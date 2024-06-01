@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+<Import Project="Dalamud.Plugin.Bootstrap.targets"/>
+    
+    <ItemGroup>
+        <None Remove="LICENSE"/>
+        <None Remove=".gitignore"/>
+    </ItemGroup>
+</Project>

@@ -1,0 +1,14 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KamiToolKit", "KamiToolKit.csproj", "{52A9E8E2-ACC7-4696-8684-5C4994D0350C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{52A9E8E2-ACC7-4696-8684-5C4994D0350C}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{52A9E8E2-ACC7-4696-8684-5C4994D0350C}.Debug|Any CPU.Build.0 = Debug|x64
+	EndGlobalSection
+EndGlobal
