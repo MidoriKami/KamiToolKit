@@ -5,5 +5,8 @@
     <ItemGroup>
         <None Remove="LICENSE"/>
         <None Remove=".gitignore"/>
+        <None Remove="KamiToolKit.json" />
+        <None Remove="packages.lock.json" />
+        <None Remove="README.md" />
     </ItemGroup>
 </Project>
