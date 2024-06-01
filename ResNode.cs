@@ -127,7 +127,7 @@ public unsafe class ResNode : IDisposable {
         => NodeFlags &= ~flags;
 
     public Vector4 Color {
-        get => new(internalNode->Color.R, internalNode->Color.G, internalNode->Color.B, internalNode->Color.A);
+        get => new(internalNode->Color.R * 255.0f, internalNode->Color.G * 255.0f, internalNode->Color.B * 255.0f, internalNode->Color.A * 255.0f);
         set => internalNode->Color = value.ToByteColor();
     }
     
