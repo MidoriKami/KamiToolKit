@@ -16,4 +16,14 @@ public static class NativeMemoryHelper {
 
     public static unsafe void UiFree<T>(T* memory) where T : unmanaged 
         => IMemorySpace.Free(memory);
+
+    public static unsafe T* Create<T>() where T : unmanaged, ICreatable {
+        var memory = (T*) IMemorySpace.GetUISpace()->Create<T>();
+
+        if (memory is null) {
+            throw new Exception($"Unable to allocate memory for {typeof(T)}");
+        }
+
+        return memory;
+    }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -31,11 +30,13 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         InternalNode->PartsList = partsList;
     }
     
-    protected void Dispose(bool disposing) {
+    protected override void Dispose(bool disposing) {
         if (disposing) {
             NativeMemoryHelper.UiFree(InternalNode->PartsList->Parts->UldAsset);
             NativeMemoryHelper.UiFree(InternalNode->PartsList->Parts);
             NativeMemoryHelper.UiFree(InternalNode->PartsList);
+            
+            base.Dispose(disposing);
         }
     }
     

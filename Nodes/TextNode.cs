@@ -8,7 +8,6 @@ using KamiToolKit.Extensions;
 namespace KamiToolKit;
 
 public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
-    
     public Vector4 TextColor {
         get => InternalNode->TextColor.ToVector4();
         set => InternalNode->TextColor = value.ToByteColor();
