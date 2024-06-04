@@ -56,9 +56,5 @@ public abstract unsafe partial class NodeBase<T> : NodeBase, IDisposable where T
         
         isDisposed = true;
     }
-    
-    public Vector4 Margin { get; set; }
-    
-    public Vector4 Padding { get; set; }
 }
 
