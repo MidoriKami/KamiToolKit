@@ -3,8 +3,8 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit;
 
+// Untested, this node might not work at all.
 public unsafe class NineGridNode() : NodeBase<AtkNineGridNode>(NodeType.NineGrid) {
-
     public AtkUldPartsList* PartsList {
         get => InternalNode->PartsList;
         set => InternalNode->PartsList = value;

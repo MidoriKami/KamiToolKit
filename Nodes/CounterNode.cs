@@ -2,8 +2,8 @@
 
 namespace KamiToolKit;
 
+// Untested, this node might not work at all.
 public unsafe class CounterNode() : NodeBase<AtkCounterNode>(NodeType.Counter) {
-
     public uint PartId {
         get => InternalNode->PartId;
         set => InternalNode->PartId = value;
@@ -52,5 +52,5 @@ public unsafe class CounterNode() : NodeBase<AtkCounterNode>(NodeType.Counter) {
 }
 
 public enum TextAlignment {
-    
+    Unknown = 5,
 }
