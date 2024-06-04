@@ -28,11 +28,6 @@ public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
         set => InternalNode->SetText(value.Encode());
     }
 
-    public string String {
-        get => MemoryHelper.ReadStringNullTerminated((nint) InternalNode->GetText());
-        set => InternalNode->SetText(value);
-    }
-
     public uint SelectStart {
         get => InternalNode->SelectStart;
         set => InternalNode->SelectStart = value;
@@ -85,4 +80,12 @@ public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
 
     public void SetNumber(int number, bool showCommas = false, bool showPlusSign = false, int digits = 0, bool zeroPad = false)
         => InternalNode->SetNumber(number, showCommas, showPlusSign, (byte) digits, zeroPad);
+    
+    /// <summary>
+    /// If you want the node to resize automatically, use TextFlags.AutoAdjustNodeSize <b><em>before</em></b> setting the String property.
+    /// </summary>
+    public string String {
+        get => MemoryHelper.ReadStringNullTerminated((nint) InternalNode->GetText());
+        set => InternalNode->SetText(value);
+    }
 }

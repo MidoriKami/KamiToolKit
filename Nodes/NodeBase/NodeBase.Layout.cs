@@ -1,10 +1,15 @@
 ﻿using System.Numerics;
-using FFXIVClientStructs.FFXIV.Client.System.Memory;
 
 namespace KamiToolKit;
 
-public abstract unsafe partial class NodeBase<T> where T : unmanaged, ICreatable {
-    public Vector4 Margin { get; set; }
+public record Spacing(float Top, float Left, float Right, float Bottom) {
+    public Spacing(float allSides) : this(allSides, allSides, allSides, allSides) { }
+}
+
+public abstract unsafe partial class NodeBase {
+    public Spacing Margin { get; set; } = new(0.0f);
     
-    public Vector4 Padding { get; set; }
+    public Spacing Padding { get; set; } = new(0.0f);
+
+    public Vector2 LayoutSize => Size;
 }

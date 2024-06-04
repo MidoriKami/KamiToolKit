@@ -1,30 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
 namespace KamiToolKit;
 
-public abstract class NodeBase {
-    // Keeps a reference to all created nodes, so you can simply foreach/Dispose all nodes.
+public abstract unsafe partial class NodeBase : IDisposable {
     protected static readonly List<IDisposable> CreatedNodes = [];
+    
+    private bool isDisposed;
+
+    internal abstract AtkResNode* InternalResNode { get; }
 
     public static void DisposeAllNodes() {
         foreach (var node in CreatedNodes.ToArray()) {
             node.Dispose();
         }
     }
+
+    ~NodeBase() => Dispose(false);
+
+    protected virtual void Dispose(bool disposing) {
+        if (disposing) {
+            RemoveTooltipEvents();
+            RemoveOnClickEvents();
+        }
+    }
+
+    public void Dispose() {
+        if (!isDisposed) {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        isDisposed = true;
+    }
 }
 
-[SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "This class is a library utility, it is meant to provide the functionality to other assemblies")]
-public abstract unsafe partial class NodeBase<T> : NodeBase, IDisposable where T : unmanaged, ICreatable {
+public abstract unsafe partial class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
     protected T* InternalNode { get; }
-    
-    private AtkResNode* InternalResNode => (AtkResNode*) InternalNode;
 
-    private bool isDisposed;
+    internal override sealed AtkResNode* InternalResNode => (AtkResNode*) InternalNode;
 
     protected NodeBase(NodeType nodeType) {
         InternalNode = NativeMemoryHelper.Create<T>();
@@ -36,27 +53,18 @@ public abstract unsafe partial class NodeBase<T> : NodeBase, IDisposable where T
         
         CreatedNodes.Add(this);
     }
-
-    ~NodeBase() => Dispose(false);
-
-    protected virtual void Dispose(bool disposing) {
-        UnAttachNode();
-        RemoveTooltipEvents();
-        RemoveOnClickEvents();
+    
+    protected override void Dispose(bool disposing) {
+        if (disposing) {
+            NodeLinker.DetachNode(InternalResNode);
         
-        InternalResNode->Destroy(false);
-        NativeMemoryHelper.UiFree(InternalNode);
+            InternalResNode->Destroy(false);
+            NativeMemoryHelper.UiFree(InternalNode);
         
-        CreatedNodes.Remove(this);
-    }
-
-    public void Dispose() {
-        if (!isDisposed) {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            CreatedNodes.Remove(this);
+            
+            base.Dispose(disposing);
         }
-        
-        isDisposed = true;
     }
 }
 

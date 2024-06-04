@@ -4,12 +4,11 @@ using System.Linq;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit;
 
-public abstract unsafe partial class NodeBase<T> where T : unmanaged, ICreatable {
+public abstract unsafe partial class NodeBase {
     private readonly List<IAddonEventHandle?> tooltipHandles = [];
     private IAddonEventManager? tooltipAddonEventManager;
     
