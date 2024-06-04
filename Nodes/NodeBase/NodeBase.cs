@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -13,7 +12,7 @@ public abstract class NodeBase {
     protected static readonly List<IDisposable> CreatedNodes = [];
 
     public static void DisposeAllNodes() {
-        foreach (var node in CreatedNodes) {
+        foreach (var node in CreatedNodes.ToArray()) {
             node.Dispose();
         }
     }
