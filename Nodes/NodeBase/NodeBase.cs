@@ -41,6 +41,8 @@ public abstract unsafe partial class NodeBase<T> : NodeBase, IDisposable where T
 
     protected virtual void Dispose(bool disposing) {
         UnAttachNode();
+        RemoveTooltipEvents();
+        RemoveOnClickEvents();
         
         InternalResNode->Destroy(false);
         NativeMemoryHelper.UiFree(InternalNode);
