@@ -31,6 +31,7 @@ public static unsafe class AddonLocator {
             if ((uint) currentNode->Type > 1000u) {
                 var componentNode = ((AtkComponentNode*) currentNode)->Component;
                 if (componentNode is not null) {
+                    if (componentNode->UldManager.LoadedState is not AtkLoadState.Loaded) continue;
                     if (AddonContainsNode(ref componentNode->UldManager, targetNode)) {
                         return true;
                     }
