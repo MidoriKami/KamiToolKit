@@ -15,8 +15,16 @@ public enum NodePosition {
 public static unsafe class NodeLinker {
     public static void AttachNode(AtkUnitBase* addon, AtkResNode* node, AtkResNode* targetNode, NodePosition position) 
         => AttachNode(node, addon, targetNode, position);
-    
-    private static void AttachNode(AtkResNode* node, AtkUnitBase* parent, AtkResNode* attachTargetNode, NodePosition position) {
+
+    /// <summary>
+    /// Attaches a node that may or may not be attached to an addon.
+    /// This method will not update the parent addon to notify it has a new node, if one exists.
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="attachTargetNode"></param>
+    /// <param name="position"></param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    public static void AttachNodeUnsafe(AtkResNode* node, AtkResNode* attachTargetNode, NodePosition position) {
         switch (position) {
             case NodePosition.BeforeTarget:
                 EmplaceBefore(node, attachTargetNode);
@@ -45,6 +53,10 @@ public static unsafe class NodeLinker {
             default:
                 throw new ArgumentOutOfRangeException(nameof(position), position, null);
         }
+    }
+    
+    private static void AttachNode(AtkResNode* node, AtkUnitBase* parent, AtkResNode* attachTargetNode, NodePosition position) {
+        AttachNodeUnsafe(node, attachTargetNode, position);
         
         parent->UpdateCollisionNodeList(false);
         parent->UldManager.UpdateDrawNodeList();
