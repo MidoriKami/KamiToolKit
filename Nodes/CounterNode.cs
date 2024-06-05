@@ -68,7 +68,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
 
     public string Text {
         get => InternalNode->NodeText.ToString();
-        set => InternalNode->SetText(value);
+        set => InternalNode->SetText($"{int.Parse(value):n0}");
     }
 }
 
