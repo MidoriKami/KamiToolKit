@@ -11,6 +11,7 @@ public static unsafe class AddonLocator {
     public static AtkUnitBase* GetAddonForNode(AtkResNode* node) {
         foreach (ref readonly var unit in AtkStage.Instance()->RaptureAtkUnitManager->AllLoadedUnitsList.Entries) {
             if (unit.Value is null) continue;
+            if (unit.Value->UldManager.LoadedState is not AtkLoadState.Loaded) continue;
             
             if (AddonContainsNode(ref unit.Value->UldManager, node)) {
                 return unit.Value;
