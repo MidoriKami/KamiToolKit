@@ -32,6 +32,8 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
     
     protected override void Dispose(bool disposing) {
         if (disposing) {
+            InternalNode->UnloadTexture();
+            
             NativeMemoryHelper.UiFree(InternalNode->PartsList->Parts->UldAsset);
             NativeMemoryHelper.UiFree(InternalNode->PartsList->Parts);
             NativeMemoryHelper.UiFree(InternalNode->PartsList);
