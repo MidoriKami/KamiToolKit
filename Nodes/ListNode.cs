@@ -24,6 +24,9 @@ public unsafe class ListNode() : NodeBase<AtkResNode>(NodeType.Res) {
     
     protected override void Dispose(bool isDisposing) {
         if (isDisposing) {
+            foreach (var node in nodeList) {
+                node.Dispose();
+            }
             
             base.Dispose(isDisposing);
         }
