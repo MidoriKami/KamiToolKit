@@ -1,9 +1,30 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 
 namespace KamiToolKit;
 
-// Untested, this node might not work at all.
-public unsafe class CounterNode() : NodeBase<AtkCounterNode>(NodeType.Counter) {
+public unsafe class CounterNode : NodeBase<AtkCounterNode> {
+    public CounterNode() : base(NodeType.Counter) {
+        var asset = NativeMemoryHelper.UiAlloc<AtkUldAsset>();
+        asset->Id = 1;
+        asset->AtkTexture.Ctor();
+        asset->AtkTexture.LoadTexture("ui/uld/Money_Number_hr1.tex");
+
+        var part = NativeMemoryHelper.UiAlloc<AtkUldPart>();
+        part->UldAsset = asset;
+        part->U = 0;
+        part->V= 0;
+        part->Height = 22;
+        part->Width = 22;
+
+        var partsList = NativeMemoryHelper.UiAlloc<AtkUldPartsList>();
+        partsList->Parts = part;
+        partsList->Id = 1;
+        partsList->PartCount = 1;
+        
+        InternalNode->PartsList = partsList;
+    }
+
     public uint PartId {
         get => InternalNode->PartId;
         set => InternalNode->PartId = value;
