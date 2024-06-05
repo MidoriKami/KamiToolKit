@@ -25,6 +25,18 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         InternalNode->PartsList = partsList;
     }
 
+    protected override void Dispose(bool disposing) {
+        if (disposing) {
+            InternalNode->PartsList->Parts->UldAsset->AtkTexture.ReleaseTexture();
+            
+            NativeMemoryHelper.UiFree(InternalNode->PartsList->Parts->UldAsset);
+            NativeMemoryHelper.UiFree(InternalNode->PartsList->Parts);
+            NativeMemoryHelper.UiFree(InternalNode->PartsList);
+            
+            base.Dispose(disposing);
+        }
+    }
+
     public uint PartId {
         get => InternalNode->PartId;
         set => InternalNode->PartId = value;
