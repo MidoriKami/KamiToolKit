@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
-using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -32,7 +31,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         };
         
         backgroundImageNode.LoadTexture("ui/uld/Parameter_Gauge_hr1.tex");
-        NodeLinker.AttachNodeUnsafe(backgroundImageNode.InternalResNode, InternalNode, NodePosition.AsLastChild);
+        backgroundImageNode.AttachNode(this, NodePosition.AsLastChild);
 
         progressNode = new NineGridNode {
             NodeID = 200 + baseId,
@@ -49,7 +48,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         };
         
         progressNode.LoadTexture("ui/uld/Parameter_Gauge_hr1.tex");
-        NodeLinker.AttachNodeUnsafe(progressNode.InternalResNode, InternalNode, NodePosition.AsLastChild);
+        progressNode.AttachNode(this, NodePosition.AsLastChild);
 
         borderImageNode = new NineGridNode {
             NodeID = 300 + baseId,
@@ -64,7 +63,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         };
         
         borderImageNode.LoadTexture("ui/uld/Parameter_Gauge_hr1.tex");
-        NodeLinker.AttachNodeUnsafe(borderImageNode.InternalResNode, InternalNode, NodePosition.AsLastChild);
+        borderImageNode.AttachNode(this, NodePosition.AsLastChild);
     }
 
     protected override void Dispose(bool disposing) {
@@ -82,7 +81,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         set => progressNode.Width = ActualSize.X * value;
     }
 
-    public new float X {
+    public new float Width {
         get => ActualSize.X;
         set {
             InternalNode->SetWidth((ushort)value);
@@ -92,7 +91,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         }
     }
 
-    public new float Y {
+    public new float Height {
         get => ActualSize.Y;
         set {
             InternalNode->SetHeight((ushort)value);
@@ -105,8 +104,8 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
     public new Vector2 Size {
         get => ActualSize;
         set {
-            X = value.X;
-            Y = value.Y;
+            Width = value.X;
+            Height = value.Y;
         }
     }
 }
