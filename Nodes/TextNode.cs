@@ -4,8 +4,9 @@ using Dalamud.Memory;
 using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
+using KamiToolKit.Nodes.NodeBase;
 
-namespace KamiToolKit;
+namespace KamiToolKit.Nodes;
 
 public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
     public Vector4 TextColor {

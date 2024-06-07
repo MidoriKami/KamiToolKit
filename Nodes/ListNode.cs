@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes.NodeBase;
 
-namespace KamiToolKit;
+namespace KamiToolKit.Nodes;
 
 // Custom Implementation of a Node that contains other nodes
 public class ListNode() : NodeBase<AtkResNode>(NodeType.Res) {
-    private readonly List<NodeBase> nodeList = [];
+    private readonly List<NodeBase.NodeBase> nodeList = [];
     
     public required LayoutAnchor LayoutAnchor { get; set; }
     
@@ -17,14 +18,14 @@ public class ListNode() : NodeBase<AtkResNode>(NodeType.Res) {
     /// </summary>
     public LayoutOrientation LayoutOrientation { get; set; }
 
-    public void AddNode(NodeBase node) {
+    public void AddNode(NodeBase.NodeBase node) {
         node.AttachNode(this, NodePosition.AsLastChild);
         nodeList.Add(node);
 
         RecalculateLayout();
     }
 
-    public void RemoveNode(NodeBase node) {
+    public void RemoveNode(NodeBase.NodeBase node) {
         nodeList.Remove(node);
         node.DetachNode();
         

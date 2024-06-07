@@ -6,7 +6,7 @@ using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
-namespace KamiToolKit;
+namespace KamiToolKit.Nodes.NodeBase;
 
 public abstract unsafe partial class NodeBase {
     private readonly List<IAddonEventHandle?> tooltipHandles = [];

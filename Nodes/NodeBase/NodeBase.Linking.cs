@@ -1,7 +1,7 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
-namespace KamiToolKit;
+namespace KamiToolKit.Nodes.NodeBase;
 
 
 public abstract unsafe partial class NodeBase {

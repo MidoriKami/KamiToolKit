@@ -1,7 +1,8 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes.NodeBase;
 
-namespace KamiToolKit;
+namespace KamiToolKit.Nodes;
 
 public unsafe class CounterNode : NodeBase<AtkCounterNode> {
     public CounterNode() : base(NodeType.Counter) {

@@ -1,8 +1,9 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes.NodeBase;
 
-namespace KamiToolKit;
+namespace KamiToolKit.Nodes;
 
 public unsafe class ImageNode : NodeBase<AtkImageNode> {
 

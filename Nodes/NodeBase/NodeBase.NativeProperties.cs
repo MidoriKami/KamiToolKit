@@ -4,7 +4,7 @@ using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
 
-namespace KamiToolKit;
+namespace KamiToolKit.Nodes.NodeBase;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "This class is a library utility, it is meant to provide the functionality to other assemblies")]
 public abstract unsafe partial class NodeBase {

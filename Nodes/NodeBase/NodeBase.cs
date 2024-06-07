@@ -4,7 +4,7 @@ using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
-namespace KamiToolKit;
+namespace KamiToolKit.Nodes.NodeBase;
 
 public abstract unsafe partial class NodeBase : IDisposable {
     protected static readonly List<IDisposable> CreatedNodes = [];

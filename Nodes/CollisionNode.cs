@@ -1,7 +1,8 @@
 ﻿using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Nodes.NodeBase;
 
-namespace KamiToolKit;
+namespace KamiToolKit.Nodes;
 
 // Untested, this node might not work at all.
 public unsafe class CollisionNode() : NodeBase<AtkCollisionNode>(NodeType.Collision) {
