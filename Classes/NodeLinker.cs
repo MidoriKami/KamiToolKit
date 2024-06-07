@@ -13,8 +13,8 @@ public enum NodePosition {
 }
 
 public static unsafe class NodeLinker {
-    public static void AttachNode(AtkUnitBase* addon, AtkResNode* node, AtkResNode* targetNode, NodePosition position) 
-        => AttachNode(node, addon, targetNode, position);
+    internal static void AttachNode(void* addon, AtkResNode* node, AtkResNode* targetNode, NodePosition position) 
+        => AttachNode(node, (AtkUnitBase*)addon, targetNode, position);
 
     /// <summary>
     /// Attaches a node that may or may not be attached to an addon.
