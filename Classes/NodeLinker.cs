@@ -56,7 +56,9 @@ public static unsafe class NodeLinker {
     }
     
     private static void AttachNode(AtkResNode* node, AtkUnitBase* parent, AtkResNode* attachTargetNode, NodePosition position) {
-        AttachNodeUnsafe(node, attachTargetNode, position);
+        if (!parent->IsReady) return;
+        
+        AttachNode(node, attachTargetNode, position);
         
         parent->UpdateCollisionNodeList(false);
         parent->UldManager.UpdateDrawNodeList();
