@@ -24,7 +24,7 @@ public static unsafe class NodeLinker {
     /// <param name="attachTargetNode"></param>
     /// <param name="position"></param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public static void AttachNodeUnsafe(AtkResNode* node, AtkResNode* attachTargetNode, NodePosition position) {
+    internal static void AttachNode(AtkResNode* node, AtkResNode* attachTargetNode, NodePosition position) {
         switch (position) {
             case NodePosition.BeforeTarget:
                 EmplaceBefore(node, attachTargetNode);
