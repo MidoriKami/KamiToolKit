@@ -7,17 +7,26 @@ using KamiToolKit.Classes;
 namespace KamiToolKit;
 
 // Custom Implementation of a Node that contains other nodes
-public unsafe class ListNode() : NodeBase<AtkResNode>(NodeType.Res) {
+public class ListNode() : NodeBase<AtkResNode>(NodeType.Res) {
     private readonly List<NodeBase> nodeList = [];
     
     public required LayoutAnchor LayoutAnchor { get; set; }
+    
+    /// <summary>
+    /// Not implemented yet.
+    /// </summary>
+    public LayoutOrientation LayoutOrientation { get; set; }
 
     public void AddNode(NodeBase node) {
-        var parentAddon = AddonLocator.GetAddonForNode(InternalResNode);
-        if (parentAddon is null) return;
-        
-        NodeLinker.AttachNode(parentAddon, node.InternalResNode, InternalResNode, NodePosition.AsLastChild);
+        node.AttachNode(this, NodePosition.AsLastChild);
         nodeList.Add(node);
+
+        RecalculateLayout();
+    }
+
+    public void RemoveNode(NodeBase node) {
+        nodeList.Remove(node);
+        node.DetachNode();
         
         RecalculateLayout();
     }
@@ -81,4 +90,9 @@ public enum LayoutAnchor {
     TopRight,
     BottomLeft,
     BottomRight,
+}
+
+public enum LayoutOrientation {
+    Vertical,
+    Horizontal,
 }
