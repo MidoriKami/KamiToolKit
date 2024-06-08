@@ -29,8 +29,10 @@ public abstract unsafe partial class NodeBase {
     
     private void AddOnClickEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
         onClickAddonEventManager ??= eventManager;
-        
-        addon->UpdateCollisionNodeList(false);
+
+        if (addon->IsReady && addon->UldManager.LoadedState is AtkLoadState.Loaded) {
+            addon->UpdateCollisionNodeList(false);
+        }
 
         onClickHandles.AddRange([
             eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOver, HandleOnClickEvent),
