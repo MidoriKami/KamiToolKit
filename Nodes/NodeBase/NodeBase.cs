@@ -4,11 +4,11 @@ using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
-namespace KamiToolKit.Nodes.NodeBase;
+namespace KamiToolKit.Nodes;
 
 public abstract unsafe partial class NodeBase : IDisposable {
     protected static readonly List<IDisposable> CreatedNodes = [];
-    
+
     private bool isDisposed;
 
     internal abstract AtkResNode* InternalResNode { get; }

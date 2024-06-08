@@ -4,7 +4,7 @@ using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
 
-namespace KamiToolKit.Nodes.NodeBase;
+namespace KamiToolKit.Nodes;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "This class is a library utility, it is meant to provide the functionality to other assemblies")]
 public abstract unsafe partial class NodeBase {
@@ -124,20 +124,20 @@ public abstract unsafe partial class NodeBase {
     }
 
     public Vector3 AddColor {
-        get => new(InternalResNode->AddRed, InternalResNode->AddGreen, InternalResNode->AddBlue);
+        get => new Vector3(InternalResNode->AddRed, InternalResNode->AddGreen, InternalResNode->AddBlue) /  255.0f;
         set {
-            InternalResNode->AddRed = (short)value.X;
-            InternalResNode->AddGreen = (short)value.Y;
-            InternalResNode->AddBlue = (short)value.Z;
+            InternalResNode->AddRed = (short)(value.X * 255);
+            InternalResNode->AddGreen = (short)(value.Y * 255);
+            InternalResNode->AddBlue = (short)(value.Z * 255);
         }
     }
 
     public Vector3 MultiplyColor {
-        get => new(InternalResNode->MultiplyRed, InternalResNode->MultiplyGreen, InternalResNode->MultiplyBlue);
+        get => new Vector3(InternalResNode->MultiplyRed, InternalResNode->MultiplyGreen, InternalResNode->MultiplyBlue) / 255.0f;
         set {
-            InternalResNode->MultiplyRed = (byte)value.X;
-            InternalResNode->MultiplyGreen = (byte)value.Y;
-            InternalResNode->MultiplyBlue = (byte)value.Z;
+            InternalResNode->MultiplyRed = (byte)(value.X * 255);
+            InternalResNode->MultiplyGreen = (byte)(value.Y * 255);
+            InternalResNode->MultiplyBlue = (byte)(value.Z * 255);
         }
     }
 

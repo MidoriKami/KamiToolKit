@@ -4,7 +4,6 @@ using Dalamud.Memory;
 using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
-using KamiToolKit.Nodes.NodeBase;
 
 namespace KamiToolKit.Nodes;
 

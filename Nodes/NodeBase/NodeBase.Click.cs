@@ -5,7 +5,7 @@ using Dalamud.Game.Addon.Events;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
-namespace KamiToolKit.Nodes.NodeBase;
+namespace KamiToolKit.Nodes;
 
 public abstract unsafe partial class NodeBase {
     private readonly List<IAddonEventHandle?> onClickHandles = [];
