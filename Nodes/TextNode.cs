@@ -80,7 +80,7 @@ public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
     /// If you want the node to resize automatically, use TextFlags.AutoAdjustNodeSize <b><em>before</em></b> setting the String property.
     /// </summary>
     public SeString Text {
-        get => MemoryHelper.ReadStringNullTerminated((nint) InternalNode->GetText());
+        get => MemoryHelper.ReadSeStringNullTerminated((nint) InternalNode->GetText());
         set => InternalNode->SetText(value.Encode());
     }
 }
