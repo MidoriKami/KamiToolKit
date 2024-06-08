@@ -23,6 +23,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     protected virtual void Dispose(bool disposing) {
         if (disposing) {
+            DetachNode();
             RemoveTooltipEvents();
             RemoveOnClickEvents();
         }
@@ -38,7 +39,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     }
 }
 
-public abstract unsafe partial class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
+public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
     protected T* InternalNode { get; }
 
     internal override sealed AtkResNode* InternalResNode => (AtkResNode*) InternalNode;
@@ -56,8 +57,6 @@ public abstract unsafe partial class NodeBase<T> : NodeBase where T : unmanaged,
     
     protected override void Dispose(bool disposing) {
         if (disposing) {
-            NodeLinker.DetachNode(InternalResNode);
-        
             InternalResNode->Destroy(false);
             NativeMemoryHelper.UiFree(InternalNode);
         
