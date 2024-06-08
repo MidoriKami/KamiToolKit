@@ -56,12 +56,12 @@ public static unsafe class NodeLinker {
     }
     
     private static void AttachNode(AtkResNode* node, AtkUnitBase* parent, AtkResNode* attachTargetNode, NodePosition position) {
-        if (!parent->IsReady) return;
-        
         AttachNode(node, attachTargetNode, position);
-        
-        parent->UpdateCollisionNodeList(false);
-        parent->UldManager.UpdateDrawNodeList();
+
+        if (parent->IsReady && parent->UldManager.LoadedState is AtkLoadState.Loaded) {
+            parent->UpdateCollisionNodeList(false);
+            parent->UldManager.UpdateDrawNodeList();
+        }
     }
     
      private static void EmplaceBefore(AtkResNode* node, AtkResNode* attachTargetNode) {

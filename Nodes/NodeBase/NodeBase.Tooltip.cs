@@ -30,8 +30,10 @@ public abstract unsafe partial class NodeBase {
     
     private void AddTooltipEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
         tooltipAddonEventManager ??= eventManager;
-        
-        addon->UpdateCollisionNodeList(false);
+
+        if (addon->IsReady && addon->UldManager.LoadedState is AtkLoadState.Loaded) {
+            addon->UpdateCollisionNodeList(false);
+        }
 
         tooltipHandles.AddRange([
             eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOver, HandleTooltipEvent),
