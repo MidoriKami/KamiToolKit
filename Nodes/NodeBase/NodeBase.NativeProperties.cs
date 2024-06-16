@@ -98,7 +98,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     public bool IsVisible {
-        get => InternalResNode->IsVisible;
+        get => InternalResNode->IsVisible();
         set => InternalResNode->ToggleVisibility(value);
     }
 

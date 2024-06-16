@@ -100,7 +100,7 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         => InternalNode->UnloadTexture();
 
     public void LoadIcon(uint iconId)
-        => InternalNode->LoadIconTexture((int)iconId, 0);
+        => InternalNode->LoadIconTexture(iconId, 0);
 }
 
 public enum WrapMode {
