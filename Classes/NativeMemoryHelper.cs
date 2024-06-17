@@ -3,7 +3,7 @@ using FFXIVClientStructs.FFXIV.Client.System.Memory;
 
 namespace KamiToolKit.Classes;
 
-public static class NativeMemoryHelper {
+internal static class NativeMemoryHelper {
     public static unsafe T* UiAlloc<T>() where T : unmanaged {
         var memory = (T*) IMemorySpace.GetUISpace()->Malloc((ulong) sizeof(T), 8);
 

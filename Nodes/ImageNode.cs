@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Dalamud.Interface.Internal;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -101,6 +102,10 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
 
     public void LoadIcon(uint iconId)
         => InternalNode->LoadIconTexture(iconId, 0);
+
+    public void SetImGuiTexture(IDalamudTextureWrap texture) {
+        InternalNode->PartsList->Parts->UldAsset->AtkTexture.Resource->KernelTextureObject->D3D11ShaderResourceView = (void*)texture.ImGuiHandle;
+    }
 }
 
 public enum WrapMode {

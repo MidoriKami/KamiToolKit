@@ -16,7 +16,7 @@ public abstract unsafe partial class NodeBase {
     
     public void EnableTooltip(IAddonEventManager eventManager, void* addon) {
         var atkUnitBase = (AtkUnitBase*) addon;
-    
+
         if (tooltipHandles.Count == 0) {
             AddTooltipEvents(eventManager, atkUnitBase);
         }

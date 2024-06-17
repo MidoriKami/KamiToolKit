@@ -162,16 +162,6 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         nodeList.Add(item);
         
         RecalculateLayout();
-
-        unsafe {
-            if (AttachedAddonName is not null) {
-                var parent = AtkStage.Instance()->RaptureAtkUnitManager->GetAddonByName(AttachedAddonName);
-                if (parent is not null && parent->IsReady && parent->UldManager.LoadedState is AtkLoadState.Loaded) {
-                    parent->UpdateCollisionNodeList(false);
-                    parent->UldManager.UpdateDrawNodeList();
-                }
-            }
-        }
     }
     
     public void Clear() {
@@ -192,16 +182,6 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     public bool Remove(T item) {
         item.DetachNode();
         nodeList.Remove(item);
-
-        unsafe {
-            if (AttachedAddonName is not null) {
-                var parent = AtkStage.Instance()->RaptureAtkUnitManager->GetAddonByName(AttachedAddonName);
-                if (parent is not null && parent->IsReady && parent->UldManager.LoadedState is AtkLoadState.Loaded) {
-                    parent->UpdateCollisionNodeList(false);
-                    parent->UldManager.UpdateDrawNodeList();
-                }
-            }
-        }
         
         RecalculateLayout();
         
