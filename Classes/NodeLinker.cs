@@ -68,8 +68,6 @@ public static unsafe class NodeLinker {
 
         attachTargetNode->NextSiblingNode = node;
         node->PrevSiblingNode = attachTargetNode;
-        
-        attachTargetNode->ParentNode->ChildCount++;
     }
 
     private static void EmplaceAfter(AtkResNode* node, AtkResNode* attachTargetNode) {
@@ -83,8 +81,6 @@ public static unsafe class NodeLinker {
 
         attachTargetNode->PrevSiblingNode = node;
         node->NextSiblingNode = attachTargetNode;
-        
-        attachTargetNode->ParentNode->ChildCount++;
     }
 
     private static void EmplaceBeforeSiblings(AtkResNode* node, AtkResNode* attachTargetNode) {
@@ -99,8 +95,6 @@ public static unsafe class NodeLinker {
         if (previous is not null) {
             EmplaceBefore(node, previous);
         }
-        
-        attachTargetNode->ParentNode->ChildCount++;
     }
 
     private static void EmplaceAfterSiblings(AtkResNode* node, AtkResNode* attachTargetNode) {
@@ -115,8 +109,6 @@ public static unsafe class NodeLinker {
         if (previous is not null) {
             EmplaceAfter(node, previous);
         }
-
-        attachTargetNode->ParentNode->ChildCount++;
     }
 
     private static void EmplaceAsLastChild(AtkResNode* node, AtkResNode* attachTargetNode) {
@@ -125,7 +117,6 @@ public static unsafe class NodeLinker {
         {
             attachTargetNode->ChildNode = node;
             node->ParentNode = attachTargetNode;
-            attachTargetNode->ChildCount++;
         }
         // Else Add to the List
         else
@@ -139,17 +130,15 @@ public static unsafe class NodeLinker {
             node->ParentNode = attachTargetNode;
             node->NextSiblingNode = currentNode;
             currentNode->PrevSiblingNode = node;
-            attachTargetNode->ChildCount++;
         }
     }
     
     private static void EmplaceAsFirstChild(AtkResNode* node, AtkResNode* attachTargetNode) {
         // If the child list is empty
-        if (attachTargetNode->ChildNode is null && attachTargetNode->ChildCount is 0)
+        if (attachTargetNode->ChildNode is null)
         {
             attachTargetNode->ChildNode = node;
             node->ParentNode = attachTargetNode;
-            attachTargetNode->ChildCount++;
         }
         // Else Add to the List as the First Child
         else {
@@ -157,7 +146,6 @@ public static unsafe class NodeLinker {
             node->PrevSiblingNode = attachTargetNode->ChildNode;
             attachTargetNode->ChildNode = node;
             node->ParentNode = attachTargetNode;
-            attachTargetNode->ChildCount++;
         }
     }
 
@@ -200,7 +188,5 @@ public static unsafe class NodeLinker {
                 node->PrevSiblingNode->NextSiblingNode = null;
             }
         }
-
-        node->ParentNode->ChildCount--;
     }
 }
