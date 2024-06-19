@@ -31,16 +31,16 @@ public abstract unsafe partial class NodeBase {
     private void AddTooltipEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
         tooltipAddonEventManager ??= eventManager;
 
-        if (addon->IsReady && addon->UldManager.LoadedState is AtkLoadState.Loaded) {
-            addon->UpdateCollisionNodeList(false);
-        }
-
         tooltipHandles.AddRange([
             eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOver, HandleTooltipEvent),
             eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOut, HandleTooltipEvent),
         ]);
         
         AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
+        
+        if (addon->IsReady && addon->UldManager.LoadedState is AtkLoadState.Loaded) {
+            addon->UpdateCollisionNodeList(false);
+        }
     }
     
     private void RemoveTooltipEvents() {
