@@ -68,9 +68,11 @@ public static unsafe class NodeLinker {
 
         attachTargetNode->NextSiblingNode = node;
         node->PrevSiblingNode = attachTargetNode;
-        
-        attachTargetNode->ParentNode->ChildCount++;
-    }
+
+        if ((int)attachTargetNode->ParentNode->Type < 1000) {
+            attachTargetNode->ParentNode->ChildCount++;
+        }
+     }
 
     private static void EmplaceAfter(AtkResNode* node, AtkResNode* attachTargetNode) {
         node->ParentNode = attachTargetNode->ParentNode;
@@ -83,8 +85,10 @@ public static unsafe class NodeLinker {
 
         attachTargetNode->PrevSiblingNode = node;
         node->NextSiblingNode = attachTargetNode;
-        
-        attachTargetNode->ParentNode->ChildCount++;
+
+        if ((int)attachTargetNode->ParentNode->Type < 1000) {
+            attachTargetNode->ParentNode->ChildCount++;
+        }
     }
 
     private static void EmplaceBeforeSiblings(AtkResNode* node, AtkResNode* attachTargetNode) {
@@ -99,8 +103,10 @@ public static unsafe class NodeLinker {
         if (previous is not null) {
             EmplaceBefore(node, previous);
         }
-        
-        attachTargetNode->ParentNode->ChildCount++;
+
+        if ((int)attachTargetNode->ParentNode->Type < 1000) {
+            attachTargetNode->ParentNode->ChildCount++;
+        }
     }
 
     private static void EmplaceAfterSiblings(AtkResNode* node, AtkResNode* attachTargetNode) {
@@ -116,16 +122,23 @@ public static unsafe class NodeLinker {
             EmplaceAfter(node, previous);
         }
 
-        attachTargetNode->ParentNode->ChildCount++;
+        if ((int)attachTargetNode->ParentNode->Type < 1000) {
+            attachTargetNode->ParentNode->ChildCount++;
+        }
     }
 
     private static void EmplaceAsLastChild(AtkResNode* node, AtkResNode* attachTargetNode) {
         // If the child list is empty
-        if (attachTargetNode->ChildNode is null)
+        if (attachTargetNode->ChildNode is null && (int)attachTargetNode->Type < 1000)
         {
-            attachTargetNode->ChildNode = node;
-            node->ParentNode = attachTargetNode;
-            attachTargetNode->ChildCount++;
+            if ((int)attachTargetNode->Type < 1000) {
+                attachTargetNode->ChildNode = node;
+                node->ParentNode = attachTargetNode;
+                attachTargetNode->ChildCount++;
+            }
+            else {
+                node->ParentNode = attachTargetNode;
+            }
         }
         // Else Add to the List
         else
@@ -135,11 +148,13 @@ public static unsafe class NodeLinker {
             {
                 currentNode = currentNode->PrevSiblingNode;
             }
-        
+
             node->ParentNode = attachTargetNode;
             node->NextSiblingNode = currentNode;
             currentNode->PrevSiblingNode = node;
-            attachTargetNode->ChildCount++;
+            if ((int)attachTargetNode->Type < 1000) {
+                attachTargetNode->ChildCount++;
+            }
         }
     }
     
@@ -147,17 +162,28 @@ public static unsafe class NodeLinker {
         // If the child list is empty
         if (attachTargetNode->ChildNode is null && attachTargetNode->ChildCount is 0)
         {
-            attachTargetNode->ChildNode = node;
-            node->ParentNode = attachTargetNode;
-            attachTargetNode->ChildCount++;
+            if ((int)attachTargetNode->Type < 1000) {
+                attachTargetNode->ChildNode = node;
+                node->ParentNode = attachTargetNode;
+                attachTargetNode->ChildCount++;
+            }
+            else {
+                node->ParentNode = attachTargetNode;
+            }
         }
         // Else Add to the List as the First Child
         else {
-            attachTargetNode->ChildNode->NextSiblingNode = node;
-            node->PrevSiblingNode = attachTargetNode->ChildNode;
-            attachTargetNode->ChildNode = node;
-            node->ParentNode = attachTargetNode;
-            attachTargetNode->ChildCount++;
+            if ((int)attachTargetNode->Type < 1000) {
+                attachTargetNode->ChildNode->NextSiblingNode = node;
+                node->PrevSiblingNode = attachTargetNode->ChildNode;
+                attachTargetNode->ChildNode = node;
+                node->ParentNode = attachTargetNode;
+                attachTargetNode->ChildCount++;
+            }
+            else {
+                node->PrevSiblingNode = attachTargetNode->ChildNode;
+                node->ParentNode = attachTargetNode;
+            }
         }
     }
 
@@ -200,7 +226,9 @@ public static unsafe class NodeLinker {
                 node->PrevSiblingNode->NextSiblingNode = null;
             }
         }
-
-        node->ParentNode->ChildCount--;
+        
+        if ((int)node->ParentNode->Type < 1000) {
+            node->ParentNode->ChildCount--;
+        }
     }
 }

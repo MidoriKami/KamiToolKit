@@ -13,7 +13,11 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     internal abstract AtkResNode* InternalResNode { get; }
 
-    public static void DisposeAllNodes() {
+    /// <summary>
+    /// Warning, this is only to ensure there are no memory leaks.
+    /// Ensure you have detached nodes safely from native ui before disposing.
+    /// </summary>
+    internal static void DisposeAllNodes() {
         foreach (var node in CreatedNodes.ToArray()) {
             node.Dispose();
         }
@@ -21,18 +25,14 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     ~NodeBase() => Dispose(false);
 
-    protected virtual void Dispose(bool disposing) {
-        if (disposing) {
-            DetachNode();
-            RemoveTooltipEvents();
-            RemoveOnClickEvents();
-        }
-    }
+    protected abstract void Dispose(bool disposing);
 
     public void Dispose() {
         if (!isDisposed) {
             Dispose(true);
             GC.SuppressFinalize(this);
+
+            CreatedNodes.Remove(this);
         }
         
         isDisposed = true;
@@ -57,12 +57,8 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
     
     protected override void Dispose(bool disposing) {
         if (disposing) {
-            base.Dispose(disposing);
-            
             InternalResNode->Destroy(false);
             NativeMemoryHelper.UiFree(InternalNode);
-        
-            CreatedNodes.Remove(this);
         }
     }
 }
