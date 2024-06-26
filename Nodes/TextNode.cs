@@ -13,7 +13,7 @@ public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
         set => InternalNode->TextColor = value.ToByteColor();
     }
 
-    public Vector4 OutlineColor {
+    public Vector4 TextOutlineColor {
         get => InternalNode->EdgeColor.ToVector4();
         set => InternalNode->EdgeColor = value.ToByteColor();
     }
