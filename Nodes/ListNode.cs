@@ -195,6 +195,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     public void Clear() {
         foreach (var node in nodeList) {
             node.DetachNode();
+            node.Dispose();
         }
         
         nodeList.Clear();
