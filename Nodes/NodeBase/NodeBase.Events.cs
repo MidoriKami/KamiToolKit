@@ -17,6 +17,8 @@ public abstract unsafe partial class NodeBase {
 	private IAddonEventHandle? MouseClickHandle { get; set; } 
 
 	public SeString? Tooltip { get; set; }
+	
+	private IAddonEventManager? EventManager { get; set; }
 
 	public void EnableEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
 		AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
@@ -32,6 +34,8 @@ public abstract unsafe partial class NodeBase {
 		if (MouseClick is not null && MouseClickHandle is null) {
 			MouseClickHandle = eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseClick, HandleEvents);
 		}
+
+		EventManager = eventManager;
 	}
 	
 	public void DisableEvents(IAddonEventManager eventManager) {
@@ -51,6 +55,8 @@ public abstract unsafe partial class NodeBase {
 			eventManager.RemoveEvent(MouseClickHandle);
 			MouseClickHandle = null;
 		}
+		
+		EventManager = eventManager;
 	}
 	
 	public void UpdateEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
@@ -61,18 +67,28 @@ public abstract unsafe partial class NodeBase {
 	private void HandleEvents(AddonEventType atkEventType, IntPtr atkUnitBase, IntPtr atkResNode) {
 		var parentAddon = (AtkUnitBase*) atkUnitBase;
 
+		if (!IsVisible) return;
+
 		switch (atkEventType) {
 			case AddonEventType.MouseOver:
 				if (Tooltip is not null) {
 					AtkStage.Instance()->TooltipManager.ShowTooltip(parentAddon->Id, (AtkResNode*) atkResNode, Tooltip.Encode());
 				}
 
+				if (MouseClick is not null) {
+					EventManager?.SetCursor(AddonCursorType.Clickable);
+				}
+				
 				MouseOver?.Invoke();
 				break;
 
 			case AddonEventType.MouseOut:
 				if (Tooltip is not null) {
 					AtkStage.Instance()->TooltipManager.HideTooltip(parentAddon->Id);
+				}
+				
+				if (MouseClick is not null) {
+					EventManager?.ResetCursor();
 				}
 				
 				MouseOut?.Invoke();
