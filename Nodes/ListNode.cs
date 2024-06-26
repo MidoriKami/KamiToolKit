@@ -15,8 +15,8 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     private readonly ImageNode background;
 
     private LayoutOrientation InternalLayoutOrientation { get; set; }
-    
-    public required LayoutAnchor LayoutAnchor { get; set; }
+
+    public LayoutAnchor LayoutAnchor { get; set; } = LayoutAnchor.TopLeft;
     
     public LayoutOrientation LayoutOrientation {
         get => InternalLayoutOrientation;
