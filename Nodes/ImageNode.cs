@@ -103,8 +103,28 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
     public void LoadIcon(uint iconId)
         => InternalNode->LoadIconTexture(iconId, 0);
 
+    /// <summary>
+    /// Don't use, experimental. Will crash your game.
+    /// </summary>
+    /// <param name="texture"></param>
     public void SetImGuiTexture(IDalamudTextureWrap texture) {
-        InternalNode->PartsList->Parts->UldAsset->AtkTexture.Resource->KernelTextureObject->D3D11ShaderResourceView = (void*)texture.ImGuiHandle;
+        // public unsafe void DoTheThing(IDataManager dataManager) {
+        //     var data = dataManager.GameData.GetFileFromDisk<TexFile>(@"D:\Downloads\huton1.tex");
+        //
+        //     fixed (byte* dataPtr = data.ImageData) {
+        //         var newTexture = Texture.CreateTexture2D(data.TextureBuffer.Width, data.TextureBuffer.Height, data.Header.MipLevelsCount, (uint)TextureFormat.R8G8B8A8, 0u, 0u);
+        //         newTexture->InitializeContents(dataPtr);
+        //
+        //         var imageNode = (AtkImageNode*) background.InternalResNode;
+        //
+        //         imageNode->PartsList->Parts->UldAsset->AtkTexture.KernelTexture = newTexture;
+        //         imageNode->PartsList->Parts->UldAsset->AtkTexture.TextureType = TextureType.KernelTexture;
+        //         background.Color = KnownColor.White.Vector();
+        //         background.AddColor = Vector3.Zero;
+        //     }
+        // }
+        
+        // InternalNode->PartsList->Parts->UldAsset->AtkTexture.Resource->KernelTextureObject->D3D11ShaderResourceView = (void*)texture.ImGuiHandle;
     }
 }
 
