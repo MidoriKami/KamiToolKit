@@ -15,8 +15,8 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     private readonly ImageNode background;
 
     private LayoutOrientation InternalLayoutOrientation { get; set; }
-    
-    public required LayoutAnchor LayoutAnchor { get; set; }
+
+    public LayoutAnchor LayoutAnchor { get; set; } = LayoutAnchor.TopLeft;
     
     public LayoutOrientation LayoutOrientation {
         get => InternalLayoutOrientation;
@@ -71,6 +71,34 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         }
 
         background.Size = Size;
+    }
+    
+    /// <summary>
+    /// Get the current minimum size that would contain all the nodes including their margins.
+    /// </summary>
+    /// <returns></returns>
+    public Vector2 GetMinimumSize() {
+        var size = Vector2.Zero;
+        
+        foreach (var node in nodeList) {
+            if (!node.IsVisible) continue;
+
+            switch (LayoutOrientation) {
+                // Horizontal we take max height, and add widths
+                case LayoutOrientation.Horizontal:
+                    size.Y = MathF.Max(size.Y, node.LayoutSize.Y);
+                    size.X += node.LayoutSize.X;
+                    break;
+                
+                // Vertical we take max width, and add heights
+                case LayoutOrientation.Vertical:
+                    size.X = MathF.Max(size.X, node.LayoutSize.X);
+                    size.Y += node.LayoutSize.Y;
+                    break;
+            }
+        }
+
+        return size;
     }
 
     private void CalculateVerticalLayout() {
@@ -167,6 +195,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     public void Clear() {
         foreach (var node in nodeList) {
             node.DetachNode();
+            node.Dispose();
         }
         
         nodeList.Clear();
