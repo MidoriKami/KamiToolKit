@@ -71,8 +71,6 @@ public unsafe class NativeController : IDisposable {
 			customNode.DetachNode();
 
 			component->UldManager.UpdateDrawNodeList();
-			component->UldManager.NodeListSize = component->UldManager.NodeListCount;
-			component->UldManager.UpdateDrawNodeList();
 
 			addon->UldManager.UpdateDrawNodeList();
 			addon->UpdateCollisionNodeList(false);

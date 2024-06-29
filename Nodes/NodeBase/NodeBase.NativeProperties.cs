@@ -9,13 +9,13 @@ namespace KamiToolKit.Nodes;
 [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "This class is a library utility, it is meant to provide the functionality to other assemblies")]
 public abstract unsafe partial class NodeBase {
      public float X {
-        get => InternalResNode->GetX();
-        set => InternalResNode->SetX(value);
+        get => InternalResNode->GetXFloat();
+        set => InternalResNode->SetXFloat(value);
     }
 
     public float Y {
-        get => InternalResNode->GetY();
-        set => InternalResNode->SetY(value);
+        get => InternalResNode->GetYFloat();
+        set => InternalResNode->SetYFloat(value);
     }
 
     public Vector2 Position {
