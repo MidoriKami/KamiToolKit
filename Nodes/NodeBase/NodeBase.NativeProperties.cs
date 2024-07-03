@@ -141,7 +141,10 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
-    public uint ChildCount => InternalResNode->ChildCount;
+    public uint ChildCount {
+        get => InternalResNode->ChildCount;
+        private set => InternalResNode->ChildCount = (ushort)value;
+    }
 
     private AtkResNode* ParentNode {
         get => InternalResNode->ParentNode;
@@ -166,5 +169,10 @@ public abstract unsafe partial class NodeBase {
     public uint NodeID {
         get => InternalResNode->NodeId;
         set => InternalResNode->NodeId = value;
+    }
+
+    public uint DrawFlags {
+        get => InternalResNode->DrawFlags;
+        private set => InternalResNode->DrawFlags = value;
     }
 }

@@ -105,7 +105,17 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         var runningPosition = GetLayoutStartPosition();
         
         foreach (var node in nodeList) {
-            if (!node.IsVisible) continue;
+            if (!node.IsVisible) {
+                if (node.NodeFlags.HasFlag(NodeFlags.HasCollision)) {
+                    node.RemoveFlags(NodeFlags.HasCollision);
+                }
+                continue;
+            }
+            else {
+                if (!node.NodeFlags.HasFlag(NodeFlags.HasCollision)) {
+                    node.AddFlags(NodeFlags.HasCollision);
+                }
+            }
             
             switch (LayoutAnchor) {
                 case LayoutAnchor.TopLeft: {
