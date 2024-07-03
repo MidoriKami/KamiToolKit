@@ -15,7 +15,7 @@ public unsafe class NativeController : IDisposable {
 	[PluginService] private IAddonEventManager AddonEventManager { get; set; }
 	[PluginService] private IFramework Framework { get; set; }
 	
-	public NativeController(DalamudPluginInterface pluginInterface) {
+	public NativeController(IDalamudPluginInterface pluginInterface) {
 		pluginInterface.Inject(this);
 	}
 
