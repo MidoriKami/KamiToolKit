@@ -1,9 +1,1 @@
-<Project Sdk="Dalamud.NET.Sdk/9.0.1">
-    <ItemGroup>
-        <None Remove="LICENSE"/>
-        <None Remove=".gitignore"/>
-        <None Remove="KamiToolKit.json" />
-        <None Remove="packages.lock.json" />
-        <None Remove="README.md" />
-    </ItemGroup>
-</Project>
+<Project Sdk="Dalamud.NET.Sdk/9.0.2"/>
