@@ -190,42 +190,15 @@ public static unsafe class NodeLinker {
     public static void DetachNode(AtkResNode* node) {
         if (node is null) return;
         if (node->ParentNode is null) return;
-        
-        // If we were the main child of the containing node, assign it to the next element in line.
-        if (node->ParentNode->ChildNode == node) {
-            // And we have a node after us, our parents child should be the next node in line.
-            if (node->PrevSiblingNode != null) {
-                node->ParentNode->ChildNode = node->PrevSiblingNode;
-            }
-            // else our parent is no longer pointing to any children.
-            else {
-                node->ParentNode->ChildNode = null;
-            }
-        }
-        
-        // If we have a node before us
-        if (node->NextSiblingNode != null) {
-            // and a node after us, link the one before to the one after
-            if (node->PrevSiblingNode != null) {
-                node->NextSiblingNode->PrevSiblingNode = node->PrevSiblingNode;
-            }
-            // else unlink it from us
-            else {
-                node->NextSiblingNode->PrevSiblingNode = null;
-            }
-        }
-        
-        // If we have a node after us
-        if (node->PrevSiblingNode != null) {
-            // and a node before us, link the one after to the one before
-            if (node->NextSiblingNode != null) {
-                node->PrevSiblingNode->NextSiblingNode = node->NextSiblingNode;
-            }
-            // else unlink it from us
-            else {
-                node->PrevSiblingNode->NextSiblingNode = null;
-            }
-        }
+
+        if (node->ParentNode->ChildNode == node)
+            node->ParentNode->ChildNode = node->PrevSiblingNode;
+
+        if (node->PrevSiblingNode != null)
+            node->PrevSiblingNode->NextSiblingNode = node->NextSiblingNode;
+
+        if (node->NextSiblingNode != null)
+            node->NextSiblingNode->PrevSiblingNode = node->PrevSiblingNode;
         
         if ((int)node->ParentNode->Type < 1000) {
             node->ParentNode->ChildCount--;
