@@ -35,13 +35,14 @@ public unsafe class NativeController : IDisposable {
 		});
 	}
 
+	/// <summary>
+	/// Warning! Known to be volatile, use at your own risk.
+	/// </summary>
 	public void AttachToComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component, AtkResNode* target, NodePosition position) {
 		Framework.RunOnFrameworkThread(() => {
 			NodeLinker.AttachNode(customNode.InternalResNode, target, position);
 			customNode.EnableEvents(AddonEventManager, addon);
 			component->UldManager.UpdateDrawNodeList();
-			addon->UldManager.UpdateDrawNodeList();
-			addon->UpdateCollisionNodeList(false);
 		});
 	}
 	
@@ -54,8 +55,6 @@ public unsafe class NativeController : IDisposable {
 	public void DetachFromAddon(NodeBase customNode, AtkUnitBase* addon) {
 		Framework.RunOnFrameworkThread(() => {
 			customNode.DisableEvents(AddonEventManager);
-			addon->UpdateCollisionNodeList(false);
-			
 			customNode.DetachNode();
 			
 			addon->UldManager.UpdateDrawNodeList();
@@ -63,17 +62,15 @@ public unsafe class NativeController : IDisposable {
 		});
 	}
 
+	/// <summary>
+	/// Warning! Known to be volatile, use at your own risk.
+	/// </summary>
 	public void DetachFromComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component) {
 		Framework.RunOnFrameworkThread(() => {
 			customNode.DisableEvents(AddonEventManager);
-			addon->UpdateCollisionNodeList(false);
-			
 			customNode.DetachNode();
 
 			component->UldManager.UpdateDrawNodeList();
-
-			addon->UldManager.UpdateDrawNodeList();
-			addon->UpdateCollisionNodeList(false);
 		});
 	}
 
