@@ -126,6 +126,18 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         
         // InternalNode->PartsList->Parts->UldAsset->AtkTexture.Resource->KernelTextureObject->D3D11ShaderResourceView = (void*)texture.ImGuiHandle;
     }
+
+    public uint? LoadedIconId {
+        get {
+            if (InternalNode->PartsList is null) return null;
+            if (InternalNode->PartsList->Parts is null) return null;
+            if (InternalNode->PartsList->Parts->UldAsset is null) return null;
+            if (!InternalNode->PartsList->Parts->UldAsset->AtkTexture.IsTextureReady()) return null;
+            if (InternalNode->PartsList->Parts->UldAsset->AtkTexture.Resource is null) return null;
+
+            return InternalNode->PartsList->Parts->UldAsset->AtkTexture.Resource->IconId;
+        }
+    }
 }
 
 public enum WrapMode {
