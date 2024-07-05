@@ -32,6 +32,8 @@ public abstract unsafe partial class NodeBase {
 		}
 
 		if (MouseClick is not null && MouseClickHandle is null) {
+			MouseOverHandle ??= eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOver, HandleEvents);
+			MouseOutHandle ??= eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOut, HandleEvents);
 			MouseClickHandle = eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseClick, HandleEvents);
 		}
 
@@ -41,17 +43,17 @@ public abstract unsafe partial class NodeBase {
 	public void DisableEvents(IAddonEventManager eventManager) {
 		RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
 
-		if (MouseOver is null && Tooltip is null && MouseOverHandle is not null) {
+		if (MouseOverHandle is not null) {
 			eventManager.RemoveEvent(MouseOverHandle);
 			MouseOverHandle = null;
 		}
 
-		if (MouseOut is null && Tooltip is null && MouseOutHandle is not null) {
+		if (MouseOutHandle is not null) {
 			eventManager.RemoveEvent(MouseOutHandle);
 			MouseOutHandle = null;
 		}
 
-		if (MouseClick is null && MouseClickHandle is not null) {
+		if (MouseClickHandle is not null) {
 			eventManager.RemoveEvent(MouseClickHandle);
 			MouseClickHandle = null;
 		}
