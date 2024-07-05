@@ -10,8 +10,8 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
     private readonly NineGridNode backgroundImageNode;
     private readonly NineGridNode progressNode;
     private readonly NineGridNode borderImageNode;
-    
-    private Vector2 ActualSize { get; set; }
+
+    private Vector2 actualSize;
 
     public ProgressBarNode(uint baseId) : base(NodeType.Res) {
         NodeID = baseId;
@@ -77,35 +77,47 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
     }
 
     public float Progress {
-        get => progressNode.Width / ActualSize.X;
-        set => progressNode.Width = ActualSize.X * value;
+        get => progressNode.Width / actualSize.X;
+        set => progressNode.Width = actualSize.X * value;
     }
 
     public new float Width {
-        get => ActualSize.X;
+        get => actualSize.X;
         set {
             InternalNode->SetWidth((ushort)value);
             backgroundImageNode.Width = value;
             progressNode.Width = value;
             borderImageNode.Width = value;
+            actualSize.X = value;
         }
     }
 
     public new float Height {
-        get => ActualSize.Y;
+        get => actualSize.Y;
         set {
             InternalNode->SetHeight((ushort)value);
             backgroundImageNode.Height = value;
             progressNode.Height = value;
             borderImageNode.Height = value;
+            actualSize.Y = value;
         }
     }
 
     public new Vector2 Size {
-        get => ActualSize;
+        get => actualSize;
         set {
             Width = value.X;
             Height = value.Y;
         }
+    }
+
+    public Vector4 BackgroundColor {
+        get => backgroundImageNode.Color;
+        set => backgroundImageNode.Color = value;
+    }
+
+    public Vector4 BarColor {
+        get => progressNode.Color;
+        set => progressNode.Color = value;
     }
 }
