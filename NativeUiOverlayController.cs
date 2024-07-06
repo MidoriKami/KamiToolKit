@@ -4,6 +4,7 @@ using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit;
 
@@ -51,4 +52,14 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 	protected abstract void AttachNodes(AddonNamePlate* addonNamePlate);
 	protected abstract void DetachNodes(AddonNamePlate* addonNamePlate);
 	protected abstract void LoadConfig();
+
+	protected void RefreshAddon() {
+		if (AddonNamePlate is not null) {
+			if (AddonNamePlate->UldManager.LoadedState is AtkLoadState.Loaded) {
+				AddonNamePlate->UldManager.UpdateDrawNodeList();
+			}
+			
+			AddonNamePlate->UpdateCollisionNodeList(false);
+		}
+	}
 }
