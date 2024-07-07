@@ -21,7 +21,9 @@ public abstract unsafe partial class NodeBase {
 	private IAddonEventManager? EventManager { get; set; }
 
 	public virtual void EnableEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
-		AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
+		if (MouseOver is not null || MouseOut is not null || MouseClick is not null || Tooltip is not null) {
+			AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
+		}
 
 		if ((MouseOver is not null || Tooltip is not null) && MouseOverHandle is null) {
 			MouseOverHandle = eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOver, HandleEvents);
