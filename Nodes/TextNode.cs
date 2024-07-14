@@ -11,7 +11,7 @@ namespace KamiToolKit.Nodes;
 public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
     protected override void Dispose(bool disposing) {
         if (disposing) {
-            stringBuffer.Dtor();
+            stringBuffer->Dtor(true);
             base.Dispose(disposing);
         }
     }
@@ -84,7 +84,7 @@ public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
     public void SetNumber(int number, bool showCommas = false, bool showPlusSign = false, int digits = 0, bool zeroPad = false)
         => InternalNode->SetNumber(number, showCommas, showPlusSign, (byte) digits, zeroPad);
 
-    private Utf8String stringBuffer = new();
+    private readonly Utf8String* stringBuffer = Utf8String.CreateEmpty();
     
     /// <summary>
     /// If you want the node to resize automatically, use TextFlags.AutoAdjustNodeSize <b><em>before</em></b> setting the String property.
@@ -92,8 +92,8 @@ public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
     public SeString Text {
         get => MemoryHelper.ReadSeStringNullTerminated((nint) InternalNode->GetText());
         set {
-            stringBuffer.SetString(value.Encode());
-            InternalNode->SetText(stringBuffer.StringPtr);
+            stringBuffer->SetString(value.Encode());
+            InternalNode->SetText(stringBuffer->StringPtr);
         }
     }
 }
