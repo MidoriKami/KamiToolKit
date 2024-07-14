@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using System.Runtime.InteropServices;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Memory;
 using Dalamud.Utility.Numerics;
