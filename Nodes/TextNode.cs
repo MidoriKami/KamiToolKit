@@ -11,7 +11,7 @@ namespace KamiToolKit.Nodes;
 public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
     protected override void Dispose(bool disposing) {
         if (disposing) {
-            stringBuffer.Dtor(true);
+            stringBuffer.Dtor();
             base.Dispose(disposing);
         }
     }
