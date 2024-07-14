@@ -3,12 +3,20 @@ using System.Runtime.InteropServices;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Memory;
 using Dalamud.Utility.Numerics;
+using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
 
 namespace KamiToolKit.Nodes;
 
 public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
+    protected override void Dispose(bool disposing) {
+        if (disposing) {
+            stringBuffer.Dtor(true);
+            base.Dispose(disposing);
+        }
+    }
+
     public Vector4 TextColor {
         get => InternalNode->TextColor.ToVector4();
         set => InternalNode->TextColor = value.ToByteColor();
@@ -77,7 +85,7 @@ public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
     public void SetNumber(int number, bool showCommas = false, bool showPlusSign = false, int digits = 0, bool zeroPad = false)
         => InternalNode->SetNumber(number, showCommas, showPlusSign, (byte) digits, zeroPad);
 
-    private nint stringMemoryBuffer = nint.Zero;
+    private Utf8String stringBuffer = new();
     
     /// <summary>
     /// If you want the node to resize automatically, use TextFlags.AutoAdjustNodeSize <b><em>before</em></b> setting the String property.
@@ -85,14 +93,8 @@ public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
     public SeString Text {
         get => MemoryHelper.ReadSeStringNullTerminated((nint) InternalNode->GetText());
         set {
-            var encodedString = value.Encode();
-            var stringLength = encodedString.Length;
-
-            Marshal.FreeHGlobal(stringMemoryBuffer);
-            stringMemoryBuffer = Marshal.AllocHGlobal(stringLength + 1);
-            Marshal.Copy(encodedString, 0, stringMemoryBuffer, stringLength);
-            Marshal.WriteByte(stringMemoryBuffer, stringLength, 0);
-            InternalNode->SetText((byte*)stringMemoryBuffer);
+            stringBuffer.SetString(value.Encode());
+            InternalNode->SetText(stringBuffer.StringPtr);
         }
     }
 }
