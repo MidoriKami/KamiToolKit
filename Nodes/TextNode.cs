@@ -92,7 +92,7 @@ public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
     public SeString Text {
         get => MemoryHelper.ReadSeStringNullTerminated((nint) InternalNode->GetText());
         set {
-            stringBuffer->SetString(value.Encode());
+            stringBuffer->SetString(value.EncodeWithNull());
             InternalNode->SetText(stringBuffer->StringPtr);
         }
     }
