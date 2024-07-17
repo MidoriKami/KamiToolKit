@@ -2,20 +2,12 @@
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Memory;
 using Dalamud.Utility.Numerics;
-using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
 
 namespace KamiToolKit.Nodes;
 
 public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
-    protected override void Dispose(bool disposing) {
-        if (disposing) {
-            stringBuffer->Dtor(true);
-            base.Dispose(disposing);
-        }
-    }
-
     public Vector4 TextColor {
         get => InternalNode->TextColor.ToVector4();
         set => InternalNode->TextColor = value.ToByteColor();
@@ -84,16 +76,14 @@ public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
     public void SetNumber(int number, bool showCommas = false, bool showPlusSign = false, int digits = 0, bool zeroPad = false)
         => InternalNode->SetNumber(number, showCommas, showPlusSign, (byte) digits, zeroPad);
 
-    private readonly Utf8String* stringBuffer = Utf8String.CreateEmpty();
-    
     /// <summary>
     /// If you want the node to resize automatically, use TextFlags.AutoAdjustNodeSize <b><em>before</em></b> setting the String property.
     /// </summary>
     public SeString Text {
         get => MemoryHelper.ReadSeStringNullTerminated((nint) InternalNode->GetText());
         set {
-            stringBuffer->SetString(value.Encode());
-            InternalNode->SetText(stringBuffer->StringPtr);
+            InternalNode->NodeText.SetString(value.EncodeWithNullTerminator());
+            InternalNode->SetText(InternalNode->NodeText.StringPtr);
         }
     }
 }
