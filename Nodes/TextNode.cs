@@ -81,9 +81,6 @@ public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
     /// </summary>
     public SeString Text {
         get => MemoryHelper.ReadSeStringNullTerminated((nint) InternalNode->GetText());
-        set {
-            InternalNode->NodeText.SetString(value.EncodeWithNullTerminator());
-            InternalNode->SetText(InternalNode->NodeText.StringPtr);
-        }
+        set => InternalNode->SetText(value.EncodeWithNullTerminator());
     }
 }
