@@ -12,7 +12,7 @@ namespace KamiToolKit.Nodes;
 // Custom Implementation of a Node that contains other nodes
 public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     private readonly List<T> nodeList = [];
-    private readonly ImageNode background;
+    private readonly BackgroundImageNode background;
 
     private LayoutOrientation InternalLayoutOrientation { get; set; }
 
@@ -27,11 +27,8 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     }
 
     public Vector4 BackgroundColor {
-        get => new(background.AddColor.X, background.AddColor.Y, background.AddColor.Z, background.Color.W);
-        set {
-            background.Color = Vector4.Zero with { W = value.W };
-            background.AddColor = value.AsVector3Color();
-        }
+        get => background.Color;
+        set => background.Color = value;
     }
 
     public bool BackgroundVisible {
@@ -40,7 +37,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     }
     
     public ListNode() : base(NodeType.Res) {
-        background = new ImageNode {
+        background = new BackgroundImageNode {
             NodeID = 101_000,
             Size = new Vector2(600.0f, 32.0f),
             IsVisible = true,
