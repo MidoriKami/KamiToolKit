@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Extensions;
 
 namespace KamiToolKit.Nodes;
 
