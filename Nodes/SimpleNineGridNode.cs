@@ -26,16 +26,16 @@ public class SimpleNineGridNode : NineGridNode {
         }
     }
 
+    public float TextureWidth {
+        get => PartsList[0].Width;
+        set => PartsList[0].Width = (ushort) value;
+    }
+    
     public float TextureHeight {
         get => PartsList[0].Height;
         set => PartsList[0].Height = (ushort) value;
     }
     
-    public float TextureWidth {
-        get => PartsList[0].Width;
-        set => PartsList[0].Width = (ushort) value;
-    }
-
     public Vector2 TextureSize {
         get => new(TextureWidth, TextureHeight);
         set {
