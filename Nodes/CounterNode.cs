@@ -1,37 +1,27 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Nodes.Parts;
 
 namespace KamiToolKit.Nodes;
 
 public unsafe class CounterNode : NodeBase<AtkCounterNode> {
+    protected readonly PartsList PartsList;
+    
     public CounterNode() : base(NodeType.Counter) {
-        var asset = NativeMemoryHelper.UiAlloc<AtkUldAsset>();
-        asset->Id = 1;
-        asset->AtkTexture.Ctor();
-        asset->AtkTexture.LoadTexture("ui/uld/Money_Number_hr1.tex");
-
-        var part = NativeMemoryHelper.UiAlloc<AtkUldPart>();
-        part->UldAsset = asset;
-        part->U = 0;
-        part->V= 0;
-        part->Height = 22;
-        part->Width = 22;
-
-        var partsList = NativeMemoryHelper.UiAlloc<AtkUldPartsList>();
-        partsList->Parts = part;
-        partsList->Id = 1;
-        partsList->PartCount = 1;
+        PartsList = new PartsList();
+        PartsList.Add( new Part() );
         
-        InternalNode->PartsList = partsList;
+        InternalNode->PartsList = PartsList.InternalPartsList;
+
+        NumberWidth = 10;
+        CommaWidth = 8;
+        SpaceWidth = 6;
+        TextAlignment = TextAlignment.Unknown;
+        CounterWidth = 32;
     }
 
     protected override void Dispose(bool disposing) {
         if (disposing) {
-            InternalNode->PartsList->Parts->UldAsset->AtkTexture.ReleaseTexture();
-            
-            NativeMemoryHelper.UiFree(InternalNode->PartsList->Parts->UldAsset);
-            NativeMemoryHelper.UiFree(InternalNode->PartsList->Parts);
-            NativeMemoryHelper.UiFree(InternalNode->PartsList);
+            PartsList.Dispose();
             
             base.Dispose(disposing);
         }
@@ -41,12 +31,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         get => InternalNode->PartId;
         set => InternalNode->PartId = value;
     }
-
-    public AtkUldPartsList* PartsList {
-        get => InternalNode->PartsList;
-        set => InternalNode->PartsList = value;
-    }
-
+    
     public uint NumberWidth {
         get => InternalNode->NumberWidth;
         set => InternalNode->NumberWidth = (byte)value;
@@ -62,7 +47,6 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         set => InternalNode->SpaceWidth = (byte) value;
     }
 
-    /// <remarks>Might not be a enum at all.</remarks>
     public TextAlignment TextAlignment {
         get => (TextAlignment) InternalNode->TextAlign;
         set => InternalNode->TextAlign = (ushort) value;

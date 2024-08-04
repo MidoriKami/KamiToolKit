@@ -4,7 +4,10 @@ using KamiToolKit.Extensions;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class BackgroundImageNode : ImageNode {
+/// <summary>
+/// A simple image node that makes it easy to display a single color.
+/// </summary>
+public unsafe class BackgroundImageNode : SimpleImageNode {
     public new Vector4 Color {
         get => new(AddColor.X, AddColor.Y, AddColor.Z, InternalResNode->Color.A);
         set {

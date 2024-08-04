@@ -1,84 +1,30 @@
-﻿using System.Numerics;
-using Dalamud.Interface.Textures.TextureWraps;
+﻿using Dalamud.Interface.Textures.TextureWraps;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Nodes.Parts;
 
 namespace KamiToolKit.Nodes;
 
 public unsafe class ImageNode : NodeBase<AtkImageNode> {
+    protected readonly PartsList PartsList;
 
     public ImageNode() : base(NodeType.Image) {
-        var asset = NativeMemoryHelper.UiAlloc<AtkUldAsset>();
-        asset->Id = 1;
-        asset->AtkTexture.Ctor();
-
-        var part = NativeMemoryHelper.UiAlloc<AtkUldPart>();
-        part->UldAsset = asset;
-        part->U = 0;
-        part->V= 0;
-        part->Height = 0;
-        part->Width = 0;
-
-        var partsList = NativeMemoryHelper.UiAlloc<AtkUldPartsList>();
-        partsList->Parts = part;
-        partsList->Id = 1;
-        partsList->PartCount = 1;
+        PartsList = new PartsList();
 
         WrapMode = WrapMode.Unknown;
         ImageNodeFlags = ImageNodeFlags.AutoFit;
 
         InternalNode->DrawFlags = 0x100;
-        InternalNode->PartsList = partsList;
+        InternalNode->PartsList = PartsList.InternalPartsList;
     }
     
     protected override void Dispose(bool disposing) {
         if (disposing) {
-            InternalNode->UnloadTexture();
-            
-            NativeMemoryHelper.UiFree(InternalNode->PartsList->Parts->UldAsset);
-            NativeMemoryHelper.UiFree(InternalNode->PartsList->Parts);
-            NativeMemoryHelper.UiFree(InternalNode->PartsList);
+            PartsList.Dispose();
             
             base.Dispose(disposing);
         }
     }
-    
-    public float U {
-        get => InternalNode->PartsList->Parts->U;
-        set => InternalNode->PartsList->Parts->U = (ushort) value;
-    }
-    
-    public float V {
-        get => InternalNode->PartsList->Parts->V;
-        set => InternalNode->PartsList->Parts->V = (ushort) value;
-    }
 
-    public Vector2 TextureCoordinates {
-        get => new(U, V);
-        set {
-            U = value.X;
-            V = value.Y;
-        }
-    }
-
-    public float TextureHeight {
-        get => InternalNode->PartsList->Parts->Height;
-        set => InternalNode->PartsList->Parts->Height = (ushort) value;
-    }
-    
-    public float TextureWidth {
-        get => InternalNode->PartsList->Parts->Width;
-        set => InternalNode->PartsList->Parts->Width = (ushort) value;
-    }
-
-    public Vector2 TextureSize {
-        get => new(TextureWidth, TextureHeight);
-        set {
-            TextureWidth = value.X;
-            TextureHeight = value.Y;
-        }
-    }
-    
     public uint PartId {
         get => InternalNode->PartId;
         set => InternalNode->PartId = (ushort) value;
@@ -94,50 +40,9 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         set => InternalNode->Flags = (byte) value;
     }
 
-    public void LoadTexture(string path)
-        => InternalNode->LoadTexture(path);
-
-    public void UnloadTexture()
-        => InternalNode->UnloadTexture();
-
-    public void LoadIcon(uint iconId)
-        => InternalNode->LoadIconTexture(iconId, 0);
-
-    /// <summary>
-    /// Don't use, experimental. Will crash your game.
-    /// </summary>
-    /// <param name="texture"></param>
-    public void SetImGuiTexture(IDalamudTextureWrap texture) {
-        // public unsafe void DoTheThing(IDataManager dataManager) {
-        //     var data = dataManager.GameData.GetFileFromDisk<TexFile>(@"D:\Downloads\huton1.tex");
-        //
-        //     fixed (byte* dataPtr = data.ImageData) {
-        //         var newTexture = Texture.CreateTexture2D(data.TextureBuffer.Width, data.TextureBuffer.Height, data.Header.MipLevelsCount, (uint)TextureFormat.R8G8B8A8, 0u, 0u);
-        //         newTexture->InitializeContents(dataPtr);
-        //
-        //         var imageNode = (AtkImageNode*) background.InternalResNode;
-        //
-        //         imageNode->PartsList->Parts->UldAsset->AtkTexture.KernelTexture = newTexture;
-        //         imageNode->PartsList->Parts->UldAsset->AtkTexture.TextureType = TextureType.KernelTexture;
-        //         background.Color = KnownColor.White.Vector();
-        //         background.AddColor = Vector3.Zero;
-        //     }
-        // }
-        
-        // InternalNode->PartsList->Parts->UldAsset->AtkTexture.Resource->KernelTextureObject->D3D11ShaderResourceView = (void*)texture.ImGuiHandle;
-    }
-
-    public uint? LoadedIconId {
-        get {
-            if (InternalNode->PartsList is null) return null;
-            if (InternalNode->PartsList->Parts is null) return null;
-            if (InternalNode->PartsList->Parts->UldAsset is null) return null;
-            if (!InternalNode->PartsList->Parts->UldAsset->AtkTexture.IsTextureReady()) return null;
-            if (InternalNode->PartsList->Parts->UldAsset->AtkTexture.Resource is null) return null;
-
-            return InternalNode->PartsList->Parts->UldAsset->AtkTexture.Resource->IconId;
-        }
-    }
+    // The image node will take ownership of any parts added, be sure not to share parts between nodes
+    public void AddPart(Part part)
+        => PartsList.Add(part);
 }
 
 public enum WrapMode {
