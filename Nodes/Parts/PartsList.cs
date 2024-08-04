@@ -58,6 +58,13 @@ public unsafe class PartsList : IList<Part>, IDisposable {
         
         // Add new part on end of buffer
         newBuffer[PartCount] = *item.InternalPart;
+        
+        // Now that we have the data copied into the new array, update the pointer and free old memory
+        var allocatedPart = item.InternalPart;
+        item.InternalPart = &newBuffer[PartCount];
+        NativeMemoryHelper.UiFree(allocatedPart);
+        
+        // Update Parts List
         PartCount++;
         parts.Add(item);
 
@@ -73,9 +80,8 @@ public unsafe class PartsList : IList<Part>, IDisposable {
     public bool Contains(Part item)
         => parts.Contains(item);
 
-    public void CopyTo(Part[] array, int arrayIndex) {
-        throw new Exception("Bulk Modification of PartsList is not supported.");
-    }
+    public void CopyTo(Part[] array, int arrayIndex)
+        => parts.CopyTo(array, arrayIndex);
 
     public bool Remove(Part item) {
         if (!Contains(item)) return false;
@@ -105,22 +111,23 @@ public unsafe class PartsList : IList<Part>, IDisposable {
     }
 
     public int Count => parts.Count;
+
     public bool IsReadOnly => false;
 
     public int IndexOf(Part item)
         => parts.IndexOf(item);
 
-    public void Insert(int index, Part item) {
-        throw new Exception("Inserting a part into arbitrary index is not supported.");
-    }
+    public void Insert(int index, Part item)
+        => throw new Exception("Inserting a part into arbitrary index is not supported.");
 
-    public void RemoveAt(int index) {
-        var partAtIndex = parts[index];
-        Remove(partAtIndex);
-    }
+    public void RemoveAt(int index)
+        => Remove(parts[index]);
 
     public Part this[int index] {
         get => parts[index];
-        set => throw new Exception("Setting a part at a arbitrary index is not supported.");
+        set {
+            parts[index] = value;
+            InternalPartsList->Parts[index] = *value.InternalPart;
+        }
     }
 }
