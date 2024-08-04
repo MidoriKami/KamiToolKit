@@ -8,9 +8,7 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
     protected readonly PartsList PartsList;
     
     public NineGridNode() : base(NodeType.NineGrid) {
-        PartsList = new PartsList {
-            Id = 2,
-        };
+        PartsList = new PartsList();
 
         InternalNode->PartsList = PartsList.InternalPartsList;
     }
