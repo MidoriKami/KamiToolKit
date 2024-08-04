@@ -63,6 +63,10 @@ public unsafe class Part : IDisposable {
         }
     }
 
+    public uint Id {
+        get => Asset.Id;
+        set => Asset.Id = value;
+    }
 
     public void LoadTexture(string path)
         => Asset.InternalAsset->AtkTexture.LoadTexture(path);
