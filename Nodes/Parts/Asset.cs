@@ -11,6 +11,8 @@ public unsafe class Asset : IDisposable {
 
     private void* cachedTexture;
     private bool customTextureLoaded;
+
+    private bool isDisposed;
     
     public Asset() {
         InternalAsset = NativeMemoryHelper.UiAlloc<AtkUldAsset>();
@@ -20,16 +22,20 @@ public unsafe class Asset : IDisposable {
     }
     
     public void Dispose() {
-        if (customTextureLoaded) {
-            // Restore cached texture
-            InternalAsset->AtkTexture.KernelTexture->D3D11ShaderResourceView = cachedTexture;
+        if (!isDisposed) {
+            if (customTextureLoaded) {
+                // Restore cached texture
+                InternalAsset->AtkTexture.KernelTexture->D3D11ShaderResourceView = cachedTexture;
             
-            // Then destroy it and make it regret existing.
-            InternalAsset->AtkTexture.ReleaseTexture();
-            InternalAsset->AtkTexture.Destroy(true);
+                // Then destroy it and make it regret existing.
+                InternalAsset->AtkTexture.ReleaseTexture();
+                InternalAsset->AtkTexture.Destroy(true);
+            }
+
+            NativeMemoryHelper.UiFree(InternalAsset);
         }
 
-        NativeMemoryHelper.UiFree(InternalAsset);
+        isDisposed = true;
     }
 
     public uint Id {

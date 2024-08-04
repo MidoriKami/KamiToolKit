@@ -10,6 +10,9 @@ public unsafe class Part : IDisposable {
     internal AtkUldPart* InternalPart;
  
     public Asset Asset { get; } = new();
+    public bool IsAttached;
+
+    private bool isDisposed;
     
     public Part() {
         InternalPart = NativeMemoryHelper.UiAlloc<AtkUldPart>();
@@ -23,8 +26,15 @@ public unsafe class Part : IDisposable {
     }
 
     public void Dispose() {
-        Asset.Dispose();
-        NativeMemoryHelper.UiFree(InternalPart);
+        if (!isDisposed) {
+            Asset.Dispose();
+
+            if (!IsAttached) {
+                NativeMemoryHelper.UiFree(InternalPart);
+            }
+        }
+
+        isDisposed = true;
     }
 
     public float Width {

@@ -12,6 +12,8 @@ public unsafe class PartsList : IList<Part>, IDisposable {
     internal readonly AtkUldPartsList* InternalPartsList;
     private readonly List<Part> parts = [];
 
+    private bool isDisposed;
+
     public PartsList() {
         InternalPartsList = NativeMemoryHelper.UiAlloc<AtkUldPartsList>();
 
@@ -21,11 +23,15 @@ public unsafe class PartsList : IList<Part>, IDisposable {
     }
 
     public void Dispose() {
-        foreach (var part in parts) {
-            part.Dispose();
-        }
+        if (!isDisposed) {
+            foreach (var part in parts) {
+                part.Dispose();
+            }
         
-        NativeMemoryHelper.UiFree(InternalPartsList);
+            NativeMemoryHelper.UiFree(InternalPartsList);
+        }
+
+        isDisposed = true;
     }
 
     public uint PartCount {
@@ -62,6 +68,7 @@ public unsafe class PartsList : IList<Part>, IDisposable {
         // Now that we have the data copied into the new array, update the pointer and free old memory
         var allocatedPart = item.InternalPart;
         item.InternalPart = &newBuffer[PartCount];
+        item.IsAttached = true;
         NativeMemoryHelper.UiFree(allocatedPart);
         
         // Update Parts List
