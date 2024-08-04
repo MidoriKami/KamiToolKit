@@ -1,5 +1,7 @@
-﻿using System.Numerics;
+﻿using System.Drawing;
+using System.Numerics;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Interface;
 using Dalamud.Memory;
 using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -7,7 +9,15 @@ using KamiToolKit.Extensions;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class TextNode() : NodeBase<AtkTextNode>(NodeType.Text) {
+public unsafe class TextNode : NodeBase<AtkTextNode> {
+
+    public TextNode() : base(NodeType.Text) {
+        TextColor = KnownColor.White.Vector();
+        TextOutlineColor = KnownColor.Black.Vector();
+        FontSize = 12;
+        FontType = FontType.Axis;
+    }
+    
     public Vector4 TextColor {
         get => InternalNode->TextColor.ToVector4();
         set => InternalNode->TextColor = value.ToByteColor();
