@@ -1,4 +1,6 @@
-﻿namespace KamiToolKit.Nodes;
+﻿using KamiToolKit.Nodes.Parts;
+
+namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// A simple image node for use with displaying game icons.
