@@ -19,14 +19,6 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     public LayoutAnchor LayoutAnchor { get; set; } = LayoutAnchor.TopLeft;
     
     public ListNode() : base(NodeType.Res) {
-        background = new BackgroundImageNode {
-            NodeID = 101_000,
-            Size = new Vector2(600.0f, 32.0f),
-            IsVisible = true,
-        };
-        
-        background.AttachNode(this, NodePosition.AsFirstChild);
-
         border = new BorderNineGridNode {
             NodeID = 102_000,
             Size = new Vector2(600.0f, 32.0f),
@@ -35,6 +27,14 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         };
         
         border.AttachNode(this, NodePosition.AsFirstChild);
+        
+        background = new BackgroundImageNode {
+            NodeID = 101_000,
+            Size = new Vector2(600.0f, 32.0f),
+            IsVisible = true,
+        };
+        
+        background.AttachNode(this, NodePosition.AsFirstChild);
     }
     
     public LayoutOrientation LayoutOrientation {
