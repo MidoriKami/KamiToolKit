@@ -21,8 +21,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         backgroundImageNode = new SimpleNineGridNode {
             NodeID = 100 + baseId,
             Size = new Vector2(160.0f, 20.0f),
-            TextureHeight = 20,
-            TextureWidth = 160,
+            TextureSize = new Vector2(160.0f, 20.0f),
             TextureCoordinates = new Vector2(0.0f, 100.0f),
             NodeFlags = NodeFlags.Visible,
             PartsRenderType = PartsRenderType.RenderType,
@@ -36,8 +35,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         progressNode = new SimpleNineGridNode {
             NodeID = 200 + baseId,
             Size = new Vector2(160.0f, 20.0f),
-            TextureHeight = 20,
-            TextureWidth = 160,
+            TextureSize = new Vector2(160.0f, 20.0f),
             TextureCoordinates = new Vector2(0.0f, 40.0f),
             NodeFlags = NodeFlags.Visible,
             Width = 80,
@@ -53,8 +51,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         borderImageNode = new SimpleNineGridNode {
             NodeID = 300 + baseId,
             Size = new Vector2(160.0f, 20.0f),
-            TextureHeight = 20,
-            TextureWidth = 160,
+            TextureSize = new Vector2(160.0f, 20.0f),
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             NodeFlags = NodeFlags.Visible,
             PartsRenderType = PartsRenderType.RenderType,
