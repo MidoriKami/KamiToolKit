@@ -18,12 +18,17 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
 
     public LayoutAnchor LayoutAnchor { get; set; } = LayoutAnchor.TopLeft;
     
+    /// <summary>
+    /// If enabled, the background is sized around the content, not the list itself.
+    /// </summary>
+    public bool BackgroundFitsContents { get; set; }
+    
     public ListNode() : base(NodeType.Res) {
         border = new BorderNineGridNode {
             NodeID = 102_000,
             Size = new Vector2(600.0f, 32.0f),
             Position = new Vector2(-15.0f, -15.0f),
-            IsVisible = true,
+            IsVisible = false,
         };
         
         border.AttachNode(this, NodePosition.AsFirstChild);
@@ -84,8 +89,19 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
                 break;
         }
 
-        background.Size = Size;
-        border.Size = Size + new Vector2(30.0f, 30.0f);
+        if (BackgroundFitsContents) {
+            background.Size = GetMinimumSize();
+
+            if (nodeList.Count is not 0) {
+                background.Position = nodeList[0].Position;
+            }
+        }
+        else {
+            background.Size = Size;
+            background.Position = Vector2.Zero;
+        }
+        
+        border.Size = Size + new Vector2(30.0f, 30.0f); 
     }
     
     /// <summary>
