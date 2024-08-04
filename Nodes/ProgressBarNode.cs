@@ -7,9 +7,9 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.Nodes;
 
 public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
-    private readonly NineGridNode backgroundImageNode;
-    private readonly NineGridNode progressNode;
-    private readonly NineGridNode borderImageNode;
+    private readonly SimpleNineGridNode backgroundImageNode;
+    private readonly SimpleNineGridNode progressNode;
+    private readonly SimpleNineGridNode borderImageNode;
 
     private Vector2 actualSize;
 
@@ -18,7 +18,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         InternalNode->SetWidth((ushort)160.0f);
         InternalNode->SetHeight((ushort)20.0f);
         
-        backgroundImageNode = new NineGridNode {
+        backgroundImageNode = new SimpleNineGridNode {
             NodeID = 100 + baseId,
             Size = new Vector2(160.0f, 20.0f),
             TextureHeight = 20,
@@ -33,7 +33,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         backgroundImageNode.LoadTexture("ui/uld/Parameter_Gauge_hr1.tex");
         backgroundImageNode.AttachNode(this, NodePosition.AsLastChild);
 
-        progressNode = new NineGridNode {
+        progressNode = new SimpleNineGridNode {
             NodeID = 200 + baseId,
             Size = new Vector2(160.0f, 20.0f),
             TextureHeight = 20,
@@ -50,7 +50,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         progressNode.LoadTexture("ui/uld/Parameter_Gauge_hr1.tex");
         progressNode.AttachNode(this, NodePosition.AsLastChild);
 
-        borderImageNode = new NineGridNode {
+        borderImageNode = new SimpleNineGridNode {
             NodeID = 300 + baseId,
             Size = new Vector2(160.0f, 20.0f),
             TextureHeight = 20,
