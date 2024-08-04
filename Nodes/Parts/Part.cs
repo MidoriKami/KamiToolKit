@@ -7,15 +7,15 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.Nodes.Parts;
 
 public unsafe class Part : IDisposable {
-    internal readonly AtkUldPart* InternalPart;
+    internal AtkUldPart* InternalPart;
  
     public Asset Asset { get; } = new();
     
     public Part() {
         InternalPart = NativeMemoryHelper.UiAlloc<AtkUldPart>();
 
-        InternalPart->Height = 0;
         InternalPart->Width = 0;
+        InternalPart->Height = 0;
         InternalPart->U = 0;
         InternalPart->V = 0;
 
