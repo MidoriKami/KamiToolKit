@@ -12,10 +12,30 @@ namespace KamiToolKit.Nodes;
 public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     private readonly List<T> nodeList = [];
     private readonly BackgroundImageNode background;
+    private readonly BorderNineGridNode border;
 
     private LayoutOrientation InternalLayoutOrientation { get; set; }
 
     public LayoutAnchor LayoutAnchor { get; set; } = LayoutAnchor.TopLeft;
+    
+    public ListNode() : base(NodeType.Res) {
+        background = new BackgroundImageNode {
+            NodeID = 101_000,
+            Size = new Vector2(600.0f, 32.0f),
+            IsVisible = true,
+        };
+        
+        background.AttachNode(this, NodePosition.AsFirstChild);
+
+        border = new BorderNineGridNode {
+            NodeID = 102_000,
+            Size = new Vector2(600.0f, 32.0f),
+            Position = new Vector2(-15.0f, -15.0f),
+            IsVisible = true,
+        };
+        
+        border.AttachNode(this, NodePosition.AsFirstChild);
+    }
     
     public LayoutOrientation LayoutOrientation {
         get => InternalLayoutOrientation;
@@ -34,15 +54,10 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         get => background.IsVisible;
         set => background.IsVisible = value;
     }
-    
-    public ListNode() : base(NodeType.Res) {
-        background = new BackgroundImageNode {
-            NodeID = 101_000,
-            Size = new Vector2(600.0f, 32.0f),
-            IsVisible = true,
-        };
-        
-        background.AttachNode(this, NodePosition.AsFirstChild);
+
+    public bool BorderVisible {
+        get => border.IsVisible;
+        set => border.IsVisible = value;
     }
 
     protected override void Dispose(bool isDisposing) {
@@ -50,6 +65,9 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
             foreach (var node in nodeList) {
                 node.Dispose();
             }
+            
+            background.Dispose();
+            border.Dispose();
             
             base.Dispose(isDisposing);
         }
@@ -67,12 +85,12 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         }
 
         background.Size = Size;
+        border.Size = Size + new Vector2(30.0f, 30.0f);
     }
     
     /// <summary>
     /// Get the current minimum size that would contain all the nodes including their margins.
     /// </summary>
-    /// <returns></returns>
     public Vector2 GetMinimumSize() {
         var size = Vector2.Zero;
         
