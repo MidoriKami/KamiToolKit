@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -8,10 +9,12 @@ namespace KamiToolKit.Nodes.Parts;
 
 public unsafe class Part : IDisposable {
     internal AtkUldPart* InternalPart;
+    internal readonly AtkUldAsset* InternalAsset;
  
-    public Asset Asset { get; } = new();
+    private void* cachedTexture;
+    private bool customTextureLoaded;
+    
     public bool IsAttached;
-
     private bool isDisposed;
     
     public Part() {
@@ -22,12 +25,26 @@ public unsafe class Part : IDisposable {
         InternalPart->U = 0;
         InternalPart->V = 0;
 
-        InternalPart->UldAsset = Asset.InternalAsset;
+        InternalAsset = NativeMemoryHelper.UiAlloc<AtkUldAsset>();
+
+        InternalAsset->Id = 0;
+        InternalAsset->AtkTexture.Ctor();
+        
+        InternalPart->UldAsset = InternalAsset;
     }
 
     public void Dispose() {
         if (!isDisposed) {
-            Asset.Dispose();
+            if (customTextureLoaded) {
+                // Restore cached texture
+                InternalAsset->AtkTexture.KernelTexture->D3D11ShaderResourceView = cachedTexture;
+            
+                // Then destroy it and make it regret existing.
+                InternalAsset->AtkTexture.ReleaseTexture();
+                InternalAsset->AtkTexture.Destroy(true);
+            }
+
+            NativeMemoryHelper.UiFree(InternalAsset);
 
             if (!IsAttached) {
                 NativeMemoryHelper.UiFree(InternalPart);
@@ -74,19 +91,37 @@ public unsafe class Part : IDisposable {
     }
 
     public uint Id {
-        get => Asset.Id;
-        set => Asset.Id = value;
+        get => InternalAsset->Id;
+        set => InternalAsset->Id = value;
+    }
+    
+    public uint? GetLoadedIconId() {
+        if (!InternalAsset->AtkTexture.IsTextureReady()) return null;
+        if (InternalAsset->AtkTexture.Resource is null) return null;
+
+        return InternalAsset->AtkTexture.Resource->IconId;
     }
 
     public void LoadTexture(string path)
-        => Asset.InternalAsset->AtkTexture.LoadTexture(path);
+        => InternalAsset->AtkTexture.LoadTexture(path);
 
     public void UnloadTexture()
-        => Asset.InternalAsset->AtkTexture.ReleaseTexture();
+        => InternalAsset->AtkTexture.ReleaseTexture();
 
     public void LoadIcon(uint iconId)
-        => Asset.InternalAsset->AtkTexture.LoadIconTexture(iconId, 0);
+        => InternalAsset->AtkTexture.LoadIconTexture(iconId, 0);
 
-    public void LoadImGuiTexture(IDalamudTextureWrap textureWrap)
-        => Asset.LoadImGuiTexture(textureWrap);
+    public void LoadImGuiTexture(IDalamudTextureWrap textureWrap) {
+        // Do not attempt to load another texture, if we have one loaded already.
+        if (customTextureLoaded) return;
+
+        InternalAsset->AtkTexture.KernelTexture = Texture.CreateTexture2D(textureWrap.Width, textureWrap.Height, 3, (uint) TextureFormat.R8G8B8A8, 0, 0);
+
+        cachedTexture = InternalAsset->AtkTexture.KernelTexture->D3D11ShaderResourceView;
+        InternalAsset->AtkTexture.KernelTexture->D3D11ShaderResourceView = (void*) textureWrap.ImGuiHandle;
+
+        InternalAsset->AtkTexture.TextureType = TextureType.KernelTexture;
+
+        customTextureLoaded = true;
+    }
 }

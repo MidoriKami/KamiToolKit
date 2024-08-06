@@ -20,5 +20,5 @@ public class IconImageNode : SimpleImageNode {
 	}
     
 	public uint? LoadedIconId 
-		=> PartsList[0].Asset.GetLoadedIconId();
+		=> PartsList[0].GetLoadedIconId();
 }
