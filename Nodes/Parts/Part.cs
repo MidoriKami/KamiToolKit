@@ -7,6 +7,9 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes.Parts;
 
+/// <summary>
+/// Wrapper around a AtkUldPart and AtkUldAsset, loads and holds graphics textures for display in image, and image-like nodes.
+/// </summary>
 public unsafe class Part : IDisposable {
     internal AtkUldPart* InternalPart;
     internal readonly AtkUldAsset* InternalAsset;
@@ -39,7 +42,7 @@ public unsafe class Part : IDisposable {
                 // Restore cached texture
                 InternalAsset->AtkTexture.KernelTexture->D3D11ShaderResourceView = cachedTexture;
             
-                // Then destroy it and make it regret existing.
+                // Then destroy it and make it regret existing
                 InternalAsset->AtkTexture.ReleaseTexture();
                 InternalAsset->AtkTexture.Destroy(true);
             }
@@ -95,6 +98,10 @@ public unsafe class Part : IDisposable {
         set => InternalAsset->Id = value;
     }
     
+    /// <summary>
+    /// Gets the icon id of the currently loaded texture
+    /// </summary>
+    /// <returns>IconId or null</returns>
     public uint? GetLoadedIconId() {
         if (!InternalAsset->AtkTexture.IsTextureReady()) return null;
         if (InternalAsset->AtkTexture.Resource is null) return null;
@@ -102,15 +109,42 @@ public unsafe class Part : IDisposable {
         return InternalAsset->AtkTexture.Resource->IconId;
     }
 
+    /// <summary>
+    /// Loads a game texture via path
+    /// </summary>
+    /// <example1>"ui/icon/065000/65108_hr1.tex"</example1>
+    /// <example2>"ui/uld/ActionBar_hr1.tex"</example2>
+    /// <param name="path">Path to native game resource</param>
     public void LoadTexture(string path)
         => InternalAsset->AtkTexture.LoadTexture(path);
 
-    public void UnloadTexture()
+    /// <summary>
+    /// Release the loaded texture, decreases ref count
+    /// </summary>
+    public void ReleaseTexture()
         => InternalAsset->AtkTexture.ReleaseTexture();
 
+    /// <summary>
+    /// Destroys the loaded texture, with option to free the allocated memory
+    /// </summary>
+    /// <param name="free">If the game should free the texture in memory</param>
+    public void DestroyTexture(bool free)
+        => InternalAsset->AtkTexture.Destroy(free);
+
+    /// <summary>
+    /// Loads a game icon via id
+    /// </summary>
+    /// <param name="iconId">Icon id to load</param>
     public void LoadIcon(uint iconId)
         => InternalAsset->AtkTexture.LoadIconTexture(iconId, 0);
 
+    /// <summary>
+    /// Load a DalamudTextureWrap texture into this node.
+    /// </summary>
+    /// <remarks>
+    /// This does not transfer ownership of the texture to the node, you are required
+    /// to keep the texture alive during the lifetime of this node.</remarks>
+    /// <param name="textureWrap">Dalamud Texture to Load</param>
     public void LoadImGuiTexture(IDalamudTextureWrap textureWrap) {
         // Do not attempt to load another texture, if we have one loaded already.
         if (customTextureLoaded) return;

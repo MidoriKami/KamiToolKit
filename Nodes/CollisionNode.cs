@@ -3,7 +3,9 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Nodes;
 
-// Untested, this node might not work at all.
+/// <summary>
+/// Untested, this node might not work at all.
+/// </summary>
 public unsafe class CollisionNode() : NodeBase<AtkCollisionNode>(NodeType.Collision) {
     public CollisionType CollisionType {
         get => (CollisionType)InternalNode->CollisionType;

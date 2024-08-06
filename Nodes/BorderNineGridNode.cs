@@ -3,6 +3,9 @@ using KamiToolKit.Nodes.Parts;
 
 namespace KamiToolKit.Nodes;
 
+/// <summary>
+/// A node that shows a border loaded from the party list textures
+/// </summary>
 public class BorderNineGridNode : NineGridNode {
     public BorderNineGridNode() {
         var renderPart = new Part {

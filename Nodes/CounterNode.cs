@@ -3,6 +3,9 @@ using KamiToolKit.Nodes.Parts;
 
 namespace KamiToolKit.Nodes;
 
+/// <summary>
+/// A counter node for displaying numbers
+/// </summary>
 public unsafe class CounterNode : NodeBase<AtkCounterNode> {
     protected readonly PartsList PartsList;
     
