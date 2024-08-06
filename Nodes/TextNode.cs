@@ -4,6 +4,7 @@ using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
 using Dalamud.Memory;
 using Dalamud.Utility.Numerics;
+using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
 
@@ -11,13 +12,23 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class TextNode : NodeBase<AtkTextNode> {
 
+    private readonly Utf8String* stringBuffer = Utf8String.CreateEmpty();
+
     public TextNode() : base(NodeType.Text) {
         TextColor = KnownColor.White.Vector();
         TextOutlineColor = KnownColor.Black.Vector();
         FontSize = 12;
         FontType = FontType.Axis;
     }
-    
+
+    protected override void Dispose(bool disposing) {
+        if (disposing) {
+            stringBuffer->Dtor(true);
+        }
+        
+        base.Dispose(disposing);
+    }
+
     public Vector4 TextColor {
         get => InternalNode->TextColor.ToVector4();
         set => InternalNode->TextColor = value.ToByteColor();
@@ -91,6 +102,9 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     /// </summary>
     public SeString Text {
         get => MemoryHelper.ReadSeStringNullTerminated((nint) InternalNode->GetText());
-        set => InternalNode->SetText(value.EncodeWithNullTerminator());
+        set {
+            stringBuffer->SetString(value.EncodeWithNullTerminator());
+            InternalNode->SetText(stringBuffer->StringPtr);
+        }
     }
 }
