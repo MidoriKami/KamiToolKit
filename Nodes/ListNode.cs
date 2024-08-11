@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -10,6 +11,7 @@ namespace KamiToolKit.Nodes;
 
 // Custom Implementation of a Node that contains other nodes
 public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
+    private readonly ResNode containerNode;
     private readonly List<T> nodeList = [];
     private readonly BackgroundImageNode background;
     private readonly BorderNineGridNode border;
@@ -22,8 +24,31 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     /// If enabled, the background is sized around the content, not the list itself.
     /// </summary>
     public bool BackgroundFitsContents { get; set; }
-    
+
+    /// <summary>
+    /// If enabled, node contents will be clipped inside the container.
+    /// </summary>
+    public bool ClipListContents {
+        get => containerNode.NodeFlags.HasFlag(NodeFlags.Clip);
+        set {
+            if (value) {
+                containerNode.AddFlags(NodeFlags.Clip);
+            }
+            else {
+                containerNode.RemoveFlags(NodeFlags.Clip);
+            }
+        }
+    }
+
     public ListNode() : base(NodeType.Res) {
+        containerNode = new ResNode {
+            NodeID = 103_000,
+            Size = new Vector2(600.0f, 32.0f),
+            IsVisible = true,
+        };
+        
+        containerNode.AttachNode(this, NodePosition.AsFirstChild);
+        
         border = new BorderNineGridNode {
             NodeID = 102_000,
             Size = new Vector2(600.0f, 32.0f),
@@ -92,8 +117,10 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         if (BackgroundFitsContents) {
             background.Size = GetMinimumSize();
 
-            if (nodeList.Count is not 0) {
-                background.Position = nodeList[0].Position;
+            var topLeftNode = nodeList.MinBy(node => Vector2.DistanceSquared(Vector2.Zero, node.ScreenPosition));
+            
+            if (nodeList.Count is not 0 && topLeftNode is not null) {
+                background.Position = topLeftNode.Position;
             }
         }
         else {
@@ -101,7 +128,8 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
             background.Position = Vector2.Zero;
         }
         
-        border.Size = Size + new Vector2(30.0f, 30.0f); 
+        border.Size = Size + new Vector2(30.0f, 30.0f);
+        containerNode.Size = Size;
     }
     
     /// <summary>
@@ -216,7 +244,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         LayoutAnchor.TopRight => new Vector2(Width, 0.0f),
         LayoutAnchor.BottomLeft => new Vector2(0.0f, Height),
         LayoutAnchor.BottomRight => new Vector2(Width, Height),
-        _ => throw new ArgumentOutOfRangeException()
+        _ => throw new ArgumentOutOfRangeException(),
     };
 
     public IEnumerator<T> GetEnumerator() 
@@ -226,7 +254,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         => GetEnumerator();
 
     public void Add(T item) {
-        item.AttachNode(this, NodePosition.AsLastChild);
+        item.AttachNode(containerNode, NodePosition.AsLastChild);
         nodeList.Add(item);
         
         RecalculateLayout();
@@ -251,6 +279,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     public bool Remove(T item) {
         item.DetachNode();
         nodeList.Remove(item);
+        item.Dispose();
         
         RecalculateLayout();
         
@@ -260,7 +289,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     public int Count => nodeList.Count;
 
     public bool IsReadOnly => false;
-    
+
     public int IndexOf(T item) 
         => nodeList.IndexOf(item);
 
