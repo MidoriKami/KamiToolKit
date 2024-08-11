@@ -98,7 +98,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         => InternalNode->SetNumber(number, showCommas, showPlusSign, (byte) digits, zeroPad);
 
     /// <summary>
-    /// If you want the node to resize automatically, use TextFlags.AutoAdjustNodeSize <b><em>before</em></b> setting the String property.
+    /// If you want the node to resize automatically, use TextFlags.AutoAdjustNodeSize <b><em>before</em></b> setting the Text property.
     /// </summary>
     public SeString Text {
         get => MemoryHelper.ReadSeStringNullTerminated((nint) InternalNode->GetText());
