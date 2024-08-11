@@ -104,7 +104,9 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         get => MemoryHelper.ReadSeStringNullTerminated((nint) InternalNode->GetText());
         set {
             stringBuffer->SetString(value.EncodeWithNullTerminator());
-            InternalNode->SetText(stringBuffer->StringPtr);
+            if (stringBuffer->StringPtr is not null) {
+                InternalNode->SetText(stringBuffer->StringPtr);
+            }
         }
     }
 }
