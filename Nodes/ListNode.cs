@@ -117,7 +117,9 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         if (BackgroundFitsContents) {
             background.Size = GetMinimumSize();
 
-            var topLeftNode = nodeList.MinBy(node => Vector2.DistanceSquared(Vector2.Zero, node.ScreenPosition));
+            var topLeftNode = nodeList
+                .Where(node => node.IsVisible)
+                .MinBy(node => node.Position.Length());
             
             if (nodeList.Count is not 0 && topLeftNode is not null) {
                 background.Position = topLeftNode.Position;
