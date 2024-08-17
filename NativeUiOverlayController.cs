@@ -19,7 +19,9 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 		LoadConfig();
 		
 		// Force 4k / HD textures, so things map correctly.
-		gameConfig.Set(SystemConfigOption.UiAssetType, 1);
+		if (gameConfig.TryGet(SystemConfigOption.UiAssetType, out uint value) && value == 0) {
+			gameConfig.Set(SystemConfigOption.UiAssetType, 1);
+		}
 		
 		addonLifecycle.RegisterListener(AddonEvent.PostSetup, "NamePlate", OnNamePlateSetup);
 		addonLifecycle.RegisterListener(AddonEvent.PreFinalize, "NamePlate", OnNamePlateFinalize);
