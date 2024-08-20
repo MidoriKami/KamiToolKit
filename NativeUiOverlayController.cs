@@ -69,7 +69,7 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 	protected abstract void AttachNodes(AddonNamePlate* addonNamePlate);
 	protected abstract void DetachNodes(AddonNamePlate* addonNamePlate);
 
-	protected void RefreshAddon() {
+	private void RefreshAddon() {
 		if (AddonNamePlate is not null) {
 			if (AddonNamePlate->UldManager.LoadedState is AtkLoadState.Loaded) {
 				AddonNamePlate->UldManager.UpdateDrawNodeList();
