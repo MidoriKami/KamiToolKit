@@ -15,8 +15,11 @@ namespace KamiToolKit;
 public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLifecycle, IFramework framework, IGameGui gameGui, IGameConfig gameConfig) : IDisposable {
 	private AddonNamePlate* AddonNamePlate => (AddonNamePlate*) gameGui.GetAddonByName("NamePlate");
 
-	public void Load() {
-		LoadConfig();
+	/// <summary>
+	/// Enable this overlay controller, it will call PreAttach and AttachNodes anytime the NamePlate addon loads, and calls DetachNodes when it unloads. 
+	/// </summary>
+	public void Enable() {
+		PreAttach();
 		
 		// Force 4k / HD textures, so things map correctly.
 		if (gameConfig.TryGet(SystemConfigOption.UiAssetType, out uint value) && value == 0) {
@@ -34,7 +37,10 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 		}
 	}
 	
-	public void Unload() {
+	/// <summary>
+	/// Disable this overlay controller, unregisters listeners, and if the NamePlate addon is loaded, calls DetachNodes.
+	/// </summary>
+	public void Disable() {
 		addonLifecycle.UnregisterListener(OnNamePlateSetup);
 		addonLifecycle.UnregisterListener(OnNamePlateFinalize);
 
@@ -43,8 +49,11 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 		}
 	}
 	
+	/// <summary>
+	/// Disables and unloads controller.
+	/// </summary>
 	public void Dispose()
-		=> Unload();
+		=> Disable();
 
 	private void OnNamePlateSetup(AddonEvent type, AddonArgs args)
 		=> AttachToNative((AddonNamePlate*)args.Addon);
@@ -58,9 +67,9 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 	private void DetachFromNative(AddonNamePlate* addonNamePlate)
 		=> framework.RunOnFrameworkThread(() => DetachNodes(addonNamePlate));
 
+	protected abstract void PreAttach();
 	protected abstract void AttachNodes(AddonNamePlate* addonNamePlate);
 	protected abstract void DetachNodes(AddonNamePlate* addonNamePlate);
-	protected abstract void LoadConfig();
 
 	protected void RefreshAddon() {
 		if (AddonNamePlate is not null) {
