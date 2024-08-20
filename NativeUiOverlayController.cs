@@ -31,9 +31,7 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 		
 		if (AddonNamePlate is not null) {
 			AttachToNative(AddonNamePlate);
-
-			AddonNamePlate->DoFullUpdate = 1;
-			AddonNamePlateNumberArray.Instance()->DoFullUpdate = true;
+			RefreshAddon();
 		}
 	}
 	
@@ -78,6 +76,9 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 			}
 			
 			AddonNamePlate->UpdateCollisionNodeList(false);
+			
+			AddonNamePlate->DoFullUpdate = 1;
+			AddonNamePlateNumberArray.Instance()->DoFullUpdate = true;
 		}
 	}
 }
