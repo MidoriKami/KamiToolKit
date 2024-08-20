@@ -4,8 +4,11 @@ using FFXIVClientStructs.FFXIV.Client.System.Memory;
 namespace KamiToolKit.Classes;
 
 internal static class NativeMemoryHelper {
-    public static unsafe T* UiAlloc<T>(uint elementCount = 1) where T : unmanaged {
-        var memory = (T*) IMemorySpace.GetUISpace()->Malloc((ulong) sizeof(T) * elementCount, 8);
+    public static unsafe T* UiAlloc<T>(uint elementCount = 1, ulong alignment = 8) where T : unmanaged {
+        var allocSize = (ulong) sizeof(T) * elementCount;
+        var memory = (T*) IMemorySpace.GetUISpace()->Malloc(allocSize, alignment);
+        
+        IMemorySpace.Memset(memory, 0, allocSize);
 
         if (memory is null) {
             throw new Exception($"Unable to allocate memory for {typeof(T)}");
@@ -29,4 +32,7 @@ internal static class NativeMemoryHelper {
 
         return memory;
     }
+
+    public static unsafe nint Malloc(ulong size, ulong alignment = 8)
+        => (nint) IMemorySpace.GetUISpace()->Malloc(size, alignment);
 }

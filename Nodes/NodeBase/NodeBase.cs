@@ -40,13 +40,15 @@ public abstract unsafe partial class NodeBase : IDisposable {
 }
 
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
-    protected T* InternalNode { get; }
+    internal T* InternalNode { get; }
 
     internal override sealed AtkResNode* InternalResNode => (AtkResNode*) InternalNode;
 
     protected NodeBase(NodeType nodeType) {
         InternalNode = NativeMemoryHelper.Create<T>();
         InternalResNode->Type = nodeType;
+
+        var asComponentNode = (AtkComponentNode*) InternalNode;
 
         if (InternalNode is null) {
             throw new Exception($"Unable to allocate memory for {typeof(T)}");

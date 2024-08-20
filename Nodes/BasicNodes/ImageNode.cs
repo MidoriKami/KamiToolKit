@@ -1,5 +1,4 @@
-﻿using Dalamud.Interface.Textures.TextureWraps;
-using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes.Parts;
 
 namespace KamiToolKit.Nodes;
