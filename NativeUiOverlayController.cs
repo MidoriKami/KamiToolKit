@@ -1,7 +1,6 @@
 ﻿using System;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
-using Dalamud.Game.Config;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -12,7 +11,7 @@ namespace KamiToolKit;
 /// <summary>
 /// Simplified controller for using AddonNamePlate for basic overlays.
 /// </summary>
-public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLifecycle, IFramework framework, IGameGui gameGui, IGameConfig gameConfig) : IDisposable {
+public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLifecycle, IFramework framework, IGameGui gameGui) : IDisposable {
 	private AddonNamePlate* AddonNamePlate => (AddonNamePlate*) gameGui.GetAddonByName("NamePlate");
 
 	/// <summary>
@@ -20,11 +19,6 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 	/// </summary>
 	public void Enable() {
 		PreAttach();
-		
-		// Force 4k / HD textures, so things map correctly.
-		if (gameConfig.TryGet(SystemConfigOption.UiAssetType, out uint value) && value == 0) {
-			gameConfig.Set(SystemConfigOption.UiAssetType, 1);
-		}
 		
 		addonLifecycle.RegisterListener(AddonEvent.PostSetup, "NamePlate", OnNamePlateSetup);
 		addonLifecycle.RegisterListener(AddonEvent.PreFinalize, "NamePlate", OnNamePlateFinalize);
