@@ -48,8 +48,6 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
         InternalNode = NativeMemoryHelper.Create<T>();
         InternalResNode->Type = nodeType;
 
-        var asComponentNode = (AtkComponentNode*) InternalNode;
-
         if (InternalNode is null) {
             throw new Exception($"Unable to allocate memory for {typeof(T)}");
         }
