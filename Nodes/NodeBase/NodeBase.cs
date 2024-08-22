@@ -40,7 +40,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 }
 
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
-    internal T* InternalNode { get; }
+    public T* InternalNode { get; }
 
     internal override sealed AtkResNode* InternalResNode => (AtkResNode*) InternalNode;
 
