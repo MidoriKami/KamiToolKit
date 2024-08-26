@@ -1,4 +1,5 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Nodes.NodeStyles;
 using KamiToolKit.Nodes.Parts;
 
 namespace KamiToolKit.Nodes;
@@ -42,6 +43,13 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
     // The image node will take ownership of any parts added, be sure not to share parts between nodes
     public void AddPart(Part part)
         => PartsList.Add(part);
+
+    public void SetStyle(ImageNodeStyle style) {
+        SetStyle(style as NodeBaseStyle);
+
+        WrapMode = style.WrapMode;
+        ImageNodeFlags = style.ImageNodeFlags;
+    }
 }
 
 public enum WrapMode {

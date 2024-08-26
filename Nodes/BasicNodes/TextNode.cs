@@ -7,6 +7,7 @@ using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
+using KamiToolKit.Nodes.NodeStyles;
 
 namespace KamiToolKit.Nodes;
 
@@ -108,5 +109,20 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
                 InternalNode->SetText(stringBuffer->StringPtr);
             }
         }
+    }
+
+    public void SetStyle(TextNodeStyle style) {
+        SetStyle(style as NodeBaseStyle);
+
+        TextColor = style.TextColor;
+        TextOutlineColor = style.TextOutlineColor;
+        BackgroundColor = style.BackgroundColor;
+        AlignmentType = style.AlignmentType;
+        FontType = style.FontType;
+        TextFlags = style.TextFlags;
+        TextFlags2 = style.TextFlags2;
+        FontSize = (uint) style.FontSize;
+        LineSpacing = (uint) style.LineSpacing;
+        CharSpacing = (uint) style.CharacterSpacing;
     }
 }

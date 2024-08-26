@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes.NodeStyles;
 
 namespace KamiToolKit.Nodes;
 
@@ -304,6 +305,18 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     public T this[int index] {
         get => nodeList[index];
         set => nodeList[index] = value;
+    }
+
+    public void SetStyle(ListNodeStyle style) {
+        SetStyle(style as NodeBaseStyle);
+
+        LayoutAnchor = style.LayoutAnchor;
+        BackgroundFitsContents = style.FitContents;
+        ClipListContents = style.ClipContents;
+        LayoutOrientation = style.LayoutOrientation;
+        BackgroundColor = style.BackgroundColor;
+        BackgroundVisible = style.BackgroundVisible;
+        BorderVisible = style.BorderVisible;
     }
 }
 

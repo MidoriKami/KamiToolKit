@@ -1,12 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Numerics;
+﻿using System.Numerics;
 using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
+using KamiToolKit.Nodes.NodeStyles;
 
 namespace KamiToolKit.Nodes;
 
-[SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "This class is a library utility, it is meant to provide the functionality to other assemblies")]
 public abstract unsafe partial class NodeBase {
      public float X {
         get => InternalResNode->GetXFloat();
@@ -174,5 +173,17 @@ public abstract unsafe partial class NodeBase {
     public uint DrawFlags {
         get => InternalResNode->DrawFlags;
         private set => InternalResNode->DrawFlags = value;
+    }
+
+    public virtual void SetStyle(NodeBaseStyle style) {
+        Position = style.Position;
+        Size = style.Size;
+        Scale = style.Scale;
+        NodeFlags = style.NodeFlags;
+        IsVisible = style.IsVisible;
+        Color = style.Color;
+        AddColor = style.AddColor;
+        MultiplyColor = style.MultiplyColor;
+        Margin = new Spacing(style.Margin.X, style.Margin.Y, style.Margin.Z, style.Margin.W);
     }
 }
