@@ -149,7 +149,7 @@ public unsafe class Part : IDisposable {
         // Do not attempt to load another texture, if we have one loaded already.
         if (customTextureLoaded) return;
 
-        InternalAsset->AtkTexture.KernelTexture = Texture.CreateTexture2D(textureWrap.Width, textureWrap.Height, 3, (uint) TextureFormat.R8G8B8A8, 0, 0);
+        InternalAsset->AtkTexture.KernelTexture = Texture.CreateTexture2D(textureWrap.Width, textureWrap.Height, 3, (uint) TextureFormat.B8G8R8A8_UNORM, 0, 0);
 
         cachedTexture = InternalAsset->AtkTexture.KernelTexture->D3D11ShaderResourceView;
         InternalAsset->AtkTexture.KernelTexture->D3D11ShaderResourceView = (void*) textureWrap.ImGuiHandle;
