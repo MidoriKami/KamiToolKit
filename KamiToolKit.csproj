@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     
     <!-- Resolve Dalamud installation, updated through XIVLauncher -->
     <PropertyGroup>
