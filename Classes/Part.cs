@@ -115,8 +115,20 @@ public unsafe class Part : IDisposable {
     /// <example1>"ui/icon/065000/65108_hr1.tex"</example1>
     /// <example2>"ui/uld/ActionBar_hr1.tex"</example2>
     /// <param name="path">Path to native game resource</param>
-    public void LoadTexture(string path)
-        => InternalAsset->AtkTexture.LoadTexture(path);
+    public void LoadTexture(string path) {
+        var texturePath = path;
+            
+        // If we are trying to load a HR texture
+        if (texturePath.Contains("_hr1")) {
+                
+            // But we are not in HR mode
+            if (AtkStage.Instance()->AtkTextureResourceManager->DefaultTextureVersion is 1) {
+                texturePath = texturePath.Replace("_hr1", "");
+            }
+        }
+            
+        InternalAsset->AtkTexture.LoadTexture(texturePath);
+    }
 
     /// <summary>
     /// Release the loaded texture, decreases ref count
