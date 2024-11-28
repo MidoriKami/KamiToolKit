@@ -28,9 +28,9 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
             PartsRenderType = PartsRenderType.RenderType,
             LeftOffset = 15,
             RightOffset = 15,
+            TexturePath = "ui/uld/Parameter_Gauge_hr1.tex",
         };
         
-        backgroundImageNode.LoadTexture("ui/uld/Parameter_Gauge_hr1.tex");
         backgroundImageNode.AttachNode(this, NodePosition.AsLastChild);
 
         progressNode = new SimpleNineGridNode {
@@ -44,9 +44,9 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
             LeftOffset = 10,
             RightOffset = 10,
             PartsRenderType = PartsRenderType.RenderType,
+            TexturePath = "ui/uld/Parameter_Gauge_hr1.tex",
         };
         
-        progressNode.LoadTexture("ui/uld/Parameter_Gauge_hr1.tex");
         progressNode.AttachNode(this, NodePosition.AsLastChild);
 
         borderImageNode = new SimpleNineGridNode {
@@ -58,9 +58,9 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
             PartsRenderType = PartsRenderType.RenderType,
             LeftOffset = 15,
             RightOffset = 15,
+            TexturePath = "ui/uld/Parameter_Gauge_hr1.tex",
         };
         
-        borderImageNode.LoadTexture("ui/uld/Parameter_Gauge_hr1.tex");
         borderImageNode.AttachNode(this, NodePosition.AsLastChild);
     }
 

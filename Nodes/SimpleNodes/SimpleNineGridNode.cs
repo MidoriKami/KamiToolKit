@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes.Parts;
 
 namespace KamiToolKit.Nodes;
@@ -43,7 +44,21 @@ public class SimpleNineGridNode : NineGridNode {
             TextureHeight = value.Y;
         }
     }
-    
-    public void LoadTexture(string path)
-        => PartsList[0].LoadTexture(path);
+
+    public unsafe string TexturePath {
+        set {
+            var texturePath = value;
+            
+            // If we are trying to load a HR texture
+            if (texturePath.Contains("_hr1")) {
+                
+                // But we are not in HR mode
+                if (AtkStage.Instance()->AtkTextureResourceManager->DefaultTextureVersion is 1) {
+                    texturePath = texturePath.Replace("_hr1", "");
+                }
+            }
+            
+            PartsList[0].LoadTexture(texturePath);
+        }
+    }
 }

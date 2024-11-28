@@ -59,12 +59,12 @@ public unsafe class Part : IDisposable {
 
     public float Width {
         get => InternalPart->Width;
-        set => InternalPart->Width = (ushort) (value * (AtkStage.Instance()->AtkTextureResourceManager->DefaultTextureVersion is 2 ? 2.0f : 1.0f));
+        set => InternalPart->Width = (ushort) value;
     }
 
     public float Height {
         get => InternalPart->Height;
-        set => InternalPart->Height = (ushort) (value * (AtkStage.Instance()->AtkTextureResourceManager->DefaultTextureVersion is 2 ? 2.0f : 1.0f));
+        set => InternalPart->Height = (ushort) value;
     }
 
     public Vector2 Size {
@@ -77,12 +77,12 @@ public unsafe class Part : IDisposable {
 
     public float U {
         get => InternalPart->U;
-        set => InternalPart->U = (ushort) (value * (AtkStage.Instance()->AtkTextureResourceManager->DefaultTextureVersion is 2 ? 2.0f : 1.0f));
+        set => InternalPart->U = (ushort) value;
     }
 
     public float V {
         get => InternalPart->V;
-        set => InternalPart->V = (ushort) (value * (AtkStage.Instance()->AtkTextureResourceManager->DefaultTextureVersion is 2 ? 2.0f : 1.0f));
+        set => InternalPart->V = (ushort) value;
     }
 
     public Vector2 TextureCoordinates {
