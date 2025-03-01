@@ -10,7 +10,7 @@ public class BorderNineGridNode : NineGridNode {
     public BorderNineGridNode() {
         var renderPart = new Part {
             TextureCoordinates = new Vector2(0.0f, 0.0f), 
-            Size = new Vector2(32.0f, 32.0f), 
+            Size = new Vector2(64.0f, 64.0f), 
             Id = 0,
         };
         
