@@ -1,39 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk">
-    
-    <!-- Resolve Dalamud installation, updated through XIVLauncher -->
+<Project Sdk="Dalamud.NET.Sdk/12.0.2">
     <PropertyGroup>
-        <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
-        <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Linux'))">$(HOME)/.xlcore/dalamud/Hooks/dev/</DalamudLibPath>
-        <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(HOME)/Library/Application Support/XIV on Mac/dalamud/Hooks/dev/</DalamudLibPath>
-        <DalamudLibPath Condition="$(DALAMUD_HOME) != ''">$(DALAMUD_HOME)/</DalamudLibPath>
+        <Use_DalamudPackager>false</Use_DalamudPackager>
     </PropertyGroup>
-
-    <PropertyGroup>
-        <TargetFramework>net8.0-windows</TargetFramework>
-        <Platforms>x64</Platforms>
-        <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-        <AssemblySearchPaths>$(AssemblySearchPaths);$(DalamudLibPath)</AssemblySearchPaths>
-    </PropertyGroup>
-
-    <!-- Required NuGet packages -->
-    <ItemGroup>
-        <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All" />
-    </ItemGroup>
-
-    <!-- Required assembly references shipped via Dalamud -->
-    <ItemGroup>
-        <Reference Include="FFXIVClientStructs" Private="false" />
-        <Reference Include="Newtonsoft.Json" Private="false" />
-        <Reference Include="Dalamud" Private="false" />
-        <Reference Include="ImGui.NET" Private="false" />
-        <Reference Include="ImGuiScene" Private="false" />
-        <Reference Include="Lumina" Private="false" />
-        <Reference Include="Lumina.Excel" Private="false" />
-    </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 using System.Numerics;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
-using Dalamud.Memory;
+using Dalamud.Utility;
 using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -102,10 +102,10 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     /// If you want the node to resize automatically, use TextFlags.AutoAdjustNodeSize <b><em>before</em></b> setting the Text property.
     /// </summary>
     public SeString Text {
-        get => MemoryHelper.ReadSeStringNullTerminated((nint) InternalNode->GetText());
+        get => InternalNode->GetText().AsDalamudSeString();
         set {
             stringBuffer->SetString(value.EncodeWithNullTerminator());
-            if (stringBuffer->StringPtr is not null) {
+            if (stringBuffer->StringPtr.Value is not null) {
                 InternalNode->SetText(stringBuffer->StringPtr);
             }
         }
