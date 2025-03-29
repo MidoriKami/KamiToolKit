@@ -3,8 +3,8 @@ using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Arrays;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using AddonNamePlateNumberArray = FFXIVClientStructs.FFXIV.Client.UI.AddonNamePlate.AddonNamePlateNumberArray;
 
 namespace KamiToolKit;
 
@@ -72,7 +72,7 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 			AddonNamePlate->UpdateCollisionNodeList(false);
 			
 			AddonNamePlate->DoFullUpdate = 1;
-			AddonNamePlateNumberArray.Instance()->DoFullUpdate = true;
+			NamePlateNumberArray.Instance()->DoFullUpdate = true;
 		}
 	}
 }
