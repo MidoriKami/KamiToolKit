@@ -35,4 +35,7 @@ internal static class NativeMemoryHelper {
 
     public static unsafe nint Malloc(ulong size, ulong alignment = 8)
         => (nint) IMemorySpace.GetUISpace()->Malloc(size, alignment);
+    
+    public static unsafe void Free(void* memory, ulong size)
+        => IMemorySpace.Free(memory, size);
 }
