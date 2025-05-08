@@ -175,6 +175,11 @@ public abstract unsafe partial class NodeBase {
         private set => InternalResNode->DrawFlags = value;
     }
 
+    public NodeType NodeType {
+        get => InternalResNode->Type;
+        set => InternalResNode->Type = value;
+    }
+
     public virtual void SetStyle(NodeBaseStyle style) {
         Position = style.Position;
         Size = style.Size;
