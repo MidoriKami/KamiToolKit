@@ -14,7 +14,6 @@ namespace KamiToolKit;
 /// Controller for custom native nodes, this class is required to attach custom nodes to native ui, this service will also keep track of the allocated nodes to prevent memory leaks.
 /// </summary>
 public unsafe class NativeController : IDisposable {
-	// [PluginService] private IAddonLifecycle AddonLifecycle { get; set; } // Might be used later, haven't decided yet.
 	[PluginService] private IAddonEventManager AddonEventManager { get; set; }
 	[PluginService] private IFramework Framework { get; set; }
 	[PluginService] private IGameInteropProvider GameInteropProvider { get; set; }
@@ -22,6 +21,10 @@ public unsafe class NativeController : IDisposable {
 	public NativeController(IDalamudPluginInterface pluginInterface) {
 		pluginInterface.Inject(this);
 		GameInteropProvider?.InitializeFromAttributes(ClientStructs.Instance);
+		
+#if DEBUG
+		ExperimentalMethods.Initialize(pluginInterface);
+#endif
 	}
 
 	/// <summary>
