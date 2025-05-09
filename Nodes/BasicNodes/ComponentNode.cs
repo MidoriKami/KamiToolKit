@@ -19,6 +19,7 @@ public unsafe class ComponentNode<T, TU> : NodeBase<AtkComponentNode> where T : 
 		CollisionNode.InternalResNode->ParentNode = InternalResNode;
 		
 		ComponentBase->OwnerNode = InternalNode;
+		ComponentBase->AtkResNode = CollisionNode.InternalResNode;
 		
 		ref var uldManager = ref ComponentBase->UldManager;
 
