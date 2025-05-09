@@ -27,7 +27,7 @@ public unsafe class ComponentNode<T, TU> : NodeBase<AtkComponentNode> where T : 
 		objects->NodeList = (AtkResNode**) NativeMemoryHelper.Malloc(8);
 		objects->NodeList[0] = CollisionNode.InternalResNode;
 		objects->NodeCount = 1;
-		objects->Id = 1010;
+		objects->Id = 1;
 		
 		uldManager.InitializeResourceRendererManager();
 		uldManager.RootNode = CollisionNode.InternalResNode;
