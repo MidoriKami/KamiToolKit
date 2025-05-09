@@ -18,10 +18,20 @@ public abstract unsafe partial class NodeBase {
 
 	public SeString? Tooltip { get; set; }
 	
+	public Action? MouseDown { get; set; }
+	private IAddonEventHandle? MouseDownHandle { get; set; }
+	
+	public Action? MouseUp { get; set; }
+	private IAddonEventHandle? MouseUpHandle { get; set; }
+	
+	public Action? InputReceived { get; set; }
+	private IAddonEventHandle? InputReceivedHandle { get; set; }
+	
 	private IAddonEventManager? EventManager { get; set; }
 
 	public virtual void EnableEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
-		if (MouseOver is not null || MouseOut is not null || MouseClick is not null || Tooltip is not null) {
+		if (MouseOver is not null || MouseOut is not null || MouseClick is not null || Tooltip is not null ||
+		    MouseDown is not null || MouseUp is not null || InputReceived is not null || InputReceivedHandle is not null) {
 			AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
 		}
 
@@ -37,6 +47,18 @@ public abstract unsafe partial class NodeBase {
 			MouseOverHandle ??= eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOver, HandleEvents);
 			MouseOutHandle ??= eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOut, HandleEvents);
 			MouseClickHandle = eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseClick, HandleEvents);
+		}
+
+		if (MouseDown is not null) {
+			MouseDownHandle ??= eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseDown, HandleEvents);
+		}
+
+		if (MouseUp is not null) {
+			MouseUpHandle ??= eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseUp, HandleEvents);
+		}
+
+		if (InputReceived is not null) {
+			InputReceivedHandle ??= eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.InputReceived, HandleEvents);
 		}
 
 		EventManager = eventManager;
@@ -58,6 +80,18 @@ public abstract unsafe partial class NodeBase {
 		if (MouseClickHandle is not null) {
 			eventManager.RemoveEvent(MouseClickHandle);
 			MouseClickHandle = null;
+		}
+
+		if (MouseDownHandle is not null) {
+			eventManager.RemoveEvent(MouseDownHandle);
+		}
+
+		if (MouseUpHandle is not null) {
+			eventManager.RemoveEvent(MouseUpHandle);
+		}
+
+		if (InputReceivedHandle is not null) {
+			eventManager.RemoveEvent(InputReceivedHandle);
 		}
 		
 		EventManager = eventManager;
@@ -101,6 +135,26 @@ public abstract unsafe partial class NodeBase {
 			case AddonEventType.MouseClick:
 				MouseClick?.Invoke();
 				break;
+			
+			case AddonEventType.MouseDown:
+				MouseDown?.Invoke();
+				break;
+			
+			case AddonEventType.MouseUp:
+				MouseUp?.Invoke();
+				break;
+			
+			case AddonEventType.InputReceived:
+				InputReceived?.Invoke();
+				break;
 		}
+	}
+
+	protected void SetCursor(AddonCursorType cursor) {
+		EventManager?.SetCursor(cursor);
+	}
+
+	protected void ResetCursor() {
+		EventManager?.ResetCursor();
 	}
 }
