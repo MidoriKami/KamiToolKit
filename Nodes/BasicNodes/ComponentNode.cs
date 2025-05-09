@@ -13,6 +13,7 @@ public unsafe class ComponentNode<T, TU> : NodeBase<AtkComponentNode> where T : 
 
 		CollisionNode = new CollisionNode {
 			IsVisible = true,
+			NodeID = 1,
 		};
 
 		CollisionNode.InternalResNode->ParentNode = InternalResNode;
