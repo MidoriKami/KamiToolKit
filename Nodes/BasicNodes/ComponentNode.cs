@@ -58,13 +58,15 @@ public unsafe class ComponentNode<T, TU> : NodeBase<AtkComponentNode> where T : 
 	}
 
 	protected override void Dispose(bool disposing) {
-		NativeMemoryHelper.Free(ComponentBase->UldManager.Objects->NodeList, 8);
-		NativeMemoryHelper.UiFree(ComponentBase->UldManager.Objects);
-		NativeMemoryHelper.UiFree(Component);
+		if (disposing) {
+			NativeMemoryHelper.Free(ComponentBase->UldManager.Objects->NodeList, 8);
+			NativeMemoryHelper.UiFree(ComponentBase->UldManager.Objects);
+			NativeMemoryHelper.UiFree(Component);
 		
-		CollisionNode.Dispose();
+			CollisionNode.Dispose();
 		
-		base.Dispose(disposing);
+			base.Dispose(disposing);
+		}
 	}
 
 	protected void SetInternalComponentType(ComponentType type) {
