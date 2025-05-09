@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -9,15 +8,14 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class ButtonComponent : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
-
+public abstract unsafe class ButtonBaseComponent : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
 	private readonly NineGridNode backgroundNode;
-	private readonly TextNode labelNode;
+	protected abstract NodeBase DecorationNode { get; }
 
 	public Action? OnClick { get; set; }
 	private IAddonEventHandle? OnClickHandle { get; set; }
 
-	public ButtonComponent() {
+	protected ButtonBaseComponent() {
 		SetInternalComponentType(ComponentType.Button);
 		Data = NativeMemoryHelper.UiAlloc<AtkUldComponentDataButton>();
 		Data->Nodes[0] = 2;
@@ -34,16 +32,6 @@ public unsafe class ButtonComponent : ComponentNode<AtkComponentButton, AtkUldCo
 		};
 
 		backgroundNode.AttachNode(CollisionNode, NodePosition.AfterAllSiblings);
-
-		labelNode = new TextNode {
-			IsVisible = true,
-			Text = "uwu",
-			AlignmentType = AlignmentType.Center,
-			Position = new Vector2(16.0f, 3.0f),
-			NodeID = 3,
-		};
-		
-		labelNode.AttachNode(CollisionNode, NodePosition.AfterAllSiblings);
 		Component->UldManager.UpdateDrawNodeList();
 		
 		CollisionNode.MouseOver = OnMouseOver;
@@ -56,7 +44,6 @@ public unsafe class ButtonComponent : ComponentNode<AtkComponentButton, AtkUldCo
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
 			backgroundNode.Dispose();
-			labelNode.Dispose();
 		
 			NativeMemoryHelper.UiFree(Data);
 		
@@ -94,12 +81,12 @@ public unsafe class ButtonComponent : ComponentNode<AtkComponentButton, AtkUldCo
 
 	private void OnMouseDown() {
 		backgroundNode.Position += new Vector2(0.0f, 1.0f);
-		labelNode.Position += new Vector2(0.0f, 1.0f);
+		DecorationNode.Position += new Vector2(0.0f, 1.0f);
 	}
 	
 	private void OnMouseUp() {
 		backgroundNode.Position -= new Vector2(0.0f, 1.0f);
-		labelNode.Position -= new Vector2(0.0f, 1.0f);
+		DecorationNode.Position -= new Vector2(0.0f, 1.0f);
 	}
 
 	private void OnMouseOver() {
@@ -111,18 +98,13 @@ public unsafe class ButtonComponent : ComponentNode<AtkComponentButton, AtkUldCo
 		backgroundNode.AddColor = Vector3.Zero;
 		ResetCursor();
 	}
-
-	public SeString Label {
-		get => labelNode.Text;
-		set => labelNode.Text = value;
-	}
 	
 	public new float Width {
 		get => InternalResNode->Width;
 		set {
 			InternalResNode->SetWidth((ushort) value);
 			backgroundNode.Width = value;
-			labelNode.Width = value - backgroundNode.LeftOffset - backgroundNode.RightOffset;
+			DecorationNode.Width = value - backgroundNode.LeftOffset - backgroundNode.RightOffset;
 			CollisionNode.Width = value;
 		}
 	}
@@ -132,7 +114,7 @@ public unsafe class ButtonComponent : ComponentNode<AtkComponentButton, AtkUldCo
 		set {
 			InternalResNode->SetHeight((ushort) value);
 			backgroundNode.Height = value;
-			labelNode.Height = value - 8.0f;
+			DecorationNode.Height = value - 8.0f;
 			CollisionNode.Height = value;
 		}
 	}
