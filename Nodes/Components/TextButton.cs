@@ -23,14 +23,6 @@ public unsafe class TextButton : ButtonBaseComponent {
 		Component->UldManager.UpdateDrawNodeList();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			labelNode.Dispose();
-		
-			base.Dispose(disposing);
-		}
-	}
-
 	public SeString Label {
 		get => labelNode.Text;
 		set => labelNode.Text = value;

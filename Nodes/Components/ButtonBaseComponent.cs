@@ -44,6 +44,7 @@ public abstract unsafe class ButtonBaseComponent : ComponentNode<AtkComponentBut
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
 			backgroundNode.Dispose();
+			DecorationNode.Dispose();
 		
 			NativeMemoryHelper.UiFree(Data);
 		
