@@ -31,8 +31,7 @@ public abstract unsafe class ButtonBaseComponent : ComponentNode<AtkComponentBut
 			NodeID = 2,
 		};
 
-		backgroundNode.AttachNode(CollisionNode, NodePosition.AfterAllSiblings);
-		Component->UldManager.UpdateDrawNodeList();
+		backgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
 		
 		CollisionNode.MouseOver = OnMouseOver;
 		CollisionNode.MouseOut = OnMouseOut;

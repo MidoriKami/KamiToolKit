@@ -5,7 +5,7 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class TextButton : ButtonBaseComponent {
+public class TextButton : ButtonBaseComponent {
 
 	protected override NodeBase DecorationNode => labelNode;
 	private readonly TextNode labelNode;
@@ -19,8 +19,7 @@ public unsafe class TextButton : ButtonBaseComponent {
 			NodeID = 3,
 		};
 		
-		labelNode.AttachNode(CollisionNode, NodePosition.AfterAllSiblings);
-		Component->UldManager.UpdateDrawNodeList();
+		labelNode.AttachNode(this, NodePosition.AfterAllSiblings);
 	}
 
 	public SeString Label {
