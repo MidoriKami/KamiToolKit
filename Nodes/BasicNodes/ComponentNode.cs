@@ -31,7 +31,7 @@ public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, IC
 		
 		ref var uldManager = ref componentBase->UldManager;
 
-		uldManager.Objects = NativeMemoryHelper.UiAlloc<AtkUldObjectInfo>();
+		uldManager.Objects = (AtkUldObjectInfo*) NativeMemoryHelper.UiAlloc<AtkUldComponentInfo>();
 		ref var objects = ref uldManager.Objects;
 
 		objects->NodeList = (AtkResNode**) NativeMemoryHelper.Malloc(8);
