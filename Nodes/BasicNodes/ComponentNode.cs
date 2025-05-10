@@ -4,12 +4,20 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class ComponentNode<T, TU> : NodeBase<AtkComponentNode> where T : unmanaged, ICreatable where TU : unmanaged {
-	
+public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComponentNode>(nodeType) {
+	internal abstract AtkComponentBase* ComponentBase { get; }
+	internal abstract AtkUldComponentDataBase* DataBase { get; }
+}
+
+public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable where TU : unmanaged {
+
 	protected readonly CollisionNode CollisionNode;
+	internal override AtkComponentBase* ComponentBase => (AtkComponentBase*) Component;
+	internal override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*) Data;
 	
 	protected ComponentNode() : base((NodeType) 1000) {
 		Component = NativeMemoryHelper.Create<T>();
+		var componentBase = (AtkComponentBase*) Component;
 
 		CollisionNode = new CollisionNode {
 			IsVisible = true,
@@ -18,10 +26,10 @@ public unsafe class ComponentNode<T, TU> : NodeBase<AtkComponentNode> where T : 
 
 		CollisionNode.InternalResNode->ParentNode = InternalResNode;
 		
-		ComponentBase->OwnerNode = InternalNode;
-		ComponentBase->AtkResNode = CollisionNode.InternalResNode;
+		componentBase->OwnerNode = InternalNode;
+		componentBase->AtkResNode = CollisionNode.InternalResNode;
 		
-		ref var uldManager = ref ComponentBase->UldManager;
+		ref var uldManager = ref componentBase->UldManager;
 
 		uldManager.Objects = NativeMemoryHelper.UiAlloc<AtkUldObjectInfo>();
 		ref var objects = ref uldManager.Objects;
@@ -39,19 +47,9 @@ public unsafe class ComponentNode<T, TU> : NodeBase<AtkComponentNode> where T : 
 		uldManager.LoadedState = AtkLoadState.Loaded;
 	}
 
-	internal AtkComponentBase* ComponentBase {
-		get => InternalNode->Component;
-		set => InternalNode->Component = value;
-	}
-
 	internal T* Component {
 		get => (T*)InternalNode->Component;
 		set => InternalNode->Component = (AtkComponentBase*) value;
-	}
-
-	internal AtkUldComponentDataBase* DataBase {
-		get => InternalNode->Component->UldManager.ComponentData;
-		set => InternalNode->Component->UldManager.ComponentData = value;
 	}
 
 	internal TU* Data {
@@ -66,8 +64,6 @@ public unsafe class ComponentNode<T, TU> : NodeBase<AtkComponentNode> where T : 
 			NativeMemoryHelper.Free(ComponentBase->UldManager.Objects->NodeList, 8);
 			NativeMemoryHelper.UiFree(ComponentBase->UldManager.Objects);
 			NativeMemoryHelper.UiFree(Component);
-		
-			CollisionNode.Dispose();
 		
 			base.Dispose(disposing);
 		}
