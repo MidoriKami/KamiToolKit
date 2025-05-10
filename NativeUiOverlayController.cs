@@ -71,7 +71,7 @@ public abstract unsafe class NativeUiOverlayController : IDisposable {
 		=> DetachFromNative((AddonNamePlate*)args.Addon);
 
 	private void DetachFromNative(AddonNamePlate* addonNamePlate)
-		=> Framework.RunOnFrameworkThread(() => DetachNodes(addonNamePlate));
+		=> DetachNodes(addonNamePlate);
 
 	protected abstract void PreAttach();
 	protected abstract void AttachNodes(AddonNamePlate* addonNamePlate);
