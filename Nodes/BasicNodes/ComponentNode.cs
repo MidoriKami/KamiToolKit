@@ -61,6 +61,8 @@ public unsafe class ComponentNode<T, TU> : NodeBase<AtkComponentNode> where T : 
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
+			CollisionNode.Dispose();
+
 			NativeMemoryHelper.Free(ComponentBase->UldManager.Objects->NodeList, 8);
 			NativeMemoryHelper.UiFree(ComponentBase->UldManager.Objects);
 			NativeMemoryHelper.UiFree(Component);
