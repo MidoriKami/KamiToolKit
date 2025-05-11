@@ -2,6 +2,7 @@
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
@@ -22,41 +23,90 @@ public unsafe class NativeController : IDisposable {
 		GameInteropProvider.InitializeFromAttributes(Experimental.Instance);
 	}
 
-	/// <summary>
-	/// Dispose this <em>after</em> removing/disposing any attached nodes.
-	/// </summary>
 	public void Dispose()
 		=> NodeBase.DisposeAllNodes();
 
-	public void AttachToAddon(NodeBase customNode, AtkUnitBase* addon, AtkResNode* target, NodePosition position)
-		=> Framework.RunOnFrameworkThread(() => AttachToAddonTask(customNode, addon, target, position));
+	public void AttachToAddon(NodeBase customNode, AtkUnitBase* addon, AtkResNode* target, NodePosition position) {
+		if (ThreadSafety.IsMainThread) {
+			InternalAttachToAddon(customNode, addon, target, position);
+		}
+		else {
+			Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, addon, target, position));
+		}
+	}
 
-	private void AttachToAddonTask(NodeBase customNode, AtkUnitBase* addon, AtkResNode* target, NodePosition position) {
+	/// <summary>
+	/// Warning! Known to be volatile, use at your own risk.
+	/// </summary>
+	public void AttachToComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component, AtkResNode* target, NodePosition position) {
+		if (ThreadSafety.IsMainThread) {
+			InternalAttachToComponent(customNode, addon, component, target, position);
+		}
+		else {
+			Framework.RunOnFrameworkThread(() => InternalAttachToComponent(customNode, addon, component, target, position));
+		}
+	}
+
+	public void AttachToNode(NodeBase customNode, NodeBase other, NodePosition position) {
+		if (ThreadSafety.IsMainThread) {
+			InternalAttachToNode(customNode, other, position);
+		}
+		else {
+			Framework.RunOnFrameworkThread(() => InternalAttachToNode(customNode, other, position));
+		}
+	}
+
+	public void DetachFromAddon(NodeBase customNode, AtkUnitBase* addon) {
+		if (ThreadSafety.IsMainThread) {
+			InternalDetachFromAddon(customNode, addon);
+		}
+		else {
+			Framework.RunOnFrameworkThread(() => InternalDetachFromAddon(customNode, addon));
+		}
+	}
+
+	/// <summary>
+	/// Warning! Known to be volatile, use at your own risk.
+	/// </summary>
+	public void DetachFromComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component) {
+		if (ThreadSafety.IsMainThread) {
+			InternalDetachFromComponent(customNode, component);
+		}
+		else {
+			Framework.RunOnFrameworkThread(() => InternalDetachFromComponent(customNode, component));
+			
+		}
+	}
+
+	public void DetachFromNode(NodeBase customNode) {
+		if (ThreadSafety.IsMainThread) {
+			customNode.DetachNode();
+		}
+		else {
+			Framework.RunOnFrameworkThread(customNode.DetachNode);
+		}
+	}
+
+	public void UpdateEvents(NodeBase node, AtkUnitBase* addon)
+		=> Framework.RunOnFrameworkThread(() => UpdateEventsTask(node, addon));
+
+	private void InternalAttachToAddon(NodeBase customNode, AtkUnitBase* addon, AtkResNode* target, NodePosition position) {
 		NodeLinker.AttachNode(customNode.InternalResNode, target, position);
 		customNode.EnableEvents(AddonEventManager, addon);
 		addon->UldManager.UpdateDrawNodeList();
 		addon->UpdateCollisionNodeList(false);
 	}
 
-	/// <summary>
-	/// Warning! Known to be volatile, use at your own risk.
-	/// </summary>
-	public void AttachToComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component, AtkResNode* target, NodePosition position)
-		=> Framework.RunOnFrameworkThread(() => AttachToComponentTask(customNode, addon, component, target, position));
-
-	private void AttachToComponentTask(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component, AtkResNode* target, NodePosition position) {
+	private void InternalAttachToComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component, AtkResNode* target, NodePosition position) {
 		NodeLinker.AttachNode(customNode.InternalResNode, target, position);
 		customNode.EnableEvents(AddonEventManager, addon);
 		component->UldManager.UpdateDrawNodeList();
 	}
-
-	public void AttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
-		=> Framework.RunOnFrameworkThread(() => AttachToNodeTask(customNode, other, position));
-
-	private void AttachToNodeTask(NodeBase customNode, NodeBase other, NodePosition position)
+	
+	private void InternalAttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
 		=> customNode.AttachNode(other, position);
 
-	public void DetachFromAddon(NodeBase customNode, AtkUnitBase* addon) {
+	private void InternalDetachFromAddon(NodeBase customNode, AtkUnitBase* addon) {
 		customNode.DisableEvents(AddonEventManager);
 		customNode.DetachNode();
 			
@@ -64,21 +114,12 @@ public unsafe class NativeController : IDisposable {
 		addon->UpdateCollisionNodeList(false);
 	}
 
-	/// <summary>
-	/// Warning! Known to be volatile, use at your own risk.
-	/// </summary>
-	public void DetachFromComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component) {
+	private void InternalDetachFromComponent(NodeBase customNode, AtkComponentBase* component) {
 		customNode.DisableEvents(AddonEventManager);
 		customNode.DetachNode();
 
 		component->UldManager.UpdateDrawNodeList();
 	}
-
-	public void DetachFromNode(NodeBase customNode)
-		=> Framework.RunOnFrameworkThread(customNode.DetachNode);
-
-	public void UpdateEvents(NodeBase node, AtkUnitBase* addon)
-		=> Framework.RunOnFrameworkThread(() => UpdateEventsTask(node, addon));
 
 	private void UpdateEventsTask(NodeBase node, AtkUnitBase* addon) {
 		node.EnableEvents(AddonEventManager, addon);
