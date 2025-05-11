@@ -5,7 +5,7 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
-public class TextButton : ButtonBaseComponent {
+public unsafe class TextButton : ButtonBase {
 
 	protected override NodeBase DecorationNode => labelNode;
 	private readonly TextNode labelNode;
@@ -13,7 +13,6 @@ public class TextButton : ButtonBaseComponent {
 	public TextButton() {
 		labelNode = new TextNode {
 			IsVisible = true,
-			Text = "uwu",
 			AlignmentType = AlignmentType.Center,
 			Position = new Vector2(16.0f, 3.0f),
 			NodeID = 3,
@@ -25,5 +24,33 @@ public class TextButton : ButtonBaseComponent {
 	public SeString Label {
 		get => labelNode.Text;
 		set => labelNode.Text = value;
+	}
+	
+	public new float Width {
+		get => InternalResNode->Width;
+		set {
+			InternalResNode->SetWidth((ushort) value);
+			BackgroundNode.Width = value;
+			DecorationNode.Width = value - BackgroundNode.LeftOffset - BackgroundNode.RightOffset;
+			CollisionNode.Width = value;
+		}
+	}
+
+	public new float Height {
+		get => InternalResNode->Height;
+		set {
+			InternalResNode->SetHeight((ushort) value);
+			BackgroundNode.Height = value;
+			DecorationNode.Height = value - 8.0f;
+			CollisionNode.Height = value;
+		}
+	}
+
+	public new Vector2 Size {
+		get => new(Width, Height);
+		set {
+			Width = value.X;
+			Height = value.Y;
+		}
 	}
 }
