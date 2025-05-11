@@ -13,7 +13,7 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class TextNode : NodeBase<AtkTextNode> {
 
-    private readonly Utf8String* stringBuffer = Utf8String.CreateEmpty();
+    private Utf8String* stringBuffer = Utf8String.CreateEmpty();
 
     public TextNode() : base(NodeType.Text) {
         TextColor = KnownColor.White.Vector();
@@ -25,6 +25,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     protected override void Dispose(bool disposing) {
         if (disposing) {
             stringBuffer->Dtor(true);
+            stringBuffer = null;
         }
         
         base.Dispose(disposing);

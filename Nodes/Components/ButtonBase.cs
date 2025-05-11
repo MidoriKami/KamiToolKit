@@ -48,9 +48,10 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		if (disposing) {
 			BackgroundNode.Dispose();
 			DecorationNode.Dispose();
-		
+
 			NativeMemoryHelper.UiFree(Data);
-		
+			Data = null;
+
 			base.Dispose(disposing);
 		}
 	}
