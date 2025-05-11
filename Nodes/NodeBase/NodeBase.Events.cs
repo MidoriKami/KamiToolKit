@@ -24,48 +24,52 @@ public abstract unsafe partial class NodeBase {
 	public Action? MouseUp { get; set; }
 	private IAddonEventHandle? MouseUpHandle { get; set; }
 	
-	public Action? InputReceived { get; set; }
-	private IAddonEventHandle? InputReceivedHandle { get; set; }
-	
 	private IAddonEventManager? EventManager { get; set; }
+
+	/// <summary>
+	/// Reference to the node that all events should be attached to.
+	/// Override to set to another node.
+	/// </summary>
+	protected virtual NodeBase EventTargetNode => this;
 
 	public virtual void EnableEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
 		if (MouseOver is not null || MouseOut is not null || MouseClick is not null || Tooltip is not null ||
-		    MouseDown is not null || MouseUp is not null || InputReceived is not null || InputReceivedHandle is not null) {
-			AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
+		    MouseDown is not null || MouseUp is not null) {
+			EventTargetNode.AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
 		}
 
 		if ((MouseOver is not null || Tooltip is not null) && MouseOverHandle is null) {
-			MouseOverHandle = eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOver, HandleEvents);
+			MouseOverHandle = eventManager.AddEvent((nint) addon, (nint) EventTargetNode.InternalResNode, AddonEventType.MouseOver, HandleEvents);
 		}
 
 		if ((MouseOut is not null || Tooltip is not null) && MouseOutHandle is null) {
-			MouseOutHandle = eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOut, HandleEvents);
+			MouseOutHandle = eventManager.AddEvent((nint) addon, (nint) EventTargetNode.InternalResNode, AddonEventType.MouseOut, HandleEvents);
 		}
 
 		if (MouseClick is not null && MouseClickHandle is null) {
-			MouseOverHandle ??= eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOver, HandleEvents);
-			MouseOutHandle ??= eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseOut, HandleEvents);
-			MouseClickHandle = eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseClick, HandleEvents);
+			MouseOverHandle ??= eventManager.AddEvent((nint) addon, (nint) EventTargetNode.InternalResNode, AddonEventType.MouseOver, HandleEvents);
+			MouseOutHandle ??= eventManager.AddEvent((nint) addon, (nint) EventTargetNode.InternalResNode, AddonEventType.MouseOut, HandleEvents);
+			MouseClickHandle = eventManager.AddEvent((nint) addon, (nint) EventTargetNode.InternalResNode, AddonEventType.MouseClick, HandleEvents);
 		}
 
 		if (MouseDown is not null) {
-			MouseDownHandle ??= eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseDown, HandleEvents);
+			MouseDownHandle ??= eventManager.AddEvent((nint) addon, (nint) EventTargetNode.InternalResNode, AddonEventType.MouseDown, HandleEvents);
 		}
 
 		if (MouseUp is not null) {
-			MouseUpHandle ??= eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.MouseUp, HandleEvents);
-		}
-
-		if (InputReceived is not null) {
-			InputReceivedHandle ??= eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.InputReceived, HandleEvents);
+			MouseUpHandle ??= eventManager.AddEvent((nint) addon, (nint) EventTargetNode.InternalResNode, AddonEventType.MouseUp, HandleEvents);
 		}
 
 		EventManager = eventManager;
+		
+		// If `this` isn't the target node, then we should propagate the EnableEvents call to our intended target
+		if (this != EventTargetNode) {
+			EventTargetNode.EnableEvents(eventManager, addon);
+		}
 	}
 	
 	public virtual void DisableEvents(IAddonEventManager eventManager) {
-		RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
+		EventTargetNode.RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
 
 		if (MouseOverHandle is not null) {
 			eventManager.RemoveEvent(MouseOverHandle);
@@ -90,16 +94,15 @@ public abstract unsafe partial class NodeBase {
 			eventManager.RemoveEvent(MouseUpHandle);
 		}
 
-		if (InputReceivedHandle is not null) {
-			eventManager.RemoveEvent(InputReceivedHandle);
-		}
-		
 		EventManager = eventManager;
+		if (this != EventTargetNode) {
+			EventTargetNode.DisableEvents(eventManager);
+		}
 	}
 	
 	public virtual void UpdateEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
-		DisableEvents(eventManager);
-		EnableEvents(eventManager, addon);
+		EventTargetNode.DisableEvents(eventManager);
+		EventTargetNode.EnableEvents(eventManager, addon);
 	}
 
 	private void HandleEvents(AddonEventType atkEventType, IntPtr atkUnitBase, IntPtr atkResNode) {
@@ -142,10 +145,6 @@ public abstract unsafe partial class NodeBase {
 			
 			case AddonEventType.MouseUp:
 				MouseUp?.Invoke();
-				break;
-			
-			case AddonEventType.InputReceived:
-				InputReceived?.Invoke();
 				break;
 		}
 	}
