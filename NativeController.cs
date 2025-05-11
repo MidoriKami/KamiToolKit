@@ -47,45 +47,29 @@ public unsafe class NativeController : IDisposable {
 		}
 	}
 
-	public void AttachToNode(NodeBase customNode, NodeBase other, NodePosition position) {
-		if (ThreadSafety.IsMainThread) {
-			InternalAttachToNode(customNode, other, position);
-		}
-		else {
-			Framework.RunOnFrameworkThread(() => InternalAttachToNode(customNode, other, position));
-		}
-	}
+	public void AttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
+		=> Framework.RunOnFrameworkThread(() => InternalAttachToNode(customNode, other, position));
 
-	public void DetachFromAddon(NodeBase customNode, AtkUnitBase* addon) {
-		if (ThreadSafety.IsMainThread) {
+	public void DetachFromAddon(NodeBase customNode, AtkUnitBase* addon, Action? disposeAction = null)
+		=> Framework.RunOnFrameworkThread(() => {
 			InternalDetachFromAddon(customNode, addon);
-		}
-		else {
-			Framework.RunOnFrameworkThread(() => InternalDetachFromAddon(customNode, addon));
-		}
-	}
+			disposeAction?.Invoke();
+		});
 
 	/// <summary>
 	/// Warning! Known to be volatile, use at your own risk.
 	/// </summary>
-	public void DetachFromComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component) {
-		if (ThreadSafety.IsMainThread) {
+	public void DetachFromComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component, Action? disposeAction = null)
+		=> Framework.RunOnFrameworkThread(() => {
 			InternalDetachFromComponent(customNode, component);
-		}
-		else {
-			Framework.RunOnFrameworkThread(() => InternalDetachFromComponent(customNode, component));
-			
-		}
-	}
+			disposeAction?.Invoke();
+		});
 
-	public void DetachFromNode(NodeBase customNode) {
-		if (ThreadSafety.IsMainThread) {
+	public void DetachFromNode(NodeBase customNode, Action? disposeAction = null)
+		=> Framework.RunOnFrameworkThread(() => {
 			customNode.DetachNode();
-		}
-		else {
-			Framework.RunOnFrameworkThread(customNode.DetachNode);
-		}
-	}
+			disposeAction?.Invoke();
+		});
 
 	public void UpdateEvents(NodeBase node, AtkUnitBase* addon)
 		=> Framework.RunOnFrameworkThread(() => UpdateEventsTask(node, addon));
