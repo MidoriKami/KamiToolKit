@@ -24,4 +24,9 @@ public unsafe class ExperimentalMethods {
 
 	[Signature("E8 ?? ?? ?? ?? 66 41 3B B7 ?? ?? ?? ??")]
 	public ExpandNodeListSizeDelegate? ExpandNodeListSize = null;
+	
+	public delegate void DestroyUldManagerDelegate(AtkUldManager* atkUldManager);
+	
+	[Signature("40 57 48 83 EC 30 0F B6 81 ?? ?? ?? ?? 48 8B F9 A8 01")]
+	public DestroyUldManagerDelegate? DestroyUldManager = null;
 }
