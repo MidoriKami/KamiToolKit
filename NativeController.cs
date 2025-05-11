@@ -8,23 +8,18 @@ using KamiToolKit.Nodes;
 
 namespace KamiToolKit;
 
-
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 /// <summary>
 /// Controller for custom native nodes, this class is required to attach custom nodes to native ui, this service will also keep track of the allocated nodes to prevent memory leaks.
 /// </summary>
 public unsafe class NativeController : IDisposable {
-	[PluginService] private IAddonEventManager AddonEventManager { get; set; }
-	[PluginService] private IFramework Framework { get; set; }
-	[PluginService] private IGameInteropProvider GameInteropProvider { get; set; }
+	[PluginService] private IAddonEventManager AddonEventManager { get; set; } = null!;
+	[PluginService] private IFramework Framework { get; set; } = null!;
+	[PluginService] private IGameInteropProvider GameInteropProvider { get; set; } = null!;
 	
 	public NativeController(IDalamudPluginInterface pluginInterface) {
 		pluginInterface.Inject(this);
-		GameInteropProvider?.InitializeFromAttributes(ClientStructs.Instance);
-		
-#if DEBUG
-		ExperimentalMethods.Initialize(pluginInterface);
-#endif
+		pluginInterface.Inject(ExperimentalMethods.Instance);
+		GameInteropProvider.InitializeFromAttributes(ExperimentalMethods.Instance);
 	}
 
 	/// <summary>
