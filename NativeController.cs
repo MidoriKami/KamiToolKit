@@ -72,10 +72,7 @@ public unsafe class NativeController : IDisposable {
 	/// <summary>
 	/// Warning! Known to be volatile, use at your own risk.
 	/// </summary>
-	public void DetachFromComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component)
-		=> Framework.RunOnFrameworkThread(() => DetachFromComponentTask(customNode, addon, component));
-
-	private void DetachFromComponentTask(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component) {
+	public void DetachFromComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component) {
 		customNode.DisableEvents(AddonEventManager);
 		customNode.DetachNode();
 
