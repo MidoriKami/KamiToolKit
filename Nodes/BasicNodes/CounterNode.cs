@@ -1,6 +1,6 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes.NodeStyles;
-using KamiToolKit.Nodes.Parts;
 
 namespace KamiToolKit.Nodes;
 

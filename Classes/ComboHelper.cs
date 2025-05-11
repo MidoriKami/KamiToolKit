@@ -52,9 +52,6 @@ internal static class EnumExtensions {
                 }
             }
         }
-        // else {
-        //     return "None";
-        // }
         
         return value.ToString();
     }

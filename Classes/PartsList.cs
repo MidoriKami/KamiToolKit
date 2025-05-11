@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 
-namespace KamiToolKit.Nodes.Parts;
+namespace KamiToolKit.Classes;
 
 /// <summary>
 /// Wrapper around a AtkUldPartsList, manages adding and removing multiple parts more easily.
