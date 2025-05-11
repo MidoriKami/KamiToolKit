@@ -8,20 +8,24 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
-public abstract unsafe class ButtonBaseComponent : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
-	private readonly NineGridNode backgroundNode;
+public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
+	protected readonly NineGridNode BackgroundNode;
 	protected abstract NodeBase DecorationNode { get; }
 
 	public Action? OnClick { get; set; }
 	private IAddonEventHandle? OnClickHandle { get; set; }
 
-	protected ButtonBaseComponent() {
+	protected override NodeBase EventTargetNode => CollisionNode;
+
+	protected ButtonBase() {
 		SetInternalComponentType(ComponentType.Button);
 		Data = NativeMemoryHelper.UiAlloc<AtkUldComponentDataButton>();
 		Data->Nodes[0] = 2;
 		Data->Nodes[1] = 3;
 		
-		backgroundNode = new SimpleNineGridNode {
+		NodeType = (NodeType) 1001;
+		
+		BackgroundNode = new SimpleNineGridNode {
 			TexturePath = "ui/uld/ButtonA_hr1.tex",
 			IsVisible = true,
 			TextureSize = new Vector2(100.0f, 28.0f),
@@ -31,7 +35,7 @@ public abstract unsafe class ButtonBaseComponent : ComponentNode<AtkComponentBut
 			NodeID = 2,
 		};
 
-		backgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		BackgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
 		
 		CollisionNode.MouseOver = OnMouseOver;
 		CollisionNode.MouseOut = OnMouseOut;
@@ -42,7 +46,7 @@ public abstract unsafe class ButtonBaseComponent : ComponentNode<AtkComponentBut
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			backgroundNode.Dispose();
+			BackgroundNode.Dispose();
 			DecorationNode.Dispose();
 		
 			NativeMemoryHelper.UiFree(Data);
@@ -59,7 +63,7 @@ public abstract unsafe class ButtonBaseComponent : ComponentNode<AtkComponentBut
 		base.EnableEvents(eventManager, addon);
 		CollisionNode.EnableEvents(eventManager, addon);
 
-		eventManager.AddEvent((nint) addon, (nint) InternalResNode, AddonEventType.ButtonClick, OnClickHandler);
+		eventManager.AddEvent((nint) addon, (nint) EventTargetNode.InternalResNode, AddonEventType.ButtonClick, OnClickHandler);
 	}
 
 	private void OnClickHandler(AddonEventType atkEventType, IntPtr atkUnitBase, IntPtr atkResNode) {
@@ -80,22 +84,22 @@ public abstract unsafe class ButtonBaseComponent : ComponentNode<AtkComponentBut
 	}
 
 	private void OnMouseDown() {
-		backgroundNode.Position += new Vector2(0.0f, 1.0f);
+		BackgroundNode.Position += new Vector2(0.0f, 1.0f);
 		DecorationNode.Position += new Vector2(0.0f, 1.0f);
 	}
 	
 	private void OnMouseUp() {
-		backgroundNode.Position -= new Vector2(0.0f, 1.0f);
+		BackgroundNode.Position -= new Vector2(0.0f, 1.0f);
 		DecorationNode.Position -= new Vector2(0.0f, 1.0f);
 	}
 
 	private void OnMouseOver() {
-		backgroundNode.AddColor = new Vector3(16.0f, 16.0f, 16.0f).AsVector4().NormalizeToUnitRange().AsVector3();
+		BackgroundNode.AddColor = new Vector3(16.0f, 16.0f, 16.0f).AsVector4().NormalizeToUnitRange().AsVector3();
 		SetCursor(AddonCursorType.Clickable);
 	}
 	
 	private void OnMouseOut() {
-		backgroundNode.AddColor = Vector3.Zero;
+		BackgroundNode.AddColor = Vector3.Zero;
 		ResetCursor();
 	}
 	
@@ -103,8 +107,7 @@ public abstract unsafe class ButtonBaseComponent : ComponentNode<AtkComponentBut
 		get => InternalResNode->Width;
 		set {
 			InternalResNode->SetWidth((ushort) value);
-			backgroundNode.Width = value;
-			DecorationNode.Width = value - backgroundNode.LeftOffset - backgroundNode.RightOffset;
+			BackgroundNode.Width = value;
 			CollisionNode.Width = value;
 		}
 	}
@@ -113,8 +116,7 @@ public abstract unsafe class ButtonBaseComponent : ComponentNode<AtkComponentBut
 		get => InternalResNode->Height;
 		set {
 			InternalResNode->SetHeight((ushort) value);
-			backgroundNode.Height = value;
-			DecorationNode.Height = value - 8.0f;
+			BackgroundNode.Height = value;
 			CollisionNode.Height = value;
 		}
 	}
