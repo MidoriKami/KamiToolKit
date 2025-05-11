@@ -6,12 +6,13 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit;
 
-public unsafe class ExperimentalMethods {
-	private static ExperimentalMethods? instance;
-	public static ExperimentalMethods Instance => instance ??= new ExperimentalMethods();
+public unsafe class Experimental {
+	private static Experimental? instance;
+	public static Experimental Instance => instance ??= new Experimental();
 	public static bool Initialized { get; private set; }
 
-	[PluginService] public IGameInteropProvider Hooker { get; set; } = null!; // Still not gonna call it a GameInteropProvider
+	[PluginService] private IGameInteropProvider Hooker { get; set; } = null!; // Still not gonna call it a GameInteropProvider
+	[PluginService] public IPluginLog Log { get; set; } = null!;
 
 	public static void Initialize(IDalamudPluginInterface pluginInterface) {
 		pluginInterface.Inject(Instance);
@@ -29,4 +30,10 @@ public unsafe class ExperimentalMethods {
 	
 	[Signature("40 57 48 83 EC 30 0F B6 81 ?? ?? ?? ?? 48 8B F9 A8 01")]
 	public DestroyUldManagerDelegate? DestroyUldManager = null;
+}
+
+internal static class Log {
+	internal static void Debug(string message) {
+		Experimental.Instance.Log.Debug(message);
+	}
 }

@@ -18,8 +18,8 @@ public unsafe class NativeController : IDisposable {
 	
 	public NativeController(IDalamudPluginInterface pluginInterface) {
 		pluginInterface.Inject(this);
-		pluginInterface.Inject(ExperimentalMethods.Instance);
-		GameInteropProvider.InitializeFromAttributes(ExperimentalMethods.Instance);
+		pluginInterface.Inject(Experimental.Instance);
+		GameInteropProvider.InitializeFromAttributes(Experimental.Instance);
 	}
 
 	/// <summary>
