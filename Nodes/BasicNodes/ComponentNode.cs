@@ -61,8 +61,7 @@ public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, IC
 		if (disposing) {
 			CollisionNode.Dispose();
 
-			NativeMemoryHelper.Free(ComponentBase->UldManager.Objects->NodeList, 8);
-			NativeMemoryHelper.UiFree(ComponentBase->UldManager.Objects);
+			ExperimentalMethods.Instance.DestroyUldManager?.Invoke(&ComponentBase->UldManager);
 			NativeMemoryHelper.UiFree(Component);
 		
 			base.Dispose(disposing);
