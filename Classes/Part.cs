@@ -131,6 +131,28 @@ public unsafe class Part : IDisposable {
     }
 
     /// <summary>
+    /// Loads a game texture via path, but processes it through the substitution provider.
+    /// </summary>
+    /// <param name="path">The path to the specific tex file that you want</param>
+    /// <param name="provider">Dalamud ITextureSubstitutionProvider for resolving the path</param>
+    public void LoadTexture(string path, ITextureSubstitutionProvider provider) {
+        var texturePath = path;
+        
+        // If we are trying to load a HR texture
+        if (texturePath.Contains("_hr1")) {
+
+            // But we are not in HR mode
+            if (AtkStage.Instance()->AtkTextureResourceManager->DefaultTextureVersion is 1) {
+                texturePath = texturePath.Replace("_hr1", "");
+            }
+        }
+        
+        var substitutionPath = provider.GetSubstitutedPath(texturePath);
+        
+        InternalAsset->AtkTexture.LoadTexture(substitutionPath);
+    }
+
+    /// <summary>
     /// Release the loaded texture, decreases ref count
     /// </summary>
     public void ReleaseTexture()
