@@ -61,7 +61,6 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
 	public override void EnableEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
 		base.EnableEvents(eventManager, addon);
-		CollisionNode.EnableEvents(eventManager, addon);
 
 		eventManager.AddEvent((nint) addon, (nint) EventTargetNode.InternalResNode, AddonEventType.ButtonClick, OnClickHandler);
 	}
