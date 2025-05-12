@@ -19,6 +19,15 @@ public class IconButton : ButtonBase {
 		
 		imageNode.AttachNode(this, NodePosition.AfterAllSiblings);
 	}
+	
+	protected override void Dispose(bool disposing) {
+		if (disposing) {
+			imageNode.DetachNode();
+			imageNode.Dispose();
+			
+			base.Dispose(disposing);
+		}
+	}
 
 	public uint IconId {
 		get => imageNode.IconId;
