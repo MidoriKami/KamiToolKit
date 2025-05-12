@@ -32,26 +32,14 @@ public unsafe class NativeController : IDisposable {
 	public void Dispose()
 		=> NodeBase.DisposeAllNodes();
 
-	public void AttachToAddon(NodeBase customNode, AtkUnitBase* addon, AtkResNode* target, NodePosition position) {
-		if (ThreadSafety.IsMainThread) {
-			InternalAttachToAddon(customNode, addon, target, position);
-		}
-		else {
-			Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, addon, target, position));
-		}
-	}
+	public void AttachToAddon(NodeBase customNode, AtkUnitBase* addon, AtkResNode* target, NodePosition position)
+		=> Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, addon, target, position));
 
 	/// <summary>
 	/// Warning! Known to be volatile, use at your own risk.
 	/// </summary>
-	public void AttachToComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component, AtkResNode* target, NodePosition position) {
-		if (ThreadSafety.IsMainThread) {
-			InternalAttachToComponent(customNode, addon, component, target, position);
-		}
-		else {
-			Framework.RunOnFrameworkThread(() => InternalAttachToComponent(customNode, addon, component, target, position));
-		}
-	}
+	public void AttachToComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component, AtkResNode* target, NodePosition position)
+		=> Framework.RunOnFrameworkThread(() => InternalAttachToComponent(customNode, addon, component, target, position));
 
 	public void AttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
 		=> Framework.RunOnFrameworkThread(() => InternalAttachToNode(customNode, other, position));
