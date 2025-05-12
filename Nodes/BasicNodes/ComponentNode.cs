@@ -19,6 +19,8 @@ public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, IC
 		Component = NativeMemoryHelper.Create<T>();
 		var componentBase = (AtkComponentBase*) Component;
 
+		componentBase->InitializeAtkUldManager();
+					
 		CollisionNode = new CollisionNode {
 			IsVisible = true,
 			NodeID = 1,
@@ -59,12 +61,8 @@ public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, IC
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
+			ComponentBase->Dtor(1);
 			CollisionNode.Dispose();
-
-			Experimental.Instance.DestroyUldManager?.Invoke(&ComponentBase->UldManager);
-			
-			NativeMemoryHelper.UiFree(Component);
-			Component = null;
 		
 			base.Dispose(disposing);
 		}
