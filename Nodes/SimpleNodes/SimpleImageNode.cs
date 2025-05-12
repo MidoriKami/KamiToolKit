@@ -47,4 +47,8 @@ public class SimpleImageNode : ImageNode {
             TextureHeight = value.Y;
         }
     }
+        
+    public string TexturePath {
+        set => PartsList[0].LoadTexture(value);
+    }
 }
