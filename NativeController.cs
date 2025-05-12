@@ -65,7 +65,7 @@ public unsafe class NativeController : IDisposable {
 			disposeAction?.Invoke();
 		});
 
-	public void DetachFromNode(NodeBase customNode, Action? disposeAction = null)
+	public void DetachNode(NodeBase customNode, Action? disposeAction = null)
 		=> Framework.RunOnFrameworkThread(() => {
 			customNode.DetachNode();
 			disposeAction?.Invoke();
