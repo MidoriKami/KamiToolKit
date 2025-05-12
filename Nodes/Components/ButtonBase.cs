@@ -148,4 +148,9 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 			Height = value.Y;
 		}
 	}
+
+	public bool BackgroundVisible {
+		get => BackgroundNode.IsVisible;
+		set => BackgroundNode.IsVisible = value;
+	}
 }
