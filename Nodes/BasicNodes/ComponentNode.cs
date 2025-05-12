@@ -61,9 +61,12 @@ public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, IC
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			ComponentBase->Dtor(1);
+			CollisionNode.DetachNode();
 			CollisionNode.Dispose();
-		
+			
+			ComponentBase->DeinitializeAtkUldManager();
+			ComponentBase->Dtor(1);
+
 			base.Dispose(disposing);
 		}
 	}

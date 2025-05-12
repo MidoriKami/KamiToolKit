@@ -38,7 +38,7 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		};
 
 		BackgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
-		
+
 		CollisionNode.MouseOver += OnMouseOver;
 		CollisionNode.MouseOut += OnMouseOut;
 		CollisionNode.MouseDown += OnMouseDown;
@@ -48,8 +48,14 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
+			BackgroundNode.DetachNode();
 			BackgroundNode.Dispose();
-			DecorationNode.Dispose();
+			
+			CollisionNode.MouseOver -= OnMouseOver;
+			CollisionNode.MouseOut -= OnMouseOut;
+			CollisionNode.MouseDown -= OnMouseDown;
+			CollisionNode.MouseUp -= OnMouseUp;
+			CollisionNode.MouseClick -= OnMouseClick;
 
 			NativeMemoryHelper.UiFree(Data);
 			Data = null;
