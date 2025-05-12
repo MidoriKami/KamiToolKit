@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using KamiToolKit.Nodes.Parts;
+using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
@@ -46,5 +46,9 @@ public class SimpleImageNode : ImageNode {
             TextureWidth = value.X;
             TextureHeight = value.Y;
         }
+    }
+        
+    public string TexturePath {
+        set => PartsList[0].LoadTexture(value);
     }
 }

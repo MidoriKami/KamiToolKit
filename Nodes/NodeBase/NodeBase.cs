@@ -40,7 +40,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 }
 
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
-    public T* InternalNode { get; }
+    public T* InternalNode { get; private set; }
 
     internal override sealed AtkResNode* InternalResNode => (AtkResNode*) InternalNode;
 
@@ -59,6 +59,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
         if (disposing) {
             InternalResNode->Destroy(false);
             NativeMemoryHelper.UiFree(InternalNode);
+            InternalNode = null;
         }
     }
 }

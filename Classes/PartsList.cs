@@ -4,15 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 
-namespace KamiToolKit.Nodes.Parts;
+namespace KamiToolKit.Classes;
 
 /// <summary>
 /// Wrapper around a AtkUldPartsList, manages adding and removing multiple parts more easily.
 /// </summary>
 public unsafe class PartsList : IList<Part>, IDisposable {
-    internal readonly AtkUldPartsList* InternalPartsList;
+    internal AtkUldPartsList* InternalPartsList;
     private readonly List<Part> parts = [];
 
     private bool isDisposed;
@@ -32,6 +31,7 @@ public unsafe class PartsList : IList<Part>, IDisposable {
             }
         
             NativeMemoryHelper.UiFree(InternalPartsList);
+            InternalPartsList = null;
         }
 
         isDisposed = true;

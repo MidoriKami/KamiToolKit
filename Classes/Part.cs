@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 
-namespace KamiToolKit.Nodes.Parts;
+namespace KamiToolKit.Classes;
 
 /// <summary>
 /// Wrapper around a AtkUldPart and AtkUldAsset, loads and holds graphics textures for display in image, and image-like nodes.
 /// </summary>
 public unsafe class Part : IDisposable {
     internal AtkUldPart* InternalPart;
-    internal readonly AtkUldAsset* InternalAsset;
+    internal AtkUldAsset* InternalAsset;
  
-    private void* cachedTexture;
     private bool customTextureLoaded;
     
     public bool IsAttached;
@@ -39,18 +38,20 @@ public unsafe class Part : IDisposable {
     public void Dispose() {
         if (!isDisposed) {
             if (customTextureLoaded) {
-                // Restore cached texture
-                InternalAsset->AtkTexture.KernelTexture->D3D11ShaderResourceView = cachedTexture;
-            
-                // Then destroy it and make it regret existing
+                InternalAsset->AtkTexture.KernelTexture->DecRef();
+                InternalAsset->AtkTexture.Destroy(false);
+            }
+            else {
                 InternalAsset->AtkTexture.ReleaseTexture();
                 InternalAsset->AtkTexture.Destroy(true);
             }
 
             NativeMemoryHelper.UiFree(InternalAsset);
+            InternalAsset = null;
 
             if (!IsAttached) {
                 NativeMemoryHelper.UiFree(InternalPart);
+                InternalPart = null;
             }
         }
 
@@ -117,7 +118,7 @@ public unsafe class Part : IDisposable {
     /// <param name="path">Path to native game resource</param>
     public void LoadTexture(string path) {
         var texturePath = path;
-            
+
         // If we are trying to load a HR texture
         if (texturePath.Contains("_hr1")) {
                 
@@ -126,8 +127,30 @@ public unsafe class Part : IDisposable {
                 texturePath = texturePath.Replace("_hr1", "");
             }
         }
-            
+
         InternalAsset->AtkTexture.LoadTexture(texturePath);
+    }
+
+    /// <summary>
+    /// Loads a game texture via path, but processes it through the substitution provider.
+    /// </summary>
+    /// <param name="path">The path to the specific tex file that you want</param>
+    /// <param name="provider">Dalamud ITextureSubstitutionProvider for resolving the path</param>
+    public void LoadTexture(string path, ITextureSubstitutionProvider provider) {
+        var texturePath = path;
+        
+        // If we are trying to load a HR texture
+        if (texturePath.Contains("_hr1")) {
+
+            // But we are not in HR mode
+            if (AtkStage.Instance()->AtkTextureResourceManager->DefaultTextureVersion is 1) {
+                texturePath = texturePath.Replace("_hr1", "");
+            }
+        }
+        
+        var substitutionPath = provider.GetSubstitutedPath(texturePath);
+        
+        InternalAsset->AtkTexture.LoadTexture(substitutionPath);
     }
 
     /// <summary>
@@ -151,23 +174,30 @@ public unsafe class Part : IDisposable {
         => InternalAsset->AtkTexture.LoadIconTexture(iconId, 0);
 
     /// <summary>
-    /// Load a DalamudTextureWrap texture into this node.
+    /// Loads texture via an already constructed Texture*
     /// </summary>
-    /// <remarks>
-    /// This does not transfer ownership of the texture to the node, you are required
-    /// to keep the texture alive during the lifetime of this node.</remarks>
-    /// <param name="textureWrap">Dalamud Texture to Load</param>
-    public void LoadImGuiTexture(IDalamudTextureWrap textureWrap) {
-        // Do not attempt to load another texture, if we have one loaded already.
-        if (customTextureLoaded) return;
+    /// <remarks>This does not preserve any existing texture.</remarks>
+    /// <param name="texture">Texture to assign to this image node.</param>
+    public void LoadTexture(Texture* texture) {
+        // If a texture is already loaded, dec ref it to probably free it automatically
+        if (customTextureLoaded) {
+            InternalAsset->AtkTexture.KernelTexture->DecRef();
+        }
 
-        InternalAsset->AtkTexture.KernelTexture = Texture.CreateTexture2D(textureWrap.Width, textureWrap.Height, 3, TextureFormat.B8G8R8A8_UNORM, 0, 0);
-
-        cachedTexture = InternalAsset->AtkTexture.KernelTexture->D3D11ShaderResourceView;
-        InternalAsset->AtkTexture.KernelTexture->D3D11ShaderResourceView = (void*) textureWrap.ImGuiHandle;
-
+        InternalAsset->AtkTexture.KernelTexture = texture;
         InternalAsset->AtkTexture.TextureType = TextureType.KernelTexture;
 
         customTextureLoaded = true;
+    }
+
+    /// <summary>
+    /// Loads a texture via dalamud texture wrap.
+    /// </summary>
+    /// <remarks>WIP</remarks>
+    /// <param name="textureProvider">Dalamud TextureProvider that will generate KernelTexture</param>
+    /// <param name="texture">Texture Wrap to convert</param>
+    public void LoadTexture(ITextureProvider textureProvider, IDalamudTextureWrap texture) {
+        var texturePointer = (Texture*) textureProvider.ConvertToKernelTexture(texture, true);
+        LoadTexture(texturePointer);
     }
 }

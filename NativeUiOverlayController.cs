@@ -1,6 +1,8 @@
 ﻿using System;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
+using Dalamud.IoC;
+using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Arrays;
@@ -11,8 +13,20 @@ namespace KamiToolKit;
 /// <summary>
 /// Simplified controller for using AddonNamePlate for basic overlays.
 /// </summary>
-public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLifecycle, IFramework framework, IGameGui gameGui) : IDisposable {
-	private AddonNamePlate* AddonNamePlate => (AddonNamePlate*) gameGui.GetAddonByName("NamePlate");
+public abstract unsafe class NativeUiOverlayController : IDisposable {
+	
+	[PluginService] private IAddonLifecycle AddonLifecycle { get; set; } = null!;
+	[PluginService] private IFramework Framework { get; set; } = null!;
+	[PluginService] private IGameGui GameGui { get; set; } = null!;
+	
+	/// <summary>
+	/// Simplified controller for using AddonNamePlate for basic overlays.
+	/// </summary>
+	protected NativeUiOverlayController(IDalamudPluginInterface pluginInterface) {
+		pluginInterface.Inject(this);
+	}
+	
+	private AddonNamePlate* AddonNamePlate => (AddonNamePlate*) GameGui.GetAddonByName("NamePlate");
 
 	/// <summary>
 	/// Enable this overlay controller, it will call PreAttach and AttachNodes anytime the NamePlate addon loads, and calls DetachNodes when it unloads. 
@@ -20,8 +34,8 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 	public void Enable() {
 		PreAttach();
 		
-		addonLifecycle.RegisterListener(AddonEvent.PostSetup, "NamePlate", OnNamePlateSetup);
-		addonLifecycle.RegisterListener(AddonEvent.PreFinalize, "NamePlate", OnNamePlateFinalize);
+		AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "NamePlate", OnNamePlateSetup);
+		AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "NamePlate", OnNamePlateFinalize);
 		
 		if (AddonNamePlate is not null) {
 			AttachToNative(AddonNamePlate);
@@ -33,8 +47,8 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 	/// Disable this overlay controller, unregisters listeners, and if the NamePlate addon is loaded, calls DetachNodes.
 	/// </summary>
 	public void Disable() {
-		addonLifecycle.UnregisterListener(OnNamePlateSetup);
-		addonLifecycle.UnregisterListener(OnNamePlateFinalize);
+		AddonLifecycle.UnregisterListener(OnNamePlateSetup);
+		AddonLifecycle.UnregisterListener(OnNamePlateFinalize);
 
 		if (AddonNamePlate is not null) {
 			DetachFromNative(AddonNamePlate);
@@ -51,13 +65,13 @@ public abstract unsafe class NativeUiOverlayController(IAddonLifecycle addonLife
 		=> AttachToNative((AddonNamePlate*)args.Addon);
 
 	private void AttachToNative(AddonNamePlate* addonNamePlate)
-		=> framework.RunOnFrameworkThread(() => AttachNodes(addonNamePlate));
+		=> Framework.RunOnFrameworkThread(() => AttachNodes(addonNamePlate));
 
 	private void OnNamePlateFinalize(AddonEvent type, AddonArgs args)
 		=> DetachFromNative((AddonNamePlate*)args.Addon);
 
 	private void DetachFromNative(AddonNamePlate* addonNamePlate)
-		=> framework.RunOnFrameworkThread(() => DetachNodes(addonNamePlate));
+		=> DetachNodes(addonNamePlate);
 
 	protected abstract void PreAttach();
 	protected abstract void AttachNodes(AddonNamePlate* addonNamePlate);
