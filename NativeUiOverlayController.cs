@@ -14,10 +14,9 @@ namespace KamiToolKit;
 /// Simplified controller for using AddonNamePlate for basic overlays.
 /// </summary>
 public abstract unsafe class NativeUiOverlayController : IDisposable {
-	
-	[PluginService] private IAddonLifecycle AddonLifecycle { get; set; } = null!;
-	[PluginService] private IFramework Framework { get; set; } = null!;
-	[PluginService] private IGameGui GameGui { get; set; } = null!;
+	[PluginService] public IAddonLifecycle AddonLifecycle { get; set; } = null!;
+	[PluginService] public IFramework Framework { get; set; } = null!;
+	[PluginService] public IGameGui GameGui { get; set; } = null!;
 	
 	/// <summary>
 	/// Simplified controller for using AddonNamePlate for basic overlays.
