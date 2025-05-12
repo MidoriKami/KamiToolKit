@@ -15,6 +15,8 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 	public Action? OnClick { get; set; }
 	private IAddonEventHandle? OnClickHandle { get; set; }
 
+	private bool buttonHeld;
+
 	protected override NodeBase EventTargetNode => CollisionNode;
 
 	protected ButtonBase() {
@@ -84,13 +86,19 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 	}
 
 	private void OnMouseDown() {
-		BackgroundNode.Position += new Vector2(0.0f, 1.0f);
-		DecorationNode.Position += new Vector2(0.0f, 1.0f);
+		if (!buttonHeld) {
+			BackgroundNode.Position += new Vector2(0.0f, 1.0f);
+			DecorationNode.Position += new Vector2(0.0f, 1.0f);
+			buttonHeld = true;
+		}
 	}
 	
 	private void OnMouseUp() {
-		BackgroundNode.Position -= new Vector2(0.0f, 1.0f);
-		DecorationNode.Position -= new Vector2(0.0f, 1.0f);
+		if (buttonHeld) {
+			BackgroundNode.Position -= new Vector2(0.0f, 1.0f);
+			DecorationNode.Position -= new Vector2(0.0f, 1.0f);
+			buttonHeld = false;
+		}
 	}
 
 	private void OnMouseOver() {
@@ -99,6 +107,12 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 	}
 	
 	private void OnMouseOut() {
+		if (buttonHeld) {
+			BackgroundNode.Position -= new Vector2(0.0f, 1.0f);
+			DecorationNode.Position -= new Vector2(0.0f, 1.0f);
+			buttonHeld = false;
+		}
+		
 		BackgroundNode.AddColor = Vector3.Zero;
 		ResetCursor();
 	}
