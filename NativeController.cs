@@ -44,24 +44,30 @@ public unsafe class NativeController : IDisposable {
 	public void AttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
 		=> Framework.RunOnFrameworkThread(() => InternalAttachToNode(customNode, other, position));
 
-	public void DetachFromAddon(NodeBase customNode, AtkUnitBase* addon, Action? disposeAction = null)
+	public void DetachFromAddon(NodeBase? customNode, AtkUnitBase* addon, Action? disposeAction = null)
 		=> Framework.RunOnFrameworkThread(() => {
-			InternalDetachFromAddon(customNode, addon);
+			if (customNode is not null) {
+				InternalDetachFromAddon(customNode, addon);
+			}
+
 			disposeAction?.Invoke();
 		});
 
 	/// <summary>
 	/// Warning! Known to be volatile, use at your own risk.
 	/// </summary>
-	public void DetachFromComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component, Action? disposeAction = null)
+	public void DetachFromComponent(NodeBase? customNode, AtkUnitBase* addon, AtkComponentBase* component, Action? disposeAction = null)
 		=> Framework.RunOnFrameworkThread(() => {
-			InternalDetachFromComponent(customNode, component);
+			if (customNode is not null) {
+				InternalDetachFromComponent(customNode, component);
+			}
+			
 			disposeAction?.Invoke();
 		});
 
-	public void DetachNode(NodeBase customNode, Action? disposeAction = null)
+	public void DetachNode(NodeBase? customNode, Action? disposeAction = null)
 		=> Framework.RunOnFrameworkThread(() => {
-			customNode.DetachNode();
+			customNode?.DetachNode();
 			disposeAction?.Invoke();
 		});
 
