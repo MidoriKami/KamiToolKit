@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Dalamud.Plugin.Services;
 using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
@@ -51,4 +52,7 @@ public class SimpleImageNode : ImageNode {
     public string TexturePath {
         set => PartsList[0].LoadTexture(value);
     }
+    
+    public void LoadTexture(string path, ITextureSubstitutionProvider? substitutionProvider)
+        => PartsList[0].LoadTexture(path, substitutionProvider);
 }
