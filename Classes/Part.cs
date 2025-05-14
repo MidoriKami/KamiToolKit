@@ -111,32 +111,11 @@ public unsafe class Part : IDisposable {
     }
 
     /// <summary>
-    /// Loads a game texture via path
-    /// </summary>
-    /// <example1>"ui/icon/065000/65108_hr1.tex"</example1>
-    /// <example2>"ui/uld/ActionBar_hr1.tex"</example2>
-    /// <param name="path">Path to native game resource</param>
-    public void LoadTexture(string path) {
-        var texturePath = path;
-
-        // If we are trying to load a HR texture
-        if (texturePath.Contains("_hr1")) {
-                
-            // But we are not in HR mode
-            if (AtkStage.Instance()->AtkTextureResourceManager->DefaultTextureVersion is 1) {
-                texturePath = texturePath.Replace("_hr1", "");
-            }
-        }
-
-        InternalAsset->AtkTexture.LoadTexture(texturePath);
-    }
-
-    /// <summary>
     /// Loads a game texture via path, but processes it through the substitution provider.
     /// </summary>
     /// <param name="path">The path to the specific tex file that you want</param>
     /// <param name="provider">Dalamud ITextureSubstitutionProvider for resolving the path</param>
-    public void LoadTexture(string path, ITextureSubstitutionProvider provider) {
+    public void LoadTexture(string path, ITextureSubstitutionProvider? provider = null) {
         var texturePath = path;
         
         // If we are trying to load a HR texture
@@ -147,10 +126,12 @@ public unsafe class Part : IDisposable {
                 texturePath = texturePath.Replace("_hr1", "");
             }
         }
+
+        if (provider is not null) {
+            texturePath = provider.GetSubstitutedPath(texturePath);
+        }
         
-        var substitutionPath = provider.GetSubstitutedPath(texturePath);
-        
-        InternalAsset->AtkTexture.LoadTexture(substitutionPath);
+        InternalAsset->AtkTexture.LoadTexture(texturePath);
     }
 
     /// <summary>
