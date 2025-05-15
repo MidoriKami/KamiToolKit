@@ -2,7 +2,6 @@
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
@@ -24,16 +23,21 @@ public unsafe class NativeController : IDisposable {
 		pluginInterface.Inject(Experimental.Instance);
 		GameInteropProvider.InitializeFromAttributes(Experimental.Instance);
 		
+		Experimental.Instance.EnableHooks();
+		
 		// Inject non-Experimental Properties
 		pluginInterface.Inject(DalamudInterface.Instance);
 		GameInteropProvider.InitializeFromAttributes(DalamudInterface.Instance);
 	}
 
-	public void Dispose()
-		=> NodeBase.DisposeAllNodes();
+	public void Dispose() {
+		NodeBase.DisposeAllNodes();
+		
+		Experimental.Instance.DisposeHooks();
+	}
 
-	public void AttachToAddon(NodeBase customNode, AtkUnitBase* addon, AtkResNode* target, NodePosition position)
-		=> Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, addon, target, position));
+	public void AttachToAddon(NodeBase customNode, void* addon, AtkResNode* target, NodePosition position)
+		=> Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, (AtkUnitBase*) addon, target, position));
 
 	/// <summary>
 	/// Warning! Known to be volatile, use at your own risk.
