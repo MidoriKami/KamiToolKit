@@ -9,6 +9,7 @@ internal class DalamudInterface {
 	public static DalamudInterface Instance => instance ??= new DalamudInterface();
 	
 	[PluginService] public IPluginLog Log { get; set; } = null!;
+	[PluginService] public IGameGui GameGui { get; set; } = null!;
 }
 
 internal static class Log {
@@ -18,6 +19,10 @@ internal static class Log {
 
 	internal static void Fatal(string message) {
 		DalamudInterface.Instance.Log.Fatal(message);
+	}
+
+	internal static void Warning(string message) {
+		DalamudInterface.Instance.Log.Warning(message);
 	}
 
 	internal static void Exception(Exception exception) {
