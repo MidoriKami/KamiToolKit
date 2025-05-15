@@ -24,6 +24,7 @@ public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, IC
 		CollisionNode = new CollisionNode {
 			IsVisible = true,
 			NodeID = 1,
+			LinkedComponent = componentBase,
 		};
 
 		CollisionNode.InternalResNode->ParentNode = InternalResNode;
