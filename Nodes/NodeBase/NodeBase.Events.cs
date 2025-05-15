@@ -128,10 +128,6 @@ public abstract unsafe partial class NodeBase {
 			return;
 		}
 
-		if (eventHandlers.Count != 0) {
-			EventTargetNode.AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
-		}
-
 		foreach (var (eventType, handler) in eventHandlers) {
 			handler.EventHandle = EventManager.AddEvent((nint) addon, (nint) EventTargetNode.InternalResNode, eventType, HandleEvents);
 		}
@@ -146,10 +142,6 @@ public abstract unsafe partial class NodeBase {
 			return;
 		}
 		
-		if (eventHandlers.Count != 0) {
-			EventTargetNode.RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
-		}
-
 		foreach (var (_, handler) in eventHandlers) {
 			if (handler.EventHandle is not null) {
 				
