@@ -17,8 +17,8 @@ internal unsafe class Experimental {
 	}
 
 	public void DisposeHooks() {
-		// OnUldManagerUpdateHook?.Dispose();
-		// UpdateUldFromParentHook?.Dispose();
+		OnUldManagerUpdateHook?.Dispose();
+		UpdateUldFromParentHook?.Dispose();
 	}
 
 	public delegate void ExpandNodeListSizeDelegate(AtkUldManager* atkUldManager, int newSize);
