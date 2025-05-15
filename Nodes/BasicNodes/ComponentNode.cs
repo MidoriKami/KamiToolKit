@@ -18,6 +18,8 @@ public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, IC
 	protected ComponentNode() : base((NodeType) 1001) {
 		Component = NativeMemoryHelper.Create<T>();
 		var componentBase = (AtkComponentBase*) Component;
+		
+		Data = NativeMemoryHelper.UiAlloc<TU>();
 
 		componentBase->InitializeAtkUldManager();
 					
