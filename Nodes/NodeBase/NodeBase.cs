@@ -31,6 +31,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     public void Dispose() {
         if (!isDisposed) {
             Log.Debug($"[KamiToolKit] Disposing node {GetType()}");
+            TryDetach();
             Dispose(true);
             GC.SuppressFinalize(this);
 

@@ -49,7 +49,7 @@ public unsafe partial class NodeBase {
 	private void TryAutoDetach() {
 		// Only log a warning if it was actually detached from an active addon
 		if (TryDetach()) {
-			Log.Warning($"{GetType()} was not detached before disposal, failsafe has detached this node from native UI");
+			Log.Warning($"{GetType()} was not detached nor disposed, failsafe has detached this node from native UI");
 		}
 	}
 
