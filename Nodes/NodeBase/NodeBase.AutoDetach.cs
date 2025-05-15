@@ -42,6 +42,7 @@ public unsafe partial class NodeBase {
 		if (!IsAddonPointerValid()) return false;
 
 		NativeController.DetachFromAddon(this, AttachedAddon);
+		IsAttached = false;
 		return true;
 	}
 	
