@@ -25,7 +25,16 @@ public unsafe class TextButton : ButtonBase {
 		get => labelNode.Text;
 		set => labelNode.Text = value;
 	}
-	
+
+	protected override void Dispose(bool disposing) {
+		if (disposing) {
+			labelNode.DetachNode();
+			labelNode.Dispose();
+			
+			base.Dispose(disposing);
+		}
+	}
+
 	public new float Width {
 		get => InternalResNode->Width;
 		set {
