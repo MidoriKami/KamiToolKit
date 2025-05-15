@@ -24,8 +24,8 @@ public unsafe class CircleButton : ButtonBase {
 
 		imageNode.AttachNode(this, NodePosition.AfterAllSiblings);
 
-		CollisionNode.AddEvent(AddonEventType.MouseOver,  OnMouseOver);
-		CollisionNode.AddEvent(AddonEventType.MouseOut,  OnMouseOut);
+		AddEvent(AddonEventType.MouseOver,  OnMouseOver);
+		AddEvent(AddonEventType.MouseOut,  OnMouseOut);
 	}
 
 	protected override void Dispose(bool disposing) {
@@ -33,8 +33,8 @@ public unsafe class CircleButton : ButtonBase {
 			imageNode.DetachNode();
 			imageNode.Dispose();
 			
-			CollisionNode.RemoveEvent(AddonEventType.MouseOver, OnMouseOver);
-			CollisionNode.RemoveEvent(AddonEventType.MouseOut, OnMouseOut);
+			RemoveEvent(AddonEventType.MouseOver, OnMouseOver);
+			RemoveEvent(AddonEventType.MouseOut, OnMouseOut);
 			
 			base.Dispose(disposing);
 		}

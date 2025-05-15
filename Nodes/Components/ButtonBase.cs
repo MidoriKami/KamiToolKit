@@ -32,10 +32,10 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
 		BackgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
 
-		CollisionNode.AddEvent(AddonEventType.MouseOver, OnMouseOver);
-		CollisionNode.AddEvent(AddonEventType.MouseOut, OnMouseOut);
-		CollisionNode.AddEvent(AddonEventType.MouseDown, OnMouseDown);
-		CollisionNode.AddEvent(AddonEventType.MouseUp, OnMouseUp);
+		AddEvent(AddonEventType.MouseOver, OnMouseOver);
+		AddEvent(AddonEventType.MouseOut, OnMouseOut);
+		AddEvent(AddonEventType.MouseDown, OnMouseDown);
+		AddEvent(AddonEventType.MouseUp, OnMouseUp);
 	}
 
 	protected override void Dispose(bool disposing) {
@@ -43,10 +43,10 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 			BackgroundNode.DetachNode();
 			BackgroundNode.Dispose();
 			
-			CollisionNode.RemoveEvent(AddonEventType.MouseOver, OnMouseOver);
-			CollisionNode.RemoveEvent(AddonEventType.MouseOut, OnMouseOut);
-			CollisionNode.RemoveEvent(AddonEventType.MouseDown, OnMouseDown);
-			CollisionNode.RemoveEvent(AddonEventType.MouseUp, OnMouseUp);
+			RemoveEvent(AddonEventType.MouseOver, OnMouseOver);
+			RemoveEvent(AddonEventType.MouseOut, OnMouseOut);
+			RemoveEvent(AddonEventType.MouseDown, OnMouseDown);
+			RemoveEvent(AddonEventType.MouseUp, OnMouseUp);
 
 			NativeMemoryHelper.UiFree(Data);
 			Data = null;
