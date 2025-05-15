@@ -44,6 +44,12 @@ public unsafe class NativeController : IDisposable {
 	public void AttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
 		=> Framework.RunOnFrameworkThread(() => InternalAttachToNode(customNode, other, position));
 
+	public void DetachFromAddon(NodeBase? customNode, nint addon, Action? disposeAction = null)
+		=> DetachFromAddon(customNode, (AtkUnitBase*) addon, disposeAction);
+	
+	public void DetachFromAddon(NodeBase? customNode, void* addon, Action? disposeAction = null)
+		=> DetachFromAddon(customNode, (AtkUnitBase*) addon, disposeAction);
+	
 	public void DetachFromAddon(NodeBase? customNode, AtkUnitBase* addon, Action? disposeAction = null)
 		=> Framework.RunOnFrameworkThread(() => {
 			if (customNode is not null) {
