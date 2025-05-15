@@ -31,15 +31,25 @@ public unsafe partial class NodeBase {
 		IsAttached = false;
 	}
 
-	private void TryAutoDetach() {
-		if (!IsAttached) return;
+	/// <summary>
+	/// Attempts to remove this node from its attached addon
+	/// </summary>
+	public bool TryDetach() {
+		if (!IsAttached) return false;
 		
-		if (NativeController is null) return;
-		if (AttachedAddon is null) return;
-		if (!IsAddonPointerValid()) return;
+		if (NativeController is null) return false;
+		if (AttachedAddon is null) return false;
+		if (!IsAddonPointerValid()) return false;
 
 		NativeController.DetachFromAddon(this, AttachedAddon);
-		Log.Warning($"{GetType()} was not detached before disposal, failsafe has detached this node from native UI");
+		return true;
+	}
+	
+	private void TryAutoDetach() {
+		// Only log a warning if it was actually detached from an active addon
+		if (TryDetach()) {
+			Log.Warning($"{GetType()} was not detached before disposal, failsafe has detached this node from native UI");
+		}
 	}
 
 	private bool IsAddonPointerValid() {
