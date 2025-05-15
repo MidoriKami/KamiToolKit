@@ -1,8 +1,6 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Interface;
-using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -11,9 +9,6 @@ namespace KamiToolKit.Nodes;
 public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
 	protected readonly NineGridNode BackgroundNode;
 	protected abstract NodeBase DecorationNode { get; }
-
-	public Action? OnClick { get; set; }
-	private IAddonEventHandle? OnClickHandle { get; set; }
 
 	private bool buttonHeld;
 
@@ -24,8 +19,6 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		Data = NativeMemoryHelper.UiAlloc<AtkUldComponentDataButton>();
 		Data->Nodes[0] = 2;
 		Data->Nodes[1] = 3;
-		
-		NodeType = (NodeType) 1001;
 		
 		BackgroundNode = new SimpleNineGridNode {
 			TexturePath = "ui/uld/ButtonA_hr1.tex",
@@ -39,11 +32,10 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
 		BackgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
 
-		CollisionNode.MouseOver += OnMouseOver;
-		CollisionNode.MouseOut += OnMouseOut;
-		CollisionNode.MouseDown += OnMouseDown;
-		CollisionNode.MouseUp += OnMouseUp;
-		CollisionNode.MouseClick += OnMouseClick;
+		CollisionNode.AddEvent(AddonEventType.MouseOver, OnMouseOver);
+		CollisionNode.AddEvent(AddonEventType.MouseOut, OnMouseOut);
+		CollisionNode.AddEvent(AddonEventType.MouseDown, OnMouseDown);
+		CollisionNode.AddEvent(AddonEventType.MouseUp, OnMouseUp);
 	}
 
 	protected override void Dispose(bool disposing) {
@@ -51,11 +43,10 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 			BackgroundNode.DetachNode();
 			BackgroundNode.Dispose();
 			
-			CollisionNode.MouseOver -= OnMouseOver;
-			CollisionNode.MouseOut -= OnMouseOut;
-			CollisionNode.MouseDown -= OnMouseDown;
-			CollisionNode.MouseUp -= OnMouseUp;
-			CollisionNode.MouseClick -= OnMouseClick;
+			CollisionNode.RemoveEvent(AddonEventType.MouseOver, OnMouseOver);
+			CollisionNode.RemoveEvent(AddonEventType.MouseOut, OnMouseOut);
+			CollisionNode.RemoveEvent(AddonEventType.MouseDown, OnMouseDown);
+			CollisionNode.RemoveEvent(AddonEventType.MouseUp, OnMouseUp);
 
 			NativeMemoryHelper.UiFree(Data);
 			Data = null;
@@ -64,33 +55,6 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		}
 	}
 	
-	private void OnMouseClick() {
-		OnClick?.Invoke();
-	}
-
-	public override void EnableEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
-		base.EnableEvents(eventManager, addon);
-
-		eventManager.AddEvent((nint) addon, (nint) EventTargetNode.InternalResNode, AddonEventType.ButtonClick, OnClickHandler);
-	}
-
-	private void OnClickHandler(AddonEventType atkEventType, IntPtr atkUnitBase, IntPtr atkResNode) {
-		if (!IsVisible) return;
-		
-		if (atkEventType is AddonEventType.ButtonClick) {
-			OnClick?.Invoke();
-		}
-	}
-
-	public override void DisableEvents(IAddonEventManager eventManager) {
-		base.DisableEvents(eventManager);
-		CollisionNode.DisableEvents(eventManager);
-
-		if (OnClickHandle is not null) {
-			eventManager.RemoveEvent(OnClickHandle);
-		}
-	}
-
 	private void OnMouseDown() {
 		if (!buttonHeld) {
 			BackgroundNode.Position += new Vector2(0.0f, 1.0f);

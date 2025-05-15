@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Dalamud.Game.Addon.Events;
 using Dalamud.Interface;
 using KamiToolKit.Classes;
 
@@ -23,8 +24,8 @@ public unsafe class CircleButton : ButtonBase {
 
 		imageNode.AttachNode(this, NodePosition.AfterAllSiblings);
 
-		CollisionNode.MouseOver += OnMouseOver;
-		CollisionNode.MouseOut += OnMouseOut;
+		CollisionNode.AddEvent(AddonEventType.MouseOver,  OnMouseOver);
+		CollisionNode.AddEvent(AddonEventType.MouseOut,  OnMouseOut);
 	}
 
 	protected override void Dispose(bool disposing) {
@@ -32,8 +33,8 @@ public unsafe class CircleButton : ButtonBase {
 			imageNode.DetachNode();
 			imageNode.Dispose();
 			
-			CollisionNode.MouseOver -= OnMouseOver;
-			CollisionNode.MouseOut -= OnMouseOut;
+			CollisionNode.RemoveEvent(AddonEventType.MouseOver, OnMouseOver);
+			CollisionNode.RemoveEvent(AddonEventType.MouseOut, OnMouseOut);
 			
 			base.Dispose(disposing);
 		}
