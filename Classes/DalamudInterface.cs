@@ -1,24 +1,26 @@
-﻿using Dalamud.Interface;
+﻿using System;
 using Dalamud.IoC;
-using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
 namespace KamiToolKit.Classes;
 
-internal unsafe class DalamudInterface {
+internal class DalamudInterface {
 	private static DalamudInterface? instance;
 	public static DalamudInterface Instance => instance ??= new DalamudInterface();
 	
 	[PluginService] public IPluginLog Log { get; set; } = null!;
-	
-	[PluginService] public IDalamudPluginInterface PluginInterface { get; set; } = null!;
-
-	public IUiBuilder UiBuilder => PluginInterface.UiBuilder;
-
 }
 
 internal static class Log {
 	internal static void Debug(string message) {
 		DalamudInterface.Instance.Log.Debug(message);
+	}
+
+	internal static void Fatal(string message) {
+		DalamudInterface.Instance.Log.Fatal(message);
+	}
+
+	internal static void Exception(Exception exception) {
+		DalamudInterface.Instance.Log.Error(exception, "Shit broke yo.");
 	}
 }
