@@ -76,6 +76,8 @@ public unsafe class NativeController : IDisposable {
 		=> customNode.AttachNode(other, position);
 
 	private void InternalDetachFromAddon(NodeBase customNode, AtkUnitBase* addon) {
+		customNode.TryUnregisterAutoDetach();
+		
 		customNode.DisableEvents(AddonEventManager);
 		customNode.DetachNode();
 			
