@@ -15,7 +15,7 @@ public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, IC
 	internal override AtkComponentBase* ComponentBase => (AtkComponentBase*) Component;
 	internal override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*) Data;
 	
-	protected ComponentNode() : base((NodeType) 1000) {
+	protected ComponentNode() : base((NodeType) 1001) {
 		Component = NativeMemoryHelper.Create<T>();
 		var componentBase = (AtkComponentBase*) Component;
 
