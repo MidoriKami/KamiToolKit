@@ -159,6 +159,20 @@ public abstract unsafe partial class NodeBase {
 		}
 	}
 
+	/// <summary>
+	/// Sets EmitsEvents, HasCollision, and RespondToMouse flags for the EventTarget node to allow it to be interactable.
+	/// </summary>
+	public void SetNodeEventFlags() {
+		AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
+	}
+
+	/// <summary>
+	/// Clears EmitsEvents, HasCollision, and RespondToMouse flags, for the EventTarget node to disable it stealing inputs
+	/// </summary>
+	public void ClearNodeEventFlags() {
+		RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
+	}
+
 	protected void SetCursor(AddonCursorType cursor) {
 		EventManager?.SetCursor(cursor);
 	}
