@@ -59,6 +59,11 @@ public unsafe partial class NodeBase {
 		var currentPointer = (AtkUnitBase*) DalamudInterface.Instance.GameGui.GetAddonByName(AttachedAddonName);
 		if (currentPointer is null) return false;
 
-		return currentPointer == AddonPointer;
+		if (currentPointer != AttachedAddon) {
+			Log.Debug($"{GetType()} Stored AddonPointer ({(nint)AttachedAddon:X}) doesn't match CurrentAddon ({(nint)currentPointer:X}) Pointer. {AttachedAddonName}");
+			return false;
+		}
+
+		return true;
 	}
 }
