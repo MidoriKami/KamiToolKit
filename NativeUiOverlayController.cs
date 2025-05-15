@@ -46,8 +46,7 @@ public abstract unsafe class NativeUiOverlayController : IDisposable {
 	/// Disable this overlay controller, unregisters listeners, and if the NamePlate addon is loaded, calls DetachNodes.
 	/// </summary>
 	public void Disable() {
-		AddonLifecycle.UnregisterListener(OnNamePlateSetup);
-		AddonLifecycle.UnregisterListener(OnNamePlateFinalize);
+		AddonLifecycle.UnregisterListener(OnNamePlateSetup, OnNamePlateFinalize);
 
 		if (AddonNamePlate is not null) {
 			DetachFromNative(AddonNamePlate);
