@@ -31,19 +31,13 @@ public unsafe class NativeController : IDisposable {
 	}
 
 	public void Dispose() {
-		NodeBase.DisposeAllNodes();
+		NodeBase.DetachAndDispose();
 		
 		Experimental.Instance.DisposeHooks();
 	}
 
 	public void AttachToAddon(NodeBase customNode, void* addon, AtkResNode* target, NodePosition position)
 		=> Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, (AtkUnitBase*) addon, target, position));
-
-	/// <summary>
-	/// Warning! Known to be volatile, use at your own risk.
-	/// </summary>
-	public void AttachToComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component, AtkResNode* target, NodePosition position)
-		=> Framework.RunOnFrameworkThread(() => InternalAttachToComponent(customNode, addon, component, target, position));
 
 	public void AttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
 		=> Framework.RunOnFrameworkThread(() => InternalAttachToNode(customNode, other, position));
@@ -63,41 +57,22 @@ public unsafe class NativeController : IDisposable {
 			disposeAction?.Invoke();
 		});
 
-	/// <summary>
-	/// Warning! Known to be volatile, use at your own risk.
-	/// </summary>
-	public void DetachFromComponent(NodeBase? customNode, AtkUnitBase* addon, AtkComponentBase* component, Action? disposeAction = null)
-		=> Framework.RunOnFrameworkThread(() => {
-			if (customNode is not null) {
-				InternalDetachFromComponent(customNode, component);
-			}
-			
-			disposeAction?.Invoke();
-		});
-
 	public void DetachNode(NodeBase? customNode, Action? disposeAction = null)
 		=> Framework.RunOnFrameworkThread(() => {
 			customNode?.DetachNode();
 			disposeAction?.Invoke();
 		});
 
-	public void UpdateEvents(NodeBase node, AtkUnitBase* addon)
-		=> Framework.RunOnFrameworkThread(() => UpdateEventsTask(node, addon));
-
 	private void InternalAttachToAddon(NodeBase customNode, AtkUnitBase* addon, AtkResNode* target, NodePosition position) {
+		customNode.TryRegisterAutoDetach(this, addon);
+
 		NodeLinker.AttachNode(customNode.InternalResNode, target, position);
 		customNode.EnableEvents(AddonEventManager, addon);
 		addon->UldManager.UpdateDrawNodeList();
 		addon->UpdateCollisionNodeList(false);
 	}
-
-	private void InternalAttachToComponent(NodeBase customNode, AtkUnitBase* addon, AtkComponentBase* component, AtkResNode* target, NodePosition position) {
-		NodeLinker.AttachNode(customNode.InternalResNode, target, position);
-		customNode.EnableEvents(AddonEventManager, addon);
-		component->UldManager.UpdateDrawNodeList();
-	}
 	
-	private void InternalAttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
+	private static void InternalAttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
 		=> customNode.AttachNode(other, position);
 
 	private void InternalDetachFromAddon(NodeBase customNode, AtkUnitBase* addon) {
@@ -105,18 +80,6 @@ public unsafe class NativeController : IDisposable {
 		customNode.DetachNode();
 			
 		addon->UldManager.UpdateDrawNodeList();
-		addon->UpdateCollisionNodeList(false);
-	}
-
-	private void InternalDetachFromComponent(NodeBase customNode, AtkComponentBase* component) {
-		customNode.DisableEvents(AddonEventManager);
-		customNode.DetachNode();
-
-		component->UldManager.UpdateDrawNodeList();
-	}
-
-	private void UpdateEventsTask(NodeBase node, AtkUnitBase* addon) {
-		node.EnableEvents(AddonEventManager, addon);
 		addon->UpdateCollisionNodeList(false);
 	}
 }

@@ -7,7 +7,7 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.Nodes;
 
 public abstract unsafe partial class NodeBase : IDisposable {
-    protected static readonly List<IDisposable> CreatedNodes = [];
+    protected static readonly List<NodeBase> CreatedNodes = [];
 
     private bool isDisposed;
 
@@ -17,8 +17,9 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// Warning, this is only to ensure there are no memory leaks.
     /// Ensure you have detached nodes safely from native ui before disposing.
     /// </summary>
-    internal static void DisposeAllNodes() {
+    internal static void DetachAndDispose() {
         foreach (var node in CreatedNodes.ToArray()) {
+            node.TryAutoDetach();
             node.Dispose();
         }
     }
