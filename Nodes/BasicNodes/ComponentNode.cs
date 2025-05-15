@@ -18,6 +18,8 @@ public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, IC
 	protected ComponentNode() : base((NodeType) 1001) {
 		Component = NativeMemoryHelper.Create<T>();
 		var componentBase = (AtkComponentBase*) Component;
+		
+		Data = NativeMemoryHelper.UiAlloc<TU>();
 
 		componentBase->InitializeAtkUldManager();
 					
@@ -25,6 +27,7 @@ public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, IC
 			IsVisible = true,
 			NodeID = 1,
 			LinkedComponent = componentBase,
+			NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents,
 		};
 
 		CollisionNode.InternalResNode->ParentNode = InternalResNode;
@@ -48,6 +51,9 @@ public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, IC
 		uldManager.UpdateDrawNodeList();
 		uldManager.Flags1 = 1;
 		uldManager.LoadedState = AtkLoadState.Loaded;
+		
+		componentBase->RegisterEvents();
+		componentBase->SetEnabledState(true);
 	}
 
 	internal T* Component {

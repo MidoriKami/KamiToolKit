@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
@@ -14,11 +16,13 @@ internal unsafe class Experimental {
 	public void EnableHooks() {
 		// OnUldManagerUpdateHook?.Enable();
 		// UpdateUldFromParentHook?.Enable();
+		// ButtonReceiveEventHook?.Enable();
 	}
 
 	public void DisposeHooks() {
 		OnUldManagerUpdateHook?.Dispose();
 		UpdateUldFromParentHook?.Dispose();
+		ButtonReceiveEventHook?.Dispose();
 	}
 
 	public delegate void ExpandNodeListSizeDelegate(AtkUldManager* atkUldManager, int newSize);
@@ -81,6 +85,30 @@ internal unsafe class Experimental {
 		
 		UpdateUldFromParentHook!.Original(atkUldManager, atkResNode, a3, a4);
 	}
+	
+	public delegate void AtkComponentButtonReceiveEventDelegate(AtkComponentButton* atkComponentButton, AtkEventType eventType, int param, AtkEvent* eventPointer, AtkEventData* eventData);
+	
+	[Signature("E8 ?? ?? ?? ?? 48 8B BE ?? ?? ?? ?? 48 85 FF 74 11", DetourName = nameof(ButtonReceiveEvent))]
+	public Hook<AtkComponentButtonReceiveEventDelegate>? ButtonReceiveEventHook = null;
+	
+	internal List<nint> TrackedComponents = [];
+	public void ButtonReceiveEvent(AtkComponentButton* atkComponentButton, AtkEventType eventType, int param, AtkEvent* eventPointer, AtkEventData* eventData) {
+		ButtonReceiveEventHook!.Original(atkComponentButton, eventType, param, eventPointer, eventData);
+
+		try {
+			if (TrackedComponents.Contains((nint) atkComponentButton)) {
+				Log.Debug("Event Received");
+			}
+			else {
+				var parsedComponents = string.Join(", ", TrackedComponents.Select(component => $"{component:X}"));
+
+				Log.Debug($"Event Received, but not matched: Actual: {(nint) atkComponentButton:X}, Desired: {parsedComponents}");
+			}
+		}
+		catch (Exception e) {
+			Log.Exception(e);
+		}
+	}
 }
 
 // vf3  - [InitializeAtkUldManager] Initialize function, sets AtkUldManager fields to zero (mostly)
@@ -94,6 +122,8 @@ internal unsafe class Experimental {
 // vf15 - Iterates DuplicateObjectList and calls some function on each node
 // vf16 - (No base implementation)
 // vf18 - Some kind of collision check, returns AtkCollisionNode
+// vf22 - [Button] Seems to center the text inside the button
+// vf23 - [Button] Also seems to do the same, but slightly different
 internal static unsafe class AtkComponentBaseExtensions {
 	public static void RegisterEvents(ref this AtkComponentBase atkComponentBase) {
 		var ptr = (AtkComponentBase*) Unsafe.AsPointer(ref atkComponentBase);
@@ -111,5 +141,17 @@ internal static unsafe class AtkComponentBaseExtensions {
 		var ptr = (AtkComponentBase*) Unsafe.AsPointer(ref atkComponentBase);
 		
 		((delegate* unmanaged<AtkComponentBase*, void>) (*(nint**) ptr)[4])(ptr);
+	}
+
+	public static void InitializeFromComponentData(ref this AtkComponentBase atkComponentBase, AtkUldComponentDataBase* atkUldComponentData) {
+		var ptr = (AtkComponentBase*) Unsafe.AsPointer(ref atkComponentBase);
+		
+		((delegate* unmanaged<AtkComponentBase*, AtkUldComponentDataBase*, void>) (*(nint**) ptr)[17])(ptr, atkUldComponentData);
+	}
+	
+	public static void UpdateComponentLayout(ref this AtkComponentBase atkComponentBase) {
+		var ptr = (AtkComponentBase*) Unsafe.AsPointer(ref atkComponentBase);
+		
+		((delegate* unmanaged<AtkComponentBase*, void>) (*(nint**) ptr)[22])(ptr);
 	}
 }

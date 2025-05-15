@@ -16,11 +16,6 @@ public abstract unsafe partial class NodeBase {
 		=> eventHandlers.ContainsKey(eventType);
 	
 	public void AddEvent(AddonEventType eventType, Action action) {
-		if (this != EventTargetNode) {
-			EventTargetNode.AddEvent(eventType, action);
-			return;
-		}
-		
 		// Check if this eventType is already registered
 		if (eventHandlers.TryGetValue(eventType, out var handler)) {
 			handler.EventAction += action;
@@ -31,7 +26,7 @@ public abstract unsafe partial class NodeBase {
 			});
 			
 			if (EventsActive) {
-				handler.EventHandle ??= EventManager.AddEvent((nint) AddonPointer, (nint) EventTargetNode.InternalResNode, eventType, HandleEvents);
+				handler.EventHandle ??= EventManager.AddEvent((nint) AddonPointer, (nint) InternalResNode, eventType, HandleEvents);
 			}
 			
 			// If we have added a click event, we need to also make the cursor change when hovering this node
@@ -44,11 +39,6 @@ public abstract unsafe partial class NodeBase {
 	}
 
 	public void RemoveEvent(AddonEventType eventType, Action action) {
-		if (this != EventTargetNode) {
-			EventTargetNode.RemoveEvent(eventType, action);
-			return;
-		}
-		
 		if (eventHandlers.TryGetValue(eventType, out var handler)) {
 			if (handler.EventAction is not null) {
 				handler.EventAction -= action;
@@ -116,39 +106,19 @@ public abstract unsafe partial class NodeBase {
 	private bool TooltipRegistered { get; set; }
 	private bool CursorEventsSet { get; set; }
 
-	protected virtual NodeBase EventTargetNode => this;
-
 	public virtual void EnableEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
 		EventManager ??= eventManager;
 		AddonPointer = addon;
 		EventsActive = true;
 
-		if (this != EventTargetNode) {
-			EventTargetNode.EnableEvents(eventManager, addon);
-			return;
-		}
-
-		if (eventHandlers.Count != 0) {
-			EventTargetNode.AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
-		}
-
 		foreach (var (eventType, handler) in eventHandlers) {
-			handler.EventHandle = EventManager.AddEvent((nint) addon, (nint) EventTargetNode.InternalResNode, eventType, HandleEvents);
+			handler.EventHandle = EventManager.AddEvent((nint) addon, (nint) InternalResNode, eventType, HandleEvents);
 		}
 	}
 	
 	public virtual void DisableEvents(IAddonEventManager eventManager) {
 		AddonPointer = null;
 		EventsActive = false;
-
-		if (this != EventTargetNode) {
-			EventTargetNode.DisableEvents(eventManager);
-			return;
-		}
-		
-		if (eventHandlers.Count != 0) {
-			EventTargetNode.RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
-		}
 
 		foreach (var (_, handler) in eventHandlers) {
 			if (handler.EventHandle is not null) {
@@ -157,6 +127,20 @@ public abstract unsafe partial class NodeBase {
 				handler.EventHandle = null;
 			}
 		}
+	}
+
+	/// <summary>
+	/// Sets EmitsEvents, HasCollision, and RespondToMouse flags for the EventTarget node to allow it to be interactable.
+	/// </summary>
+	public void SetNodeEventFlags() {
+		AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
+	}
+
+	/// <summary>
+	/// Clears EmitsEvents, HasCollision, and RespondToMouse flags, for the EventTarget node to disable it stealing inputs
+	/// </summary>
+	public void ClearNodeEventFlags() {
+		RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
 	}
 
 	protected void SetCursor(AddonCursorType cursor) {
@@ -169,7 +153,7 @@ public abstract unsafe partial class NodeBase {
 
 	private void ShowTooltip() {
 		if (Tooltip is not null) {
-			AtkStage.Instance()->TooltipManager.ShowTooltip(AddonPointer->Id, EventTargetNode.InternalResNode, Tooltip.Encode());
+			AtkStage.Instance()->TooltipManager.ShowTooltip(AddonPointer->Id, InternalResNode, Tooltip.Encode());
 		}
 	}
 

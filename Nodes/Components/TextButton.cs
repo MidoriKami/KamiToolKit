@@ -11,6 +11,8 @@ public unsafe class TextButton : ButtonBase {
 	private readonly TextNode labelNode;
 
 	public TextButton() {
+		Data->Nodes[0] = 3;
+
 		labelNode = new TextNode {
 			IsVisible = true,
 			AlignmentType = AlignmentType.Center,
@@ -19,6 +21,8 @@ public unsafe class TextButton : ButtonBase {
 		};
 		
 		labelNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		
+		Component->AtkComponentBase.InitializeFromComponentData(&Data->AtkUldComponentDataBase);
 	}
 
 	public SeString Label {
