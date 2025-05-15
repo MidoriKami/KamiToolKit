@@ -29,6 +29,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     public void Dispose() {
         if (!isDisposed) {
+            Log.Debug($"[KamiToolKit] Disposing node {GetType()}");
             Dispose(true);
             GC.SuppressFinalize(this);
 
@@ -45,6 +46,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
     internal override sealed AtkResNode* InternalResNode => (AtkResNode*) InternalNode;
 
     protected NodeBase(NodeType nodeType) {
+        Log.Debug($"[KamiToolKit] Creating new node {GetType()}");
         InternalNode = NativeMemoryHelper.Create<T>();
         InternalResNode->Type = nodeType;
 
