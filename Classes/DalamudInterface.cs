@@ -10,6 +10,7 @@ internal class DalamudInterface {
 	
 	[PluginService] public IPluginLog Log { get; set; } = null!;
 	[PluginService] public IGameGui GameGui { get; set; } = null!;
+	[PluginService] public IAddonLifecycle AddonLifecycle { get; set; } = null!;
 }
 
 internal static class Log {
