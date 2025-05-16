@@ -66,17 +66,5 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
         set => InternalNode->BlendMode = value;
     }
 
-    public PartsRenderType PartsRenderType {
-        get => (PartsRenderType) InternalNode->PartsTypeRenderType;
-        set => InternalNode->PartsTypeRenderType = (byte) value;
     }
-}
-
-public enum PartsRenderType {
-    PartsType = 2,
-    RenderType = 4,
-    
-    /// Used in PartyList to draw the selected party member outline
-    /// This is clearly multiple flags at once, but each flag itself is unknown in function
-    Unknown = 108,
 }

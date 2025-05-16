@@ -19,7 +19,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         NumberWidth = 10;
         CommaWidth = 8;
         SpaceWidth = 6;
-        TextAlignment = TextAlignment.Unknown;
+        TextAlignment = 5;
         CounterWidth = 32;
     }
 
@@ -70,8 +70,4 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         get => InternalNode->NodeText.ToString();
         set => InternalNode->SetText($"{int.Parse(value):n0}");
     }
-}
-
-public enum TextAlignment {
-    Unknown = 5,
 }

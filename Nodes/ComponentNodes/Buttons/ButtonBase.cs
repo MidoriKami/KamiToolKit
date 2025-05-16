@@ -24,8 +24,8 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 			TextureSize = new Vector2(100.0f, 28.0f),
 			LeftOffset = 16.0f,
 			RightOffset = 16.0f,
-			PartsRenderType = (PartsRenderType)88,
-			NodeID = 2,
+			PartsRenderType = 88,
+			NodeId = 2,
 		};
 
 		BackgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);

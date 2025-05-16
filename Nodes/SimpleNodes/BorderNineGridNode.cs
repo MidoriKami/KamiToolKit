@@ -22,7 +22,6 @@ public class BorderNineGridNode : NineGridNode {
         LeftOffset = 20;
         RightOffset = 20;
         BottomOffset = 20;
-
-        PartsRenderType = PartsRenderType.Unknown;
+        PartsRenderType = 108;
     }
 }
