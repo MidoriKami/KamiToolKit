@@ -25,6 +25,10 @@ internal static class Log {
 		DalamudInterface.Instance.Log.Warning(message);
 	}
 
+	internal static void Verbose(string message) {
+		DalamudInterface.Instance.Log.Verbose(message);
+	}
+
 	internal static void Exception(Exception exception) {
 		DalamudInterface.Instance.Log.Error(exception, "Shit broke yo.");
 	}
