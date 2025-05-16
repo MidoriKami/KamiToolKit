@@ -68,6 +68,7 @@ public unsafe class NativeController : IDisposable {
 
 		NodeLinker.AttachNode(customNode.InternalResNode, target, position);
 		customNode.EnableEvents(AddonEventManager, addon);
+
 		addon->UldManager.UpdateDrawNodeList();
 		addon->UpdateCollisionNodeList(false);
 	}
