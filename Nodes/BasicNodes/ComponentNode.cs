@@ -1,6 +1,7 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;
 

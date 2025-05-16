@@ -6,7 +6,7 @@ using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
 
@@ -106,6 +106,20 @@ public abstract unsafe partial class NodeBase {
 	private bool TooltipRegistered { get; set; }
 	private bool CursorEventsSet { get; set; }
 
+	public bool EventFlagsSet {
+		get => NodeFlags.HasFlag(NodeFlags.EmitsEvents) &&
+		       NodeFlags.HasFlag(NodeFlags.HasCollision) &&
+		       NodeFlags.HasFlag(NodeFlags.RespondToMouse);
+		set {
+			if (value) {
+				SetEventFlags();
+			}
+			else {
+				ClearEventFlags();
+			}
+		}
+	}
+
 	public virtual void EnableEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
 		EventManager ??= eventManager;
 		AddonPointer = addon;
@@ -119,7 +133,7 @@ public abstract unsafe partial class NodeBase {
 	public virtual void DisableEvents(IAddonEventManager eventManager) {
 		AddonPointer = null;
 		EventsActive = false;
-
+		
 		foreach (var (_, handler) in eventHandlers) {
 			if (handler.EventHandle is not null) {
 				
@@ -132,14 +146,14 @@ public abstract unsafe partial class NodeBase {
 	/// <summary>
 	/// Sets EmitsEvents, HasCollision, and RespondToMouse flags for the EventTarget node to allow it to be interactable.
 	/// </summary>
-	public void SetNodeEventFlags() {
+	public void SetEventFlags() {
 		AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
 	}
 
 	/// <summary>
 	/// Clears EmitsEvents, HasCollision, and RespondToMouse flags, for the EventTarget node to disable it stealing inputs
 	/// </summary>
-	public void ClearNodeEventFlags() {
+	public void ClearEventFlags() {
 		RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
 	}
 

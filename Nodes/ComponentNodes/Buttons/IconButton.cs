@@ -1,7 +1,8 @@
 ﻿using System.Numerics;
 using KamiToolKit.Classes;
+using KamiToolKit.System;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.Nodes.ComponentNodes;
 
 /// <summary>
 /// Uses a GameIconId to display that icon as the decorator for the button.

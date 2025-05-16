@@ -2,8 +2,9 @@
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.System;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.Nodes.ComponentNodes;
 
 public unsafe class TextButton : ButtonBase {
 

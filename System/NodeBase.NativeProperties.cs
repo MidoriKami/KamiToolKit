@@ -2,9 +2,8 @@
 using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
-using KamiToolKit.Nodes.NodeStyles;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
      public float X {
@@ -178,17 +177,5 @@ public abstract unsafe partial class NodeBase {
     public NodeType NodeType {
         get => InternalResNode->Type;
         set => InternalResNode->Type = value;
-    }
-
-    public virtual void SetStyle(NodeBaseStyle style) {
-        Position = style.Position;
-        Size = style.Size;
-        Scale = style.Scale;
-        NodeFlags = style.NodeFlags;
-        IsVisible = style.IsVisible;
-        Color = style.Color;
-        AddColor = style.AddColor;
-        MultiplyColor = style.MultiplyColor;
-        Margin = new Spacing(style.Margin.X, style.Margin.Y, style.Margin.Z, style.Margin.W);
     }
 }

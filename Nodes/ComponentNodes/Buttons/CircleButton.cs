@@ -2,8 +2,9 @@
 using Dalamud.Game.Addon.Events;
 using Dalamud.Interface;
 using KamiToolKit.Classes;
+using KamiToolKit.System;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.Nodes.ComponentNodes;
 
 public unsafe class CircleButton : ButtonBase {
 	protected override NodeBase DecorationNode => imageNode;
@@ -18,7 +19,7 @@ public unsafe class CircleButton : ButtonBase {
 			TextureSize = new Vector2(24.0f, 24.0f),
 			TextureCoordinates = new Vector2(0.0f, 112.0f),
 			IsVisible = true,
-			WrapMode = (WrapMode) 2,
+			WrapMode = 2,
 			ImageNodeFlags = 0,
 		};
 

@@ -12,15 +12,7 @@ public enum NodePosition {
     AsFirstChild,
 }
 
-public static unsafe class NodeLinker {
-    /// <summary>
-    /// Attaches a node that may or may not be attached to an addon.
-    /// This method will not update the parent addon to notify it has a new node, if one exists.
-    /// </summary>
-    /// <param name="node"></param>
-    /// <param name="attachTargetNode"></param>
-    /// <param name="position"></param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+internal static unsafe class NodeLinker {
     internal static void AttachNode(AtkResNode* node, AtkResNode* attachTargetNode, NodePosition position) {
         switch (position) {
             case NodePosition.BeforeTarget:

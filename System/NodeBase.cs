@@ -4,7 +4,7 @@ using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase : IDisposable {
     protected static readonly List<NodeBase> CreatedNodes = [];
@@ -32,6 +32,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         if (!isDisposed) {
             Log.Debug($"[KamiToolKit] Disposing node {GetType()}");
             TryDetach();
+            
             Dispose(true);
             GC.SuppressFinalize(this);
 

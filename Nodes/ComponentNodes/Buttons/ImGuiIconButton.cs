@@ -2,8 +2,9 @@
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Plugin.Services;
 using KamiToolKit.Classes;
+using KamiToolKit.System;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.Nodes.ComponentNodes;
 
 public class ImGuiIconButton : ButtonBase {
 	protected override NodeBase DecorationNode => imageNode;

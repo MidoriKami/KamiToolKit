@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.System;
 
 public record Spacing(float Top, float Left, float Right, float Bottom) {
     public Spacing(float allSides) : this(allSides, allSides, allSides, allSides) { }

@@ -1,6 +1,6 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Nodes.NodeStyles;
+using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;
 
@@ -69,16 +69,6 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
     public string Text {
         get => InternalNode->NodeText.ToString();
         set => InternalNode->SetText($"{int.Parse(value):n0}");
-    }
-
-    public void SetStyle(CounterNodeStyle style) {
-        SetStyle(style as NodeBaseStyle);
-
-        NumberWidth = (uint) style.NumberWidth;
-        CommaWidth = (uint) style.CommaWidth;
-        SpaceWidth = (uint) style.SpaceWidth;
-        CounterWidth = (uint) style.CounterWidth;
-        TextAlignment = style.TextAlignment;
     }
 }
 

@@ -1,6 +1,6 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Nodes.NodeStyles;
+using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;
 
@@ -10,7 +10,7 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
     public ImageNode() : base(NodeType.Image) {
         PartsList = new PartsList();
 
-        WrapMode = WrapMode.Unknown;
+        WrapMode = 1;
         ImageNodeFlags = ImageNodeFlags.AutoFit;
 
         InternalNode->DrawFlags = 0x100;
@@ -30,9 +30,9 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         set => InternalNode->PartId = (ushort) value;
     }
 
-    public WrapMode WrapMode {
-        get => (WrapMode)InternalNode->WrapMode;
-        set => InternalNode->WrapMode = (byte) value;
+    public byte WrapMode {
+        get => InternalNode->WrapMode;
+        set => InternalNode->WrapMode = value;
     } 
 
     public ImageNodeFlags ImageNodeFlags {
@@ -43,15 +43,4 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
     // The image node will take ownership of any parts added, be sure not to share parts between nodes
     public void AddPart(Part part)
         => PartsList.Add(part);
-
-    public void SetStyle(ImageNodeStyle style) {
-        SetStyle(style as NodeBaseStyle);
-
-        WrapMode = style.WrapMode;
-        ImageNodeFlags = style.ImageNodeFlags;
-    }
-}
-
-public enum WrapMode {
-    Unknown = 1,
 }

@@ -3,7 +3,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Nodes.NodeStyles;
+using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;
 
@@ -117,12 +117,5 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
     public Vector4 BarColor {
         get => progressNode.Color;
         set => progressNode.Color = value;
-    }
-
-    public void SetStyle(ProgressBarNodeStyle style) {
-        SetStyle(style as NodeBaseStyle);
-
-        BackgroundColor = style.BackgroundColor;
-        BarColor = style.BarColor;
     }
 }

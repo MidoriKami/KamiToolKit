@@ -4,8 +4,9 @@ using Dalamud.Interface;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.System;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.Nodes.ComponentNodes;
 
 public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
 	protected readonly NineGridNode BackgroundNode;

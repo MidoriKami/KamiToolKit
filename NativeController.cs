@@ -4,7 +4,7 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Nodes;
+using KamiToolKit.System;
 
 namespace KamiToolKit;
 

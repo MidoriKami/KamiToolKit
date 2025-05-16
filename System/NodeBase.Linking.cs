@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
     internal void AttachNode(NodeBase target, NodePosition position) {
