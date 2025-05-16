@@ -144,26 +144,6 @@ public abstract unsafe partial class NodeBase {
         get => InternalResNode->ChildCount;
         private set => InternalResNode->ChildCount = (ushort)value;
     }
-
-    private AtkResNode* ParentNode {
-        get => InternalResNode->ParentNode;
-        set => InternalResNode->ParentNode = value;
-    }
-    
-    private AtkResNode* PrevSiblingNode {
-        get => InternalResNode->PrevSiblingNode;
-        set => InternalResNode->PrevSiblingNode = value;
-    }
-    
-    private AtkResNode* NextSiblingNode {
-        get => InternalResNode->NextSiblingNode;
-        set => InternalResNode->NextSiblingNode = value;
-    }
-    
-    private AtkResNode* ChildNode {
-        get => InternalResNode->ChildNode;
-        set => InternalResNode->ChildNode = value;
-    }
     
     [JsonIgnore] public uint NodeId {
         get => InternalResNode->NodeId;
