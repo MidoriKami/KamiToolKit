@@ -12,7 +12,7 @@ namespace KamiToolKit.Classes;
 /// </summary>
 public unsafe class Part : IDisposable {
     internal AtkUldPart* InternalPart;
-    internal AtkUldAsset* InternalAsset;
+    private AtkUldAsset* internalAsset;
  
     private bool customTextureLoaded;
     
@@ -27,27 +27,27 @@ public unsafe class Part : IDisposable {
         InternalPart->U = 0;
         InternalPart->V = 0;
 
-        InternalAsset = NativeMemoryHelper.UiAlloc<AtkUldAsset>();
+        internalAsset = NativeMemoryHelper.UiAlloc<AtkUldAsset>();
 
-        InternalAsset->Id = 0;
-        InternalAsset->AtkTexture.Ctor();
+        internalAsset->Id = 0;
+        internalAsset->AtkTexture.Ctor();
         
-        InternalPart->UldAsset = InternalAsset;
+        InternalPart->UldAsset = internalAsset;
     }
 
     public void Dispose() {
         if (!isDisposed) {
             if (customTextureLoaded) {
-                InternalAsset->AtkTexture.KernelTexture->DecRef();
-                InternalAsset->AtkTexture.Destroy(false);
+                internalAsset->AtkTexture.KernelTexture->DecRef();
+                internalAsset->AtkTexture.Destroy(false);
             }
             else {
-                InternalAsset->AtkTexture.ReleaseTexture();
-                InternalAsset->AtkTexture.Destroy(true);
+                internalAsset->AtkTexture.ReleaseTexture();
+                internalAsset->AtkTexture.Destroy(true);
             }
 
-            NativeMemoryHelper.UiFree(InternalAsset);
-            InternalAsset = null;
+            NativeMemoryHelper.UiFree(internalAsset);
+            internalAsset = null;
 
             if (!IsAttached) {
                 NativeMemoryHelper.UiFree(InternalPart);
@@ -95,8 +95,8 @@ public unsafe class Part : IDisposable {
     }
 
     public uint Id {
-        get => InternalAsset->Id;
-        set => InternalAsset->Id = value;
+        get => internalAsset->Id;
+        set => internalAsset->Id = value;
     }
     
     /// <summary>
@@ -104,10 +104,10 @@ public unsafe class Part : IDisposable {
     /// </summary>
     /// <returns>IconId or null</returns>
     public uint? GetLoadedIconId() {
-        if (!InternalAsset->AtkTexture.IsTextureReady()) return null;
-        if (InternalAsset->AtkTexture.Resource is null) return null;
+        if (!internalAsset->AtkTexture.IsTextureReady()) return null;
+        if (internalAsset->AtkTexture.Resource is null) return null;
 
-        return InternalAsset->AtkTexture.Resource->IconId;
+        return internalAsset->AtkTexture.Resource->IconId;
     }
 
     /// <summary>
@@ -131,28 +131,28 @@ public unsafe class Part : IDisposable {
             texturePath = provider.GetSubstitutedPath(texturePath);
         }
         
-        InternalAsset->AtkTexture.LoadTexture(texturePath);
+        internalAsset->AtkTexture.LoadTexture(texturePath);
     }
 
     /// <summary>
     /// Release the loaded texture, decreases ref count
     /// </summary>
     public void ReleaseTexture()
-        => InternalAsset->AtkTexture.ReleaseTexture();
+        => internalAsset->AtkTexture.ReleaseTexture();
 
     /// <summary>
     /// Destroys the loaded texture, with option to free the allocated memory
     /// </summary>
     /// <param name="free">If the game should free the texture in memory</param>
     public void DestroyTexture(bool free)
-        => InternalAsset->AtkTexture.Destroy(free);
+        => internalAsset->AtkTexture.Destroy(free);
 
     /// <summary>
     /// Loads a game icon via id
     /// </summary>
     /// <param name="iconId">Icon id to load</param>
     public void LoadIcon(uint iconId)
-        => InternalAsset->AtkTexture.LoadIconTexture(iconId, 0);
+        => internalAsset->AtkTexture.LoadIconTexture(iconId, 0);
 
     /// <summary>
     /// Loads texture via an already constructed Texture*
@@ -162,11 +162,11 @@ public unsafe class Part : IDisposable {
     public void LoadTexture(Texture* texture) {
         // If a texture is already loaded, dec ref it to probably free it automatically
         if (customTextureLoaded) {
-            InternalAsset->AtkTexture.KernelTexture->DecRef();
+            internalAsset->AtkTexture.KernelTexture->DecRef();
         }
 
-        InternalAsset->AtkTexture.KernelTexture = texture;
-        InternalAsset->AtkTexture.TextureType = TextureType.KernelTexture;
+        internalAsset->AtkTexture.KernelTexture = texture;
+        internalAsset->AtkTexture.TextureType = TextureType.KernelTexture;
 
         customTextureLoaded = true;
     }
