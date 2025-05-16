@@ -19,7 +19,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// </summary>
     internal static void DetachAndDispose() {
         foreach (var node in CreatedNodes.ToArray()) {
-            node.TryAutoDetach();
             node.Dispose();
         }
     }
@@ -31,8 +30,9 @@ public abstract unsafe partial class NodeBase : IDisposable {
     public void Dispose() {
         if (!isDisposed) {
             Log.Debug($"[KamiToolKit] Disposing node {GetType()}");
-            TryDetach();
-            
+
+            TryForceDetach();
+
             Dispose(true);
             GC.SuppressFinalize(this);
 

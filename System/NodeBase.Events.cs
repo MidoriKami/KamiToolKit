@@ -26,7 +26,7 @@ public abstract unsafe partial class NodeBase {
 			});
 			
 			if (EventsActive) {
-				handler.EventHandle ??= EventManager.AddEvent((nint) AddonPointer, (nint) InternalResNode, eventType, HandleEvents);
+				handler.EventHandle ??= EventManager.AddEvent((nint) EventAddonPointer, (nint) InternalResNode, eventType, HandleEvents);
 			}
 			
 			// If we have added a click event, we need to also make the cursor change when hovering this node
@@ -99,7 +99,7 @@ public abstract unsafe partial class NodeBase {
 	}
 	
 	private IAddonEventManager? EventManager { get; set; }
-	private AtkUnitBase* AddonPointer { get; set; }
+	private AtkUnitBase* EventAddonPointer { get; set; }
 	
 	[MemberNotNullWhen(true, nameof(EventManager))]
 	private bool EventsActive { get; set; }
@@ -122,7 +122,7 @@ public abstract unsafe partial class NodeBase {
 
 	public virtual void EnableEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
 		EventManager ??= eventManager;
-		AddonPointer = addon;
+		EventAddonPointer = addon;
 		EventsActive = true;
 
 		foreach (var (eventType, handler) in eventHandlers) {
@@ -131,7 +131,7 @@ public abstract unsafe partial class NodeBase {
 	}
 	
 	public virtual void DisableEvents(IAddonEventManager eventManager) {
-		AddonPointer = null;
+		EventAddonPointer = null;
 		EventsActive = false;
 		
 		foreach (var (_, handler) in eventHandlers) {
@@ -167,13 +167,13 @@ public abstract unsafe partial class NodeBase {
 
 	private void ShowTooltip() {
 		if (Tooltip is not null) {
-			AtkStage.Instance()->TooltipManager.ShowTooltip(AddonPointer->Id, InternalResNode, Tooltip.Encode());
+			AtkStage.Instance()->TooltipManager.ShowTooltip(EventAddonPointer->Id, InternalResNode, Tooltip.Encode());
 		}
 	}
 
 	private void HideTooltip() {
 		if (Tooltip is not null) {
-			AtkStage.Instance()->TooltipManager.HideTooltip(AddonPointer->Id);
+			AtkStage.Instance()->TooltipManager.HideTooltip(EventAddonPointer->Id);
 		}
 	}
 

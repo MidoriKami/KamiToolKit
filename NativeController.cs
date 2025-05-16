@@ -64,7 +64,7 @@ public unsafe class NativeController : IDisposable {
 		});
 
 	private void InternalAttachToAddon(NodeBase customNode, AtkUnitBase* addon, AtkResNode* target, NodePosition position) {
-		customNode.TryRegisterAutoDetach(this, addon);
+		customNode.RegisterAutoDetach(this, addon);
 
 		NodeLinker.AttachNode(customNode.InternalResNode, target, position);
 		customNode.EnableEvents(AddonEventManager, addon);
@@ -76,7 +76,7 @@ public unsafe class NativeController : IDisposable {
 		=> customNode.AttachNode(other, position);
 
 	private void InternalDetachFromAddon(NodeBase customNode, AtkUnitBase* addon) {
-		customNode.TryUnregisterAutoDetach();
+		customNode.UnregisterAutoDetach();
 		
 		customNode.DisableEvents(AddonEventManager);
 		customNode.DetachNode();
