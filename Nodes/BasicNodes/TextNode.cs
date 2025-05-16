@@ -8,6 +8,7 @@ using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
 using KamiToolKit.System;
+using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
@@ -102,7 +103,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     /// <summary>
     /// If you want the node to resize automatically, use TextFlags.AutoAdjustNodeSize <b><em>before</em></b> setting the Text property.
     /// </summary>
-    public SeString Text {
+    [JsonIgnore] public SeString Text {
         get => InternalNode->GetText().AsDalamudSeString();
         set {
             stringBuffer->SetString(value.EncodeWithNullTerminator());
@@ -110,5 +111,10 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
                 InternalNode->SetText(stringBuffer->StringPtr);
             }
         }
+    }
+
+    public string String {
+        get => Text.ToString();
+        set => Text = value;
     }
 }

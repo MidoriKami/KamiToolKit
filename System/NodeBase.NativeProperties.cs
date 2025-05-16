@@ -2,16 +2,17 @@
 using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
+using Newtonsoft.Json;
 
 namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
-     public float X {
+    [JsonIgnore] public float X {
         get => InternalResNode->GetXFloat();
         set => InternalResNode->SetXFloat(value);
     }
 
-    public float Y {
+    [JsonIgnore] public float Y {
         get => InternalResNode->GetYFloat();
         set => InternalResNode->SetYFloat(value);
     }
@@ -21,12 +22,12 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->SetPositionFloat(value.X, value.Y);
     }
 
-    public float ScreenX {
+    [JsonIgnore] public float ScreenX {
         get => InternalResNode->ScreenX;
         set => InternalResNode->ScreenX = value;
     }
 
-    public float ScreenY {
+    [JsonIgnore] public float ScreenY {
         get => InternalResNode->ScreenY;
         set => InternalResNode->ScreenY = value;
     }
@@ -39,12 +40,12 @@ public abstract unsafe partial class NodeBase {
         }
     }
     
-    public float Width {
+    [JsonIgnore] public float Width {
         get => InternalResNode->GetWidth();
         set => InternalResNode->SetWidth((ushort)value);
     }
 
-    public float Height {
+    [JsonIgnore] public float Height {
         get => InternalResNode->Height;
         set => InternalResNode->SetHeight((ushort) value);
     }
@@ -57,12 +58,12 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
-    private float ScaleX {
+    [JsonIgnore] private float ScaleX {
         get => InternalResNode->GetScaleX();
         set => InternalResNode->SetScaleX(value);
     }
 
-    private float ScaleY {
+    [JsonIgnore] private float ScaleY {
         get => InternalResNode->GetScaleY();
         set => InternalResNode->SetScaleY(value);
     }
@@ -77,17 +78,17 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->Rotation = value;
     }
 
-    private float OriginX {
+    [JsonIgnore] public float OriginX {
         get => InternalResNode->OriginX;
         set => InternalResNode->OriginX = value;
     }
 
-    private float OriginY {
+    [JsonIgnore] public float OriginY {
         get => InternalResNode->OriginY;
         set => InternalResNode->OriginY = value;
     }
 
-    private Vector2 Origin {
+    public Vector2 Origin {
         get => new(OriginX, OriginY);
         set {
             OriginX = value.X;
@@ -116,7 +117,7 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->Color = value.ToByteColor();
     }
 
-    public float Alpha {
+    [JsonIgnore] public float Alpha {
         get => InternalResNode->Color.A;
         set => InternalResNode->Color.A = (byte)(value * 255.0f);
     }
@@ -139,7 +140,7 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
-    public uint ChildCount {
+    internal uint ChildCount {
         get => InternalResNode->ChildCount;
         private set => InternalResNode->ChildCount = (ushort)value;
     }
@@ -164,7 +165,7 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->ChildNode = value;
     }
     
-    public uint NodeID {
+    [JsonIgnore] public uint NodeId {
         get => InternalResNode->NodeId;
         set => InternalResNode->NodeId = value;
     }
@@ -174,7 +175,7 @@ public abstract unsafe partial class NodeBase {
         private set => InternalResNode->DrawFlags = value;
     }
 
-    public NodeType NodeType {
+    protected NodeType NodeType {
         get => InternalResNode->Type;
         set => InternalResNode->Type = value;
     }

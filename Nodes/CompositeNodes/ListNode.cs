@@ -43,7 +43,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
 
     public ListNode() : base(NodeType.Res) {
         containerNode = new ResNode {
-            NodeID = 103_000,
+            NodeId = 103_000,
             Size = new Vector2(600.0f, 32.0f),
             IsVisible = true,
         };
@@ -51,7 +51,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         containerNode.AttachNode(this, NodePosition.AsFirstChild);
         
         border = new BorderNineGridNode {
-            NodeID = 102_000,
+            NodeId = 102_000,
             Size = new Vector2(600.0f, 32.0f),
             Position = new Vector2(-15.0f, -15.0f),
             IsVisible = false,
@@ -60,7 +60,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         border.AttachNode(this, NodePosition.AsFirstChild);
         
         background = new BackgroundImageNode {
-            NodeID = 101_000,
+            NodeId = 101_000,
             Size = new Vector2(600.0f, 32.0f),
             IsVisible = true,
         };

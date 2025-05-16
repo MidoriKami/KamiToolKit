@@ -26,7 +26,7 @@ public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, IC
 					
 		CollisionNode = new CollisionNode {
 			IsVisible = true,
-			NodeID = 1,
+			NodeId = 1,
 			LinkedComponent = componentBase,
 			NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents,
 		};

@@ -9,7 +9,7 @@ using KamiToolKit.System;
 namespace KamiToolKit.Nodes.ComponentNodes;
 
 public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
-	protected readonly NineGridNode BackgroundNode;
+	public readonly NineGridNode BackgroundNode;
 	protected abstract NodeBase DecorationNode { get; }
 
 	private bool buttonHeld;

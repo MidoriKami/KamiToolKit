@@ -51,9 +51,9 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         set => InternalNode->SpaceWidth = (byte) value;
     }
 
-    public TextAlignment TextAlignment {
-        get => (TextAlignment) InternalNode->TextAlign;
-        set => InternalNode->TextAlign = (ushort) value;
+    public ushort TextAlignment {
+        get => InternalNode->TextAlign;
+        set => InternalNode->TextAlign = value;
     }
 
     public float CounterWidth {

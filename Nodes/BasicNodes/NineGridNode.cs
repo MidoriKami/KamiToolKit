@@ -2,6 +2,7 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
+using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
@@ -22,16 +23,16 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
         }
     }
     
-    // The image node will take ownership of any parts added, be sure not to share parts between nodes
+    /// The image node will take ownership of any parts added, be sure not to share parts between nodes
     public void AddPart(Part part)
         => PartsList.Add(part);
 
-    public uint PartId {
+    [JsonIgnore] public uint PartId {
         get => InternalNode->PartId;
         set => InternalNode->PartId = value;
     }
 
-    public Vector4 Offsets {
+    [JsonIgnore] public Vector4 Offsets {
         get => new(InternalNode->TopOffset, InternalNode->BottomOffset, InternalNode->LeftOffset, InternalNode->RightOffset);
         set {
             InternalNode->TopOffset = (short)value.X;
@@ -41,30 +42,33 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
         }
     }
 
-    public float TopOffset {
+    [JsonIgnore] public float TopOffset {
         get => InternalNode->TopOffset;
         set => InternalNode->TopOffset = (short)value;
     }
     
-    public float BottomOffset {
+    [JsonIgnore] public float BottomOffset {
         get => InternalNode->BottomOffset;
         set => InternalNode->BottomOffset = (short)value;
     }
     
-    public float LeftOffset {
+    [JsonIgnore] public float LeftOffset {
         get => InternalNode->LeftOffset;
         set => InternalNode->LeftOffset = (short)value;
     }
     
-    public float RightOffset {
+    [JsonIgnore]  public float RightOffset {
         get => InternalNode->RightOffset;
         set => InternalNode->RightOffset = (short)value;
     }
 
-    public uint BlendMode {
+    [JsonIgnore] public uint BlendMode {
         get => InternalNode->BlendMode;
         set => InternalNode->BlendMode = value;
     }
 
+    [JsonIgnore] public byte PartsRenderType {
+        get => InternalNode->PartsTypeRenderType;
+        set => InternalNode->PartsTypeRenderType = value;
     }
 }

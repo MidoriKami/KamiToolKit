@@ -1,6 +1,7 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
+using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
@@ -25,22 +26,22 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         }
     }
 
-    public uint PartId {
+    [JsonIgnore] public uint PartId {
         get => InternalNode->PartId;
         set => InternalNode->PartId = (ushort) value;
     }
 
-    public byte WrapMode {
+    [JsonIgnore] public byte WrapMode {
         get => InternalNode->WrapMode;
         set => InternalNode->WrapMode = value;
     } 
 
-    public ImageNodeFlags ImageNodeFlags {
+    [JsonIgnore] public ImageNodeFlags ImageNodeFlags {
         get => (ImageNodeFlags) InternalNode->Flags;
         set => InternalNode->Flags = (byte) value;
     }
 
-    // The image node will take ownership of any parts added, be sure not to share parts between nodes
+    /// The image node will take ownership of any parts added, be sure not to share parts between nodes
     public void AddPart(Part part)
         => PartsList.Add(part);
 }

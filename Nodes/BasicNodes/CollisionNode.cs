@@ -1,6 +1,7 @@
 ﻿using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.System;
+using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
@@ -18,7 +19,7 @@ public unsafe class CollisionNode() : NodeBase<AtkCollisionNode>(NodeType.Collis
         set => InternalNode->Uses = (ushort) value;
     }
 
-    public AtkComponentBase* LinkedComponent {
+    [JsonIgnore] public AtkComponentBase* LinkedComponent {
         get => InternalNode->LinkedComponent;
         set => InternalNode->LinkedComponent = value;
     }

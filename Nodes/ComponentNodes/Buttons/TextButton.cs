@@ -3,38 +3,44 @@ using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
+using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
 public unsafe class TextButton : ButtonBase {
 
-	protected override NodeBase DecorationNode => labelNode;
-	private readonly TextNode labelNode;
+	protected override NodeBase DecorationNode => LabelNode;
+	public readonly TextNode LabelNode;
 
 	public TextButton() {
 		Data->Nodes[0] = 3;
 
-		labelNode = new TextNode {
+		LabelNode = new TextNode {
 			IsVisible = true,
 			AlignmentType = AlignmentType.Center,
 			Position = new Vector2(16.0f, 3.0f),
-			NodeID = 3,
+			NodeId = 3,
 		};
 		
-		labelNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		LabelNode.AttachNode(this, NodePosition.AfterAllSiblings);
 		
 		Component->AtkComponentBase.InitializeFromComponentData(&Data->AtkUldComponentDataBase);
 	}
 
-	public SeString Label {
-		get => labelNode.Text;
-		set => labelNode.Text = value;
+	[JsonIgnore] public SeString Label {
+		get => LabelNode.Text;
+		set => LabelNode.Text = value;
+	}
+
+	public string String {
+		get => LabelNode.Text.ToString();
+		set => LabelNode.Text = value;
 	}
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			labelNode.DetachNode();
-			labelNode.Dispose();
+			LabelNode.DetachNode();
+			LabelNode.Dispose();
 			
 			base.Dispose(disposing);
 		}

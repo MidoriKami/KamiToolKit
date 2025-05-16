@@ -5,6 +5,7 @@ using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using Newtonsoft.Json;
 
 namespace KamiToolKit.System;
 
@@ -76,7 +77,7 @@ public abstract unsafe partial class NodeBase {
 
 	private SeString? internalTooltip;
 
-	public SeString? Tooltip {
+	[JsonIgnore] public SeString? Tooltip {
 		get => internalTooltip;
 		set {
 			if (value is not null) {
@@ -97,6 +98,11 @@ public abstract unsafe partial class NodeBase {
 			}
 		}
 	}
+
+	public string TooltipString {
+		get => Tooltip?.ToString() ?? string.Empty;
+		set => Tooltip = value;
+	}
 	
 	private IAddonEventManager? EventManager { get; set; }
 	private AtkUnitBase* EventAddonPointer { get; set; }
@@ -106,7 +112,7 @@ public abstract unsafe partial class NodeBase {
 	private bool TooltipRegistered { get; set; }
 	private bool CursorEventsSet { get; set; }
 
-	public bool EventFlagsSet {
+	[JsonIgnore] public bool EventFlagsSet {
 		get => NodeFlags.HasFlag(NodeFlags.EmitsEvents) &&
 		       NodeFlags.HasFlag(NodeFlags.HasCollision) &&
 		       NodeFlags.HasFlag(NodeFlags.RespondToMouse);
