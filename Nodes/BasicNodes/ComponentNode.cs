@@ -10,7 +10,7 @@ public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComp
 	internal abstract AtkUldComponentDataBase* DataBase { get; }
 }
 
-public unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable where TU : unmanaged {
+public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable where TU : unmanaged {
 
 	protected readonly CollisionNode CollisionNode;
 	internal override AtkComponentBase* ComponentBase => (AtkComponentBase*) Component;
