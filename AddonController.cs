@@ -11,7 +11,7 @@ namespace KamiToolKit;
 /// <summary>
 /// This class provides functionality to add-and manage custom elements for any Addon
 /// </summary>
-public abstract unsafe class AddonController<T> : IDisposable where T : unmanaged {
+public unsafe class AddonController<T> : IDisposable where T : unmanaged {
 	[PluginService] public IAddonLifecycle AddonLifecycle { get; set; } = null!;
 	[PluginService] public IGameGui GameGui { get; set; } = null!;
 	[PluginService] public IFramework Framework { get; set; } = null!;
@@ -20,7 +20,7 @@ public abstract unsafe class AddonController<T> : IDisposable where T : unmanage
 	private AtkUnitBase* AddonPointer => (AtkUnitBase*)GameGui.GetAddonByName(addonName);
 	private bool IsEnabled { get; set; }
 	
-	protected AddonController(IDalamudPluginInterface pluginInterface, string addonName) {
+	public AddonController(IDalamudPluginInterface pluginInterface, string addonName) {
 		pluginInterface.Inject(this);
 		
 		this.addonName = addonName;
