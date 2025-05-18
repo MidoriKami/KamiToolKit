@@ -5,16 +5,13 @@ using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-/// <summary>
-/// Untested, this node might not work at all.
-/// </summary>
 public unsafe class CollisionNode() : NodeBase<AtkCollisionNode>(NodeType.Collision) {
-    public CollisionType CollisionType {
+    [JsonIgnore] public CollisionType CollisionType {
         get => (CollisionType)InternalNode->CollisionType;
         set => InternalNode->CollisionType = (ushort) value;
     }
 
-    public uint Uses {
+    [JsonIgnore] public uint Uses {
         get => InternalNode->Uses;
         set => InternalNode->Uses = (ushort) value;
     }

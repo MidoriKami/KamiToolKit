@@ -32,7 +32,7 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->ScreenY = value;
     }
 
-    public Vector2 ScreenPosition {
+    [JsonIgnore] public Vector2 ScreenPosition {
         get => new(ScreenX, ScreenY);
         set {
             ScreenX = value.X;
@@ -101,7 +101,7 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->ToggleVisibility(value);
     }
 
-    public NodeFlags NodeFlags {
+    [JsonIgnore] public NodeFlags NodeFlags {
         get => InternalResNode->NodeFlags;
         set => InternalResNode->NodeFlags = value;
     }
@@ -139,18 +139,13 @@ public abstract unsafe partial class NodeBase {
             InternalResNode->MultiplyBlue = (byte)(value.Z * 255);
         }
     }
-
-    internal uint ChildCount {
-        get => InternalResNode->ChildCount;
-        private set => InternalResNode->ChildCount = (ushort)value;
-    }
     
     [JsonIgnore] public uint NodeId {
         get => InternalResNode->NodeId;
         set => InternalResNode->NodeId = value;
     }
 
-    public uint DrawFlags {
+    [JsonIgnore] public uint DrawFlags {
         get => InternalResNode->DrawFlags;
         private set => InternalResNode->DrawFlags = value;
     }

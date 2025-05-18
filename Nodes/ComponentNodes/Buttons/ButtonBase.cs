@@ -1,8 +1,10 @@
 ﻿using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using ImGuiNET;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
 
@@ -126,5 +128,51 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 	public bool BackgroundVisible {
 		get => BackgroundNode.IsVisible;
 		set => BackgroundNode.IsVisible = value;
+	}
+
+	public override void DrawConfig() {
+		using var buttonNode = ImRaii.TreeNode("Button Node");
+		if (!buttonNode) return;
+		
+		base.DrawConfig();
+
+		using (var buttonProperties = ImRaii.TreeNode("Button Properties")) {
+			
+		}
+
+		using (var table = ImRaii.Table("button_properties_table", 2)) {
+			if (!table) return;
+		
+			ImGui.TableSetupColumn("##label", ImGuiTableColumnFlags.WidthStretch, 1.0f);
+			ImGui.TableSetupColumn("##configuration", ImGuiTableColumnFlags.WidthStretch, 2.0f);
+
+			ImGui.TableNextColumn();
+			ImGui.Text("Background Visible");
+		
+			ImGui.TableNextColumn();
+			var backgroundvisible = BackgroundVisible;
+			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
+			if (ImGui.Checkbox("##BackgroundVisible", ref backgroundvisible)) {
+				BackgroundVisible = backgroundvisible;
+			}
+		}
+		
+		using (var collisionNode = ImRaii.TreeNode("Collision Node")) {
+			if (collisionNode) {
+				CollisionNode.DrawConfig();
+			}
+		}
+				
+		using (var backgroundNode = ImRaii.TreeNode("Background Node")) {
+			if (backgroundNode) {
+				BackgroundNode.DrawConfig();
+			}
+		}
+		
+		using (var decorationNode = ImRaii.TreeNode("Decoration Node")) {
+			if (decorationNode) {
+				DecorationNode.DrawConfig();
+			}
+		}
 	}
 }

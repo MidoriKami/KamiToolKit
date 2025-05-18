@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using Dalamud.Plugin.Services;
 using KamiToolKit.Classes;
+using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
@@ -9,17 +10,17 @@ public class SimpleNineGridNode : NineGridNode {
         PartsList.Add(new Part());
     }
     
-    public float U {
+    [JsonIgnore] public float U {
         get => PartsList[0].U;
         set => PartsList[0].U = (ushort) value;
     }
     
-    public float V {
+    [JsonIgnore] public float V {
         get => PartsList[0].V;
         set => PartsList[0].V = (ushort) value;
     }
 
-    public Vector2 TextureCoordinates {
+    [JsonIgnore] public Vector2 TextureCoordinates {
         get => new(U, V);
         set {
             U = value.X;
@@ -27,17 +28,17 @@ public class SimpleNineGridNode : NineGridNode {
         }
     }
 
-    public float TextureWidth {
+    [JsonIgnore] public float TextureWidth {
         get => PartsList[0].Width;
         set => PartsList[0].Width = (ushort) value;
     }
     
-    public float TextureHeight {
+    [JsonIgnore] public float TextureHeight {
         get => PartsList[0].Height;
         set => PartsList[0].Height = (ushort) value;
     }
     
-    public Vector2 TextureSize {
+    [JsonIgnore] public Vector2 TextureSize {
         get => new(TextureWidth, TextureHeight);
         set {
             TextureWidth = value.X;
@@ -45,7 +46,7 @@ public class SimpleNineGridNode : NineGridNode {
         }
     }
 
-    public string TexturePath {
+    [JsonIgnore] public string TexturePath {
         set => PartsList[0].LoadTexture(value);
     }
     

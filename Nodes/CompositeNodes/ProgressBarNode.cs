@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
@@ -117,5 +118,27 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
     public Vector4 BarColor {
         get => ProgressNode.Color;
         set => ProgressNode.Color = value;
+    }
+
+    public override void DrawConfig() {
+        base.DrawConfig();
+
+        using (var background = ImRaii.TreeNode("Background")) {
+            if (background) {
+                BackgroundImageNode.DrawConfig();
+            }
+        }
+
+        using (var progress = ImRaii.TreeNode("Progress")) {
+            if (progress) {
+                ProgressNode.DrawConfig();
+            }
+        }
+
+        using (var border = ImRaii.TreeNode("Border")) {
+            if (border) {
+                BorderImageNode.DrawConfig();
+            }
+        }
     }
 }
