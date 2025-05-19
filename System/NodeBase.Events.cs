@@ -16,7 +16,7 @@ public abstract unsafe partial class NodeBase {
 	public bool IsEventRegistered(AddonEventType eventType) 
 		=> eventHandlers.ContainsKey(eventType);
 	
-	public void AddEvent(AddonEventType eventType, Action action) {
+	public void AddEvent(AddonEventType eventType, Action action, bool enableEventFlags = false) {
 		// Check if this eventType is already registered
 		if (eventHandlers.TryGetValue(eventType, out var handler)) {
 			handler.EventAction += action;
@@ -37,9 +37,13 @@ public abstract unsafe partial class NodeBase {
 				CursorEventsSet = true;
 			}
 		}
+		
+		if (!EventFlagsSet && enableEventFlags) {
+			EventFlagsSet = true;
+		}
 	}
 
-	public void RemoveEvent(AddonEventType eventType, Action action) {
+	public void RemoveEvent(AddonEventType eventType, Action action, bool clearEventFlags = false) {
 		if (eventHandlers.TryGetValue(eventType, out var handler)) {
 			if (handler.EventAction is not null) {
 				handler.EventAction -= action;
@@ -64,6 +68,10 @@ public abstract unsafe partial class NodeBase {
 					CursorEventsSet = false;
 				}
 			}
+		}
+
+		if (EventFlagsSet && clearEventFlags) {
+			EventFlagsSet = false;
 		}
 	}
 
