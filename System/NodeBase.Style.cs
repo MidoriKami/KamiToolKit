@@ -1,5 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Numerics;
+using System.Reflection;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;
@@ -35,132 +42,116 @@ public partial class NodeBase {
 		}
 	}
 
-	public virtual void DrawConfig() {
-		using var treeNode = ImRaii.TreeNode("Base Data");
-		if (!treeNode) return;
+	private bool TagListGenerated { get; set; }
+	
+	private List<PropertyInfo> taggedFields = [];
+	private IOrderedEnumerable<PropertyInfo> OrderedPrimitives => taggedFields.OrderByDescending(property => property.PropertyType.Name);
 
-		using var table = ImRaii.Table("basic_property_table", 2);
-		if (!table) return;
-		
-		ImGui.TableSetupColumn("##label", ImGuiTableColumnFlags.WidthStretch, 1.0f);
-		ImGui.TableSetupColumn("##configuration", ImGuiTableColumnFlags.WidthStretch, 2.0f);
-
-		ImGui.TableNextRow();
-		// Four Value Properties
-
-		ImGui.TableNextColumn();
-		ImGui.Text("Color");
-
-		ImGui.TableNextColumn();
-		var color = Color;
-		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-		if (ImGui.ColorEdit4("##Color", ref color, ImGuiColorEditFlags.AlphaPreviewHalf)) {
-			Color = color;
+	private void DrawTaggedFields() {
+		foreach (var primitive in OrderedPrimitives) {
+			DrawConfigForType(primitive);
 		}
+	}
 
-		ImGui.Spacing();
-		// Three Value Properties
-		
-		ImGui.TableNextColumn();
-		ImGui.Text("Add Color");
-
-		ImGui.TableNextColumn();
-		var addColor = AddColor;
-		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-		if (ImGui.ColorEdit3("##AddColor", ref addColor, ImGuiColorEditFlags.AlphaPreviewHalf)) {
-			AddColor = addColor;
-		}
-		
-		ImGui.TableNextColumn();
-		ImGui.Text("Multiply Color");
-
-		ImGui.TableNextColumn();
-		var multiplyColor = MultiplyColor;
-		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-		if (ImGui.ColorEdit3("##MultiplyColor", ref multiplyColor, ImGuiColorEditFlags.AlphaPreviewHalf)) {
-			MultiplyColor = multiplyColor;
-		}
-		
-		ImGui.Spacing();
-		// Two Value Properties
-		
-		ImGui.TableNextColumn();
-		ImGui.Text("Position");
-		
-		ImGui.TableNextColumn();
-		var position = Position;
-		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-		if (ImGui.DragFloat2("##Position", ref position)) {
-			Position = position;
-		}
-		
-		ImGui.TableNextColumn();
-		ImGui.Text("Size");
-		
-		ImGui.TableNextColumn();
-		var size = Size;
-		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-		if (ImGui.DragFloat2("##Size", ref size)) {
-			Size = size;
-		}
-
-		ImGui.TableNextColumn();
-		ImGui.Text("Scale");
-		
-		ImGui.TableNextColumn();
-		var scale = Scale;
-		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-		if (ImGui.DragFloat2("##Scale", ref scale, 0.005f, 0.10f, 6.00f)) {
-			Scale = scale;
-		}
-		
-		ImGui.TableNextColumn();
-		ImGui.Text("Origin");
-		
-		ImGui.TableNextColumn();
-		var origin = Origin;
-		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-		if (ImGui.DragFloat2("##Origin", ref origin)) {
-			Origin = origin;
-		}
-		
-		ImGui.Spacing();
-		// One Value Properties
-		ImGui.TableNextColumn();
-		ImGui.Text("Tooltip");
-		
-		ImGui.TableNextColumn();
-		using (ImRaii.Disabled(!EventFlagsSet)) {
-			var tooltip = TooltipString;
-			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-			if (ImGui.InputTextMultiline("##tooltip", ref tooltip, 2000, ImGui.GetContentRegionAvail() with { Y = ImGuiHelpers.GetButtonSize("A").Y * 2.0f } ,ImGuiInputTextFlags.AutoSelectAll)) {
-				TooltipString = tooltip;
+	private void GenerateTypeList(Type type) {
+		foreach (var memberInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
+			if (memberInfo is not { MemberType: MemberTypes.Field or MemberTypes.Property }) continue;
+			if (!memberInfo.GetCustomAttributesData().Any(attribute => attribute.AttributeType == typeof(JsonPropertyAttribute))) continue;
+			
+			if (memberInfo.PropertyType.Assembly != GetType().Assembly) {
+				taggedFields.Add(memberInfo);
 			}
 		}
-		
-		ImGui.Spacing();
-		
-		ImGui.TableNextColumn();
-		ImGui.Text("Rotation");
-		
-		ImGui.TableNextColumn();
-		var rotation = Rotation * ( 180.0f / MathF.PI );
-		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-		if (ImGui.DragFloat("##Rotation", ref rotation, 0.5f, 0.0f, 360.0f, "%.0f")) {
-			Rotation = rotation * MathF.PI / 180.0f;
-		}
+	}
 
-		ImGui.Spacing();
-		// Checkboxes
+	private void GeneratePropertyList() {
+		var stopWatch = Stopwatch.StartNew();
 		
+		if (!TagListGenerated) {
+			GenerateTypeList(GetType());
+			TagListGenerated = true;
+			Log.Debug($"Attribute Tree Generated in {stopWatch.Elapsed}");
+		}
+	}
+
+	private void DrawConfigForType(PropertyInfo info) {
 		ImGui.TableNextColumn();
-		ImGui.Text("Visible");
+		ImGui.Text(info.Name);
+
+		ImGui.TableNextColumn();
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		
-		ImGui.TableNextColumn();
-		var visible = IsVisible;
-		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-		if (ImGui.Checkbox("##visible", ref visible)) {
-			IsVisible = visible;
+		if (info.PropertyType == typeof(Vector4)) {
+			var value = (Vector4) info.GetValue(this)!;
+			if (ImGui.ColorEdit4($"##{info.Name}", ref value, ImGuiColorEditFlags.AlphaPreviewHalf)) {
+				info.SetValue(this, value);
+			}
+		}
+		else if (info.PropertyType == typeof(Vector3)) {
+			var value = (Vector3) info.GetValue(this)!;
+			if (ImGui.ColorEdit3($"##{info.Name}", ref value, ImGuiColorEditFlags.AlphaPreviewHalf)) {
+				info.SetValue(this, value);
+			}
+		}
+		else if (info.PropertyType == typeof(Vector2)) {
+			var value = (Vector2) info.GetValue(this)!;
+			if (ImGui.InputFloat2($"##{info.Name}", ref value)) {
+				info.SetValue(this, value);
+			}
+		}
+		else if (info.PropertyType == typeof(float)) {
+			var value = (float) info.GetValue(this)!;
+			if (ImGui.InputFloat($"##{info.Name}", ref value)) {
+				info.SetValue(this, value);
+			}
+		}
+		else if (info.PropertyType == typeof(bool)) {
+			var value = (bool) info.GetValue(this)!;
+			if (ImGui.Checkbox($"##{info.Name}", ref value)) {
+				info.SetValue(this, value);
+			}
+		}
+		else if (info.PropertyType == typeof(uint)) {
+			var value = Convert.ToInt32(info.GetValue(this)!);
+			if (ImGui.InputInt($"##{info.Name}", ref value, 0, 0)) {
+				info.SetValue(this, (uint)value);
+			}
+		}
+		else if (info.PropertyType.IsEnum) {
+			var hasFlags = info.PropertyType.GetCustomAttribute<FlagsAttribute>() != null;
+			
+			var value = (Enum) info.GetValue(this)!;
+			if (ComboHelper.EnumCombo($"##{info.Name}", ref value, hasFlags)) {
+				info.SetValue(this, value);
+			}
+		}
+		else if (info.PropertyType == typeof(string)) {
+			var standardHeight = ImGuiHelpers.GetButtonSize("A").Y;
+			
+			var value = (string)info.GetValue(this)!;
+			if (ImGui.InputTextMultiline($"##{info.Name}", ref value, 2000, ImGui.GetContentRegionAvail() with { Y = standardHeight * 2.0f })) {
+				info.SetValue(this, value);
+			}
+		}
+		else {
+			using (ImRaii.PushColor(ImGuiCol.Text, KnownColor.Orange.Vector())) {
+				ImGui.Text($"Undefined Property Type: {info.PropertyType} {info.Name}");
+			}
+		}
+	}
+	
+	public virtual void DrawConfig() {
+		GeneratePropertyList();
+
+		using var table = ImRaii.Table("basic_property_table", 2);
+		if (table) {
+
+			ImGui.TableSetupColumn("##label", ImGuiTableColumnFlags.WidthStretch, 1.0f);
+			ImGui.TableSetupColumn("##configuration", ImGuiTableColumnFlags.WidthStretch, 2.0f);
+
+			ImGui.TableNextRow();
+
+			DrawTaggedFields();
 		}
 	}
 }

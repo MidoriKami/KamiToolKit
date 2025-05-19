@@ -14,17 +14,17 @@ public class SimpleImageNode : ImageNode {
         PartsList.Add(new Part());
     }
     
-    [JsonIgnore] public float U {
+    public float U {
         get => PartsList[0].U;
         set => PartsList[0].U = (ushort) value;
     }
     
-    [JsonIgnore] public float V {
+    public float V {
         get => PartsList[0].V;
         set => PartsList[0].V = (ushort) value;
     }
 
-    [JsonIgnore] public Vector2 TextureCoordinates {
+    public Vector2 TextureCoordinates {
         get => new(U, V);
         set {
             U = value.X;
@@ -32,17 +32,17 @@ public class SimpleImageNode : ImageNode {
         }
     }
 
-    [JsonIgnore] public float TextureHeight {
+    public float TextureHeight {
         get => PartsList[0].Height;
         set => PartsList[0].Height = (ushort) value;
     }
     
-    [JsonIgnore] public float TextureWidth {
+    public float TextureWidth {
         get => PartsList[0].Width;
         set => PartsList[0].Width = (ushort) value;
     }
 
-    [JsonIgnore] public Vector2 TextureSize {
+    public Vector2 TextureSize {
         get => new(TextureWidth, TextureHeight);
         set {
             TextureWidth = value.X;
@@ -50,7 +50,7 @@ public class SimpleImageNode : ImageNode {
         }
     }
         
-    [JsonIgnore] public string TexturePath {
+    public string TexturePath {
         set => PartsList[0].LoadTexture(value);
     }
     

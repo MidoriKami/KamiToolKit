@@ -183,7 +183,7 @@ public enum ButtonIcon {
 	Headgear,
 	Sword,
 	Emotes,
-	PersonStanding, // They seem rather disappointed
+	PersonStanding,
 	PaintBucket,
 	EyeSmall,
 	Undo,

@@ -77,7 +77,7 @@ public abstract unsafe partial class NodeBase {
 
 	private SeString? internalTooltip;
 
-	[JsonIgnore] public SeString? Tooltip {
+	public SeString? Tooltip {
 		get => internalTooltip;
 		set {
 			if (value is not null) {
@@ -99,7 +99,7 @@ public abstract unsafe partial class NodeBase {
 		}
 	}
 
-	public string TooltipString {
+	[JsonProperty] public string TooltipString {
 		get => Tooltip?.ToString() ?? string.Empty;
 		set => Tooltip = value;
 	}
@@ -112,7 +112,7 @@ public abstract unsafe partial class NodeBase {
 	private bool TooltipRegistered { get; set; }
 	private bool CursorEventsSet { get; set; }
 
-	[JsonIgnore] public bool EventFlagsSet {
+	public bool EventFlagsSet {
 		get => NodeFlags.HasFlag(NodeFlags.EmitsEvents) &&
 		       NodeFlags.HasFlag(NodeFlags.HasCollision) &&
 		       NodeFlags.HasFlag(NodeFlags.RespondToMouse);

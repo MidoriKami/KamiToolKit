@@ -6,18 +6,19 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using ImGuiNET;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
+using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-// Custom Implementation of a Node that contains other nodes
+/// Custom Implementation of a Node that contains other nodes
+[JsonObject(MemberSerialization.OptIn)]
 public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
-    public readonly ResNode ContainerNode;
+    [JsonProperty] private readonly ResNode containerNode;
     private readonly List<T> nodeList = [];
-    public readonly BackgroundImageNode Background;
-    public readonly BorderNineGridNode Border;
+    [JsonProperty] private readonly BackgroundImageNode background;
+    [JsonProperty] private readonly BorderNineGridNode border;
 
     private LayoutOrientation InternalLayoutOrientation { get; set; }
 
@@ -33,42 +34,42 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     /// If enabled, node contents will be clipped inside the container.
     /// </summary>
     public bool ClipListContents {
-        get => ContainerNode.NodeFlags.HasFlag(NodeFlags.Clip);
+        get => containerNode.NodeFlags.HasFlag(NodeFlags.Clip);
         set {
             if (value) {
-                ContainerNode.AddFlags(NodeFlags.Clip);
+                containerNode.AddFlags(NodeFlags.Clip);
             }
             else {
-                ContainerNode.RemoveFlags(NodeFlags.Clip);
+                containerNode.RemoveFlags(NodeFlags.Clip);
             }
         }
     }
 
     public ListNode() : base(NodeType.Res) {
-        ContainerNode = new ResNode {
+        containerNode = new ResNode {
             NodeId = 103_000,
             Size = new Vector2(600.0f, 32.0f),
             IsVisible = true,
         };
         
-        ContainerNode.AttachNode(this, NodePosition.AsFirstChild);
+        containerNode.AttachNode(this, NodePosition.AsFirstChild);
         
-        Border = new BorderNineGridNode {
+        border = new BorderNineGridNode {
             NodeId = 102_000,
             Size = new Vector2(600.0f, 32.0f),
             Position = new Vector2(-15.0f, -15.0f),
             IsVisible = false,
         };
         
-        Border.AttachNode(this, NodePosition.AsFirstChild);
+        border.AttachNode(this, NodePosition.AsFirstChild);
         
-        Background = new BackgroundImageNode {
+        background = new BackgroundImageNode {
             NodeId = 101_000,
             Size = new Vector2(600.0f, 32.0f),
             IsVisible = true,
         };
         
-        Background.AttachNode(this, NodePosition.AsFirstChild);
+        background.AttachNode(this, NodePosition.AsFirstChild);
     }
     
     public LayoutOrientation LayoutOrientation {
@@ -80,18 +81,18 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     }
 
     public Vector4 BackgroundColor {
-        get => Background.Color;
-        set => Background.Color = value;
+        get => background.Color;
+        set => background.Color = value;
     }
 
     public bool BackgroundVisible {
-        get => Background.IsVisible;
-        set => Background.IsVisible = value;
+        get => background.IsVisible;
+        set => background.IsVisible = value;
     }
 
     public bool BorderVisible {
-        get => Border.IsVisible;
-        set => Border.IsVisible = value;
+        get => border.IsVisible;
+        set => border.IsVisible = value;
     }
 
     protected override void Dispose(bool isDisposing) {
@@ -100,8 +101,8 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
                 node.Dispose();
             }
             
-            Background.Dispose();
-            Border.Dispose();
+            background.Dispose();
+            border.Dispose();
             
             base.Dispose(isDisposing);
         }
@@ -119,38 +120,38 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         }
 
         if (BackgroundFitsContents) {
-            Background.Size = GetMinimumSize();
+            background.Size = GetMinimumSize();
 
             var topLeftNode = nodeList
                 .Where(node => node.IsVisible)
                 .MinBy(node => node.Position.Length());
             
             if (nodeList.Count is not 0 && topLeftNode is not null) {
-                Background.Position = topLeftNode.Position;
+                background.Position = topLeftNode.Position;
             }
         }
         else {
-            Background.Size = Size;
-            Background.Position = Vector2.Zero;
+            background.Size = Size;
+            background.Position = Vector2.Zero;
         }
         
         if (BorderFitsContents) {
-            Border.Size = GetMinimumSize() + new Vector2(30.0f, 30.0f);
+            border.Size = GetMinimumSize() + new Vector2(30.0f, 30.0f);
 
             var topLeftNode = nodeList
                 .Where(node => node.IsVisible)
                 .MinBy(node => node.Position.Length());
             
             if (nodeList.Count is not 0 && topLeftNode is not null) {
-                Border.Position = topLeftNode.Position - new Vector2(15.0f, 15.0f);
+                border.Position = topLeftNode.Position - new Vector2(15.0f, 15.0f);
             }
         }
         else {
-            Border.Size = Size + new Vector2(30.0f, 30.0f);
-            Border.Position = - new Vector2(15.0f, 15.0f);
+            border.Size = Size + new Vector2(30.0f, 30.0f);
+            border.Position = - new Vector2(15.0f, 15.0f);
         }
         
-        ContainerNode.Size = Size;
+        containerNode.Size = Size;
     }
     
     /// <summary>
@@ -275,7 +276,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         => GetEnumerator();
 
     public void Add(T item) {
-        item.AttachNode(ContainerNode, NodePosition.AsLastChild);
+        item.AttachNode(containerNode, NodePosition.AsLastChild);
         nodeList.Add(item);
         
         RecalculateLayout();
@@ -328,113 +329,21 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     public override void DrawConfig() {
         base.DrawConfig();
         
-        using (var list = ImRaii.TreeNode("List")) {
-            if (list) {
-                using var table = ImRaii.Table("list_property_table", 2);
-                if (table) {
-                    ImGui.TableSetupColumn("##label", ImGuiTableColumnFlags.WidthStretch, 1.0f);
-                    ImGui.TableSetupColumn("##configuration", ImGuiTableColumnFlags.WidthStretch, 2.0f);
-
-                    ImGui.TableNextRow();
-                    
-                    ImGui.TableNextColumn();
-                    ImGui.Text("Background Color");
-
-                    ImGui.TableNextColumn();
-                    var backgroundColor = BackgroundColor;
-                    ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-                    if (ImGui.ColorEdit4("##BackgroundColor", ref backgroundColor, ImGuiColorEditFlags.AlphaPreviewHalf)) {
-                        BackgroundColor = backgroundColor;
-                    }
-                    
-                    ImGui.TableNextColumn();
-                    ImGui.Text("Text Alignment");
-        
-                    ImGui.TableNextColumn();
-                    var layoutAnchor = LayoutAnchor;
-                    if (ComboHelper.EnumCombo("##LayoutAnchor", ref layoutAnchor)) {
-                        LayoutAnchor = layoutAnchor;
-                    }
-                    
-                    ImGui.TableNextColumn();
-                    ImGui.Text("Layout Orientation");
-        
-                    ImGui.TableNextColumn();
-                    var layoutOrientation = LayoutOrientation;
-                    if (ComboHelper.EnumCombo("##LayoutOrientation", ref layoutOrientation)) {
-                        LayoutOrientation = layoutOrientation;
-                    }
-                    
-                    ImGui.Spacing();
-		
-                    ImGui.TableNextColumn();
-                    ImGui.Text("Fit Background");
-		
-                    ImGui.TableNextColumn();
-                    var fitContents = BackgroundFitsContents;
-                    ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-                    if (ImGui.Checkbox("##FitContents", ref fitContents)) {
-                        BackgroundFitsContents = fitContents;
-                    }
-                    
-                    ImGui.TableNextColumn();
-                    ImGui.Text("Fit Border");
-		
-                    ImGui.TableNextColumn();
-                    var fitBorder = BorderFitsContents;
-                    ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-                    if (ImGui.Checkbox("##FitBorder", ref fitBorder)) {
-                        BorderFitsContents = fitBorder;
-                    }
-                    
-                    ImGui.TableNextColumn();
-                    ImGui.Text("Clip List Contents");
-		
-                    ImGui.TableNextColumn();
-                    var clipList = ClipListContents;
-                    ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-                    if (ImGui.Checkbox("##ClipList", ref clipList)) {
-                        ClipListContents = clipList;
-                    }
-                    
-                    ImGui.TableNextColumn();
-                    ImGui.Text("Background Visible");
-		
-                    ImGui.TableNextColumn();
-                    var backgroundVisible = BackgroundVisible;
-                    ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-                    if (ImGui.Checkbox("##BackgroundVisible", ref backgroundVisible)) {
-                        BackgroundVisible = backgroundVisible;
-                    }
-                    
-                    ImGui.TableNextColumn();
-                    ImGui.Text("Border Visible");
-		
-                    ImGui.TableNextColumn();
-                    var borderVisible = BorderVisible;
-                    ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-                    if (ImGui.Checkbox("##BorderVisible", ref borderVisible)) {
-                        BorderVisible = borderVisible;
-                    }
-                }
-            }
-        }
-        
         using (var container = ImRaii.TreeNode("Container")) {
             if (container) {
-                ContainerNode.DrawConfig();
+                containerNode.DrawConfig();
             }
         }
-
-        using (var background = ImRaii.TreeNode("Background")) {
-            if (background) {
-                Background.DrawConfig();
+    
+        using (var backgroundNode = ImRaii.TreeNode("Background")) {
+            if (backgroundNode) {
+                background.DrawConfig();
             }
         }
-
-        using (var border = ImRaii.TreeNode("Border")) {
-            if (border) {
-                Border.DrawConfig();
+    
+        using (var borderNode = ImRaii.TreeNode("Border")) {
+            if (borderNode) {
+                border.DrawConfig();
             }
         }
     }

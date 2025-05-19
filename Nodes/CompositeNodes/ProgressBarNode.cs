@@ -5,13 +5,15 @@ using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
+using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
+[JsonObject(MemberSerialization.OptIn)]
 public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
-    public readonly SimpleNineGridNode BackgroundImageNode;
-    public readonly SimpleNineGridNode ProgressNode;
-    public readonly SimpleNineGridNode BorderImageNode;
+    [JsonProperty] private readonly SimpleNineGridNode backgroundImageNode;
+    [JsonProperty] private readonly SimpleNineGridNode progressNode;
+    [JsonProperty] private readonly SimpleNineGridNode borderImageNode;
 
     private Vector2 actualSize;
 
@@ -20,7 +22,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         InternalNode->SetWidth((ushort)160.0f);
         InternalNode->SetHeight((ushort)20.0f);
         
-        BackgroundImageNode = new SimpleNineGridNode {
+        backgroundImageNode = new SimpleNineGridNode {
             NodeId = 100 + baseId,
             Size = new Vector2(160.0f, 20.0f),
             TextureSize = new Vector2(160.0f, 20.0f),
@@ -32,9 +34,9 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
             TexturePath = "ui/uld/Parameter_Gauge_hr1.tex",
         };
         
-        BackgroundImageNode.AttachNode(this, NodePosition.AsLastChild);
+        backgroundImageNode.AttachNode(this, NodePosition.AsLastChild);
 
-        ProgressNode = new SimpleNineGridNode {
+        progressNode = new SimpleNineGridNode {
             NodeId = 200 + baseId,
             Size = new Vector2(160.0f, 20.0f),
             TextureSize = new Vector2(160.0f, 20.0f),
@@ -48,9 +50,9 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
             TexturePath = "ui/uld/Parameter_Gauge_hr1.tex",
         };
         
-        ProgressNode.AttachNode(this, NodePosition.AsLastChild);
+        progressNode.AttachNode(this, NodePosition.AsLastChild);
 
-        BorderImageNode = new SimpleNineGridNode {
+        borderImageNode = new SimpleNineGridNode {
             NodeId = 300 + baseId,
             Size = new Vector2(160.0f, 20.0f),
             TextureSize = new Vector2(160.0f, 20.0f),
@@ -62,31 +64,31 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
             TexturePath = "ui/uld/Parameter_Gauge_hr1.tex",
         };
         
-        BorderImageNode.AttachNode(this, NodePosition.AsLastChild);
+        borderImageNode.AttachNode(this, NodePosition.AsLastChild);
     }
 
     protected override void Dispose(bool disposing) {
         if (disposing) {
-            BackgroundImageNode.Dispose();
-            ProgressNode.Dispose();
-            BorderImageNode.Dispose();
+            backgroundImageNode.Dispose();
+            progressNode.Dispose();
+            borderImageNode.Dispose();
             
             base.Dispose(disposing);
         }
     }
 
     public float Progress {
-        get => ProgressNode.Width / actualSize.X;
-        set => ProgressNode.Width = actualSize.X * value;
+        get => progressNode.Width / actualSize.X;
+        set => progressNode.Width = actualSize.X * value;
     }
 
     public new float Width {
         get => actualSize.X;
         set {
             InternalNode->SetWidth((ushort)value);
-            BackgroundImageNode.Width = value;
-            ProgressNode.Width = value;
-            BorderImageNode.Width = value;
+            backgroundImageNode.Width = value;
+            progressNode.Width = value;
+            borderImageNode.Width = value;
             actualSize.X = value;
         }
     }
@@ -95,9 +97,9 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         get => actualSize.Y;
         set {
             InternalNode->SetHeight((ushort)value);
-            BackgroundImageNode.Height = value;
-            ProgressNode.Height = value;
-            BorderImageNode.Height = value;
+            backgroundImageNode.Height = value;
+            progressNode.Height = value;
+            borderImageNode.Height = value;
             actualSize.Y = value;
         }
     }
@@ -111,13 +113,13 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
     }
 
     public Vector4 BackgroundColor {
-        get => BackgroundImageNode.Color;
-        set => BackgroundImageNode.Color = value;
+        get => backgroundImageNode.Color;
+        set => backgroundImageNode.Color = value;
     }
 
     public Vector4 BarColor {
-        get => ProgressNode.Color;
-        set => ProgressNode.Color = value;
+        get => progressNode.Color;
+        set => progressNode.Color = value;
     }
 
     public override void DrawConfig() {
@@ -125,19 +127,19 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
 
         using (var background = ImRaii.TreeNode("Background")) {
             if (background) {
-                BackgroundImageNode.DrawConfig();
+                backgroundImageNode.DrawConfig();
             }
         }
 
         using (var progress = ImRaii.TreeNode("Progress")) {
             if (progress) {
-                ProgressNode.DrawConfig();
+                progressNode.DrawConfig();
             }
         }
 
         using (var border = ImRaii.TreeNode("Border")) {
             if (border) {
-                BorderImageNode.DrawConfig();
+                borderImageNode.DrawConfig();
             }
         }
     }

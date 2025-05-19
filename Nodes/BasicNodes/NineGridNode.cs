@@ -2,7 +2,6 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
@@ -27,12 +26,12 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
     public void AddPart(Part part)
         => PartsList.Add(part);
 
-    [JsonIgnore] public uint PartId {
+    public uint PartId {
         get => InternalNode->PartId;
         set => InternalNode->PartId = value;
     }
 
-    [JsonIgnore] public Vector4 Offsets {
+    public Vector4 Offsets {
         get => new(InternalNode->TopOffset, InternalNode->BottomOffset, InternalNode->LeftOffset, InternalNode->RightOffset);
         set {
             InternalNode->TopOffset = (short)value.X;
@@ -42,32 +41,32 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
         }
     }
 
-    [JsonIgnore] public float TopOffset {
+    public float TopOffset {
         get => InternalNode->TopOffset;
         set => InternalNode->TopOffset = (short)value;
     }
     
-    [JsonIgnore] public float BottomOffset {
+    public float BottomOffset {
         get => InternalNode->BottomOffset;
         set => InternalNode->BottomOffset = (short)value;
     }
     
-    [JsonIgnore] public float LeftOffset {
+    public float LeftOffset {
         get => InternalNode->LeftOffset;
         set => InternalNode->LeftOffset = (short)value;
     }
     
-    [JsonIgnore]  public float RightOffset {
+    public float RightOffset {
         get => InternalNode->RightOffset;
         set => InternalNode->RightOffset = (short)value;
     }
 
-    [JsonIgnore] public uint BlendMode {
+    public uint BlendMode {
         get => InternalNode->BlendMode;
         set => InternalNode->BlendMode = value;
     }
 
-    [JsonIgnore] public byte PartsRenderType {
+    public byte PartsRenderType {
         get => InternalNode->PartsTypeRenderType;
         set => InternalNode->PartsTypeRenderType = value;
     }

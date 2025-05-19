@@ -6,33 +6,34 @@ using Newtonsoft.Json;
 
 namespace KamiToolKit.System;
 
+[JsonObject(MemberSerialization.OptIn)]
 public abstract unsafe partial class NodeBase {
-    [JsonIgnore] public float X {
+    public float X {
         get => InternalResNode->GetXFloat();
         set => InternalResNode->SetXFloat(value);
     }
 
-    [JsonIgnore] public float Y {
+    public float Y {
         get => InternalResNode->GetYFloat();
         set => InternalResNode->SetYFloat(value);
     }
 
-    public Vector2 Position {
+    [JsonProperty] public Vector2 Position {
         get => new(X, Y);
         set => InternalResNode->SetPositionFloat(value.X, value.Y);
     }
 
-    [JsonIgnore] public float ScreenX {
+    public float ScreenX {
         get => InternalResNode->ScreenX;
         set => InternalResNode->ScreenX = value;
     }
 
-    [JsonIgnore] public float ScreenY {
+    public float ScreenY {
         get => InternalResNode->ScreenY;
         set => InternalResNode->ScreenY = value;
     }
 
-    [JsonIgnore] public Vector2 ScreenPosition {
+    public Vector2 ScreenPosition {
         get => new(ScreenX, ScreenY);
         set {
             ScreenX = value.X;
@@ -40,17 +41,17 @@ public abstract unsafe partial class NodeBase {
         }
     }
     
-    [JsonIgnore] public float Width {
+    public float Width {
         get => InternalResNode->GetWidth();
         set => InternalResNode->SetWidth((ushort)value);
     }
 
-    [JsonIgnore] public float Height {
+    public float Height {
         get => InternalResNode->Height;
         set => InternalResNode->SetHeight((ushort) value);
     }
     
-    public Vector2 Size {
+    [JsonProperty] public Vector2 Size {
         get => new(Width, Height);
         set {
             Width = value.X;
@@ -58,37 +59,37 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
-    [JsonIgnore] private float ScaleX {
+    private float ScaleX {
         get => InternalResNode->GetScaleX();
         set => InternalResNode->SetScaleX(value);
     }
 
-    [JsonIgnore] private float ScaleY {
+    private float ScaleY {
         get => InternalResNode->GetScaleY();
         set => InternalResNode->SetScaleY(value);
     }
     
-    public Vector2 Scale {
+    [JsonProperty] public Vector2 Scale {
         get => new(ScaleX, ScaleY);
         set => InternalResNode->SetScale(value.X, value.Y);
     }
 
-    public float Rotation {
+    [JsonProperty] public float Rotation {
         get => InternalResNode->Rotation;
         set => InternalResNode->Rotation = value;
     }
 
-    [JsonIgnore] public float OriginX {
+    public float OriginX {
         get => InternalResNode->OriginX;
         set => InternalResNode->OriginX = value;
     }
 
-    [JsonIgnore] public float OriginY {
+    public float OriginY {
         get => InternalResNode->OriginY;
         set => InternalResNode->OriginY = value;
     }
 
-    public Vector2 Origin {
+    [JsonProperty] public Vector2 Origin {
         get => new(OriginX, OriginY);
         set {
             OriginX = value.X;
@@ -96,12 +97,12 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
-    public bool IsVisible {
+    [JsonProperty] public bool IsVisible {
         get => InternalResNode->IsVisible();
         set => InternalResNode->ToggleVisibility(value);
     }
 
-    [JsonIgnore] public NodeFlags NodeFlags {
+    public NodeFlags NodeFlags {
         get => InternalResNode->NodeFlags;
         set => InternalResNode->NodeFlags = value;
     }
@@ -112,17 +113,17 @@ public abstract unsafe partial class NodeBase {
     public void RemoveFlags(NodeFlags flags)
         => NodeFlags &= ~flags;
 
-    public Vector4 Color {
+    [JsonProperty] public Vector4 Color {
         get => InternalResNode->Color.ToVector4();
         set => InternalResNode->Color = value.ToByteColor();
     }
 
-    [JsonIgnore] public float Alpha {
+    public float Alpha {
         get => InternalResNode->Color.A;
         set => InternalResNode->Color.A = (byte)(value * 255.0f);
     }
 
-    public Vector3 AddColor {
+    [JsonProperty] public Vector3 AddColor {
         get => new Vector3(InternalResNode->AddRed, InternalResNode->AddGreen, InternalResNode->AddBlue) /  255.0f;
         set {
             InternalResNode->AddRed = (short)(value.X * 255);
@@ -131,7 +132,7 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
-    public Vector3 MultiplyColor {
+    [JsonProperty] public Vector3 MultiplyColor {
         get => new Vector3(InternalResNode->MultiplyRed, InternalResNode->MultiplyGreen, InternalResNode->MultiplyBlue) / 255.0f;
         set {
             InternalResNode->MultiplyRed = (byte)(value.X * 255);
@@ -140,12 +141,12 @@ public abstract unsafe partial class NodeBase {
         }
     }
     
-    [JsonIgnore] public uint NodeId {
+    public uint NodeId {
         get => InternalResNode->NodeId;
         set => InternalResNode->NodeId = value;
     }
 
-    [JsonIgnore] public uint DrawFlags {
+    public uint DrawFlags {
         get => InternalResNode->DrawFlags;
         private set => InternalResNode->DrawFlags = value;
     }

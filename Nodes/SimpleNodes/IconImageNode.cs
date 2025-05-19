@@ -1,5 +1,4 @@
 ﻿using KamiToolKit.Classes;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
@@ -10,7 +9,7 @@ namespace KamiToolKit.Nodes;
 public class IconImageNode : SimpleImageNode {
 	private uint internalIconId;
 	
-	[JsonIgnore] public uint IconId {
+	public uint IconId {
 		get => internalIconId;
 		set {
 			if (internalIconId != value) {

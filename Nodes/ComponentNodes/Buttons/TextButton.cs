@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
+[JsonObject(MemberSerialization.OptIn)]
 public unsafe class TextButton : ButtonBase {
 
 	protected override NodeBase DecorationNode => LabelNode;
@@ -27,12 +28,12 @@ public unsafe class TextButton : ButtonBase {
 		Component->AtkComponentBase.InitializeFromComponentData(&Data->AtkUldComponentDataBase);
 	}
 
-	[JsonIgnore] public SeString Label {
+	public SeString Label {
 		get => LabelNode.Text;
 		set => LabelNode.Text = value;
 	}
 
-	public string String {
+	[JsonProperty] public string String {
 		get => LabelNode.Text.ToString();
 		set => LabelNode.Text = value;
 	}

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.System;
 
@@ -45,7 +44,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 }
 
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
-    [JsonIgnore] public T* InternalNode { get; private set; }
+    protected T* InternalNode { get; private set; }
 
     internal override sealed AtkResNode* InternalResNode => (AtkResNode*) InternalNode;
 
