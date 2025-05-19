@@ -118,8 +118,8 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->Color = value.ToByteColor();
     }
 
-    public float Alpha {
-        get => InternalResNode->Color.A;
+    [JsonProperty] public float Alpha {
+        get => InternalResNode->Color.A / 255.0f;
         set => InternalResNode->Color.A = (byte)(value * 255.0f);
     }
 
