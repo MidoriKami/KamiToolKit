@@ -8,7 +8,7 @@ namespace KamiToolKit.Nodes.ComponentNodes;
 
 public unsafe class CircleButton : ButtonBase {
 	protected override NodeBase DecorationNode => ImageNode;
-	public readonly SimpleImageNode ImageNode;
+	protected readonly SimpleImageNode ImageNode;
 	private ButtonIcon currentIcon;
 
 	public CircleButton() {

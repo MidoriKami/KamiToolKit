@@ -1,17 +1,15 @@
 ﻿using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Interface;
-using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using ImGuiNET;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
 public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
-	public readonly NineGridNode BackgroundNode;
+	protected readonly NineGridNode BackgroundNode;
 	protected abstract NodeBase DecorationNode { get; }
 
 	private bool buttonHeld;

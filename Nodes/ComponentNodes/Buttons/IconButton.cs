@@ -8,60 +8,59 @@ namespace KamiToolKit.Nodes.ComponentNodes;
 /// Uses a GameIconId to display that icon as the decorator for the button.
 /// </summary>
 public class IconButton : ButtonBase {
-
-	protected override NodeBase DecorationNode => ImageNode;
-	public readonly IconImageNode ImageNode;
+	protected override NodeBase DecorationNode => imageNode;
+	private readonly IconImageNode imageNode;
 
 	public IconButton() {
-		ImageNode = new IconImageNode {
+		imageNode = new IconImageNode {
 			IsVisible = true,
 			NodeId = 3,
 		};
 		
-		ImageNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		imageNode.AttachNode(this, NodePosition.AfterAllSiblings);
 	}
 	
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			ImageNode.DetachNode();
-			ImageNode.Dispose();
+			imageNode.DetachNode();
+			imageNode.Dispose();
 			
 			base.Dispose(disposing);
 		}
 	}
 
 	public uint IconId {
-		get => ImageNode.IconId;
-		set => ImageNode.IconId = value;
+		get => imageNode.IconId;
+		set => imageNode.IconId = value;
 	}
 
 	public float IconPositionX {
-		get => ImageNode.X;
-		set => ImageNode.X = value;
+		get => imageNode.X;
+		set => imageNode.X = value;
 	}
 
 	public float IconPositionY {
-		get => ImageNode.Y;
-		set => ImageNode.Y = value;
+		get => imageNode.Y;
+		set => imageNode.Y = value;
 	}
 
 	public Vector2 IconPosition {
-		get => ImageNode.Position;
-		set => ImageNode.Position = value;
+		get => imageNode.Position;
+		set => imageNode.Position = value;
 	}
 
 	public float IconWidth {
-		get => ImageNode.Width;
-		set => ImageNode.Width = value;
+		get => imageNode.Width;
+		set => imageNode.Width = value;
 	}
 
 	public float IconHeight {
-		get => ImageNode.Height;
-		set => ImageNode.Height = value;
+		get => imageNode.Height;
+		set => imageNode.Height = value;
 	}
 
 	public Vector2 IconSize {
-		get => ImageNode.Size;
-		set => ImageNode.Size = value;
+		get => imageNode.Size;
+		set => imageNode.Size = value;
 	}
 }
