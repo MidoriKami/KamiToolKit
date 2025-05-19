@@ -18,10 +18,13 @@ public class Spacing {
         Right = right;
         Bottom = bottom;
     }
+    
+    public static implicit operator Spacing(Vector4 vector) => new(vector.X, vector.Y, vector.Z, vector.W);
+    public static implicit operator Vector4(Spacing spacing) => new(spacing.Top, spacing.Left, spacing.Right, spacing.Bottom);
 }
 
 public abstract partial class NodeBase {
-    public Spacing Margin { get; set; } = new(0.0f);
+    [JsonProperty] public Spacing Margin { get; set; } = new(0.0f);
 
     public Vector2 LayoutSize => new(Width + Margin.Left + Margin.Right, Height + Margin.Top + Margin.Bottom);
 }

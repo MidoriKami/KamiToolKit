@@ -133,6 +133,15 @@ public partial class NodeBase {
 				info.SetValue(this, value);
 			}
 		}
+		else if (info.PropertyType == typeof(Spacing)) {
+			var rawValue = (Spacing) info.GetValue(this)!;
+			Vector4 vector = rawValue;
+
+			if (ImGui.InputFloat4($"##{info.Name}", ref vector)) {
+				Spacing spacing = vector;
+				info.SetValue(this, spacing);
+			}
+		}
 		else {
 			using (ImRaii.PushColor(ImGuiCol.Text, KnownColor.Orange.Vector())) {
 				ImGui.Text($"Undefined Property Type: {info.PropertyType} {info.Name}");
