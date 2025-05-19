@@ -22,7 +22,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
 
     private LayoutOrientation InternalLayoutOrientation { get; set; }
 
-    public LayoutAnchor LayoutAnchor { get; set; } = LayoutAnchor.TopLeft;
+    [JsonProperty] public LayoutAnchor LayoutAnchor { get; set; } = LayoutAnchor.TopLeft;
     
     /// <summary>
     /// If enabled, the background is sized around the content, not the list itself.
@@ -72,7 +72,7 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         background.AttachNode(this, NodePosition.AsFirstChild);
     }
     
-    public LayoutOrientation LayoutOrientation {
+    [JsonProperty] public LayoutOrientation LayoutOrientation {
         get => InternalLayoutOrientation;
         set {
             InternalLayoutOrientation = value;
@@ -80,17 +80,17 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
         } 
     }
 
-    public Vector4 BackgroundColor {
+    [JsonProperty] public Vector4 BackgroundColor {
         get => background.Color;
         set => background.Color = value;
     }
 
-    public bool BackgroundVisible {
+    [JsonProperty] public bool BackgroundVisible {
         get => background.IsVisible;
         set => background.IsVisible = value;
     }
 
-    public bool BorderVisible {
+    [JsonProperty] public bool BorderVisible {
         get => border.IsVisible;
         set => border.IsVisible = value;
     }
@@ -225,7 +225,6 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
             }
         }
     }
-    
         
     private void CalculateHorizontalLayout() {
         var runningPosition = GetLayoutStartPosition();
