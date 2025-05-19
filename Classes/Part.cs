@@ -127,12 +127,21 @@ public unsafe class Part : IDisposable {
             }
         }
 
+        texturePath = texturePath.Replace("uld", GetThemePathModifier());
+
         if (provider is not null) {
             texturePath = provider.GetSubstitutedPath(texturePath);
         }
         
         internalAsset->AtkTexture.LoadTexture(texturePath);
     }
+
+    private string GetThemePathModifier() => AtkStage.Instance()->AtkUIColorHolder->ActiveColorThemeType switch {
+        1 => "uld/light",
+        2 => "uld/third",
+        3 => "uld/fourth",
+        _ => "uld",
+    };
 
     /// <summary>
     /// Release the loaded texture, decreases ref count
