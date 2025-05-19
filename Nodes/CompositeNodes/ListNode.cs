@@ -27,13 +27,13 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     /// <summary>
     /// If enabled, the background is sized around the content, not the list itself.
     /// </summary>
-    public bool BackgroundFitsContents { get; set; }
-    public bool BorderFitsContents { get; set; }
+    [JsonProperty] public bool BackgroundFitsContents { get; set; }
+    [JsonProperty] public bool BorderFitsContents { get; set; }
 
     /// <summary>
     /// If enabled, node contents will be clipped inside the container.
     /// </summary>
-    public bool ClipListContents {
+    [JsonProperty] public bool ClipListContents {
         get => containerNode.NodeFlags.HasFlag(NodeFlags.Clip);
         set {
             if (value) {
