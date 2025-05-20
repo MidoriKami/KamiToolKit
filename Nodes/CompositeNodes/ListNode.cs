@@ -14,7 +14,7 @@ namespace KamiToolKit.Nodes;
 
 /// Custom Implementation of a Node that contains other nodes
 [JsonObject(MemberSerialization.OptIn)]
-public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
+public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     [JsonProperty] private readonly ResNode containerNode;
     private readonly List<T> nodeList = [];
     [JsonProperty] private readonly BackgroundImageNode background;
@@ -115,6 +115,30 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     [JsonProperty] public bool BorderVisible {
         get => border.IsVisible;
         set => border.IsVisible = value;
+    }
+
+    public new float Width {
+        get => InternalResNode->GetWidth();
+        set {
+            InternalResNode->SetWidth((ushort)value);
+            RecalculateLayout();
+        }
+    }
+    
+    public new float Height {
+        get => InternalResNode->GetHeight();
+        set {
+            InternalResNode->SetHeight((ushort)value);
+            RecalculateLayout();
+        }
+    }
+
+    [JsonProperty] public new Vector2 Size {
+        get => new(Width, Height);
+        set {
+            Width = value.X;
+            Height = value.Y;
+        }
     }
 
     protected override void Dispose(bool isDisposing) {
