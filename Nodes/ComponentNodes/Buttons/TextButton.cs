@@ -10,38 +10,39 @@ namespace KamiToolKit.Nodes.ComponentNodes;
 [JsonObject(MemberSerialization.OptIn)]
 public unsafe class TextButton : ButtonBase {
 
-	protected override NodeBase DecorationNode => LabelNode;
-	public readonly TextNode LabelNode;
+	protected override NodeBase DecorationNode => labelNode;
+	private readonly TextNode labelNode;
 
 	public TextButton() {
-		Data->Nodes[0] = 3;
-
-		LabelNode = new TextNode {
+		labelNode = new TextNode {
 			IsVisible = true,
 			AlignmentType = AlignmentType.Center,
 			Position = new Vector2(16.0f, 3.0f),
-			NodeId = 3,
+			NodeId = 2,
 		};
+
+		Data->Nodes[0] = 2;
+		Data->Nodes[1] = 3;
 		
-		LabelNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		labelNode.AttachNode(this, NodePosition.AfterAllSiblings);
 		
 		Component->AtkComponentBase.InitializeFromComponentData(&Data->AtkUldComponentDataBase);
 	}
 
 	public SeString Label {
-		get => LabelNode.Text;
-		set => LabelNode.Text = value;
+		get => labelNode.Text;
+		set => labelNode.Text = value;
 	}
 
 	[JsonProperty] public string String {
-		get => LabelNode.Text.ToString();
-		set => LabelNode.Text = value;
+		get => labelNode.Text.ToString();
+		set => labelNode.Text = value;
 	}
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			LabelNode.DetachNode();
-			LabelNode.Dispose();
+			labelNode.DetachNode();
+			labelNode.Dispose();
 			
 			base.Dispose(disposing);
 		}

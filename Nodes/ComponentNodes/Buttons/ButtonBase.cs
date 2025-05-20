@@ -16,7 +16,8 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
 	protected ButtonBase() {
 		SetInternalComponentType(ComponentType.Button);
-		Data->Nodes[1] = 2;
+
+		CollisionNode.NodeId = 4;
 		
 		BackgroundNode = new SimpleNineGridNode {
 			TexturePath = "ui/uld/ButtonA_hr1.tex",
@@ -25,7 +26,7 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 			LeftOffset = 16.0f,
 			RightOffset = 16.0f,
 			PartsRenderType = 88,
-			NodeId = 2,
+			NodeId = 3,
 		};
 
 		BackgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
