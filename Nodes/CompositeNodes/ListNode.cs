@@ -21,14 +21,36 @@ public class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     [JsonProperty] private readonly BorderNineGridNode border;
 
     private LayoutOrientation InternalLayoutOrientation { get; set; }
+    private LayoutAnchor InternalLayoutAnchor { get; set; } = LayoutAnchor.TopLeft;
+    private bool InternalBackgroundFitContents { get; set; }
+    private bool InternalBorderFitContents { get; set; }
 
-    [JsonProperty] public LayoutAnchor LayoutAnchor { get; set; } = LayoutAnchor.TopLeft;
-    
+    [JsonProperty] public LayoutAnchor LayoutAnchor {
+        get => InternalLayoutAnchor;
+        set {
+            InternalLayoutAnchor = value;
+            RecalculateLayout();
+        }
+    }
+
     /// <summary>
     /// If enabled, the background is sized around the content, not the list itself.
     /// </summary>
-    [JsonProperty] public bool BackgroundFitsContents { get; set; }
-    [JsonProperty] public bool BorderFitsContents { get; set; }
+    [JsonProperty] public bool BackgroundFitsContents {
+        get => InternalBackgroundFitContents;
+        set {
+            InternalBackgroundFitContents = value;
+            RecalculateLayout();
+        }
+    }
+
+    [JsonProperty] public bool BorderFitsContents {
+        get => InternalBorderFitContents;
+        set {
+            InternalBorderFitContents = value;
+            RecalculateLayout();
+        }
+    }
 
     /// <summary>
     /// If enabled, node contents will be clipped inside the container.
