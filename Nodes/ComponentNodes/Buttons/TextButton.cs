@@ -2,6 +2,7 @@
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes.ComponentNodes.Abstract;
 using KamiToolKit.System;
 using Newtonsoft.Json;
 
@@ -25,7 +26,7 @@ public unsafe class TextButton : ButtonBase {
 		
 		LabelNode.AttachNode(this, NodePosition.AfterAllSiblings);
 		
-		Component->AtkComponentBase.InitializeFromComponentData(&Data->AtkUldComponentDataBase);
+		InitializeComponentEvents();
 	}
 
 	public SeString Label {

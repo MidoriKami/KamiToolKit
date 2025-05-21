@@ -2,19 +2,19 @@
 using Dalamud.Game.Addon.Events;
 using Dalamud.Interface;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes.ComponentNodes.Abstract;
 using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
 public unsafe class CircleButton : ButtonBase {
-	protected override NodeBase DecorationNode => ImageNode;
-	protected readonly SimpleImageNode ImageNode;
+	protected override NodeBase DecorationNode => imageNode;
+	private SimpleImageNode imageNode;
 	private ButtonIcon currentIcon;
 
 	public CircleButton() {
 		BackgroundVisible = false;
-		
-		ImageNode = new SimpleImageNode {
+		imageNode = new SimpleImageNode {
 			TexturePath = "ui/uld/CircleButtons_hr1.tex",
 			TextureSize = new Vector2(24.0f, 24.0f),
 			TextureCoordinates = new Vector2(0.0f, 112.0f),
@@ -23,16 +23,18 @@ public unsafe class CircleButton : ButtonBase {
 			ImageNodeFlags = 0,
 		};
 
-		ImageNode.AttachNode(this, NodePosition.AfterAllSiblings);
-
+		imageNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		
+		InitializeComponentEvents();
+		
 		AddEvent(AddonEventType.MouseOver,  OnMouseOver);
 		AddEvent(AddonEventType.MouseOut,  OnMouseOut);
 	}
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			ImageNode.DetachNode();
-			ImageNode.Dispose();
+			imageNode.DetachNode();
+			imageNode.Dispose();
 			
 			RemoveEvent(AddonEventType.MouseOver, OnMouseOver);
 			RemoveEvent(AddonEventType.MouseOut, OnMouseOut);
@@ -42,19 +44,19 @@ public unsafe class CircleButton : ButtonBase {
 	}
 
 	private void OnMouseOver() {
-		ImageNode.AddColor = new Vector3(16.0f, 16.0f, 16.0f).AsVector4().NormalizeToUnitRange().AsVector3();
+		imageNode.AddColor = new Vector3(16.0f, 16.0f, 16.0f).AsVector4().NormalizeToUnitRange().AsVector3();
 	}
 	
 	private void OnMouseOut() {
-		ImageNode.AddColor = Vector3.Zero;
+		imageNode.AddColor = Vector3.Zero;
 	}
 
 	public ButtonIcon Icon {
 		get => currentIcon;
 		set {
 			var uldInfo = GetTextureCoordinateForIcon(value);
-			ImageNode.TextureCoordinates = uldInfo.TextureCoordinates;
-			ImageNode.TextureSize = uldInfo.TextureSize;
+			imageNode.TextureCoordinates = uldInfo.TextureCoordinates;
+			imageNode.TextureSize = uldInfo.TextureSize;
 			currentIcon = value;
 		}
 	}
@@ -65,7 +67,7 @@ public unsafe class CircleButton : ButtonBase {
 			InternalResNode->SetWidth((ushort) value);
 			BackgroundNode.Width = value;
 			CollisionNode.Width = value;
-			ImageNode.Width = value;
+			imageNode.Width = value;
 		}
 	}
 
@@ -75,7 +77,7 @@ public unsafe class CircleButton : ButtonBase {
 			InternalResNode->SetHeight((ushort) value);
 			BackgroundNode.Height = value;
 			CollisionNode.Height = value;
-			ImageNode.Height = value;
+			imageNode.Height = value;
 		}
 	}
 

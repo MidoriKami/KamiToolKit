@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes.ComponentNodes.Abstract;
 using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
@@ -9,7 +10,7 @@ namespace KamiToolKit.Nodes.ComponentNodes;
 /// </summary>
 public class IconButton : ButtonBase {
 	protected override NodeBase DecorationNode => imageNode;
-	private readonly IconImageNode imageNode;
+	private IconImageNode imageNode;
 
 	public IconButton() {
 		imageNode = new IconImageNode {
@@ -18,6 +19,8 @@ public class IconButton : ButtonBase {
 		};
 		
 		imageNode.AttachNode(this, NodePosition.AfterAllSiblings);
+
+		InitializeComponentEvents();
 	}
 	
 	protected override void Dispose(bool disposing) {

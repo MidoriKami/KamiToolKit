@@ -2,6 +2,7 @@
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Plugin.Services;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes.ComponentNodes.Abstract;
 using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
@@ -17,6 +18,8 @@ public class ImGuiIconButton : ButtonBase {
 		};
 		
 		imageNode.AttachNode(this, NodePosition.AfterAllSiblings);
+				
+		InitializeComponentEvents();
 	}
 
 	protected override void Dispose(bool disposing) {

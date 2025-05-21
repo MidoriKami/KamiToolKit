@@ -52,9 +52,6 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		uldManager.UpdateDrawNodeList();
 		uldManager.Flags1 = 1;
 		uldManager.LoadedState = AtkLoadState.Loaded;
-		
-		componentBase->RegisterEvents();
-		componentBase->SetEnabledState(true);
 	}
 
 	internal T* Component {
@@ -83,5 +80,12 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		var componentInfo = (AtkUldComponentInfo*) ComponentBase->UldManager.Objects;
 		
 		componentInfo->ComponentType = type;
+	}
+
+	protected void InitializeComponentEvents() {
+		ComponentBase->InitializeFromComponentData(DataBase);
+		
+		ComponentBase->RegisterEvents();
+		ComponentBase->SetEnabledState(true);
 	}
 }

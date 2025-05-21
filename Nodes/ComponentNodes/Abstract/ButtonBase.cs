@@ -6,7 +6,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
 
-namespace KamiToolKit.Nodes.ComponentNodes;
+namespace KamiToolKit.Nodes.ComponentNodes.Abstract;
 
 public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
 	protected readonly NineGridNode BackgroundNode;
