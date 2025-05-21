@@ -54,6 +54,6 @@ public class SimpleImageNode : ImageNode {
         set => PartsList[0].LoadTexture(value);
     }
     
-    public void LoadTexture(string path, ITextureSubstitutionProvider? substitutionProvider)
-        => PartsList[0].LoadTexture(path, substitutionProvider);
+    public void LoadTexture(string path)
+        => PartsList[0].LoadTexture(path);
 }

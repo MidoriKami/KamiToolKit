@@ -111,11 +111,11 @@ public unsafe class Part : IDisposable {
     }
 
     /// <summary>
-    /// Loads a game texture via path, but processes it through the substitution provider.
+    /// Load the specified path, this will try to select the correct path based on theme
+    /// and resolve through any texture substitutions defined by other plugins.
     /// </summary>
-    /// <param name="path">The path to the specific tex file that you want</param>
-    /// <param name="provider">Dalamud ITextureSubstitutionProvider for resolving the path</param>
-    public void LoadTexture(string path, ITextureSubstitutionProvider? provider = null) {
+    /// <param name="path">Path to load</param>
+    public void LoadTexture(string path) {
         var texturePath = path;
         
         // If we are trying to load a HR texture
@@ -127,11 +127,12 @@ public unsafe class Part : IDisposable {
             }
         }
 
-        texturePath = texturePath.Replace("uld", GetThemePathModifier());
-
-        if (provider is not null) {
-            texturePath = provider.GetSubstitutedPath(texturePath);
+        var themedPath = texturePath.Replace("uld", GetThemePathModifier());
+        if (DalamudInterface.Instance.DataManager.FileExists(themedPath)) {
+            texturePath = themedPath;
         }
+
+        texturePath = DalamudInterface.Instance.TextureSubstitutionProvider.GetSubstitutedPath(texturePath);
         
         internalAsset->AtkTexture.LoadTexture(texturePath);
     }
