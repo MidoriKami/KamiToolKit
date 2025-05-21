@@ -120,6 +120,11 @@ public abstract unsafe partial class NodeBase {
 	private bool TooltipRegistered { get; set; }
 	private bool CursorEventsSet { get; set; }
 
+	public bool EnableEventFlags {
+		get => EventFlagsSet;
+		set => EventFlagsSet = value;
+	}
+
 	public bool EventFlagsSet {
 		get => NodeFlags.HasFlag(NodeFlags.EmitsEvents) &&
 		       NodeFlags.HasFlag(NodeFlags.HasCollision) &&
