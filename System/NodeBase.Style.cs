@@ -58,9 +58,7 @@ public partial class NodeBase {
 			if (memberInfo is not { MemberType: MemberTypes.Field or MemberTypes.Property }) continue;
 			if (!memberInfo.GetCustomAttributesData().Any(attribute => attribute.AttributeType == typeof(JsonPropertyAttribute))) continue;
 			
-			if (memberInfo.PropertyType.Assembly != GetType().Assembly || memberInfo.PropertyType.IsEnum) {
-				taggedFields.Add(memberInfo);
-			}
+			taggedFields.Add(memberInfo);
 		}
 	}
 
