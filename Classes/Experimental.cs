@@ -122,6 +122,7 @@ internal unsafe class Experimental {
 // vf15 - Iterates DuplicateObjectList and calls some function on each node
 // vf16 - (No base implementation)
 // vf18 - Some kind of collision check, returns AtkCollisionNode
+// vf19 - [Button] GetHeight
 // vf22 - [Button] Seems to center the text inside the button
 // vf23 - [Button] Also seems to do the same, but slightly different
 internal static unsafe class AtkComponentBaseExtensions {
