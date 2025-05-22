@@ -3,24 +3,19 @@ using Newtonsoft.Json;
 
 namespace KamiToolKit.System;
 
-public class Spacing {
-    public float Top { get; set; }
-    public float Left { get; set; }
-    public float Right { get; set; }
-    public float Bottom { get; set; }
-    
-    
+[method: JsonConstructor]
+public class Spacing(float top, float left, float right, float bottom) {
+    public float Top { get; set; } = top;
+    public float Left { get; set; } = left;
+    public float Right { get; set; } = right;
+    public float Bottom { get; set; } = bottom;
+
+
     public Spacing(float allSides) : this(allSides, allSides, allSides, allSides) { }
 
-    [JsonConstructor] public Spacing(float top, float left, float right, float bottom) {
-        Top = top;
-        Left = left;
-        Right = right;
-        Bottom = bottom;
-    }
-    
     public static implicit operator Spacing(Vector4 vector) => new(vector.X, vector.Y, vector.Z, vector.W);
     public static implicit operator Vector4(Spacing spacing) => new(spacing.Top, spacing.Left, spacing.Right, spacing.Bottom);
+    public static Spacing operator+(Spacing a, Spacing b) => new(a.Top + b.Top, a.Left + b.Left, a.Right + b.Right, a.Bottom + b.Bottom);
 }
 
 public abstract partial class NodeBase {
