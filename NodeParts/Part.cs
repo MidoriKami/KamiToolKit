@@ -4,8 +4,9 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 
-namespace KamiToolKit.Classes;
+namespace KamiToolKit.NodeParts;
 
 /// <summary>
 /// Wrapper around a AtkUldPart and AtkUldAsset, loads and holds graphics textures for display in image, and image-like nodes.

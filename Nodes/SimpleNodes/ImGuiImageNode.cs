@@ -1,6 +1,6 @@
 ﻿using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Plugin.Services;
-using KamiToolKit.Classes;
+using KamiToolKit.NodeParts;
 
 namespace KamiToolKit.Nodes;
 
