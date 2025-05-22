@@ -183,12 +183,12 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
                 .MinBy(node => node.Position.Length());
             
             if (nodeList.Count is not 0 && topLeftNode is not null) {
-                background.Position = topLeftNode.Position;
+                background.Position = topLeftNode.Position - new Vector2(ItemMargin.Left, ItemMargin.Top);
             }
         }
         else {
             background.Size = Size;
-            background.Position = Vector2.Zero;
+            background.Position = Vector2.Zero - new Vector2(ItemMargin.Left, ItemMargin.Top);
         }
         
         if (BorderFitsContents) {
@@ -199,12 +199,12 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
                 .MinBy(node => node.Position.Length());
             
             if (nodeList.Count is not 0 && topLeftNode is not null) {
-                border.Position = topLeftNode.Position - new Vector2(15.0f, 15.0f);
+                border.Position = topLeftNode.Position - new Vector2(15.0f, 15.0f) - new Vector2(ItemMargin.Left, ItemMargin.Top);
             }
         }
         else {
             border.Size = Size + new Vector2(30.0f, 30.0f);
-            border.Position = - new Vector2(15.0f, 15.0f);
+            border.Position = - new Vector2(15.0f, 15.0f) - new Vector2(ItemMargin.Left, ItemMargin.Top);
         }
         
         containerNode.Size = Size;
@@ -222,14 +222,14 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
             switch (LayoutOrientation) {
                 // Horizontal we take max height, and add widths
                 case LayoutOrientation.Horizontal:
-                    size.Y = MathF.Max(size.Y, node.LayoutSize.Y);
-                    size.X += node.LayoutSize.X;
+                    size.Y = MathF.Max(size.Y, node.LayoutSize.Y + ItemMargin.Top + ItemMargin.Bottom);
+                    size.X += node.LayoutSize.X + ItemMargin.Right + ItemMargin.Left;
                     break;
                 
                 // Vertical we take max width, and add heights
                 case LayoutOrientation.Vertical:
-                    size.X = MathF.Max(size.X, node.LayoutSize.X);
-                    size.Y += node.LayoutSize.Y;
+                    size.X = MathF.Max(size.X, node.LayoutSize.X + ItemMargin.Left + ItemMargin.Right);
+                    size.Y += node.LayoutSize.Y + ItemMargin.Top + ItemMargin.Bottom;
                     break;
             }
         }
