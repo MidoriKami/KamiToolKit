@@ -120,15 +120,15 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
     public new float Width {
         get => InternalResNode->GetWidth();
         set {
-            InternalResNode->SetWidth((ushort)value);
+            InternalResNode->SetWidth((ushort) value);
             RecalculateLayout();
         }
     }
-    
+
     public new float Height {
         get => InternalResNode->GetHeight();
         set {
-            InternalResNode->SetHeight((ushort)value);
+            InternalResNode->SetHeight((ushort) value);
             RecalculateLayout();
         }
     }
@@ -138,6 +138,16 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
         set {
             Width = value.X;
             Height = value.Y;
+        }
+    }
+
+    private Spacing InternalSpacing { get; set; } = new(0.0f);
+
+    [JsonProperty] public Spacing ItemMargin {
+        get => InternalSpacing;
+        set {
+            InternalSpacing = value;
+            RecalculateLayout();
         }
     }
 
@@ -243,29 +253,30 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
                 }
             }
             
+            var netMargin = node.Margin + ItemMargin;
+            
             switch (LayoutAnchor) {
                 case LayoutAnchor.TopLeft: {
-                    node.Position = runningPosition + new Vector2(node.Margin.Left, node.Margin.Top);
-                    runningPosition.Y += node.Height * node.Scale.Y + node.Margin.Bottom + node.Margin.Top;
+                    node.Position = runningPosition + new Vector2(netMargin.Left, netMargin.Top);
+                    runningPosition.Y += node.Height * node.Scale.Y + netMargin.Bottom + netMargin.Top;
                     break;
                 }
 
                 case LayoutAnchor.TopRight: {
-                    node.Position = runningPosition - new Vector2(node.Margin.Right, 0.0f) + new Vector2(0.0f, node.Margin.Top) - new Vector2(node.Width * node.Scale.X, 0.0f);
-                    runningPosition.Y += node.Height * node.Scale.Y + node.Margin.Bottom + node.Margin.Top;
+                    node.Position = runningPosition - new Vector2(netMargin.Right, 0.0f) + new Vector2(0.0f, netMargin.Top) - new Vector2(node.Width * node.Scale.X, 0.0f);
+                    runningPosition.Y += node.Height * node.Scale.Y + netMargin.Bottom + netMargin.Top;
                     break;
                 }
                 
                 case LayoutAnchor.BottomLeft: {
-                    node.Position = runningPosition + new Vector2(node.Margin.Left, 0.0f) - new Vector2(0.0f, node.Margin.Bottom) - new Vector2(0.0f, node.Height * node.Scale.Y);
-                    runningPosition.Y -= node.Height * node.Scale.Y + node.Margin.Top + node.Margin.Bottom;
+                    node.Position = runningPosition + new Vector2(netMargin.Left, 0.0f) - new Vector2(0.0f, netMargin.Bottom) - new Vector2(0.0f, node.Height * node.Scale.Y);
+                    runningPosition.Y -= node.Height * node.Scale.Y + netMargin.Top + netMargin.Bottom;
                     break;
                 }
 
                 case LayoutAnchor.BottomRight: {
-                    node.Position = runningPosition - new Vector2(node.Margin.Right, 0.0f) - new Vector2(0.0f, node.Margin.Bottom) - new Vector2(node.Width * node.Scale.X, node.Height * node.Scale.Y);
-                    runningPosition.Y -= node.Height * node.Scale.Y + node.Margin.Top + node.Margin.Bottom;
-
+                    node.Position = runningPosition - new Vector2(netMargin.Right, 0.0f) - new Vector2(0.0f, netMargin.Bottom) - new Vector2(node.Width * node.Scale.X, node.Height * node.Scale.Y);
+                    runningPosition.Y -= node.Height * node.Scale.Y + netMargin.Top + netMargin.Bottom;
                     break;
                 }
             }
@@ -278,28 +289,30 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
         foreach (var node in nodeList) {
             if (!node.IsVisible) continue;
             
+            var netMargin = node.Margin + ItemMargin;
+            
             switch (LayoutAnchor) {
                 case LayoutAnchor.TopLeft: {
-                    node.Position = runningPosition + new Vector2(node.Margin.Left, node.Margin.Top);
-                    runningPosition.X += node.Width * node.Scale.X + node.Margin.Right + node.Margin.Left;
+                    node.Position = runningPosition + new Vector2(netMargin.Left, netMargin.Top);
+                    runningPosition.X += node.Width * node.Scale.X + netMargin.Right + netMargin.Left;
                     break;
                 }
 
                 case LayoutAnchor.TopRight: {
-                    node.Position = runningPosition - new Vector2(node.Margin.Right, 0.0f) + new Vector2(0.0f, node.Margin.Top) - new Vector2(node.Width * node.Scale.X, 0.0f);
-                    runningPosition.X -= node.Width * node.Scale.X + node.Margin.Left + node.Margin.Right;
+                    node.Position = runningPosition - new Vector2(netMargin.Right, 0.0f) + new Vector2(0.0f, netMargin.Top) - new Vector2(node.Width * node.Scale.X, 0.0f);
+                    runningPosition.X -= node.Width * node.Scale.X + netMargin.Left + netMargin.Right;
                     break;
                 }
                 
                 case LayoutAnchor.BottomLeft: {
-                    node.Position = runningPosition + new Vector2(node.Margin.Left, 0.0f) - new Vector2(0.0f, node.Margin.Bottom) - new Vector2(0.0f, node.Height * node.Scale.Y);
-                    runningPosition.X += node.Width * node.Scale.X + node.Margin.Left + node.Margin.Right;
+                    node.Position = runningPosition + new Vector2(netMargin.Left, 0.0f) - new Vector2(0.0f, netMargin.Bottom) - new Vector2(0.0f, node.Height * node.Scale.Y);
+                    runningPosition.X += node.Width * node.Scale.X + netMargin.Left + netMargin.Right;
                     break;
                 }
 
                 case LayoutAnchor.BottomRight: {
-                    node.Position = runningPosition - new Vector2(node.Margin.Right, 0.0f) - new Vector2(0.0f, node.Margin.Bottom) - new Vector2(node.Width * node.Scale.X, node.Height * node.Scale.Y);
-                    runningPosition.X -= node.Width * node.Scale.X + node.Margin.Left + node.Margin.Right;
+                    node.Position = runningPosition - new Vector2(netMargin.Right, 0.0f) - new Vector2(0.0f, netMargin.Bottom) - new Vector2(node.Width * node.Scale.X, node.Height * node.Scale.Y);
+                    runningPosition.X -= node.Width * node.Scale.X + netMargin.Left + netMargin.Right;
                     break;
                 }
             }
