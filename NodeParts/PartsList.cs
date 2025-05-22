@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -55,32 +54,20 @@ public unsafe class PartsList : IList<Part>, IDisposable {
         => GetEnumerator();
 
     public void Add(Part item) {
-        // Make new buffer to fit new part
-        var newBuffer = NativeMemoryHelper.UiAlloc<AtkUldPart>(PartCount + 1);
-        
-        // Copy old parts into new buffer
-        NativeMemory.Copy(InternalPartsList->Parts, newBuffer, (nuint) (sizeof(AtkUldPart) * PartCount));
-        
-        // Free old buffer
-        if (InternalPartsList->Parts is not null) {
-            NativeMemoryHelper.UiFree(InternalPartsList->Parts, PartCount);
-        }
+        NativeMemoryHelper.ResizeArray(ref InternalPartsList->Parts, PartCount, PartCount + 1);
         
         // Add new part on end of buffer
-        newBuffer[PartCount] = *item.InternalPart;
+        InternalPartsList->Parts[PartCount] = *item.InternalPart;
         
         // Now that we have the data copied into the new array, update the pointer and free old memory
         var allocatedPart = item.InternalPart;
-        item.InternalPart = &newBuffer[PartCount];
+        item.InternalPart = &InternalPartsList->Parts[PartCount];
         item.IsAttached = true;
         NativeMemoryHelper.UiFree(allocatedPart);
         
         // Update Parts List
         PartCount++;
         parts.Add(item);
-
-        // Assign new parts list to native parts list
-        InternalPartsList->Parts = newBuffer;
     }
 
     public void Clear() {

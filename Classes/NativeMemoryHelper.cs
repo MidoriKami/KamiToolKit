@@ -50,12 +50,12 @@ internal static class NativeMemoryHelper {
         => ResizeArray(ref array, (int) oldSize, newSize);
     
     public static unsafe void ResizeArray<T>(ref T* array, int oldSize, int newSize) where T : unmanaged {
-        var newBuffer = (T*) Malloc((ulong) (sizeof(T) * newSize) );
+        var newBuffer = UiAlloc<T>((uint) newSize);
 
         Copy(array, newBuffer, oldSize);
 
-        if (oldSize > 0) {
-            Free(array, (ulong) (sizeof(T) * oldSize));
+        if (array is not null) {
+            UiFree(array, (uint) oldSize);
         }
         
         array = newBuffer;
