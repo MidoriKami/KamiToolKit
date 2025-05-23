@@ -5,6 +5,9 @@ using FFXIVClientStructs.FFXIV.Client.System.Memory;
 namespace KamiToolKit.Classes;
 
 internal static class NativeMemoryHelper {
+    public static unsafe T* UiAlloc<T>(int elementCount, ulong alignment = 8) where T : unmanaged 
+        => UiAlloc<T>((uint) elementCount, alignment);
+    
     public static unsafe T* UiAlloc<T>(uint elementCount = 1, ulong alignment = 8) where T : unmanaged {
         var allocSize = (ulong) sizeof(T) * elementCount;
         var memory = (T*) IMemorySpace.GetUISpace()->Malloc(allocSize, alignment);
