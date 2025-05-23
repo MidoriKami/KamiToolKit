@@ -1,6 +1,4 @@
 ﻿using System.Numerics;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Interface;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -13,6 +11,8 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 	protected abstract NodeBase DecorationNode { get; }
 
 	private bool buttonHeld;
+
+	protected AtkComponentButton* ButtonNode => (AtkComponentButton*) InternalNode;
 
 	protected ButtonBase() {
 		SetInternalComponentType(ComponentType.Button);
@@ -29,22 +29,12 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		};
 
 		BackgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
-
-		CollisionNode.AddEvent(AddonEventType.MouseOver, OnMouseOver);
-		CollisionNode.AddEvent(AddonEventType.MouseOut, OnMouseOut);
-		CollisionNode.AddEvent(AddonEventType.MouseDown, OnMouseDown);
-		CollisionNode.AddEvent(AddonEventType.MouseUp, OnMouseUp);
 	}
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
 			BackgroundNode.DetachNode();
 			BackgroundNode.Dispose();
-			
-			CollisionNode.RemoveEvent(AddonEventType.MouseOver, OnMouseOver);
-			CollisionNode.RemoveEvent(AddonEventType.MouseOut, OnMouseOut);
-			CollisionNode.RemoveEvent(AddonEventType.MouseDown, OnMouseDown);
-			CollisionNode.RemoveEvent(AddonEventType.MouseUp, OnMouseUp);
 
 			NativeMemoryHelper.UiFree(Data);
 			Data = null;
@@ -63,38 +53,6 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		base.DisableEvents(eventManager);
 		
 		CollisionNode.DisableEvents(eventManager);
-	}
-
-	private void OnMouseDown() {
-		if (!buttonHeld) {
-			BackgroundNode.Position += new Vector2(0.0f, 1.0f);
-			DecorationNode.Position += new Vector2(0.0f, 1.0f);
-			buttonHeld = true;
-		}
-	}
-	
-	private void OnMouseUp() {
-		if (buttonHeld) {
-			BackgroundNode.Position -= new Vector2(0.0f, 1.0f);
-			DecorationNode.Position -= new Vector2(0.0f, 1.0f);
-			buttonHeld = false;
-		}
-	}
-
-	private void OnMouseOver() {
-		BackgroundNode.AddColor = new Vector3(16.0f, 16.0f, 16.0f).AsVector4().NormalizeToUnitRange().AsVector3();
-		SetCursor(AddonCursorType.Clickable);
-	}
-	
-	private void OnMouseOut() {
-		if (buttonHeld) {
-			BackgroundNode.Position -= new Vector2(0.0f, 1.0f);
-			DecorationNode.Position -= new Vector2(0.0f, 1.0f);
-			buttonHeld = false;
-		}
-		
-		BackgroundNode.AddColor = Vector3.Zero;
-		ResetCursor();
 	}
 	
 	public new float Width {

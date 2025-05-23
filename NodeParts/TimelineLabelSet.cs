@@ -4,7 +4,7 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.NodeParts;
 
-internal unsafe class TimelineLabelSet : IDisposable {
+public unsafe class TimelineLabelSet : IDisposable {
 
 	internal AtkTimelineLabelSet* InternalLabelSet;
 

@@ -5,24 +5,37 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.NodeParts;
 
-internal unsafe class TimelineResource : IDisposable {
+public unsafe class TimelineResource : IDisposable {
 	internal AtkTimelineResource* InternalResource;
-
-	private readonly List<TimelineAnimation> animations = [];
-	private readonly List<TimelineLabelSet> labelSets = [];
-
+	
+	private readonly TimelineAnimationArray animationArray;
+	
 	public TimelineResource() {
 		InternalResource = NativeMemoryHelper.UiAlloc<AtkTimelineResource>();
 
-		InternalResource->Id = 0;
+		InternalResource->Id = 1;
 		InternalResource->AnimationCount = 0;
 		InternalResource->LabelSetCount = 0;
-		InternalResource->Animations = null;
+		
+		animationArray = new TimelineAnimationArray();
+		InternalResource->Animations = animationArray.InternalTimelineArray; // Should be null here, as we don't make any animations by default.
+		
 		InternalResource->LabelSets = null;
 	}
 	
 	public void Dispose() {
+		animationArray.Dispose();
+		
 		NativeMemoryHelper.UiFree(InternalResource);
 		InternalResource = null;
+	}
+
+	public List<TimelineAnimation> Animations {
+		get => animationArray.Animations;
+		set {
+			animationArray.Animations = value;
+			InternalResource->Animations = animationArray.InternalTimelineArray;
+			InternalResource->AnimationCount = (ushort) animationArray.Count;
+		}
 	}
 }
