@@ -107,8 +107,20 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->NodeFlags = value;
     }
 
+    public void AddFlags(params NodeFlags[] flags) {
+        foreach (var flag in flags) {
+            AddFlags(flag);
+        }
+    }
+    
     public void AddFlags(NodeFlags flags)
         => NodeFlags |= flags;
+
+    public void RemoveFlags(params NodeFlags[] flags) {
+        foreach (var flag in flags) {
+            RemoveFlags(flag);
+        }
+    }
 
     public void RemoveFlags(NodeFlags flags)
         => NodeFlags &= ~flags;
@@ -148,7 +160,7 @@ public abstract unsafe partial class NodeBase {
 
     public uint DrawFlags {
         get => InternalResNode->DrawFlags;
-        private set => InternalResNode->DrawFlags = value;
+        internal set => InternalResNode->DrawFlags = value;
     }
 
     protected NodeType NodeType {
