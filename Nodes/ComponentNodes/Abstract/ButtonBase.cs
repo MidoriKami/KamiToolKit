@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
+using Dalamud.Game.Addon.Events;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -55,6 +57,31 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		CollisionNode.DisableEvents(eventManager);
 	}
 	
+	private Action? InternalOnClick { get; set; }
+
+	public Action? OnClick {
+		get => InternalOnClick;
+		set {
+			if (value is null ) {
+				if (InternalOnClick is not null) {
+					RemoveEvent(AddonEventType.ButtonClick, InternalOnClick);
+					InternalOnClick = null;
+				}
+			}
+			else {
+				if (InternalOnClick is not null) {
+					AddEvent(AddonEventType.ButtonClick, InternalOnClick);
+					AddEvent(AddonEventType.ButtonClick, value);
+					InternalOnClick = value;
+				}
+				else {
+					AddEvent(AddonEventType.ButtonClick, value);
+					InternalOnClick = value;
+				}
+			}
+		}
+	}
+
 	public new float Width {
 		get => InternalResNode->Width;
 		set {
