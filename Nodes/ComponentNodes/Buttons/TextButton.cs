@@ -23,6 +23,8 @@ public unsafe class TextButton : ButtonBase {
 			AlignmentType = AlignmentType.Center,
 			Position = new Vector2(16.0f, 3.0f),
 			NodeId = 3,
+			TextFlags = (TextFlags) 33,
+			LineSpacing = 12,
 		};
 		
 		LabelNode.AddTimeline(new Timeline {
@@ -78,10 +80,6 @@ public unsafe class TextButton : ButtonBase {
 		LabelNode.AttachNode(this, NodePosition.AfterAllSiblings);
 		
 		InitializeComponentEvents();
-		
-		LabelNode.InternalResNode->EnableTimeline();
-		LabelNode.InternalResNode->Timeline->PlayAnimation(AtkTimelineJumpBehavior.Initialize, 1);
-		LabelNode.InternalResNode->Timeline->PlayAnimation(AtkTimelineJumpBehavior.LoopForever, 1);
 	}
 
 	public SeString Label {
@@ -110,6 +108,7 @@ public unsafe class TextButton : ButtonBase {
 			BackgroundNode.Width = value;
 			DecorationNode.Width = value - BackgroundNode.LeftOffset - BackgroundNode.RightOffset;
 			CollisionNode.Width = value;
+			Component->UldManager.RootNodeWidth = (ushort) value;
 		}
 	}
 
@@ -120,6 +119,7 @@ public unsafe class TextButton : ButtonBase {
 			BackgroundNode.Height = value;
 			DecorationNode.Height = value - 8.0f;
 			CollisionNode.Height = value;
+			Component->UldManager.RootNodeHeight = (ushort) value;
 		}
 	}
 

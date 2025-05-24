@@ -40,17 +40,18 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
 		uldManager.Objects = (AtkUldObjectInfo*) NativeMemoryHelper.UiAlloc<AtkUldComponentInfo>();
 		ref var objects = ref uldManager.Objects;
+		uldManager.ObjectCount = 1;
 
 		objects->NodeList = (AtkResNode**) NativeMemoryHelper.Malloc(8);
 		objects->NodeList[0] = CollisionNode.InternalResNode;
 		objects->NodeCount = 1;
-		objects->Id = 1;
+		objects->Id = 1001;
 		
 		uldManager.InitializeResourceRendererManager();
 		uldManager.RootNode = CollisionNode.InternalResNode;
 		
 		uldManager.UpdateDrawNodeList();
-		uldManager.Flags1 = 1;
+		uldManager.Flags1 = 23;
 		uldManager.LoadedState = AtkLoadState.Loaded;
 	}
 
@@ -69,7 +70,6 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 			CollisionNode.DetachNode();
 			CollisionNode.Dispose();
 			
-			ComponentBase->DeinitializeAtkUldManager();
 			ComponentBase->Dtor(1);
 
 			base.Dispose(disposing);

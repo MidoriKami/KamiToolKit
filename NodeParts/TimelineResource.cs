@@ -9,22 +9,25 @@ public unsafe class TimelineResource : IDisposable {
 	internal AtkTimelineResource* InternalResource;
 	
 	private readonly TimelineAnimationArray animationArray;
+	private readonly TimelineLabelSetArray labelsArray;
 	
 	public TimelineResource() {
 		InternalResource = NativeMemoryHelper.UiAlloc<AtkTimelineResource>();
 
-		InternalResource->Id = 1;
+		InternalResource->Id = 2;
 		InternalResource->AnimationCount = 0;
 		InternalResource->LabelSetCount = 0;
 		
 		animationArray = new TimelineAnimationArray();
-		InternalResource->Animations = animationArray.InternalTimelineArray; // Should be null here, as we don't make any animations by default.
+		InternalResource->Animations = animationArray.InternalTimelineArray;
 		
-		InternalResource->LabelSets = null;
+		labelsArray = new TimelineLabelSetArray();
+		InternalResource->LabelSets = labelsArray.InternalLabelSetArray;
 	}
 	
 	public void Dispose() {
 		animationArray.Dispose();
+		labelsArray.Dispose();
 		
 		NativeMemoryHelper.UiFree(InternalResource);
 		InternalResource = null;
@@ -37,5 +40,19 @@ public unsafe class TimelineResource : IDisposable {
 			InternalResource->Animations = animationArray.InternalTimelineArray;
 			InternalResource->AnimationCount = (ushort) animationArray.Count;
 		}
+	}
+
+	public List<TimelineLabelSet> LabelSets {
+		get => labelsArray.LabelSets;
+		set {
+			labelsArray.LabelSets = value;
+			InternalResource->LabelSets = labelsArray.InternalLabelSetArray;
+			InternalResource->LabelSetCount = (ushort) labelsArray.Count;
+		}
+	}
+
+	public int Id {
+		get => (int) InternalResource->Id;
+		set => InternalResource->Id = (uint) value;
 	}
 }

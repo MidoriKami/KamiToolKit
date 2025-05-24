@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -83,12 +82,10 @@ public unsafe class Timeline : IDisposable {
 	}
 
 	public List<TimelineAnimation> Animations {
-		get => internalTimelineResource.Animations;
-		set {
-			internalTimelineResource.Animations = value;
-			if (value.Count is not 0) {
-				InternalTimeline->ActiveAnimation = value.First().InternalAnimation;
-			}
-		}
+		set => internalTimelineResource.Animations = value;
+	}
+
+	public List<TimelineLabelSet> LabelSets {
+		set => internalTimelineResource.LabelSets = value;
 	}
 }

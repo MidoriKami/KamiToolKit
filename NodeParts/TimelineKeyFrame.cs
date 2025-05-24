@@ -6,8 +6,9 @@ using FFXIVClientStructs.STD;
 namespace KamiToolKit.NodeParts;
 
 public class TimelineKeyFrame {
-	public KeyFrameGroupType Type { get; set; }
+	public KeyFrameGroupType GroupSelector { get; set; }
 	
+	public AtkTimelineKeyGroupType GroupType { get; set; }
 	public float SpeedStart { get; set; } = 0.0f;
 	public float SpeedEnd { get; set; } = 1.0f;
 	public required int FrameIndex { get; set; } = 0;
@@ -21,7 +22,7 @@ public class TimelineKeyFrame {
 				Float2 = new StdPair<float, float>(value.X, value.Y),
 			};
 
-			Type = KeyFrameGroupType.Position;
+			GroupSelector = KeyFrameGroupType.Position;
 		}
 	}
 
@@ -32,7 +33,8 @@ public class TimelineKeyFrame {
 				Byte = value,
 			};
 			
-			Type = KeyFrameGroupType.Alpha;
+			GroupType = AtkTimelineKeyGroupType.Byte;
+			GroupSelector = KeyFrameGroupType.Alpha;
 		}
 	}
 
@@ -43,7 +45,8 @@ public class TimelineKeyFrame {
 				NodeTint = value,
 			};
 			
-			Type = KeyFrameGroupType.Tint;
+			GroupType = AtkTimelineKeyGroupType.NodeTint;
+			GroupSelector = KeyFrameGroupType.Tint;
 		}
 	}
 
@@ -54,7 +57,8 @@ public class TimelineKeyFrame {
 				Float = value,
 			};
 			
-			Type = KeyFrameGroupType.Rotation;
+			GroupType = AtkTimelineKeyGroupType.Float;
+			GroupSelector = KeyFrameGroupType.Rotation;
 		}
 	}
 
@@ -65,7 +69,8 @@ public class TimelineKeyFrame {
 				Float2 = new StdPair<float, float>(value.X, value.Y),
 			};
 
-			Type = KeyFrameGroupType.Scale;
+			GroupType = AtkTimelineKeyGroupType.Float;
+			GroupSelector = KeyFrameGroupType.Scale;
 		}
 	}
 
@@ -80,7 +85,8 @@ public class TimelineKeyFrame {
 				},
 			};
 
-			Type = KeyFrameGroupType.TextColor;
+			GroupType = AtkTimelineKeyGroupType.RGB;
+			GroupSelector = KeyFrameGroupType.TextColor;
 		}
 	}
 	
@@ -95,7 +101,22 @@ public class TimelineKeyFrame {
 				},
 			};
 
-			Type = KeyFrameGroupType.TextEdge;
+			GroupType = AtkTimelineKeyGroupType.RGB;
+			GroupSelector = KeyFrameGroupType.TextEdge;
+		}
+	}
+
+	public AtkTimelineLabel Label {
+		get => Value.Label;
+		set {
+			Value = new AtkTimelineKeyValue {
+				Label = value,
+			};
+
+			GroupType = AtkTimelineKeyGroupType.Label;
+			SpeedEnd = 0.0f;
+			Interpolation = AtkTimelineInterpolation.None;
+			GroupSelector = KeyFrameGroupType.TextLabel;
 		}
 	}
 	

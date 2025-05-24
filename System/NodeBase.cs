@@ -33,8 +33,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
             TryForceDetach();
 
-            InternalResNode->Timeline = null;
             Timeline?.Dispose();
+            InternalResNode->Timeline = null;
 
             Dispose(true);
             GC.SuppressFinalize(this);

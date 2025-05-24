@@ -41,8 +41,9 @@ public unsafe class TimelineAnimation : IDisposable {
 	}
 
 	private void Resync() {
-		foreach (var keyFrameSet in internalKeyFrames.GroupBy(frame => frame.Type)) {
+		foreach (var keyFrameSet in internalKeyFrames.GroupBy(frame => frame.GroupSelector)) {
 			ref var keyFrameGroup = ref InternalAnimation->KeyGroups[(int) keyFrameSet.Key];
+			keyFrameGroup.Type = keyFrameSet.First().GroupType;
 
 			if (keyFrameGroup.KeyFrames is not null) {
 				NativeMemoryHelper.UiFree(keyFrameGroup.KeyFrames, keyFrameGroup.KeyFrameCount);
