@@ -9,7 +9,6 @@ namespace KamiToolKit.Nodes.ComponentNodes;
 /// Uses a GameIconId to display that icon as the decorator for the button.
 /// </summary>
 public class IconButton : ButtonBase {
-	protected override NodeBase DecorationNode => imageNode;
 	private IconImageNode imageNode;
 
 	public IconButton() {
