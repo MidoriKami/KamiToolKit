@@ -54,7 +54,7 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		=> ComponentBase->SetEnabledState(false);
 
 	public void Enable()
-		=> ComponentBase->SetEnabledState(false);
+		=> ComponentBase->SetEnabledState(true);
 
 	public void Toggle()
 		=> ComponentBase->SetEnabledState(!Component->IsEnabled);
