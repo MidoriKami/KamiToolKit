@@ -17,6 +17,10 @@ public unsafe class TimelineAnimation : IDisposable {
 
 		InternalAnimation->StartFrameIdx = 0;
 		InternalAnimation->EndFrameIdx = 0;
+
+		foreach (ref var value in InternalAnimation->KeyGroups) {
+			value.Type = AtkTimelineKeyGroupType.None;
+		}
 	}
 	
 	public void Dispose() {
