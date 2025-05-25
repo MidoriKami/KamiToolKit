@@ -4,50 +4,50 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
 using KamiToolKit.Nodes.ComponentNodes.Abstract;
-using KamiToolKit.System;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
-[JsonObject(MemberSerialization.OptIn)]
 public unsafe class TextButton : ButtonBase {
 
-	protected override NodeBase DecorationNode => LabelNode;
-	public readonly TextNode LabelNode;
+	private readonly TextNode labelNode;
+	private readonly NineGridNode backgroundNode;
 
 	public TextButton() {
 		Data->Nodes[0] = 3;
+		Data->Nodes[1] = 2;
 
-		LabelNode = new TextNode {
-			IsVisible = true,
+		backgroundNode = new SimpleNineGridNode {
+			TexturePath = "ui/uld/ButtonA_hr1.tex",
+			TextureSize = new Vector2(100.0f, 28.0f),
+			LeftOffset = 16.0f,
+			RightOffset = 16.0f,
+			NodeId = 2,
+		};
+
+		backgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		
+		labelNode = new TextNode {
 			AlignmentType = AlignmentType.Center,
 			Position = new Vector2(16.0f, 3.0f),
 			NodeId = 3,
-			TextFlags = (TextFlags) 33,
-			LineSpacing = 12,
 		};
 		
+		labelNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		
 		LoadTimelines();
-
-		LabelNode.AttachNode(this, NodePosition.AfterAllSiblings);
 		
 		InitializeComponentEvents();
 	}
 
 	public SeString Label {
-		get => LabelNode.Text;
-		set => LabelNode.Text = value;
-	}
-
-	[JsonProperty] public string String {
-		get => LabelNode.Text.ToString();
-		set => LabelNode.Text = value;
+		get => labelNode.Text;
+		set => labelNode.Text = value;
 	}
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			LabelNode.DetachNode();
-			LabelNode.Dispose();
+			labelNode.DetachNode();
+			labelNode.Dispose();
 			
 			base.Dispose(disposing);
 		}
@@ -57,8 +57,8 @@ public unsafe class TextButton : ButtonBase {
 		get => InternalResNode->Width;
 		set {
 			InternalResNode->SetWidth((ushort) value);
-			BackgroundNode.Width = value;
-			DecorationNode.Width = value - BackgroundNode.LeftOffset - BackgroundNode.RightOffset;
+			backgroundNode.Width = value;
+			labelNode.Width = value - backgroundNode.LeftOffset - backgroundNode.RightOffset;
 			CollisionNode.Width = value;
 			Component->UldManager.RootNodeWidth = (ushort) value;
 		}
@@ -68,8 +68,8 @@ public unsafe class TextButton : ButtonBase {
 		get => InternalResNode->Height;
 		set {
 			InternalResNode->SetHeight((ushort) value);
-			BackgroundNode.Height = value;
-			DecorationNode.Height = value - 8.0f;
+			backgroundNode.Height = value;
+			labelNode.Height = value - 8.0f;
 			CollisionNode.Height = value;
 			Component->UldManager.RootNodeHeight = (ushort) value;
 		}
@@ -108,7 +108,7 @@ public unsafe class TextButton : ButtonBase {
 			],
 		});
 		
-		BackgroundNode.AddTimeline(new Timeline {
+		backgroundNode.AddTimeline(new Timeline {
 			Mask = AtkTimelineMask.VendorSpecific2,
 			Animations = [ 
 				new TimelineAnimation {
@@ -164,7 +164,7 @@ public unsafe class TextButton : ButtonBase {
 			],
 		});
 		
-		LabelNode.AddTimeline(new Timeline {
+		labelNode.AddTimeline(new Timeline {
 			Animations = [ 
 				new TimelineAnimation {
 					StartFrameId = 1, EndFrameId = 10, KeyFrames = [ 
