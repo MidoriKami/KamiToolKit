@@ -46,4 +46,16 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 			}
 		}
 	}
+	
+	public void SetEnabled(bool enable)
+		=> ComponentBase->SetEnabledState(enable);
+
+	public void Disable()
+		=> ComponentBase->SetEnabledState(false);
+
+	public void Enable()
+		=> ComponentBase->SetEnabledState(false);
+
+	public void Toggle()
+		=> ComponentBase->SetEnabledState(!Component->IsEnabled);
 }
