@@ -188,8 +188,8 @@ public unsafe class Part : IDisposable {
     /// <remarks>WIP</remarks>
     /// <param name="textureProvider">Dalamud TextureProvider that will generate KernelTexture</param>
     /// <param name="texture">Texture Wrap to convert</param>
-    public void LoadTexture(ITextureProvider textureProvider, IDalamudTextureWrap texture) {
-        var texturePointer = (Texture*) textureProvider.ConvertToKernelTexture(texture, true);
+    public void LoadTexture(IDalamudTextureWrap texture) {
+        var texturePointer = (Texture*) DalamudInterface.Instance.TextureProvider.ConvertToKernelTexture(texture, true);
         LoadTexture(texturePointer);
     }
 }

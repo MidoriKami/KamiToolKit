@@ -1,5 +1,4 @@
 ﻿using Dalamud.Interface.Textures.TextureWraps;
-using Dalamud.Plugin.Services;
 using KamiToolKit.NodeParts;
 
 namespace KamiToolKit.Nodes;
@@ -10,6 +9,6 @@ namespace KamiToolKit.Nodes;
 /// </summary>
 /// <remarks>This node is not intended to be used with multiple <see cref="Part"/>'s.</remarks>
 public class ImGuiImageNode : SimpleImageNode {
-    public void LoadTexture(ITextureProvider textureProvider, IDalamudTextureWrap texture) 
-        => PartsList[0].LoadTexture(textureProvider, texture);
+    public void LoadTexture(IDalamudTextureWrap texture) 
+        => PartsList[0].LoadTexture(texture);
 }
