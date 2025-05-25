@@ -6,13 +6,15 @@ using KamiToolKit.Nodes.ComponentNodes.Abstract;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
-public class TextureButtonNode : ButtonBase {
+public unsafe class TextureButtonNode : ButtonBase {
 	private readonly SimpleImageNode imageNode;
 
 	public TextureButtonNode() {
 		imageNode = new ImGuiImageNode {
 			IsVisible = true,
 			NodeId = 3,
+			WrapMode = 1,
+			ImageNodeFlags = 0,
 		};
 		
 		imageNode.AttachNode(this, NodePosition.AfterAllSiblings);
@@ -44,6 +46,34 @@ public class TextureButtonNode : ButtonBase {
 	public Vector2 TextureSize {
 		get => imageNode.TextureSize;
 		set => imageNode.TextureSize = value;
+	}
+	
+	public new float Width {
+		get => InternalResNode->Width;
+		set {
+			InternalResNode->SetWidth((ushort) value);
+			CollisionNode.Width = value;
+			imageNode.Width = value;
+			Component->UldManager.RootNodeWidth = (ushort) value;
+		}
+	}
+
+	public new float Height {
+		get => InternalResNode->Height;
+		set {
+			InternalResNode->SetHeight((ushort) value);
+			CollisionNode.Height = value;
+			imageNode.Height = value;
+			Component->UldManager.RootNodeHeight = (ushort) value;
+		}
+	}
+
+	public new Vector2 Size {
+		get => new(Width, Height);
+		set {
+			Width = value.X;
+			Height = value.Y;
+		}
 	}
 	
 	private void LoadTimelines() {
