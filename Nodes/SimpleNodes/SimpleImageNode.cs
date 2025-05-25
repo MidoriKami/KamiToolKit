@@ -49,6 +49,7 @@ public class SimpleImageNode : ImageNode {
     }
         
     public string TexturePath {
+        get => PartsList[0].GetLoadedPath();
         set => PartsList[0].LoadTexture(value);
     }
     

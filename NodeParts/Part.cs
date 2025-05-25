@@ -112,6 +112,18 @@ public unsafe class Part : IDisposable {
     }
 
     /// <summary>
+    /// Gets the loaded tex file resource handle texture, string.Empty if null
+    /// </summary>
+    /// <returns></returns>
+    public string GetLoadedPath() {
+        if (internalAsset is null) return string.Empty;
+        if (internalAsset->AtkTexture.Resource is null) return string.Empty;
+        if (internalAsset->AtkTexture.Resource->TexFileResourceHandle is null) return string.Empty;
+        
+        return internalAsset->AtkTexture.Resource->TexFileResourceHandle->FileName.ToString();
+    }
+
+    /// <summary>
     /// Load the specified path, this will try to select the correct path based on theme
     /// and resolve through any texture substitutions defined by other plugins.
     /// </summary>
