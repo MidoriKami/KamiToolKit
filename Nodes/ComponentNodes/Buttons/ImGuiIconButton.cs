@@ -63,7 +63,7 @@ public unsafe class ImGuiIconButton : ButtonBase {
 	public void LoadTexture(IDalamudTextureWrap texture)
 		=> imageNode.LoadTexture(texture);
 	
-		private void LoadTimelines() {
+	private void LoadTimelines() {
 		AddTimeline(new Timeline {
 			Mask = (AtkTimelineMask) 0xFF,
 			LabelEndFrameIdx = 59,
