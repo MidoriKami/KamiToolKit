@@ -119,6 +119,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		set {
 			headerNode.SubtitleNode.String = value;
 			headerNode.SubtitleNode.IsVisible = true;
+			headerNode.SubtitleNode.X = headerNode.TitleNode.X + headerNode.TitleNode.Width + 2.0f;
 		}
 	}
 
