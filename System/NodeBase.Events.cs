@@ -184,14 +184,14 @@ public abstract unsafe partial class NodeBase {
 		EventManager?.ResetCursor();
 	}
 
-	private void ShowTooltip() {
-		if (Tooltip is not null) {
+	public void ShowTooltip() {
+		if (Tooltip is not null && TooltipRegistered) {
 			AtkStage.Instance()->TooltipManager.ShowTooltip(EventAddonPointer->Id, InternalResNode, Tooltip.Encode());
 		}
 	}
 
-	private void HideTooltip() {
-		if (Tooltip is not null) {
+	public void HideTooltip() {
+		if (Tooltip is not null && TooltipRegistered) {
 			AtkStage.Instance()->TooltipManager.HideTooltip(EventAddonPointer->Id);
 		}
 	}
