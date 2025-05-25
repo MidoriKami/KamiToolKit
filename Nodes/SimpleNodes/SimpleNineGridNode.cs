@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
-using Dalamud.Plugin.Services;
-using KamiToolKit.Classes;
+using KamiToolKit.NodeParts;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;

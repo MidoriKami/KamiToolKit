@@ -4,8 +4,9 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 
-namespace KamiToolKit.Classes;
+namespace KamiToolKit.NodeParts;
 
 /// <summary>
 /// Wrapper around a AtkUldPart and AtkUldAsset, loads and holds graphics textures for display in image, and image-like nodes.
@@ -187,8 +188,8 @@ public unsafe class Part : IDisposable {
     /// <remarks>WIP</remarks>
     /// <param name="textureProvider">Dalamud TextureProvider that will generate KernelTexture</param>
     /// <param name="texture">Texture Wrap to convert</param>
-    public void LoadTexture(ITextureProvider textureProvider, IDalamudTextureWrap texture) {
-        var texturePointer = (Texture*) textureProvider.ConvertToKernelTexture(texture, true);
+    public void LoadTexture(IDalamudTextureWrap texture) {
+        var texturePointer = (Texture*) DalamudInterface.Instance.TextureProvider.ConvertToKernelTexture(texture, true);
         LoadTexture(texturePointer);
     }
 }

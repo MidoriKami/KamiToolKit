@@ -1,5 +1,5 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.NodeParts;
 using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;

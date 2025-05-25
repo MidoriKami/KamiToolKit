@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Classes;
@@ -17,12 +18,14 @@ internal unsafe class Experimental {
 		// OnUldManagerUpdateHook?.Enable();
 		// UpdateUldFromParentHook?.Enable();
 		// ButtonReceiveEventHook?.Enable();
+		//CreateTimelineManagerHook?.Enable();
 	}
 
 	public void DisposeHooks() {
 		OnUldManagerUpdateHook?.Dispose();
 		UpdateUldFromParentHook?.Dispose();
 		ButtonReceiveEventHook?.Dispose();
+		CreateTimelineManagerHook?.Dispose();
 	}
 
 	public delegate void ExpandNodeListSizeDelegate(AtkUldManager* atkUldManager, int newSize);
@@ -109,6 +112,26 @@ internal unsafe class Experimental {
 			Log.Exception(e);
 		}
 	}
+	
+	public delegate int CreateTimelineManagerDelegate(AtkUldManager* atkUldManager, IMemorySpace* memorySpace, nint a3, nint a4, ushort a5);
+	
+	[Signature("40 57 41 56 41 57 48 83 EC 30 45 8B 71 18", DetourName = nameof(CreateTimelineManagerDetour))]
+	public Hook<CreateTimelineManagerDelegate>? CreateTimelineManagerHook = null;
+
+	public int CreateTimelineManagerDetour(AtkUldManager* atkUldManager, IMemorySpace* memorySpace, nint a3, nint a4, ushort a5) {
+		var result = CreateTimelineManagerHook!.Original(atkUldManager, memorySpace, a3, a4, a5);
+
+		try {
+			Log.Debug($"a3: {a3:X}");
+			Log.Debug($"a4: {a4:X}");
+			Log.Debug($"a5: {a5}");
+		}
+		catch (Exception e) {
+			Log.Exception(e);
+		}
+
+		return result;
+	}
 }
 
 // vf3  - [InitializeAtkUldManager] Initialize function, sets AtkUldManager fields to zero (mostly)
@@ -122,6 +145,7 @@ internal unsafe class Experimental {
 // vf15 - Iterates DuplicateObjectList and calls some function on each node
 // vf16 - (No base implementation)
 // vf18 - Some kind of collision check, returns AtkCollisionNode
+// vf19 - [Button] GetHeight
 // vf22 - [Button] Seems to center the text inside the button
 // vf23 - [Button] Also seems to do the same, but slightly different
 internal static unsafe class AtkComponentBaseExtensions {
