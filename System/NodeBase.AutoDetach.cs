@@ -46,12 +46,13 @@ public unsafe partial class NodeBase {
 		NativeController?.DetachFromAddon(this, addon);
 	}
 
-	private void TryForceDetach() {
+	private void TryForceDetach(bool warn) {
 		if (!IsAttached) return;
 
 		if (AddonPointer == (AtkUnitBase*) DalamudInterface.Instance.GameGui.GetAddonByName(AddonName!) && AddonPointer is not null) {
-			Log.Warning($"{GetType()} was not detached from {AddonName} before dispose. Forcing Detach from Addon.");
+			if (warn) Log.Warning($"{GetType()} was not detached from {AddonName} before dispose. Forcing Detach from Addon.");
 			NativeController?.DetachFromAddon(this, AddonPointer);
+			IsAttached = false;
 		}
 		else {
 			Log.Error($"{GetType()} was attached to {AddonName} which is an already finalized addon somehow.");
