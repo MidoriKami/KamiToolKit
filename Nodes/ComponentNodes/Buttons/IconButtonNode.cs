@@ -9,11 +9,11 @@ namespace KamiToolKit.Nodes.ComponentNodes;
 /// <summary>
 /// Uses a GameIconId to display that icon as the decorator for the button.
 /// </summary>
-public unsafe class IconButton : ButtonBase {
+public unsafe class IconButtonNode : ButtonBase {
 	private IconImageNode imageNode;
 	private readonly NineGridNode backgroundNode;
 
-	public IconButton() {
+	public IconButtonNode() {
 		backgroundNode = new SimpleNineGridNode {
 			TexturePath = "ui/uld/BgParts_hr1.tex",
 			TextureSize = new Vector2(32.0f, 32.0f),

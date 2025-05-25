@@ -17,6 +17,12 @@ public abstract unsafe partial class NodeBase {
     internal void AttachNode(ComponentNode target, NodePosition position) {
         NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
         AddNodeToUldObjectList(&target.ComponentBase->UldManager, InternalResNode);
+
+        var thisChildren = InternalResNode->ChildNode;
+        while (thisChildren is not null) {
+            AddNodeToUldObjectList(&target.ComponentBase->UldManager, thisChildren);
+            thisChildren = thisChildren->PrevSiblingNode;
+        }
         
         target.ComponentBase->UldManager.UpdateDrawNodeList();
     }

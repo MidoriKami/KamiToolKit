@@ -53,6 +53,12 @@ public unsafe class PartsList : IList<Part>, IDisposable {
     IEnumerator IEnumerable.GetEnumerator()
         => GetEnumerator();
 
+    public void Add(params Part[] items) {
+        foreach (var part in items) {
+            Add(part);
+        }
+    }
+    
     public void Add(Part item) {
         NativeMemoryHelper.ResizeArray(ref InternalPartsList->Parts, PartCount, PartCount + 1);
         

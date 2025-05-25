@@ -7,10 +7,10 @@ using KamiToolKit.Nodes.ComponentNodes.Abstract;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
-public unsafe class ImGuiIconButton : ButtonBase {
+public unsafe class ImGuiIconButtonNode : ButtonBase {
 	private readonly ImGuiImageNode imageNode;
 
-	public ImGuiIconButton() {
+	public ImGuiIconButtonNode() {
 		imageNode = new ImGuiImageNode {
 			IsVisible = true,
 			NodeId = 3,
