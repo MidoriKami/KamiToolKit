@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
-using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -43,8 +42,10 @@ public unsafe class Part : IDisposable {
                 internalAsset->AtkTexture.Destroy(false);
             }
             else {
-                internalAsset->AtkTexture.ReleaseTexture();
-                internalAsset->AtkTexture.Destroy(true);
+                // todo: eventually reevaluate texture refcounting
+
+                // internalAsset->AtkTexture.ReleaseTexture();
+                // internalAsset->AtkTexture.Destroy(true);
             }
 
             NativeMemoryHelper.UiFree(internalAsset);
@@ -98,6 +99,11 @@ public unsafe class Part : IDisposable {
     public uint Id {
         get => internalAsset->Id;
         set => internalAsset->Id = value;
+    }
+
+    public string TexturePath {
+        get => GetLoadedPath();
+        set => LoadTexture(value);
     }
     
     /// <summary>
