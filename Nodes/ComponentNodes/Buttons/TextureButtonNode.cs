@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Dalamud.Interface.Textures.TextureWraps;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
@@ -7,10 +6,10 @@ using KamiToolKit.Nodes.ComponentNodes.Abstract;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
-public unsafe class ImGuiIconButton : ButtonBase {
-	private readonly ImGuiImageNode imageNode;
+public class TextureButtonNode : ButtonBase {
+	private readonly SimpleImageNode imageNode;
 
-	public ImGuiIconButton() {
+	public TextureButtonNode() {
 		imageNode = new ImGuiImageNode {
 			IsVisible = true,
 			NodeId = 3,
@@ -27,41 +26,25 @@ public unsafe class ImGuiIconButton : ButtonBase {
 		if (disposing) {
 			imageNode.DetachNode();
 			imageNode.Dispose();
-			
+
 			base.Dispose(disposing);
 		}
 	}
 
-	public new float Width {
-		get => InternalResNode->Width;
-		set {
-			InternalResNode->SetWidth((ushort) value);
-			CollisionNode.Width = value;
-			imageNode.Width = value;
-			Component->UldManager.RootNodeWidth = (ushort) value;
-		}
+	public string TexturePath {
+		get => imageNode.TexturePath;
+		set => imageNode.TexturePath = value;
 	}
 
-	public new float Height {
-		get => InternalResNode->Height;
-		set {
-			InternalResNode->SetHeight((ushort) value);
-			CollisionNode.Height = value;
-			imageNode.Height = value;
-			Component->UldManager.RootNodeHeight = (ushort) value;
-		}
+	public Vector2 TextureCoordinates {
+		get => imageNode.TextureCoordinates;
+		set => imageNode.TextureCoordinates = value;
 	}
 
-	public new Vector2 Size {
-		get => new(Width, Height);
-		set {
-			Width = value.X;
-			Height = value.Y;
-		}
+	public Vector2 TextureSize {
+		get => imageNode.TextureSize;
+		set => imageNode.TextureSize = value;
 	}
-
-	public void LoadTexture(IDalamudTextureWrap texture)
-		=> imageNode.LoadTexture(texture);
 	
 	private void LoadTimelines() {
 		AddTimeline(new Timeline {

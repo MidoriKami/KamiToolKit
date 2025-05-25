@@ -7,12 +7,12 @@ using KamiToolKit.Nodes.ComponentNodes.Abstract;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
-public unsafe class TextButton : ButtonBase {
+public unsafe class TextButtonNode : ButtonBase {
 
 	private readonly TextNode labelNode;
 	private readonly NineGridNode backgroundNode;
 
-	public TextButton() {
+	public TextButtonNode() {
 		Data->Nodes[0] = 3;
 		Data->Nodes[1] = 2;
 

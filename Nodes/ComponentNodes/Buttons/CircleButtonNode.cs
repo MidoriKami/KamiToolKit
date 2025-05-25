@@ -6,11 +6,11 @@ using KamiToolKit.Nodes.ComponentNodes.Abstract;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
-public unsafe class CircleButton : ButtonBase {
+public unsafe class CircleButtonNode : ButtonBase {
 	private SimpleImageNode imageNode;
 	private ButtonIcon currentIcon;
 
-	public CircleButton() {
+	public CircleButtonNode() {
 		imageNode = new SimpleImageNode {
 			TexturePath = "ui/uld/CircleButtons_hr1.tex",
 			TextureSize = new Vector2(24.0f, 24.0f),
