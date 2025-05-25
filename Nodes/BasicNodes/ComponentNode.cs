@@ -25,7 +25,6 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		componentBase->InitializeAtkUldManager();
 					
 		CollisionNode = new CollisionNode {
-			IsVisible = true,
 			NodeId = 1,
 			LinkedComponent = componentBase,
 			NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents,
