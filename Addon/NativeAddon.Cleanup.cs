@@ -1,5 +1,4 @@
 ﻿using System;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
 namespace KamiToolKit.Addon;
@@ -17,11 +16,7 @@ public unsafe partial class NativeAddon : IDisposable {
 		if (!isDisposed) {
 			Log.Debug($"[KamiToolKit] Disposing addon {GetType()}");
 
-			AtkUnitBase.StaticVirtualTablePointer->Close(InternalAddon, false);
-			// AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
-			
-			// NativeMemoryHelper.UiFree(InternalAddon);
-			// GC.SuppressFinalize(this);
+			Close();
 		}
         
 		isDisposed = true;
