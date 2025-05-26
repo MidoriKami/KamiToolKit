@@ -21,15 +21,15 @@ public unsafe class NativeController : IDisposable {
 	public NativeController(IDalamudPluginInterface pluginInterface) {
 		pluginInterface.Inject(this);
 		
+		// Inject non-Experimental Properties
+		pluginInterface.Inject(DalamudInterface.Instance);
+		GameInteropProvider.InitializeFromAttributes(DalamudInterface.Instance);
+		
 		// Inject Experimental Properties
 		pluginInterface.Inject(Experimental.Instance);
 		GameInteropProvider.InitializeFromAttributes(Experimental.Instance);
 		
 		Experimental.Instance.EnableHooks();
-		
-		// Inject non-Experimental Properties
-		pluginInterface.Inject(DalamudInterface.Instance);
-		GameInteropProvider.InitializeFromAttributes(DalamudInterface.Instance);
 	}
 
 	public void Dispose() {
