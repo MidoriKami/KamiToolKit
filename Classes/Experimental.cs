@@ -30,6 +30,9 @@ internal unsafe class Experimental {
 
 	public delegate void ExpandNodeListSizeDelegate(AtkUldManager* atkUldManager, int newSize);
 
+	[Signature("4C 8D 3D ?? ?? ?? ?? 4C 89 3F 41 F6 C4")]
+	public nint AtkEventListenerVirtualTable = nint.Zero;
+
 	[Signature("E8 ?? ?? ?? ?? 66 41 3B B7 ?? ?? ?? ??")]
 	public ExpandNodeListSizeDelegate? ExpandNodeListSize = null;
 	
