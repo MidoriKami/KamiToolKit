@@ -29,6 +29,14 @@ public abstract unsafe partial class NodeBase : IDisposable {
     protected abstract void Dispose(bool disposing);
 
     public void Dispose() {
+        // If the node was invalidated before dispose, we want to skip trying to free it.
+        if (!IsNodeValid()) {
+            isDisposed = true;
+            GC.SuppressFinalize(this);
+            CreatedNodes.Remove(this);
+            return;
+        }
+        
         if (!isDisposed) {
             Log.Debug($"[KamiToolKit] Disposing node {GetType()}");
 
@@ -44,6 +52,14 @@ public abstract unsafe partial class NodeBase : IDisposable {
         }
         
         isDisposed = true;
+    }
+
+    private bool IsNodeValid() {
+        if (InternalResNode is null) return false;
+        if (InternalResNode->VirtualTable is null) return false;
+        if ((nint) InternalResNode->VirtualTable == Experimental.Instance.AtkEventListenerVirtualTable) return false;
+
+        return true;
     }
 }
 
