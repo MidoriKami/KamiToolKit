@@ -9,9 +9,9 @@ using KamiToolKit.System;
 namespace KamiToolKit.Addon;
 
 [SuppressMessage("ReSharper", "PrivateFieldCanBeConvertedToLocalVariable", Justification = "Using native function pointers, pinning the pointer is required.")]
-public unsafe partial class NativeAddon {
+public abstract unsafe partial class NativeAddon {
 
-	internal AtkUnitBase.AtkUnitBaseVirtualTable* VirtualTable;
+	private readonly AtkUnitBase.AtkUnitBaseVirtualTable* virtualTable;
 	internal AtkUnitBase* InternalAddon;
 	public required string Name { get; set; } = "NameNotSet";
 
@@ -35,9 +35,9 @@ public unsafe partial class NativeAddon {
 		DalamudInterface.Instance.Log.Debug("Name Set");
 
 		// Overwrite virtual table with a custom copy
-		VirtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 73);
-		NativeMemory.Copy(InternalAddon->VirtualTable, VirtualTable,0x8 * 73);
-		InternalAddon->VirtualTable = VirtualTable;
+		virtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 73);
+		NativeMemory.Copy(InternalAddon->VirtualTable, virtualTable,0x8 * 73);
+		InternalAddon->VirtualTable = virtualTable;
 		DalamudInterface.Instance.Log.Debug("Vtable Allocated, and Copied");
 
 		destructorFunction = Destructor;
@@ -45,10 +45,10 @@ public unsafe partial class NativeAddon {
 		finalizerFunction = Finalizer;
 		softHideFunction = SoftHide;
 		
-		VirtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>) Marshal.GetFunctionPointerForDelegate(destructorFunction);
-		VirtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(initializeFunction);
-		VirtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(finalizerFunction);
-		VirtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(softHideFunction);
+		virtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>) Marshal.GetFunctionPointerForDelegate(destructorFunction);
+		virtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(initializeFunction);
+		virtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(finalizerFunction);
+		virtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(softHideFunction);
 		
 		DalamudInterface.Instance.Log.Debug("Delegates Set");
 
@@ -57,32 +57,29 @@ public unsafe partial class NativeAddon {
 		DalamudInterface.Instance.Log.Debug("Flags Set");
 	}
 
-	public void Show()
-		=> InternalAddon->Open(4);
-	
+	public void Open(int depthLayer = 4) {
+		if (InternalAddon is null) return;
+		
+		InternalAddon->Open((uint) depthLayer);
+	}
+
+	public void Close() {
+		if (InternalAddon is null) return;
+
+		InternalAddon->Close(false);
+	}
+
 	public virtual void OnDestroy() { }
 	
-	private AtkEventListener* Destructor(AtkUnitBase* thisPtr, byte flags) {
+	private AtkEventListener* Destructor(AtkUnitBase* addon, byte flags) {
 		DalamudInterface.Instance.Log.Debug("Destructor Called");
 		
 		OnDestroy();
-		DalamudInterface.Instance.Log.Debug("Destroy Delegated");
 
-		var result = AtkUnitBase.StaticVirtualTablePointer->Dtor(thisPtr, flags);
-		DalamudInterface.Instance.Log.Debug("Calling Original");
-		
-		if ((flags & 1) != 0) {
-			DalamudInterface.Instance.Log.Debug("Free Declared");
-			
-			NativeMemoryHelper.Free(VirtualTable, 0x8 * 73);
-			VirtualTable = null;
-			
-			DalamudInterface.Instance.Log.Debug("Virtual Table Freed");
-			
-			NativeMemoryHelper.UiFree(InternalAddon);
+		var result = AtkUnitBase.StaticVirtualTablePointer->Dtor(addon, flags);
+
+		if ((flags & 1) == 1) {
 			InternalAddon = null;
-			
-			DalamudInterface.Instance.Log.Debug("Addon Table Freed");
 		}
 
 		return result;
@@ -140,7 +137,7 @@ public unsafe partial class NativeAddon {
 		InternalAddon->Flags1A2 |= 4;  // LoadUldByName called
 		DalamudInterface.Instance.Log.Debug("Addon Flags");
 		
-		InternalAddon->SetSize((ushort) 996.0f, (ushort) 670.0f);
+		InternalAddon->SetSize((ushort) 500.0f, (ushort) 350.0f);
 		InternalAddon->UpdateCollisionNodeList(false);
 
 		OnInitialize();
@@ -151,16 +148,9 @@ public unsafe partial class NativeAddon {
 	private void Finalizer(AtkUnitBase* thisPtr) {
 		OnFinalize();
 		
-		// windowNode?.DetachNode();
-		// windowNode?.Dispose();
-		// 	
-		// rootNode?.DetachNode();
-		// rootNode?.Dispose();
-		
 		AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
 	}
 
-	private void SoftHide(AtkUnitBase* addon) {
-		AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
-	}
+	private void SoftHide(AtkUnitBase* addon)
+		=> AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
 }
