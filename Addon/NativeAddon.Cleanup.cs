@@ -15,19 +15,13 @@ public unsafe partial class NativeAddon : IDisposable {
 
 	public void Dispose() {
 		if (!isDisposed) {
-			Log.Debug($"[KamiToolKit] Disposing Addon {GetType()}");
-			
-			windowNode.DetachNode();
-			windowNode.Dispose();
-			
-			rootNode.DetachNode();
-			rootNode.Dispose();
+			Log.Debug($"[KamiToolKit] Disposing addon {GetType()}");
 
 			AtkUnitBase.StaticVirtualTablePointer->Close(InternalAddon, false);
-			AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
+			// AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
 			
-			NativeMemoryHelper.UiFree(InternalAddon);
-			GC.SuppressFinalize(this);
+			// NativeMemoryHelper.UiFree(InternalAddon);
+			// GC.SuppressFinalize(this);
 		}
         
 		isDisposed = true;

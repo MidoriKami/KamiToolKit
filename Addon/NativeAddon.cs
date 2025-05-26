@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -18,14 +17,13 @@ public unsafe partial class NativeAddon {
 
 	private bool isDisposed;
 
-	private ResNode rootNode;
-	private WindowNode windowNode;
+	private ResNode? rootNode;
+	private WindowNode? windowNode;
 
-	private DestructorDelegate destructorFunction;
-	private InitializeDelegate initializeFunction;
-	
-	private GCHandle gcHandle1;
-	private GCHandle gcHandle2;
+	private readonly AtkUnitBase.Delegates.Dtor destructorFunction;
+	private readonly AtkUnitBase.Delegates.Initialize initializeFunction;
+	private readonly AtkUnitBase.Delegates.Finalizer finalizerFunction;
+	private readonly AtkUnitBase.Delegates.Hide2 softHideFunction;
 	
 	public NativeAddon() {
 		DalamudInterface.Instance.Log.Debug("Starting Construction");
@@ -38,18 +36,19 @@ public unsafe partial class NativeAddon {
 
 		// Overwrite virtual table with a custom copy
 		VirtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 73);
-		NativeMemoryHelper.Copy(InternalAddon->VirtualTable, VirtualTable, 0x8 * 73);
+		NativeMemory.Copy(InternalAddon->VirtualTable, VirtualTable,0x8 * 73);
 		InternalAddon->VirtualTable = VirtualTable;
 		DalamudInterface.Instance.Log.Debug("Vtable Allocated, and Copied");
 
 		destructorFunction = Destructor;
 		initializeFunction = Initialize;
+		finalizerFunction = Finalizer;
+		softHideFunction = SoftHide;
 		
-		gcHandle1 = GCHandle.Alloc(destructorFunction);
-		gcHandle2 = GCHandle.Alloc(initializeFunction);
-
 		VirtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>) Marshal.GetFunctionPointerForDelegate(destructorFunction);
 		VirtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(initializeFunction);
+		VirtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(finalizerFunction);
+		VirtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(softHideFunction);
 		
 		DalamudInterface.Instance.Log.Debug("Delegates Set");
 
@@ -58,44 +57,38 @@ public unsafe partial class NativeAddon {
 		DalamudInterface.Instance.Log.Debug("Flags Set");
 	}
 
+	public void Show()
+		=> InternalAddon->Open(4);
+	
 	public virtual void OnDestroy() { }
 	
 	private AtkEventListener* Destructor(AtkUnitBase* thisPtr, byte flags) {
 		DalamudInterface.Instance.Log.Debug("Destructor Called");
 		
 		OnDestroy();
+		DalamudInterface.Instance.Log.Debug("Destroy Delegated");
 
-		NativeMemoryHelper.Free(VirtualTable, 0x8 * 73);
-		VirtualTable = null;
+		var result = AtkUnitBase.StaticVirtualTablePointer->Dtor(thisPtr, flags);
+		DalamudInterface.Instance.Log.Debug("Calling Original");
 		
-		gcHandle1.Free();
-		gcHandle2.Free();
+		if ((flags & 1) != 0) {
+			DalamudInterface.Instance.Log.Debug("Free Declared");
+			
+			NativeMemoryHelper.Free(VirtualTable, 0x8 * 73);
+			VirtualTable = null;
+			
+			DalamudInterface.Instance.Log.Debug("Virtual Table Freed");
+			
+			NativeMemoryHelper.UiFree(InternalAddon);
+			InternalAddon = null;
+			
+			DalamudInterface.Instance.Log.Debug("Addon Table Freed");
+		}
 
-		return AtkUnitBase.StaticVirtualTablePointer->Dtor(thisPtr, flags);
+		return result;
 	}
 
-	public virtual void OnInitialize() {
-		DalamudInterface.Instance.Log.Debug("Virtual Call Received");
-		rootNode = new ResNode {
-			NodeId = 1,
-			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
-		};
-		
-		InternalAddon->RootNode = rootNode.InternalResNode;
-		NodeBase.AddNodeToUldObjectList(&InternalAddon->UldManager, rootNode.InternalResNode);
-		
-		windowNode = new WindowNode {
-			Title = Name,
-		};
-		
-		windowNode.AttachNode(rootNode, NodePosition.AsFirstChild);
-		
-		InternalAddon->WindowNode = (AtkComponentNode*) windowNode.InternalResNode;
-		
-		DalamudInterface.Instance.Log.Debug("Pre-Drawlist Update");
-		InternalAddon->UldManager.UpdateDrawNodeList();
-		DalamudInterface.Instance.Log.Debug("Post-Drawlist Update");
-	}
+	public virtual void OnInitialize() { }
 
 	private void Initialize(AtkUnitBase* thisPtr) {
 		DalamudInterface.Instance.Log.Debug("Initialize Called");
@@ -120,7 +113,26 @@ public unsafe partial class NativeAddon {
 		InternalAddon->UldManager.Flags1 |= 4;
 		DalamudInterface.Instance.Log.Debug("UldManager Flags");
 
-		OnInitialize();
+		rootNode = new ResNode {
+			NodeId = 1,
+			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
+		};
+		
+		InternalAddon->RootNode = rootNode.InternalResNode;
+		NodeBase.AddNodeToUldObjectList(&InternalAddon->UldManager, rootNode.InternalResNode);
+		
+		windowNode = new WindowNode {
+			Title = Name,
+		};
+		
+		windowNode.AttachNode(rootNode, NodePosition.AsFirstChild);
+
+		InternalAddon->WindowNode = (AtkComponentNode*) windowNode.InternalResNode;
+		
+		DalamudInterface.Instance.Log.Debug("Pre-Drawlist Update");
+		InternalAddon->UldManager.UpdateDrawNodeList();
+		DalamudInterface.Instance.Log.Debug("Post-Drawlist Update");
+		
 		DalamudInterface.Instance.Log.Debug("Virtual Delegate Called");
 		
 		InternalAddon->UldManager.LoadedState = AtkLoadState.Loaded;
@@ -129,5 +141,26 @@ public unsafe partial class NativeAddon {
 		DalamudInterface.Instance.Log.Debug("Addon Flags");
 		
 		InternalAddon->SetSize((ushort) 996.0f, (ushort) 670.0f);
+		InternalAddon->UpdateCollisionNodeList(false);
+
+		OnInitialize();
+	}
+
+	public virtual void OnFinalize() { }
+	
+	private void Finalizer(AtkUnitBase* thisPtr) {
+		OnFinalize();
+		
+		// windowNode?.DetachNode();
+		// windowNode?.Dispose();
+		// 	
+		// rootNode?.DetachNode();
+		// rootNode?.Dispose();
+		
+		AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
+	}
+
+	private void SoftHide(AtkUnitBase* addon) {
+		AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
 	}
 }
