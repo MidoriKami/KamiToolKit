@@ -2,7 +2,9 @@
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Addon;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
 
@@ -34,6 +36,10 @@ public unsafe class NativeController : IDisposable {
 		NodeBase.DetachAndDispose();
 		
 		Experimental.Instance.DisposeHooks();
+	}
+
+	public void InjectAddon(NativeAddon addon) {
+		RaptureAtkUnitManager.Instance()->InitializeAddon(addon.InternalAddon, addon.Name);
 	}
 
 	public void AttachToAddon(NodeBase customNode, void* addon, AtkResNode* target, NodePosition position)

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Addon;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 
@@ -27,6 +28,19 @@ public abstract unsafe partial class NodeBase {
         target.ComponentBase->UldManager.UpdateDrawNodeList();
     }
 
+    internal void AttachNode(NativeAddon addon, NodePosition position) {
+        NodeLinker.AttachNode(InternalResNode, addon.InternalAddon->RootNode, position);
+        AddNodeToUldObjectList(&addon.InternalAddon->UldManager, InternalResNode);
+        
+        var thisChildren = InternalResNode->ChildNode;
+        while (thisChildren is not null) {
+            AddNodeToUldObjectList(&addon.InternalAddon->UldManager, thisChildren);
+            thisChildren = thisChildren->PrevSiblingNode;
+        }
+        
+        addon.InternalAddon->UldManager.UpdateDrawNodeList();
+    }
+
     internal void DetachNode() {
         NodeLinker.DetachNode(InternalResNode);
 
@@ -36,23 +50,26 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
-    private void AddNodeToUldObjectList(AtkUldManager* uldManager, AtkResNode* newNode) {
+    internal static void AddNodeToUldObjectList(AtkUldManager* uldManager, AtkResNode* newNode) {
         var oldSize = uldManager->Objects->NodeCount;
         var newSize = oldSize + 1;
         var newBuffer = (AtkResNode**) NativeMemoryHelper.Malloc((ulong)(newSize * 8));
 
-        foreach (var index in Enumerable.Range(0, oldSize)) {
-            newBuffer[index] = uldManager->Objects->NodeList[index];
+        if (oldSize > 0) {
+            foreach (var index in Enumerable.Range(0, oldSize)) {
+                newBuffer[index] = uldManager->Objects->NodeList[index];
+            }
+        
+            NativeMemoryHelper.Free(uldManager->Objects->NodeList, (ulong)(oldSize * 8));
         }
         
         newBuffer[newSize - 1] = newNode;
-        
-        NativeMemoryHelper.Free(uldManager->Objects->NodeList, (ulong)(oldSize * 8));
+
         uldManager->Objects->NodeList = newBuffer;
         uldManager->Objects->NodeCount = newSize;
     }
 
-    private void RemoveNodeFromUldObjectList(AtkUldManager* uldManager, AtkResNode* nodeToRemove) {
+    internal static void RemoveNodeFromUldObjectList(AtkUldManager* uldManager, AtkResNode* nodeToRemove) {
         var oldSize = uldManager->Objects->NodeCount;
         var newSize = oldSize - 1;
         var newBuffer = (AtkResNode**) NativeMemoryHelper.Malloc((ulong)(newSize * 8));
