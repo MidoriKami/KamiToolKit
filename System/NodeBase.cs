@@ -66,8 +66,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
     
     protected override void Dispose(bool disposing) {
         if (disposing) {
-            InternalResNode->Destroy(false);
-            NativeMemoryHelper.UiFree(InternalNode);
+            InternalResNode->Destroy(true);
             InternalNode = null;
         }
     }
