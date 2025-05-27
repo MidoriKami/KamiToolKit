@@ -9,8 +9,7 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
 	protected AtkComponentButton* ButtonNode => (AtkComponentButton*) InternalNode;
 
-	protected ButtonBase()
-		=> SetInternalComponentType(ComponentType.Button);
+	protected ButtonBase() => SetInternalComponentType(ComponentType.Button);
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
