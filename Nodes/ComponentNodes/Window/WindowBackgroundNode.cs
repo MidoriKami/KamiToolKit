@@ -3,7 +3,7 @@ using KamiToolKit.NodeParts;
 
 namespace KamiToolKit.Nodes.ComponentNodes.Window;
 
-public unsafe class WindowBackgroundNode : NineGridNode {
+public class WindowBackgroundNode : NineGridNode {
 	public WindowBackgroundNode(bool selectedPath) {
 		var basePath = $"ui/uld/WindowA_Bg{(selectedPath ? "Selected" : "Normal")}";
 		

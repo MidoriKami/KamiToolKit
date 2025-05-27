@@ -62,33 +62,21 @@ public unsafe class TextButtonNode : ButtonBase {
 		}
 	}
 
-	public new float Width {
-		get => InternalResNode->Width;
+	public override float Width {
+		get => base.Width;
 		set {
-			InternalResNode->SetWidth((ushort) value);
 			backgroundNode.Width = value;
 			labelNode.Width = value - backgroundNode.LeftOffset - backgroundNode.RightOffset;
-			CollisionNode.Width = value;
-			Component->UldManager.RootNodeWidth = (ushort) value;
+			base.Width = value;
 		}
 	}
 
-	public new float Height {
-		get => InternalResNode->Height;
+	public override float Height {
+		get => base.Height;
 		set {
-			InternalResNode->SetHeight((ushort) value);
 			backgroundNode.Height = value;
 			labelNode.Height = value - 8.0f;
-			CollisionNode.Height = value;
-			Component->UldManager.RootNodeHeight = (ushort) value;
-		}
-	}
-
-	public new Vector2 Size {
-		get => new(Width, Height);
-		set {
-			Width = value.X;
-			Height = value.Y;
+			base.Height = value;
 		}
 	}
 

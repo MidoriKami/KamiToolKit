@@ -97,4 +97,22 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 			CollisionNode.SuppressDispose = value;
 		}
 	}
+		
+	public override float Width {
+		get => base.Width;
+		set {
+			CollisionNode.Width = value;
+			ComponentBase->UldManager.RootNodeWidth = (ushort) value;
+			base.Width = value;
+		}
+	}
+
+	public override float Height {
+		get => base.Height;
+		set {
+			CollisionNode.Height = value;
+			ComponentBase->UldManager.RootNodeWidth = (ushort) value;
+			base.Height = value;
+		}
+	}
 }

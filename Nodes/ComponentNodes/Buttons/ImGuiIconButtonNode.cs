@@ -7,7 +7,7 @@ using KamiToolKit.Nodes.ComponentNodes.Abstract;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
-public unsafe class ImGuiIconButtonNode : ButtonBase {
+public class ImGuiIconButtonNode : ButtonBase {
 	private readonly ImGuiImageNode imageNode;
 
 	public ImGuiIconButtonNode() {
@@ -40,31 +40,19 @@ public unsafe class ImGuiIconButtonNode : ButtonBase {
 		}
 	}
 
-	public new float Width {
-		get => InternalResNode->Width;
+	public override float Width {
+		get => base.Width;
 		set {
-			InternalResNode->SetWidth((ushort) value);
-			CollisionNode.Width = value;
 			imageNode.Width = value;
-			Component->UldManager.RootNodeWidth = (ushort) value;
+			base.Width = value;
 		}
 	}
 
-	public new float Height {
-		get => InternalResNode->Height;
+	public override float Height {
+		get => base.Height;
 		set {
-			InternalResNode->SetHeight((ushort) value);
-			CollisionNode.Height = value;
 			imageNode.Height = value;
-			Component->UldManager.RootNodeHeight = (ushort) value;
-		}
-	}
-
-	public new Vector2 Size {
-		get => new(Width, Height);
-		set {
-			Width = value.X;
-			Height = value.Y;
+			base.Height = value;
 		}
 	}
 

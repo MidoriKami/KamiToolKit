@@ -6,7 +6,7 @@ using KamiToolKit.Nodes.ComponentNodes.Abstract;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
-public unsafe class CircleButtonNode : ButtonBase {
+public class CircleButtonNode : ButtonBase {
 	private SimpleImageNode imageNode;
 	private ButtonIcon currentIcon;
 
@@ -54,29 +54,19 @@ public unsafe class CircleButtonNode : ButtonBase {
 		}
 	}
 
-	public new float Width {
-		get => InternalResNode->Width;
+	public override float Width {
+		get => base.Width;
 		set {
-			InternalResNode->SetWidth((ushort) value);
-			CollisionNode.Width = value;
 			imageNode.Width = value;
+			base.Width = value;
 		}
 	}
 
-	public new float Height {
-		get => InternalResNode->Height;
+	public override float Height {
+		get => base.Height;
 		set {
-			InternalResNode->SetHeight((ushort) value);
-			CollisionNode.Height = value;
 			imageNode.Height = value;
-		}
-	}
-
-	public new Vector2 Size {
-		get => new(Width, Height);
-		set {
-			Width = value.X;
-			Height = value.Y;
+			base.Height = value;
 		}
 	}
 
