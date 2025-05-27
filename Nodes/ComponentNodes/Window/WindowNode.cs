@@ -16,11 +16,11 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 	public WindowNode() {
 		SetInternalComponentType(ComponentType.Window);
 
-		CollisionNode.NodeId = 12;
+		CollisionNode.NodeId = 13;
 
 		headerCollisionNode = new CollisionNode {
 			Uses = 2,
-			NodeId = 11,
+			NodeId = 12,
 			Size = new Vector2(468.0f, 28.0f),
 			Position = new Vector2(8.0f, 8.0f),
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible |NodeFlags.Enabled |NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.EmitsEvents,
@@ -29,7 +29,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		headerCollisionNode.AttachNode(this, NodePosition.AfterAllSiblings);
 
 		backgroundNode = new WindowBackgroundNode(false) {
-			NodeId = 10,
+			NodeId = 11,
 			Size = new Vector2(482.0f, 636.0f),
 			Position = Vector2.Zero,
 			Offsets = new Vector4(64.0f, 32.0f, 32.0f, 32.0f),
@@ -40,7 +40,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		backgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
 
 		borderNode = new WindowBackgroundNode(true) {
-			NodeId = 9,
+			NodeId = 10,
 			Size = new Vector2(482.0f, 636.0f),
 			Position = Vector2.Zero,
 			Offsets = new Vector4(64.0f, 32.0f, 32.0f, 32.0f),
@@ -51,7 +51,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		borderNode.AttachNode(this, NodePosition.AfterAllSiblings);
 
 		backgroundImageNode = new SimpleImageNode {
-			NodeId = 8,
+			NodeId = 9,
 			Position = new Vector2(4.0f, 4.0f),
 			Size = new Vector2(474.0f, 620.0f),
 			WrapMode = 2,
