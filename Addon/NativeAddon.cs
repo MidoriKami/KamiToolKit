@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.NodeParts;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.ComponentNodes.Window;
 
@@ -101,6 +102,9 @@ public abstract unsafe partial class NativeAddon {
 		InternalAddon->RootNode = rootNode.InternalResNode;
 		NodeLinker.AddNodeToUldObjectList(&InternalAddon->UldManager, rootNode.InternalResNode);
 
+		LoadTimeline();
+		rootNode.InternalResNode->EnableTimeline(); // Shouldn't be necessary to have this call
+		
 		windowNode = new WindowNode {
 			Title = Title,
 			SuppressDispose = true,
@@ -150,7 +154,7 @@ public abstract unsafe partial class NativeAddon {
 	private void Draw(AtkUnitBase* addon) {
 		OnDraw(addon);
 
-		windowNode.Focused = IsAddonFocused();
+		// windowNode.Focused = IsAddonFocused();
 		
 		AtkUnitBase.StaticVirtualTablePointer->Draw(addon);
 	}
@@ -158,9 +162,9 @@ public abstract unsafe partial class NativeAddon {
 	private void Setup(AtkUnitBase* addon, uint valueCount, AtkValue* values) {
 		InternalAddon->SetSize((ushort) 500.0f, (ushort) 350.0f);
 
-		OnSetup(addon);
-
 		AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);
+		
+		OnSetup(addon);
 	}
 
 	public void Open(int depthLayer = 4) {
@@ -190,5 +194,28 @@ public abstract unsafe partial class NativeAddon {
 		if (focusedUnitsList.Count == 0) return false;
 
 		return focusedUnitsList.Entries[focusedUnitsList.Count - 1] == InternalAddon;
+	}
+
+	private void LoadTimeline() {
+		rootNode.AddTimeline(new Timeline {
+			Mask = (AtkTimelineMask) 0xFF,
+			LabelEndFrameIdx = 89,
+			LabelFrameIdxDuration = 88,
+			LabelSets = [
+				new TimelineLabelSet {
+					StartFrameId = 1, EndFrameId = 89, Labels = [
+						new TimelineLabelFrame { FrameIndex = 1,  LabelId = 101, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
+						new TimelineLabelFrame { FrameIndex = 10, LabelId = 102, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
+						new TimelineLabelFrame { FrameIndex = 20, LabelId = 103, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
+						new TimelineLabelFrame { FrameIndex = 30, LabelId = 104, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
+						new TimelineLabelFrame { FrameIndex = 40, LabelId = 105, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
+						new TimelineLabelFrame { FrameIndex = 50, LabelId = 106, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
+						new TimelineLabelFrame { FrameIndex = 60, LabelId = 107, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
+						new TimelineLabelFrame { FrameIndex = 70, LabelId = 108, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
+						new TimelineLabelFrame { FrameIndex = 80, LabelId = 109, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
+					],
+				},
+			],
+		});
 	}
 }
