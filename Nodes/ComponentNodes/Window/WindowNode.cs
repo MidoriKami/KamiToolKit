@@ -171,15 +171,19 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		}
 	}
 
-	public new float Height {
+	public override float Height {
 		get => base.Height;
 		set {
-			headerCollisionNode.Height = value;
 			backgroundNode.Height = value;
 			borderNode.Height = value;
 			backgroundImageNode.Height = value;
 			base.Height = value;
 		}
+	}
+
+	public bool Focused {
+		get => borderNode.IsVisible;
+		set => borderNode.IsVisible = value;
 	}
 	
 	private void LoadTimelines() {

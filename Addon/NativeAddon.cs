@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
@@ -17,8 +18,8 @@ public abstract unsafe partial class NativeAddon {
 
 	private bool isDisposed;
 
-	private ResNode? rootNode;
-	private WindowNode? windowNode;
+	private ResNode rootNode;
+	private WindowNode windowNode;
 
 	private readonly AtkUnitBase.Delegates.Dtor destructorFunction;
 	private readonly AtkUnitBase.Delegates.Initialize initializeFunction;
@@ -30,13 +31,12 @@ public abstract unsafe partial class NativeAddon {
 	private readonly AtkUnitBase.Delegates.Show showFunction;
 	private readonly AtkUnitBase.Delegates.Hide hideFunction;
 
-	protected virtual void OnInitialize(AtkUnitBase* addon) { }
-	protected virtual void OnFinalize(AtkUnitBase* addon) { }
 	protected virtual void OnSetup(AtkUnitBase* addon) { }
-	protected virtual void OnDraw(AtkUnitBase* addon) { }
-	protected virtual void OnUpdate(AtkUnitBase* addon) { }
 	protected virtual void OnShow(AtkUnitBase* addon) { }
 	protected virtual void OnHide(AtkUnitBase* addon) { }
+	protected virtual void OnDraw(AtkUnitBase* addon) { }
+	protected virtual void OnUpdate(AtkUnitBase* addon) { }
+	protected virtual void OnFinalize(AtkUnitBase* addon) { }
 
 	protected NativeAddon() {
 		InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
@@ -114,8 +114,6 @@ public abstract unsafe partial class NativeAddon {
 
 		windowNode.Size = new Vector2(500.0f, 350.0f);
 		InternalAddon->UpdateCollisionNodeList(false);
-
-		OnInitialize(thisPtr);
 	}
 
 	private void Finalizer(AtkUnitBase* addon) {
@@ -148,6 +146,8 @@ public abstract unsafe partial class NativeAddon {
 
 	private void Draw(AtkUnitBase* addon) {
 		OnDraw(addon);
+
+		windowNode.Focused = IsAddonFocused();
 		
 		AtkUnitBase.StaticVirtualTablePointer->Draw(addon);
 	}
@@ -180,5 +180,12 @@ public abstract unsafe partial class NativeAddon {
 		}
 
 		return result;
+	}
+
+	protected bool IsAddonFocused() {
+		var focusedUnitsList = RaptureAtkUnitManager.Instance()->FocusedUnitsList;
+		if (focusedUnitsList.Count == 0) return false;
+
+		return focusedUnitsList.Entries[focusedUnitsList.Count - 1] == InternalAddon;
 	}
 }
