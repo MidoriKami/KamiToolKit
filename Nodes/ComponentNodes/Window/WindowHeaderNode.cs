@@ -14,10 +14,6 @@ internal class WindowHeaderNode : ResNode {
 	internal TextNode TitleNode;
 	
 	public WindowHeaderNode() {
-		Size = new Vector2(477.0f, 38.0f);
-		NodeId = 2;
-		IsVisible = true;
-		
 		CloseButtonNode = new TextureButtonNode {
 			NodeId = 7,
 			Size = new Vector2(28.0f, 28.0f),
@@ -100,6 +96,16 @@ internal class WindowHeaderNode : ResNode {
 			TitleNode.Dispose();
 			
 			base.Dispose(disposing);
+		}
+	}
+	
+	public override float Width {
+		get => base.Width;
+		set {
+			CloseButtonNode.X = value - 33.0f;
+			ConfigurationButtonNode.X = value - 47.0f;
+			InformationButtonNode.X = value - 61.0f;
+			base.Width = value;
 		}
 	}
 
