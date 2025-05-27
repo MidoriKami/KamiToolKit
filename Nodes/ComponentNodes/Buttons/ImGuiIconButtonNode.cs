@@ -32,6 +32,14 @@ public unsafe class ImGuiIconButtonNode : ButtonBase {
 		}
 	}
 
+	internal override bool SuppressDispose {
+		get => base.SuppressDispose;
+		set {
+			base.SuppressDispose = value;
+			imageNode.SuppressDispose = value;
+		}
+	}
+
 	public new float Width {
 		get => InternalResNode->Width;
 		set {

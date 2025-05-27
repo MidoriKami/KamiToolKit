@@ -98,6 +98,18 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		}
 	}
 
+	internal override bool SuppressDispose {
+		get => base.SuppressDispose;
+		set {
+			base.SuppressDispose = value;
+			headerNode.SuppressDispose = value;
+			headerCollisionNode.SuppressDispose = value;
+			backgroundNode.SuppressDispose = value;
+			borderNode.SuppressDispose = value;
+			backgroundImageNode.SuppressDispose = value;
+		}
+	}
+
 	public AtkUnitBase* OwnerAddon {
 		get => Component->OwnerUnitBase;
 		set => Component->OwnerUnitBase = value;

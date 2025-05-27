@@ -53,6 +53,15 @@ public unsafe class TextButtonNode : ButtonBase {
 		}
 	}
 
+	internal override bool SuppressDispose {
+		get => base.SuppressDispose;
+		set {
+			base.SuppressDispose = value;
+			labelNode.SuppressDispose = value;
+			backgroundNode.SuppressDispose = value;
+		}
+	}
+
 	public new float Width {
 		get => InternalResNode->Width;
 		set {

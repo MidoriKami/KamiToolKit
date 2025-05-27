@@ -33,6 +33,14 @@ public unsafe class TextureButtonNode : ButtonBase {
 		}
 	}
 
+	internal override bool SuppressDispose {
+		get => base.SuppressDispose;
+		set {
+			base.SuppressDispose = value;
+			imageNode.SuppressDispose = value;
+		}
+	}
+
 	public string TexturePath {
 		get => imageNode.TexturePath;
 		set => imageNode.TexturePath = value;

@@ -50,6 +50,15 @@ public unsafe class IconButtonNode : ButtonBase {
 		}
 	}
 
+	internal override bool SuppressDispose {
+		get => base.SuppressDispose;
+		set {
+			base.SuppressDispose = value;
+			imageNode.SuppressDispose = value;
+			backgroundNode.SuppressDispose = value;
+		}
+	}
+	
 	public uint IconId {
 		get => imageNode.IconId;
 		set => imageNode.IconId = value;

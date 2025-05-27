@@ -36,6 +36,14 @@ public unsafe class CircleButtonNode : ButtonBase {
 		}
 	}
 
+	internal override bool SuppressDispose {
+		get => base.SuppressDispose;
+		set {
+			base.SuppressDispose = value;
+			imageNode.SuppressDispose = value;
+		}
+	}
+
 	public ButtonIcon Icon {
 		get => currentIcon;
 		set {
