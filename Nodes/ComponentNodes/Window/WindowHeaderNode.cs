@@ -7,6 +7,7 @@ namespace KamiToolKit.Nodes.ComponentNodes.Window;
 
 internal class WindowHeaderNode : ResNode {
 
+	internal SimpleNineGridNode DividingLineNode;
 	internal TextureButtonNode CloseButtonNode;
 	internal TextureButtonNode ConfigurationButtonNode;
 	internal TextureButtonNode InformationButtonNode;
@@ -14,9 +15,19 @@ internal class WindowHeaderNode : ResNode {
 	internal TextNode TitleNode;
 	
 	public WindowHeaderNode() {
-		Size = new Vector2(477.0f, 38.0f);
-		NodeId = 2;
-		IsVisible = true;
+		DividingLineNode = new SimpleNineGridNode {
+			NodeId = 8,
+			TexturePath = "ui/uld/WindowA_Line_hr1.tex",
+			TextureCoordinates = Vector2.Zero,
+			TextureSize = new Vector2(32.0f, 4.0f),
+			Size = new Vector2(650.0f, 4.0f),
+			IsVisible = true,
+			LeftOffset = 12.0f,
+			RightOffset = 12.0f,
+			Position = new Vector2(10.0f, 33.0f),
+		};
+		
+		DividingLineNode.AttachNode(this, NodePosition.AsLastChild);
 		
 		CloseButtonNode = new TextureButtonNode {
 			NodeId = 7,
@@ -98,8 +109,33 @@ internal class WindowHeaderNode : ResNode {
 			InformationButtonNode.Dispose();
 			SubtitleNode.Dispose();
 			TitleNode.Dispose();
+			DividingLineNode.Dispose();
 			
 			base.Dispose(disposing);
+		}
+	}
+	
+	public override float Width {
+		get => base.Width;
+		set {
+			CloseButtonNode.X = value - 33.0f;
+			ConfigurationButtonNode.X = value - 47.0f;
+			InformationButtonNode.X = value - 61.0f;
+			DividingLineNode.Width = value - 20.0f;
+			base.Width = value;
+		}
+	}
+
+	internal override bool SuppressDispose {
+		get => base.SuppressDispose;
+		set {
+			base.SuppressDispose = value;
+			CloseButtonNode.SuppressDispose = value;
+			ConfigurationButtonNode.SuppressDispose = value;
+			InformationButtonNode.SuppressDispose = value;
+			SubtitleNode.SuppressDispose = value;
+			TitleNode.SuppressDispose = value;
+			DividingLineNode.SuppressDispose = value;
 		}
 	}
 }

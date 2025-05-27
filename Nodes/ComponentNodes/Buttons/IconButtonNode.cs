@@ -9,8 +9,8 @@ namespace KamiToolKit.Nodes.ComponentNodes;
 /// <summary>
 /// Uses a GameIconId to display that icon as the decorator for the button.
 /// </summary>
-public unsafe class IconButtonNode : ButtonBase {
-	private IconImageNode imageNode;
+public class IconButtonNode : ButtonBase {
+	private readonly IconImageNode imageNode;
 	private readonly NineGridNode backgroundNode;
 
 	public IconButtonNode() {
@@ -50,40 +50,37 @@ public unsafe class IconButtonNode : ButtonBase {
 		}
 	}
 
+	internal override bool SuppressDispose {
+		get => base.SuppressDispose;
+		set {
+			base.SuppressDispose = value;
+			imageNode.SuppressDispose = value;
+			backgroundNode.SuppressDispose = value;
+		}
+	}
+	
 	public uint IconId {
 		get => imageNode.IconId;
 		set => imageNode.IconId = value;
 	}
 
-	public new float Width {
-		get => InternalResNode->Width;
+	public override float Width {
+		get => base.Width;
 		set {
-			InternalResNode->SetWidth((ushort) value);
-			backgroundNode.Width = value;
-			CollisionNode.Width = value;
-			imageNode.Width = value - backgroundNode.LeftOffset - backgroundNode.RightOffset;
+			imageNode.Width = value;
 			imageNode.Position = imageNode.Position with { X = backgroundNode.Position.X + backgroundNode.LeftOffset };
-			Component->UldManager.RootNodeWidth = (ushort) value;
+			backgroundNode.Width = value;
+			base.Width = value;
 		}
 	}
 
-	public new float Height {
-		get => InternalResNode->Height;
+	public override float Height {
+		get => base.Height;
 		set {
-			InternalResNode->SetHeight((ushort) value);
-			backgroundNode.Height = value;
-			CollisionNode.Height = value;
-			imageNode.Height = value - backgroundNode.TopOffset - backgroundNode.BottomOffset;
+			imageNode.Height = value;
 			imageNode.Position = imageNode.Position with { Y = backgroundNode.Position.Y + backgroundNode.TopOffset };
-			Component->UldManager.RootNodeHeight = (ushort) value;
-		}
-	}
-
-	public new Vector2 Size {
-		get => new(Width, Height);
-		set {
-			Width = value.X;
-			Height = value.Y;
+			backgroundNode.Height = value;
+			base.Height = value;
 		}
 	}
 

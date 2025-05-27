@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using FFXIVClientStructs.Interop;
+using KamiToolKit.Addon;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 
@@ -10,64 +12,51 @@ public abstract unsafe partial class NodeBase {
         NodeLinker.AttachNode(InternalResNode, target.InternalResNode, position);
     }
 
-    /// <summary>
-    /// When attaching to a custom ComponentNode, we want to attach to the ULDManager, which should already have a collision node allocated.
-    /// As this node is intended to be self contained, it will update the draw list upon any additions.
-    /// </summary>
     internal void AttachNode(ComponentNode target, NodePosition position) {
         NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
-        AddNodeToUldObjectList(&target.ComponentBase->UldManager, InternalResNode);
+        NodeLinker.AddNodeToUldObjectList(&target.ComponentBase->UldManager, InternalResNode);
 
+        VisitChildren(InternalResNode, node => {
+            NodeLinker.AddNodeToUldObjectList(&target.ComponentBase->UldManager, node);
+        });
+
+        target.ComponentBase->UldManager.UpdateDrawNodeList();
+    }
+
+    internal void AttachNode(NativeAddon addon, NodePosition position) {
+        NodeLinker.AttachNode(InternalResNode, addon.InternalAddon->RootNode, position);
+        NodeLinker.AddNodeToUldObjectList(&addon.InternalAddon->UldManager, InternalResNode);
+        
         var thisChildren = InternalResNode->ChildNode;
         while (thisChildren is not null) {
-            AddNodeToUldObjectList(&target.ComponentBase->UldManager, thisChildren);
+            NodeLinker.AddNodeToUldObjectList(&addon.InternalAddon->UldManager, thisChildren);
             thisChildren = thisChildren->PrevSiblingNode;
         }
         
-        target.ComponentBase->UldManager.UpdateDrawNodeList();
+        addon.InternalAddon->UldManager.UpdateDrawNodeList();
     }
 
     internal void DetachNode() {
         NodeLinker.DetachNode(InternalResNode);
 
         if (this is ComponentNode node) {
-            RemoveNodeFromUldObjectList(&node.ComponentBase->UldManager, InternalResNode);
+            NodeLinker.RemoveNodeFromUldObjectList(&node.ComponentBase->UldManager, InternalResNode);
             node.ComponentBase->UldManager.UpdateDrawNodeList();
         }
     }
 
-    private void AddNodeToUldObjectList(AtkUldManager* uldManager, AtkResNode* newNode) {
-        var oldSize = uldManager->Objects->NodeCount;
-        var newSize = oldSize + 1;
-        var newBuffer = (AtkResNode**) NativeMemoryHelper.Malloc((ulong)(newSize * 8));
+    internal void VisitChildren(AtkResNode* parent, Action<Pointer<AtkResNode>> visitAction) {
+        var child = parent->ChildNode;
 
-        foreach (var index in Enumerable.Range(0, oldSize)) {
-            newBuffer[index] = uldManager->Objects->NodeList[index];
-        }
-        
-        newBuffer[newSize - 1] = newNode;
-        
-        NativeMemoryHelper.Free(uldManager->Objects->NodeList, (ulong)(oldSize * 8));
-        uldManager->Objects->NodeList = newBuffer;
-        uldManager->Objects->NodeCount = newSize;
-    }
+        while (child is not null) {
+            visitAction(child);
 
-    private void RemoveNodeFromUldObjectList(AtkUldManager* uldManager, AtkResNode* nodeToRemove) {
-        var oldSize = uldManager->Objects->NodeCount;
-        var newSize = oldSize - 1;
-        var newBuffer = (AtkResNode**) NativeMemoryHelper.Malloc((ulong)(newSize * 8));
-
-        var newIndex = 0;
-        foreach (var index in Enumerable.Range(0, oldSize)) {
-            if (uldManager->Objects->NodeList[index] != nodeToRemove) {
-                newBuffer[newIndex] = uldManager->Objects->NodeList[index];
+            // Be sure to not accidentally visit a components children, they manage their own children
+            if (child->ChildNode is not null && child->ChildNode->Type < (NodeType) 1000) {
+                VisitChildren(child->ChildNode, visitAction);
             }
-            
-            newIndex++;
-        }
 
-        NativeMemoryHelper.Free(uldManager->Objects->NodeList, (ulong)(oldSize * 8));
-        uldManager->Objects->NodeList = newBuffer;
-        uldManager->Objects->NodeCount = newSize;
+            child = child->PrevSiblingNode;
+        }
     }
 }

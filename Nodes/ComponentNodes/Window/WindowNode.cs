@@ -16,11 +16,11 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 	public WindowNode() {
 		SetInternalComponentType(ComponentType.Window);
 
-		CollisionNode.NodeId = 12;
+		CollisionNode.NodeId = 13;
 
 		headerCollisionNode = new CollisionNode {
 			Uses = 2,
-			NodeId = 11,
+			NodeId = 12,
 			Size = new Vector2(468.0f, 28.0f),
 			Position = new Vector2(8.0f, 8.0f),
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible |NodeFlags.Enabled |NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.EmitsEvents,
@@ -29,7 +29,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		headerCollisionNode.AttachNode(this, NodePosition.AfterAllSiblings);
 
 		backgroundNode = new WindowBackgroundNode(false) {
-			NodeId = 10,
+			NodeId = 11,
 			Size = new Vector2(482.0f, 636.0f),
 			Position = Vector2.Zero,
 			Offsets = new Vector4(64.0f, 32.0f, 32.0f, 32.0f),
@@ -40,7 +40,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		backgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
 
 		borderNode = new WindowBackgroundNode(true) {
-			NodeId = 9,
+			NodeId = 10,
 			Size = new Vector2(482.0f, 636.0f),
 			Position = Vector2.Zero,
 			Offsets = new Vector4(64.0f, 32.0f, 32.0f, 32.0f),
@@ -51,7 +51,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		borderNode.AttachNode(this, NodePosition.AfterAllSiblings);
 
 		backgroundImageNode = new SimpleImageNode {
-			NodeId = 8,
+			NodeId = 9,
 			Position = new Vector2(4.0f, 4.0f),
 			Size = new Vector2(474.0f, 620.0f),
 			WrapMode = 2,
@@ -62,8 +62,12 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		};
 		
 		backgroundImageNode.AttachNode(this, NodePosition.AfterAllSiblings);
-		
-		headerNode = new WindowHeaderNode();
+
+		headerNode = new WindowHeaderNode {
+			Size = new Vector2(477.0f, 38.0f),
+			NodeId = 2,
+			IsVisible = true,
+		};
 		headerNode.AttachNode(this, NodePosition.AfterAllSiblings);
 		
 		Data->ShowCloseButton = 1;
@@ -95,6 +99,18 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 			backgroundImageNode.Dispose();
 			
 			base.Dispose(disposing);
+		}
+	}
+
+	internal override bool SuppressDispose {
+		get => base.SuppressDispose;
+		set {
+			base.SuppressDispose = value;
+			headerNode.SuppressDispose = value;
+			headerCollisionNode.SuppressDispose = value;
+			backgroundNode.SuppressDispose = value;
+			borderNode.SuppressDispose = value;
+			backgroundImageNode.SuppressDispose = value;
 		}
 	}
 
@@ -143,30 +159,31 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		set => headerNode.InformationButtonNode.IsVisible = value;
 	}
 
-	public new float Width {
-		get => InternalResNode->Width;
+	public override float Width {
+		get => base.Width;
 		set {
-			InternalResNode->SetWidth((ushort) value);
-			CollisionNode.Width = value;
-			Component->UldManager.RootNodeWidth = (ushort) value;
+			headerNode.Width = value;
+			headerCollisionNode.Width = value;
+			backgroundNode.Width = value;
+			borderNode.Width = value;
+			backgroundImageNode.Width = value;
+			base.Width = value;
 		}
 	}
 
-	public new float Height {
-		get => InternalResNode->Height;
+	public override float Height {
+		get => base.Height;
 		set {
-			InternalResNode->SetHeight((ushort) value);
-			CollisionNode.Height = value;
-			Component->UldManager.RootNodeHeight = (ushort) value;
+			backgroundNode.Height = value;
+			borderNode.Height = value;
+			backgroundImageNode.Height = value;
+			base.Height = value;
 		}
 	}
 
-	public new Vector2 Size {
-		get => new(Width, Height);
-		set {
-			Width = value.X;
-			Height = value.Y;
-		}
+	public bool Focused {
+		get => borderNode.IsVisible;
+		set => borderNode.IsVisible = value;
 	}
 	
 	private void LoadTimelines() {

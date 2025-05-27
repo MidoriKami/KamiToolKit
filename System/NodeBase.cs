@@ -10,6 +10,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     protected static readonly List<NodeBase> CreatedNodes = [];
 
     private bool isDisposed;
+    internal virtual bool SuppressDispose { get; set; }
 
     internal abstract AtkResNode* InternalResNode { get; }
 
@@ -19,6 +20,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// </summary>
     internal static void DetachAndDispose() {
         foreach (var node in CreatedNodes.ToArray()) {
+            if (node.SuppressDispose) continue;
+            
             node.TryForceDetach(true);
             node.Dispose();
         }
@@ -29,6 +32,14 @@ public abstract unsafe partial class NodeBase : IDisposable {
     protected abstract void Dispose(bool disposing);
 
     public void Dispose() {
+        // If the node was invalidated before dispose, we want to skip trying to free it.
+        if (!IsNodeValid() || SuppressDispose) {
+            isDisposed = true;
+            GC.SuppressFinalize(this);
+            CreatedNodes.Remove(this);
+            return;
+        }
+        
         if (!isDisposed) {
             Log.Debug($"[KamiToolKit] Disposing node {GetType()}");
 
@@ -44,6 +55,14 @@ public abstract unsafe partial class NodeBase : IDisposable {
         }
         
         isDisposed = true;
+    }
+
+    private bool IsNodeValid() {
+        if (InternalResNode is null) return false;
+        if (InternalResNode->VirtualTable is null) return false;
+        if ((nint) InternalResNode->VirtualTable == Experimental.Instance.AtkEventListenerVirtualTable) return false;
+
+        return true;
     }
 }
 
@@ -66,8 +85,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
     
     protected override void Dispose(bool disposing) {
         if (disposing) {
-            InternalResNode->Destroy(false);
-            NativeMemoryHelper.UiFree(InternalNode);
+            InternalResNode->Destroy(true);
             InternalNode = null;
         }
     }

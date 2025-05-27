@@ -8,6 +8,7 @@ namespace KamiToolKit.Nodes;
 public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComponentNode>(nodeType) {
 	internal abstract AtkComponentBase* ComponentBase { get; }
 	internal abstract AtkUldComponentDataBase* DataBase { get; }
+	internal abstract AtkComponentNode* InternalComponentNode { get; }
 }
 
 public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable where TU : unmanaged {
@@ -15,6 +16,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 	protected readonly CollisionNode CollisionNode;
 	internal override AtkComponentBase* ComponentBase => (AtkComponentBase*) Component;
 	internal override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*) Data;
+	internal override AtkComponentNode* InternalComponentNode => (AtkComponentNode*) InternalResNode;
 	
 	protected ComponentNode() : base((NodeType) 1001) {
 		Component = NativeMemoryHelper.Create<T>();
@@ -86,5 +88,31 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		
 		ComponentBase->RegisterEvents();
 		ComponentBase->SetEnabledState(true);
+	}
+
+	internal override bool SuppressDispose {
+		get => base.SuppressDispose;
+		set {
+			base.SuppressDispose = value;
+			CollisionNode.SuppressDispose = value;
+		}
+	}
+		
+	public override float Width {
+		get => base.Width;
+		set {
+			CollisionNode.Width = value;
+			ComponentBase->UldManager.RootNodeWidth = (ushort) value;
+			base.Width = value;
+		}
+	}
+
+	public override float Height {
+		get => base.Height;
+		set {
+			CollisionNode.Height = value;
+			ComponentBase->UldManager.RootNodeWidth = (ushort) value;
+			base.Height = value;
+		}
 	}
 }

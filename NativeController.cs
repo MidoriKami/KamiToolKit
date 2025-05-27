@@ -2,7 +2,9 @@
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Addon;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
 
@@ -19,15 +21,15 @@ public unsafe class NativeController : IDisposable {
 	public NativeController(IDalamudPluginInterface pluginInterface) {
 		pluginInterface.Inject(this);
 		
+		// Inject non-Experimental Properties
+		pluginInterface.Inject(DalamudInterface.Instance);
+		GameInteropProvider.InitializeFromAttributes(DalamudInterface.Instance);
+		
 		// Inject Experimental Properties
 		pluginInterface.Inject(Experimental.Instance);
 		GameInteropProvider.InitializeFromAttributes(Experimental.Instance);
 		
 		Experimental.Instance.EnableHooks();
-		
-		// Inject non-Experimental Properties
-		pluginInterface.Inject(DalamudInterface.Instance);
-		GameInteropProvider.InitializeFromAttributes(DalamudInterface.Instance);
 	}
 
 	public void Dispose() {
@@ -35,6 +37,9 @@ public unsafe class NativeController : IDisposable {
 		
 		Experimental.Instance.DisposeHooks();
 	}
+
+	public void InjectAddon(NativeAddon addon) 
+		=> Framework.RunOnFrameworkThread(() => RaptureAtkUnitManager.Instance()->InitializeAddon(addon.InternalAddon, addon.InternalName));
 
 	public void AttachToAddon(NodeBase customNode, void* addon, AtkResNode* target, NodePosition position)
 		=> Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, (AtkUnitBase*) addon, target, position));

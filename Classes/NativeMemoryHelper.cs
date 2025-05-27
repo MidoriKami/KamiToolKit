@@ -69,4 +69,7 @@ internal static class NativeMemoryHelper {
     
     public static unsafe void Copy<T>(T* oldBuffer, T* newBuffer, uint count) where T : unmanaged
         => NativeMemory.Copy(oldBuffer, newBuffer, (nuint) (sizeof(T) * count));
+    
+    public static unsafe void MemCopy<T>(T* oldBuffer, T* newBuffer, uint byteCount) where T : unmanaged
+        => NativeMemory.Copy(oldBuffer, newBuffer, byteCount);
 }

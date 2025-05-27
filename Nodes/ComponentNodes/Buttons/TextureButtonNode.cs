@@ -6,7 +6,7 @@ using KamiToolKit.Nodes.ComponentNodes.Abstract;
 
 namespace KamiToolKit.Nodes.ComponentNodes;
 
-public unsafe class TextureButtonNode : ButtonBase {
+public class TextureButtonNode : ButtonBase {
 	private readonly SimpleImageNode imageNode;
 
 	public TextureButtonNode() {
@@ -33,6 +33,14 @@ public unsafe class TextureButtonNode : ButtonBase {
 		}
 	}
 
+	internal override bool SuppressDispose {
+		get => base.SuppressDispose;
+		set {
+			base.SuppressDispose = value;
+			imageNode.SuppressDispose = value;
+		}
+	}
+
 	public string TexturePath {
 		get => imageNode.TexturePath;
 		set => imageNode.TexturePath = value;
@@ -48,34 +56,22 @@ public unsafe class TextureButtonNode : ButtonBase {
 		set => imageNode.TextureSize = value;
 	}
 	
-	public new float Width {
-		get => InternalResNode->Width;
+	public override float Width {
+		get => base.Width;
 		set {
-			InternalResNode->SetWidth((ushort) value);
-			CollisionNode.Width = value;
 			imageNode.Width = value;
-			Component->UldManager.RootNodeWidth = (ushort) value;
+			base.Width = value;
 		}
 	}
 
-	public new float Height {
-		get => InternalResNode->Height;
+	public override float Height {
+		get => base.Height;
 		set {
-			InternalResNode->SetHeight((ushort) value);
-			CollisionNode.Height = value;
 			imageNode.Height = value;
-			Component->UldManager.RootNodeHeight = (ushort) value;
+			base.Height = value;
 		}
 	}
 
-	public new Vector2 Size {
-		get => new(Width, Height);
-		set {
-			Width = value.X;
-			Height = value.Y;
-		}
-	}
-	
 	private void LoadTimelines() {
 		AddTimeline(new Timeline {
 			Mask = (AtkTimelineMask) 0xFF,
