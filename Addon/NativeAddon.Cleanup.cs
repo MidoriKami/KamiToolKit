@@ -3,7 +3,7 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.Addon;
 
-public unsafe partial class NativeAddon : IDisposable {
+public partial class NativeAddon : IDisposable {
 	~NativeAddon() => Dispose(false);
 
 	protected virtual void Dispose(bool disposing) {
