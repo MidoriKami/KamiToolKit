@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
 using Newtonsoft.Json;
