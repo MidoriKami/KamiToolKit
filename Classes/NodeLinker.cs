@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Classes;
@@ -13,6 +14,44 @@ public enum NodePosition {
 }
 
 internal static unsafe class NodeLinker {
+    internal static void AddNodeToUldObjectList(AtkUldManager* uldManager, AtkResNode* newNode) {
+        var oldSize = uldManager->Objects->NodeCount;
+        var newSize = oldSize + 1;
+        var newBuffer = (AtkResNode**) NativeMemoryHelper.Malloc((ulong)(newSize * 8));
+
+        if (oldSize > 0) {
+            foreach (var index in Enumerable.Range(0, oldSize)) {
+                newBuffer[index] = uldManager->Objects->NodeList[index];
+            }
+        
+            NativeMemoryHelper.Free(uldManager->Objects->NodeList, (ulong)(oldSize * 8));
+        }
+        
+        newBuffer[newSize - 1] = newNode;
+
+        uldManager->Objects->NodeList = newBuffer;
+        uldManager->Objects->NodeCount = newSize;
+    }
+    
+    internal static void RemoveNodeFromUldObjectList(AtkUldManager* uldManager, AtkResNode* nodeToRemove) {
+        var oldSize = uldManager->Objects->NodeCount;
+        var newSize = oldSize - 1;
+        var newBuffer = (AtkResNode**) NativeMemoryHelper.Malloc((ulong)(newSize * 8));
+
+        var newIndex = 0;
+        foreach (var index in Enumerable.Range(0, oldSize)) {
+            if (uldManager->Objects->NodeList[index] != nodeToRemove) {
+                newBuffer[newIndex] = uldManager->Objects->NodeList[index];
+            }
+            
+            newIndex++;
+        }
+
+        NativeMemoryHelper.Free(uldManager->Objects->NodeList, (ulong)(oldSize * 8));
+        uldManager->Objects->NodeList = newBuffer;
+        uldManager->Objects->NodeCount = newSize;
+    }
+    
     internal static void AttachNode(AtkResNode* node, AtkResNode* attachTargetNode, NodePosition position) {
         switch (position) {
             case NodePosition.BeforeTarget:
