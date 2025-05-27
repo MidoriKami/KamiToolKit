@@ -14,7 +14,8 @@ public abstract unsafe partial class NativeAddon {
 
 	private readonly AtkUnitBase.AtkUnitBaseVirtualTable* virtualTable;
 	internal AtkUnitBase* InternalAddon;
-	public required string Name { get; set; } = "NameNotSet";
+	public required string InternalName { get; init; } = "NameNotSet";
+	public required string Title { get; set; } = "TitleNotSet";
 
 	private bool isDisposed;
 
@@ -41,7 +42,9 @@ public abstract unsafe partial class NativeAddon {
 	protected NativeAddon() {
 		InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
 
-		InternalAddon->NameString = Name;
+		// Ensure InternalName doesn't contain any spaces
+		InternalName = InternalName.Replace(" ", string.Empty);
+		InternalAddon->NameString = InternalName;
 
 		// Overwrite virtual table with a custom copy
 		virtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 73);
@@ -99,7 +102,7 @@ public abstract unsafe partial class NativeAddon {
 		NodeLinker.AddNodeToUldObjectList(&InternalAddon->UldManager, rootNode.InternalResNode);
 
 		windowNode = new WindowNode {
-			Title = Name,
+			Title = Title,
 			SuppressDispose = true,
 		};
 
