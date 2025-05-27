@@ -129,31 +129,23 @@ public unsafe class Part : IDisposable {
         return internalAsset->AtkTexture.Resource->TexFileResourceHandle->FileName.ToString();
     }
 
+    internal static int TextureVersion() 
+        => AtkStage.Instance()->AtkTextureResourceManager->DefaultTextureVersion;
+
     /// <summary>
     /// Load the specified path, this will try to select the correct path based on theme
     /// and resolve through any texture substitutions defined by other plugins.
     /// </summary>
     /// <param name="path">Path to load</param>
     public void LoadTexture(string path) {
-        var texturePath = path;
-        
-        // If we are trying to load a HR texture
-        if (texturePath.Contains("_hr1")) {
-
-            // But we are not in HR mode
-            if (AtkStage.Instance()->AtkTextureResourceManager->DefaultTextureVersion is 1) {
-                texturePath = texturePath.Replace("_hr1", "");
-            }
-        }
+        var texturePath = path.Replace("_hr1", string.Empty);
 
         var themedPath = texturePath.Replace("uld", GetThemePathModifier());
         if (DalamudInterface.Instance.DataManager.FileExists(themedPath)) {
             texturePath = themedPath;
         }
-
-        texturePath = DalamudInterface.Instance.TextureSubstitutionProvider.GetSubstitutedPath(texturePath);
         
-        internalAsset->AtkTexture.LoadTexture(texturePath);
+        internalAsset->AtkTexture.LoadTexture(texturePath, TextureVersion());
     }
 
     private string GetThemePathModifier() => AtkStage.Instance()->AtkUIColorHolder->ActiveColorThemeType switch {
