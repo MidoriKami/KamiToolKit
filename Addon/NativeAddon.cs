@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -10,7 +11,7 @@ using KamiToolKit.Nodes.ComponentNodes.Window;
 namespace KamiToolKit.Addon;
 
 [SuppressMessage("ReSharper", "PrivateFieldCanBeConvertedToLocalVariable", Justification = "Using native function pointers, pinning the pointer is required.")]
-public abstract unsafe partial class NativeAddon {
+public abstract unsafe class NativeAddon :IDisposable {
 
 	private readonly AtkUnitBase.AtkUnitBaseVirtualTable* virtualTable;
 	internal AtkUnitBase* InternalAddon;
@@ -244,5 +245,24 @@ public abstract unsafe partial class NativeAddon {
 				},
 			],
 		});
+	}
+	
+	~NativeAddon() => Dispose(false);
+
+	protected virtual void Dispose(bool disposing) {
+		if (disposing) {
+			Dispose();
+		}
+	}
+
+	public void Dispose() {
+		if (!isDisposed) {
+			Log.Debug($"[KamiToolKit] Disposing addon {GetType()}");
+
+			Close();
+            GC.SuppressFinalize(this);
+		}
+        
+		isDisposed = true;
 	}
 }
