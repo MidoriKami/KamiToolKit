@@ -158,22 +158,24 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 	public override float Width {
 		get => base.Width;
 		set {
+			base.Width = value;
 			headerNode.Width = value;
-			headerCollisionNode.Width = value;
+			headerCollisionNode.Width = value - 14.0f;
 			backgroundNode.Width = value;
 			borderNode.Width = value;
-			backgroundImageNode.Width = value;
-			base.Width = value;
+			backgroundImageNode.Width = value - 8.0f;
+			backgroundImageNode.X = 4.0f;
 		}
 	}
 
 	public override float Height {
 		get => base.Height;
 		set {
+			base.Height = value;
 			backgroundNode.Height = value;
 			borderNode.Height = value;
-			backgroundImageNode.Height = value;
-			base.Height = value;
+			backgroundImageNode.Height = value - 16.0f;
+			backgroundImageNode.Y = 4.0f;
 		}
 	}
 
