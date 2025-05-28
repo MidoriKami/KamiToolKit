@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -75,8 +74,8 @@ internal class WindowHeaderNode : ResNode {
 			TextFlags = TextFlags.Emboss,
 			FontType = FontType.Axis,
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-			TextColor = new Vector4(238.0f, 225.0f, 197.0f, 255.0f).NormalizeToUnitRange(),
-			TextOutlineColor = new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+			TextColor = ColorHelper.GetColor(8),
+			TextOutlineColor = ColorHelper.GetColor(7),
 			BackgroundColor = Vector4.Zero,
 			Size = new Vector2(46.0f, 20.0f),
 			Position = new Vector2(83.0f, 17.0f),
@@ -92,8 +91,8 @@ internal class WindowHeaderNode : ResNode {
 			TextFlags = TextFlags.Emboss,
 			FontType = FontType.TrumpGothic,
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-			TextColor = new Vector4(204.0f, 204.0f, 204.0f, 255.0f).NormalizeToUnitRange(),
-			TextOutlineColor = new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+			TextColor = ColorHelper.GetColor(2),
+			TextOutlineColor = ColorHelper.GetColor(7),
 			BackgroundColor = Vector4.Zero,
 			Size = new Vector2(86.0f, 31.0f),
 			Position = new Vector2(12.0f, 7.0f),

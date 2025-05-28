@@ -24,7 +24,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		
 		Data = NativeMemoryHelper.UiAlloc<TU>();
 
-		componentBase->InitializeAtkUldManager();
+		componentBase->Initialize();
 					
 		CollisionNode = new CollisionNode {
 			NodeId = 1,
@@ -36,6 +36,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		
 		componentBase->OwnerNode = InternalNode;
 		componentBase->AtkResNode = CollisionNode.InternalResNode;
+		componentBase->ComponentFlags = 1;
 		
 		ref var uldManager = ref componentBase->UldManager;
 
@@ -52,7 +53,11 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		uldManager.RootNode = CollisionNode.InternalResNode;
 		
 		uldManager.UpdateDrawNodeList();
-		uldManager.Flags1 = 23;
+		uldManager.ResourceFlags = AtkUldManagerResourceFlag.Initialized |
+		                           AtkUldManagerResourceFlag.KeepUldResourceHandle |
+		                           AtkUldManagerResourceFlag.ArraysAllocated |
+		                           AtkUldManagerResourceFlag.AssetsHaveThemeSupport;
+
 		uldManager.LoadedState = AtkLoadState.Loaded;
 	}
 
@@ -86,7 +91,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 	protected void InitializeComponentEvents() {
 		ComponentBase->InitializeFromComponentData(DataBase);
 		
-		ComponentBase->RegisterEvents();
+		ComponentBase->Setup();
 		ComponentBase->SetEnabledState(true);
 	}
 
