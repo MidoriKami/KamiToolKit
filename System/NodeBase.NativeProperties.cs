@@ -152,7 +152,7 @@ public abstract unsafe partial class NodeBase {
         }
     }
     
-    public virtual uint NodeId {
+    public uint NodeId {
         get => InternalResNode->NodeId;
         set => InternalResNode->NodeId = value;
     }

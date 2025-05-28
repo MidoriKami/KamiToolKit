@@ -17,10 +17,12 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		SetInternalComponentType(ComponentType.Window);
 
 		CollisionNode.NodeId = 13;
+		Component->ShowFlags = 1;
 
 		headerCollisionNode = new CollisionNode {
 			Uses = 2,
 			NodeId = 12,
+			Height = 28.0f,
 			Position = new Vector2(8.0f, 8.0f),
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible |NodeFlags.Enabled |NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.EmitsEvents,
 		};

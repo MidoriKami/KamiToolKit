@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
@@ -17,6 +16,7 @@ public abstract unsafe partial class NativeAddon {
 	internal AtkUnitBase* InternalAddon;
 	public required string InternalName { get; init; } = "NameNotSet";
 	public required string Title { get; set; } = "TitleNotSet";
+	public string Subtitle { get; set; } = string.Empty;
 
 	private bool isDisposed;
 
@@ -41,6 +41,8 @@ public abstract unsafe partial class NativeAddon {
 	protected virtual void OnFinalize(AtkUnitBase* addon) { }
 
 	protected NativeAddon() {
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Beginning Native Addon Construction");
+		
 		InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
 
 		// Ensure InternalName doesn't contain any spaces
@@ -74,9 +76,23 @@ public abstract unsafe partial class NativeAddon {
 
 		InternalAddon->Flags1A2 |= 0b0100_0000; // don't save/load AddonConfig
 		InternalAddon->OpenSoundEffectId = 23;
+		
+		rootNode = new ResNode {
+			NodeId = 1,
+			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
+			SuppressDispose = true,
+		};
+		
+		windowNode = new WindowNode {
+			SuppressDispose = true,
+		};
+		
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Construction Complete");
 	}
 
 	private void Initialize(AtkUnitBase* thisPtr) {
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Initialize");
+		
 		AtkUnitBase.StaticVirtualTablePointer->Initialize(thisPtr);
 
 		thisPtr->UldManager.InitializeResourceRendererManager();
@@ -95,22 +111,14 @@ public abstract unsafe partial class NativeAddon {
 		InternalAddon->UldManager.ObjectCount = 1;
 		InternalAddon->UldManager.ResourceFlags |= AtkUldManagerResourceFlag.ArraysAllocated;
 
-		rootNode = new ResNode {
-			NodeId = 1,
-			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
-			SuppressDispose = true,
-		};
+		rootNode.SuppressDispose = true;
 
 		InternalAddon->RootNode = rootNode.InternalResNode;
 		NodeLinker.AddNodeToUldObjectList(&InternalAddon->UldManager, rootNode.InternalResNode);
 
 		LoadTimeline();
-		rootNode.InternalResNode->EnableTimeline(); // Shouldn't be necessary to have this call
 		
-		windowNode = new WindowNode {
-			Title = Title,
-			SuppressDispose = true,
-		};
+		windowNode.SuppressDispose = true;
 
 		windowNode.AttachNode(rootNode, NodePosition.AsFirstChild);
 		InternalAddon->WindowNode = (AtkComponentNode*) windowNode.InternalResNode;
@@ -118,70 +126,92 @@ public abstract unsafe partial class NativeAddon {
 		InternalAddon->UldManager.UpdateDrawNodeList();
 		InternalAddon->UldManager.LoadedState = AtkLoadState.Loaded;
 
-		InternalAddon->Flags198 |= 2 << 0x1C; // UldManager finished loading the uld
-		InternalAddon->Flags1A2 |= 4;  // LoadUldByName called
+		// UldManager finished loading the uld
+		InternalAddon->Flags198 |= 2 << 0x1C;
+		
+		// LoadUldByName called
+		InternalAddon->Flags1A2 |= 4;
 
-		windowNode.Size = new Vector2(500.0f, 350.0f);
 		InternalAddon->UpdateCollisionNodeList(false);
 	}
 
 	private void Finalizer(AtkUnitBase* addon) {
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Finalize");
+		
 		OnFinalize(addon);
 
 		AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
 	}
 
-	private void SoftHide(AtkUnitBase* addon)
-		=> AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
-	
-	
+	private void SoftHide(AtkUnitBase* addon) {
+		Log.Verbose($"[KamiToolKit] [{InternalName}] SoftHide (Hide2)");
+		
+		AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
+	}
+
 	private void Hide(AtkUnitBase* thisPtr, bool unkBool, bool callHideCallback, uint setShowHideFlags) {
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Hide");
+		
 		OnHide(thisPtr);
 		
 		AtkUnitBase.StaticVirtualTablePointer->Hide(thisPtr, unkBool, callHideCallback, setShowHideFlags);
 	}
 
 	private void Show(AtkUnitBase* thisPtr, bool silenceOpenSoundEffect, uint unsetShowHideFlags) {
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Show");
+		
 		OnShow(thisPtr);
 		
 		AtkUnitBase.StaticVirtualTablePointer->Show(thisPtr, silenceOpenSoundEffect, unsetShowHideFlags);
 	}
 
 	private void Update(AtkUnitBase* addon, float delta) {
+		Log.Excessive($"[KamiToolKit] [{InternalName}] Update");
+		
 		OnUpdate(addon);
 		
 		AtkUnitBase.StaticVirtualTablePointer->Update(addon, delta);
 	}
 
 	private void Draw(AtkUnitBase* addon) {
+		Log.Excessive($"[KamiToolKit] [{InternalName}] Draw");
+		
 		OnDraw(addon);
-
-		// windowNode.Focused = IsAddonFocused();
 		
 		AtkUnitBase.StaticVirtualTablePointer->Draw(addon);
 	}
 
 	private void Setup(AtkUnitBase* addon, uint valueCount, AtkValue* values) {
-		InternalAddon->SetSize((ushort) 500.0f, (ushort) 350.0f);
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Setup");
+
+		windowNode.SetTitle(Title, Subtitle);
+		InternalAddon->SetSize((ushort) Size.X, (ushort) Size.Y);
+		windowNode.Size = Size;
 
 		AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);
-		
+
 		OnSetup(addon);
 	}
 
 	public void Open(int depthLayer = 4) {
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Open");
+
 		if (InternalAddon is null) return;
 
 		InternalAddon->Open((uint) depthLayer);
 	}
 
 	public void Close() {
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Close");
+		
 		if (InternalAddon is null) return;
 
 		InternalAddon->Close(false);
 	}
 	
 	private AtkEventListener* Destructor(AtkUnitBase* addon, byte flags) {
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Destructor");
+		
 		var result = AtkUnitBase.StaticVirtualTablePointer->Dtor(addon, flags);
 
 		if ((flags & 1) == 1) {
@@ -191,12 +221,7 @@ public abstract unsafe partial class NativeAddon {
 		return result;
 	}
 
-	protected bool IsAddonFocused() {
-		var focusedUnitsList = RaptureAtkUnitManager.Instance()->FocusedUnitsList;
-		if (focusedUnitsList.Count == 0) return false;
-
-		return focusedUnitsList.Entries[focusedUnitsList.Count - 1] == InternalAddon;
-	}
+	public Vector2 Size { get; set; }
 
 	private void LoadTimeline() {
 		rootNode.AddTimeline(new Timeline {

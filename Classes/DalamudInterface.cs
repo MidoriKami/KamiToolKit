@@ -16,6 +16,8 @@ internal class DalamudInterface {
 }
 
 internal static class Log {
+	private static readonly bool ExcessiveLogging = false;
+
 	internal static void Debug(string message) {
 		DalamudInterface.Instance.Log.Debug(message);
 	}
@@ -30,6 +32,12 @@ internal static class Log {
 
 	internal static void Verbose(string message) {
 		DalamudInterface.Instance.Log.Verbose(message);
+	}
+
+	internal static void Excessive(string message) {
+		if (ExcessiveLogging) {
+			Verbose(message);
+		}
 	}
 
 	internal static void Error(string message) {
