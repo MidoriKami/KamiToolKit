@@ -94,14 +94,6 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		ComponentBase->Setup();
 		ComponentBase->SetEnabledState(true);
 	}
-
-	internal override bool SuppressDispose {
-		get => base.SuppressDispose;
-		set {
-			base.SuppressDispose = value;
-			CollisionNode.SuppressDispose = value;
-		}
-	}
 		
 	public override float Width {
 		get => base.Width;

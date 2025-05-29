@@ -81,12 +81,9 @@ public abstract unsafe class NativeAddon :IDisposable {
 		rootNode = new ResNode {
 			NodeId = 1,
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
-			SuppressDispose = true,
 		};
 		
-		windowNode = new WindowNode {
-			SuppressDispose = true,
-		};
+		windowNode = new WindowNode();
 		
 		Log.Verbose($"[KamiToolKit] [{InternalName}] Construction Complete");
 	}
@@ -112,14 +109,10 @@ public abstract unsafe class NativeAddon :IDisposable {
 		InternalAddon->UldManager.ObjectCount = 1;
 		InternalAddon->UldManager.ResourceFlags |= AtkUldManagerResourceFlag.ArraysAllocated;
 
-		rootNode.SuppressDispose = true;
-
 		InternalAddon->RootNode = rootNode.InternalResNode;
 		NodeLinker.AddNodeToUldObjectList(&InternalAddon->UldManager, rootNode.InternalResNode);
 
 		LoadTimeline();
-		
-		windowNode.SuppressDispose = true;
 
 		windowNode.AttachNode(rootNode, NodePosition.AsFirstChild);
 		InternalAddon->WindowNode = (AtkComponentNode*) windowNode.InternalResNode;

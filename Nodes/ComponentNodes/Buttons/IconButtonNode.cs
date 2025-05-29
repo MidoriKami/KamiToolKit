@@ -49,15 +49,6 @@ public class IconButtonNode : ButtonBase {
 			base.Dispose(disposing);
 		}
 	}
-
-	internal override bool SuppressDispose {
-		get => base.SuppressDispose;
-		set {
-			base.SuppressDispose = value;
-			imageNode.SuppressDispose = value;
-			backgroundNode.SuppressDispose = value;
-		}
-	}
 	
 	public uint IconId {
 		get => imageNode.IconId;

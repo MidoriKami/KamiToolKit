@@ -124,17 +124,4 @@ internal class WindowHeaderNode : ResNode {
 			base.Width = value;
 		}
 	}
-
-	internal override bool SuppressDispose {
-		get => base.SuppressDispose;
-		set {
-			base.SuppressDispose = value;
-			CloseButtonNode.SuppressDispose = value;
-			ConfigurationButtonNode.SuppressDispose = value;
-			InformationButtonNode.SuppressDispose = value;
-			SubtitleNode.SuppressDispose = value;
-			TitleNode.SuppressDispose = value;
-			DividingLineNode.SuppressDispose = value;
-		}
-	}
 }
