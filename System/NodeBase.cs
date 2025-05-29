@@ -10,7 +10,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     protected static readonly List<NodeBase> CreatedNodes = [];
 
     private bool isDisposed;
-    internal virtual bool SuppressDispose { get; set; }
+    internal virtual bool SuppressDispose { get; set; } = true;
 
     internal abstract AtkResNode* InternalResNode { get; }
 

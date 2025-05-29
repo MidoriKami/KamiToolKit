@@ -41,6 +41,9 @@ public unsafe class NativeController : IDisposable {
 	public void InjectAddon(NativeAddon addon) 
 		=> Framework.RunOnFrameworkThread(() => RaptureAtkUnitManager.Instance()->InitializeAddon(addon.InternalAddon, addon.InternalName));
 
+	public void AttachToAddon(NodeBase customNode, NativeAddon addon)
+		=> Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, addon));
+
 	public void AttachToAddon(NodeBase customNode, void* addon, AtkResNode* target, NodePosition position)
 		=> Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, (AtkUnitBase*) addon, target, position));
 
@@ -62,14 +65,32 @@ public unsafe class NativeController : IDisposable {
 			disposeAction?.Invoke();
 		});
 
+	public void DetachFromAddon(NodeBase? customNode, NativeAddon addon, Action? disposeAction = null)
+		=> Framework.RunOnFrameworkThread(() => {
+			if (customNode is not null && addon.InternalAddon is not null) {
+				InternalDetachFromAddon(customNode, addon);
+			}
+			
+			disposeAction?.Invoke();
+		});
+
 	public void DetachNode(NodeBase? customNode, Action? disposeAction = null)
 		=> Framework.RunOnFrameworkThread(() => {
 			customNode?.DetachNode();
 			disposeAction?.Invoke();
 		});
 
+	private void InternalAttachToAddon(NodeBase customNode, NativeAddon addon) {
+		NodeLinker.AttachNode(customNode.InternalResNode, addon.InternalAddon->RootNode, NodePosition.AsLastChild);
+		customNode.EnableEvents(AddonEventManager, addon.InternalAddon);
+		
+		addon.InternalAddon->UldManager.UpdateDrawNodeList();
+		addon.InternalAddon->UpdateCollisionNodeList(false);
+	}
+	
 	private void InternalAttachToAddon(NodeBase customNode, AtkUnitBase* addon, AtkResNode* target, NodePosition position) {
 		customNode.RegisterAutoDetach(this, addon);
+		customNode.SuppressDispose = false;
 
 		NodeLinker.AttachNode(customNode.InternalResNode, target, position);
 		customNode.EnableEvents(AddonEventManager, addon);
@@ -89,5 +110,13 @@ public unsafe class NativeController : IDisposable {
 			
 		addon->UldManager.UpdateDrawNodeList();
 		addon->UpdateCollisionNodeList(false);
+	}
+
+	private void InternalDetachFromAddon(NodeBase customNode, NativeAddon addon) {
+		customNode.DisableEvents(AddonEventManager);
+		customNode.DetachNode();
+		
+		addon.InternalAddon->UldManager.UpdateDrawNodeList();
+		addon.InternalAddon->UpdateCollisionNodeList(false);
 	}
 }

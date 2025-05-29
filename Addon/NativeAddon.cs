@@ -58,7 +58,7 @@ public abstract unsafe class NativeAddon :IDisposable {
 		destructorFunction = Destructor;
 		initializeFunction = Initialize;
 		finalizerFunction = Finalizer;
-		softHideFunction = SoftHide;
+		softHideFunction = Hide2;
 		onSetupFunction = Setup;
 		drawFunction = Draw;
 		updateFunction = Update;
@@ -144,7 +144,7 @@ public abstract unsafe class NativeAddon :IDisposable {
 		AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
 	}
 
-	private void SoftHide(AtkUnitBase* addon) {
+	private void Hide2(AtkUnitBase* addon) {
 		Log.Verbose($"[KamiToolKit] [{InternalName}] SoftHide (Hide2)");
 		
 		AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
