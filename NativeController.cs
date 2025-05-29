@@ -33,7 +33,8 @@ public unsafe class NativeController : IDisposable {
 	}
 
 	public void Dispose() {
-		NodeBase.DetachAndDispose();
+		NodeBase.DisposeNodes();
+		NativeAddon.DisposeAddons();
 		
 		Experimental.Instance.DisposeHooks();
 	}
