@@ -18,7 +18,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// Warning, this is only to ensure there are no memory leaks.
     /// Ensure you have detached nodes safely from native ui before disposing.
     /// </summary>
-    internal static void DetachAndDispose() {
+    internal static void DisposeNodes() {
         foreach (var node in CreatedNodes.ToArray()) {
             if (node.SuppressDispose) continue;
             
