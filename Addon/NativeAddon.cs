@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -12,7 +13,6 @@ namespace KamiToolKit.Addon;
 
 [SuppressMessage("ReSharper", "PrivateFieldCanBeConvertedToLocalVariable", Justification = "Using native function pointers, pinning the pointer is required.")]
 public abstract unsafe class NativeAddon :IDisposable {
-
 	private readonly AtkUnitBase.AtkUnitBaseVirtualTable* virtualTable;
 	internal AtkUnitBase* InternalAddon;
 	public required string InternalName { get; init; } = "NameNotSet";
@@ -134,6 +134,9 @@ public abstract unsafe class NativeAddon :IDisposable {
 		InternalAddon->Flags1A2 |= 4;
 
 		InternalAddon->UpdateCollisionNodeList(false);
+		
+		// Now that we have constructed this instance, track it for auto-dispose
+		CreatedAddons.Add(this);
 	}
 
 	private void Finalizer(AtkUnitBase* addon) {
@@ -246,6 +249,8 @@ public abstract unsafe class NativeAddon :IDisposable {
 			],
 		});
 	}
+
+	private static readonly List<NativeAddon> CreatedAddons = [];
 	
 	~NativeAddon() => Dispose(false);
 
@@ -261,8 +266,15 @@ public abstract unsafe class NativeAddon :IDisposable {
 
 			Close();
             GC.SuppressFinalize(this);
+            CreatedAddons.Remove(this);
 		}
         
 		isDisposed = true;
+	}
+
+	internal static void DisposeAddons() {
+		foreach (var addon in CreatedAddons) {
+			addon.Dispose();
+		}
 	}
 }
