@@ -39,8 +39,11 @@ public unsafe class NativeController : IDisposable {
 		Experimental.Instance.DisposeHooks();
 	}
 
-	public void InjectAddon(NativeAddon addon) 
-		=> Framework.RunOnFrameworkThread(() => RaptureAtkUnitManager.Instance()->InitializeAddon(addon.InternalAddon, addon.InternalName));
+	public void InjectAddon(NativeAddon addon, Action? onInject)
+		=> Framework.RunOnFrameworkThread(() => {
+			RaptureAtkUnitManager.Instance()->InitializeAddon(addon.InternalAddon, addon.InternalName);
+			onInject?.Invoke();
+		});
 
 	public void AttachToAddon(NodeBase customNode, NativeAddon addon)
 		=> Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, addon));

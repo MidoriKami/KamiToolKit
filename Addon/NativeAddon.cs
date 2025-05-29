@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -11,9 +10,8 @@ using KamiToolKit.Nodes.ComponentNodes.Window;
 
 namespace KamiToolKit.Addon;
 
-[SuppressMessage("ReSharper", "PrivateFieldCanBeConvertedToLocalVariable", Justification = "Using native function pointers, pinning the pointer is required.")]
 public abstract unsafe class NativeAddon :IDisposable {
-	private readonly AtkUnitBase.AtkUnitBaseVirtualTable* virtualTable;
+	private AtkUnitBase.AtkUnitBaseVirtualTable* virtualTable;
 	internal AtkUnitBase* InternalAddon;
 	public required string InternalName { get; init; } = "NameNotSet";
 	public required string Title { get; set; } = "TitleNotSet";
@@ -21,18 +19,18 @@ public abstract unsafe class NativeAddon :IDisposable {
 
 	private bool isDisposed;
 
-	private ResNode rootNode;
-	private WindowNode windowNode;
+	private ResNode rootNode = null!;
+	private WindowNode windowNode = null!;
 
-	private readonly AtkUnitBase.Delegates.Dtor destructorFunction;
-	private readonly AtkUnitBase.Delegates.Initialize initializeFunction;
-	private readonly AtkUnitBase.Delegates.Finalizer finalizerFunction;
-	private readonly AtkUnitBase.Delegates.Hide2 softHideFunction;
-	private readonly AtkUnitBase.Delegates.OnSetup onSetupFunction;
-	private readonly AtkUnitBase.Delegates.Draw drawFunction;
-	private readonly AtkUnitBase.Delegates.Update updateFunction;
-	private readonly AtkUnitBase.Delegates.Show showFunction;
-	private readonly AtkUnitBase.Delegates.Hide hideFunction;
+	private AtkUnitBase.Delegates.Dtor destructorFunction = null!;
+	private AtkUnitBase.Delegates.Initialize initializeFunction = null!;
+	private AtkUnitBase.Delegates.Finalizer finalizerFunction = null!;
+	private AtkUnitBase.Delegates.Hide2 softHideFunction = null!;
+	private AtkUnitBase.Delegates.OnSetup onSetupFunction = null!;
+	private AtkUnitBase.Delegates.Draw drawFunction = null!;
+	private AtkUnitBase.Delegates.Update updateFunction = null!;
+	private AtkUnitBase.Delegates.Show showFunction = null!;
+	private AtkUnitBase.Delegates.Hide hideFunction = null!;
 
 	protected virtual void OnSetup(AtkUnitBase* addon) { }
 	protected virtual void OnShow(AtkUnitBase* addon) { }
@@ -41,14 +39,15 @@ public abstract unsafe class NativeAddon :IDisposable {
 	protected virtual void OnUpdate(AtkUnitBase* addon) { }
 	protected virtual void OnFinalize(AtkUnitBase* addon) { }
 
-	protected NativeAddon() {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Beginning Native Addon Construction");
-		
-		InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
+	private void AllocateAddon() {
+		if (InternalAddon is not null) {
+			Log.Warning("Tried to allocate addon that was already allocated.");
+			return;
+		}
 
-		// Ensure InternalName doesn't contain any spaces
-		InternalName = InternalName.Replace(" ", string.Empty);
-		InternalAddon->NameString = InternalName;
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Beginning Native Addon Allocation");
+
+		InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
 
 		// Overwrite virtual table with a custom copy
 		virtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 73);
@@ -64,7 +63,7 @@ public abstract unsafe class NativeAddon :IDisposable {
 		updateFunction = Update;
 		showFunction = Show;
 		hideFunction = Hide;
-		
+
 		virtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>) Marshal.GetFunctionPointerForDelegate(destructorFunction);
 		virtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(initializeFunction);
 		virtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(finalizerFunction);
@@ -77,19 +76,21 @@ public abstract unsafe class NativeAddon :IDisposable {
 
 		InternalAddon->Flags1A2 |= 0b0100_0000; // don't save/load AddonConfig
 		InternalAddon->OpenSoundEffectId = 23;
-		
+
 		rootNode = new ResNode {
 			NodeId = 1,
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
 		};
-		
+
 		windowNode = new WindowNode();
-		
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Construction Complete");
+
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Allocation Complete");
 	}
 
 	private void Initialize(AtkUnitBase* thisPtr) {
 		Log.Verbose($"[KamiToolKit] [{InternalName}] Initialize");
+
+		InternalAddon->NameString = GetInternalNameSafe();
 		
 		AtkUnitBase.StaticVirtualTablePointer->Initialize(thisPtr);
 
@@ -190,12 +191,21 @@ public abstract unsafe class NativeAddon :IDisposable {
 		OnSetup(addon);
 	}
 
-	public void Open(int depthLayer = 4) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Open");
+	public void Open(NativeController nativeController, int depthLayer = 4) {
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Open Called");
 
-		if (InternalAddon is null) return;
+		if (InternalAddon is null) {
+			AllocateAddon();
 
-		InternalAddon->Open((uint) depthLayer);
+			if (InternalAddon is not null) {
+				nativeController.InjectAddon(this, () => {
+					InternalAddon->Open((uint) depthLayer);
+				});
+			}
+		}
+		else {
+			Log.Verbose($"[KamiToolKit] [{InternalName}] Already open, skipping call.");
+		}
 	}
 
 	public void Close() {
@@ -241,6 +251,17 @@ public abstract unsafe class NativeAddon :IDisposable {
 				},
 			],
 		});
+	}
+
+	private string GetInternalNameSafe() {
+		var noSpaces = InternalName.Replace(" ", string.Empty);
+
+		if (noSpaces.Length > 31) {
+			noSpaces = noSpaces[..31];
+		}
+		
+		noSpaces += char.MinValue;
+		return noSpaces;
 	}
 
 	private static readonly List<NativeAddon> CreatedAddons = [];
