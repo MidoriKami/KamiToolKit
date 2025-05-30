@@ -21,6 +21,8 @@ public abstract unsafe class NativeAddon :IDisposable {
 
 	private ResNode rootNode = null!;
 	private WindowNode windowNode = null!;
+	
+	private GCHandle? disposeHandle;
 
 	private AtkUnitBase.Delegates.Dtor destructorFunction = null!;
 	private AtkUnitBase.Delegates.Initialize initializeFunction = null!;
@@ -44,6 +46,8 @@ public abstract unsafe class NativeAddon :IDisposable {
 			Log.Warning("Tried to allocate addon that was already allocated.");
 			return;
 		}
+		
+		disposeHandle = GCHandle.Alloc(this);
 
 		Log.Verbose($"[KamiToolKit] [{InternalName}] Beginning Native Addon Allocation");
 
@@ -202,6 +206,12 @@ public abstract unsafe class NativeAddon :IDisposable {
 					InternalAddon->Open((uint) depthLayer);
 				});
 			}
+			
+			// We are somehow still null, and need to free our GC Handle we made in AllocateAddon
+			else {
+				disposeHandle?.Free();
+				disposeHandle = null;
+			}
 		}
 		else {
 			Log.Verbose($"[KamiToolKit] [{InternalName}] Already open, skipping call.");
@@ -223,6 +233,8 @@ public abstract unsafe class NativeAddon :IDisposable {
 
 		if ((flags & 1) == 1) {
 			InternalAddon = null;
+			disposeHandle?.Free();
+			disposeHandle = null;
 		}
 
 		return result;
