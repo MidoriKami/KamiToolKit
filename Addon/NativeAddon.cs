@@ -10,12 +10,14 @@ using KamiToolKit.Nodes.ComponentNodes.Window;
 
 namespace KamiToolKit.Addon;
 
-public abstract unsafe class NativeAddon :IDisposable {
+public abstract unsafe class NativeAddon : IDisposable {
 	private AtkUnitBase.AtkUnitBaseVirtualTable* virtualTable;
 	internal AtkUnitBase* InternalAddon;
 	public required string InternalName { get; init; } = "NameNotSet";
 	public required string Title { get; set; } = "TitleNotSet";
 	public string Subtitle { get; set; } = string.Empty;
+	
+	public required NativeController NativeController { get; init; }
 
 	private bool isDisposed;
 
@@ -23,16 +25,6 @@ public abstract unsafe class NativeAddon :IDisposable {
 	private WindowNode windowNode = null!;
 	
 	private GCHandle? disposeHandle;
-
-	private AtkUnitBase.Delegates.Dtor destructorFunction = null!;
-	private AtkUnitBase.Delegates.Initialize initializeFunction = null!;
-	private AtkUnitBase.Delegates.Finalizer finalizerFunction = null!;
-	private AtkUnitBase.Delegates.Hide2 softHideFunction = null!;
-	private AtkUnitBase.Delegates.OnSetup onSetupFunction = null!;
-	private AtkUnitBase.Delegates.Draw drawFunction = null!;
-	private AtkUnitBase.Delegates.Update updateFunction = null!;
-	private AtkUnitBase.Delegates.Show showFunction = null!;
-	private AtkUnitBase.Delegates.Hide hideFunction = null!;
 
 	protected virtual void OnSetup(AtkUnitBase* addon) { }
 	protected virtual void OnShow(AtkUnitBase* addon) { }
@@ -46,8 +38,6 @@ public abstract unsafe class NativeAddon :IDisposable {
 			Log.Warning("Tried to allocate addon that was already allocated.");
 			return;
 		}
-		
-		disposeHandle = GCHandle.Alloc(this);
 
 		Log.Verbose($"[KamiToolKit] [{InternalName}] Beginning Native Addon Allocation");
 
@@ -58,25 +48,15 @@ public abstract unsafe class NativeAddon :IDisposable {
 		NativeMemory.Copy(InternalAddon->VirtualTable, virtualTable,0x8 * 73);
 		InternalAddon->VirtualTable = virtualTable;
 
-		destructorFunction = Destructor;
-		initializeFunction = Initialize;
-		finalizerFunction = Finalizer;
-		softHideFunction = Hide2;
-		onSetupFunction = Setup;
-		drawFunction = Draw;
-		updateFunction = Update;
-		showFunction = Show;
-		hideFunction = Hide;
-
-		virtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>) Marshal.GetFunctionPointerForDelegate(destructorFunction);
-		virtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(initializeFunction);
-		virtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(finalizerFunction);
-		virtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(softHideFunction);
-		virtualTable->OnSetup = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, void>) Marshal.GetFunctionPointerForDelegate(onSetupFunction);
-		virtualTable->Draw = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(drawFunction);
-		virtualTable->Update = (delegate* unmanaged<AtkUnitBase*, float, void>) Marshal.GetFunctionPointerForDelegate(updateFunction);
-		virtualTable->Show = (delegate* unmanaged<AtkUnitBase*, bool, uint, void>) Marshal.GetFunctionPointerForDelegate(showFunction);
-		virtualTable->Hide = (delegate* unmanaged<AtkUnitBase*, bool, bool, uint, void>) Marshal.GetFunctionPointerForDelegate(hideFunction);
+		virtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>) Marshal.GetFunctionPointerForDelegate(Destructor);
+		virtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(Initialize);
+		virtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(Finalizer);
+		virtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(Hide2);
+		virtualTable->OnSetup = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, void>) Marshal.GetFunctionPointerForDelegate(Setup);
+		virtualTable->Draw = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(Draw);
+		virtualTable->Update = (delegate* unmanaged<AtkUnitBase*, float, void>) Marshal.GetFunctionPointerForDelegate(Update);
+		virtualTable->Show = (delegate* unmanaged<AtkUnitBase*, bool, uint, void>) Marshal.GetFunctionPointerForDelegate(Show);
+		virtualTable->Hide = (delegate* unmanaged<AtkUnitBase*, bool, bool, uint, void>) Marshal.GetFunctionPointerForDelegate(Hide);
 
 		InternalAddon->Flags1A2 |= 0b0100_0000; // don't save/load AddonConfig
 		InternalAddon->OpenSoundEffectId = 23;
@@ -195,27 +175,23 @@ public abstract unsafe class NativeAddon :IDisposable {
 		OnSetup(addon);
 	}
 
-	public void Open(NativeController nativeController, int depthLayer = 4) {
+	/// <summary>
+	/// Initializes and Opens this instance of Addon
+	/// </summary>
+	/// <param name="depthLayer">Which UI layer to attach the Addon to</param>
+	public void Open(int depthLayer = 4) {
 		Log.Verbose($"[KamiToolKit] [{InternalName}] Open Called");
 
 		if (InternalAddon is null) {
 			AllocateAddon();
 
 			if (InternalAddon is not null) {
-				nativeController.InjectAddon(this, () => {
-					InternalAddon->Open((uint) depthLayer);
-				});
-			}
-			
-			// We are somehow still null, and need to free our GC Handle we made in AllocateAddon
-			else {
-				disposeHandle?.Free();
-				disposeHandle = null;
+				AtkStage.Instance()->RaptureAtkUnitManager->InitializeAddon(InternalAddon, InternalName);
+				InternalAddon->Open((uint) depthLayer);
+				disposeHandle = GCHandle.Alloc(this);
 			}
 		}
 		else {
-			disposeHandle?.Free();
-			disposeHandle = null;
 			Log.Verbose($"[KamiToolKit] [{InternalName}] Already open, skipping call.");
 		}
 	}
@@ -293,8 +269,8 @@ public abstract unsafe class NativeAddon :IDisposable {
 			Log.Debug($"[KamiToolKit] Disposing addon {GetType()}");
 
 			Close();
-            GC.SuppressFinalize(this);
-            CreatedAddons.Remove(this);
+			GC.SuppressFinalize(this);
+			CreatedAddons.Remove(this);
 		}
         
 		isDisposed = true;
