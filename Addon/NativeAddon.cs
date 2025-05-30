@@ -214,6 +214,8 @@ public abstract unsafe class NativeAddon :IDisposable {
 			}
 		}
 		else {
+			disposeHandle?.Free();
+			disposeHandle = null;
 			Log.Verbose($"[KamiToolKit] [{InternalName}] Already open, skipping call.");
 		}
 	}
