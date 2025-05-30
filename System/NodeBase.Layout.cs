@@ -10,6 +10,7 @@ public class Spacing(float top, float left, float right, float bottom) {
     public float Right { get; set; } = right;
     public float Bottom { get; set; } = bottom;
 
+    public Spacing() : this(0.0f, 0.0f, 0.0f, 0.0f) { }
 
     public Spacing(float allSides) : this(allSides, allSides, allSides, allSides) { }
 
