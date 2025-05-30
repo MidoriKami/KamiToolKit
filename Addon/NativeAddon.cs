@@ -25,6 +25,16 @@ public abstract unsafe class NativeAddon : IDisposable {
 	private WindowNode windowNode = null!;
 	
 	private GCHandle? disposeHandle;
+	
+	private AtkUnitBase.Delegates.Dtor destructorFunction = null!;
+	private AtkUnitBase.Delegates.Initialize initializeFunction = null!;
+	private AtkUnitBase.Delegates.Finalizer finalizerFunction = null!;
+	private AtkUnitBase.Delegates.Hide2 softHideFunction = null!;
+	private AtkUnitBase.Delegates.OnSetup onSetupFunction = null!;
+	private AtkUnitBase.Delegates.Draw drawFunction = null!;
+	private AtkUnitBase.Delegates.Update updateFunction = null!;
+	private AtkUnitBase.Delegates.Show showFunction = null!;
+	private AtkUnitBase.Delegates.Hide hideFunction = null!;
 
 	protected virtual void OnSetup(AtkUnitBase* addon) { }
 	protected virtual void OnShow(AtkUnitBase* addon) { }
@@ -48,15 +58,25 @@ public abstract unsafe class NativeAddon : IDisposable {
 		NativeMemory.Copy(InternalAddon->VirtualTable, virtualTable,0x8 * 73);
 		InternalAddon->VirtualTable = virtualTable;
 
-		virtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>) Marshal.GetFunctionPointerForDelegate(Destructor);
-		virtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(Initialize);
-		virtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(Finalizer);
-		virtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(Hide2);
-		virtualTable->OnSetup = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, void>) Marshal.GetFunctionPointerForDelegate(Setup);
-		virtualTable->Draw = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(Draw);
-		virtualTable->Update = (delegate* unmanaged<AtkUnitBase*, float, void>) Marshal.GetFunctionPointerForDelegate(Update);
-		virtualTable->Show = (delegate* unmanaged<AtkUnitBase*, bool, uint, void>) Marshal.GetFunctionPointerForDelegate(Show);
-		virtualTable->Hide = (delegate* unmanaged<AtkUnitBase*, bool, bool, uint, void>) Marshal.GetFunctionPointerForDelegate(Hide);
+		destructorFunction = Destructor;
+		initializeFunction = Initialize;
+		finalizerFunction = Finalizer;
+		softHideFunction = Hide2;
+		onSetupFunction = Setup;
+		drawFunction = Draw;
+		updateFunction = Update;
+		showFunction = Show;
+		hideFunction = Hide;
+		
+		virtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>) Marshal.GetFunctionPointerForDelegate(destructorFunction);
+		virtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(initializeFunction);
+		virtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(finalizerFunction);
+		virtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(softHideFunction);
+		virtualTable->OnSetup = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, void>) Marshal.GetFunctionPointerForDelegate(onSetupFunction);
+		virtualTable->Draw = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(drawFunction);
+		virtualTable->Update = (delegate* unmanaged<AtkUnitBase*, float, void>) Marshal.GetFunctionPointerForDelegate(updateFunction);
+		virtualTable->Show = (delegate* unmanaged<AtkUnitBase*, bool, uint, void>) Marshal.GetFunctionPointerForDelegate(showFunction);
+		virtualTable->Hide = (delegate* unmanaged<AtkUnitBase*, bool, bool, uint, void>) Marshal.GetFunctionPointerForDelegate(hideFunction);
 
 		InternalAddon->Flags1A2 |= 0b0100_0000; // don't save/load AddonConfig
 		InternalAddon->OpenSoundEffectId = 23;
