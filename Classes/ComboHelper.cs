@@ -5,7 +5,7 @@ using ImGuiNET;
 
 namespace KamiToolKit.Classes;
 
-internal static class ComboHelper {
+public static class ComboHelper {
     public static bool EnumCombo<T>(string label, ref T refValue, bool flagCombo = false) where T : Enum {
         using var combo = ImRaii.Combo(label, refValue.GetDescription());
         if (!combo) return false;
