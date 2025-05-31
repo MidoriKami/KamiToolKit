@@ -98,6 +98,8 @@ public abstract unsafe partial class NodeBase {
 				}
 			}
 			else if (value is null) {
+				internalTooltip = null;
+
 				if (TooltipRegistered) {
 					RemoveEvent(AddonEventType.MouseOver, ShowTooltip);
 					RemoveEvent(AddonEventType.MouseOut, HideTooltip);
