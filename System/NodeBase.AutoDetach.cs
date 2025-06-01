@@ -57,7 +57,7 @@ public unsafe partial class NodeBase {
 	private void TryForceDetach(bool warn) {
 		if (!IsAttached) return;
 
-		if (AddonPointer == (AtkUnitBase*) DalamudInterface.Instance.GameGui.GetAddonByName(AddonName!) && AddonPointer is not null) {
+		if (IsAddonPointerValid(AddonPointer, AddonName)) {
 			if (warn) Log.Warning($"{GetType()} was not detached from {AddonName} before dispose. Forcing Detach from Addon.");
 
 			if (ComponentPointer is not null) {
@@ -73,5 +73,16 @@ public unsafe partial class NodeBase {
 		else {
 			Log.Error($"{GetType()} was attached to {AddonName} which is an already finalized addon somehow.");
 		}
+	}
+
+	private bool IsAddonPointerValid(AtkUnitBase* addon, string? addonName) {
+		if (addon is null) return false;
+		if (addonName is null) return false;
+
+		var nativePointer = (AtkUnitBase*) DalamudInterface.Instance.GameGui.GetAddonByName(addonName);
+
+		if (nativePointer is null) return false;
+		
+		return addon == nativePointer;
 	}
 }

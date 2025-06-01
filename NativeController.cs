@@ -100,17 +100,11 @@ public unsafe class NativeController : IDisposable {
 
 		NodeLinker.AttachNode(customNode.InternalResNode, component->UldManager.RootNode, position);
 		customNode.EnableEvents(AddonEventManager, addon);
-		
-		component->UldManager.UpdateDrawNodeList();
-		addon->UpdateCollisionNodeList(false);
 	}
 
 	private void InternalAttachToAddon(NodeBase customNode, NativeAddon addon) {
 		NodeLinker.AttachNode(customNode.InternalResNode, addon.InternalAddon->RootNode, NodePosition.AsLastChild);
 		customNode.EnableEvents(AddonEventManager, addon.InternalAddon);
-		
-		addon.InternalAddon->UldManager.UpdateDrawNodeList();
-		addon.InternalAddon->UpdateCollisionNodeList(false);
 	}
 	
 	private void InternalAttachToAddon(NodeBase customNode, AtkUnitBase* addon, AtkResNode* target, NodePosition position) {
@@ -118,9 +112,6 @@ public unsafe class NativeController : IDisposable {
 
 		NodeLinker.AttachNode(customNode.InternalResNode, target, position);
 		customNode.EnableEvents(AddonEventManager, addon);
-
-		addon->UldManager.UpdateDrawNodeList();
-		addon->UpdateCollisionNodeList(false);
 	}
 	
 	private static void InternalAttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
@@ -131,9 +122,6 @@ public unsafe class NativeController : IDisposable {
 		
 		customNode.DisableEvents(AddonEventManager);
 		customNode.DetachNode();
-		
-		component->UldManager.UpdateDrawNodeList();
-		addon->UpdateCollisionNodeList(false);
 	}
 	
 	private void InternalDetachFromAddon(NodeBase customNode, AtkUnitBase* addon) {
@@ -141,16 +129,10 @@ public unsafe class NativeController : IDisposable {
 		
 		customNode.DisableEvents(AddonEventManager);
 		customNode.DetachNode();
-			
-		addon->UldManager.UpdateDrawNodeList();
-		addon->UpdateCollisionNodeList(false);
 	}
 
 	private void InternalDetachFromAddon(NodeBase customNode, NativeAddon addon) {
 		customNode.DisableEvents(AddonEventManager);
 		customNode.DetachNode();
-		
-		addon.InternalAddon->UldManager.UpdateDrawNodeList();
-		addon.InternalAddon->UpdateCollisionNodeList(false);
 	}
 }
