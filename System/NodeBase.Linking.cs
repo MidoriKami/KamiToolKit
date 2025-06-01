@@ -38,11 +38,6 @@ public abstract unsafe partial class NodeBase {
 
     internal void DetachNode() {
         NodeLinker.DetachNode(InternalResNode);
-
-        if (this is ComponentNode node) {
-            NodeLinker.RemoveNodeFromUldObjectList(&node.ComponentBase->UldManager, InternalResNode);
-            node.ComponentBase->UldManager.UpdateDrawNodeList();
-        }
     }
 
     internal void VisitChildren(AtkResNode* parent, Action<Pointer<AtkResNode>> visitAction) {
