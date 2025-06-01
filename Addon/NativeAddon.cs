@@ -29,7 +29,7 @@ public abstract unsafe class NativeAddon : IDisposable {
 	private AtkUnitBase.Delegates.Dtor destructorFunction = null!;
 	private AtkUnitBase.Delegates.Initialize initializeFunction = null!;
 	private AtkUnitBase.Delegates.Finalizer finalizerFunction = null!;
-	private AtkUnitBase.Delegates.Hide2 softHideFunction = null!;
+	private AtkUnitBase.Delegates.Hide2 hide2Function = null!;
 	private AtkUnitBase.Delegates.OnSetup onSetupFunction = null!;
 	private AtkUnitBase.Delegates.Draw drawFunction = null!;
 	private AtkUnitBase.Delegates.Update updateFunction = null!;
@@ -61,7 +61,7 @@ public abstract unsafe class NativeAddon : IDisposable {
 		destructorFunction = Destructor;
 		initializeFunction = Initialize;
 		finalizerFunction = Finalizer;
-		softHideFunction = Hide2;
+		hide2Function = Hide2;
 		onSetupFunction = Setup;
 		drawFunction = Draw;
 		updateFunction = Update;
@@ -71,7 +71,7 @@ public abstract unsafe class NativeAddon : IDisposable {
 		virtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>) Marshal.GetFunctionPointerForDelegate(destructorFunction);
 		virtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(initializeFunction);
 		virtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(finalizerFunction);
-		virtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(softHideFunction);
+		virtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(hide2Function);
 		virtualTable->OnSetup = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, void>) Marshal.GetFunctionPointerForDelegate(onSetupFunction);
 		virtualTable->Draw = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(drawFunction);
 		virtualTable->Update = (delegate* unmanaged<AtkUnitBase*, float, void>) Marshal.GetFunctionPointerForDelegate(updateFunction);
@@ -146,7 +146,7 @@ public abstract unsafe class NativeAddon : IDisposable {
 	}
 
 	private void Hide2(AtkUnitBase* addon) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] SoftHide (Hide2)");
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Hide2");
 		
 		AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
 	}
