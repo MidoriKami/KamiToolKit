@@ -7,9 +7,9 @@ public abstract unsafe partial class NativeAddon {
 	
 	protected virtual void OnSetup(AtkUnitBase* addon) { }
 	protected virtual void OnShow(AtkUnitBase* addon) { }
-	protected virtual void OnHide(AtkUnitBase* addon) { }
 	protected virtual void OnDraw(AtkUnitBase* addon) { }
 	protected virtual void OnUpdate(AtkUnitBase* addon) { }
+	protected virtual void OnHide(AtkUnitBase* addon) { }
 	protected virtual void OnFinalize(AtkUnitBase* addon) { }
 
 	private void Initialize(AtkUnitBase* thisPtr) {
