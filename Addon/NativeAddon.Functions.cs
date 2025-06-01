@@ -87,6 +87,7 @@ public abstract unsafe partial class NativeAddon {
 			InternalAddon = null;
 			disposeHandle?.Free();
 			disposeHandle = null;
+			CreatedAddons.Remove(this);
 		}
 
 		return result;
