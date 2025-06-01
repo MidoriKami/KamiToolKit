@@ -2,7 +2,6 @@
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
 using KamiToolKit.Classes;
@@ -38,12 +37,12 @@ public unsafe class NativeController : IDisposable {
 		
 		Experimental.Instance.DisposeHooks();
 	}
+	
+	public void AttachToComponent(NodeBase node, AtkComponentBase* component, void* addon, NodePosition position) 
+		=> AttachToComponent(node, component, (AtkUnitBase*) addon, position);
 
-	public void InjectAddon(NativeAddon addon, Action? onInject)
-		=> Framework.RunOnFrameworkThread(() => {
-			RaptureAtkUnitManager.Instance()->InitializeAddon(addon.InternalAddon, addon.InternalName);
-			onInject?.Invoke();
-		});
+	public void AttachToComponent(NodeBase node, AtkComponentBase* component, AtkUnitBase* addon, NodePosition position)
+		=> Framework.RunOnFrameworkThread(() => InternalAttachToComponent(node, component, addon, position));
 
 	public void AttachToAddon(NodeBase customNode, NativeAddon addon)
 		=> Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, addon));
@@ -53,6 +52,18 @@ public unsafe class NativeController : IDisposable {
 
 	public void AttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
 		=> Framework.RunOnFrameworkThread(() => InternalAttachToNode(customNode, other, position));
+
+	public void DetachFromComponent(NodeBase? node, AtkComponentBase* component, void* addon, Action? disposeAction = null)
+		=>	DetachFromComponent(node, component, (AtkUnitBase*) addon, disposeAction);
+	
+	public void DetachFromComponent(NodeBase? node, AtkComponentBase* component, AtkUnitBase* addon, Action? disposeAction = null)
+		=> Framework.RunOnFrameworkThread(() => {
+			if (node is not null) {
+				InternalDetachFromComponent(node, component, addon);
+			}
+			
+			disposeAction?.Invoke();
+		});
 
 	public void DetachFromAddon(NodeBase? customNode, nint addon, Action? disposeAction = null)
 		=> DetachFromAddon(customNode, (AtkUnitBase*) addon, disposeAction);
@@ -84,6 +95,16 @@ public unsafe class NativeController : IDisposable {
 			disposeAction?.Invoke();
 		});
 
+	private void InternalAttachToComponent(NodeBase customNode, AtkComponentBase* component, AtkUnitBase* addon, NodePosition position) {
+		customNode.RegisterAutoDetach(this, addon);
+
+		NodeLinker.AttachNode(customNode.InternalResNode, component->UldManager.RootNode, position);
+		customNode.EnableEvents(AddonEventManager, addon);
+		
+		component->UldManager.UpdateDrawNodeList();
+		addon->UpdateCollisionNodeList(false);
+	}
+
 	private void InternalAttachToAddon(NodeBase customNode, NativeAddon addon) {
 		NodeLinker.AttachNode(customNode.InternalResNode, addon.InternalAddon->RootNode, NodePosition.AsLastChild);
 		customNode.EnableEvents(AddonEventManager, addon.InternalAddon);
@@ -105,6 +126,16 @@ public unsafe class NativeController : IDisposable {
 	private static void InternalAttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
 		=> customNode.AttachNode(other, position);
 
+	private void InternalDetachFromComponent(NodeBase customNode, AtkComponentBase* component, AtkUnitBase* addon) {
+		customNode.UnregisterAutoDetach();
+		
+		customNode.DisableEvents(AddonEventManager);
+		customNode.DetachNode();
+		
+		component->UldManager.UpdateDrawNodeList();
+		addon->UpdateCollisionNodeList(false);
+	}
+	
 	private void InternalDetachFromAddon(NodeBase customNode, AtkUnitBase* addon) {
 		customNode.UnregisterAutoDetach();
 		
