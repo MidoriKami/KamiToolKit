@@ -9,9 +9,10 @@ public unsafe partial class NodeBase {
 	private NativeController? NativeController { get; set; }
 	private bool IsAttached { get; set; }
 	private AtkUnitBase* AddonPointer { get; set; }
+	private AtkComponentBase* ComponentPointer { get; set; }
 	private string? AddonName { get; set; }
 	
-	internal void RegisterAutoDetach(NativeController controller, AtkUnitBase* addon) {
+	internal void RegisterAutoDetach(NativeController controller, AtkUnitBase* addon, AtkComponentBase* component = null) {
 		if (IsAttached) {
 			Log.Verbose("Tried to register auto detach, to already attached node.");
 			return;
@@ -21,6 +22,7 @@ public unsafe partial class NodeBase {
 		DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addon->NameString, OnAddonFinalize);
 
 		AddonPointer = addon;
+		ComponentPointer = component;
 		AddonName = addon->NameString;
 		NativeController = controller;
 		IsAttached = true;
@@ -43,7 +45,13 @@ public unsafe partial class NodeBase {
 	private void OnAddonFinalize(AddonEvent type, AddonArgs args) {
 		var addon = (AtkUnitBase*) args.Addon;
 
-		NativeController?.DetachFromAddon(this, addon);
+		if (ComponentPointer is not null) {
+			NativeController?.DetachFromComponent(this, ComponentPointer, addon);
+			ComponentPointer = null;
+		}
+		else {
+			NativeController?.DetachFromAddon(this, addon);
+		}
 	}
 
 	private void TryForceDetach(bool warn) {
@@ -51,7 +59,15 @@ public unsafe partial class NodeBase {
 
 		if (AddonPointer == (AtkUnitBase*) DalamudInterface.Instance.GameGui.GetAddonByName(AddonName!) && AddonPointer is not null) {
 			if (warn) Log.Warning($"{GetType()} was not detached from {AddonName} before dispose. Forcing Detach from Addon.");
-			NativeController?.DetachFromAddon(this, AddonPointer);
+
+			if (ComponentPointer is not null) {
+				NativeController?.DetachFromComponent(this, ComponentPointer, AddonPointer);
+				ComponentPointer = null;
+			}
+			else {
+				NativeController?.DetachFromAddon(this, AddonPointer);
+			}
+			
 			IsAttached = false;
 		}
 		else {
