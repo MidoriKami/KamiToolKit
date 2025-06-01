@@ -174,6 +174,12 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		set => borderNode.IsVisible = value;
 	}
 	
+	public float HeaderHeight => headerNode.Height;
+	
+	public Vector2 ContentSize => new(backgroundImageNode.Width, backgroundImageNode.Height - HeaderHeight);
+	
+	public Vector2 ContentStartPosition => new(backgroundImageNode.X, backgroundImageNode.Y + HeaderHeight);
+	
 	private void LoadTimelines() {
 		AddTimeline(new Timeline {
 			FrameTime = 0.3f,

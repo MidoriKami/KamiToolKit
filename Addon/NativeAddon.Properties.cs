@@ -27,6 +27,10 @@ public abstract unsafe partial class NativeAddon {
 
 	public required Vector2 Size { get; set; }
 
+	public Vector2 ContentStartPosition => windowNode.ContentStartPosition;
+
+	public Vector2 ContentSize => windowNode.ContentSize;
+
 	private Vector2? InternalPosition { get; set; }
 
 	public Vector2 Position {
