@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
@@ -10,38 +7,14 @@ using KamiToolKit.Nodes.ComponentNodes.Window;
 
 namespace KamiToolKit.Addon;
 
-public abstract unsafe class NativeAddon : IDisposable {
-	private AtkUnitBase.AtkUnitBaseVirtualTable* virtualTable;
-	internal AtkUnitBase* InternalAddon;
-	public required string InternalName { get; init; } = "NameNotSet";
-	public required string Title { get; set; } = "TitleNotSet";
-	public string Subtitle { get; set; } = string.Empty;
-	
-	public required NativeController NativeController { get; init; }
+public abstract unsafe partial class NativeAddon {
 
-	private bool isDisposed;
+	internal AtkUnitBase* InternalAddon;
 
 	private ResNode rootNode = null!;
 	private WindowNode windowNode = null!;
 	
 	private GCHandle? disposeHandle;
-	
-	private AtkUnitBase.Delegates.Dtor destructorFunction = null!;
-	private AtkUnitBase.Delegates.Initialize initializeFunction = null!;
-	private AtkUnitBase.Delegates.Finalizer finalizerFunction = null!;
-	private AtkUnitBase.Delegates.Hide2 hide2Function = null!;
-	private AtkUnitBase.Delegates.OnSetup onSetupFunction = null!;
-	private AtkUnitBase.Delegates.Draw drawFunction = null!;
-	private AtkUnitBase.Delegates.Update updateFunction = null!;
-	private AtkUnitBase.Delegates.Show showFunction = null!;
-	private AtkUnitBase.Delegates.Hide hideFunction = null!;
-
-	protected virtual void OnSetup(AtkUnitBase* addon) { }
-	protected virtual void OnShow(AtkUnitBase* addon) { }
-	protected virtual void OnHide(AtkUnitBase* addon) { }
-	protected virtual void OnDraw(AtkUnitBase* addon) { }
-	protected virtual void OnUpdate(AtkUnitBase* addon) { }
-	protected virtual void OnFinalize(AtkUnitBase* addon) { }
 
 	private void AllocateAddon() {
 		if (InternalAddon is not null) {
@@ -57,29 +30,10 @@ public abstract unsafe class NativeAddon : IDisposable {
 		virtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 73);
 		NativeMemory.Copy(InternalAddon->VirtualTable, virtualTable,0x8 * 73);
 		InternalAddon->VirtualTable = virtualTable;
-
-		destructorFunction = Destructor;
-		initializeFunction = Initialize;
-		finalizerFunction = Finalizer;
-		hide2Function = Hide2;
-		onSetupFunction = Setup;
-		drawFunction = Draw;
-		updateFunction = Update;
-		showFunction = Show;
-		hideFunction = Hide;
 		
-		virtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>) Marshal.GetFunctionPointerForDelegate(destructorFunction);
-		virtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(initializeFunction);
-		virtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(finalizerFunction);
-		virtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(hide2Function);
-		virtualTable->OnSetup = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, void>) Marshal.GetFunctionPointerForDelegate(onSetupFunction);
-		virtualTable->Draw = (delegate* unmanaged<AtkUnitBase*, void>) Marshal.GetFunctionPointerForDelegate(drawFunction);
-		virtualTable->Update = (delegate* unmanaged<AtkUnitBase*, float, void>) Marshal.GetFunctionPointerForDelegate(updateFunction);
-		virtualTable->Show = (delegate* unmanaged<AtkUnitBase*, bool, uint, void>) Marshal.GetFunctionPointerForDelegate(showFunction);
-		virtualTable->Hide = (delegate* unmanaged<AtkUnitBase*, bool, bool, uint, void>) Marshal.GetFunctionPointerForDelegate(hideFunction);
+		RegisterVirtualTable();
 
 		InternalAddon->Flags1A2 |= 0b0100_0000; // don't save/load AddonConfig
-		InternalAddon->OpenSoundEffectId = 23;
 
 		rootNode = new ResNode {
 			NodeId = 1,
@@ -88,17 +42,13 @@ public abstract unsafe class NativeAddon : IDisposable {
 
 		windowNode = new WindowNode();
 
+		InternalAddon->NameString = GetInternalNameSafe();
+		
 		Log.Verbose($"[KamiToolKit] [{InternalName}] Allocation Complete");
 	}
 
-	private void Initialize(AtkUnitBase* thisPtr) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Initialize");
-
-		InternalAddon->NameString = GetInternalNameSafe();
-		
-		AtkUnitBase.StaticVirtualTablePointer->Initialize(thisPtr);
-
-		thisPtr->UldManager.InitializeResourceRendererManager();
+	private void InitializeAddon() {
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Initializing Addon");
 
 		var widgetInfo = NativeMemoryHelper.UiAlloc<AtkUldWidgetInfo>(1, 16);
 		widgetInfo->Id = 1;
@@ -135,64 +85,8 @@ public abstract unsafe class NativeAddon : IDisposable {
 		
 		// Now that we have constructed this instance, track it for auto-dispose
 		CreatedAddons.Add(this);
-	}
 
-	private void Finalizer(AtkUnitBase* addon) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Finalize");
-		
-		OnFinalize(addon);
-
-		AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
-	}
-
-	private void Hide2(AtkUnitBase* addon) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Hide2");
-		
-		AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
-	}
-
-	private void Hide(AtkUnitBase* thisPtr, bool unkBool, bool callHideCallback, uint setShowHideFlags) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Hide");
-		
-		OnHide(thisPtr);
-		
-		AtkUnitBase.StaticVirtualTablePointer->Hide(thisPtr, unkBool, callHideCallback, setShowHideFlags);
-	}
-
-	private void Show(AtkUnitBase* thisPtr, bool silenceOpenSoundEffect, uint unsetShowHideFlags) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Show");
-		
-		OnShow(thisPtr);
-		
-		AtkUnitBase.StaticVirtualTablePointer->Show(thisPtr, silenceOpenSoundEffect, unsetShowHideFlags);
-	}
-
-	private void Update(AtkUnitBase* addon, float delta) {
-		Log.Excessive($"[KamiToolKit] [{InternalName}] Update");
-		
-		OnUpdate(addon);
-		
-		AtkUnitBase.StaticVirtualTablePointer->Update(addon, delta);
-	}
-
-	private void Draw(AtkUnitBase* addon) {
-		Log.Excessive($"[KamiToolKit] [{InternalName}] Draw");
-		
-		OnDraw(addon);
-		
-		AtkUnitBase.StaticVirtualTablePointer->Draw(addon);
-	}
-
-	private void Setup(AtkUnitBase* addon, uint valueCount, AtkValue* values) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Setup");
-
-		windowNode.SetTitle(Title, Subtitle);
-		InternalAddon->SetSize((ushort) Size.X, (ushort) Size.Y);
-		windowNode.Size = Size;
-
-		AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);
-
-		OnSetup(addon);
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Initialization Complete");
 	}
 
 	/// <summary>
@@ -223,22 +117,6 @@ public abstract unsafe class NativeAddon : IDisposable {
 
 		InternalAddon->Close(false);
 	}
-	
-	private AtkEventListener* Destructor(AtkUnitBase* addon, byte flags) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Destructor");
-		
-		var result = AtkUnitBase.StaticVirtualTablePointer->Dtor(addon, flags);
-
-		if ((flags & 1) == 1) {
-			InternalAddon = null;
-			disposeHandle?.Free();
-			disposeHandle = null;
-		}
-
-		return result;
-	}
-
-	public Vector2 Size { get; set; }
 
 	private void LoadTimeline() {
 		rootNode.AddTimeline(new Timeline {
@@ -272,33 +150,5 @@ public abstract unsafe class NativeAddon : IDisposable {
 		
 		noSpaces += char.MinValue;
 		return noSpaces;
-	}
-
-	private static readonly List<NativeAddon> CreatedAddons = [];
-	
-	~NativeAddon() => Dispose(false);
-
-	protected virtual void Dispose(bool disposing) {
-		if (disposing) {
-			Dispose();
-		}
-	}
-
-	public void Dispose() {
-		if (!isDisposed) {
-			Log.Debug($"[KamiToolKit] Disposing addon {GetType()}");
-
-			Close();
-			GC.SuppressFinalize(this);
-			CreatedAddons.Remove(this);
-		}
-        
-		isDisposed = true;
-	}
-
-	internal static void DisposeAddons() {
-		foreach (var addon in CreatedAddons) {
-			addon.Dispose();
-		}
 	}
 }
