@@ -31,7 +31,7 @@ public abstract partial class NativeAddon : IDisposable {
 	}
 
 	internal static void DisposeAddons() {
-		foreach (var addon in CreatedAddons) {
+		foreach (var addon in CreatedAddons.ToArray()) {
 			addon.Dispose();
 		}
 	}
