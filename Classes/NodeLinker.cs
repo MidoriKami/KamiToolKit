@@ -15,6 +15,8 @@ public enum NodePosition {
 
 internal static unsafe class NodeLinker {
     internal static void AddNodeToUldObjectList(AtkUldManager* uldManager, AtkResNode* newNode) {
+        if (uldManager is null) return;
+
         var oldSize = uldManager->Objects->NodeCount;
         var newSize = oldSize + 1;
         var newBuffer = (AtkResNode**) NativeMemoryHelper.Malloc((ulong)(newSize * 8));
@@ -34,6 +36,8 @@ internal static unsafe class NodeLinker {
     }
     
     internal static void RemoveNodeFromUldObjectList(AtkUldManager* uldManager, AtkResNode* nodeToRemove) {
+        if (uldManager is null) return;
+        
         var oldSize = uldManager->Objects->NodeCount;
         var newSize = oldSize - 1;
         var newBuffer = (AtkResNode**) NativeMemoryHelper.Malloc((ulong)(newSize * 8));
@@ -100,7 +104,7 @@ internal static unsafe class NodeLinker {
         attachTargetNode->NextSiblingNode = node;
         node->PrevSiblingNode = attachTargetNode;
 
-        if (attachTargetNode->ParentNode->Type < (NodeType) 1000) {
+        if (attachTargetNode->ParentNode->GetNodeType() is not NodeType.Component) {
             attachTargetNode->ParentNode->ChildCount++;
         }
      }
@@ -117,7 +121,7 @@ internal static unsafe class NodeLinker {
         attachTargetNode->PrevSiblingNode = node;
         node->NextSiblingNode = attachTargetNode;
 
-        if (attachTargetNode->ParentNode->Type < (NodeType) 1000) {
+        if (attachTargetNode->ParentNode->GetNodeType() is not NodeType.Component) {
             attachTargetNode->ParentNode->ChildCount++;
         }
     }
@@ -135,7 +139,7 @@ internal static unsafe class NodeLinker {
             EmplaceBefore(node, previous);
         }
 
-        if (attachTargetNode->ParentNode->Type < (NodeType) 1000) {
+        if (attachTargetNode->ParentNode->GetNodeType() is not NodeType.Component) {
             attachTargetNode->ParentNode->ChildCount++;
         }
     }
@@ -153,16 +157,16 @@ internal static unsafe class NodeLinker {
             EmplaceAfter(node, previous);
         }
 
-        if (attachTargetNode->ParentNode->Type < (NodeType) 1000) {
+        if (attachTargetNode->ParentNode->GetNodeType() is not NodeType.Component) {
             attachTargetNode->ParentNode->ChildCount++;
         }
     }
 
     private static void EmplaceAsLastChild(AtkResNode* node, AtkResNode* attachTargetNode) {
         // If the child list is empty
-        if (attachTargetNode->ChildNode is null && attachTargetNode->Type < (NodeType) 1000)
+        if (attachTargetNode->ChildNode is null && attachTargetNode->GetNodeType() is not NodeType.Component)
         {
-            if (attachTargetNode->Type < (NodeType) 1000) {
+            if (attachTargetNode->GetNodeType() is not NodeType.Component) {
                 attachTargetNode->ChildNode = node;
                 node->ParentNode = attachTargetNode;
                 attachTargetNode->ChildCount++;
@@ -183,7 +187,7 @@ internal static unsafe class NodeLinker {
             node->ParentNode = attachTargetNode;
             node->NextSiblingNode = currentNode;
             currentNode->PrevSiblingNode = node;
-            if (attachTargetNode->Type < (NodeType) 1000) {
+            if (attachTargetNode->GetNodeType() is not NodeType.Component) {
                 attachTargetNode->ChildCount++;
             }
         }
@@ -193,7 +197,7 @@ internal static unsafe class NodeLinker {
         // If the child list is empty
         if (attachTargetNode->ChildNode is null && attachTargetNode->ChildCount is 0)
         {
-            if (attachTargetNode->Type < (NodeType) 1000) {
+            if (attachTargetNode->GetNodeType() is not NodeType.Component) {
                 attachTargetNode->ChildNode = node;
                 node->ParentNode = attachTargetNode;
                 attachTargetNode->ChildCount++;
@@ -204,7 +208,7 @@ internal static unsafe class NodeLinker {
         }
         // Else Add to the List as the First Child
         else {
-            if (attachTargetNode->Type < (NodeType) 1000) {
+            if (attachTargetNode->GetNodeType() is not NodeType.Component) {
                 attachTargetNode->ChildNode->NextSiblingNode = node;
                 node->PrevSiblingNode = attachTargetNode->ChildNode;
                 attachTargetNode->ChildNode = node;
@@ -231,7 +235,7 @@ internal static unsafe class NodeLinker {
         if (node->NextSiblingNode != null)
             node->NextSiblingNode->PrevSiblingNode = node->PrevSiblingNode;
         
-        if (node->ParentNode->Type < (NodeType) 1000) {
+        if (node->ParentNode->GetNodeType() is not NodeType.Component) {
             node->ParentNode->ChildCount--;
         }
     }

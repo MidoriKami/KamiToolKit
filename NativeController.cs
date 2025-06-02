@@ -5,6 +5,7 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes;
 using KamiToolKit.System;
 
 namespace KamiToolKit;
@@ -38,101 +39,48 @@ public unsafe class NativeController : IDisposable {
 		Experimental.Instance.DisposeHooks();
 	}
 	
-	public void AttachToComponent(NodeBase node, AtkComponentBase* component, void* addon, NodePosition position) 
-		=> AttachToComponent(node, component, (AtkUnitBase*) addon, position);
-
-	public void AttachToComponent(NodeBase node, AtkComponentBase* component, AtkUnitBase* addon, NodePosition position)
-		=> Framework.RunOnFrameworkThread(() => InternalAttachToComponent(node, component, addon, position));
-
-	public void AttachToAddon(NodeBase customNode, NativeAddon addon)
-		=> Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, addon));
-
-	public void AttachToAddon(NodeBase customNode, void* addon, AtkResNode* target, NodePosition position)
-		=> Framework.RunOnFrameworkThread(() => InternalAttachToAddon(customNode, (AtkUnitBase*) addon, target, position));
-
-	public void AttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
-		=> Framework.RunOnFrameworkThread(() => InternalAttachToNode(customNode, other, position));
-
-	public void DetachFromComponent(NodeBase? node, AtkComponentBase* component, void* addon, Action? disposeAction = null)
-		=>	DetachFromComponent(node, component, (AtkUnitBase*) addon, disposeAction);
-	
-	public void DetachFromComponent(NodeBase? node, AtkComponentBase* component, AtkUnitBase* addon, Action? disposeAction = null)
+	public void AttachNode(NodeBase customNode, NodeBase targetNode, NodePosition position)
 		=> Framework.RunOnFrameworkThread(() => {
-			if (node is not null) {
-				InternalDetachFromComponent(node, component, addon);
-			}
+			switch (targetNode) {
 			
-			disposeAction?.Invoke();
-		});
-
-	public void DetachFromAddon(NodeBase? customNode, nint addon, Action? disposeAction = null)
-		=> DetachFromAddon(customNode, (AtkUnitBase*) addon, disposeAction);
-	
-	public void DetachFromAddon(NodeBase? customNode, void* addon, Action? disposeAction = null)
-		=> DetachFromAddon(customNode, (AtkUnitBase*) addon, disposeAction);
-	
-	public void DetachFromAddon(NodeBase? customNode, AtkUnitBase* addon, Action? disposeAction = null)
-		=> Framework.RunOnFrameworkThread(() => {
-			if (customNode is not null) {
-				InternalDetachFromAddon(customNode, addon);
-			}
-
-			disposeAction?.Invoke();
-		});
-
-	public void DetachFromAddon(NodeBase? customNode, NativeAddon addon, Action? disposeAction = null)
-		=> Framework.RunOnFrameworkThread(() => {
-			if (customNode is not null && addon.InternalAddon is not null) {
-				InternalDetachFromAddon(customNode, addon);
-			}
+				// Don't attach directly to ComponentNode, attach to its managed RootNode
+				case ComponentNode componentNode:
+					customNode.AttachNode(componentNode.ComponentBase->UldManager.RootNode, position);
+					return;
 			
-			disposeAction?.Invoke();
+				default:
+					customNode.AttachNode(targetNode, position);
+					return;
+			}
 		});
 
+	public void AttachNode(NodeBase customNode, AtkResNode* targetNode, void* addon, NodePosition position)
+		=> Framework.RunOnFrameworkThread(() => {
+			customNode.RegisterAutoDetach((AtkUnitBase*) addon);
+			customNode.AttachNode(targetNode, position);
+			customNode.EnableEvents(AddonEventManager, (AtkUnitBase*) addon);
+		});
+
+	public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, void* addon, NodePosition position) {
+		Framework.RunOnFrameworkThread(() => {
+			customNode.RegisterAutoDetach((AtkUnitBase*) addon);
+			customNode.AttachNode(targetNode, position);
+			customNode.EnableEvents(AddonEventManager, (AtkUnitBase*) addon);
+		});
+	}
+
+	public void AttachNode(NodeBase customNode, NativeAddon targetAddon, NodePosition position) {
+		Framework.RunOnFrameworkThread(() => {
+			customNode.AttachNode(targetAddon.InternalAddon->UldManager.RootNode, position);
+			customNode.EnableEvents(AddonEventManager, targetAddon.InternalAddon);
+		});
+	}
+	
 	public void DetachNode(NodeBase? customNode, Action? disposeAction = null)
 		=> Framework.RunOnFrameworkThread(() => {
+			customNode?.UnregisterAutoDetach();
+			customNode?.DisableEvents(AddonEventManager);
 			customNode?.DetachNode();
 			disposeAction?.Invoke();
 		});
-
-	private void InternalAttachToComponent(NodeBase customNode, AtkComponentBase* component, AtkUnitBase* addon, NodePosition position) {
-		customNode.RegisterAutoDetach(this, addon);
-
-		NodeLinker.AttachNode(customNode.InternalResNode, component->UldManager.RootNode, position);
-		customNode.EnableEvents(AddonEventManager, addon);
-	}
-
-	private void InternalAttachToAddon(NodeBase customNode, NativeAddon addon) {
-		NodeLinker.AttachNode(customNode.InternalResNode, addon.InternalAddon->RootNode, NodePosition.AsLastChild);
-		customNode.EnableEvents(AddonEventManager, addon.InternalAddon);
-	}
-	
-	private void InternalAttachToAddon(NodeBase customNode, AtkUnitBase* addon, AtkResNode* target, NodePosition position) {
-		customNode.RegisterAutoDetach(this, addon);
-
-		NodeLinker.AttachNode(customNode.InternalResNode, target, position);
-		customNode.EnableEvents(AddonEventManager, addon);
-	}
-	
-	private static void InternalAttachToNode(NodeBase customNode, NodeBase other, NodePosition position)
-		=> customNode.AttachNode(other, position);
-
-	private void InternalDetachFromComponent(NodeBase customNode, AtkComponentBase* component, AtkUnitBase* addon) {
-		customNode.UnregisterAutoDetach();
-		
-		customNode.DisableEvents(AddonEventManager);
-		customNode.DetachNode();
-	}
-	
-	private void InternalDetachFromAddon(NodeBase customNode, AtkUnitBase* addon) {
-		customNode.UnregisterAutoDetach();
-		
-		customNode.DisableEvents(AddonEventManager);
-		customNode.DetachNode();
-	}
-
-	private void InternalDetachFromAddon(NodeBase customNode, NativeAddon addon) {
-		customNode.DisableEvents(AddonEventManager);
-		customNode.DetachNode();
-	}
 }
