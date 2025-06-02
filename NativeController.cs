@@ -69,9 +69,9 @@ public unsafe class NativeController : IDisposable {
 		});
 	}
 
-	public void AttachNode(NodeBase customNode, NativeAddon targetAddon, NodePosition position) {
+	public void AttachNode(NodeBase customNode, NativeAddon targetAddon, NodePosition position = NodePosition.AsLastChild) {
 		Framework.RunOnFrameworkThread(() => {
-			customNode.AttachNode(targetAddon.InternalAddon->UldManager.RootNode, position);
+			customNode.AttachNode(targetAddon, position);
 			customNode.EnableEvents(AddonEventManager, targetAddon.InternalAddon);
 		});
 	}
