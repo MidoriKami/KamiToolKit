@@ -181,51 +181,30 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 	public Vector2 ContentStartPosition => new(backgroundImageNode.X, backgroundImageNode.Y + HeaderHeight);
 	
 	private void LoadTimelines() {
-		AddTimeline(new Timeline {
-			FrameTime = 0.3f,
-			ParentFrameTime = 0.033333335f,
-			LabelFrameIdxDuration = 28,
-			LabelEndFrameIdx = 29,
-			Mask = (AtkTimelineMask) 0xFF,
-			LabelSets = [
-				new TimelineLabelSet {
-					StartFrameId = 1,
-					EndFrameId = 29,
-					Labels = [
-						new TimelineLabelFrame { FrameIndex = 1, LabelId = 17 },
-						new TimelineLabelFrame { FrameIndex = 9, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
-						new TimelineLabelFrame { FrameIndex = 10, LabelId = 18 },
-						new TimelineLabelFrame { FrameIndex = 19, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
-						new TimelineLabelFrame { FrameIndex = 20, LabelId = 7 },
-						new TimelineLabelFrame { FrameIndex = 29, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
-					],
-				},
-			],
-		});
+		var labelSet = new LabelSetBuilder()
+			.AddLabelSet(17, 1, 9)
+			.AddLabelSet(18, 10, 19)
+			.AddLabelSet(7, 20, 29);
 		
-		backgroundNode.AddTimeline(new Timeline {
-			Mask = AtkTimelineMask.VendorSpecific2,
-			Animations = [
-				new TimelineAnimation{ StartFrameId = 1, EndFrameId = 9, KeyFrames = [
-					new TimelineKeyFrame{ FrameIndex = 1, NodeTint = new NodeTint{ AddColor = Vector3.Zero, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f)}, }, 
-				]},
-				new TimelineAnimation{ StartFrameId = 10, EndFrameId = 19, KeyFrames = [
-					new TimelineKeyFrame{ FrameIndex = 10, NodeTint = new NodeTint{ AddColor = Vector3.Zero, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f)}, }, 
-				]},
-				new TimelineAnimation{ StartFrameId = 20, EndFrameId = 29, KeyFrames = [
-					new TimelineKeyFrame{ FrameIndex = 20, NodeTint = new NodeTint{ AddColor = Vector3.Zero, MultiplyColor = new Vector3(50.0f, 50.0f, 50.0f)}, }, 
-				]},
-			],
-		});
+		AddTimeline(labelSet.Build());
 		
-		borderNode.AddTimeline(new Timeline {
-			Mask = (AtkTimelineMask) 0xFF,
-			Animations = [
-				new TimelineAnimation{ StartFrameId = 10, EndFrameId = 19, KeyFrames = [
-					new TimelineKeyFrame{ FrameIndex = 10, Alpha = 0, }, 
-					new TimelineKeyFrame{ FrameIndex = 12, Alpha = 255, }, 
-				]},
-			],
-		});
+		backgroundNode.AddTimeline(new TimelineBuilder(labelSet)
+			.AddFrame(1, new TimelineKeyFrameSet {
+				MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
+			})
+			.AddFrame(10, new TimelineKeyFrameSet {
+				MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
+			})
+			.AddFrame(20, new TimelineKeyFrameSet {
+				MultiplyColor = new Vector3(50.0f, 50.0f, 50.0f),
+			})
+			.Build()
+		);
+		
+		borderNode.AddTimeline(new TimelineBuilder(labelSet)
+			.AddFrame(10, new TimelineKeyFrameSet { Alpha = 0 })
+			.AddFrame(12, new TimelineKeyFrameSet { Alpha = 255 })
+			.Build()
+		);
 	}
 }
