@@ -24,12 +24,6 @@ public class LabelSetBuilder {
 		return this;
 	}
 
-	public LabelSetBuilder AddLabelSet(AtkEventType type, int start, int end) {
-		LabelSets.Add(new LabelSet((int) type, start, end));
-		
-		return this;
-	}
-	
 	public LabelSetBuilder AddLabelSet(int labelId, int start, int end) {
 		LabelSets.Add(new LabelSet(labelId, start, end));
 		
