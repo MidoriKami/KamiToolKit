@@ -11,6 +11,10 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     private bool isDisposed;
     
+    internal const uint NodeIdBase = 100_000_000;
+
+    internal static uint CurrentOffset;
+    
     internal abstract AtkResNode* InternalResNode { get; }
 
     /// <summary>
@@ -75,6 +79,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
         Log.Debug($"[KamiToolKit] Creating new node {GetType()}");
         InternalNode = NativeMemoryHelper.Create<T>();
         InternalResNode->Type = nodeType;
+        InternalResNode->NodeId = NodeIdBase + CurrentOffset++;
 
         if (InternalNode is null) {
             throw new Exception($"Unable to allocate memory for {typeof(T)}");
