@@ -32,13 +32,14 @@ public unsafe class NativeController : IDisposable {
 		Experimental.Instance.EnableHooks();
 	}
 
-	public void Dispose() {
-		NodeBase.DisposeNodes();
-		NativeAddon.DisposeAddons();
+	public void Dispose()
+		=> Framework.RunOnFrameworkThread(() => {
+			NodeBase.DisposeNodes();
+			NativeAddon.DisposeAddons();
 		
-		Experimental.Instance.DisposeHooks();
-	}
-	
+			Experimental.Instance.DisposeHooks();
+		});
+
 	public void AttachNode(NodeBase customNode, NodeBase targetNode, NodePosition position)
 		=> Framework.RunOnFrameworkThread(() => {
 			switch (targetNode) {

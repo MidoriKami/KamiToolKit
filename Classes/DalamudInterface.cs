@@ -13,6 +13,7 @@ internal class DalamudInterface {
 	[PluginService] public IAddonLifecycle AddonLifecycle { get; set; } = null!;
 	[PluginService] public IDataManager DataManager { get; set; } = null!;
 	[PluginService] public ITextureProvider TextureProvider { get; set; } = null!;
+	[PluginService] public IFramework Framework { get; set; } = null!;
 }
 
 internal static class Log {

@@ -24,7 +24,6 @@ public abstract partial class NativeAddon : IDisposable {
 
 			Close();
 			GC.SuppressFinalize(this);
-			CreatedAddons.Remove(this);
 		}
         
 		isDisposed = true;

@@ -32,12 +32,12 @@ public abstract unsafe partial class NativeAddon {
 		OnSetup(addon);
 	}
 
-	private void Show(AtkUnitBase* thisPtr, bool silenceOpenSoundEffect, uint unsetShowHideFlags) {
+	private void Show(AtkUnitBase* addon, bool silenceOpenSoundEffect, uint unsetShowHideFlags) {
 		Log.Verbose($"[KamiToolKit] [{InternalName}] Show");
 		
-		OnShow(thisPtr);
+		OnShow(addon);
 		
-		AtkUnitBase.StaticVirtualTablePointer->Show(thisPtr, silenceOpenSoundEffect, unsetShowHideFlags);
+		AtkUnitBase.StaticVirtualTablePointer->Show(addon, silenceOpenSoundEffect, unsetShowHideFlags);
 	}
 
 	private void Update(AtkUnitBase* addon, float delta) {
@@ -56,16 +56,16 @@ public abstract unsafe partial class NativeAddon {
 		AtkUnitBase.StaticVirtualTablePointer->Draw(addon);
 	}
 
-	private void Hide(AtkUnitBase* thisPtr, bool unkBool, bool callHideCallback, uint setShowHideFlags) {
+	private void Hide(AtkUnitBase* addon, bool unkBool, bool callHideCallback, uint setShowHideFlags) {
 		Log.Verbose($"[KamiToolKit] [{InternalName}] Hide");
 		
-		OnHide(thisPtr);
+		OnHide(addon);
 		
-		AtkUnitBase.StaticVirtualTablePointer->Hide(thisPtr, unkBool, callHideCallback, setShowHideFlags);
+		AtkUnitBase.StaticVirtualTablePointer->Hide(addon, unkBool, callHideCallback, setShowHideFlags);
 	}
 
 	private void Hide2(AtkUnitBase* addon) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] SoftHide (Hide2)");
+		Log.Verbose($"[KamiToolKit] [{InternalName}] Hide2");
 		
 		AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
 	}

@@ -93,30 +93,31 @@ public abstract unsafe partial class NativeAddon {
 	/// Initializes and Opens this instance of Addon
 	/// </summary>
 	/// <param name="depthLayer">Which UI layer to attach the Addon to</param>
-	public void Open(int depthLayer = 4) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Open Called");
+	public void Open(int depthLayer = 4)
+		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+			Log.Verbose($"[KamiToolKit] [{InternalName}] Open Called");
 
-		if (InternalAddon is null) {
-			AllocateAddon();
+			if (InternalAddon is null) {
+				AllocateAddon();
 
-			if (InternalAddon is not null) {
-				AtkStage.Instance()->RaptureAtkUnitManager->InitializeAddon(InternalAddon, InternalName);
-				InternalAddon->Open((uint) depthLayer);
-				disposeHandle = GCHandle.Alloc(this);
+				if (InternalAddon is not null) {
+					AtkStage.Instance()->RaptureAtkUnitManager->InitializeAddon(InternalAddon, InternalName);
+					InternalAddon->Open((uint) depthLayer);
+					disposeHandle = GCHandle.Alloc(this);
+				}
 			}
-		}
-		else {
-			Log.Verbose($"[KamiToolKit] [{InternalName}] Already open, skipping call.");
-		}
-	}
+			else {
+				Log.Verbose($"[KamiToolKit] [{InternalName}] Already open, skipping call.");
+			}
+		});
 
-	public void Close() {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Close");
-		
-		if (InternalAddon is null) return;
+	public void Close() 
+		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+			Log.Verbose($"[KamiToolKit] [{InternalName}] Close");
 
-		InternalAddon->Close(false);
-	}
+			if (InternalAddon is null) return;
+			InternalAddon->Close(false);
+		});
 
 	private void LoadTimeline() {
 		rootNode.AddTimeline(new Timeline {
