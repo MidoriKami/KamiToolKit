@@ -45,7 +45,7 @@ public unsafe class NativeController : IDisposable {
 			
 				// Don't attach directly to ComponentNode, attach to its managed RootNode
 				case ComponentNode componentNode:
-					customNode.AttachNode(componentNode.ComponentBase->UldManager.RootNode, position);
+					customNode.AttachNode(componentNode, position);
 					return;
 			
 				default:

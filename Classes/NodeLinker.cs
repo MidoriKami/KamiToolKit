@@ -16,6 +16,7 @@ public enum NodePosition {
 internal static unsafe class NodeLinker {
     internal static void AddNodeToUldObjectList(AtkUldManager* uldManager, AtkResNode* newNode) {
         if (uldManager is null) return;
+        if (NodeListContainsNode(uldManager, newNode)) return;
 
         var oldSize = uldManager->Objects->NodeCount;
         var newSize = oldSize + 1;
@@ -37,6 +38,7 @@ internal static unsafe class NodeLinker {
     
     internal static void RemoveNodeFromUldObjectList(AtkUldManager* uldManager, AtkResNode* nodeToRemove) {
         if (uldManager is null) return;
+        if (!NodeListContainsNode(uldManager, nodeToRemove)) return;
         
         var oldSize = uldManager->Objects->NodeCount;
         var newSize = oldSize - 1;
@@ -54,6 +56,17 @@ internal static unsafe class NodeLinker {
         NativeMemoryHelper.Free(uldManager->Objects->NodeList, (ulong)(oldSize * 8));
         uldManager->Objects->NodeList = newBuffer;
         uldManager->Objects->NodeCount = newSize;
+    }
+
+    private static bool NodeListContainsNode(AtkUldManager* uldManager, AtkResNode* node) {
+        if (uldManager->Objects is null) return false;
+        if (uldManager->Objects->NodeList is null) return false;
+        
+        foreach (var index in Enumerable.Range(0, uldManager->Objects->NodeCount)) {
+            if (uldManager->Objects->NodeList[index] == node) return true;
+        }
+
+        return false;
     }
     
     internal static void AttachNode(AtkResNode* node, AtkResNode* attachTargetNode, NodePosition position) {

@@ -1,5 +1,7 @@
-﻿using FFXIVClientStructs.FFXIV.Client.UI;
+﻿using System;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using FFXIVClientStructs.Interop;
 using KamiToolKit.Addon;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
@@ -27,8 +29,8 @@ public abstract unsafe partial class NodeBase {
 
     internal void AttachNode(ComponentNode target, NodePosition position) {
         NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
-        NodeLinker.AddNodeToUldObjectList(&target.ComponentBase->UldManager, InternalResNode);
 
+        AddToUldObjectsList(&target.ComponentBase->UldManager, InternalResNode);
         UpdateLinkedAddon();
         UpdateUldManager(target.InternalResNode);
     }
@@ -38,39 +40,32 @@ public abstract unsafe partial class NodeBase {
         var target = uldManager->RootNode;
         
         NodeLinker.AttachNode(InternalResNode, target, position);
-        NodeLinker.AddNodeToUldObjectList(uldManager, InternalResNode);
 
+        AddToUldObjectsList(uldManager, InternalResNode);
         UpdateLinkedAddon();
         UpdateUldManager(target);
     }
     
     internal void AttachNode(NativeAddon addon, NodePosition position) {
         NodeLinker.AttachNode(InternalResNode, addon.InternalAddon->RootNode, position);
-        NodeLinker.AddNodeToUldObjectList(&addon.InternalAddon->UldManager, InternalResNode);
-        
+
+        AddToUldObjectsList(&addon.InternalAddon->UldManager, InternalResNode);
         UpdateLinkedAddon();
         UpdateUldManager(addon.InternalAddon->RootNode);
     }
 
     internal void DetachNode() {
-        // Find this nodes owner uldManager and save it
         var nodesUldManager = GetUldManagerForNode(InternalResNode);
         
-        // Remove node from adjacent nodes
-        NodeLinker.DetachNode(InternalResNode);
-        NodeLinker.RemoveNodeFromUldObjectList(nodesUldManager, InternalResNode);
+        RemoveFromUldObjectList(nodesUldManager, InternalResNode);
 
-        // If the addon that we initially attached to is still valid
+        NodeLinker.DetachNode(InternalResNode);
+
         if (IsAddonPointerValid(linkedParentAddon, linkedParentName)) {
-            
-            // and the uldManager we looked for earlier is valid
             if (nodesUldManager is not null) {
-                
-                // Update DrawList that we are changing
                 nodesUldManager->UpdateDrawNodeList();
             }
             
-            // And also update addons collision node list just in case
             linkedParentAddon->UpdateCollisionNodeList(false);
         }
     }
@@ -135,5 +130,35 @@ public abstract unsafe partial class NodeBase {
         }
 
         return null;
+    }
+    
+    private void VisitChildren(AtkResNode* parent, Action<Pointer<AtkResNode>> visitAction) {
+        visitAction(parent);
+        
+        var child = parent->ChildNode;
+
+        while (child is not null) {
+            visitAction(child);
+
+            // Be sure to not accidentally visit a components children, they manage their own children
+            if (child->ChildNode is not null && child->ChildNode->GetNodeType() is not NodeType.Component) {
+                VisitChildren(child->ChildNode, visitAction);
+            }
+
+            child = child->PrevSiblingNode;
+        }
+    }
+
+    private void AddToUldObjectsList(AtkUldManager* uldManager, AtkResNode* parent)
+        => VisitChildren(parent, node => {
+            NodeLinker.AddNodeToUldObjectList(uldManager, node);
+        });
+
+    private void RemoveFromUldObjectList(AtkUldManager* uldManager, AtkResNode* parent) {
+        if (uldManager is null) return;
+        
+        VisitChildren(parent, node => {
+            NodeLinker.RemoveNodeFromUldObjectList(uldManager, node);
+        });
     }
 }
