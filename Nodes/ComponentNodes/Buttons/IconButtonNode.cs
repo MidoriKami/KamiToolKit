@@ -58,7 +58,7 @@ public class IconButtonNode : ButtonBase {
 	public override float Width {
 		get => base.Width;
 		set {
-			imageNode.Width = value;
+			imageNode.Width = value - 16.0f;
 			imageNode.Position = imageNode.Position with { X = backgroundNode.Position.X + backgroundNode.LeftOffset };
 			backgroundNode.Width = value;
 			base.Width = value;
@@ -68,7 +68,7 @@ public class IconButtonNode : ButtonBase {
 	public override float Height {
 		get => base.Height;
 		set {
-			imageNode.Height = value;
+			imageNode.Height = value - 16.0f;
 			imageNode.Position = imageNode.Position with { Y = backgroundNode.Position.Y + backgroundNode.TopOffset };
 			backgroundNode.Height = value;
 			base.Height = value;
