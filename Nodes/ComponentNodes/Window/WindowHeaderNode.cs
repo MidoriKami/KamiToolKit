@@ -26,7 +26,7 @@ internal class WindowHeaderNode : ResNode {
 			Position = new Vector2(10.0f, 33.0f),
 		};
 		
-		DividingLineNode.AttachNode(this, NodePosition.AsLastChild);
+		DividingLineNode.AttachNode(this);
 		
 		CloseButtonNode = new TextureButtonNode {
 			NodeId = 7,
@@ -38,7 +38,7 @@ internal class WindowHeaderNode : ResNode {
 			TextureSize = new Vector2(28.0f, 28.0f),
 		};
 		
-		CloseButtonNode.AttachNode(this, NodePosition.AsLastChild);
+		CloseButtonNode.AttachNode(this);
 
 		ConfigurationButtonNode = new TextureButtonNode {
 			NodeId = 6,
@@ -51,7 +51,7 @@ internal class WindowHeaderNode : ResNode {
 			IsVisible = true,
 		};
 		
-		ConfigurationButtonNode.AttachNode(this, NodePosition.AsLastChild);
+		ConfigurationButtonNode.AttachNode(this);
 		
 		InformationButtonNode = new TextureButtonNode {
 			NodeId = 5,
@@ -64,7 +64,7 @@ internal class WindowHeaderNode : ResNode {
 			IsVisible = true,
 		};
 		
-		InformationButtonNode.AttachNode(this, NodePosition.AsLastChild);
+		InformationButtonNode.AttachNode(this);
 
 		SubtitleNode = new TextNode {
 			NodeId = 4,
@@ -81,7 +81,7 @@ internal class WindowHeaderNode : ResNode {
 			Position = new Vector2(83.0f, 17.0f),
 		};
 		
-		SubtitleNode.AttachNode(this, NodePosition.AsLastChild);
+		SubtitleNode.AttachNode(this);
 
 		TitleNode = new TextNode {
 			NodeId = 3,
@@ -98,7 +98,7 @@ internal class WindowHeaderNode : ResNode {
 			Position = new Vector2(12.0f, 7.0f),
 		};
 		
-		TitleNode.AttachNode(this, NodePosition.AsLastChild);
+		TitleNode.AttachNode(this);
 	}
 	
 	protected override void Dispose(bool disposing) {

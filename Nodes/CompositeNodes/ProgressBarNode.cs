@@ -31,7 +31,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
             TexturePath = "ui/uld/Parameter_Gauge.tex",
         };
         
-        backgroundImageNode.AttachNode(this, NodePosition.AsLastChild);
+        backgroundImageNode.AttachNode(this);
 
         progressNode = new SimpleNineGridNode {
             NodeId = 200,
@@ -47,7 +47,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
             TexturePath = "ui/uld/Parameter_Gauge.tex",
         };
         
-        progressNode.AttachNode(this, NodePosition.AsLastChild);
+        progressNode.AttachNode(this);
 
         borderImageNode = new SimpleNineGridNode {
             NodeId = 300,
@@ -61,7 +61,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
             TexturePath = "ui/uld/Parameter_Gauge.tex",
         };
         
-        borderImageNode.AttachNode(this, NodePosition.AsLastChild);
+        borderImageNode.AttachNode(this);
     }
 
     protected override void Dispose(bool disposing) {

@@ -334,7 +334,7 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
         => GetEnumerator();
 
     public void Add(T item) {
-        item.AttachNode(containerNode, NodePosition.AsLastChild);
+        item.AttachNode(containerNode);
         nodeList.Add(item);
         
         RecalculateLayout();
