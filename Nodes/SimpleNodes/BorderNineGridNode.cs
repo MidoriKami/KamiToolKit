@@ -14,7 +14,7 @@ public class BorderNineGridNode : NineGridNode {
             Id = 0,
         };
         
-        renderPart.LoadTexture("ui/uld/PartyListTargetBase_hr1.tex");
+        renderPart.LoadTexture("ui/uld/PartyListTargetBase.tex");
         
         PartsList.Add(renderPart);
         

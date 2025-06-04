@@ -28,7 +28,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
             PartsRenderType = 4,
             LeftOffset = 15,
             RightOffset = 15,
-            TexturePath = "ui/uld/Parameter_Gauge_hr1.tex",
+            TexturePath = "ui/uld/Parameter_Gauge.tex",
         };
         
         backgroundImageNode.AttachNode(this, NodePosition.AsLastChild);
@@ -44,7 +44,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
             LeftOffset = 10,
             RightOffset = 10,
             PartsRenderType = 4,
-            TexturePath = "ui/uld/Parameter_Gauge_hr1.tex",
+            TexturePath = "ui/uld/Parameter_Gauge.tex",
         };
         
         progressNode.AttachNode(this, NodePosition.AsLastChild);
@@ -58,7 +58,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
             PartsRenderType = 4,
             LeftOffset = 15,
             RightOffset = 15,
-            TexturePath = "ui/uld/Parameter_Gauge_hr1.tex",
+            TexturePath = "ui/uld/Parameter_Gauge.tex",
         };
         
         borderImageNode.AttachNode(this, NodePosition.AsLastChild);

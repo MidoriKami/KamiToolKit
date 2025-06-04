@@ -16,7 +16,7 @@ public unsafe class TextButtonNode : ButtonBase {
 		Data->Nodes[1] = 2;
 
 		backgroundNode = new SimpleNineGridNode {
-			TexturePath = "ui/uld/ButtonA_hr1.tex",
+			TexturePath = "ui/uld/ButtonA.tex",
 			TextureSize = new Vector2(100.0f, 28.0f),
 			LeftOffset = 16.0f,
 			RightOffset = 16.0f,

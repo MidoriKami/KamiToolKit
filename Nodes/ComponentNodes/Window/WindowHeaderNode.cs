@@ -16,7 +16,7 @@ internal class WindowHeaderNode : ResNode {
 	public WindowHeaderNode() {
 		DividingLineNode = new SimpleNineGridNode {
 			NodeId = 8,
-			TexturePath = "ui/uld/WindowA_Line_hr1.tex",
+			TexturePath = "ui/uld/WindowA_Line.tex",
 			TextureCoordinates = Vector2.Zero,
 			TextureSize = new Vector2(32.0f, 4.0f),
 			Size = new Vector2(650.0f, 4.0f),
@@ -33,7 +33,7 @@ internal class WindowHeaderNode : ResNode {
 			Size = new Vector2(28.0f, 28.0f),
 			Position = new Vector2(449.0f, 6.0f),
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-			TexturePath = "ui/uld/WindowA_Button_hr1.tex",
+			TexturePath = "ui/uld/WindowA_Button.tex",
 			TextureCoordinates = new Vector2(0.0f, 0.0f),
 			TextureSize = new Vector2(28.0f, 28.0f),
 		};
@@ -45,7 +45,7 @@ internal class WindowHeaderNode : ResNode {
 			Size = new Vector2(16.0f, 16.0f),
 			Position = new Vector2(435.0f, 8.0f),
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-			TexturePath = "ui/uld/WindowA_Button_hr1.tex",
+			TexturePath = "ui/uld/WindowA_Button.tex",
 			TextureCoordinates = new Vector2(44.0f, 0.0f),
 			TextureSize = new Vector2(16.0f, 16.0f),
 			IsVisible = true,
@@ -58,7 +58,7 @@ internal class WindowHeaderNode : ResNode {
 			Size = new Vector2(16.0f, 16.0f),
 			Position = new Vector2(421.0f, 8.0f),
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-			TexturePath = "ui/uld/WindowA_Button_hr1.tex",
+			TexturePath = "ui/uld/WindowA_Button.tex",
 			TextureCoordinates = new Vector2(28.0f, 0.0f),
 			TextureSize = new Vector2(16.0f, 16.0f),
 			IsVisible = true,

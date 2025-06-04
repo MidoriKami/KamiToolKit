@@ -13,7 +13,7 @@ public class IconButtonNode : ButtonBase {
 
 	public IconButtonNode() {
 		backgroundNode = new SimpleNineGridNode {
-			TexturePath = "ui/uld/BgParts_hr1.tex",
+			TexturePath = "ui/uld/BgParts.tex",
 			TextureSize = new Vector2(32.0f, 32.0f),
 			TextureCoordinates = new Vector2(33.0f, 65.0f),
 			TopOffset = 8.0f,

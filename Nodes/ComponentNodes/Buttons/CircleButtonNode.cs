@@ -10,7 +10,7 @@ public class CircleButtonNode : ButtonBase {
 
 	public CircleButtonNode() {
 		imageNode = new SimpleImageNode {
-			TexturePath = "ui/uld/CircleButtons_hr1.tex",
+			TexturePath = "ui/uld/CircleButtons.tex",
 			TextureSize = new Vector2(24.0f, 24.0f),
 			TextureCoordinates = new Vector2(0.0f, 112.0f),
 			IsVisible = true,

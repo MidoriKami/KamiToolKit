@@ -54,7 +54,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 			WrapMode = 2,
 			ImageNodeFlags = 0,
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorBottom | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-			TexturePath = "ui/uld/WindowA_Gradation_hr1.tex",
+			TexturePath = "ui/uld/WindowA_Gradation.tex",
 			TextureCoordinates = new Vector2(6.0f, 2.0f),
 			TextureSize = new Vector2(24.0f, 24.0f),
 		};
