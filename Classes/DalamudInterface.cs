@@ -46,6 +46,6 @@ internal static class Log {
 	}
 
 	internal static void Exception(Exception exception) {
-		DalamudInterface.Instance.Log.Error(exception, "Shit broke yo.");
+		DalamudInterface.Instance.Log.Error(exception, "Exception doing something, check trace for details.");
 	}
 }
