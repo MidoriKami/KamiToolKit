@@ -48,6 +48,9 @@ public class ImGuiIconButtonNode : ButtonBase {
 	public void LoadTexture(IDalamudTextureWrap texture)
 		=> imageNode.LoadTexture(texture);
 	
+	public void LoadTextureFromFile(string path)
+		=> imageNode.LoadTextureFromFile(path);
+	
 	private void LoadTimelines()
 		=> LoadTwoPartTimelines(this, imageNode);
 }
