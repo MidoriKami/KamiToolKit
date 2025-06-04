@@ -138,14 +138,19 @@ public unsafe class Part : IDisposable {
     /// </summary>
     /// <param name="path">Path to load</param>
     public void LoadTexture(string path) {
-        var texturePath = path.Replace("_hr1", string.Empty);
+        try {
+            var texturePath = path.Replace("_hr1", string.Empty);
 
-        var themedPath = texturePath.Replace("uld", GetThemePathModifier());
-        if (DalamudInterface.Instance.DataManager.FileExists(themedPath)) {
-            texturePath = themedPath;
-        }
+            var themedPath = texturePath.Replace("uld", GetThemePathModifier());
+            if (DalamudInterface.Instance.DataManager.FileExists(themedPath)) {
+                texturePath = themedPath;
+            }
         
-        internalAsset->AtkTexture.LoadTexture(texturePath, TextureVersion());
+            internalAsset->AtkTexture.LoadTexture(texturePath, TextureVersion());
+        }
+        catch (Exception e) {
+            Log.Exception(e);
+        }
     }
 
     private string GetThemePathModifier() => AtkStage.Instance()->AtkUIColorHolder->ActiveColorThemeType switch {
