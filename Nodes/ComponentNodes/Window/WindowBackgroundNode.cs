@@ -5,7 +5,7 @@ namespace KamiToolKit.Nodes.ComponentNodes.Window;
 
 public class WindowBackgroundNode : NineGridNode {
 	public WindowBackgroundNode(bool selectedPath, string path = "ui/uld/WindowA_Bg") {
-		var basePath = $"path{(selectedPath ? "Selected" : "Normal")}";
+		var basePath = $"{path}{(selectedPath ? "Selected" : "Normal")}";
 		
 		PartsList.Add(
 			new Part {
