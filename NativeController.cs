@@ -2,6 +2,7 @@
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
 using KamiToolKit.Classes;
@@ -55,18 +56,22 @@ public unsafe class NativeController : IDisposable {
 			}
 		});
 
-	public void AttachNode(NodeBase customNode, AtkResNode* targetNode, void* addon, NodePosition position = NodePosition.AsLastChild)
+	public void AttachNode(NodeBase customNode, AtkResNode* targetNode, NodePosition position = NodePosition.AsLastChild)
 		=> Framework.RunOnFrameworkThread(() => {
-			customNode.RegisterAutoDetach((AtkUnitBase*) addon);
+			var addon = GetAddonForNode(targetNode);
+			
+			customNode.RegisterAutoDetach(addon);
 			customNode.AttachNode(targetNode, position);
-			customNode.EnableEvents(AddonEventManager, (AtkUnitBase*) addon);
+			customNode.EnableEvents(AddonEventManager, addon);
 		});
 
-	public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, void* addon, NodePosition position = NodePosition.AsLastChild) {
+	public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, NodePosition position = NodePosition.AsLastChild) {
 		Framework.RunOnFrameworkThread(() => {
-			customNode.RegisterAutoDetach((AtkUnitBase*) addon);
+			var addon = GetAddonForNode((AtkResNode*) targetNode);
+			
+			customNode.RegisterAutoDetach(addon);
 			customNode.AttachNode(targetNode, position);
-			customNode.EnableEvents(AddonEventManager, (AtkUnitBase*) addon);
+			customNode.EnableEvents(AddonEventManager, addon);
 		});
 	}
 
@@ -84,4 +89,12 @@ public unsafe class NativeController : IDisposable {
 			customNode?.DetachNode();
 			disposeAction?.Invoke();
 		});
+	
+	private AtkUnitBase* GetAddonForNode(AtkResNode* node) {
+		if (Experimental.Instance.GetAddonByNode != null) {
+			return Experimental.Instance.GetAddonByNode.Invoke(RaptureAtkUnitManager.Instance(), node);
+		}
+
+		return null;
+	}
 }
