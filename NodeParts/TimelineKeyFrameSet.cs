@@ -54,6 +54,10 @@ public class TimelineKeyFrameSet {
 		}
 	}
 
+	public uint PartId {
+		set => KeyFrames.Add(new TimelineKeyFrame { FrameIndex = FrameIndex, PartId = value });
+	}
+
 	public float Rotation {
 		set => KeyFrames.Add(new TimelineKeyFrame { FrameIndex = FrameIndex, Rotation = value });
 	}

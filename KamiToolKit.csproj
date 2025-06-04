@@ -2,4 +2,8 @@
     <PropertyGroup>
         <Use_DalamudPackager>false</Use_DalamudPackager>
     </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
+    </ItemGroup>
 </Project>

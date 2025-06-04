@@ -119,7 +119,18 @@ public class TimelineKeyFrame {
 			GroupSelector = KeyFrameGroupType.TextLabel;
 		}
 	}
-	
+
+	public uint PartId {
+		set {
+			Value = new AtkTimelineKeyValue {
+				UShort = (ushort) value,
+			};
+			
+			GroupType = AtkTimelineKeyGroupType.UShort;
+			GroupSelector = KeyFrameGroupType.PartId;
+		}
+	}
+
 	public static implicit operator AtkTimelineKeyFrame(TimelineKeyFrame frame) => new() {
 		Interpolation = frame.Interpolation,
 		SpeedCoefficient1 = frame.SpeedStart,
