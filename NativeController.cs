@@ -40,7 +40,7 @@ public unsafe class NativeController : IDisposable {
 			Experimental.Instance.DisposeHooks();
 		});
 
-	public void AttachNode(NodeBase customNode, NodeBase targetNode, NodePosition position)
+	public void AttachNode(NodeBase customNode, NodeBase targetNode, NodePosition position = NodePosition.AsLastChild)
 		=> Framework.RunOnFrameworkThread(() => {
 			switch (targetNode) {
 			
@@ -55,14 +55,14 @@ public unsafe class NativeController : IDisposable {
 			}
 		});
 
-	public void AttachNode(NodeBase customNode, AtkResNode* targetNode, void* addon, NodePosition position)
+	public void AttachNode(NodeBase customNode, AtkResNode* targetNode, void* addon, NodePosition position = NodePosition.AsLastChild)
 		=> Framework.RunOnFrameworkThread(() => {
 			customNode.RegisterAutoDetach((AtkUnitBase*) addon);
 			customNode.AttachNode(targetNode, position);
 			customNode.EnableEvents(AddonEventManager, (AtkUnitBase*) addon);
 		});
 
-	public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, void* addon, NodePosition position) {
+	public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, void* addon, NodePosition position = NodePosition.AsLastChild) {
 		Framework.RunOnFrameworkThread(() => {
 			customNode.RegisterAutoDetach((AtkUnitBase*) addon);
 			customNode.AttachNode(targetNode, position);
