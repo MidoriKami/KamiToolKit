@@ -13,21 +13,21 @@ public abstract unsafe partial class NodeBase {
     private AtkUnitBase* linkedParentAddon;
     private string? linkedParentName;
 
-    internal void AttachNode(AtkResNode* target, NodePosition position) {
+    internal void AttachNode(AtkResNode* target, NodePosition position = NodePosition.AsLastChild) {
         NodeLinker.AttachNode(InternalResNode, target, position);
 
         UpdateLinkedAddon();
         UpdateUldManager(target);
     }
     
-    internal void AttachNode(NodeBase target, NodePosition position) {
+    internal void AttachNode(NodeBase target, NodePosition position = NodePosition.AsLastChild) {
         NodeLinker.AttachNode(InternalResNode, target.InternalResNode, position);
         
         UpdateLinkedAddon();
         UpdateUldManager(target.InternalResNode);
     }
 
-    internal void AttachNode(ComponentNode target, NodePosition position) {
+    internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AsLastChild) {
         NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
 
         AddToUldObjectsList(&target.ComponentBase->UldManager, InternalResNode);
@@ -35,7 +35,7 @@ public abstract unsafe partial class NodeBase {
         UpdateUldManager(target.InternalResNode);
     }
     
-    public void AttachNode(AtkComponentNode* targetNode, NodePosition position) {
+    internal void AttachNode(AtkComponentNode* targetNode, NodePosition position = NodePosition.AsLastChild) {
         var uldManager = &targetNode->Component->UldManager;
         var target = uldManager->RootNode;
         
@@ -46,7 +46,7 @@ public abstract unsafe partial class NodeBase {
         UpdateUldManager(target);
     }
     
-    internal void AttachNode(NativeAddon addon, NodePosition position) {
+    internal void AttachNode(NativeAddon addon, NodePosition position = NodePosition.AsLastChild) {
         NodeLinker.AttachNode(InternalResNode, addon.InternalAddon->RootNode, position);
 
         AddToUldObjectsList(&addon.InternalAddon->UldManager, InternalResNode);
