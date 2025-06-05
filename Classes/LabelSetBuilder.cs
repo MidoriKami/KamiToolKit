@@ -6,7 +6,7 @@ using KamiToolKit.NodeParts;
 
 namespace KamiToolKit.Classes;
 
-internal record LabelSet(int LabelId, int FrameStart, int FrameEnd);
+internal record LabelSet(int FrameId, int LabelId, AtkTimelineJumpBehavior JumpBehavior, int TargetLabel);
 
 public class LabelSetBuilder {
 	private AtkTimelineMask timelineMask = (AtkTimelineMask) 0xFF;
@@ -24,22 +24,26 @@ public class LabelSetBuilder {
 		return this;
 	}
 
-	public LabelSetBuilder AddLabelSet(int labelId, int start, int end) {
-		LabelSets.Add(new LabelSet(labelId, start, end));
-		
-		return this;
-	}
-	
-	public LabelSetBuilder AddLabelSet(int labelId, Range range) {
-		LabelSets.Add(new LabelSet(labelId, range.Start.Value, range.End.Value));
+	public LabelSetBuilder AddStartPlayOncePair(int labelId, int start, int end) {
+		LabelSets.Add(new LabelSet(start, labelId, AtkTimelineJumpBehavior.Start, 0));
+		LabelSets.Add(new LabelSet(end, labelId, AtkTimelineJumpBehavior.PlayOnce, 0));
 		
 		return this;
 	}
 
+	public LabelSetBuilder AddLabelSet(int labelId, int frame, AtkTimelineJumpBehavior behavior, int targetId) {
+		LabelSets.Add(new LabelSet(frame, labelId, behavior, targetId));
+		
+		return this;
+	}
+
+	public LabelSetBuilder AddStartPlayOncePair(int labelId, Range range)
+		=> AddStartPlayOncePair(labelId, range.Start.Value, range.End.Value);
+
 	public Timeline Build() => new() {
 		Mask = timelineMask,
-		LabelEndFrameIdx = LabelSets.Max(set => set.FrameEnd),
-		LabelFrameIdxDuration = LabelSets.Max(set => set.FrameEnd) - 1,
+		LabelEndFrameIdx = LabelSets.Max(set => set.FrameId),
+		LabelFrameIdxDuration = LabelSets.Max(set => set.FrameId) - 1,
 		LabelSets = [ BuildLabelSet() ],
 	};
 
@@ -48,20 +52,16 @@ public class LabelSetBuilder {
 		
 		foreach (var set in LabelSets) {
 			labelFrames.Add(new TimelineLabelFrame {
-				FrameIndex = set.FrameStart,
+				FrameIndex = set.FrameId,
 				LabelId = set.LabelId,
-			});
-			
-			labelFrames.Add(new TimelineLabelFrame {
-				FrameIndex = set.FrameEnd,
-				LabelId = 0,
-				JumpBehavior = AtkTimelineJumpBehavior.PlayOnce,
+				JumpBehavior = set.JumpBehavior,
+				JumpLabelId = set.TargetLabel,
 			});
 		}
 
 		return new TimelineLabelSet {
 			StartFrameId = 1,
-			EndFrameId = LabelSets.Max(labelSet => labelSet.FrameEnd),
+			EndFrameId = LabelSets.Max(labelSet => labelSet.FrameId),
 			Labels = labelFrames,
 		};
 	}

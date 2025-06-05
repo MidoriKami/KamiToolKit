@@ -3,7 +3,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
 using KamiToolKit.Nodes;
-using KamiToolKit.Nodes.ComponentNodes.Window;
+using KamiToolKit.Nodes.Window;
 
 namespace KamiToolKit.Addon;
 

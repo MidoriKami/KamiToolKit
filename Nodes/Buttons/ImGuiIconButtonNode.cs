@@ -1,8 +1,7 @@
 ﻿using Dalamud.Interface.Textures.TextureWraps;
 using KamiToolKit.Classes;
-using KamiToolKit.Nodes.ComponentNodes.Abstract;
 
-namespace KamiToolKit.Nodes.ComponentNodes;
+namespace KamiToolKit.Nodes;
 
 public class ImGuiIconButtonNode : ButtonBase {
 	private readonly ImGuiImageNode imageNode;

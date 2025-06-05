@@ -6,7 +6,7 @@ using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
 using KamiToolKit.System;
 
-namespace KamiToolKit.Nodes.ComponentNodes.Abstract;
+namespace KamiToolKit.Nodes;
 
 public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
 
@@ -62,12 +62,12 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
 	protected void LoadTwoPartTimelines(NodeBase parent, NodeBase foreground) {
 		var labelSet = new LabelSetBuilder()
-			.AddLabelSet(1, 1, 9)
-			.AddLabelSet(2, 10, 19)
-			.AddLabelSet(3, 20, 29)
-			.AddLabelSet(7, 30, 39)
-			.AddLabelSet(6, 40, 49)
-			.AddLabelSet(4, 50, 59);
+			.AddStartPlayOncePair(1, 1, 9)
+			.AddStartPlayOncePair(2, 10, 19)
+			.AddStartPlayOncePair(3, 20, 29)
+			.AddStartPlayOncePair(7, 30, 39)
+			.AddStartPlayOncePair(6, 40, 49)
+			.AddStartPlayOncePair(4, 50, 59);
 		
 		parent.AddTimeline(labelSet.Build());
 
@@ -102,12 +102,12 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
 	protected void LoadThreePartTimelines(NodeBase parent, NodeBase background, NodeBase foreground) {
 		var labelSet = new LabelSetBuilder()
-			.AddLabelSet(1, 1, 10)
-			.AddLabelSet(2, 11, 17)
-			.AddLabelSet(3, 18, 26)
-			.AddLabelSet(7, 27, 36)
-			.AddLabelSet(6, 37, 46)
-			.AddLabelSet(4, 47, 53);
+			.AddStartPlayOncePair(1, 1, 10)
+			.AddStartPlayOncePair(2, 11, 17)
+			.AddStartPlayOncePair(3, 18, 26)
+			.AddStartPlayOncePair(7, 27, 36)
+			.AddStartPlayOncePair(6, 37, 46)
+			.AddStartPlayOncePair(4, 47, 53);
 		
 		parent.AddTimeline(labelSet.Build());
 		

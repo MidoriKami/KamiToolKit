@@ -2,7 +2,7 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
-namespace KamiToolKit.Nodes.ComponentNodes.Window;
+namespace KamiToolKit.Nodes.Window;
 
 internal class WindowHeaderNode : ResNode {
 

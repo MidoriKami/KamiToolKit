@@ -3,7 +3,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
 
-namespace KamiToolKit.Nodes.ComponentNodes.Window;
+namespace KamiToolKit.Nodes.Window;
 
 public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldComponentDataWindow> {
 
@@ -182,9 +182,9 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 	
 	private void LoadTimelines() {
 		var labelSet = new LabelSetBuilder()
-			.AddLabelSet(17, 1, 9)
-			.AddLabelSet(18, 10, 19)
-			.AddLabelSet(7, 20, 29);
+			.AddStartPlayOncePair(17, 1, 9)
+			.AddStartPlayOncePair(18, 10, 19)
+			.AddStartPlayOncePair(7, 20, 29);
 		
 		AddTimeline(labelSet.Build());
 		

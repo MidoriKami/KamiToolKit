@@ -41,23 +41,30 @@ public class TimelineBuilder(LabelSetBuilder labelSetBuilder) {
 
 	private List<TimelineAnimation> BuildAnimations() {
 		var builtAnimations = new List<TimelineAnimation>();
-		
-		foreach (var labelSet in labelSetBuilder.LabelSets) {
-			var keyFrames = BuildKeyFramesForLabelSet(labelSet);
-			if (keyFrames.Count == 0) continue;
+
+		foreach(var index in Enumerable.Range(0, labelSetBuilder.LabelSets.Count / 2)) {
+			var startLabel = labelSetBuilder.LabelSets.ElementAt(index);
+			var endLabel = labelSetBuilder.LabelSets.ElementAt(index + 1);
+
+			var keyFramesForFrameSet = new List<TimelineKeyFrame>();
+			
+			foreach (var animation in animations) {
+				
+				// If this animation has frames within this set
+				if (animation.Frame >= startLabel.FrameId && animation.Frame <= endLabel.FrameId) {
+					
+					// Add each keyframe for that animation
+					keyFramesForFrameSet.AddRange(animation.Data.KeyFrames);
+				}
+			}
 			
 			builtAnimations.Add(new TimelineAnimation {
-				StartFrameId = labelSet.FrameStart,
-				EndFrameId = labelSet.FrameEnd,
-				KeyFrames = BuildKeyFramesForLabelSet(labelSet),
+				StartFrameId = startLabel.FrameId,
+				EndFrameId = endLabel.FrameId,
+				KeyFrames = keyFramesForFrameSet,
 			});
 		}
 		
 		return builtAnimations;
 	}
-
-	private List<TimelineKeyFrame> BuildKeyFramesForLabelSet(LabelSet set) => animations
-		.Where(animation => animation.Frame >= set.FrameStart && animation.Frame <= set.FrameEnd)
-		.SelectMany((animation, _) => animation.Data.KeyFrames)
-		.ToList();
 }
