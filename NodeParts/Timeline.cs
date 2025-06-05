@@ -24,13 +24,6 @@ public unsafe class Timeline : IDisposable {
 		
 		InternalTimeline->ActiveAnimation = null;
 		InternalTimeline->OwnerNode = null;
-		InternalTimeline->FrameTime = 0.033333335f;
-		InternalTimeline->ParentFrameTime = 0.333333334f;
-		InternalTimeline->LabelFrameIdxDuration = 0;
-		InternalTimeline->LabelEndFrameIdx = 1;
-		InternalTimeline->ActiveLabelId = 0;
-		InternalTimeline->Mask = 0;
-		InternalTimeline->Flags = 0;
 	}
 
 	public void Dispose() {

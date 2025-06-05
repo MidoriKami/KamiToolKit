@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dalamud.Interface.Textures;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Classes.TimelineBuilding;
 using KamiToolKit.NodeParts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -67,7 +68,7 @@ public class GifImageNode : ResNode {
 			if (processedImage.Frames.Count is 0) return;
 
 			var timelineBuilder = new TimelineBuilder()
-				.AddLabelSet(200, 1, AtkTimelineJumpBehavior.Start, 0);
+				.BeginFrameSet(1, 999);
 
 			uint currentPartId = 0;
 			var frameDelay = processedImage.Frames.RootFrame.Metadata.GetGifMetadata().FrameDelay / 3.33333333f;
@@ -79,13 +80,12 @@ public class GifImageNode : ResNode {
 			
 			foreach (var frame in processedImage.Frames) {
 				var buffer = new byte[8 * frame.Width * frame.Height];
-			
+
 				frame.CopyPixelDataTo(buffer);
 			
 				var texture = await DalamudInterface.Instance.TextureProvider.CreateFromRawAsync(RawImageSpecification.Rgba32(frame.Width, frame.Height), buffer);
-				timelineBuilder.AddAnimation((int)(currentPartId * frameDelay ), new TimelineKeyFrameSet {
-					PartId = currentPartId,
-				});
+				
+				timelineBuilder.AddFrame((int)(currentPartId * frameDelay ), partId: currentPartId);
 				
 				var texturePart = new Part {
 					Size = texture.Size,
@@ -96,14 +96,20 @@ public class GifImageNode : ResNode {
 				imageNode.AddPart(texturePart);
 			}
 			
-			timelineBuilder.AddAnimation((int)(currentPartId * frameDelay ), new TimelineKeyFrameSet {
-				PartId = currentPartId,
-			});
+			timelineBuilder.AddFrame((int)(currentPartId * frameDelay ), partId: currentPartId);
+
+			var endFrameIndex = (int) (processedImage.Frames.Count * frameDelay);
 			
-			timelineBuilder.AddLabelSet(0, (int)(processedImage.Frames.Count * frameDelay ), AtkTimelineJumpBehavior.LoopForever, 200);
+			AddTimeline(new TimelineBuilder()
+				.BeginFrameSet(1, endFrameIndex)
+				.AddLabel(1, 200, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(endFrameIndex, 0, AtkTimelineJumpBehavior.LoopForever, 200)
+				.EndFrameSet()
+				.Build());
 			
-			AddTimeline(timelineBuilder.BuildLabelSets());
-			imageNode.AddTimeline(timelineBuilder.BuildAnimations());
+			imageNode.AddTimeline(timelineBuilder
+				.EndFrameSet(endFrameIndex)
+				.Build());
 			
 			unsafe {
 				InternalResNode->Timeline->PlayAnimation(AtkTimelineJumpBehavior.LoopForever, 200);
