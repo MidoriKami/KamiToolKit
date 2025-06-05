@@ -17,7 +17,7 @@ internal class LabelSetBuilder {
 
 	public void AddStartPlayOncePair(int labelId, int start, int end) {
 		LabelSets.Add(new LabelSet(start, labelId, AtkTimelineJumpBehavior.Start, 0));
-		LabelSets.Add(new LabelSet(end, labelId, AtkTimelineJumpBehavior.PlayOnce, 0));
+		LabelSets.Add(new LabelSet(end, 0, AtkTimelineJumpBehavior.PlayOnce, 0));
 
 	}
 
