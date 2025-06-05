@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.System;
+
+public class EventHandler {
+	public required Action? EventAction { get; set; }
+	public IAddonEventHandle? EventHandle { get; set; }
+}
 
 public abstract unsafe partial class NodeBase {
 
@@ -27,7 +31,7 @@ public abstract unsafe partial class NodeBase {
 			});
 			
 			if (EventsActive) {
-				handler.EventHandle ??= EventManager.AddEvent((nint) EventAddonPointer, (nint) InternalResNode, eventType, HandleEvents);
+				handler.EventHandle ??= DalamudInterface.Instance.AddonEventManager.AddEvent((nint) EventAddonPointer, (nint) InternalResNode, eventType, HandleEvents);
 			}
 			
 			// If we have added a click event, we need to also make the cursor change when hovering this node
@@ -57,7 +61,7 @@ public abstract unsafe partial class NodeBase {
 				
 				// And if events are currently active, unregister them
 				if (EventsActive) {
-					EventManager.RemoveEvent(handler.EventHandle);
+					DalamudInterface.Instance.AddonEventManager.RemoveEvent(handler.EventHandle);
 					handler.EventHandle = null;
 				}
 				
@@ -112,10 +116,8 @@ public abstract unsafe partial class NodeBase {
 		set => Tooltip = value;
 	}
 	
-	private IAddonEventManager? EventManager { get; set; }
 	private AtkUnitBase* EventAddonPointer { get; set; }
 	
-	[MemberNotNullWhen(true, nameof(EventManager))]
 	private bool EventsActive { get; set; }
 	private bool TooltipRegistered { get; set; }
 	private bool CursorEventsSet { get; set; }
@@ -139,24 +141,24 @@ public abstract unsafe partial class NodeBase {
 		}
 	}
 
-	public virtual void EnableEvents(IAddonEventManager eventManager, AtkUnitBase* addon) {
-		EventManager ??= eventManager;
+	public virtual void EnableEvents(AtkUnitBase* addon) {
+		if (addon is null) return;
+
 		EventAddonPointer = addon;
 		EventsActive = true;
 
 		foreach (var (eventType, handler) in eventHandlers) {
-			handler.EventHandle = EventManager.AddEvent((nint) addon, (nint) InternalResNode, eventType, HandleEvents);
+			handler.EventHandle = DalamudInterface.Instance.AddonEventManager.AddEvent((nint) addon, (nint) InternalResNode, eventType, HandleEvents);
 		}
 	}
 	
-	public virtual void DisableEvents(IAddonEventManager eventManager) {
-		EventAddonPointer = null;
+	public virtual void DisableEvents() {
 		EventsActive = false;
 		
 		foreach (var (_, handler) in eventHandlers) {
 			if (handler.EventHandle is not null) {
 				
-				eventManager.RemoveEvent(handler.EventHandle);
+				DalamudInterface.Instance.AddonEventManager.RemoveEvent(handler.EventHandle);
 				handler.EventHandle = null;
 			}
 		}
@@ -177,22 +179,24 @@ public abstract unsafe partial class NodeBase {
 	}
 
 	protected void SetCursor(AddonCursorType cursor) {
-		EventManager?.SetCursor(cursor);
+		DalamudInterface.Instance.AddonEventManager.SetCursor(cursor);
 	}
 
 	protected void ResetCursor() {
-		EventManager?.ResetCursor();
+		DalamudInterface.Instance.AddonEventManager.ResetCursor();
 	}
 
 	public void ShowTooltip() {
 		if (Tooltip is not null && TooltipRegistered) {
-			AtkStage.Instance()->TooltipManager.ShowTooltip(EventAddonPointer->Id, InternalResNode, Tooltip.Encode());
+			var addon = GetAddonForNode(InternalResNode);
+			AtkStage.Instance()->TooltipManager.ShowTooltip(addon->Id, InternalResNode, Tooltip.Encode());
 		}
 	}
 
 	public void HideTooltip() {
 		if (Tooltip is not null && TooltipRegistered) {
-			AtkStage.Instance()->TooltipManager.HideTooltip(EventAddonPointer->Id);
+			var addon = GetAddonForNode(InternalResNode);
+			AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
 		}
 	}
 
@@ -201,9 +205,4 @@ public abstract unsafe partial class NodeBase {
 
 	private void ResetCursorMouseover()
 		=> ResetCursor();
-}
-
-public class EventHandler {
-	public required Action? EventAction { get; set; }
-	public IAddonEventHandle? EventHandle { get; set; }
 }

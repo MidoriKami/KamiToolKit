@@ -15,7 +15,6 @@ namespace KamiToolKit;
 /// Controller for custom native nodes, this class is required to attach custom nodes to native ui, this service will also keep track of the allocated nodes to prevent memory leaks.
 /// </summary>
 public unsafe class NativeController : IDisposable {
-	[PluginService] private IAddonEventManager AddonEventManager { get; set; } = null!;
 	[PluginService] private IFramework Framework { get; set; } = null!;
 	[PluginService] private IGameInteropProvider GameInteropProvider { get; set; } = null!;
 	
@@ -62,7 +61,7 @@ public unsafe class NativeController : IDisposable {
 			
 			customNode.RegisterAutoDetach(addon);
 			customNode.AttachNode(targetNode, position);
-			customNode.EnableEvents(AddonEventManager, addon);
+			customNode.EnableEvents(addon);
 		});
 
 	public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, NodePosition position = NodePosition.AsLastChild) {
@@ -71,21 +70,21 @@ public unsafe class NativeController : IDisposable {
 			
 			customNode.RegisterAutoDetach(addon);
 			customNode.AttachNode(targetNode, position);
-			customNode.EnableEvents(AddonEventManager, addon);
+			customNode.EnableEvents(addon);
 		});
 	}
 
 	public void AttachNode(NodeBase customNode, NativeAddon targetAddon, NodePosition position = NodePosition.AsLastChild) {
 		Framework.RunOnFrameworkThread(() => {
 			customNode.AttachNode(targetAddon, position);
-			customNode.EnableEvents(AddonEventManager, targetAddon.InternalAddon);
+			customNode.EnableEvents(targetAddon.InternalAddon);
 		});
 	}
 	
 	public void DetachNode(NodeBase? customNode, Action? disposeAction = null)
 		=> Framework.RunOnFrameworkThread(() => {
 			customNode?.UnregisterAutoDetach();
-			customNode?.DisableEvents(AddonEventManager);
+			customNode?.DisableEvents();
 			customNode?.DetachNode();
 			disposeAction?.Invoke();
 		});
