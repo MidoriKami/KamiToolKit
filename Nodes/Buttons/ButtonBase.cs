@@ -140,22 +140,22 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		
 		foreground.AddTimeline(timelineBuilder
 			.AddAnimation(1, new TimelineKeyFrameSet {
-				Position = new Vector2(8.0f, 8.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
+				Position = new Vector2(16.0f, 3.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
 			.AddAnimation(11, new TimelineKeyFrameSet {
-				Position = new Vector2(8.0f, 8.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
+				Position = new Vector2(16.0f, 3.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
 			.AddAnimation(18, new TimelineKeyFrameSet {
-				Position = new Vector2(8.0f, 9.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
+				Position = new Vector2(16.0f, 4.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
 			.AddAnimation(27, new TimelineKeyFrameSet {
-				Position = new Vector2(8.0f, 8.0f), Alpha = 153, MultiplyColor = new Vector3(80.0f, 80.0f, 80.0f),
+				Position = new Vector2(16.0f, 3.0f), Alpha = 153, MultiplyColor = new Vector3(80.0f, 80.0f, 80.0f),
 			})
 			.AddAnimation(37, new TimelineKeyFrameSet {
-				Position = new Vector2(8.0f, 8.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
+				Position = new Vector2(16.0f, 3.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
 			.AddAnimation(47, new TimelineKeyFrameSet {
-				Position = new Vector2(8.0f, 8.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
+				Position = new Vector2(16.0f, 3.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
 			.BuildAnimations()
 		);
