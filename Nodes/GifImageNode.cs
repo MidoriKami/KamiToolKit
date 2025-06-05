@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Interface.Textures;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -51,6 +52,10 @@ public class GifImageNode : ResNode {
 			base.Height = value;
 		}
 	}
+	
+	public Vector2 GifFrameSize { get; private set; }
+	
+	public bool FitNodeToGif { get; set; }
 
 	private async void LoadFrames(string filepath) {
 		try {
@@ -66,6 +71,11 @@ public class GifImageNode : ResNode {
 
 			uint currentPartId = 0;
 			var frameDelay = processedImage.Frames.RootFrame.Metadata.GetGifMetadata().FrameDelay / 3.33333333f;
+			GifFrameSize = new Vector2(processedImage.Width, processedImage.Height);
+
+			if (FitNodeToGif) {
+				Size = GifFrameSize;
+			}
 			
 			foreach (var frame in processedImage.Frames) {
 				var buffer = new byte[8 * frame.Width * frame.Height];
