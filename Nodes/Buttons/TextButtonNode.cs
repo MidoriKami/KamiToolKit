@@ -70,5 +70,5 @@ public unsafe class TextButtonNode : ButtonBase {
 	}
 
 	private void LoadTimelines()
-		=> LoadThreePartTimelines(this, backgroundNode, labelNode);
+		=> LoadThreePartTimelines(this, backgroundNode, labelNode, new Vector2(16.0f, 3.0f));
 }

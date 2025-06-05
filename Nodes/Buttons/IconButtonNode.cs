@@ -73,5 +73,5 @@ public class IconButtonNode : ButtonBase {
 	}
 
 	private void LoadTimelines()
-		=> LoadThreePartTimelines(this, backgroundNode, imageNode);
+		=> LoadThreePartTimelines(this, backgroundNode, imageNode, new Vector2(8.0f, 8.0f));
 }
