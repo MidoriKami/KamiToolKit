@@ -70,7 +70,7 @@ public class TimelineKeyFrame {
 				Float2 = new StdPair<float, float>(value.X, value.Y),
 			};
 
-			GroupType = AtkTimelineKeyGroupType.Float;
+			GroupType = AtkTimelineKeyGroupType.Float2;
 			GroupSelector = KeyFrameGroupType.Scale;
 		}
 	}
