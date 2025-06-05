@@ -23,6 +23,7 @@ public class TimelineKeyFrame {
 			};
 
 			GroupSelector = KeyFrameGroupType.Position;
+			GroupType = AtkTimelineKeyGroupType.Float2;
 		}
 	}
 
