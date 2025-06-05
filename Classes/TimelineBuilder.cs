@@ -1,18 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.NodeParts;
 
 namespace KamiToolKit.Classes;
 
-internal record Animation(int Frame, TimelineKeyFrameSet Data);
-
-public class TimelineBuilder(LabelSetBuilder labelSetBuilder) {
+public class TimelineBuilder {
 
 	private AtkTimelineMask timelineMask = AtkTimelineMask.VendorSpecific2;
 
-	private readonly List<Animation> animations = [];
-	
+	private LabelSetBuilder labelSetBuilder = new();
+	private AnimationBuilder animationBuilder = new();
+
 	public TimelineBuilder SetMask(AtkTimelineMask mask) {
 		timelineMask = mask;
 		return this;
@@ -23,48 +22,64 @@ public class TimelineBuilder(LabelSetBuilder labelSetBuilder) {
 		return this;
 	}
 
-	public TimelineBuilder AddFrame(int frame, TimelineKeyFrameSet data) {
-		data.FrameIndex = frame;
-
-		foreach (var keyFrame in data.KeyFrames) {
-			keyFrame.FrameIndex = frame;
-		}
-		
-		animations.Add(new Animation(frame, data));
+	public TimelineBuilder AddLabelSetPair(int labelId, Range range) {
+		labelSetBuilder.AddStartPlayOncePair(labelId, range);
 		return this;
 	}
 
-	public Timeline Build() => new() {
-		Mask = timelineMask,
-		Animations = BuildAnimations(),
+	public TimelineBuilder AddLabelSetPair(int labelId, int start, int end) {
+		labelSetBuilder.AddStartPlayOncePair(labelId, start, end);
+		return this;
+	}
+
+	public TimelineBuilder AddLabelSet(int labelId, int frame, AtkTimelineJumpBehavior jumpBehavior, int targetLabel) {
+		labelSetBuilder.AddLabelSet(labelId, frame, jumpBehavior, targetLabel);
+		return this;
+	}
+
+	public TimelineBuilder AddAnimation(int frame, TimelineKeyFrameSet animation) {
+		animationBuilder.AddAnimation(frame, animation);
+		return this;
+	}
+
+	public TimelineBuilder ResetAnimations() {
+		animationBuilder = new AnimationBuilder();
+		return this;
+	}
+
+	public TimelineBuilder ResetLabelSet() {
+		labelSetBuilder = new LabelSetBuilder();
+		return this;
+	}
+
+	// Set ResetAnimations to true if you need to reuse the existing label sets for another animation
+	public Timeline BuildAnimations(bool resetAnimations = false) {
+		var builtTimeline =  new Timeline {
+			Mask = timelineMask, 
+			LabelEndFrameIdx = labelSetBuilder.LabelSets.Last().FrameId, 
+			LabelFrameIdxDuration = labelSetBuilder.LabelSets.Last().FrameId - 1, 
+			Animations = animationBuilder.Build(labelSetBuilder),
+		};
+
+		if (resetAnimations) {
+			ResetAnimations();
+		}
+
+		return builtTimeline;
+	}
+
+	public Timeline BuildLabelSets() => new() {
+		Mask = timelineMask, 
+		LabelEndFrameIdx = labelSetBuilder.LabelSets.Last().FrameId, 
+		LabelFrameIdxDuration = labelSetBuilder.LabelSets.Last().FrameId - 1,
+		LabelSets = [ labelSetBuilder.Build() ],
 	};
 
-	private List<TimelineAnimation> BuildAnimations() {
-		var builtAnimations = new List<TimelineAnimation>();
-
-		foreach(var index in Enumerable.Range(0, labelSetBuilder.LabelSets.Count / 2)) {
-			var startLabel = labelSetBuilder.LabelSets.ElementAt(index);
-			var endLabel = labelSetBuilder.LabelSets.ElementAt(index + 1);
-
-			var keyFramesForFrameSet = new List<TimelineKeyFrame>();
-			
-			foreach (var animation in animations) {
-				
-				// If this animation has frames within this set
-				if (animation.Frame >= startLabel.FrameId && animation.Frame <= endLabel.FrameId) {
-					
-					// Add each keyframe for that animation
-					keyFramesForFrameSet.AddRange(animation.Data.KeyFrames);
-				}
-			}
-			
-			builtAnimations.Add(new TimelineAnimation {
-				StartFrameId = startLabel.FrameId,
-				EndFrameId = endLabel.FrameId,
-				KeyFrames = keyFramesForFrameSet,
-			});
-		}
-		
-		return builtAnimations;
-	}
+	public Timeline BuildEverything() => new() {
+		Mask = timelineMask, 
+		LabelEndFrameIdx = labelSetBuilder.LabelSets.Last().FrameId, 
+		LabelFrameIdxDuration = labelSetBuilder.LabelSets.Last().FrameId - 1,
+		Animations = animationBuilder.Build(labelSetBuilder),
+		LabelSets = [ labelSetBuilder.Build() ],
+	};
 }

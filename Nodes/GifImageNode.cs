@@ -61,11 +61,10 @@ public class GifImageNode : ResNode {
 			using var processedImage = Image.Load<Rgba32>(memoryStream);
 			if (processedImage.Frames.Count is 0) return;
 
-			var labelSetBuilder = new LabelSetBuilder().AddLabelSet(200, 1, AtkTimelineJumpBehavior.Start, 0);
-			var timelineBuilder = new TimelineBuilder(labelSetBuilder);
+			var timelineBuilder = new TimelineBuilder()
+				.AddLabelSet(200, 1, AtkTimelineJumpBehavior.Start, 0);
 
 			uint currentPartId = 0;
-
 			var frameDelay = processedImage.Frames.RootFrame.Metadata.GetGifMetadata().FrameDelay / 3.33333333f;
 			
 			foreach (var frame in processedImage.Frames) {
@@ -74,7 +73,7 @@ public class GifImageNode : ResNode {
 				frame.CopyPixelDataTo(buffer);
 			
 				var texture = await DalamudInterface.Instance.TextureProvider.CreateFromRawAsync(RawImageSpecification.Rgba32(frame.Width, frame.Height), buffer);
-				timelineBuilder.AddFrame((int)(currentPartId * frameDelay ), new TimelineKeyFrameSet {
+				timelineBuilder.AddAnimation((int)(currentPartId * frameDelay ), new TimelineKeyFrameSet {
 					PartId = currentPartId,
 				});
 				
@@ -87,16 +86,15 @@ public class GifImageNode : ResNode {
 				imageNode.AddPart(texturePart);
 			}
 			
-			timelineBuilder.AddFrame((int)(currentPartId * frameDelay ), new TimelineKeyFrameSet {
+			timelineBuilder.AddAnimation((int)(currentPartId * frameDelay ), new TimelineKeyFrameSet {
 				PartId = currentPartId,
 			});
 			
-			labelSetBuilder.AddLabelSet(0, (int)(processedImage.Frames.Count * frameDelay ), AtkTimelineJumpBehavior.LoopForever, 200);
+			timelineBuilder.AddLabelSet(0, (int)(processedImage.Frames.Count * frameDelay ), AtkTimelineJumpBehavior.LoopForever, 200);
 			
-			AddTimeline(labelSetBuilder.Build());
+			AddTimeline(timelineBuilder.BuildLabelSets());
+			imageNode.AddTimeline(timelineBuilder.BuildAnimations());
 			
-			imageNode.AddTimeline(timelineBuilder.Build());
-
 			unsafe {
 				InternalResNode->Timeline->PlayAnimation(AtkTimelineJumpBehavior.LoopForever, 200);
 			}

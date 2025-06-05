@@ -61,104 +61,103 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		=> ComponentBase->SetEnabledState(!Component->IsEnabled);
 
 	protected void LoadTwoPartTimelines(NodeBase parent, NodeBase foreground) {
-		var labelSet = new LabelSetBuilder()
-			.AddStartPlayOncePair(1, 1, 9)
-			.AddStartPlayOncePair(2, 10, 19)
-			.AddStartPlayOncePair(3, 20, 29)
-			.AddStartPlayOncePair(7, 30, 39)
-			.AddStartPlayOncePair(6, 40, 49)
-			.AddStartPlayOncePair(4, 50, 59);
+		var timelineBuilder = new TimelineBuilder()
+			.AddLabelSetPair(1, 1, 9)
+			.AddLabelSetPair(2, 10, 19)
+			.AddLabelSetPair(3, 20, 29)
+			.AddLabelSetPair(7, 30, 39)
+			.AddLabelSetPair(6, 40, 49)
+			.AddLabelSetPair(4, 50, 59);
 		
-		parent.AddTimeline(labelSet.Build());
+		parent.AddTimeline(timelineBuilder.BuildLabelSets());
 
-		var timelineBuilder = new TimelineBuilder(labelSet)
-			.AddFrame(1, new TimelineKeyFrameSet {
+		foreground.AddTimeline(timelineBuilder
+			.AddAnimation(1, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
-			.AddFrame(10, new TimelineKeyFrameSet {
+			.AddAnimation(10, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
-			.AddFrame(12, new TimelineKeyFrameSet {
+			.AddAnimation(12, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f), AddColor = new Vector3(16.0f, 16.0f, 16.0f),
 			})
-			.AddFrame(20, new TimelineKeyFrameSet {
+			.AddAnimation(20, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 1.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f), AddColor = new Vector3(16.0f, 16.0f, 16.0f),
 			})
-			.AddFrame(30, new TimelineKeyFrameSet {
+			.AddAnimation(30, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 178, MultiplyColor = new Vector3(50.0f, 50.0f, 50.0f),
 			})
-			.AddFrame(40, new TimelineKeyFrameSet {
+			.AddAnimation(40, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f), AddColor = new Vector3(16.0f, 16.0f, 16.0f),
 			})
-			.AddFrame(50, new TimelineKeyFrameSet {
+			.AddAnimation(50, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f), AddColor = new Vector3(16.0f, 16.0f, 16.0f),
 			})
-			.AddFrame(52, new TimelineKeyFrameSet {
+			.AddAnimation(52, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
-			});
-
-		foreground.AddTimeline(timelineBuilder.Build());
+			})
+			.BuildAnimations());
 	}
 
 	protected void LoadThreePartTimelines(NodeBase parent, NodeBase background, NodeBase foreground) {
-		var labelSet = new LabelSetBuilder()
-			.AddStartPlayOncePair(1, 1, 10)
-			.AddStartPlayOncePair(2, 11, 17)
-			.AddStartPlayOncePair(3, 18, 26)
-			.AddStartPlayOncePair(7, 27, 36)
-			.AddStartPlayOncePair(6, 37, 46)
-			.AddStartPlayOncePair(4, 47, 53);
+		var timelineBuilder = new TimelineBuilder()
+			.AddLabelSetPair(1, 1, 10)
+			.AddLabelSetPair(2, 11, 17)
+			.AddLabelSetPair(3, 18, 26)
+			.AddLabelSetPair(7, 27, 36)
+			.AddLabelSetPair(6, 37, 46)
+			.AddLabelSetPair(4, 47, 53);
 		
-		parent.AddTimeline(labelSet.Build());
+		parent.AddTimeline(timelineBuilder.BuildLabelSets());
 		
-		background.AddTimeline(new TimelineBuilder(labelSet)
-			.AddFrame(1, new TimelineKeyFrameSet {
+		background.AddTimeline(timelineBuilder
+			.AddAnimation(1, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
-			.AddFrame(11, new TimelineKeyFrameSet {
+			.AddAnimation(11, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
-			.AddFrame(13, new TimelineKeyFrameSet {
+			.AddAnimation(13, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f), AddColor = new Vector3(16.0f, 16.0f, 16.0f),
 			})
-			.AddFrame(18, new TimelineKeyFrameSet {
+			.AddAnimation(18, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 1.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f), AddColor = new Vector3(16.0f, 16.0f, 16.0f),
 			})
-			.AddFrame(27, new TimelineKeyFrameSet {
+			.AddAnimation(27, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 178, MultiplyColor = new Vector3(50.0f, 50.0f, 50.0f),
 			})
-			.AddFrame(37, new TimelineKeyFrameSet {
+			.AddAnimation(37, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f), AddColor = new Vector3(16.0f, 16.0f, 16.0f),
 			})
-			.AddFrame(47, new TimelineKeyFrameSet {
+			.AddAnimation(47, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f), AddColor = new Vector3(16.0f, 16.0f, 16.0f),
 			})
-			.AddFrame(53, new TimelineKeyFrameSet {
+			.AddAnimation(53, new TimelineKeyFrameSet {
 				Position = new Vector2(0.0f, 0.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
-			.Build()
+			.BuildAnimations(true)
 		);
 		
-		foreground.AddTimeline(new TimelineBuilder(labelSet)
-			.AddFrame(1, new TimelineKeyFrameSet {
+		foreground.AddTimeline(timelineBuilder
+			.AddAnimation(1, new TimelineKeyFrameSet {
 				Position = new Vector2(8.0f, 8.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
-			.AddFrame(11, new TimelineKeyFrameSet {
+			.AddAnimation(11, new TimelineKeyFrameSet {
 				Position = new Vector2(8.0f, 8.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
-			.AddFrame(18, new TimelineKeyFrameSet {
+			.AddAnimation(18, new TimelineKeyFrameSet {
 				Position = new Vector2(8.0f, 9.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
-			.AddFrame(27, new TimelineKeyFrameSet {
+			.AddAnimation(27, new TimelineKeyFrameSet {
 				Position = new Vector2(8.0f, 8.0f), Alpha = 153, MultiplyColor = new Vector3(80.0f, 80.0f, 80.0f),
 			})
-			.AddFrame(37, new TimelineKeyFrameSet {
+			.AddAnimation(37, new TimelineKeyFrameSet {
 				Position = new Vector2(8.0f, 8.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
-			.AddFrame(47, new TimelineKeyFrameSet {
+			.AddAnimation(47, new TimelineKeyFrameSet {
 				Position = new Vector2(8.0f, 8.0f), Alpha = 255, MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
-			.Build()
+			.BuildAnimations()
 		);
 	}
 }

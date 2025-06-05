@@ -181,30 +181,30 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 	public Vector2 ContentStartPosition => new(backgroundImageNode.X, backgroundImageNode.Y + HeaderHeight);
 	
 	private void LoadTimelines() {
-		var labelSet = new LabelSetBuilder()
-			.AddStartPlayOncePair(17, 1, 9)
-			.AddStartPlayOncePair(18, 10, 19)
-			.AddStartPlayOncePair(7, 20, 29);
+		var timelineBuilder = new TimelineBuilder()
+			.AddLabelSetPair(17, 1, 9)
+			.AddLabelSetPair(18, 10, 19)
+			.AddLabelSetPair(7, 20, 29);
 		
-		AddTimeline(labelSet.Build());
+		AddTimeline(timelineBuilder.BuildLabelSets());
 		
-		backgroundNode.AddTimeline(new TimelineBuilder(labelSet)
-			.AddFrame(1, new TimelineKeyFrameSet {
+		backgroundNode.AddTimeline(timelineBuilder
+			.AddAnimation(1, new TimelineKeyFrameSet {
 				MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
-			.AddFrame(10, new TimelineKeyFrameSet {
+			.AddAnimation(10, new TimelineKeyFrameSet {
 				MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
 			})
-			.AddFrame(20, new TimelineKeyFrameSet {
+			.AddAnimation(20, new TimelineKeyFrameSet {
 				MultiplyColor = new Vector3(50.0f, 50.0f, 50.0f),
 			})
-			.Build()
+			.BuildAnimations(true)
 		);
 		
-		borderNode.AddTimeline(new TimelineBuilder(labelSet)
-			.AddFrame(10, new TimelineKeyFrameSet { Alpha = 0 })
-			.AddFrame(12, new TimelineKeyFrameSet { Alpha = 255 })
-			.Build()
+		borderNode.AddTimeline(timelineBuilder
+			.AddAnimation(10, new TimelineKeyFrameSet { Alpha = 0 })
+			.AddAnimation(12, new TimelineKeyFrameSet { Alpha = 255 })
+			.BuildAnimations()
 		);
 	}
 }
