@@ -24,8 +24,8 @@ internal class AnimationBuilder {
 		var builtAnimations = new List<TimelineAnimation>();
 
 		foreach(var index in Enumerable.Range(0, labelSetBuilder.LabelSets.Count / 2)) {
-			var startLabel = labelSetBuilder.LabelSets.ElementAt(index);
-			var endLabel = labelSetBuilder.LabelSets.ElementAt(index + 1);
+			var startLabel = labelSetBuilder.LabelSets.ElementAt(index * 2);
+			var endLabel = labelSetBuilder.LabelSets.ElementAt(index * 2 + 1);
 
 			var keyFramesForFrameSet = new List<TimelineKeyFrame>();
 			
