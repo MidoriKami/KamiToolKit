@@ -61,37 +61,20 @@ public class GifImageNode : ResNode {
 			using var processedImage = Image.Load<Rgba32>(memoryStream);
 			if (processedImage.Frames.Count is 0) return;
 
-			var labelSetBuilder = new LabelSetBuilder()
-				.AddLabelSet(200, 1, processedImage.Frames.Count * 3);
-			
+			var labelSetBuilder = new LabelSetBuilder().AddLabelSet(200, 1, AtkTimelineJumpBehavior.Start, 0);
 			var timelineBuilder = new TimelineBuilder(labelSetBuilder);
 
-			AddTimeline(new Timeline {
-				Mask = (AtkTimelineMask) 0xFF,
-				LabelEndFrameIdx = processedImage.Frames.Count * 3,
-				LabelFrameIdxDuration = processedImage.Frames.Count * 3 - 1,
-				LabelSets = [
-					new TimelineLabelSet {
-						StartFrameId = 1, EndFrameId = processedImage.Frames.Count * 3, Labels = [
-							new TimelineLabelFrame { FrameIndex = 1,  LabelId = 200, JumpBehavior = AtkTimelineJumpBehavior.Start },
-							new TimelineLabelFrame { FrameIndex = 138,  LabelId = 0, JumpBehavior = AtkTimelineJumpBehavior.LoopForever, JumpLabelId = 200},
-						],
-					},
-				],
-			});
-			
 			uint currentPartId = 0;
+
+			var frameDelay = processedImage.Frames.RootFrame.Metadata.GetGifMetadata().FrameDelay / 3.33333333f;
 			
 			foreach (var frame in processedImage.Frames) {
-				// var delay = frame.Metadata.GetGifMetadata().FrameDelay / 100.0f;
-				// if(delay < 0.02f) delay = 0.1f;
-			
 				var buffer = new byte[8 * frame.Width * frame.Height];
 			
 				frame.CopyPixelDataTo(buffer);
 			
 				var texture = await DalamudInterface.Instance.TextureProvider.CreateFromRawAsync(RawImageSpecification.Rgba32(frame.Width, frame.Height), buffer);
-				timelineBuilder.AddFrame((int)(3 * currentPartId), new TimelineKeyFrameSet {
+				timelineBuilder.AddFrame((int)(currentPartId * frameDelay ), new TimelineKeyFrameSet {
 					PartId = currentPartId,
 				});
 				
@@ -101,9 +84,16 @@ public class GifImageNode : ResNode {
 				};
 				
 				texturePart.LoadTexture(texture);
-				
 				imageNode.AddPart(texturePart);
 			}
+			
+			timelineBuilder.AddFrame((int)(currentPartId * frameDelay ), new TimelineKeyFrameSet {
+				PartId = currentPartId,
+			});
+			
+			labelSetBuilder.AddLabelSet(0, (int)(processedImage.Frames.Count * frameDelay ), AtkTimelineJumpBehavior.LoopForever, 200);
+			
+			AddTimeline(labelSetBuilder.Build());
 			
 			imageNode.AddTimeline(timelineBuilder.Build());
 
