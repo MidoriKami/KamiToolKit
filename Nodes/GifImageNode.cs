@@ -67,11 +67,9 @@ public class GifImageNode : ResNode {
 			using var processedImage = Image.Load<Rgba32>(memoryStream);
 			if (processedImage.Frames.Count is 0) return;
 
-			var timelineBuilder = new TimelineBuilder()
-				.BeginFrameSet(1, 999);
-
 			uint currentPartId = 0;
 			var frameDelay = processedImage.Frames.RootFrame.Metadata.GetGifMetadata().FrameDelay / 3.33333333f;
+			var frameCount = (int)( processedImage.Frames.Count * frameDelay );
 			GifFrameSize = new Vector2(processedImage.Width, processedImage.Height);
 
 			if (FitNodeToGif) {
@@ -85,8 +83,6 @@ public class GifImageNode : ResNode {
 			
 				var texture = await DalamudInterface.Instance.TextureProvider.CreateFromRawAsync(RawImageSpecification.Rgba32(frame.Width, frame.Height), buffer);
 				
-				timelineBuilder.AddFrame((int)(currentPartId * frameDelay ), partId: currentPartId);
-				
 				var texturePart = new Part {
 					Size = texture.Size,
 					Id = currentPartId++,
@@ -96,19 +92,18 @@ public class GifImageNode : ResNode {
 				imageNode.AddPart(texturePart);
 			}
 			
-			timelineBuilder.AddFrame((int)(currentPartId * frameDelay ), partId: currentPartId);
-
-			var endFrameIndex = (int) (processedImage.Frames.Count * frameDelay);
-			
-			AddTimeline(new TimelineBuilder()
-				.BeginFrameSet(1, endFrameIndex)
-				.AddLabel(1, 200, AtkTimelineJumpBehavior.Start, 0)
-				.AddLabel(endFrameIndex, 0, AtkTimelineJumpBehavior.LoopForever, 200)
+			imageNode.AddTimeline(new TimelineBuilder()
+				.BeginFrameSet(1, frameCount)
+				.AddFrame(0, partId: 0)
+				.AddFrame(frameCount, partId: currentPartId)
 				.EndFrameSet()
 				.Build());
-			
-			imageNode.AddTimeline(timelineBuilder
-				.EndFrameSet(endFrameIndex)
+
+			AddTimeline(new TimelineBuilder()
+				.BeginFrameSet(1, frameCount)
+				.AddLabel(1, 200, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(frameCount, 0, AtkTimelineJumpBehavior.LoopForever, 200)
+				.EndFrameSet()
 				.Build());
 			
 			unsafe {
