@@ -89,15 +89,15 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		Data->Nodes[1] = backgroundNode.NodeId;
 		Data->Nodes[2] = cursorNode.NodeId;
 		Data->Nodes[3] = selectionListNode.NodeId;
-		Data->Nodes[4] = selectionListNode.Buttons[0].NodeId;
-		Data->Nodes[5] = selectionListNode.Buttons[1].NodeId;
-		Data->Nodes[6] = selectionListNode.Buttons[2].NodeId;
-		Data->Nodes[7] = selectionListNode.Buttons[3].NodeId;
+		Data->Nodes[4] = selectionListNode.Buttons[8].NodeId;
+		Data->Nodes[5] = selectionListNode.Buttons[7].NodeId;
+		Data->Nodes[6] = selectionListNode.Buttons[6].NodeId;
+		Data->Nodes[7] = selectionListNode.Buttons[5].NodeId;
 		Data->Nodes[8] = selectionListNode.Buttons[4].NodeId;
-		Data->Nodes[9] = selectionListNode.Buttons[5].NodeId;
-		Data->Nodes[10] = selectionListNode.Buttons[6].NodeId;
-		Data->Nodes[11] = selectionListNode.Buttons[7].NodeId;
-		Data->Nodes[12] = selectionListNode.Buttons[8].NodeId;
+		Data->Nodes[9] = selectionListNode.Buttons[3].NodeId;
+		Data->Nodes[10] = selectionListNode.Buttons[2].NodeId;
+		Data->Nodes[11] = selectionListNode.Buttons[1].NodeId;
+		Data->Nodes[12] = selectionListNode.Buttons[0].NodeId;
 		Data->Nodes[13] = selectionListNode.LabelNode.NodeId;
 		Data->Nodes[14] = selectionListNode.BackgroundNode.NodeId;
 		Data->Nodes[15] = textLimitsNode.NodeId;
@@ -110,7 +110,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		Data->MaxLine = 1;
 		Data->MaxByte = 0;
 		Data->MaxChar = 40;
-		Data->Flags1 = 208;
+		Data->Flags1 = 208 + 0xC;
 		Data->CharSet = 0;
 		Data->Flags2 = 3;
 
