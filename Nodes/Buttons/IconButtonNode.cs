@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
@@ -23,7 +22,7 @@ public class IconButtonNode : ButtonBase {
 			IsVisible = true,
 		};
 
-		backgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		backgroundNode.AttachNode(this);
 		
 		imageNode = new IconImageNode {
 			IsVisible = true,
@@ -31,7 +30,7 @@ public class IconButtonNode : ButtonBase {
 			NodeId = 3,
 		};
 		
-		imageNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		imageNode.AttachNode(this);
 
 		LoadTimelines();
 		
