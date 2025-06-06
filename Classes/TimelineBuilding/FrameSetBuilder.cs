@@ -35,6 +35,15 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 		return this;
 	}
 
+	public FrameSetBuilder AddEmptyFrame(int frameId) {
+		animationKeyFrames.Add(new TimelineAnimationKeyFrame {
+			FrameIndex = frameId,
+			GroupType = AtkTimelineKeyGroupType.None,
+		});
+		
+		return this;
+	}
+	
 	public FrameSetBuilder AddFrame(int frameId, Vector2? position = null, byte? alpha = null, Vector3? addColor = null, Vector3? multiplyColor = null,
 		float? rotation = null, Vector2? scale = null, Vector3? textColor = null, Vector3? textOutlineColor = null, uint? partId = null) {
 		if (position is not null) {
@@ -132,7 +141,7 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 		return new KeyFrameBuilder(this, frame);
 	}
 
-	public TimelineBuilder EndFrameSet(int? updateEndFrameId = null) {
+	public TimelineBuilder EndFrameSet(int? updateEndFrameId = null, bool forceGenerate = false) {
 		if (labelKeyFrames.Count != 0) {
 			parent.LabelSets.Add(new TimelineLabelSet {
 				StartFrameId = startFrameId,
