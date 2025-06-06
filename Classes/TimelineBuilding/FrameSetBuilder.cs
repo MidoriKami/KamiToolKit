@@ -141,11 +141,11 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 		return new KeyFrameBuilder(this, frame);
 	}
 
-	public TimelineBuilder EndFrameSet(int? updateEndFrameId = null, bool forceGenerate = false) {
+	public TimelineBuilder EndFrameSet() {
 		if (labelKeyFrames.Count != 0) {
 			parent.LabelSets.Add(new TimelineLabelSet {
 				StartFrameId = startFrameId,
-				EndFrameId = updateEndFrameId ?? endFrameId,
+				EndFrameId = endFrameId,
 				Labels = labelKeyFrames,
 			});
 		}
@@ -153,7 +153,7 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 		if (animationKeyFrames.Count != 0) {
 			parent.Animations.Add(new TimelineAnimation {
 				StartFrameId = startFrameId,
-				EndFrameId = updateEndFrameId ?? endFrameId,
+				EndFrameId = endFrameId,
 				KeyFrames = animationKeyFrames,
 			});
 		}
