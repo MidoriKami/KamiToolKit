@@ -18,6 +18,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 	private readonly CursorNode cursorNode;
 	
 	public TextInputNode() {
+		SetInternalComponentType(ComponentType.TextInput);
+		
 		backgroundNode = new SimpleNineGridNode {
 			NodeId = 19,
 			TexturePath = "ui/uld/TextInputA.tex",
@@ -106,13 +108,14 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		Data->IMEColor = new ByteColor { R = 67 };
 		Data->FocusColor = KnownColor.Black.Vector().ToByteColor();
 		
+		Flags1 = TextInputFlags1.EnableIME | TextInputFlags1.AllowUpperCase | TextInputFlags1.AllowLowerCase;
+		Flags2 = TextInputFlags2.AllowNumberInput | TextInputFlags2.AllowSymbolInput;
+		
 		Data->MaxWidth = 0;
 		Data->MaxLine = 1;
 		Data->MaxByte = 0;
 		Data->MaxChar = 40;
-		Data->Flags1 = 208 + 0xC;
 		Data->CharSet = 0;
-		Data->Flags2 = 3;
 
 		LoadTimelines();
 
@@ -151,6 +154,16 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			currentTextNode.Height = value - 10.0f;
 			base.Height = value;
 		}
+	}
+
+	public TextInputFlags1 Flags1 {
+		get => (TextInputFlags1) Data->Flags1;
+		set => Data->Flags1 = (byte) value;
+	}
+
+	public TextInputFlags2 Flags2 {
+		get => (TextInputFlags2) Data->Flags2;
+		set => Data->Flags2 = (byte) value;
 	}
 	
 	private void LoadTimelines() {
