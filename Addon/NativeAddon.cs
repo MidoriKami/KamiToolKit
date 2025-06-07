@@ -25,12 +25,6 @@ public abstract unsafe partial class NativeAddon {
 		Log.Verbose($"[KamiToolKit] [{InternalName}] Beginning Native Addon Allocation");
 
 		InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
-
-		// Overwrite virtual table with a custom copy,
-		// Note: currently there are 73 vfuncs, but there's no harm in copying more for when they add new vfuncs to the game
-		virtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 100);
-		NativeMemory.Copy(InternalAddon->VirtualTable, virtualTable,0x8 * 100);
-		InternalAddon->VirtualTable = virtualTable;
 		
 		RegisterVirtualTable();
 

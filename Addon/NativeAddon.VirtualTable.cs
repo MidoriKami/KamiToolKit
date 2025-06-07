@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 
 namespace KamiToolKit.Addon;
 
@@ -18,6 +19,13 @@ public abstract unsafe partial class NativeAddon {
 	private AtkUnitBase.Delegates.Hide hideFunction = null!;
 
 	private void RegisterVirtualTable() {
+
+		// Overwrite virtual table with a custom copy,
+		// Note: currently there are 73 vfuncs, but there's no harm in copying more for when they add new vfuncs to the game
+		virtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 100);
+		NativeMemory.Copy(InternalAddon->VirtualTable, virtualTable,0x8 * 100);
+		InternalAddon->VirtualTable = virtualTable;
+		
 		initializeFunction = Initialize;
 		onSetupFunction = Setup;
 		showFunction = Show;
