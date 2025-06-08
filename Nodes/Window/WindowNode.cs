@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes.Window;
@@ -27,7 +26,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible |NodeFlags.Enabled |NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.EmitsEvents,
 		};
 		
-		headerCollisionNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		headerCollisionNode.AttachNode(this);
 
 		backgroundNode = new WindowBackgroundNode(false) {
 			NodeId = 11,
@@ -37,7 +36,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 			PartsRenderType = 19,
 		};
 		
-		backgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		backgroundNode.AttachNode(this);
 
 		borderNode = new WindowBackgroundNode(true) {
 			NodeId = 10,
@@ -47,7 +46,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 			PartsRenderType = 7,
 		};
 		
-		borderNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		borderNode.AttachNode(this);
 
 		backgroundImageNode = new SimpleImageNode {
 			NodeId = 9,
@@ -59,14 +58,14 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 			TextureSize = new Vector2(24.0f, 24.0f),
 		};
 		
-		backgroundImageNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		backgroundImageNode.AttachNode(this);
 
 		headerNode = new WindowHeaderNode {
 			Size = new Vector2(477.0f, 38.0f),
 			NodeId = 2,
 			IsVisible = true,
 		};
-		headerNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		headerNode.AttachNode(this);
 		
 		Data->ShowCloseButton = 1;
 		Data->ShowConfigButton = 0;
