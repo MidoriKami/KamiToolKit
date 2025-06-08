@@ -25,11 +25,6 @@ public abstract unsafe partial class NativeAddon {
 		Log.Verbose($"[KamiToolKit] [{InternalName}] Beginning Native Addon Allocation");
 
 		InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
-
-		// Overwrite virtual table with a custom copy
-		virtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 73);
-		NativeMemory.Copy(InternalAddon->VirtualTable, virtualTable,0x8 * 73);
-		InternalAddon->VirtualTable = virtualTable;
 		
 		RegisterVirtualTable();
 

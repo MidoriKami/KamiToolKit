@@ -1,8 +1,13 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Numerics;
+using System.Runtime.InteropServices;
+using Dalamud.Game.Addon.Events;
+using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 using KamiToolKit.Extensions;
 
@@ -108,7 +113,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		Data->IMEColor = new ByteColor { R = 67 };
 		Data->FocusColor = KnownColor.Black.Vector().ToByteColor();
 		
-		Flags1 = TextInputFlags1.EnableIME | TextInputFlags1.AllowUpperCase | TextInputFlags1.AllowLowerCase;
+		Flags1 = TextInputFlags1.EnableIME | TextInputFlags1.AllowUpperCase | TextInputFlags1.AllowLowerCase | TextInputFlags1.EnableDictionary;
 		Flags2 = TextInputFlags2.AllowNumberInput | TextInputFlags2.AllowSymbolInput;
 		
 		Data->MaxWidth = 0;
@@ -118,10 +123,62 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		Data->CharSet = 0;
 
 		LoadTimelines();
-
+		
+		SetupVirtualTable();
+		
 		InitializeComponentEvents();
+		
+		CollisionNode.AddEvent(AddonEventType.InputReceived, InputComplete);
 	}
 
+	private AtkTextInputEventInterfaceVirtualTable* virtualTable;
+	
+	public delegate void TextInputVirtualFuncDelegate(AtkTextInput.AtkTextInputEventInterface* listener, ushort* numEvents);
+
+	private delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, ushort*, void> originalFunction;
+	private TextInputVirtualFuncDelegate? pinnedFunction;
+
+	[StructLayout(LayoutKind.Explicit, Size = 0x8)]
+	public struct AtkTextInputEventInterface {
+		[FieldOffset(0)] public AtkTextInputEventInterfaceVirtualTable* VirtualTable;
+	}
+
+	[StructLayout(LayoutKind.Explicit, Size = 0x8 * 5)]
+	public struct AtkTextInputEventInterfaceVirtualTable {
+		[FieldOffset(8)] public delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, ushort*, void> OnInputReceived;
+	}
+	
+	private void SetupVirtualTable() {
+
+		// Note: This virtual table only has 5 entries, but we will make it have 10 in-case square enix adds another entry
+		var eventInterface = (AtkTextInputEventInterface*) &Component->AtkTextInputEventInterface;
+		
+		virtualTable = (AtkTextInputEventInterfaceVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 10);
+		NativeMemory.Copy(eventInterface->VirtualTable, virtualTable,0x8 * 10);
+		
+		eventInterface->VirtualTable = virtualTable;
+		
+		pinnedFunction = OnInputChanged;
+		
+		originalFunction = virtualTable->OnInputReceived;
+		virtualTable->OnInputReceived = (delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, ushort*, void>) Marshal.GetFunctionPointerForDelegate(pinnedFunction);
+	}
+	
+	public Action<SeString>? OnInputReceived { get; set; }
+
+	private void OnInputChanged(AtkTextInput.AtkTextInputEventInterface* listener, ushort* numEvents) {
+		originalFunction(listener, numEvents);
+		
+		try {
+			OnInputReceived?.Invoke(SeString.Parse(Component->UnkText1));
+		}
+		catch (Exception e) {
+			Log.Exception(e);
+		}
+	}
+	
+	public Action<SeString>? OnInputComplete { get; set; }
+	
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
 			backgroundNode.Dispose();
@@ -130,10 +187,26 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			currentTextNode.Dispose();
 			selectionListNode.Dispose();
 			
+			NativeMemory.Free(virtualTable);
+			
 			base.Dispose(disposing);
 		}
 	}
 	
+	private void InputComplete() {
+		OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
+	}
+
+	public override void EnableEvents(AtkUnitBase* addon) {
+		base.EnableEvents(addon);
+		CollisionNode.EnableEvents(addon);
+	}
+
+	public override void DisableEvents() {
+		base.DisableEvents();
+		CollisionNode.DisableEvents();
+	}
+
 	public override float Width {
 		get => base.Width;
 		set {
