@@ -30,7 +30,6 @@ public abstract unsafe partial class NodeBase {
     internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AsLastChild) {
         NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
 
-        AddToUldObjectsList(&target.ComponentBase->UldManager, InternalResNode);
         UpdateLinkedAddon();
         UpdateUldManager(target.InternalResNode);
     }
@@ -41,7 +40,6 @@ public abstract unsafe partial class NodeBase {
         
         NodeLinker.AttachNode(InternalResNode, target, position);
 
-        AddToUldObjectsList(uldManager, InternalResNode);
         UpdateLinkedAddon();
         UpdateUldManager(target);
     }
@@ -49,7 +47,6 @@ public abstract unsafe partial class NodeBase {
     internal void AttachNode(NativeAddon addon, NodePosition position = NodePosition.AsLastChild) {
         NodeLinker.AttachNode(InternalResNode, addon.InternalAddon->RootNode, position);
 
-        AddToUldObjectsList(&addon.InternalAddon->UldManager, InternalResNode);
         UpdateLinkedAddon();
         UpdateUldManager(addon.InternalAddon->RootNode);
     }
@@ -85,6 +82,7 @@ public abstract unsafe partial class NodeBase {
         var componentManager = GetUldManagerForNode(target);
         if (componentManager is not null) {
             componentManager->UpdateDrawNodeList();
+            AddToUldObjectsList(componentManager, InternalResNode);
             return;
         }
 
@@ -92,6 +90,7 @@ public abstract unsafe partial class NodeBase {
         if (parentAddon is not null) {
             parentAddon->UldManager.UpdateDrawNodeList();
             parentAddon->UpdateCollisionNodeList(false);
+            AddToUldObjectsList(&parentAddon->UldManager, InternalResNode);
         }
     }
 
