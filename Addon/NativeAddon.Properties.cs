@@ -38,7 +38,9 @@ public abstract unsafe partial class NativeAddon {
 		set => InternalPosition = value;
 	}
 
-	public bool IsOpen => InternalAddon is not null && InternalAddon->IsVisible; 
+	public bool IsOpen => InternalAddon is not null && InternalAddon->IsVisible;
+
+	public int AddonId => InternalAddon is null ? 0 : InternalAddon->Id;
 
 	private void SetInitialState() {
 		windowNode.SetTitle(Title, Subtitle);
