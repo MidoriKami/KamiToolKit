@@ -186,6 +186,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			textLimitsNode.Dispose();
 			currentTextNode.Dispose();
 			selectionListNode.Dispose();
+            cursorNode.Dispose();
 			
             NativeMemoryHelper.Free(virtualTable, 0x8 * 10);
 			
