@@ -114,6 +114,15 @@ public abstract unsafe partial class NativeAddon {
 			InternalAddon->Close(false);
 		});
 
+	public void Toggle() {
+		if (IsOpen) {
+			Close();
+		}
+		else {
+			Open();
+		}
+	}
+
 	private void LoadTimeline() {
 		rootNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 89)
