@@ -73,7 +73,7 @@ public abstract unsafe partial class NodeBase {
         var nativeEvent = InternalResNode->AtkEventManager.Event;
 
         while (nativeEvent is not null) {
-            InternalResNode->RemoveEvent(nativeEvent->State.EventType, nativeEvent->Param, nativeEvent->Listener, (nativeEvent->State.StateFlags & AtkEventStateFlags.IsGlobalEvent) != 0);
+            InternalResNode->AtkEventManager.UnregisterEvent(nativeEvent->State.EventType, nativeEvent->Param, nativeEvent->Listener, (nativeEvent->State.StateFlags & AtkEventStateFlags.IsGlobalEvent) != 0);
             nativeEvent = nativeEvent->NextEvent;
         }
     }
