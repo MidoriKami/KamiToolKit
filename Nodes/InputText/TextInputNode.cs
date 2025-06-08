@@ -153,8 +153,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		// Note: This virtual table only has 5 entries, but we will make it have 10 in-case square enix adds another entry
 		var eventInterface = (AtkTextInputEventInterface*) &Component->AtkTextInputEventInterface;
 		
-		virtualTable = (AtkTextInputEventInterfaceVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 5);
-		NativeMemoryHelper.Copy(eventInterface->VirtualTable, virtualTable,0x8 * 5);
+		virtualTable = (AtkTextInputEventInterfaceVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 10);
+		NativeMemory.Copy(eventInterface->VirtualTable, virtualTable,0x8 * 10);
 		
 		eventInterface->VirtualTable = virtualTable;
 		
@@ -170,7 +170,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		originalFunction(listener, numEvents);
 		
 		try {
-			Log.Warning("OnInputChanged!");
 			OnInputReceived?.Invoke(SeString.Parse(Component->UnkText1));
 		}
 		catch (Exception e) {
@@ -187,6 +186,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			textLimitsNode.Dispose();
 			currentTextNode.Dispose();
 			selectionListNode.Dispose();
+			
+			NativeMemory.Free(virtualTable);
 			
 			base.Dispose(disposing);
 		}
