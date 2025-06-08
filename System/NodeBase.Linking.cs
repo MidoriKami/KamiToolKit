@@ -27,14 +27,14 @@ public abstract unsafe partial class NodeBase {
         UpdateUldManager(target.InternalResNode);
     }
 
-    internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AsLastChild) {
+    internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
         NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
 
         UpdateLinkedAddon();
         UpdateUldManager(target.InternalResNode);
     }
     
-    internal void AttachNode(AtkComponentNode* targetNode, NodePosition position = NodePosition.AsLastChild) {
+    internal void AttachNode(AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings) {
         var uldManager = &targetNode->Component->UldManager;
         var target = uldManager->RootNode;
         

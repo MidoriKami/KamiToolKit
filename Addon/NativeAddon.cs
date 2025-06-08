@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.NodeParts;
+using KamiToolKit.Classes.TimelineBuilding;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Window;
 
@@ -25,11 +25,6 @@ public abstract unsafe partial class NativeAddon {
 		Log.Verbose($"[KamiToolKit] [{InternalName}] Beginning Native Addon Allocation");
 
 		InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
-
-		// Overwrite virtual table with a custom copy
-		virtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 73);
-		NativeMemory.Copy(InternalAddon->VirtualTable, virtualTable,0x8 * 73);
-		InternalAddon->VirtualTable = virtualTable;
 		
 		RegisterVirtualTable();
 
@@ -120,26 +115,19 @@ public abstract unsafe partial class NativeAddon {
 		});
 
 	private void LoadTimeline() {
-		rootNode.AddTimeline(new Timeline {
-			Mask = (AtkTimelineMask) 0xFF,
-			LabelEndFrameIdx = 89,
-			LabelFrameIdxDuration = 88,
-			LabelSets = [
-				new TimelineLabelSet {
-					StartFrameId = 1, EndFrameId = 89, Labels = [
-						new TimelineLabelFrame { FrameIndex = 1,  LabelId = 101, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
-						new TimelineLabelFrame { FrameIndex = 10, LabelId = 102, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
-						new TimelineLabelFrame { FrameIndex = 20, LabelId = 103, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
-						new TimelineLabelFrame { FrameIndex = 30, LabelId = 104, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
-						new TimelineLabelFrame { FrameIndex = 40, LabelId = 105, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
-						new TimelineLabelFrame { FrameIndex = 50, LabelId = 106, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
-						new TimelineLabelFrame { FrameIndex = 60, LabelId = 107, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
-						new TimelineLabelFrame { FrameIndex = 70, LabelId = 108, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
-						new TimelineLabelFrame { FrameIndex = 80, LabelId = 109, JumpBehavior = AtkTimelineJumpBehavior.PlayOnce },
-					],
-				},
-			],
-		});
+		rootNode.AddTimeline(new TimelineBuilder()
+			.BeginFrameSet(1, 89)
+			.AddLabel(1, 101, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.AddLabel(10, 102, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.AddLabel(20, 103, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.AddLabel(30, 104, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.AddLabel(40, 105, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.AddLabel(50, 106, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.AddLabel(60, 107, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.AddLabel(70, 108, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.AddLabel(80, 109, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.EndFrameSet()
+			.Build());
 	}
 
 	private string GetInternalNameSafe() {

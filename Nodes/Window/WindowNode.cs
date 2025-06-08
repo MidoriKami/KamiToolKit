@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.NodeParts;
+using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes.Window;
 
@@ -181,30 +181,25 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 	public Vector2 ContentStartPosition => new(backgroundImageNode.X, backgroundImageNode.Y + HeaderHeight);
 	
 	private void LoadTimelines() {
-		var timelineBuilder = new TimelineBuilder()
-			.AddLabelSetPair(17, 1, 9)
-			.AddLabelSetPair(18, 10, 19)
-			.AddLabelSetPair(7, 20, 29);
+		AddTimeline(new TimelineBuilder()
+			.BeginFrameSet(1, 29)
+			.AddLabelPair(1, 9, 17)
+			.AddLabelPair(10, 19, 18)
+			.AddLabelPair(20, 29, 7)
+			.EndFrameSet()
+			.Build());
+
+		backgroundNode.AddTimeline(new TimelineBuilder()
+			.AddFrameSetWithFrame(1, 9, 1, multiplyColor: new Vector3(100.0f))
+			.AddFrameSetWithFrame(10, 19, 10, multiplyColor: new Vector3(100.0f))
+			.AddFrameSetWithFrame(20, 29, 20, multiplyColor: new Vector3(50.0f))
+			.Build());
 		
-		AddTimeline(timelineBuilder.BuildLabelSets());
-		
-		backgroundNode.AddTimeline(timelineBuilder
-			.AddAnimation(1, new TimelineKeyFrameSet {
-				MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
-			})
-			.AddAnimation(10, new TimelineKeyFrameSet {
-				MultiplyColor = new Vector3(100.0f, 100.0f, 100.0f),
-			})
-			.AddAnimation(20, new TimelineKeyFrameSet {
-				MultiplyColor = new Vector3(50.0f, 50.0f, 50.0f),
-			})
-			.BuildAnimations(true)
-		);
-		
-		borderNode.AddTimeline(timelineBuilder
-			.AddAnimation(10, new TimelineKeyFrameSet { Alpha = 0 })
-			.AddAnimation(12, new TimelineKeyFrameSet { Alpha = 255 })
-			.BuildAnimations()
-		);
+		borderNode.AddTimeline(new TimelineBuilder()
+			.BeginFrameSet(10, 19)
+			.AddFrame(10, alpha: 0)
+			.AddFrame(12, alpha: 255)
+			.EndFrameSet()
+			.Build());
 	}
 }

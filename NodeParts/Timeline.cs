@@ -22,8 +22,6 @@ public unsafe class Timeline : IDisposable {
 		// InternalTimeline->LabelResource = internalLabelSetResource.InternalResource;
 		InternalTimeline->LabelResource = null;
 		
-		InternalTimeline->ActiveAnimation = null;
-		InternalTimeline->OwnerNode = null;
 		InternalTimeline->FrameTime = 0.033333335f;
 		InternalTimeline->ParentFrameTime = 0.333333334f;
 		InternalTimeline->LabelFrameIdxDuration = 0;
@@ -31,6 +29,8 @@ public unsafe class Timeline : IDisposable {
 		InternalTimeline->ActiveLabelId = 0;
 		InternalTimeline->Mask = 0;
 		InternalTimeline->Flags = 0;
+		InternalTimeline->ActiveAnimation = null;
+		InternalTimeline->OwnerNode = null;
 	}
 
 	public void Dispose() {
@@ -87,5 +87,9 @@ public unsafe class Timeline : IDisposable {
 
 	public List<TimelineLabelSet> LabelSets {
 		set => internalTimelineResource.LabelSets = value;
+	}
+
+	public void StartAnimation(int i) {
+		InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, (byte) i);
 	}
 }

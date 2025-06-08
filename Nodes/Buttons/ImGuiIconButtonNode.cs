@@ -1,5 +1,4 @@
 ﻿using Dalamud.Interface.Textures.TextureWraps;
-using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
@@ -12,7 +11,7 @@ public class ImGuiIconButtonNode : ButtonBase {
 			NodeId = 3,
 		};
 		
-		imageNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		imageNode.AttachNode(this);
 				
 		LoadTimelines();
 		

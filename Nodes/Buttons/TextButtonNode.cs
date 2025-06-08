@@ -1,7 +1,6 @@
 ﻿using System.Numerics;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
@@ -22,7 +21,7 @@ public unsafe class TextButtonNode : ButtonBase {
 			NodeId = 2,
 		};
 
-		backgroundNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		backgroundNode.AttachNode(this);
 		
 		labelNode = new TextNode {
 			AlignmentType = AlignmentType.Center,
@@ -30,7 +29,7 @@ public unsafe class TextButtonNode : ButtonBase {
 			NodeId = 3,
 		};
 		
-		labelNode.AttachNode(this, NodePosition.AfterAllSiblings);
+		labelNode.AttachNode(this);
 		
 		LoadTimelines();
 		
@@ -70,5 +69,5 @@ public unsafe class TextButtonNode : ButtonBase {
 	}
 
 	private void LoadTimelines()
-		=> LoadThreePartTimelines(this, backgroundNode, labelNode);
+		=> LoadThreePartTimelines(this, backgroundNode, labelNode, new Vector2(16.0f, 3.0f));
 }
