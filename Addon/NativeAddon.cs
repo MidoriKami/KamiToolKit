@@ -11,8 +11,8 @@ public abstract unsafe partial class NativeAddon {
 
 	internal AtkUnitBase* InternalAddon;
 
-	private ResNode rootNode = null!;
-	private WindowNode windowNode = null!;
+	protected ResNode RootNode = null!;
+	protected WindowNode WindowNode = null!;
 	
 	private GCHandle? disposeHandle;
 
@@ -30,12 +30,12 @@ public abstract unsafe partial class NativeAddon {
 
 		InternalAddon->Flags1A2 |= 0b0100_0000; // don't save/load AddonConfig
 
-		rootNode = new ResNode {
+		RootNode = new ResNode {
 			NodeId = 1,
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
 		};
 
-		windowNode = new WindowNode();
+		WindowNode = new WindowNode();
 
 		InternalAddon->NameString = GetInternalNameSafe();
 		
@@ -59,13 +59,13 @@ public abstract unsafe partial class NativeAddon {
 		InternalAddon->UldManager.ObjectCount = 1;
 		InternalAddon->UldManager.ResourceFlags |= AtkUldManagerResourceFlag.ArraysAllocated;
 
-		InternalAddon->RootNode = rootNode.InternalResNode;
-		NodeLinker.AddNodeToUldObjectList(&InternalAddon->UldManager, rootNode.InternalResNode);
+		InternalAddon->RootNode = RootNode.InternalResNode;
+		NodeLinker.AddNodeToUldObjectList(&InternalAddon->UldManager, RootNode.InternalResNode);
 
 		LoadTimeline();
 
-		windowNode.AttachNode(rootNode, NodePosition.AsFirstChild);
-		InternalAddon->WindowNode = (AtkComponentNode*) windowNode.InternalResNode;
+		WindowNode.AttachNode(RootNode, NodePosition.AsFirstChild);
+		InternalAddon->WindowNode = (AtkComponentNode*) WindowNode.InternalResNode;
 
 		InternalAddon->UldManager.UpdateDrawNodeList();
 		InternalAddon->UldManager.LoadedState = AtkLoadState.Loaded;
@@ -124,7 +124,7 @@ public abstract unsafe partial class NativeAddon {
 	}
 
 	private void LoadTimeline() {
-		rootNode.AddTimeline(new TimelineBuilder()
+		RootNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 89)
 			.AddLabel(1, 101, AtkTimelineJumpBehavior.PlayOnce, 0)
 			.AddLabel(10, 102, AtkTimelineJumpBehavior.PlayOnce, 0)
