@@ -231,8 +231,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 	}
 
 	public bool ShowLimitText {
-		get => textLimitsNode.IsVisible;
-		set => textLimitsNode.IsVisible = value;
+		get => TextLimitsNode.IsVisible;
+		set => TextLimitsNode.IsVisible = value;
 	}
 
 	public TextInputFlags1 Flags1 {
