@@ -64,7 +64,7 @@ public unsafe class NativeController : IDisposable {
 			customNode.EnableEvents(addon);
 		});
 
-	public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, NodePosition position = NodePosition.AsLastChild) {
+	public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings) {
 		Framework.RunOnFrameworkThread(() => {
 			var addon = GetAddonForNode((AtkResNode*) targetNode);
 			
