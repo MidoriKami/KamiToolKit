@@ -112,4 +112,6 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 			base.Height = value;
 		}
 	}
+
+	public override int ChildCount => ComponentBase->UldManager.NodeListCount;
 }

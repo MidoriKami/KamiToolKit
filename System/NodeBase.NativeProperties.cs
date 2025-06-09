@@ -166,4 +166,6 @@ public abstract unsafe partial class NodeBase {
         get => InternalResNode->Type;
         set => InternalResNode->Type = value;
     }
+
+    public virtual int ChildCount => InternalResNode->ChildCount;
 }
