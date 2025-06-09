@@ -12,8 +12,11 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
 	protected AtkComponentButton* ButtonNode => (AtkComponentButton*) InternalNode;
 
-	protected ButtonBase()
-		=> SetInternalComponentType(ComponentType.Button);
+	protected ButtonBase() {
+		SetInternalComponentType(ComponentType.Button);
+		
+		AddEvent(AddonEventType.MouseClick, ClickHandler);
+	}
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
@@ -24,29 +27,10 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		}
 	}
 	
-	private Action? InternalOnClick { get; set; }
-
-	public Action? OnClick {
-		get => InternalOnClick;
-		set {
-			if (value is null ) {
-				if (InternalOnClick is not null) {
-					RemoveEvent(AddonEventType.ButtonClick, InternalOnClick);
-					InternalOnClick = null;
-				}
-			}
-			else {
-				if (InternalOnClick is not null) {
-					AddEvent(AddonEventType.ButtonClick, InternalOnClick);
-					AddEvent(AddonEventType.ButtonClick, value);
-					InternalOnClick = value;
-				}
-				else {
-					AddEvent(AddonEventType.ButtonClick, value);
-					InternalOnClick = value;
-				}
-			}
-		}
+	public Action? OnClick { get; set; }
+	
+	private void ClickHandler() {
+		OnClick?.Invoke();
 	}
 	
 	public void SetEnabled(bool enable)
