@@ -59,22 +59,12 @@ public abstract unsafe partial class NodeBase {
         NodeLinker.DetachNode(InternalResNode);
 
         if (IsAddonPointerValid(linkedParentAddon, linkedParentName)) {
-            UnregisterNativeEvents();
-            
             if (nodesUldManager is not null) {
                 nodesUldManager->UpdateDrawNodeList();
             }
             
+            linkedParentAddon->UldManager.UpdateDrawNodeList();
             linkedParentAddon->UpdateCollisionNodeList(false);
-        }
-    }
-
-    private void UnregisterNativeEvents() {
-        var nativeEvent = InternalResNode->AtkEventManager.Event;
-
-        while (nativeEvent is not null) {
-            InternalResNode->RemoveEvent(nativeEvent->State.EventType, nativeEvent->Param, nativeEvent->Listener, (nativeEvent->State.StateFlags & AtkEventStateFlags.IsGlobalEvent) != 0);
-            nativeEvent = nativeEvent->NextEvent;
         }
     }
 
