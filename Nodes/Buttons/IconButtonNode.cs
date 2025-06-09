@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using KamiToolKit.Nodes.Image;
 
 namespace KamiToolKit.Nodes;
 

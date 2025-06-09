@@ -10,7 +10,7 @@ using KamiToolKit.NodeParts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.Nodes.Image;
 
 public class GifImageNode : ResNode {
 	
@@ -64,7 +64,7 @@ public class GifImageNode : ResNode {
 			if (image.Length <= 0) return;
 		
 			using var memoryStream = new MemoryStream(image);
-			using var processedImage = Image.Load<Rgba32>(memoryStream);
+			using var processedImage = SixLabors.ImageSharp.Image.Load<Rgba32>(memoryStream);
 			if (processedImage.Frames.Count is 0) return;
 
 			uint currentPartId = 0;
