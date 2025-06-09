@@ -27,9 +27,9 @@ public abstract unsafe partial class NativeAddon {
 
 	public required Vector2 Size { get; set; }
 
-	public Vector2 ContentStartPosition => windowNode.ContentStartPosition;
+	public Vector2 ContentStartPosition => WindowNode.ContentStartPosition;
 
-	public Vector2 ContentSize => windowNode.ContentSize;
+	public Vector2 ContentSize => WindowNode.ContentSize;
 
 	private Vector2? InternalPosition { get; set; }
 
@@ -43,12 +43,12 @@ public abstract unsafe partial class NativeAddon {
 	public int AddonId => InternalAddon is null ? 0 : InternalAddon->Id;
 
 	private void SetInitialState() {
-		windowNode.SetTitle(Title, Subtitle);
+		WindowNode.SetTitle(Title, Subtitle);
 		
 		InternalAddon->OpenSoundEffectId = (short) OpenWindowSoundEffectId;
 
 		InternalAddon->SetSize((ushort) Size.X, (ushort) Size.Y);
-		windowNode.Size = Size;
+		WindowNode.Size = Size;
 		
 		var screenSize = new Vector2(AtkStage.Instance()->ScreenSize.Width, AtkStage.Instance()->ScreenSize.Height);
 		var defaultPosition = screenSize / 2.0f - Size / 2.0f;
