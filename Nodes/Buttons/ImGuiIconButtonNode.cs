@@ -3,15 +3,15 @@
 namespace KamiToolKit.Nodes;
 
 public class ImGuiIconButtonNode : ButtonBase {
-	private readonly ImGuiImageNode imageNode;
+	protected readonly ImGuiImageNode ImageNode;
 
 	public ImGuiIconButtonNode() {
-		imageNode = new ImGuiImageNode {
+		ImageNode = new ImGuiImageNode {
 			IsVisible = true,
 			NodeId = 3,
 		};
 		
-		imageNode.AttachNode(this);
+		ImageNode.AttachNode(this);
 				
 		LoadTimelines();
 		
@@ -20,8 +20,8 @@ public class ImGuiIconButtonNode : ButtonBase {
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			imageNode.DetachNode();
-			imageNode.Dispose();
+			ImageNode.DetachNode();
+			ImageNode.Dispose();
 			
 			base.Dispose(disposing);
 		}
@@ -30,7 +30,7 @@ public class ImGuiIconButtonNode : ButtonBase {
 	public override float Width {
 		get => base.Width;
 		set {
-			imageNode.Width = value;
+			ImageNode.Width = value;
 			base.Width = value;
 		}
 	}
@@ -38,17 +38,17 @@ public class ImGuiIconButtonNode : ButtonBase {
 	public override float Height {
 		get => base.Height;
 		set {
-			imageNode.Height = value;
+			ImageNode.Height = value;
 			base.Height = value;
 		}
 	}
 
 	public void LoadTexture(IDalamudTextureWrap texture)
-		=> imageNode.LoadTexture(texture);
+		=> ImageNode.LoadTexture(texture);
 	
 	public void LoadTextureFromFile(string path)
-		=> imageNode.LoadTextureFromFile(path);
+		=> ImageNode.LoadTextureFromFile(path);
 	
 	private void LoadTimelines()
-		=> LoadTwoPartTimelines(this, imageNode);
+		=> LoadTwoPartTimelines(this, ImageNode);
 }

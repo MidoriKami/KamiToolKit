@@ -6,10 +6,10 @@ namespace KamiToolKit.Nodes.InputText;
 
 public class CursorNode : ResNode {
 
-	private readonly SimpleImageNode cursorImageNode;
+	protected readonly SimpleImageNode CursorImageNode;
 	
 	public CursorNode() {
-		cursorImageNode = new SimpleImageNode {
+		CursorImageNode = new SimpleImageNode {
 			TexturePath = "ui/uld/TextInputA.tex", 
 			Size = new Vector2(4.0f, 24.0f), 
 			TextureCoordinates = new Vector2(68.0f, 0.0f),
@@ -19,7 +19,7 @@ public class CursorNode : ResNode {
 			ImageNodeFlags = 0x0,
 		};
 		
-		cursorImageNode.AttachNode(this);
+		CursorImageNode.AttachNode(this);
 		
 		AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 15)
@@ -28,7 +28,7 @@ public class CursorNode : ResNode {
 			.EndFrameSet()
 			.Build());
 		
-		cursorImageNode.AddTimeline(new TimelineBuilder()
+		CursorImageNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 8)
 			.AddEmptyFrame(1)
 			.EndFrameSet()
@@ -39,7 +39,7 @@ public class CursorNode : ResNode {
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			cursorImageNode.Dispose();
+			CursorImageNode.Dispose();
 			
 			base.Dispose(disposing);
 		}

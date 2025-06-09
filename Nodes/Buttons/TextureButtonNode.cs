@@ -3,17 +3,17 @@
 namespace KamiToolKit.Nodes;
 
 public class TextureButtonNode : ButtonBase {
-	private readonly SimpleImageNode imageNode;
+	protected readonly SimpleImageNode ImageNode;
 
 	public TextureButtonNode() {
-		imageNode = new ImGuiImageNode {
+		ImageNode = new ImGuiImageNode {
 			IsVisible = true,
 			NodeId = 3,
 			WrapMode = 1,
 			ImageNodeFlags = 0,
 		};
 		
-		imageNode.AttachNode(this);
+		ImageNode.AttachNode(this);
 				
 		LoadTimelines();
 		
@@ -22,32 +22,32 @@ public class TextureButtonNode : ButtonBase {
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			imageNode.DetachNode();
-			imageNode.Dispose();
+			ImageNode.DetachNode();
+			ImageNode.Dispose();
 
 			base.Dispose(disposing);
 		}
 	}
 
 	public string TexturePath {
-		get => imageNode.TexturePath;
-		set => imageNode.TexturePath = value;
+		get => ImageNode.TexturePath;
+		set => ImageNode.TexturePath = value;
 	}
 
 	public Vector2 TextureCoordinates {
-		get => imageNode.TextureCoordinates;
-		set => imageNode.TextureCoordinates = value;
+		get => ImageNode.TextureCoordinates;
+		set => ImageNode.TextureCoordinates = value;
 	}
 
 	public Vector2 TextureSize {
-		get => imageNode.TextureSize;
-		set => imageNode.TextureSize = value;
+		get => ImageNode.TextureSize;
+		set => ImageNode.TextureSize = value;
 	}
 	
 	public override float Width {
 		get => base.Width;
 		set {
-			imageNode.Width = value;
+			ImageNode.Width = value;
 			base.Width = value;
 		}
 	}
@@ -55,11 +55,11 @@ public class TextureButtonNode : ButtonBase {
 	public override float Height {
 		get => base.Height;
 		set {
-			imageNode.Height = value;
+			ImageNode.Height = value;
 			base.Height = value;
 		}
 	}
 
 	private void LoadTimelines()
-		=> LoadTwoPartTimelines(this, imageNode);
+		=> LoadTwoPartTimelines(this, ImageNode);
 }

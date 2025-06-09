@@ -3,11 +3,11 @@
 namespace KamiToolKit.Nodes;
 
 public class CircleButtonNode : ButtonBase {
-	private SimpleImageNode imageNode;
+	protected SimpleImageNode ImageNode;
 	private ButtonIcon currentIcon;
 
 	public CircleButtonNode() {
-		imageNode = new SimpleImageNode {
+		ImageNode = new SimpleImageNode {
 			TexturePath = "ui/uld/CircleButtons.tex",
 			TextureSize = new Vector2(24.0f, 24.0f),
 			TextureCoordinates = new Vector2(0.0f, 112.0f),
@@ -16,7 +16,7 @@ public class CircleButtonNode : ButtonBase {
 			ImageNodeFlags = 0,
 		};
 
-		imageNode.AttachNode(this);
+		ImageNode.AttachNode(this);
 
 		LoadTimelines();
 		
@@ -25,8 +25,8 @@ public class CircleButtonNode : ButtonBase {
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			imageNode.DetachNode();
-			imageNode.Dispose();
+			ImageNode.DetachNode();
+			ImageNode.Dispose();
 			
 			base.Dispose(disposing);
 		}
@@ -36,8 +36,8 @@ public class CircleButtonNode : ButtonBase {
 		get => currentIcon;
 		set {
 			var uldInfo = GetTextureCoordinateForIcon(value);
-			imageNode.TextureCoordinates = uldInfo.TextureCoordinates;
-			imageNode.TextureSize = uldInfo.TextureSize;
+			ImageNode.TextureCoordinates = uldInfo.TextureCoordinates;
+			ImageNode.TextureSize = uldInfo.TextureSize;
 			currentIcon = value;
 		}
 	}
@@ -45,7 +45,7 @@ public class CircleButtonNode : ButtonBase {
 	public override float Width {
 		get => base.Width;
 		set {
-			imageNode.Width = value;
+			ImageNode.Width = value;
 			base.Width = value;
 		}
 	}
@@ -53,7 +53,7 @@ public class CircleButtonNode : ButtonBase {
 	public override float Height {
 		get => base.Height;
 		set {
-			imageNode.Height = value;
+			ImageNode.Height = value;
 			base.Height = value;
 		}
 	}
@@ -114,7 +114,7 @@ public class CircleButtonNode : ButtonBase {
 	};
 	
 	private void LoadTimelines()
-		=> LoadTwoPartTimelines(this, imageNode);
+		=> LoadTwoPartTimelines(this, ImageNode);
 }
 
 public enum ButtonIcon {

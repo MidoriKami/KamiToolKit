@@ -8,11 +8,11 @@ namespace KamiToolKit.Nodes.InputText;
 
 public unsafe class TextInputButtonNode : ButtonBase {
 
-	private readonly TextNode labelNode;
-	private readonly NineGridNode backgroundNode;
+	protected readonly TextNode LabelNode;
+	protected readonly NineGridNode BackgroundNode;
 	
 	public TextInputButtonNode() {
-		backgroundNode = new SimpleNineGridNode {
+		BackgroundNode = new SimpleNineGridNode {
 			NodeId = 3,
 			Size = new Vector2(160.0f, 24.0f),
 			LeftOffset = 16.0f,
@@ -24,9 +24,9 @@ public unsafe class TextInputButtonNode : ButtonBase {
 			TextureSize = new Vector2(63.0f, 22.0f),
 		};
 		
-		backgroundNode.AttachNode(this);
+		BackgroundNode.AttachNode(this);
 		
-		labelNode = new TextNode {
+		LabelNode = new TextNode {
 			NodeId = 2,
 			Position = new Vector2(12.0f, 2.0f),
 			Size = new Vector2(140.0f, 18.0f),
@@ -39,10 +39,10 @@ public unsafe class TextInputButtonNode : ButtonBase {
 			IsVisible = true,
 		};
 		
-		labelNode.AttachNode(this);
+		LabelNode.AttachNode(this);
 
-		Data->Nodes[0] = labelNode.NodeId;
-		Data->Nodes[1] = backgroundNode.NodeId;
+		Data->Nodes[0] = LabelNode.NodeId;
+		Data->Nodes[1] = BackgroundNode.NodeId;
 		
 		LoadTimeline();
 		
@@ -51,8 +51,8 @@ public unsafe class TextInputButtonNode : ButtonBase {
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			labelNode.Dispose();
-			backgroundNode.Dispose();
+			LabelNode.Dispose();
+			BackgroundNode.Dispose();
 			
 			base.Dispose(disposing);
 		}
@@ -70,7 +70,7 @@ public unsafe class TextInputButtonNode : ButtonBase {
 			.EndFrameSet()
 			.Build());
 		
-		backgroundNode.AddTimeline(new TimelineBuilder()
+		BackgroundNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(10, 19)
 			.AddFrame(10, alpha: 0)
 			.AddFrame(13, alpha: 255)
@@ -83,7 +83,7 @@ public unsafe class TextInputButtonNode : ButtonBase {
 			.EndFrameSet()
 			.Build());
 		
-		labelNode.AddTimeline(new TimelineBuilder()
+		LabelNode.AddTimeline(new TimelineBuilder()
 			.AddFrameSetWithFrame(1, 29, 1, alpha: 255, multiplyColor: new Vector3(100.0f))
 			.AddFrameSetWithFrame(30, 39, 30, alpha: 153, multiplyColor: new Vector3(80.0f))
 			.AddFrameSetWithFrame(40, 59, 40, alpha: 255, multiplyColor: new Vector3(100.0f))

@@ -15,17 +15,17 @@ namespace KamiToolKit.Nodes.InputText;
 
 public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldComponentDataTextInput> {
 
-	private readonly NineGridNode backgroundNode;
-	private readonly NineGridNode focusNode;
-	private readonly TextNode textLimitsNode;
-	private readonly TextNode currentTextNode;
-	private readonly TextInputSelectionListNode selectionListNode;
-	private readonly CursorNode cursorNode;
+	protected readonly NineGridNode BackgroundNode;
+	protected readonly NineGridNode FocusNode;
+	protected readonly TextNode TextLimitsNode;
+	protected readonly TextNode CurrentTextNode;
+	internal readonly TextInputSelectionListNode SelectionListNode;
+	protected readonly CursorNode CursorNode;
 	
 	public TextInputNode() {
 		SetInternalComponentType(ComponentType.TextInput);
 		
-		backgroundNode = new SimpleNineGridNode {
+		BackgroundNode = new SimpleNineGridNode {
 			NodeId = 19,
 			TexturePath = "ui/uld/TextInputA.tex",
 			TextureCoordinates = new Vector2(24.0f, 0.0f),
@@ -35,9 +35,9 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			Size = new Vector2(152.0f, 28.0f),
 		};
 		
-		backgroundNode.AttachNode(this);
+		BackgroundNode.AttachNode(this);
 
-		focusNode = new SimpleNineGridNode {
+		FocusNode = new SimpleNineGridNode {
 			NodeId = 18,
 			TexturePath = "ui/uld/TextInputA.tex",
 			TextureCoordinates = new Vector2(0.0f, 0.0f),
@@ -48,9 +48,9 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			IsVisible = true,
 		};
 		
-		focusNode.AttachNode(this);
+		FocusNode.AttachNode(this);
 
-		textLimitsNode = new TextNode {
+		TextLimitsNode = new TextNode {
 			NodeId = 17,
 			Position = new Vector2(-24.0f, 6.0f),
 			Size = new Vector2(170.0f, 19.0f),
@@ -60,9 +60,9 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			NodeFlags = NodeFlags.AnchorBottom | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
 		
-		textLimitsNode.AttachNode(this);
+		TextLimitsNode.AttachNode(this);
 
-		currentTextNode = new TextNode {
+		CurrentTextNode = new TextNode {
 			NodeId = 16,
 			Position = new Vector2(10.0f, 6.0f),
 			Size = new Vector2(132.0f, 18.0f),
@@ -71,18 +71,18 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			TextFlags = TextFlags.AutoAdjustNodeSize,
 		};
 		
-		currentTextNode.AttachNode(this);
+		CurrentTextNode.AttachNode(this);
 
-		selectionListNode = new TextInputSelectionListNode {
+		SelectionListNode = new TextInputSelectionListNode {
 			NodeId = 4,
 			Position = new Vector2(0.0f, 22.0f),
 			Size = new Vector2(186.0f, 208.0f),
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
 		
-		selectionListNode.AttachNode(this);
+		SelectionListNode.AttachNode(this);
 
-		cursorNode = new CursorNode {
+		CursorNode = new CursorNode {
 			NodeId = 2,
 			Position = new Vector2(10.0f, 2.0f),
 			Size = new Vector2(4.0f, 24.0f),
@@ -90,24 +90,24 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
 		
-		cursorNode.AttachNode(this);
+		CursorNode.AttachNode(this);
 		
-		Data->Nodes[0] = currentTextNode.NodeId;
-		Data->Nodes[1] = backgroundNode.NodeId;
-		Data->Nodes[2] = cursorNode.NodeId;
-		Data->Nodes[3] = selectionListNode.NodeId;
-		Data->Nodes[4] = selectionListNode.Buttons[8].NodeId;
-		Data->Nodes[5] = selectionListNode.Buttons[7].NodeId;
-		Data->Nodes[6] = selectionListNode.Buttons[6].NodeId;
-		Data->Nodes[7] = selectionListNode.Buttons[5].NodeId;
-		Data->Nodes[8] = selectionListNode.Buttons[4].NodeId;
-		Data->Nodes[9] = selectionListNode.Buttons[3].NodeId;
-		Data->Nodes[10] = selectionListNode.Buttons[2].NodeId;
-		Data->Nodes[11] = selectionListNode.Buttons[1].NodeId;
-		Data->Nodes[12] = selectionListNode.Buttons[0].NodeId;
-		Data->Nodes[13] = selectionListNode.LabelNode.NodeId;
-		Data->Nodes[14] = selectionListNode.BackgroundNode.NodeId;
-		Data->Nodes[15] = textLimitsNode.NodeId;
+		Data->Nodes[0] = CurrentTextNode.NodeId;
+		Data->Nodes[1] = BackgroundNode.NodeId;
+		Data->Nodes[2] = CursorNode.NodeId;
+		Data->Nodes[3] = SelectionListNode.NodeId;
+		Data->Nodes[4] = SelectionListNode.Buttons[8].NodeId;
+		Data->Nodes[5] = SelectionListNode.Buttons[7].NodeId;
+		Data->Nodes[6] = SelectionListNode.Buttons[6].NodeId;
+		Data->Nodes[7] = SelectionListNode.Buttons[5].NodeId;
+		Data->Nodes[8] = SelectionListNode.Buttons[4].NodeId;
+		Data->Nodes[9] = SelectionListNode.Buttons[3].NodeId;
+		Data->Nodes[10] = SelectionListNode.Buttons[2].NodeId;
+		Data->Nodes[11] = SelectionListNode.Buttons[1].NodeId;
+		Data->Nodes[12] = SelectionListNode.Buttons[0].NodeId;
+		Data->Nodes[13] = SelectionListNode.LabelNode.NodeId;
+		Data->Nodes[14] = SelectionListNode.BackgroundNode.NodeId;
+		Data->Nodes[15] = TextLimitsNode.NodeId;
 
 		Data->CandidateColor = new ByteColor { R = 66 };
 		Data->IMEColor = new ByteColor { R = 67 };
@@ -181,12 +181,12 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 	
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			backgroundNode.Dispose();
-			focusNode.Dispose();
-			textLimitsNode.Dispose();
-			currentTextNode.Dispose();
-			selectionListNode.Dispose();
-            cursorNode.Dispose();
+			BackgroundNode.Dispose();
+			FocusNode.Dispose();
+			TextLimitsNode.Dispose();
+			CurrentTextNode.Dispose();
+			SelectionListNode.Dispose();
+            CursorNode.Dispose();
 			
             NativeMemoryHelper.Free(virtualTable, 0x8 * 10);
 			
@@ -211,10 +211,10 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 	public override float Width {
 		get => base.Width;
 		set {
-			backgroundNode.Width = value;
-			focusNode.Width = value;
-			textLimitsNode.Width = value + 18.0f;
-			currentTextNode.Width = value - 20.0f;
+			BackgroundNode.Width = value;
+			FocusNode.Width = value;
+			TextLimitsNode.Width = value + 18.0f;
+			CurrentTextNode.Width = value - 20.0f;
 			base.Width = value;
 		}
 	}
@@ -222,10 +222,10 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 	public override float Height {
 		get => base.Height;
 		set {
-			backgroundNode.Height = value;
-			focusNode.Height = value;
-			textLimitsNode.Height = value - 9.0f;
-			currentTextNode.Height = value - 10.0f;
+			BackgroundNode.Height = value;
+			FocusNode.Height = value;
+			TextLimitsNode.Height = value - 9.0f;
+			CurrentTextNode.Height = value - 10.0f;
 			base.Height = value;
 		}
 	}
@@ -249,7 +249,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			.EndFrameSet()
 			.Build());
 		
-		backgroundNode.AddTimeline(new TimelineBuilder()
+		BackgroundNode.AddTimeline(new TimelineBuilder()
 			.AddFrameSetWithFrame(1, 9, 1, alpha: 255)
 			.BeginFrameSet(10, 19)
 			.AddFrame(10, alpha: 255)
@@ -258,14 +258,14 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			.AddFrameSetWithFrame(20, 29, 20, alpha: 127)
 			.Build());
 		
-		focusNode.AddTimeline(new TimelineBuilder()
+		FocusNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(10, 19)
 			.AddFrame(10, alpha: 0)
 			.AddFrame(12, alpha: 255)
 			.EndFrameSet()
 			.Build());
 		
-		textLimitsNode.AddTimeline(new TimelineBuilder()
+		TextLimitsNode.AddTimeline(new TimelineBuilder()
 			.AddFrameSetWithFrame(1, 9, 1, alpha: 102)
 			.BeginFrameSet(10, 19)
 			.AddFrame(10, alpha: 102)
@@ -274,7 +274,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			.AddFrameSetWithFrame(20, 29, 20, alpha: 76)
 			.Build());
 		
-		cursorNode.AddTimeline(new TimelineBuilder()
+		CursorNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 19)
 			.AddEmptyFrame(1)
 			.EndFrameSet()

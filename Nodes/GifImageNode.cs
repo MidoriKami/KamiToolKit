@@ -14,7 +14,7 @@ namespace KamiToolKit.Nodes;
 
 public class GifImageNode : ResNode {
 	
-	private ImageNode imageNode;
+	protected ImageNode ImageNode;
 
 	public required string FilePath {
 		set {
@@ -23,16 +23,16 @@ public class GifImageNode : ResNode {
 	}
 
 	public GifImageNode() {
-		imageNode = new ImageNode {
+		ImageNode = new ImageNode {
 			IsVisible = true,
 		};
 		
-		imageNode.AttachNode(this);
+		ImageNode.AttachNode(this);
 	}
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			imageNode.Dispose();
+			ImageNode.Dispose();
 
 			base.Dispose(disposing);
 		}
@@ -41,7 +41,7 @@ public class GifImageNode : ResNode {
 	public override float Width {
 		get => base.Width;
 		set {
-			imageNode.Width = value;
+			ImageNode.Width = value;
 			base.Width = value;
 		}
 	}
@@ -49,7 +49,7 @@ public class GifImageNode : ResNode {
 	public override float Height {
 		get => base.Height;
 		set {
-			imageNode.Height = value;
+			ImageNode.Height = value;
 			base.Height = value;
 		}
 	}
@@ -89,10 +89,10 @@ public class GifImageNode : ResNode {
 				};
 				
 				texturePart.LoadTexture(texture);
-				imageNode.AddPart(texturePart);
+				ImageNode.AddPart(texturePart);
 			}
 			
-			imageNode.AddTimeline(new TimelineBuilder()
+			ImageNode.AddTimeline(new TimelineBuilder()
 				.BeginFrameSet(1, frameCount)
 				.AddFrame(0, partId: 0)
 				.AddFrame(frameCount, partId: currentPartId)
