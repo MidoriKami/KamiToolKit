@@ -4,7 +4,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Nodes.InputText;
 
-public class TextInputSelectionListNode : ResNode {
+internal class TextInputSelectionListNode : ResNode {
 
 	internal readonly NineGridNode BackgroundNode;
 	internal readonly TextNode LabelNode;

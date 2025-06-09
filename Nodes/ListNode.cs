@@ -7,6 +7,7 @@ using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes.Image;
 using KamiToolKit.System;
 using Newtonsoft.Json;
 
@@ -15,10 +16,10 @@ namespace KamiToolKit.Nodes;
 /// Custom Implementation of a Node that contains other nodes
 [JsonObject(MemberSerialization.OptIn)]
 public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
-    [JsonProperty] private readonly ResNode containerNode;
+    [JsonProperty] protected readonly ResNode ContainerNode;
     private readonly List<T> nodeList = [];
-    [JsonProperty] private readonly BackgroundImageNode background;
-    [JsonProperty] private readonly BorderNineGridNode border;
+    [JsonProperty] protected readonly BackgroundImageNode Background;
+    [JsonProperty] protected readonly BorderNineGridNode Border;
 
     private LayoutOrientation InternalLayoutOrientation { get; set; }
     private LayoutAnchor InternalLayoutAnchor { get; set; } = LayoutAnchor.TopLeft;
@@ -56,42 +57,42 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
     /// If enabled, node contents will be clipped inside the container.
     /// </summary>
     [JsonProperty] public bool ClipListContents {
-        get => containerNode.NodeFlags.HasFlag(NodeFlags.Clip);
+        get => ContainerNode.NodeFlags.HasFlag(NodeFlags.Clip);
         set {
             if (value) {
-                containerNode.AddFlags(NodeFlags.Clip);
+                ContainerNode.AddFlags(NodeFlags.Clip);
             }
             else {
-                containerNode.RemoveFlags(NodeFlags.Clip);
+                ContainerNode.RemoveFlags(NodeFlags.Clip);
             }
         }
     }
 
     public ListNode() : base(NodeType.Res) {
-        containerNode = new ResNode {
+        ContainerNode = new ResNode {
             NodeId = 103_000,
             Size = new Vector2(600.0f, 32.0f),
             IsVisible = true,
         };
         
-        containerNode.AttachNode(this, NodePosition.AsFirstChild);
+        ContainerNode.AttachNode(this, NodePosition.AsFirstChild);
         
-        border = new BorderNineGridNode {
+        Border = new BorderNineGridNode {
             NodeId = 102_000,
             Size = new Vector2(600.0f, 32.0f),
             Position = new Vector2(-15.0f, -15.0f),
             IsVisible = false,
         };
         
-        border.AttachNode(this, NodePosition.AsFirstChild);
+        Border.AttachNode(this, NodePosition.AsFirstChild);
         
-        background = new BackgroundImageNode {
+        Background = new BackgroundImageNode {
             NodeId = 101_000,
             Size = new Vector2(600.0f, 32.0f),
             IsVisible = true,
         };
         
-        background.AttachNode(this, NodePosition.AsFirstChild);
+        Background.AttachNode(this, NodePosition.AsFirstChild);
     }
     
     [JsonProperty] public LayoutOrientation LayoutOrientation {
@@ -103,18 +104,18 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
     }
 
     [JsonProperty] public Vector4 BackgroundColor {
-        get => background.Color;
-        set => background.Color = value;
+        get => Background.Color;
+        set => Background.Color = value;
     }
 
     [JsonProperty] public bool BackgroundVisible {
-        get => background.IsVisible;
-        set => background.IsVisible = value;
+        get => Background.IsVisible;
+        set => Background.IsVisible = value;
     }
 
     [JsonProperty] public bool BorderVisible {
-        get => border.IsVisible;
-        set => border.IsVisible = value;
+        get => Border.IsVisible;
+        set => Border.IsVisible = value;
     }
 
     public new float Width {
@@ -157,8 +158,8 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
                 node.Dispose();
             }
             
-            background.Dispose();
-            border.Dispose();
+            Background.Dispose();
+            Border.Dispose();
             
             base.Dispose(isDisposing);
         }
@@ -176,38 +177,38 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
         }
 
         if (BackgroundFitsContents) {
-            background.Size = GetMinimumSize();
+            Background.Size = GetMinimumSize();
 
             var topLeftNode = nodeList
                 .Where(node => node.IsVisible)
                 .MinBy(node => node.Position.Length());
             
             if (nodeList.Count is not 0 && topLeftNode is not null) {
-                background.Position = topLeftNode.Position - new Vector2(ItemMargin.Left, ItemMargin.Top);
+                Background.Position = topLeftNode.Position - new Vector2(ItemMargin.Left, ItemMargin.Top);
             }
         }
         else {
-            background.Size = Size;
-            background.Position = Vector2.Zero - new Vector2(ItemMargin.Left, ItemMargin.Top);
+            Background.Size = Size;
+            Background.Position = Vector2.Zero - new Vector2(ItemMargin.Left, ItemMargin.Top);
         }
         
         if (BorderFitsContents) {
-            border.Size = GetMinimumSize() + new Vector2(30.0f, 30.0f);
+            Border.Size = GetMinimumSize() + new Vector2(30.0f, 30.0f);
 
             var topLeftNode = nodeList
                 .Where(node => node.IsVisible)
                 .MinBy(node => node.Position.Length());
             
             if (nodeList.Count is not 0 && topLeftNode is not null) {
-                border.Position = topLeftNode.Position - new Vector2(15.0f, 15.0f) - new Vector2(ItemMargin.Left, ItemMargin.Top);
+                Border.Position = topLeftNode.Position - new Vector2(15.0f, 15.0f) - new Vector2(ItemMargin.Left, ItemMargin.Top);
             }
         }
         else {
-            border.Size = Size + new Vector2(30.0f, 30.0f);
-            border.Position = - new Vector2(15.0f, 15.0f) - new Vector2(ItemMargin.Left, ItemMargin.Top);
+            Border.Size = Size + new Vector2(30.0f, 30.0f);
+            Border.Position = - new Vector2(15.0f, 15.0f) - new Vector2(ItemMargin.Left, ItemMargin.Top);
         }
         
-        containerNode.Size = Size;
+        ContainerNode.Size = Size;
     }
     
     /// <summary>
@@ -334,7 +335,7 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
         => GetEnumerator();
 
     public void Add(T item) {
-        item.AttachNode(containerNode);
+        item.AttachNode(ContainerNode);
         nodeList.Add(item);
         
         RecalculateLayout();
@@ -389,19 +390,19 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
         
         using (var container = ImRaii.TreeNode("Container")) {
             if (container) {
-                containerNode.DrawConfig();
+                ContainerNode.DrawConfig();
             }
         }
     
         using (var backgroundNode = ImRaii.TreeNode("Background")) {
             if (backgroundNode) {
-                background.DrawConfig();
+                Background.DrawConfig();
             }
         }
     
         using (var borderNode = ImRaii.TreeNode("Border")) {
             if (borderNode) {
-                border.DrawConfig();
+                Border.DrawConfig();
             }
         }
     }

@@ -3,11 +3,11 @@
 namespace KamiToolKit.Nodes;
 
 public class BasicProgressBarNode : ResNode {
-	private readonly NineGridNode backgroundNode;
-	private readonly NineGridNode foregroundNode;
+	protected readonly NineGridNode BackgroundNode;
+	protected readonly NineGridNode ForegroundNode;
 
 	public BasicProgressBarNode() {
-		backgroundNode = new SimpleNineGridNode {
+		BackgroundNode = new SimpleNineGridNode {
 			TexturePath = "ui/uld/ToDoList.tex",
 			TextureCoordinates = new Vector2(108.0f, 8.0f),
 			TextureSize = new Vector2(44.0f, 12.0f),
@@ -16,9 +16,9 @@ public class BasicProgressBarNode : ResNode {
 			RightOffset = 6,
 		};
 		
-		backgroundNode.AttachNode(this);
+		BackgroundNode.AttachNode(this);
 
-		foregroundNode = new SimpleNineGridNode {
+		ForegroundNode = new SimpleNineGridNode {
 			TexturePath = "ui/uld/ToDoList.tex", 
 			TextureCoordinates = new Vector2(112.0f, 0.0f), 
 			TextureSize = new Vector2(40.0f, 8.0f),
@@ -27,13 +27,13 @@ public class BasicProgressBarNode : ResNode {
 			RightOffset = 4,
 		};
 
-		foregroundNode.AttachNode(this);
+		ForegroundNode.AttachNode(this);
 	}
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			backgroundNode.Dispose();
-			foregroundNode.Dispose();
+			BackgroundNode.Dispose();
+			ForegroundNode.Dispose();
 			
 			base.Dispose(disposing);
 		}
@@ -42,8 +42,8 @@ public class BasicProgressBarNode : ResNode {
 	public override float Width {
 		get => base.Width;
 		set {
-			backgroundNode.Width = value;
-			foregroundNode.Width = value;
+			BackgroundNode.Width = value;
+			ForegroundNode.Width = value;
 			base.Width = value;
 		}
 	}
@@ -51,24 +51,24 @@ public class BasicProgressBarNode : ResNode {
 	public override float Height {
 		get => base.Height;
 		set {
-			backgroundNode.Height = value;
-			foregroundNode.Height = value;
+			BackgroundNode.Height = value;
+			ForegroundNode.Height = value;
 			base.Height = value;
 		}
 	}
 	
 	public Vector4 BackgroundColor {
-		get => backgroundNode.Color;
-		set => backgroundNode.Color = value;
+		get => BackgroundNode.Color;
+		set => BackgroundNode.Color = value;
 	}
 
 	public Vector4 BarColor {
-		get => foregroundNode.Color;
-		set => foregroundNode.Color = value;
+		get => ForegroundNode.Color;
+		set => ForegroundNode.Color = value;
 	}
 	
 	public float Progress {
-		get => foregroundNode.Width / Width;
-		set => foregroundNode.Width = Width * value;
+		get => ForegroundNode.Width / Width;
+		set => ForegroundNode.Width = Width * value;
 	}
 }

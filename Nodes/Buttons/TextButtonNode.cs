@@ -6,14 +6,14 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class TextButtonNode : ButtonBase {
 
-	private readonly TextNode labelNode;
-	private readonly NineGridNode backgroundNode;
+	protected readonly TextNode LabelNode;
+	protected readonly NineGridNode BackgroundNode;
 
 	public TextButtonNode() {
 		Data->Nodes[0] = 3;
 		Data->Nodes[1] = 2;
 
-		backgroundNode = new SimpleNineGridNode {
+		BackgroundNode = new SimpleNineGridNode {
 			TexturePath = "ui/uld/ButtonA.tex",
 			TextureSize = new Vector2(100.0f, 28.0f),
 			LeftOffset = 16.0f,
@@ -21,15 +21,15 @@ public unsafe class TextButtonNode : ButtonBase {
 			NodeId = 2,
 		};
 
-		backgroundNode.AttachNode(this);
+		BackgroundNode.AttachNode(this);
 		
-		labelNode = new TextNode {
+		LabelNode = new TextNode {
 			AlignmentType = AlignmentType.Center,
 			Position = new Vector2(16.0f, 3.0f),
 			NodeId = 3,
 		};
 		
-		labelNode.AttachNode(this);
+		LabelNode.AttachNode(this);
 		
 		LoadTimelines();
 		
@@ -37,14 +37,14 @@ public unsafe class TextButtonNode : ButtonBase {
 	}
 
 	public SeString Label {
-		get => labelNode.Text;
-		set => labelNode.Text = value;
+		get => LabelNode.Text;
+		set => LabelNode.Text = value;
 	}
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			labelNode.DetachNode();
-			labelNode.Dispose();
+			LabelNode.DetachNode();
+			LabelNode.Dispose();
 			
 			base.Dispose(disposing);
 		}
@@ -53,8 +53,8 @@ public unsafe class TextButtonNode : ButtonBase {
 	public override float Width {
 		get => base.Width;
 		set {
-			backgroundNode.Width = value;
-			labelNode.Width = value - backgroundNode.LeftOffset - backgroundNode.RightOffset;
+			BackgroundNode.Width = value;
+			LabelNode.Width = value - BackgroundNode.LeftOffset - BackgroundNode.RightOffset;
 			base.Width = value;
 		}
 	}
@@ -62,12 +62,12 @@ public unsafe class TextButtonNode : ButtonBase {
 	public override float Height {
 		get => base.Height;
 		set {
-			backgroundNode.Height = value;
-			labelNode.Height = value - 8.0f;
+			BackgroundNode.Height = value;
+			LabelNode.Height = value - 8.0f;
 			base.Height = value;
 		}
 	}
 
 	private void LoadTimelines()
-		=> LoadThreePartTimelines(this, backgroundNode, labelNode, new Vector2(16.0f, 3.0f));
+		=> LoadThreePartTimelines(this, BackgroundNode, LabelNode, new Vector2(16.0f, 3.0f));
 }

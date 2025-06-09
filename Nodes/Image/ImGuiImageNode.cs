@@ -3,7 +3,7 @@ using Dalamud.Interface.Textures.TextureWraps;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.Nodes.Image;
 
 /// <summary>
 /// A simple image node that allows you to load an IDalamudTextureWrap texture into a native image node.
