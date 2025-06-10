@@ -36,7 +36,7 @@ public class AlternateCooldownNode : ResNode {
 		
 		foreach (var yIndex in Enumerable.Range(9, 9))
 		foreach (var xIndex in Enumerable.Range(9, 9)) {
-			var coordinate = new Vector2(xIndex * 44.0f, yIndex * 48.0f);
+			var coordinate = new Vector2(xIndex * 44.0f, (yIndex - 9) * 48.0f);
 			CooldownImage.AddPart(new Part {
 				TexturePath = "ui/uld/IconA_Recast2.tex",
 				TextureCoordinates = coordinate,
