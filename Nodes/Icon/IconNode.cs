@@ -35,9 +35,8 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
 		
 		IconExtras.AttachNode(this);
 
-		IconIndicator1 = new IconIndicator {
+		IconIndicator1 = new IconIndicator(5) {
 			NodeId = 4,
-			SubNodId = 5,
 			Size = new Vector2(18.0f, 18.0f),
 			Position = new Vector2(27.0f, 11.0f),
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
@@ -45,9 +44,8 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
 		
 		IconIndicator1.AttachNode(this);
 
-		IconIndicator2 = new IconIndicator {
+		IconIndicator2 = new IconIndicator(3) {
 			NodeId = 2,
-			SubNodId = 3,
 			Size = new Vector2(18.0f, 18.0f),
 			Position = new Vector2(27.0f, -2.0f),
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
@@ -63,8 +61,8 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
 		Data->Nodes[3] = IconExtras.ResourceCostTextNode.NodeId;
 		Data->Nodes[4] = IconExtras.QuantityTextNode.NodeId;
 		Data->Nodes[5] = IconExtras.AntsNode.NodeId;
-		Data->Nodes[6] = IconIndicator1.SubNodId;
-		Data->Nodes[7] = IconIndicator2.SubNodId;
+		Data->Nodes[6] = IconIndicator1.IconNode.NodeId;
+		Data->Nodes[7] = IconIndicator2.IconNode.NodeId;
 		
 		InitializeComponentEvents();
 	}

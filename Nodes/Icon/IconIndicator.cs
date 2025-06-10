@@ -8,22 +8,19 @@ namespace KamiToolKit.Nodes.Icon;
 
 public class IconIndicator : ResNode {
 
-	protected readonly ImageNode IconNode;
+	internal readonly ImageNode IconNode;
 
-    public required uint SubNodId {
-        get => IconNode.NodeId;
-        set => IconNode.NodeId = value;
-    }
-    
-	public IconIndicator() {
+	public IconIndicator(uint innerNodeId) {
 		IconNode = new ImageNode {
-            NodeId = 5,
+            NodeId = innerNodeId,
             Size = new Vector2(18, 18),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = 2,
             ImageNodeFlags = 0,
             DrawFlags = 0x02,
 		};
+        
+        LoadPartsList(IconNode);
         
         IconNode.AttachNode(this);
 
@@ -55,90 +52,99 @@ public class IconIndicator : ResNode {
             .Build());
     }
 
-    private void LoadShortPartsList(ImageNode image) {
-       image.AddPart(new Part {
-            Id = 14,
-            TexturePath = "ui/uld/IconA_Frame.tex",
-            Size = new Vector2(18.0f, 18.0f),
-            TextureCoordinates = new Vector2(192.0f, 96.0f),
-        });
-       
+    private void LoadPartsList(ImageNode image) {
         image.AddPart(new Part {
-            Id = 15,
-            TexturePath = "ui/uld/IconA_Frame.tex",
-            Size = new Vector2(18.0f, 18.0f),
-            TextureCoordinates = new Vector2(192.0f, 114.0f),
+            Id = 0, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f),
         });
-        
         image.AddPart(new Part {
-            Id = 21,
-            TexturePath = "ui/uld/IconA_Frame.tex",
-            Size = new Vector2(18.0f, 18.0f),
-            TextureCoordinates = new Vector2(210.0f, 114.0f),
+            Id = 1, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(48.0f, 0.0f),
         });
-        
         image.AddPart(new Part {
-            Id = 22,
-            TexturePath = "ui/uld/IconA_Frame.tex",
-            Size = new Vector2(18.0f, 18.0f),
-            TextureCoordinates = new Vector2(360.0f, 96.0f),
+            Id = 2, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(0.0f, 48.0f),
         });
-        
         image.AddPart(new Part {
-            Id = 23,
-            TexturePath = "ui/uld/IconA_Frame.tex",
-            Size = new Vector2(18.0f, 18.0f),
-            TextureCoordinates = new Vector2(378.0f, 96.0f),
+            Id = 3, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(48.0f, 48.0f),
         });
-        
         image.AddPart(new Part {
-            Id = 24,
-            TexturePath = "ui/uld/IconA_Frame.tex",
-            Size = new Vector2(18.0f, 18.0f),
-            TextureCoordinates = new Vector2(360.0f, 114.0f),
+            Id = 4, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(0.0f, 96.0f),
         });
-        
-        image.AddPart(new Part
-        {
-            Id = 25,
-            TexturePath = "ui/uld/IconA_Frame.tex",
-            Size = new Vector2(18.0f, 18.0f),
-            TextureCoordinates = new Vector2(210.0f, 96.0f),
-        });
-        
         image.AddPart(new Part {
-            Id = 26,
-            TexturePath = "ui/uld/IconA_Frame.tex",
-            Size = new Vector2(18.0f, 18.0f),
-            TextureCoordinates = new Vector2(408.0f, 0.0f),
+            Id = 5, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(48.0f, 96.0f),
         });
-        
         image.AddPart(new Part {
-            Id = 27,
-            TexturePath = "ui/uld/IconA_Frame.tex",
-            Size = new Vector2(18.0f, 18.0f),
-            TextureCoordinates = new Vector2(408.0f, 18.0f),
+            Id = 6, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(96.0f, 0.0f),
         });
-        
         image.AddPart(new Part {
-            Id = 28,
-            TexturePath = "ui/uld/IconA_Frame.tex",
-            Size = new Vector2(18.0f, 18.0f),
-            TextureCoordinates = new Vector2(408.0f, 36.0f),
+            Id = 7, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(144.0f, 0.0f),
         });
-       
         image.AddPart(new Part {
-            Id = 29,
-            TexturePath = "ui/uld/IconA_Frame.tex",
-            Size = new Vector2(18.0f, 18.0f),
-            TextureCoordinates = new Vector2(396.0f, 96.0f),
+            Id = 8, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(192.0f, 0.0f),
         });
-        
         image.AddPart(new Part {
-            Id = 30,
-            TexturePath = "ui/uld/IconA_Frame.tex",
-            Size = new Vector2(18.0f, 18.0f),
-            TextureCoordinates = new Vector2(396.0f, 114.0f),
+            Id = 9, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(96.0f, 48.0f),
+        });
+        image.AddPart(new Part {
+            Id = 10, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(144.0f, 48.0f),
+        });
+        image.AddPart(new Part {
+            Id = 11, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(192.0f, 48.0f),
+        });
+        image.AddPart(new Part {
+            Id = 12, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(96.0f, 96.0f),
+        });
+        image.AddPart(new Part {
+            Id = 13, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(144.0f, 96.0f),
+        });
+        image.AddPart(new Part {
+            Id = 14, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(18.0f, 18.0f), TextureCoordinates = new Vector2(192.0f, 96.0f),
+        });
+        image.AddPart(new Part {
+            Id = 15, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(18.0f, 18.0f), TextureCoordinates = new Vector2(192.0f, 114.0f),
+        });
+        image.AddPart(new Part {
+            Id = 16, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(72.0f, 72.0f), TextureCoordinates = new Vector2(240.0f, 0.0f),
+        });
+        image.AddPart(new Part {
+            Id = 17, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(64.0f, 64.0f), TextureCoordinates = new Vector2(240.0f, 72.0f),
+        });
+        image.AddPart(new Part {
+            Id = 18, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(312.0f, 0.0f),
+        });
+        image.AddPart(new Part {
+            Id = 19, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(312.0f, 48.0f),
+        });
+        image.AddPart(new Part {
+            Id = 20, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f), TextureCoordinates = new Vector2(312.0f, 96.0f),
+        });
+        image.AddPart(new Part {
+            Id = 21, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(18.0f, 18.0f), TextureCoordinates = new Vector2(210.0f, 114.0f),
+        });
+        image.AddPart(new Part {
+            Id = 22, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(18.0f, 18.0f), TextureCoordinates = new Vector2(360.0f, 96.0f),
+        });
+        image.AddPart(new Part {
+            Id = 23, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(18.0f, 18.0f), TextureCoordinates = new Vector2(378.0f, 96.0f),
+        });
+        image.AddPart(new Part {
+            Id = 24, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(18.0f, 18.0f), TextureCoordinates = new Vector2(360.0f, 114.0f),
+        });
+        image.AddPart(new Part {
+            Id = 25, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(18.0f, 18.0f), TextureCoordinates = new Vector2(210.0f, 96.0f),
+        });
+        image.AddPart(new Part {
+            Id = 26, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(18.0f, 18.0f), TextureCoordinates = new Vector2(408.0f, 0.0f),
+        });
+        image.AddPart(new Part {
+            Id = 27, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(18.0f, 18.0f), TextureCoordinates = new Vector2(408.0f, 18.0f),
+        });
+        image.AddPart(new Part {
+            Id = 28, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(18.0f, 18.0f), TextureCoordinates = new Vector2(408.0f, 36.0f),
+        });
+        image.AddPart(new Part {
+            Id = 29, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(18.0f, 18.0f), TextureCoordinates = new Vector2(396.0f, 96.0f),
+        });
+        image.AddPart(new Part {
+            Id = 30, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(18.0f, 18.0f), TextureCoordinates = new Vector2(396.0f, 114.0f),
         });
 	}
 }
