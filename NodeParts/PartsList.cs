@@ -68,7 +68,6 @@ public unsafe class PartsList : IList<Part>, IDisposable {
         // Now that we have the data copied into the new array, update the pointer and free old memory
         var allocatedPart = item.InternalPart;
         item.InternalPart = &InternalPartsList->Parts[PartCount];
-        item.IsAttached = true;
         NativeMemoryHelper.UiFree(allocatedPart);
         
         // Update Parts List

@@ -16,7 +16,6 @@ public unsafe class Part : IDisposable {
  
     private bool customTextureLoaded;
     
-    public bool IsAttached;
     private bool isDisposed;
     
     public Part() {
@@ -37,24 +36,14 @@ public unsafe class Part : IDisposable {
 
     public void Dispose() {
         if (!isDisposed) {
-            if (customTextureLoaded) {
-                internalAsset->AtkTexture.KernelTexture->DecRef();
-                internalAsset->AtkTexture.Destroy(false);
-            }
-            else {
-                // todo: eventually reevaluate texture refcounting
-
-                // internalAsset->AtkTexture.ReleaseTexture();
-                // internalAsset->AtkTexture.Destroy(true);
-            }
+            internalAsset->AtkTexture.ReleaseTexture();
+            internalAsset->AtkTexture.Destroy(true);
 
             NativeMemoryHelper.UiFree(internalAsset);
             internalAsset = null;
 
-            if (!IsAttached) {
-                NativeMemoryHelper.UiFree(InternalPart);
-                InternalPart = null;
-            }
+            NativeMemoryHelper.UiFree(InternalPart);
+            InternalPart = null;
         }
 
         isDisposed = true;
