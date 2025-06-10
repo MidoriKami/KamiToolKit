@@ -147,19 +147,6 @@ public unsafe class Part : IDisposable {
     };
 
     /// <summary>
-    /// Release the loaded texture, decreases ref count
-    /// </summary>
-    public void ReleaseTexture()
-        => internalAsset->AtkTexture.ReleaseTexture();
-
-    /// <summary>
-    /// Destroys the loaded texture, with option to free the allocated memory
-    /// </summary>
-    /// <param name="free">If the game should free the texture in memory</param>
-    public void DestroyTexture(bool free)
-        => internalAsset->AtkTexture.Destroy(free);
-
-    /// <summary>
     /// Loads a game icon via id
     /// </summary>
     /// <param name="iconId">Icon id to load</param>
@@ -174,7 +161,7 @@ public unsafe class Part : IDisposable {
     public void LoadTexture(Texture* texture) {
         // If a texture is already loaded, dec ref it to probably free it automatically
         if (customTextureLoaded) {
-            internalAsset->AtkTexture.KernelTexture->DecRef();
+            internalAsset->AtkTexture.ReleaseTexture();
         }
 
         internalAsset->AtkTexture.KernelTexture = texture;
