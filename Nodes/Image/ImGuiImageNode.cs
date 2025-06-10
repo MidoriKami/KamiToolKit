@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Dalamud.Interface.Textures.TextureWraps;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
@@ -21,6 +22,18 @@ public class ImGuiImageNode : SimpleImageNode {
             loadedTexture = DalamudInterface.Instance.TextureProvider.GetFromFile(fileSystemPath).RentAsync().Result;
             LoadTexture(loadedTexture);
         });
+    }
+
+    public override string TexturePath { 
+        get => base.TexturePath;
+        set {
+            if (Path.IsPathRooted(value)) {
+                LoadTextureFromFile(value);
+            } 
+            else if (DalamudInterface.Instance.DataManager.FileExists(value)) {
+                PartsList[0].LoadTexture(value);
+            }
+        }
     }
 
     protected override void Dispose(bool disposing) {
