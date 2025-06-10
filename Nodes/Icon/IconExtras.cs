@@ -58,18 +58,17 @@ public class IconExtras : ResNode {
 		
 		AntsNode.AttachNode(this);
 
-		HoveredBorderImageNode = new SimpleImageNode {
+		HoveredBorderImageNode = new ImageNode {
 			NodeId = 11,
 			Size = new Vector2(72.0f, 72.0f),
 			Position = new Vector2(-12.0f, -12.0f),
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-			TexturePath = "ui/uld/IconA_Frame.tex",
-			TextureCoordinates = new Vector2(240.0f, 0.0f),
-			TextureSize = new Vector2(72.0f, 72.0f),
 			WrapMode = 1,
 			ImageNodeFlags = 0,
 			DrawFlags = 0x02,
 		};
+		
+		IconNodeTextureHelper.LoadIconAFrameTexture(HoveredBorderImageNode);
 		
 		HoveredBorderImageNode.AttachNode(this);
 
@@ -121,7 +120,7 @@ public class IconExtras : ResNode {
 		
 		ResourceCostTextNode.AttachNode(this);
 
-		ClickFlashImageNode = new SimpleImageNode {
+		ClickFlashImageNode = new ImageNode {
 			NodeId = 7,
 			Size = new Vector2(64, 64),
 			Position = new Vector2(-8.0f, -8.0f),
@@ -130,10 +129,9 @@ public class IconExtras : ResNode {
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 			WrapMode = 1,
 			ImageNodeFlags = 0,
-			TexturePath = "ui/uld/IconA_Frame.tex",
-			TextureCoordinates = new Vector2(240.0f, 72.0f),
-			TextureSize = new Vector2(64.0f, 64.0f),
 		};
+		
+		IconNodeTextureHelper.LoadIconAFrameTexture(ClickFlashImageNode);
 		
 		ClickFlashImageNode.AttachNode(this);
 

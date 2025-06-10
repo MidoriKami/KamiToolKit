@@ -22,16 +22,7 @@ public class CooldownNode : ResNode {
 			ImageNodeFlags = 0,
 		};
 
-		var index = 0;
-		foreach(var yIndex in Enumerable.Range(0, 3))
-		foreach (var xIndex in Enumerable.Range(0, 2)) {
-			GlossyImageFrame.AddPart(new Part {
-				TexturePath = "ui/uld/IconA_Frame.tex",
-				TextureCoordinates = new Vector2(48.0f * xIndex, 48.0f * yIndex),
-				Size = new Vector2(48.0f, 48.0f),
-				Id = (uint) index++,
-			});
-		}
+        IconNodeTextureHelper.LoadIconAFrameTexture(GlossyImageFrame);
 
 		GlossyImageFrame.AttachNode(this);
 

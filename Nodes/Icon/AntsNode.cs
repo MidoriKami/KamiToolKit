@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using System.Numerics;
+﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
-using KamiToolKit.NodeParts;
 using KamiToolKit.Nodes.Image;
 
 namespace KamiToolKit.Nodes.Icon;
@@ -21,21 +19,7 @@ public class AntsNode : ResNode {
 			DrawFlags = 0x02,
 		};
 
-		var index = 6;
-		
-		foreach(var yIndex in Enumerable.Range(0, 3))
-		foreach (var xIndex in Enumerable.Range(2, 3)) {
-			var coordinate = new Vector2(xIndex * 48.0f, yIndex * 48.0f);
-
-			if (index == 14) break;
-			
-			AntsImageNode.AddPart(new Part {
-				TexturePath = "ui/uld/IconA_Frame.tex",
-				TextureCoordinates = coordinate,
-				Size = new Vector2(48.0f, 48.0f),
-				Id = (uint) index++,
-			});
-		}
+		IconNodeTextureHelper.LoadIconAFrameTexture(AntsImageNode);
 		
 		AntsImageNode.AttachNode(this);
 
