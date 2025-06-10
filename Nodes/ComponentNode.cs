@@ -75,7 +75,10 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		if (disposing) {
 			CollisionNode.DetachNode();
 			CollisionNode.Dispose();
-			
+
+			NativeMemoryHelper.UiFree(Data);
+			Data = null;
+
 			ComponentBase->Dtor(1);
 
 			base.Dispose(disposing);

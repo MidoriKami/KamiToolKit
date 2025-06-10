@@ -2,7 +2,6 @@
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 using KamiToolKit.System;
 
@@ -20,9 +19,6 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			NativeMemoryHelper.UiFree(Data);
-			Data = null;
-
 			base.Dispose(disposing);
 		}
 	}
