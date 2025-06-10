@@ -118,9 +118,6 @@ public unsafe class Part : IDisposable {
         return internalAsset->AtkTexture.Resource->TexFileResourceHandle->FileName.ToString();
     }
 
-    internal static int TextureVersion() 
-        => AtkStage.Instance()->AtkTextureResourceManager->DefaultTextureVersion;
-
     /// <summary>
     /// Load the specified path, this will try to select the correct path based on theme
     /// and resolve through any texture substitutions defined by other plugins.
@@ -135,7 +132,7 @@ public unsafe class Part : IDisposable {
                 texturePath = themedPath;
             }
         
-            internalAsset->AtkTexture.LoadTexture(texturePath, TextureVersion());
+            internalAsset->AtkTexture.LoadTextureWithDefaultVersion(texturePath);
         }
         catch (Exception e) {
             Log.Exception(e);
