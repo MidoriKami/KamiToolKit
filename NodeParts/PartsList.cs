@@ -44,7 +44,7 @@ public unsafe class PartsList : IList<Part>, IDisposable {
 
     private void Resync() {
 		// Free existing array, we will completely rebuild it
-        if (InternalPartsList is not null) {
+        if (InternalPartsList->Parts is not null) {
             NativeMemoryHelper.UiFree(InternalPartsList->Parts, InternalPartsList->PartCount);
             InternalPartsList->Parts = null;
         }
@@ -55,6 +55,9 @@ public unsafe class PartsList : IList<Part>, IDisposable {
 		// Copy all Parts into it
         foreach (var index in Enumerable.Range(0, parts.Count)) {
             InternalPartsList->Parts[index] = *parts[index].InternalPart;
+            
+            // Update stored pointer to the data so any further modifications are actually applied
+            parts[index].InternalPart = &InternalPartsList->Parts[index];
         }
 
         InternalPartsList->PartCount = (uint) parts.Count;
@@ -117,7 +120,7 @@ public unsafe class PartsList : IList<Part>, IDisposable {
         get => parts[index];
         set {
             parts[index] = value;
-            InternalPartsList->Parts[index] = *value.InternalPart;
+            Resync();
         }
     }
 }
