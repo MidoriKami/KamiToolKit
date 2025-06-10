@@ -23,6 +23,12 @@ public abstract partial class NativeAddon : IDisposable {
 			Log.Debug($"[KamiToolKit] Disposing addon {GetType()}");
 
 			Close();
+
+			// Close will remove this node automatically on AtkUnitBase.Finalize,
+			// However, this is after the plugin unloads,
+			// and will trigger a warning in auto-dispose if we don't remove this now.
+			CreatedAddons.Remove(this);
+
 			GC.SuppressFinalize(this);
 		}
         
