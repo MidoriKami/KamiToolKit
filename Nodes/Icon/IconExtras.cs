@@ -63,6 +63,7 @@ public class IconExtras : ResNode {
 			Size = new Vector2(72.0f, 72.0f),
 			Position = new Vector2(-12.0f, -12.0f),
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+			PartId = 16,
 			WrapMode = 1,
 			ImageNodeFlags = 0,
 			DrawFlags = 0x02,
@@ -129,6 +130,7 @@ public class IconExtras : ResNode {
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 			WrapMode = 1,
 			ImageNodeFlags = 0,
+			PartId = 17,
 		};
 		
 		IconNodeTextureHelper.LoadIconAFrameTexture(ClickFlashImageNode);

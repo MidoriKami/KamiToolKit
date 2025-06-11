@@ -17,6 +17,7 @@ public class AntsNode : ResNode {
 			WrapMode = 1,
 			ImageNodeFlags = 0,
 			DrawFlags = 0x02,
+			PartId = 13,
 		};
 
 		IconNodeTextureHelper.LoadIconAFrameTexture(AntsImageNode);

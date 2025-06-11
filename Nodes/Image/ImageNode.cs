@@ -40,7 +40,6 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         set => InternalNode->Flags = (byte) value;
     }
 
-    /// The image node will take ownership of any parts added, be sure not to share parts between nodes
     public void AddPart(Part part)
         => PartsList.Add(part);
 }

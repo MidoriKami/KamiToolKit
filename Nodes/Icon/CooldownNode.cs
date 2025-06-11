@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using System.Numerics;
+﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
-using KamiToolKit.NodeParts;
 using KamiToolKit.Nodes.Image;
 
 namespace KamiToolKit.Nodes.Icon;
@@ -34,18 +32,10 @@ public class CooldownNode : ResNode {
 			WrapMode = 1,
 			ImageNodeFlags = 0,
 			DrawFlags = 0x02,
+			PartId = 80,
 		};
 
-		foreach (var yIndex in Enumerable.Range(0, 9))
-		foreach (var xIndex in Enumerable.Range(0, 9)) {
-			var coordinate = new Vector2(xIndex * 44.0f, yIndex * 48.0f);
-			CooldownImage.AddPart(new Part {
-				TexturePath = "ui/uld/IconA_Recast.tex",
-				TextureCoordinates = coordinate,
-				Size = new Vector2(44.0f, 46.0f),
-				Id = (uint) (xIndex + yIndex),
-			});
-		}
+		IconNodeTextureHelper.LoadIconARecastTexture(CooldownImage);
 		
 		CooldownImage.AttachNode(this);
 

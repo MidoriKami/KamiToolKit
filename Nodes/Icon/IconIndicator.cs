@@ -17,6 +17,7 @@ public class IconIndicator : ResNode {
             WrapMode = 2,
             ImageNodeFlags = 0,
             DrawFlags = 0x02,
+            PartId = (uint)(innerNodeId == 5 ? 25 : 30),
 		};
         
         IconNodeTextureHelper.LoadIconAFrameTexture(IconNode);

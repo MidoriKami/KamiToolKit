@@ -22,6 +22,7 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled |NodeFlags.EmitsEvents,
 			WrapMode = 1,
 			ImageNodeFlags = ImageNodeFlags.AutoFit,
+			IconId = 1,
 		};
 		
 		IconImage.AttachNode(this);
