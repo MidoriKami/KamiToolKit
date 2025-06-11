@@ -37,31 +37,14 @@ public unsafe class PartsList : IList<Part>, IDisposable {
         isDisposed = true;
     }
 
+    public uint PartCount {
+        get => InternalPartsList->PartCount;
+        internal set => InternalPartsList->PartCount = value;
+    }
+
     public uint Id {
         get => InternalPartsList->Id;
         set => InternalPartsList->Id = value;
-    }
-
-    private void Resync() {
-		// Free existing array, we will completely rebuild it
-        if (InternalPartsList->Parts is not null) {
-            NativeMemoryHelper.UiFree(InternalPartsList->Parts, InternalPartsList->PartCount);
-            InternalPartsList->Parts = null;
-        }
-
-		// Allocate new array
-        InternalPartsList->Parts = NativeMemoryHelper.UiAlloc<AtkUldPart>(parts.Count);
-
-		// Copy all Parts into it
-        foreach (var index in Enumerable.Range(0, parts.Count)) {
-            InternalPartsList->Parts[index] = *parts[index].InternalPart;
-            
-            // Update stored pointer to the data so any further modifications are actually applied
-            parts[index].InternalPart = &InternalPartsList->Parts[index];
-        }
-
-        InternalPartsList->PartCount = (uint) parts.Count;
-        Count = parts.Count;
     }
 
     public IEnumerator<Part> GetEnumerator()
@@ -77,16 +60,24 @@ public unsafe class PartsList : IList<Part>, IDisposable {
     }
     
     public void Add(Part item) {
+        NativeMemoryHelper.ResizeArray(ref InternalPartsList->Parts, PartCount, PartCount + 1);
+        
+        // Add new part on end of buffer
+        InternalPartsList->Parts[PartCount] = *item.InternalPart;
+        
+        // Now that we have the data copied into the new array, update the pointer and free old memory
+        var allocatedPart = item.InternalPart;
+        item.InternalPart = &InternalPartsList->Parts[PartCount];
+        NativeMemoryHelper.UiFree(allocatedPart);
+        
+        // Update Parts List
+        PartCount++;
         parts.Add(item);
-        Resync();
     }
 
     public void Clear() {
-        parts.Clear();
-
-        NativeMemoryHelper.UiFree(InternalPartsList->Parts, InternalPartsList->PartCount);
-        InternalPartsList->Parts = null;
-        InternalPartsList->PartCount = 0;
+        NativeMemoryHelper.UiFree(InternalPartsList->Parts, PartCount);
+        PartCount = 0;
     }
 
     public bool Contains(Part item)
@@ -97,13 +88,32 @@ public unsafe class PartsList : IList<Part>, IDisposable {
 
     public bool Remove(Part item) {
         if (!Contains(item)) return false;
+        
+        // Make new buffer to fit new part
+        var newBuffer = NativeMemoryHelper.UiAlloc<AtkUldPart>(PartCount - 1);
+
+        foreach (var index in Enumerable.Range(0, (int) PartCount)) {
+            
+            // If this is the item we want to remove, skip.
+            if (&InternalPartsList->Parts[index] == item.InternalPart) continue;
+            
+            newBuffer[index] = InternalPartsList->Parts[index];
+        }
+
+        // Free the old buffer
+        NativeMemoryHelper.UiFree(InternalPartsList->Parts, PartCount);
+        
+        // Remove the item from the stored collection
+        PartCount--;
         parts.Remove(item);
-        Resync();
+
+        // Assign new parts list to native parts list
+        InternalPartsList->Parts = newBuffer;
 
         return true;
     }
 
-    public int Count { get; set; }
+    public int Count => parts.Count;
 
     public bool IsReadOnly => false;
 
@@ -120,7 +130,7 @@ public unsafe class PartsList : IList<Part>, IDisposable {
         get => parts[index];
         set {
             parts[index] = value;
-            Resync();
+            InternalPartsList->Parts[index] = *value.InternalPart;
         }
     }
 }
