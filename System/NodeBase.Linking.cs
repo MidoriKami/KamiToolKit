@@ -49,6 +49,10 @@ public abstract unsafe partial class NodeBase {
 
         UpdateLinkedAddon();
         UpdateUldManager(addon.InternalAddon->RootNode);
+
+        if (addon.InternalAddon is not null) {
+            addon.InternalAddon->UpdateCollisionNodeList(false);
+        }
     }
 
     internal void DetachNode() {
