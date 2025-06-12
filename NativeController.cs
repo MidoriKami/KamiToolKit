@@ -17,18 +17,18 @@ namespace KamiToolKit;
 public unsafe class NativeController : IDisposable {
 	[PluginService] private IFramework Framework { get; set; } = null!;
 	[PluginService] private IGameInteropProvider GameInteropProvider { get; set; } = null!;
-	
+
 	public NativeController(IDalamudPluginInterface pluginInterface) {
 		pluginInterface.Inject(this);
-		
+
 		// Inject non-Experimental Properties
 		pluginInterface.Inject(DalamudInterface.Instance);
 		GameInteropProvider.InitializeFromAttributes(DalamudInterface.Instance);
-		
+
 		// Inject Experimental Properties
 		pluginInterface.Inject(Experimental.Instance);
 		GameInteropProvider.InitializeFromAttributes(Experimental.Instance);
-		
+
 		Experimental.Instance.EnableHooks();
 	}
 
@@ -36,19 +36,21 @@ public unsafe class NativeController : IDisposable {
 		=> Framework.RunOnFrameworkThread(() => {
 			NodeBase.DisposeNodes();
 			NativeAddon.DisposeAddons();
-		
+
 			Experimental.Instance.DisposeHooks();
 		});
 
 	public void AttachNode(NodeBase customNode, NodeBase targetNode, NodePosition position = NodePosition.AsLastChild)
 		=> Framework.RunOnFrameworkThread(() => {
+			Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}] to another Custom Node [{targetNode.GetType()}]");
+
 			switch (targetNode) {
-			
+
 				// Don't attach directly to ComponentNode, attach to its managed RootNode
 				case ComponentNode componentNode:
 					customNode.AttachNode(componentNode, position);
 					return;
-			
+
 				default:
 					customNode.AttachNode(targetNode, position);
 					return;
@@ -57,8 +59,9 @@ public unsafe class NativeController : IDisposable {
 
 	public void AttachNode(NodeBase customNode, AtkResNode* targetNode, NodePosition position = NodePosition.AsLastChild)
 		=> Framework.RunOnFrameworkThread(() => {
+			Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint) customNode.InternalResNode:X}] to a native AtkResNode");
 			var addon = GetAddonForNode(targetNode);
-			
+
 			customNode.RegisterAutoDetach(addon);
 			customNode.AttachNode(targetNode, position);
 			customNode.EnableEvents(addon);
@@ -66,34 +69,43 @@ public unsafe class NativeController : IDisposable {
 
 	public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings) {
 		Framework.RunOnFrameworkThread(() => {
+			Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint) customNode.InternalResNode:X}] to a native AtkComponentNode");
+
 			var addon = GetAddonForNode((AtkResNode*) targetNode);
-			
-			customNode.RegisterAutoDetach(addon);
-			customNode.AttachNode(targetNode, position);
-			customNode.EnableEvents(addon);
+			if (addon is not null) {
+				Log.Verbose($"[NativeController] Tried to get Addon from native AtkComponentNode, found: {addon->NameString}");
+
+				customNode.RegisterAutoDetach(addon);
+				customNode.AttachNode(targetNode, position);
+				customNode.EnableEvents(addon);
+			}
+			else {
+				Log.Error($"[NativeController] Attempted to attach [{customNode.GetType()}:{(nint) customNode.InternalResNode:X}] to a native AtkComponentNode, but could not find parent addon. Aborting.");
+			}
 		});
 	}
 
 	public void AttachNode(NodeBase customNode, NativeAddon targetAddon, NodePosition position = NodePosition.AsLastChild) {
 		Framework.RunOnFrameworkThread(() => {
+			Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint) customNode.InternalResNode:X}] to a Custom Addon [{targetAddon.GetType()}]");
+
 			customNode.AttachNode(targetAddon, position);
 			customNode.EnableEvents(targetAddon.InternalAddon);
 		});
 	}
-	
+
 	public void DetachNode(NodeBase? customNode, Action? disposeAction = null)
 		=> Framework.RunOnFrameworkThread(() => {
+			if (customNode is not null) {
+				Log.Verbose($"[NativeController] Detaching [{customNode.GetType()}:{(nint) customNode.InternalResNode:X}] from all sources.");
+			}
+
 			customNode?.UnregisterAutoDetach();
 			customNode?.DisableEvents();
 			customNode?.DetachNode();
 			disposeAction?.Invoke();
 		});
-	
-	private AtkUnitBase* GetAddonForNode(AtkResNode* node) {
-		if (Experimental.Instance.GetAddonByNode != null) {
-			return Experimental.Instance.GetAddonByNode.Invoke(RaptureAtkUnitManager.Instance(), node);
-		}
 
-		return null;
-	}
+	private AtkUnitBase* GetAddonForNode(AtkResNode* node)
+		=> RaptureAtkUnitManager.Instance()->GetAddonByNode(node);
 }
