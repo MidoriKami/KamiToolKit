@@ -48,11 +48,13 @@ public abstract unsafe partial class NodeBase {
 				ParentUldManager->RemoveNodeFromObjectList(pointer);
 			});
 			ParentUldManager->UpdateDrawNodeList();
+			ParentUldManager = null;
 		}
 
 		if (ParentAddon is not null) {
 			ParentAddon->UldManager.UpdateDrawNodeList();
 			ParentAddon->UpdateCollisionNodeList(true);
+			ParentAddon = null;
 		}
 	}
 
@@ -64,10 +66,10 @@ public abstract unsafe partial class NodeBase {
 		}
 
 		if (ParentUldManager is not null) {
-			ParentUldManager->UpdateDrawNodeList();
 			VisitChildren(InternalResNode, pointer => {
 				ParentUldManager->AddNodeToObjectList(pointer);
 			});
+			ParentUldManager->UpdateDrawNodeList();
 		}
 
 		if (ParentAddon is null) {
@@ -106,7 +108,7 @@ public abstract unsafe partial class NodeBase {
 	
 	private void VisitChildren(AtkResNode* parent, Action<Pointer<AtkResNode>> visitAction) {
 		visitAction(parent);
-        
+
 		var child = parent->ChildNode;
 
 		while (child is not null) {
