@@ -5,164 +5,122 @@ using FFXIVClientStructs.Interop;
 using KamiToolKit.Addon;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
+using KamiToolKit.Extensions;
 
 namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
-    
-    private AtkUnitBase* linkedParentAddon;
-    private string? linkedParentName;
 
-    internal void AttachNode(AtkResNode* target, NodePosition position = NodePosition.AsLastChild) {
-        NodeLinker.AttachNode(InternalResNode, target, position);
+	private bool HasAddon { get; set; }
+	private AtkUnitBase* ParentAddon { get; set; }
+	private AtkUldManager* ParentUldManager { get; set; }
 
-        UpdateLinkedAddon();
-        UpdateUldManager(target);
-    }
-    
-    internal void AttachNode(NodeBase target, NodePosition position = NodePosition.AsLastChild) {
-        NodeLinker.AttachNode(InternalResNode, target.InternalResNode, position);
+	internal void AttachNode(AtkResNode* target, NodePosition position = NodePosition.AsLastChild) {
+		NodeLinker.AttachNode(InternalResNode, target, position);
+		UpdateNative();
+	}
+
+	internal void AttachNode(NodeBase target, NodePosition position = NodePosition.AsLastChild) {
+		NodeLinker.AttachNode(InternalResNode, target.InternalResNode, position);
+		UpdateNative();
+	}
+
+	internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
+		NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
+		UpdateNative();
+	}
+
+	internal void AttachNode(AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings) {
+		NodeLinker.AttachNode(InternalResNode, targetNode->Component->UldManager.RootNode, position);
+		UpdateNative();
+	}
+
+	internal void AttachNode(NativeAddon addon, NodePosition position = NodePosition.AsLastChild) {
+		NodeLinker.AttachNode(InternalResNode, addon.InternalAddon->RootNode, position);
+		UpdateNative();
+	}
+
+	internal void DetachNode() {
+		NodeLinker.DetachNode(InternalResNode);
+
+		if (ParentUldManager is not null) {
+			VisitChildren(InternalResNode, pointer => {
+				ParentUldManager->RemoveNodeFromObjectList(pointer);
+			});
+			ParentUldManager->UpdateDrawNodeList();
+		}
+
+		if (ParentAddon is not null) {
+			ParentAddon->UldManager.UpdateDrawNodeList();
+			ParentAddon->UpdateCollisionNodeList(true);
+		}
+	}
+
+	private void UpdateNative() {
+		if (InternalResNode is null) return;
+
+		if (ParentUldManager is null) {
+			ParentUldManager = GetUldManagerForNode(InternalResNode);
+		}
+
+		if (ParentUldManager is not null) {
+			ParentUldManager->UpdateDrawNodeList();
+			VisitChildren(InternalResNode, pointer => {
+				ParentUldManager->AddNodeToObjectList(pointer);
+			});
+		}
+
+		if (ParentAddon is null) {
+			ParentAddon = GetAddonForNode(InternalResNode);
+		}
+
+		if (ParentAddon is not null) {
+			ParentAddon->UldManager.UpdateDrawNodeList();
+			ParentAddon->UpdateCollisionNodeList(true);
+		}
+	}
+
+	private AtkUldManager* GetUldManagerForNode(AtkResNode* node) {
+		if (node is null) return null;
+
+		var targetNode = node;
+
+		// Try to get UldManager via the first parent that is a component
+		while (targetNode is not null) {
+			if (targetNode->GetNodeType() is NodeType.Component) {
+				var componentNode = (AtkComponentNode*) targetNode;
+				return &componentNode->Component->UldManager;
+			}
+
+			targetNode = targetNode->ParentNode;
+		}
+
+		// We failed to find a parent component, try to get a parent addon instead
+		var parentAddon = GetAddonForNode(node);
+		if (parentAddon is not null) {
+			return &parentAddon->UldManager;
+		}
+
+		return null;
+	}
+	
+	private void VisitChildren(AtkResNode* parent, Action<Pointer<AtkResNode>> visitAction) {
+		visitAction(parent);
         
-        UpdateLinkedAddon();
-        UpdateUldManager(target.InternalResNode);
-    }
+		var child = parent->ChildNode;
 
-    internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
-        NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
+		while (child is not null) {
+			visitAction(child);
 
-        UpdateLinkedAddon();
-        UpdateUldManager(target.InternalResNode);
-    }
-    
-    internal void AttachNode(AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings) {
-        var uldManager = &targetNode->Component->UldManager;
-        var target = uldManager->RootNode;
-        
-        NodeLinker.AttachNode(InternalResNode, target, position);
+			// Be sure to not accidentally visit a components children, they manage their own children
+			if (child->ChildNode is not null && child->ChildNode->GetNodeType() is not NodeType.Component) {
+				VisitChildren(child->ChildNode, visitAction);
+			}
 
-        UpdateLinkedAddon();
-        UpdateUldManager(target);
-    }
-    
-    internal void AttachNode(NativeAddon addon, NodePosition position = NodePosition.AsLastChild) {
-        NodeLinker.AttachNode(InternalResNode, addon.InternalAddon->RootNode, position);
+			child = child->PrevSiblingNode;
+		}
+	}
 
-        UpdateLinkedAddon();
-        UpdateUldManager(addon.InternalAddon->RootNode);
-
-        if (addon.InternalAddon is not null) {
-            addon.InternalAddon->UpdateCollisionNodeList(false);
-        }
-    }
-
-    internal void DetachNode() {
-        var nodesUldManager = GetUldManagerForNode(InternalResNode);
-        
-        RemoveFromUldObjectList(nodesUldManager, InternalResNode);
-
-        NodeLinker.DetachNode(InternalResNode);
-
-        if (IsAddonPointerValid(linkedParentAddon, linkedParentName)) {
-            if (nodesUldManager is not null) {
-                nodesUldManager->UpdateDrawNodeList();
-            }
-            
-            linkedParentAddon->UldManager.UpdateDrawNodeList();
-            linkedParentAddon->UpdateCollisionNodeList(false);
-        }
-    }
-
-    private bool IsAddonPointerValid(AtkUnitBase* addon, string? addonName) {
-        if (addon is null) return false;
-        if (addonName is null) return false;
-
-        var nativePointer = (AtkUnitBase*) DalamudInterface.Instance.GameGui.GetAddonByName(addonName);
-
-        if (nativePointer is null) return false;
-		
-        return addon == nativePointer;
-    }
-
-    private void UpdateUldManager(AtkResNode* target) {
-        var componentManager = GetUldManagerForNode(target);
-        if (componentManager is not null) {
-            componentManager->UpdateDrawNodeList();
-            AddToUldObjectsList(componentManager, InternalResNode);
-            return;
-        }
-
-        var parentAddon = GetAddonForNode(target);
-        if (parentAddon is not null) {
-            parentAddon->UldManager.UpdateDrawNodeList();
-            parentAddon->UpdateCollisionNodeList(false);
-            AddToUldObjectsList(&parentAddon->UldManager, InternalResNode);
-        }
-    }
-
-    private AtkUldManager* GetUldManagerForNode(AtkResNode* node) {
-        var targetNode = node;
-
-        while (targetNode is not null) {
-            if (targetNode->GetNodeType() is NodeType.Component) {
-                var componentNode = (AtkComponentNode*) targetNode;
-                return &componentNode->Component->UldManager;
-            }
-
-            targetNode = targetNode->ParentNode;
-        }
-        
-        var parentAddon = GetAddonForNode(node);
-        if (parentAddon is not null) {
-            return &parentAddon->UldManager;
-        }
-
-        return null;
-    }
-    
-    private void UpdateLinkedAddon() {
-        var addon = GetAddonForNode(InternalResNode);
-
-        if (addon is not null) {
-            linkedParentAddon = addon;
-            linkedParentName = addon->NameString;
-        }
-    }
-
-    private AtkUnitBase* GetAddonForNode(AtkResNode* node) {
-        if (Experimental.Instance.GetAddonByNode != null) {
-            return Experimental.Instance.GetAddonByNode.Invoke(RaptureAtkUnitManager.Instance(), node);
-        }
-
-        return null;
-    }
-    
-    private void VisitChildren(AtkResNode* parent, Action<Pointer<AtkResNode>> visitAction) {
-        visitAction(parent);
-        
-        var child = parent->ChildNode;
-
-        while (child is not null) {
-            visitAction(child);
-
-            // Be sure to not accidentally visit a components children, they manage their own children
-            if (child->ChildNode is not null && child->ChildNode->GetNodeType() is not NodeType.Component) {
-                VisitChildren(child->ChildNode, visitAction);
-            }
-
-            child = child->PrevSiblingNode;
-        }
-    }
-
-    private void AddToUldObjectsList(AtkUldManager* uldManager, AtkResNode* parent)
-        => VisitChildren(parent, node => {
-            NodeLinker.AddNodeToUldObjectList(uldManager, node);
-        });
-
-    private void RemoveFromUldObjectList(AtkUldManager* uldManager, AtkResNode* parent) {
-        if (uldManager is null) return;
-        
-        VisitChildren(parent, node => {
-            NodeLinker.RemoveNodeFromUldObjectList(uldManager, node);
-        });
-    }
+	private AtkUnitBase* GetAddonForNode(AtkResNode* node)
+		=> RaptureAtkUnitManager.Instance()->GetAddonByNode(node);
 }
