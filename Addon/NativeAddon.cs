@@ -39,6 +39,8 @@ public abstract unsafe partial class NativeAddon {
 		WindowNode = new WindowNode();
 
 		InternalAddon->NameString = GetInternalNameSafe();
+
+		InternalAddon->OpenSoundEffectId = (short) OpenWindowSoundEffectId;
 		
 		Log.Verbose($"[{InternalName}] Allocation Complete");
 	}
