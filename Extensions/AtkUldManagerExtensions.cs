@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
@@ -110,7 +109,7 @@ public static unsafe class AtkUldManagerExtensions {
 		uldManager.Objects->NodeCount = newSize;
 	}
 
-	private static void PrintObjectList(ref this AtkUldManager uldManager) {
+	public static void PrintObjectList(ref this AtkUldManager uldManager) {
 		Log.Debug("Beginning NodeList");
 		
 		foreach (var index in Enumerable.Range(0, uldManager.Objects->NodeCount)) {
