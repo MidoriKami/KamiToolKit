@@ -53,7 +53,7 @@ public abstract unsafe partial class NodeBase {
 
 		if (ParentAddon is not null) {
 			ParentAddon->UldManager.UpdateDrawNodeList();
-			ParentAddon->UpdateCollisionNodeList(true);
+			ParentAddon->UpdateCollisionNodeList(false);
 			ParentAddon = null;
 		}
 	}
@@ -78,7 +78,7 @@ public abstract unsafe partial class NodeBase {
 
 		if (ParentAddon is not null) {
 			ParentAddon->UldManager.UpdateDrawNodeList();
-			ParentAddon->UpdateCollisionNodeList(true);
+			ParentAddon->UpdateCollisionNodeList(false);
 		}
 	}
 
