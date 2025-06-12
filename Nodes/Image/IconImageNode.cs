@@ -1,4 +1,5 @@
-﻿using KamiToolKit.NodeParts;
+﻿using System.Numerics;
+using KamiToolKit.NodeParts;
 
 namespace KamiToolKit.Nodes.Image;
 
@@ -15,6 +16,8 @@ public class IconImageNode : SimpleImageNode {
 			if (internalIconId != value) {
 				PartsList[0].LoadIcon(value);
 				internalIconId = value;
+				
+				TextureSize = new Vector2(32.0f, 32.0f);
 			}
 		}
 	}

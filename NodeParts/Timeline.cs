@@ -92,4 +92,8 @@ public unsafe class Timeline : IDisposable {
 	public void StartAnimation(int i) {
 		InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, (byte) i);
 	}
+
+	public void StopAnimation() {
+		InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, 0);
+	}
 }
