@@ -24,7 +24,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     internal static void DisposeNodes() {
         foreach (var node in CreatedNodes.ToArray()) {
             if (!node.IsAttached) continue;
-            Log.Debug($"[KamiToolKit] AutoDisposing node {node.GetType()}");
+            Log.Debug($"AutoDisposing node {node.GetType()}");
             
             node.TryForceDetach(true);
             node.Dispose();
@@ -45,7 +45,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         }
         
         if (!isDisposed) {
-            Log.Debug($"[KamiToolKit] Disposing node {GetType()}");
+            Log.Debug($"Disposing node {GetType()}");
 
             TryForceDetach(false);
 
@@ -76,7 +76,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
     internal override sealed AtkResNode* InternalResNode => (AtkResNode*) InternalNode;
 
     protected NodeBase(NodeType nodeType) {
-        Log.Debug($"[KamiToolKit] Creating new node {GetType()}");
+        Log.Debug($"Creating new node {GetType()}");
         InternalNode = NativeMemoryHelper.Create<T>();
         InternalResNode->Type = nodeType;
         InternalResNode->NodeId = NodeIdBase + CurrentOffset++;

@@ -21,29 +21,29 @@ internal static class Log {
 	private static readonly bool ExcessiveLogging = false;
 
 	internal static void Debug(string message) {
-		DalamudInterface.Instance.Log.Debug(message);
+		DalamudInterface.Instance.Log.Debug($"[KamiToolKit] {message}");
 	}
 
 	internal static void Fatal(string message) {
-		DalamudInterface.Instance.Log.Fatal(message);
+		DalamudInterface.Instance.Log.Fatal($"[KamiToolKit] {message}");
 	}
 
 	internal static void Warning(string message) {
-		DalamudInterface.Instance.Log.Warning(message);
+		DalamudInterface.Instance.Log.Warning($"[KamiToolKit] {message}");
 	}
 
 	internal static void Verbose(string message) {
-		DalamudInterface.Instance.Log.Verbose(message);
+		DalamudInterface.Instance.Log.Verbose($"[KamiToolKit] {message}");
 	}
 
 	internal static void Excessive(string message) {
 		if (ExcessiveLogging) {
-			Verbose(message);
+			Verbose($"[KamiToolKit] {message}");
 		}
 	}
 
 	internal static void Error(string message) {
-		DalamudInterface.Instance.Log.Error(message);
+		DalamudInterface.Instance.Log.Error($"[KamiToolKit] {message}");
 	}
 
 	internal static void Exception(Exception exception) {

@@ -13,7 +13,7 @@ public abstract unsafe partial class NativeAddon {
 	protected virtual void OnFinalize(AtkUnitBase* addon) { }
 
 	private void Initialize(AtkUnitBase* thisPtr) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Initialize");
+		Log.Verbose($"[{InternalName}] Initialize");
 		
 		AtkUnitBase.StaticVirtualTablePointer->Initialize(thisPtr);
 
@@ -23,7 +23,7 @@ public abstract unsafe partial class NativeAddon {
 	}
 
 	private void Setup(AtkUnitBase* addon, uint valueCount, AtkValue* values) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Setup");
+		Log.Verbose($"[{InternalName}] Setup");
 		
 		SetInitialState();
 
@@ -33,7 +33,7 @@ public abstract unsafe partial class NativeAddon {
 	}
 
 	private void Show(AtkUnitBase* addon, bool silenceOpenSoundEffect, uint unsetShowHideFlags) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Show");
+		Log.Verbose($"[{InternalName}] Show");
 		
 		OnShow(addon);
 		
@@ -41,7 +41,7 @@ public abstract unsafe partial class NativeAddon {
 	}
 
 	private void Update(AtkUnitBase* addon, float delta) {
-		Log.Excessive($"[KamiToolKit] [{InternalName}] Update");
+		Log.Excessive($"[{InternalName}] Update");
 		
 		OnUpdate(addon);
 		
@@ -49,7 +49,7 @@ public abstract unsafe partial class NativeAddon {
 	}
 
 	private void Draw(AtkUnitBase* addon) {
-		Log.Excessive($"[KamiToolKit] [{InternalName}] Draw");
+		Log.Excessive($"[{InternalName}] Draw");
 		
 		OnDraw(addon);
 		
@@ -57,7 +57,7 @@ public abstract unsafe partial class NativeAddon {
 	}
 
 	private void Hide(AtkUnitBase* addon, bool unkBool, bool callHideCallback, uint setShowHideFlags) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Hide");
+		Log.Verbose($"[{InternalName}] Hide");
 		
 		OnHide(addon);
 		
@@ -65,13 +65,13 @@ public abstract unsafe partial class NativeAddon {
 	}
 
 	private void Hide2(AtkUnitBase* addon) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Hide2");
+		Log.Verbose($"[{InternalName}] Hide2");
 		
 		AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
 	}
 	
 	private void Finalizer(AtkUnitBase* addon) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Finalize");
+		Log.Verbose($"[{InternalName}] Finalize");
 		
 		OnFinalize(addon);
 
@@ -79,7 +79,7 @@ public abstract unsafe partial class NativeAddon {
 	}
 	
 	private AtkEventListener* Destructor(AtkUnitBase* addon, byte flags) {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Destructor");
+		Log.Verbose($"[{InternalName}] Destructor");
 		
 		var result = AtkUnitBase.StaticVirtualTablePointer->Dtor(addon, flags);
 

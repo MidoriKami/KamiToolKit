@@ -2,6 +2,7 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
+using KamiToolKit.Extensions;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Window;
 
@@ -22,7 +23,7 @@ public abstract unsafe partial class NativeAddon {
 			return;
 		}
 
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Beginning Native Addon Allocation");
+		Log.Verbose($"[{InternalName}] Beginning Native Addon Allocation");
 
 		InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
 		
@@ -39,11 +40,11 @@ public abstract unsafe partial class NativeAddon {
 
 		InternalAddon->NameString = GetInternalNameSafe();
 		
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Allocation Complete");
+		Log.Verbose($"[{InternalName}] Allocation Complete");
 	}
 
 	private void InitializeAddon() {
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Initializing Addon");
+		Log.Verbose($"[{InternalName}] Initializing Addon");
 
 		var widgetInfo = NativeMemoryHelper.UiAlloc<AtkUldWidgetInfo>(1, 16);
 		widgetInfo->Id = 1;
@@ -60,7 +61,7 @@ public abstract unsafe partial class NativeAddon {
 		InternalAddon->UldManager.ResourceFlags |= AtkUldManagerResourceFlag.ArraysAllocated;
 
 		InternalAddon->RootNode = RootNode.InternalResNode;
-		NodeLinker.AddNodeToUldObjectList(&InternalAddon->UldManager, RootNode.InternalResNode);
+		InternalAddon->UldManager.AddNodeToObjectList(RootNode.InternalResNode);
 
 		LoadTimeline();
 
@@ -81,7 +82,7 @@ public abstract unsafe partial class NativeAddon {
 		// Now that we have constructed this instance, track it for auto-dispose
 		CreatedAddons.Add(this);
 
-		Log.Verbose($"[KamiToolKit] [{InternalName}] Initialization Complete");
+		Log.Verbose($"[{InternalName}] Initialization Complete");
 	}
 
 	/// <summary>
@@ -90,7 +91,7 @@ public abstract unsafe partial class NativeAddon {
 	/// <param name="depthLayer">Which UI layer to attach the Addon to</param>
 	public void Open(int depthLayer = 4)
 		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-			Log.Verbose($"[KamiToolKit] [{InternalName}] Open Called");
+			Log.Verbose($"[{InternalName}] Open Called");
 
 			if (InternalAddon is null) {
 				AllocateAddon();
@@ -102,13 +103,13 @@ public abstract unsafe partial class NativeAddon {
 				}
 			}
 			else {
-				Log.Verbose($"[KamiToolKit] [{InternalName}] Already open, skipping call.");
+				Log.Verbose($"[{InternalName}] Already open, skipping call.");
 			}
 		});
 
 	public void Close() 
 		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-			Log.Verbose($"[KamiToolKit] [{InternalName}] Close");
+			Log.Verbose($"[{InternalName}] Close");
 
 			if (InternalAddon is null) return;
 			InternalAddon->Close(false);
