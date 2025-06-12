@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using FFXIVClientStructs.Interop;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
 
@@ -117,4 +119,7 @@ public static unsafe class AtkUldManagerExtensions {
 			Log.Debug($"[{index}]: {(nint)nodePointer:X}");
 		}
 	}
+
+	public static Span<Pointer<AtkResNode>> GetObjectsNodeSpan(ref this AtkUldManager uldManager)
+		=> new(uldManager.Objects->NodeList, uldManager.Objects->NodeCount);
 }
