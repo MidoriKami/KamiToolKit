@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
@@ -66,7 +67,7 @@ public static unsafe class AtkUldManagerExtensions {
 		return false;
 	}
 
-	public static void AddNodeToObjectList(this AtkUldManager uldManager, AtkResNode* newNode) {
+	public static void AddNodeToObjectList(ref this AtkUldManager uldManager, AtkResNode* newNode) {
 		// If the node is already in the object list, skip.
 		if (uldManager.IsNodeInObjectList(newNode)) return;
 		
@@ -88,7 +89,7 @@ public static unsafe class AtkUldManagerExtensions {
 		uldManager.Objects->NodeCount = newSize;
 	}
 
-	public static void RemoveNodeFromObjectList(this AtkUldManager uldManager, AtkResNode* node) {
+	public static void RemoveNodeFromObjectList(ref this AtkUldManager uldManager, AtkResNode* node) {
 		// If the node isn't in the object list, skip.
 		if (!uldManager.IsNodeInObjectList(node)) return;
 		
@@ -100,13 +101,21 @@ public static unsafe class AtkUldManagerExtensions {
 		foreach (var index in Enumerable.Range(0, oldSize)) {
 			if (uldManager.Objects->NodeList[index] != node) {
 				newBuffer[newIndex] = uldManager.Objects->NodeList[index];
+				newIndex++;
 			}
-            
-			newIndex++;
 		}
 
 		NativeMemoryHelper.Free(uldManager.Objects->NodeList, (ulong)(oldSize * 8));
 		uldManager.Objects->NodeList = newBuffer;
 		uldManager.Objects->NodeCount = newSize;
+	}
+
+	private static void PrintObjectList(ref this AtkUldManager uldManager) {
+		Log.Debug("Beginning NodeList");
+		
+		foreach (var index in Enumerable.Range(0, uldManager.Objects->NodeCount)) {
+			var nodePointer = uldManager.Objects->NodeList[index];
+			Log.Debug($"[{index}]: {(nint)nodePointer:X}");
+		}
 	}
 }
