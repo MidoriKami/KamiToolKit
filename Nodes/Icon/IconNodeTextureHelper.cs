@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using System.Numerics;
 using KamiToolKit.NodeParts;
-using KamiToolKit.Nodes.Image;
 
-namespace KamiToolKit.Nodes.Icon;
+namespace KamiToolKit.Nodes;
 
 public static class IconNodeTextureHelper {
     public static void LoadIconAFrameTexture(ImageNode image) {

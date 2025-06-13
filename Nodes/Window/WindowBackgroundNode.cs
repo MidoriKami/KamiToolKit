@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using KamiToolKit.NodeParts;
 
-namespace KamiToolKit.Nodes.Window;
+namespace KamiToolKit.Nodes;
 
 public class WindowBackgroundNode : NineGridNode {
 	public WindowBackgroundNode(bool selectedPath, string path = "ui/uld/WindowA_Bg") {

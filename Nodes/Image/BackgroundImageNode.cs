@@ -2,7 +2,7 @@ using System.Numerics;
 using KamiToolKit.Extensions;
 using Newtonsoft.Json;
 
-namespace KamiToolKit.Nodes.Image;
+namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// A simple image node that makes it easy to display a single color.

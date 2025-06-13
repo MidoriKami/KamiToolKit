@@ -2,7 +2,7 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
-namespace KamiToolKit.Nodes.InputText;
+namespace KamiToolKit.Nodes;
 
 internal class TextInputSelectionListNode : ResNode {
 

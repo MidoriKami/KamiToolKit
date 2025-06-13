@@ -4,7 +4,7 @@ using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
 
-namespace KamiToolKit.Nodes.InputText;
+namespace KamiToolKit.Nodes;
 
 public unsafe class TextInputButtonNode : ButtonBase {
 

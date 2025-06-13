@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using KamiToolKit.NodeParts;
 
-namespace KamiToolKit.Nodes.Image;
+namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// A simple image node that automatically creates a single <see cref="Part"/>, and exposes helpers to modify that part.

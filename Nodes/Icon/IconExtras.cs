@@ -4,9 +4,8 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 using KamiToolKit.NodeParts;
-using KamiToolKit.Nodes.Image;
 
-namespace KamiToolKit.Nodes.Icon;
+namespace KamiToolKit.Nodes;
 
 public class IconExtras : ResNode {
 

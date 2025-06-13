@@ -1,9 +1,8 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
-using KamiToolKit.Nodes.Image;
 
-namespace KamiToolKit.Nodes.Window;
+namespace KamiToolKit.Nodes;
 
 public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldComponentDataWindow> {
 

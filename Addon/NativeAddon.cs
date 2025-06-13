@@ -4,7 +4,6 @@ using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 using KamiToolKit.Extensions;
 using KamiToolKit.Nodes;
-using KamiToolKit.Nodes.Window;
 
 namespace KamiToolKit.Addon;
 

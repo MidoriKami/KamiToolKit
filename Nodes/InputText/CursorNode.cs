@@ -1,9 +1,8 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
-using KamiToolKit.Nodes.Image;
 
-namespace KamiToolKit.Nodes.InputText;
+namespace KamiToolKit.Nodes;
 
 public class CursorNode : ResNode {
 

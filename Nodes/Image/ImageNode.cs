@@ -2,7 +2,7 @@
 using KamiToolKit.NodeParts;
 using KamiToolKit.System;
 
-namespace KamiToolKit.Nodes.Image;
+namespace KamiToolKit.Nodes;
 
 public unsafe class ImageNode : NodeBase<AtkImageNode> {
     protected readonly PartsList PartsList;

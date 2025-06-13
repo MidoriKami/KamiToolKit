@@ -10,7 +10,7 @@ using KamiToolKit.NodeParts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace KamiToolKit.Nodes.Image;
+namespace KamiToolKit.Nodes;
 
 public class GifImageNode : ResNode {
 	
