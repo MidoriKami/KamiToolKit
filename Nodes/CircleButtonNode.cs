@@ -1,12 +1,18 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
+using Dalamud.Game.Addon.Events;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
 
-public class CircleButtonNode : ButtonBase {
+public class CircleButtonNode : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
 	protected SimpleImageNode ImageNode;
 	private ButtonIcon currentIcon;
 
 	public CircleButtonNode() {
+		SetInternalComponentType(ComponentType.Button);
+		
 		ImageNode = new SimpleImageNode {
 			TexturePath = "ui/uld/CircleButtons.tex",
 			TextureSize = new Vector2(24.0f, 24.0f),
@@ -21,6 +27,8 @@ public class CircleButtonNode : ButtonBase {
 		LoadTimelines();
 		
 		InitializeComponentEvents();
+		
+		AddEvent(AddonEventType.MouseClick, ClickHandler);
 	}
 
 	protected override void Dispose(bool disposing) {
@@ -30,6 +38,12 @@ public class CircleButtonNode : ButtonBase {
 			
 			base.Dispose(disposing);
 		}
+	}
+	
+	public Action? OnClick { get; set; }
+	
+	private void ClickHandler() {
+		OnClick?.Invoke();
 	}
 
 	public ButtonIcon Icon {
@@ -112,9 +126,81 @@ public class CircleButtonNode : ButtonBase {
 		
 		_ => new UldTextureInfo(0.0f, 0.0f, 28.0f, 28.0f),
 	};
-	
-	private void LoadTimelines()
-		=> LoadTwoPartTimelines(this, ImageNode);
+
+	private void LoadTimelines() {
+		AddTimeline(new TimelineBuilder()
+				.BeginFrameSet(1, 59)
+				.AddLabel(1, 1, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(9, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(10, 2, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(19, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(20, 3, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(29, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(30, 7, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(39, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(40, 6, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(49, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(50, 4, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(59, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.EndFrameSet()
+				.Build()
+			);
+		
+		ImageNode.AddTimeline(new TimelineBuilder()
+				.BeginFrameSet(1, 9)
+				.AddFrame(1, position: new Vector2(0,0))
+				.AddFrame(1, alpha: 255)
+				.AddFrame(1, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(10, 19)
+				.AddFrame(10, position: new Vector2(0,0))
+				.AddFrame(12, position: new Vector2(0,0))
+				.AddFrame(10, alpha: 255)
+				.AddFrame(12, alpha: 255)
+				.AddFrame(10, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.AddFrame(12, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(20, 29)
+				.AddFrame(20, position: new Vector2(0,1))
+				.AddFrame(20, alpha: 255)
+				.AddFrame(20, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(30, 39)
+				.AddFrame(30, position: new Vector2(0,0))
+				.AddFrame(30, alpha: 178)
+				.AddFrame(30, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(50, 50, 50))
+				.EndFrameSet()
+				.BeginFrameSet(40, 49)
+				.AddFrame(40, position: new Vector2(0,0))
+				.AddFrame(40, alpha: 255)
+				.AddFrame(40, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(50, 59)
+				.AddFrame(50, position: new Vector2(0,0))
+				.AddFrame(52, position: new Vector2(0,0))
+				.AddFrame(50, alpha: 255)
+				.AddFrame(52, alpha: 255)
+				.AddFrame(50, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.AddFrame(52, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(130, 139)
+				.AddFrame(130, position: new Vector2(0,0))
+				.AddFrame(130, alpha: 255)
+				.AddFrame(130, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(140, 149)
+				.AddFrame(140, position: new Vector2(0,0))
+				.AddFrame(140, alpha: 255)
+				.AddFrame(140, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(150, 159)
+				.AddFrame(150, position: new Vector2(0,0))
+				.AddFrame(150, alpha: 255)
+				.AddFrame(150, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.Build()
+		);
+	}
 }
 
 public enum ButtonIcon {
