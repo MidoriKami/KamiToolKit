@@ -13,8 +13,7 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
 	protected ButtonBase() {
 		SetInternalComponentType(ComponentType.Button);
-		
-		AddEvent(AddonEventType.MouseClick, ClickHandler);
+		AddEvent(AddonEventType.ButtonClick, ClickHandler);
 	}
 
 	protected override void Dispose(bool disposing) {
