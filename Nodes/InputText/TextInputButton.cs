@@ -6,14 +6,12 @@ using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class TextInputButtonNode : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
+public unsafe class TextInputButtonNode : ButtonBase {
 
 	protected readonly TextNode LabelNode;
 	protected readonly NineGridNode BackgroundNode;
 	
 	public TextInputButtonNode() {
-		SetInternalComponentType(ComponentType.Button);
-		
 		BackgroundNode = new SimpleNineGridNode {
 			NodeId = 3,
 			Size = new Vector2(160.0f, 24.0f),
