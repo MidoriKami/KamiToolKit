@@ -53,11 +53,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		uldManager.RootNode = CollisionNode.InternalResNode;
 		
 		uldManager.UpdateDrawNodeList();
-		uldManager.ResourceFlags = AtkUldManagerResourceFlag.Initialized |
-		                           AtkUldManagerResourceFlag.KeepUldResourceHandle |
-		                           AtkUldManagerResourceFlag.ArraysAllocated |
-		                           AtkUldManagerResourceFlag.AssetsHaveThemeSupport;
-
+		uldManager.ResourceFlags = AtkUldManagerResourceFlag.Initialized | AtkUldManagerResourceFlag.ArraysAllocated;
 		uldManager.LoadedState = AtkLoadState.Loaded;
 	}
 
