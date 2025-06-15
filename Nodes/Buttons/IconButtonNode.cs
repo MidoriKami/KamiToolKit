@@ -39,7 +39,6 @@ public class IconButtonNode : ButtonBase {
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			ImageNode.DetachNode();
 			ImageNode.Dispose();
 			
 			base.Dispose(disposing);

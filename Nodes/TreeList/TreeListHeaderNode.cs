@@ -37,6 +37,9 @@ public class TreeListHeaderNode : ResNode {
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
+			DecorationNode.Dispose();
+			LabelNode.Dispose();
+			
 			base.Dispose(disposing);
 		}
 	}

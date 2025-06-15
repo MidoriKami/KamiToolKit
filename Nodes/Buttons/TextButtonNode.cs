@@ -43,8 +43,8 @@ public unsafe class TextButtonNode : ButtonBase {
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			LabelNode.DetachNode();
 			LabelNode.Dispose();
+			BackgroundNode.Dispose();
 			
 			base.Dispose(disposing);
 		}

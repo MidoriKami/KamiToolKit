@@ -157,6 +157,7 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
                 node.Dispose();
             }
             
+            ContainerNode.Dispose();
             Background.Dispose();
             Border.Dispose();
             
