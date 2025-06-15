@@ -111,7 +111,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		get => base.Height;
 		set {
 			CollisionNode.Height = value;
-			ComponentBase->UldManager.RootNodeWidth = (ushort) value;
+			ComponentBase->UldManager.RootNodeHeight = (ushort) value;
 			base.Height = value;
 		}
 	}
