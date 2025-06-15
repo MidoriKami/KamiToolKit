@@ -21,7 +21,6 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled |NodeFlags.EmitsEvents,
 			WrapMode = 1,
 			ImageNodeFlags = ImageNodeFlags.AutoFit,
-			IconId = 1,
 		};
 		
 		IconImage.AttachNode(this);
@@ -78,43 +77,44 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
 		}
 	}
 	
-	// public uint IconId {
-	// 	get => (uint) Component->IconId;
-	// 	set => Component->LoadIcon(value);
-	// }
+	public uint IconId {
+		get => Component->IconId;
+		set => Component->LoadIcon(value);
+	}
 	
-	// public bool IsIconLoading 
-	// 	=> Component->Flags.HasFlag(IconComponentFlags.IsIconLoading);
+	public bool IsIconLoading 
+		=> Component->Flags.HasFlag(IconComponentFlags.IsIconLoading);
 
-	// public bool IsIconDisabled {
-	// 	get => Component->Flags.HasFlag(IconComponentFlags.IsDisabled);
-	// 	set => Component->SetIconImageDisableState(value);
-	// }
+	public bool IsIconDisabled {
+		get => Component->Flags.HasFlag(IconComponentFlags.IsDisabled);
+		set => Component->SetIconImageDisableState(value);
+	}
 	
-	// public byte ComboLevel {
-	// 	get {
-	// 		if (Component->Flags.HasFlag(IconComponentFlags.ComboLevel3))
-	// 			return 3;
-	// 		if (Component->Flags.HasFlag(IconComponentFlags.ComboLevel2))
-	// 			return 2;
-	// 		if (Component->Flags.HasFlag(IconComponentFlags.ComboLevel1))
-	// 			return 1;
-	// 		return 0;
-	// 	}
-	// 	set => Component->SetComboLevel(value is >= 1 and <= 3, (byte)(value - 1));
-	// }
+	public byte ComboLevel {
+		get {
+			if (Component->Flags.HasFlag(IconComponentFlags.ComboLevel3))
+				return 3;
+			if (Component->Flags.HasFlag(IconComponentFlags.ComboLevel2))
+				return 2;
+			if (Component->Flags.HasFlag(IconComponentFlags.ComboLevel1))
+				return 1;
+			return 0;
+		}
+		set => Component->SetComboLevel(value is >= 1 and <= 3, (byte)(value - 1));
+	}
 	
-	// public bool IsMacro {
-	// 	get => Component->Flags.HasFlag(IconComponentFlags.IsMacro);
-	// 	set => Component->SetIsMacro(value);
-	// }
+	public bool IsMacro {
+		get => Component->Flags.HasFlag(IconComponentFlags.IsMacro);
+		set => Component->SetIsMacro(value);
+	}
 	
-	// public bool IsRecipe {
-	// 	get => Component->Flags.HasFlag(IconComponentFlags.IsRecipe);
-	// 	set => Component->SetIsRecipe(value);
-	// }
+	public bool IsRecipe {
+		get => Component->Flags.HasFlag(IconComponentFlags.IsRecipe);
+		set => Component->SetIsRecipe(value);
+	}
 	
-	// public bool IsBeingDragged => Component->Flags.HasFlag(IconComponentFlags.IsBeingDragged);
+	public bool IsBeingDragged 
+		=> Component->Flags.HasFlag(IconComponentFlags.IsBeingDragged);
 	
 	private void BuildTimeline() {
 		IconExtras.AddTimeline(new TimelineBuilder()
