@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
 namespace KamiToolKit.Addon;
@@ -74,6 +75,10 @@ public abstract unsafe partial class NativeAddon {
 		Log.Verbose($"[{InternalName}] Finalize");
 		
 		OnFinalize(addon);
+
+		if (RememberClosePosition) {
+			Position = new Vector2(InternalAddon->X, InternalAddon->Y);
+		}
 
 		AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
 	}
