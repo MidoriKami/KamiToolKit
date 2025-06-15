@@ -36,8 +36,12 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 		LoadTimelines();
 
 		Data->Nodes[0] = IconNode.NodeId;
-		
+
 		InitializeComponentEvents();
+		
+		// todo: investigate why these aren't being set automatically
+		Component->AtkComponentIcon = IconNode.Component;
+		Component->AtkDragDropInterface.ComponentNode = IconNode.InternalComponentNode;
 	}
 
 	protected override void Dispose(bool disposing) {
