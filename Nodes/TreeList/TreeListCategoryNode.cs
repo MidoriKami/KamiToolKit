@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Text.SeStringHandling;
@@ -79,7 +78,6 @@ public class TreeListCategoryNode : ResNode {
 			TextColor = ColorHelper.GetColor(1),
 			TextOutlineColor = ColorHelper.GetColor(2),
 			IsVisible = true,
-			Text = "Test!",
 		};
 		
 		LabelNode.AttachNode(this);
@@ -172,6 +170,11 @@ public class TreeListCategoryNode : ResNode {
 			ChildContainer.Width = value;
 			CollisionNode.Width = value;
 		}
+	}
+
+	public SeString Label {
+		get => LabelNode.Text;
+		set => LabelNode.Text = value;
 	}
 
 	private void BuildTimelines() {
