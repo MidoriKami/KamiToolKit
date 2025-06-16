@@ -85,7 +85,7 @@ public abstract unsafe partial class NodeBase {
 	private AtkUldManager* GetUldManagerForNode(AtkResNode* node) {
 		if (node is null) return null;
 
-		var targetNode = node;
+		var targetNode = node->ParentNode;
 
 		// Try to get UldManager via the first parent that is a component
 		while (targetNode is not null) {
