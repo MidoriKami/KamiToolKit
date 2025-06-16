@@ -1,10 +1,9 @@
-﻿using System.Drawing;
-using System.Numerics;
+﻿using System.Numerics;
 using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Interface;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Extensions;
 using KamiToolKit.System;
 using Newtonsoft.Json;
@@ -17,8 +16,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     private Utf8String* stringBuffer = Utf8String.CreateEmpty();
 
     public TextNode() : base(NodeType.Text) {
-        TextColor = KnownColor.White.Vector();
-        TextOutlineColor = KnownColor.Black.Vector();
+        TextColor = ColorHelper.GetColor(1);
+        TextOutlineColor = ColorHelper.GetColor(2);
         FontSize = 12;
         FontType = FontType.Axis;
     }
