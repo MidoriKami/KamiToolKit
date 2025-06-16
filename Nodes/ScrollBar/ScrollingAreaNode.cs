@@ -11,18 +11,18 @@ public unsafe class ScrollingAreaNode : ResNode {
 	public ScrollingAreaNode() {
 		NodeFlags = NodeFlags.Clip;
 		
-		ContentAreaNode = new ResNode {
-			IsVisible = true,
-		};
-
-		ContentAreaNode.AttachNode(this);
-		
 		ScrollingCollisionNode = new CollisionNode {
 			IsVisible = true,
 			EventFlagsSet = true,
 		};
 		
 		ScrollingCollisionNode.AttachNode(this);
+		
+		ContentAreaNode = new ResNode {
+			IsVisible = true,
+		};
+
+		ContentAreaNode.AttachNode(this);
 		
 		ScrollBarNode = new ScrollBarNode {
 			ContentNode = ContentAreaNode,
