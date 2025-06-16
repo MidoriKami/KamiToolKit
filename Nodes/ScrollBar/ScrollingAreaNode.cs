@@ -39,6 +39,14 @@ public unsafe class ScrollingAreaNode : ResNode {
 			(AtkEventTarget*) ScrollingCollisionNode.InternalResNode,
 			(AtkEventListener*) ScrollBarNode.Component, 
 			false);
+		
+		ContentAreaNode.InternalResNode->AtkEventManager.RegisterEvent(
+			AtkEventType.MouseWheel, 
+			5, 
+			null, 
+			(AtkEventTarget*) ScrollingCollisionNode.InternalResNode,
+			(AtkEventListener*) ScrollBarNode.Component, 
+			false);
 	}
 
 	protected override void Dispose(bool disposing) {
