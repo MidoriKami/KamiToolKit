@@ -14,7 +14,7 @@ namespace KamiToolKit.Nodes;
 
 /// Custom Implementation of a Node that contains other nodes
 [JsonObject(MemberSerialization.OptIn)]
-public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
+public unsafe class ListBoxNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
     [JsonProperty] protected readonly ResNode ContainerNode;
     private readonly List<T> nodeList = [];
     [JsonProperty] protected readonly BackgroundImageNode Background;
@@ -67,7 +67,7 @@ public unsafe class ListNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeB
         }
     }
 
-    public ListNode() : base(NodeType.Res) {
+    public ListBoxNode() : base(NodeType.Res) {
         ContainerNode = new ResNode {
             NodeId = 103_000,
             Size = new Vector2(600.0f, 32.0f),
