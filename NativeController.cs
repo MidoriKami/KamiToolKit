@@ -43,16 +43,19 @@ public unsafe class NativeController : IDisposable {
 	public void AttachNode(NodeBase customNode, NodeBase targetNode, NodePosition position = NodePosition.AsLastChild)
 		=> Framework.RunOnFrameworkThread(() => {
 			Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}] to another Custom Node [{targetNode.GetType()}]");
+			var addon = GetAddonForNode(targetNode.InternalResNode);
 
 			switch (targetNode) {
 
 				// Don't attach directly to ComponentNode, attach to its managed RootNode
 				case ComponentNode componentNode:
 					customNode.AttachNode(componentNode, position);
+					customNode.EnableEvents(addon);
 					return;
 
 				default:
 					customNode.AttachNode(targetNode, position);
+					customNode.EnableEvents(addon);
 					return;
 			}
 		});
