@@ -122,7 +122,10 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 		set => Component->Steps = value;
 	}
 
-	public int Value { get; set; }
+	public int Value {
+		get => Component->Value;
+		set => Component->Value = value;
+	}
 	
 	private void BuildTimelines() {
 		AddTimeline(new TimelineBuilder()
