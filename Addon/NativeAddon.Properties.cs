@@ -13,7 +13,7 @@ public abstract unsafe partial class NativeAddon {
 
 	public required NativeController NativeController { get; init; }
 
-	public int OpenWindowSoundEffectId { get; set; } = 32;
+	public int OpenWindowSoundEffectId { get; set; } = 23;
 
 	public TitleMenuOptions TitleMenuOptions { get; set; } = new() {
 		Enable = true,
