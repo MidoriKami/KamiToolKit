@@ -54,14 +54,14 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 		}
 	}
 
-	public required NodeBase ContentNode {
+	public NodeBase ContentNode {
 		set {
 			Component->ContentNode = value.InternalResNode;
 			UpdateScrollParams();
 		}
 	}
 
-	public required CollisionNode ContentCollisionNode {
+	public CollisionNode ContentCollisionNode {
 		set {
 			Component->ContentCollisionNode = value.InternalNode;
 			UpdateScrollParams();
@@ -73,7 +73,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 		set {
 			base.Height = value;
 			BackgroundButtonNode.Height = value;
-			// ForegroundButtonNode.Height = value;
+			ForegroundButtonNode.Height = value;
 		}
 	}
 
