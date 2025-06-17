@@ -24,7 +24,7 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 	
 	public Action? OnClick { get; set; }
 	
-	private void ClickHandler() {
+	private void ClickHandler(AddonEventData data) {
 		OnClick?.Invoke();
 	}
 	

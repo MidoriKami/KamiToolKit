@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace KamiToolKit.System;
 
 public class EventHandler {
-	public required Action? EventAction { get; set; }
+	public required Action<AddonEventData>? EventAction { get; set; }
 	public IAddonEventHandle? EventHandle { get; set; }
 }
 
@@ -20,7 +20,7 @@ public abstract unsafe partial class NodeBase {
 	public bool IsEventRegistered(AddonEventType eventType) 
 		=> eventHandlers.ContainsKey(eventType);
 	
-	public void AddEvent(AddonEventType eventType, Action action, bool enableEventFlags = false) {
+	public void AddEvent(AddonEventType eventType, Action<AddonEventData> action, bool enableEventFlags = false) {
 		// Check if this eventType is already registered
 		if (eventHandlers.TryGetValue(eventType, out var handler)) {
 			handler.EventAction += action;
@@ -47,7 +47,7 @@ public abstract unsafe partial class NodeBase {
 		}
 	}
 
-	public void RemoveEvent(AddonEventType eventType, Action action, bool clearEventFlags = false) {
+	public void RemoveEvent(AddonEventType eventType, Action<AddonEventData> action, bool clearEventFlags = false) {
 		if (eventHandlers.TryGetValue(eventType, out var handler)) {
 			if (handler.EventAction is not null) {
 				handler.EventAction -= action;
@@ -79,11 +79,11 @@ public abstract unsafe partial class NodeBase {
 		}
 	}
 
-	private void HandleEvents(AddonEventType atkEventType, IntPtr atkUnitBase, IntPtr atkResNode) {
+	private void HandleEvents(AddonEventType atkEventType, AddonEventData eventData) {
 		if (!IsVisible) return;
 
 		if (eventHandlers.TryGetValue(atkEventType, out var handler)) {
-			handler.EventAction?.Invoke();
+			handler.EventAction?.Invoke(eventData);
 		}
 	}
 
@@ -186,23 +186,23 @@ public abstract unsafe partial class NodeBase {
 		DalamudInterface.Instance.AddonEventManager.ResetCursor();
 	}
 
-	public void ShowTooltip() {
+	public void ShowTooltip(AddonEventData data) {
 		if (Tooltip is not null && TooltipRegistered) {
 			var addon = GetAddonForNode(InternalResNode);
 			AtkStage.Instance()->TooltipManager.ShowTooltip(addon->Id, InternalResNode, Tooltip.Encode());
 		}
 	}
 
-	public void HideTooltip() {
+	public void HideTooltip(AddonEventData data) {
 		if (Tooltip is not null && TooltipRegistered) {
 			var addon = GetAddonForNode(InternalResNode);
 			AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
 		}
 	}
 
-	private void SetCursorMouseover()
+	private void SetCursorMouseover(AddonEventData data)
 		=> SetCursor(AddonCursorType.Clickable);
 
-	private void ResetCursorMouseover()
+	private void ResetCursorMouseover(AddonEventData data)
 		=> ResetCursor();
 }

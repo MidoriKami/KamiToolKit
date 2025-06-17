@@ -141,7 +141,7 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 	
 	public Action<int>? OnValueUpdate { get; set; }
 
-	private void ValueUpdateHandler() {
+	private void ValueUpdateHandler(AddonEventData data) {
 		OnValueUpdate?.Invoke(Value);
 	}
 	

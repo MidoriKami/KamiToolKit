@@ -194,7 +194,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		}
 	}
 	
-	private void InputComplete() {
+	private void InputComplete(AddonEventData data) {
 		OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
 	}
 

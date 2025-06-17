@@ -95,7 +95,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 
 	public Action<bool>? OnClick { get; set; }
 	
-	private void ClickHandler() {
+	private void ClickHandler(AddonEventData data) {
 		OnClick?.Invoke(Component->IsChecked);
 	}
 	

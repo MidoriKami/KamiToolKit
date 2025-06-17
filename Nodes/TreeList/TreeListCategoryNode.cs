@@ -92,9 +92,9 @@ public class TreeListCategoryNode : ResNode {
 		BuildTimelines();
 		
 		CollisionNode.SetEventFlags();
-		CollisionNode.AddEvent(AddonEventType.MouseOver, () => Timeline?.StartAnimation(IsCollapsed ? 2 : 9));
-		CollisionNode.AddEvent(AddonEventType.MouseOut, () => Timeline?.StartAnimation(IsCollapsed ? 1 : 8));
-		CollisionNode.AddEvent(AddonEventType.MouseClick, () => {
+		CollisionNode.AddEvent(AddonEventType.MouseOver, _ => Timeline?.StartAnimation(IsCollapsed ? 2 : 9));
+		CollisionNode.AddEvent(AddonEventType.MouseOut, _ => Timeline?.StartAnimation(IsCollapsed ? 1 : 8));
+		CollisionNode.AddEvent(AddonEventType.MouseClick, _ => {
 			IsCollapsed = !IsCollapsed;
 			Timeline?.StartAnimation(IsCollapsed ? 2 : 9);
 			ChildContainer.IsVisible = !IsCollapsed;
