@@ -45,26 +45,20 @@ public static unsafe class AtkUldManagerExtensions {
 			}
 		}
 	}
-	
-	public static bool IsNodeInObjectList(ref this AtkUldManager uldManager, AtkResNode* node) {
-		foreach (var index in Enumerable.Range(0, uldManager.Objects->NodeCount)) {
-			var nodePointer = uldManager.Objects->NodeList[index];
-			if (nodePointer == node) {
-				return true;
-			}
+
+	private static bool IsNodeInObjectList(ref this AtkUldManager uldManager, AtkResNode* node) {
+		foreach (var objectNode in uldManager.GetObjectsNodeSpan()) {
+			if (objectNode.Value == node) return true;
 		}
 		
 		return false;
 	}
 
-	public static bool IsNodeInDrawList(ref this AtkUldManager uldManager, AtkResNode* node) {
-		foreach (var index in Enumerable.Range(0, uldManager.NodeListCount)) {
-			var nodePointer = uldManager.NodeList[index];
-
-			if (nodePointer == node) {
-				return true;
-			}
+	private static bool IsNodeInDrawList(ref this AtkUldManager uldManager, AtkResNode* node) {
+		foreach (var drawNode in uldManager.Nodes) {
+			if (drawNode.Value == node) return true;
 		}
+
 		return false;
 	}
 
