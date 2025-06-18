@@ -152,7 +152,7 @@ public abstract unsafe partial class NodeBase {
 			handler.EventHandle = DalamudInterface.Instance.AddonEventManager.AddEvent((nint) addon, (nint) InternalResNode, eventType, HandleEvents);
 		}
 		
-		VisitChildren(node => node.EnableEvents(addon));
+		VisitChildren(node => node?.EnableEvents(addon));
 	}
 	
 	internal void DisableEvents() {
@@ -167,7 +167,7 @@ public abstract unsafe partial class NodeBase {
 			}
 		}
 		
-		VisitChildren(node => node.DisableEvents());
+		VisitChildren(node => node?.DisableEvents());
 	}
 
 	/// <summary>
