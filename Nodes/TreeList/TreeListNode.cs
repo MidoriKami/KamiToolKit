@@ -11,8 +11,6 @@ public unsafe class TreeListNode : ResNode {
 
 	public float CategoryVerticalSpacing { get; set; } = 4.0f;
 
-	private const float ScrollBarWidth = 8.0f;
-	
 	public TreeListNode() {
 		childContainer = new ResNode {
 			IsVisible = true,
@@ -57,7 +55,7 @@ public unsafe class TreeListNode : ResNode {
 		get => base.Width;
 		set {
 			base.Width = value;
-			childContainer.Width = value - ScrollBarWidth;
+			childContainer.Width = value;
 		}
 	}
 
