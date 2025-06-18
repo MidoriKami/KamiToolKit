@@ -76,7 +76,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
     internal override sealed AtkResNode* InternalResNode => (AtkResNode*) InternalNode;
 
     protected NodeBase(NodeType nodeType) {
-        Log.Debug($"Creating new node {GetType()}");
+        Log.Verbose($"Creating new node {GetType()}");
         InternalNode = NativeMemoryHelper.Create<T>();
         InternalResNode->Type = nodeType;
         InternalResNode->NodeId = NodeIdBase + CurrentOffset++;
