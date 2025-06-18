@@ -1,0 +1,227 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using Dalamud.Game.Addon.Events;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes.TimelineBuilding;
+
+namespace KamiToolKit.Nodes;
+
+/// Note, automatically inserts buttons to fill the set height, please ensure option count is greater than button count.
+public abstract unsafe class ListNode<T> : ComponentNode<AtkComponentBase, AtkUldComponentDataBase> {
+
+	protected readonly NineGridNode BackgroundNode;
+	protected readonly ResNode ContainerNode;
+	protected List<ListButtonNode> Nodes = [];
+	protected readonly ScrollBarNode ScrollBarNode;
+
+	protected List<T>? InternalOptions = [];
+	
+	public T? SelectedOption { get; set; } 
+
+	public List<T>? Options {
+		get => InternalOptions;
+		set {
+			InternalOptions = value;
+			RebuildNodeList();
+		}
+	}
+
+	protected ListNode() {
+		SetInternalComponentType(ComponentType.Base);
+
+		BackgroundNode = new SimpleNineGridNode {
+			TexturePath = "ui/uld/ListB.tex",
+			TextureCoordinates = new Vector2(0.0f, 0.0f),
+			TextureSize = new Vector2(32.0f, 32.0f),
+			TopOffset = 10, BottomOffset = 12, LeftOffset = 10, RightOffset = 10,
+			IsVisible = true,
+		};
+		
+		BackgroundNode.AttachNode(this);
+
+		ContainerNode = new ResNode {
+			NodeFlags = NodeFlags.Clip,
+			IsVisible = true,
+		};
+		
+		ContainerNode.AttachNode(this);
+
+		ContainerNode.SetEventFlags();
+		ContainerNode.AddEvent(AddonEventType.MouseWheel, OnMouseWheel);
+
+		ScrollBarNode = new ScrollBarNode {
+			Position = new Vector2(0.0f, 9.0f),
+			Size = new Vector2(8.0f, 0.0f),
+			IsVisible = true,
+			OnValueChanged = OnScrollUpdate,
+		};
+		
+		ScrollBarNode.AttachNode(this);
+		
+		BuildTimelines();
+		
+		InitializeComponentEvents();
+	}
+
+	protected override void Dispose(bool disposing) {
+		if (disposing) {
+			BackgroundNode.Dispose();
+
+			foreach (var buttonNode in Nodes) {
+				buttonNode.Dispose();
+			}
+			
+			ScrollBarNode.Dispose();
+			
+			base.Dispose(disposing);
+		}
+	}
+
+	public override void EnableEvents(AtkUnitBase* addon) {
+		base.EnableEvents(addon);
+		ContainerNode.EnableEvents(addon);
+
+		foreach (var buttonNode in Nodes) {
+			buttonNode.EnableEvents(addon);
+		}
+		
+		ScrollBarNode.EnableEvents(addon);
+	}
+
+	public override void DisableEvents() {
+		base.DisableEvents();
+		ContainerNode.DisableEvents();
+
+		foreach (var buttonNode in Nodes) {
+			buttonNode.DisableEvents();
+		}
+		
+		ScrollBarNode.DisableEvents();
+	}
+
+	protected float NodeHeight { get; set; } = 22.0f;
+	
+	public override float Height {
+		get => base.Height;
+		set {
+			var adjustedSize = GetNodeCount(value) * NodeHeight + 24.0f;
+			
+			base.Height = adjustedSize;
+			BackgroundNode.Height = adjustedSize;
+			ContainerNode.Height = adjustedSize;
+			ScrollBarNode.Height = adjustedSize - 23.0f;
+
+			if (Options is not null && Options.Count != 0) {
+				RebuildNodeList();
+			}
+		}
+	}
+
+	public override float Width {
+		get => base.Width;
+		set {
+			base.Width = value;
+			BackgroundNode.Width = value;
+			ContainerNode.Width = value - 25.0f;
+			foreach (var buttonNode in Nodes) {
+				buttonNode.Width = value - 25.0f;
+			}
+			ScrollBarNode.X = value - 17.0f;
+		}
+	}
+	
+	private void OnScrollUpdate(int scrollPosition) {
+		var index = scrollPosition / 22.0f;
+		
+		CurrentStartIndex = (int) index;
+		UpdateNodes();
+	}
+	
+	private void OnMouseWheel(AddonEventData obj) {
+		CurrentStartIndex -= ((AtkEventData*) obj.AtkEventDataPointer)->MouseData.WheelDirection;
+		UpdateNodes();
+		ScrollBarNode.ScrollPosition = (int) ( CurrentStartIndex * NodeHeight + 9.0f );
+	}
+	
+	public int CurrentStartIndex { get; set; }
+
+	private void RebuildNodeList() {
+		var buttonCount = GetNodeCount(Height);
+
+		foreach (var button in Nodes) {
+			button.Dispose();
+		}
+		Nodes.Clear();
+
+		foreach (var index in Enumerable.Range(0, buttonCount)) {
+			var newButton = new ListButtonNode {
+				NodeId = (uint) index,
+				Size = new Vector2(Width - 25.0f, NodeHeight),
+				Position = new Vector2(8.0f, NodeHeight * index + 9.0f),
+				IsVisible = true,
+				Label = $"Button {index}",
+				OnClick = () => OnOptionClick(index),
+			};
+			
+			Nodes.Add(newButton);
+			newButton.AttachNode(ContainerNode);
+		}
+
+		if (Options is not null) {
+			ScrollBarNode.UpdateScrollParams((int) ScrollBarNode.Height, (int) ( Options.Count * NodeHeight + 24.0f ) );
+		}
+
+		UpdateNodes();
+	}
+
+	protected virtual void OnOptionClick(int nodeId) {
+		if (Options is null) return;
+		
+		SelectedOption = Options[nodeId + CurrentStartIndex];
+		OnOptionSelected?.Invoke(Options[nodeId + CurrentStartIndex]);
+		
+		UpdateSelected();
+	}
+
+	private void UpdateSelected() {
+		if (Options is null) return;
+		
+		foreach (var index in Enumerable.Range(0, Nodes.Count)) {
+			var option = Options[index + CurrentStartIndex];
+
+			Nodes[index].Selected = SelectedOption?.Equals(option) ?? false;
+			Nodes[index].Label = GetLabelForOption(option);
+		}
+	}
+	
+	protected abstract string GetLabelForOption(T option);
+	
+	protected void UpdateNodes() {
+		if (Options is null) return;
+		var maxStartIndex = Options.Count - Nodes.Count;
+		
+		CurrentStartIndex = Math.Clamp(CurrentStartIndex, 0, maxStartIndex);
+		UpdateSelected();
+	}
+
+	public Action<T>? OnOptionSelected { get; set; }
+	
+	protected int GetNodeCount(float height)
+		=> (int) ( ( height - 18.0f ) / NodeHeight );
+	
+	private void BuildTimelines() {
+		AddTimeline(new TimelineBuilder()
+			.BeginFrameSet(1, 29)
+			.AddLabel(1, 17, AtkTimelineJumpBehavior.Start, 0)
+			.AddLabel(9, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.AddLabel(10, 18, AtkTimelineJumpBehavior.Start, 0)
+			.AddLabel(19, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.AddLabel(20, 7, AtkTimelineJumpBehavior.Start, 0)
+			.AddLabel(29, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.EndFrameSet()
+			.Build()
+		);
+	}
+}
