@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class TreeListNode : ResNode {
+public class TreeListNode : ResNode {
 
 	private List<TreeListCategoryNode> children = [];
 	
@@ -28,26 +27,6 @@ public unsafe class TreeListNode : ResNode {
 			}
 			
 			base.Dispose(disposing);
-		}
-	}
-
-	public override void EnableEvents(AtkUnitBase* addon) {
-		base.EnableEvents(addon);
-		
-		childContainer.EnableEvents(addon);
-		
-		foreach (var child in children) {
-			child.EnableEvents(addon);
-		}
-	}
-
-	public override void DisableEvents() {
-		base.DisableEvents();
-		
-		childContainer.DisableEvents();
-		
-		foreach (var child in children) {
-			child.DisableEvents();
 		}
 	}
 

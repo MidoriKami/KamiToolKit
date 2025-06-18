@@ -9,7 +9,6 @@ internal class DalamudInterface {
 	public static DalamudInterface Instance => instance ??= new DalamudInterface();
 	
 	[PluginService] public IPluginLog Log { get; set; } = null!;
-	[PluginService] public IGameGui GameGui { get; set; } = null!;
 	[PluginService] public IAddonLifecycle AddonLifecycle { get; set; } = null!;
 	[PluginService] public IDataManager DataManager { get; set; } = null!;
 	[PluginService] public ITextureProvider TextureProvider { get; set; } = null!;

@@ -198,16 +198,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
 	}
 
-	public override void EnableEvents(AtkUnitBase* addon) {
-		base.EnableEvents(addon);
-		CollisionNode.EnableEvents(addon);
-	}
-
-	public override void DisableEvents() {
-		base.DisableEvents();
-		CollisionNode.DisableEvents();
-	}
-
 	public override float Width {
 		get => base.Width;
 		set {

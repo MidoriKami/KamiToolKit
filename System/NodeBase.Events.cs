@@ -141,8 +141,9 @@ public abstract unsafe partial class NodeBase {
 		}
 	}
 
-	public virtual void EnableEvents(AtkUnitBase* addon) {
+	internal void EnableEvents(AtkUnitBase* addon) {
 		if (addon is null) return;
+		if (EventsActive) return;
 
 		EventAddonPointer = addon;
 		EventsActive = true;
@@ -150,9 +151,12 @@ public abstract unsafe partial class NodeBase {
 		foreach (var (eventType, handler) in eventHandlers) {
 			handler.EventHandle = DalamudInterface.Instance.AddonEventManager.AddEvent((nint) addon, (nint) InternalResNode, eventType, HandleEvents);
 		}
+		
+		VisitChildren(node => node.EnableEvents(addon));
 	}
 	
-	public virtual void DisableEvents() {
+	internal void DisableEvents() {
+		if (!EventsActive) return;
 		EventsActive = false;
 		
 		foreach (var (_, handler) in eventHandlers) {
@@ -162,6 +166,8 @@ public abstract unsafe partial class NodeBase {
 				handler.EventHandle = null;
 			}
 		}
+		
+		VisitChildren(node => node.DisableEvents());
 	}
 
 	/// <summary>
@@ -186,19 +192,25 @@ public abstract unsafe partial class NodeBase {
 		DalamudInterface.Instance.AddonEventManager.ResetCursor();
 	}
 
-	public void ShowTooltip(AddonEventData data) {
+	public void ShowTooltip() {
 		if (Tooltip is not null && TooltipRegistered) {
 			var addon = GetAddonForNode(InternalResNode);
 			AtkStage.Instance()->TooltipManager.ShowTooltip(addon->Id, InternalResNode, Tooltip.Encode());
 		}
 	}
 
-	public void HideTooltip(AddonEventData data) {
+	public void HideTooltip() {
 		if (Tooltip is not null && TooltipRegistered) {
 			var addon = GetAddonForNode(InternalResNode);
 			AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
 		}
 	}
+	
+	private void ShowTooltip(AddonEventData data) 
+		=> ShowTooltip();
+
+	private void HideTooltip(AddonEventData data)
+		=> HideTooltip();
 
 	private void SetCursorMouseover(AddonEventData data)
 		=> SetCursor(AddonCursorType.Clickable);

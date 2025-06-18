@@ -123,18 +123,6 @@ public abstract class DropDownNode<T> : ResNode where T : ListNode, new() {
 		set => OptionListNode.Height = value;
 	}
 
-	public override unsafe void EnableEvents(AtkUnitBase* addon) {
-		base.EnableEvents(addon);
-		CollisionNode.EnableEvents(addon);
-		OptionListNode.EnableEvents(addon);
-	}
-
-	public override void DisableEvents() {
-		base.DisableEvents();
-		CollisionNode.DisableEvents();
-		OptionListNode.DisableEvents();
-	}
-
 	public void Toggle() {
 		IsCollapsed = !IsCollapsed;
 		Timeline?.StartAnimation(IsCollapsed ? 2 : 9);

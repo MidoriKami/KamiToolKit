@@ -115,24 +115,6 @@ public class TreeListCategoryNode : ResNode {
 		}
 	}
 
-	public override unsafe void EnableEvents(AtkUnitBase* addon) {
-		base.EnableEvents(addon);
-		CollisionNode.EnableEvents(addon);
-
-		foreach (var child in children) {
-			child.EnableEvents(addon);
-		}
-	}
-
-	public override void DisableEvents() {
-		base.DisableEvents();
-		CollisionNode.DisableEvents();
-
-		foreach (var child in children) {
-			child.DisableEvents();
-		}
-	}
-	
 	private bool InternalIsCollapsed { get; set; }
 
 	public bool IsCollapsed {

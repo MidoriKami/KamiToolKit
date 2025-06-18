@@ -46,6 +46,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
         
         if (!isDisposed) {
             Log.Debug($"Disposing node {GetType()}");
+            
+            VisitChildren(node => node?.Dispose());
 
             TryForceDetach(false);
 

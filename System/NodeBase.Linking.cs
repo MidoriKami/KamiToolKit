@@ -22,11 +22,13 @@ public abstract unsafe partial class NodeBase {
 
 	internal void AttachNode(NodeBase target, NodePosition position = NodePosition.AsLastChild) {
 		NodeLinker.AttachNode(InternalResNode, target.InternalResNode, position);
+		EnableChildEvents(target);
 		UpdateNative();
 	}
 
 	internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
 		NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
+		EnableChildEvents(target);
 		UpdateNative();
 	}
 
@@ -82,6 +84,14 @@ public abstract unsafe partial class NodeBase {
 		}
 	}
 
+	private void EnableChildEvents(NodeBase targetParent) {
+		if (targetParent.EventsActive) {
+			VisitChildren(childNode => {
+				childNode.EnableEvents(targetParent.EventAddonPointer);
+			});
+		}
+	}
+	
 	private AtkUldManager* GetUldManagerForNode(AtkResNode* node) {
 		if (node is null) return null;
 
@@ -119,7 +129,7 @@ public abstract unsafe partial class NodeBase {
 			visitAction(child);
 
 			// Be sure to not accidentally visit a components children, they manage their own children
-			if (child->ChildNode is not null && child->ChildNode->GetNodeType() is not NodeType.Component) {
+			if (child->ChildNode is not null && child->GetNodeType() is not NodeType.Component) {
 				VisitChildren(child->ChildNode, visitAction);
 			}
 

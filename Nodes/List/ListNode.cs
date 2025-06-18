@@ -81,28 +81,6 @@ public abstract unsafe class ListNode<T> : ListNode {
 		}
 	}
 
-	public override void EnableEvents(AtkUnitBase* addon) {
-		base.EnableEvents(addon);
-		ContainerNode.EnableEvents(addon);
-
-		foreach (var buttonNode in Nodes) {
-			buttonNode.EnableEvents(addon);
-		}
-		
-		ScrollBarNode.EnableEvents(addon);
-	}
-
-	public override void DisableEvents() {
-		base.DisableEvents();
-		ContainerNode.DisableEvents();
-
-		foreach (var buttonNode in Nodes) {
-			buttonNode.DisableEvents();
-		}
-		
-		ScrollBarNode.DisableEvents();
-	}
-
 	protected float NodeHeight { get; set; } = 22.0f;
 	
 	public override float Height {
