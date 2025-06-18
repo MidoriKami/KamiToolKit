@@ -11,7 +11,6 @@ using KamiToolKit.System;
 namespace KamiToolKit.Nodes;
 
 public class TreeListCategoryNode : ResNode {
-	public bool IsCollapsed { get; set; }
 
 	private List<NodeBase> children = [];
 	
@@ -96,10 +95,7 @@ public class TreeListCategoryNode : ResNode {
 		CollisionNode.AddEvent(AddonEventType.MouseOut, _ => Timeline?.StartAnimation(IsCollapsed ? 1 : 8));
 		CollisionNode.AddEvent(AddonEventType.MouseClick, _ => {
 			IsCollapsed = !IsCollapsed;
-			Timeline?.StartAnimation(IsCollapsed ? 2 : 9);
-			ChildContainer.IsVisible = !IsCollapsed;
-			Height = IsCollapsed ? BackgroundNode.Height : ChildContainer.Height + BackgroundNode.Height;
-			ParentTreeListNode?.RefreshLayout();
+			UpdateCollapsed();
 		});
 	}
 
@@ -136,6 +132,23 @@ public class TreeListCategoryNode : ResNode {
 			child.DisableEvents();
 		}
 	}
+	
+	private bool InternalIsCollapsed { get; set; }
+
+	public bool IsCollapsed {
+		get => InternalIsCollapsed;
+		set {
+			InternalIsCollapsed = value;
+			UpdateCollapsed();
+		}
+	}
+	
+	private void UpdateCollapsed() {
+		Timeline?.StartAnimation(IsCollapsed ? 2 : 9);
+		ChildContainer.IsVisible = !IsCollapsed;
+		Height = IsCollapsed ? BackgroundNode.Height : ChildContainer.Height + BackgroundNode.Height;
+		ParentTreeListNode?.RefreshLayout();
+	}
 
 	public void AddHeader(SeString label) {
 		var newHeaderNode = new TreeListHeaderNode {
@@ -171,6 +184,8 @@ public class TreeListCategoryNode : ResNode {
 			CollisionNode.Width = value;
 		}
 	}
+
+	public override float Height => CollisionNode.Height;
 
 	public SeString Label {
 		get => LabelNode.Text;
