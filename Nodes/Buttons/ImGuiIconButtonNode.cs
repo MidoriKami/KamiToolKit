@@ -18,14 +18,6 @@ public class ImGuiIconButtonNode : ButtonBase {
 		InitializeComponentEvents();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			ImageNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public override float Width {
 		get => base.Width;
 		set {

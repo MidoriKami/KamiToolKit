@@ -83,17 +83,6 @@ public abstract class DropDownNode<T> : ResNode where T : ListNode, new() {
 		CollisionNode.AddEvent(AddonEventType.MouseClick, _ => Toggle());
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			CollisionNode.Dispose();
-			BackgroundNode.Dispose();
-			CollapseArrowNode.Dispose();
-			LabelNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public override float Width {
 		get => base.Width;
 		set {

@@ -36,12 +36,4 @@ public class CursorNode : ResNode {
 
 		Timeline?.StartAnimation(101);
 	}
-
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			CursorImageNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
 }

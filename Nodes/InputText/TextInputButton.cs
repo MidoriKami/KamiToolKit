@@ -49,15 +49,6 @@ public unsafe class TextInputButtonNode : ButtonBase {
 		InitializeComponentEvents();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			LabelNode.Dispose();
-			BackgroundNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	private void LoadTimeline() {
 		AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 59)

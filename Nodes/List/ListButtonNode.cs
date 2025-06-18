@@ -51,16 +51,6 @@ public unsafe class ListButtonNode : ButtonBase {
 		InitializeComponentEvents();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			HoverBackgroundNode.Dispose();
-			SelectedBackgroundNode.Dispose();
-			LabelNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public override float Width {
 		get => base.Width;
 		set {

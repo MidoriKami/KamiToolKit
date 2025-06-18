@@ -29,15 +29,6 @@ public class BasicProgressBarNode : ResNode {
 
 		ForegroundNode.AttachNode(this);
 	}
-
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			BackgroundNode.Dispose();
-			ForegroundNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
 	
 	public override float Width {
 		get => base.Width;

@@ -99,22 +99,6 @@ public class TreeListCategoryNode : ResNode {
 		});
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			BackgroundNode.Dispose();
-			CollapseArrowNode.Dispose();
-			LabelNode.Dispose();
-			ChildContainer.Dispose();
-			CollisionNode.Dispose();
-
-			foreach (var child in children) {
-				child.Dispose();
-			}
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	private bool InternalIsCollapsed { get; set; }
 
 	public bool IsCollapsed {

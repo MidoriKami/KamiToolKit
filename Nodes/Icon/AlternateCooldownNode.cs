@@ -28,14 +28,6 @@ public class AlternateCooldownNode : ResNode {
 		BuildTimeline();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			CooldownImage.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-	
 	private void BuildTimeline() {
 		CooldownImage.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(11, 92)

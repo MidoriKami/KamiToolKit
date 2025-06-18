@@ -20,14 +20,6 @@ public class TextureButtonNode : ButtonBase {
 		InitializeComponentEvents();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			ImageNode.Dispose();
-
-			base.Dispose(disposing);
-		}
-	}
-
 	public string TexturePath {
 		get => ImageNode.TexturePath;
 		set => ImageNode.TexturePath = value;

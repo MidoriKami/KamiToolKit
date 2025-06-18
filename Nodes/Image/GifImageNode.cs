@@ -29,14 +29,6 @@ public class GifImageNode : ResNode {
 		
 		ImageNode.AttachNode(this);
 	}
-
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			ImageNode.Dispose();
-
-			base.Dispose(disposing);
-		}
-	}
 	
 	public override float Width {
 		get => base.Width;

@@ -49,16 +49,6 @@ public unsafe class ScrollingAreaNode : ResNode {
 			false);
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			ContentAreaNode.Dispose();
-			ScrollingCollisionNode.Dispose();
-			ScrollBarNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public ResNode ContentNode => ContentAreaNode;
 
 	public required float ContentHeight {

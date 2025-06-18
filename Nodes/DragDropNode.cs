@@ -44,15 +44,6 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 		Component->AtkDragDropInterface.ComponentNode = IconNode.InternalComponentNode;
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			DragDropBackgroundNode.Dispose();
-			IconNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-	
 	private void LoadTimelines() {
 		AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 59)

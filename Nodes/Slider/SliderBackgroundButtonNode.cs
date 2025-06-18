@@ -32,14 +32,6 @@ public unsafe class SliderBackgroundButtonNode : ComponentNode<AtkComponentButto
 		InitializeComponentEvents();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			BackgroundTexture.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public override float Width {
 		get => base.Width;
 		set {

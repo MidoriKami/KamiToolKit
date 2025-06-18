@@ -46,15 +46,6 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 		AddEvent(AddonEventType.ValueUpdate, UpdateHandler);
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			BackgroundButtonNode.Dispose();
-			ForegroundButtonNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public Action<int>? OnValueChanged { get; set; }
 	
 	private void UpdateHandler(AddonEventData obj) {

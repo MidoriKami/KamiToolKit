@@ -138,22 +138,6 @@ public class IconExtras : ResNode {
 
 		BuildTimelines();
 	}
-
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			TimelineImageNode.Dispose();
-			CooldownNode.Dispose();
-			AlternateCooldownNode.Dispose();
-			AntsNode.Dispose();
-			HoveredBorderImageNode.Dispose();
-			ChargeCountImageNode.Dispose();
-			QuantityTextNode.Dispose();
-			ResourceCostTextNode.Dispose();
-			ClickFlashImageNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
 	
 	private void BuildTimelines() {
 		TimelineImageNode.AddTimeline(new TimelineBuilder()

@@ -15,12 +15,6 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		SetInternalComponentType(ComponentType.Button);
 		AddEvent(AddonEventType.ButtonClick, ClickHandler);
 	}
-
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			base.Dispose(disposing);
-		}
-	}
 	
 	public Action? OnClick { get; set; }
 	

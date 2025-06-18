@@ -67,20 +67,6 @@ public abstract unsafe class ListNode<T> : ListNode {
 		InitializeComponentEvents();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			BackgroundNode.Dispose();
-
-			foreach (var buttonNode in Nodes) {
-				buttonNode.Dispose();
-			}
-			
-			ScrollBarNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	protected float NodeHeight { get; set; } = 22.0f;
 	
 	public override float Height {

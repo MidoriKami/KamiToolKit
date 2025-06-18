@@ -18,18 +18,6 @@ public class TreeListNode : ResNode {
 		childContainer.AttachNode(this);
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			childContainer.Dispose();
-			
-			foreach (var child in children) {
-				child.Dispose();
-			}
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public override float Width {
 		get => base.Width;
 		set {

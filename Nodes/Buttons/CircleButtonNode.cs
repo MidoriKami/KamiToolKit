@@ -23,14 +23,6 @@ public class CircleButtonNode : ButtonBase {
 		InitializeComponentEvents();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			ImageNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public ButtonIcon Icon {
 		get => currentIcon;
 		set {

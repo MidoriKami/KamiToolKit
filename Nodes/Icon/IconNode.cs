@@ -65,17 +65,6 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
 		
 		InitializeComponentEvents();
 	}
-
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			IconImage.Dispose();
-			IconExtras.Dispose();
-			IconIndicator1.Dispose();
-			IconIndicator2.Dispose();
-
-			base.Dispose(disposing);
-		}
-	}
 	
 	public uint IconId {
 		get => Component->IconId;

@@ -41,15 +41,6 @@ public unsafe class TextButtonNode : ButtonBase {
 		set => LabelNode.Text = value;
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			LabelNode.Dispose();
-			BackgroundNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public override float Width {
 		get => base.Width;
 		set {

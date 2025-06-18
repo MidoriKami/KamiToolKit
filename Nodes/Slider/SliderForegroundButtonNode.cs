@@ -28,14 +28,6 @@ public class SliderForegroundButtonNode : ComponentNode<AtkComponentButton, AtkU
 		InitializeComponentEvents();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			HandleNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	private void BuildTimelines() {
 		AddTimeline(new TimelineBuilder()
 				.BeginFrameSet(1, 20)

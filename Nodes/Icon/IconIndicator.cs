@@ -26,14 +26,6 @@ public class IconIndicator : ResNode {
         BuildTimeline();
     }
 
-    protected override void Dispose(bool disposing) {
-        if (disposing) {
-            IconNode.Dispose();
-            
-            base.Dispose(disposing);
-        }
-    }
-
     private void BuildTimeline() {
         IconNode.AddTimeline(new TimelineBuilder()
             .AddFrameSetWithFrame(11, 20, 11, partId: 14)

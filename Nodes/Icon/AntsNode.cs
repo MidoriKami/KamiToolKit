@@ -26,14 +26,6 @@ public class AntsNode : ResNode {
 		BuildTimeline();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			AntsImageNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-	
 	private void BuildTimeline() {
 		AntsImageNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(2, 9)

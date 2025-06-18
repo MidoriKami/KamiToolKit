@@ -9,7 +9,7 @@ public class TreeListHeaderNode : ResNode {
 
 	protected readonly NineGridNode DecorationNode;
 	protected readonly TextNode LabelNode;
-	
+
 	public TreeListHeaderNode() {
 		DecorationNode = new SimpleNineGridNode {
 			TexturePath = "ui/uld/journal_Separator.tex",
@@ -20,7 +20,7 @@ public class TreeListHeaderNode : ResNode {
 			LeftOffset = 25.0f,
 			RightOffset = 20.0f,
 		};
-		
+
 		DecorationNode.AttachNode(this);
 
 		LabelNode = new TextNode {
@@ -31,17 +31,8 @@ public class TreeListHeaderNode : ResNode {
 			FontSize = 12,
 			FontType = FontType.Axis,
 		};
-		
-		LabelNode.AttachNode(this);
-	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			DecorationNode.Dispose();
-			LabelNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
+		LabelNode.AttachNode(this);
 	}
 
 	public SeString Label {

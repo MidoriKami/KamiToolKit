@@ -36,14 +36,6 @@ public class IconButtonNode : ButtonBase {
 		
 		InitializeComponentEvents();
 	}
-
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			ImageNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
 	
 	public uint IconId {
 		get => ImageNode.IconId;

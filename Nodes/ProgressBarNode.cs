@@ -63,16 +63,6 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         BorderImageNode.AttachNode(this);
     }
 
-    protected override void Dispose(bool disposing) {
-        if (disposing) {
-            BackgroundImageNode.Dispose();
-            ProgressNode.Dispose();
-            BorderImageNode.Dispose();
-            
-            base.Dispose(disposing);
-        }
-    }
-
     public float Progress {
         get => ProgressNode.Width / Width;
         set => ProgressNode.Width = Width * value;

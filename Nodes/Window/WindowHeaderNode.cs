@@ -101,19 +101,6 @@ internal class WindowHeaderNode : ResNode {
 		TitleNode.AttachNode(this);
 	}
 	
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			CloseButtonNode.Dispose();
-			ConfigurationButtonNode.Dispose();
-			InformationButtonNode.Dispose();
-			SubtitleNode.Dispose();
-			TitleNode.Dispose();
-			DividingLineNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-	
 	public override float Width {
 		get => base.Width;
 		set {

@@ -181,13 +181,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 	
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			BackgroundNode.Dispose();
-			FocusNode.Dispose();
-			TextLimitsNode.Dispose();
-			CurrentTextNode.Dispose();
-			SelectionListNode.Dispose();
-            CursorNode.Dispose();
-			
             NativeMemoryHelper.Free(virtualTable, 0x8 * 10);
 			
 			base.Dispose(disposing);

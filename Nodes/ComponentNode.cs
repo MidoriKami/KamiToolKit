@@ -69,8 +69,6 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
-			CollisionNode.Dispose();
-
 			NativeMemoryHelper.UiFree(Data);
 			Data = null;
 

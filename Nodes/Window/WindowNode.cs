@@ -87,18 +87,6 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		InitializeComponentEvents();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			HeaderNode.Dispose();
-			HeaderCollisionNode.Dispose();
-			BackgroundNode.Dispose();
-			BorderNode.Dispose();
-			BackgroundImageNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public AtkUnitBase* OwnerAddon {
 		get => Component->OwnerUnitBase;
 		set => Component->OwnerUnitBase = value;

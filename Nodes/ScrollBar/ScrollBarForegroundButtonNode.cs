@@ -31,14 +31,6 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
 		InitializeComponentEvents();
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			ButtonTexture.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public override float Height {
 		get => base.Height;
 		set {

@@ -40,15 +40,6 @@ public class CooldownNode : ResNode {
 
 		BuildTimelines();
 	}
-
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			GlossyImageFrame.Dispose();
-			CooldownImage.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
 	
 	private void BuildTimelines() {
 		GlossyImageFrame.AddTimeline(new TimelineBuilder()

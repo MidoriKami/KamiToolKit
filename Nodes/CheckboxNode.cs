@@ -83,16 +83,6 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 		
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			BoxBackground.Dispose();
-			BoxForeground.Dispose();
-			Label.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public Action<bool>? OnClick { get; set; }
 	
 	private void ClickHandler(AddonEventData data) {

@@ -100,19 +100,6 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 		AddEvent(AddonEventType.ValueUpdate, ValueUpdateHandler);
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			BackgroundNode.Dispose();
-			AddButton.Dispose();
-			SubtractButton.Dispose();
-			ValueTextNode.Dispose();
-			FocusBorderNode.Dispose();
-			CursorNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public override float Width {
 		get => base.Width;
 		set {

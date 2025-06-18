@@ -76,17 +76,6 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 		Marshal.WriteInt16((nint)Component, 0xF8, 4);
 	}
 
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			SliderBackgroundButtonNode.Dispose();
-			ProgressTextureNode.Dispose();
-			SliderForegroundButtonNode.Dispose();
-			ValueNode.Dispose();
-			
-			base.Dispose(disposing);
-		}
-	}
-
 	public override float Width {
 		get => base.Width;
 		set {

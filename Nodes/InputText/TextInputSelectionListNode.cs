@@ -50,17 +50,4 @@ internal class TextInputSelectionListNode : ResNode {
 			Buttons[index].AttachNode(this);
 		}
 	}
-
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-			BackgroundNode.Dispose();
-			LabelNode.Dispose();
-
-			foreach (var button in Buttons) {
-				button.Dispose();
-			}
-			
-			base.Dispose(disposing);
-		}
-	}
 }
