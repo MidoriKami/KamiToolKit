@@ -2,7 +2,6 @@
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;
@@ -21,7 +20,6 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 			IsVisible = true,
 		};
 		
-		Log.Debug("Attaching BackgroundButtonNode");
 		BackgroundButtonNode.AttachNode(this);
 
 		ForegroundButtonNode = new ScrollBarForegroundButtonNode {
@@ -30,7 +28,6 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 			IsVisible = true,
 		};
 		
-		Log.Debug("Attaching ForegroundButtonNode");
 		ForegroundButtonNode.AttachNode(this);
 		
 		Data->Nodes[0] = ForegroundButtonNode.NodeId;
@@ -64,15 +61,23 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 		OnValueChanged?.Invoke(Component->PendingScrollPosition);
 	}
 
+	private NodeBase InternalContentNode { get; set; }
+	
 	public NodeBase ContentNode {
+		get => InternalContentNode;
 		set {
+			InternalContentNode = value;
 			Component->ContentNode = value.InternalResNode;
 			UpdateScrollParams();
 		}
 	}
+	
+	private CollisionNode InternalCollisionNode { get; set; }
 
 	public CollisionNode ContentCollisionNode {
+		get => InternalCollisionNode;
 		set {
+			InternalCollisionNode = value;
 			Component->ContentCollisionNode = value.InternalNode;
 			UpdateScrollParams();
 		}
