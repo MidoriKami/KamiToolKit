@@ -43,6 +43,8 @@ public abstract partial class NodeBase {
 	private static IEnumerable<MemberInfo> GetMemberInfo(NodeBase node)
 		=> node.GetType().GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
 			.Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property);
+			.Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property)
+			.Where(member => member.MemberType is MemberTypes.Property && (member as PropertyInfo)?.GetIndexParameters().Length == 0);
 
 	private static NodeBase? GetNode(MemberInfo member, NodeBase node) => member.MemberType switch {
 		MemberTypes.Field => (member as FieldInfo)?.GetValue(node) as NodeBase,
