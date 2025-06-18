@@ -96,6 +96,14 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 		}
 	}
 
+	public int ScrollPosition {
+		get => Component->ScrollPosition;
+		set => Component->SetScrollPosition(value);
+	}
+
+	/// <summary>
+	/// Updates from attached Content and Collision nodes
+	/// </summary>
 	public void UpdateScrollParams() {
 		if (Component->ContentNode is null) return;
 		if (Component->ContentCollisionNode is null) return;
@@ -103,12 +111,16 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 		var content = Component->ContentNode;
 		var collision = Component->ContentCollisionNode;
 
-		var distance = content->Height - collision->Height;
+		UpdateScrollParams(collision->Height, content->Height);
+	}
 
-		Component->ScrollbarLength = (short) collision->Height;
+	public void UpdateScrollParams(int barHeight, int offScreenHeight) {
+		var distance = offScreenHeight - barHeight;
+
+		Component->ScrollbarLength = (short) barHeight;
 		Component->ScrollMaxPosition = distance;
 		Component->ContentNodeOffScreenLength = (short) distance;
-		Component->EmptyLength = (int) ((float) collision->Height / content->Height * collision->Height - 24.0f);
-		ForegroundButtonNode.Height = collision->Height - Component->EmptyLength;
+		Component->EmptyLength = barHeight - (int) ((float) barHeight / offScreenHeight * barHeight - 24.0f);
+		ForegroundButtonNode.Height = barHeight - Component->EmptyLength;
 	}
 }
