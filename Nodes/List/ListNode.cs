@@ -8,8 +8,10 @@ using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
 
+public abstract class ListNode : ComponentNode<AtkComponentBase, AtkUldComponentDataBase>;
+
 /// Note, automatically inserts buttons to fill the set height, please ensure option count is greater than button count.
-public abstract unsafe class ListNode<T> : ComponentNode<AtkComponentBase, AtkUldComponentDataBase> {
+public abstract unsafe class ListNode<T> : ListNode {
 
 	protected readonly NineGridNode BackgroundNode;
 	protected readonly ResNode ContainerNode;
