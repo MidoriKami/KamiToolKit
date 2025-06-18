@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace KamiToolKit.Nodes;
 
 /// Custom Implementation of a Node that contains other nodes
 [JsonObject(MemberSerialization.OptIn)]
-public unsafe class ListBoxNode<T> : NodeBase<AtkResNode>, IList<T> where T : NodeBase {
+public unsafe class ListBoxNode<T> : ResNode where T : NodeBase {
     [JsonProperty] protected readonly ResNode ContainerNode;
     private readonly List<T> nodeList = [];
     [JsonProperty] protected readonly BackgroundImageNode Background;
@@ -67,7 +66,7 @@ public unsafe class ListBoxNode<T> : NodeBase<AtkResNode>, IList<T> where T : No
         }
     }
 
-    public ListBoxNode() : base(NodeType.Res) {
+    public ListBoxNode() {
         ContainerNode = new ResNode {
             NodeId = 103_000,
             Size = new Vector2(600.0f, 32.0f),
@@ -148,20 +147,6 @@ public unsafe class ListBoxNode<T> : NodeBase<AtkResNode>, IList<T> where T : No
         set {
             InternalSpacing = value;
             RecalculateLayout();
-        }
-    }
-
-    protected override void Dispose(bool isDisposing) {
-        if (isDisposing) {
-            foreach (var node in nodeList) {
-                node.Dispose();
-            }
-            
-            ContainerNode.Dispose();
-            Background.Dispose();
-            Border.Dispose();
-            
-            base.Dispose(isDisposing);
         }
     }
 
@@ -327,63 +312,15 @@ public unsafe class ListBoxNode<T> : NodeBase<AtkResNode>, IList<T> where T : No
         LayoutAnchor.BottomRight => new Vector2(Width, Height),
         _ => throw new ArgumentOutOfRangeException(),
     };
-
-    public IEnumerator<T> GetEnumerator() 
-        => nodeList.GetEnumerator();
     
-    IEnumerator IEnumerable.GetEnumerator() 
-        => GetEnumerator();
-
     public void Add(T item) {
         item.AttachNode(ContainerNode);
         nodeList.Add(item);
         
         RecalculateLayout();
     }
-    
-    public void Clear() {
-        foreach (var node in nodeList) {
-            node.DetachNode();
-            node.Dispose();
-        }
-        
-        nodeList.Clear();
-        RecalculateLayout();
-    }
-    
-    public bool Contains(T item) 
-        => nodeList.Contains(item);
 
-    public void CopyTo(T[] array, int arrayIndex)
-        => nodeList.CopyTo(array, arrayIndex);
-    
-    public bool Remove(T item) {
-        item.DetachNode();
-        nodeList.Remove(item);
-        item.Dispose();
-        
-        RecalculateLayout();
-        
-        return true;
-    }
-
-    public int Count => nodeList.Count;
-
-    public bool IsReadOnly => false;
-
-    public int IndexOf(T item) 
-        => nodeList.IndexOf(item);
-
-    public void Insert(int index, T item) 
-        => nodeList.Insert(index, item);
-
-    public void RemoveAt(int index) 
-        => nodeList.RemoveAt(index);
-
-    public T this[int index] {
-        get => nodeList[index];
-        set => nodeList[index] = value;
-    }
+    public IReadOnlyList<T> Items => nodeList.AsReadOnly();
 
     public override void DrawConfig() {
         base.DrawConfig();
@@ -406,6 +343,9 @@ public unsafe class ListBoxNode<T> : NodeBase<AtkResNode>, IList<T> where T : No
             }
         }
     }
+
+    public void Clear()
+        => nodeList.Clear();
 }
 
 public enum LayoutAnchor {
