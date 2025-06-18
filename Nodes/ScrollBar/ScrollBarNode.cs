@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
+using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
@@ -43,6 +45,8 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 
 		Component->MouseDownScreenPos = 0;
 		Component->MouseWheelSpeed = 24;
+
+		AddEvent(AddonEventType.ValueUpdate, UpdateHandler);
 	}
 
 	protected override void Dispose(bool disposing) {
@@ -52,6 +56,12 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 			
 			base.Dispose(disposing);
 		}
+	}
+
+	public Action<int>? OnValueChanged { get; set; }
+	
+	private void UpdateHandler(AddonEventData obj) {
+		OnValueChanged?.Invoke(Component->PendingScrollPosition);
 	}
 
 	public NodeBase ContentNode {
