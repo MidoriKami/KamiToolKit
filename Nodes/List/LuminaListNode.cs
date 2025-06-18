@@ -9,7 +9,7 @@ public class LuminaListNode<T> : ListNode<T> where T : struct, IExcelRow<T> {
 
 	private Func<T, string>? InternalLabelResolver { get; set; }
 	
-	public required Func<T, string>? LabelFunction {
+	public Func<T, string>? LabelFunction {
 		get => InternalLabelResolver;
 		set {
 			InternalLabelResolver = value;
@@ -19,7 +19,7 @@ public class LuminaListNode<T> : ListNode<T> where T : struct, IExcelRow<T> {
 
 	private Func<T, bool>? InternalFilterFunction { get; set; }
 
-	public required Func<T, bool>? FilterFunction {
+	public Func<T, bool>? FilterFunction {
 		get => InternalFilterFunction;
 		set {
 			InternalFilterFunction = value;
