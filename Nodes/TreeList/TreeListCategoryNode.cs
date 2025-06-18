@@ -169,6 +169,7 @@ public class TreeListCategoryNode : ResNode {
 		
 		children.Add(node);
 		node.AttachNode(ChildContainer);
+		UpdateCollapsed();
 	}
 
 	public float VerticalPadding { get; set; } = 4.0f;
@@ -184,8 +185,6 @@ public class TreeListCategoryNode : ResNode {
 			CollisionNode.Width = value;
 		}
 	}
-
-	public override float Height => CollisionNode.Height;
 
 	public SeString Label {
 		get => LabelNode.Text;
