@@ -1,0 +1,407 @@
+﻿using System.Numerics;
+using Dalamud.Game.Addon.Events;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
+using KamiToolKit.Classes.TimelineBuilding;
+
+namespace KamiToolKit.Nodes;
+
+public abstract class DropDownNode<T> : ResNode where T : ListNode, new() {
+
+	protected readonly CollisionNode CollisionNode;
+	protected readonly NineGridNode BackgroundNode;
+	protected readonly ImageNode CollapseArrowNode;
+	protected readonly TextNode LabelNode;
+	protected readonly T OptionListNode;
+
+	public bool IsCollapsed { get; set; } = true;
+	
+	public DropDownNode() {
+		CollisionNode = new CollisionNode {
+			Size = new Vector2(250.0f, 24.0f),
+			IsVisible = true,
+		};
+		
+		CollisionNode.AttachNode(this);
+		
+		BackgroundNode = new SimpleNineGridNode {
+			TexturePath = "ui/uld/DropDownA.tex",
+			TextureSize = new Vector2(44.0f, 23.0f),
+			TextureCoordinates = new Vector2(0.0f, 0.0f),
+			Size = new Vector2(250.0f, 24.0f),
+			Height = 23.0f,
+			IsVisible = true,
+			LeftOffset = 16.0f,
+			RightOffset = 16.0f,
+		};
+
+		BackgroundNode.AttachNode(this);
+
+		CollapseArrowNode = new SimpleImageNode {
+			TexturePath = "ui/uld/DropDownA.tex",
+			TextureCoordinates = new Vector2(44.0f, 0.0f),
+			TextureSize = new Vector2(12.0f, 12.0f),
+			Position = new Vector2(6.0f, 17.0f),
+			Size = new Vector2(12.0f, 12.0f),
+			IsVisible = true,
+			WrapMode = 2,
+			ImageNodeFlags = 0,
+		};
+
+		CollapseArrowNode.AttachNode(this);
+
+		LabelNode = new TextNode {
+			Position = new Vector2(20.0f, 0.0f),
+			Size = new Vector2(218.0f, 21.0f),
+			FontType = FontType.Axis,
+			FontSize = 12,
+			AlignmentType = AlignmentType.Left,
+			TextColor = ColorHelper.GetColor(1),
+			TextOutlineColor = ColorHelper.GetColor(2),
+			IsVisible = true,
+			Text = "Demo",
+			TextFlags = TextFlags.Emboss,
+			TextFlags2 = (TextFlags2) 132,
+		};
+		
+		LabelNode.AttachNode(this);
+
+		OptionListNode = new T {
+			Position = new Vector2(4.0f, 21.0f),
+			Size = new Vector2(242.0f, 243.0f),
+		};
+		
+		OptionListNode.AttachNode(this);
+
+		BuildTimelines();
+		
+		Timeline?.StartAnimation(4);
+		
+		CollisionNode.SetEventFlags();
+		CollisionNode.AddEvent(AddonEventType.MouseOver, _ => Timeline?.StartAnimation(IsCollapsed ? 2 : 9));
+		CollisionNode.AddEvent(AddonEventType.MouseOut, _ => Timeline?.StartAnimation(IsCollapsed ? 4 : 11));
+		CollisionNode.AddEvent(AddonEventType.MouseClick, _ => Toggle());
+	}
+
+	protected override void Dispose(bool disposing) {
+		if (disposing) {
+			CollisionNode.Dispose();
+			BackgroundNode.Dispose();
+			CollapseArrowNode.Dispose();
+			LabelNode.Dispose();
+			
+			base.Dispose(disposing);
+		}
+	}
+
+	public override float Width {
+		get => base.Width;
+		set {
+			base.Width = value;
+			CollisionNode.Width = value;
+			BackgroundNode.Width = value;
+			LabelNode.Width = value - 32.0f;
+			LabelNode.X = 20.0f;
+			OptionListNode.Width = value - 8.0f;
+			OptionListNode.X = 4.0f;
+		}
+	}
+	
+	public override float Height {
+		get => base.Height;
+		set {
+			base.Height = value;
+			CollisionNode.Height = value;
+			BackgroundNode.Height = value - 1.0f;
+			LabelNode.Height = value - 3.0f;
+			OptionListNode.Y = Height - 3.0f;
+		}
+	}
+
+	public float OptionListHeight {
+		get => OptionListNode.Height;
+		set => OptionListNode.Height = value;
+	}
+
+	public override unsafe void EnableEvents(AtkUnitBase* addon) {
+		base.EnableEvents(addon);
+		CollisionNode.EnableEvents(addon);
+		OptionListNode.EnableEvents(addon);
+	}
+
+	public override void DisableEvents() {
+		base.DisableEvents();
+		CollisionNode.DisableEvents();
+		OptionListNode.DisableEvents();
+	}
+
+	public void Toggle() {
+		IsCollapsed = !IsCollapsed;
+		Timeline?.StartAnimation(IsCollapsed ? 2 : 9);
+		OptionListNode.IsVisible = !IsCollapsed;
+	}
+	
+	private void BuildTimelines() {
+		AddTimeline(new TimelineBuilder()
+				.BeginFrameSet(1, 120)
+				.AddLabel(1, 1, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(9, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(10, 2, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(19, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(20, 3, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(29, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(30, 7, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(39, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(40, 6, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(49, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(50, 4, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(59, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(60, 8, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(69, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(70, 9, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(79, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(80, 10, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(89, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(90, 14, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(99, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(100, 13, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(109, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.AddLabel(110, 11, AtkTimelineJumpBehavior.Start, 0)
+				.AddLabel(120, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+				.EndFrameSet()
+				.Build()
+		);
+		
+		CollapseArrowNode.AddTimeline(new TimelineBuilder()
+				.BeginFrameSet(1, 9)
+				.AddFrame(1, position: new Vector2(6,17))
+				.AddFrame(1, rotation: 4.712389f)
+				.AddFrame(1, alpha: 255)
+				.AddFrame(1, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(10, 19)
+				.AddFrame(10, position: new Vector2(6,17))
+				.AddFrame(12, position: new Vector2(6,17))
+				.AddFrame(10, rotation: 4.712389f)
+				.AddFrame(12, rotation: 4.712389f)
+				.AddFrame(10, alpha: 255)
+				.AddFrame(12, alpha: 255)
+				.AddFrame(10, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.AddFrame(12, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(20, 29)
+				.AddFrame(20, position: new Vector2(6,18))
+				.AddFrame(20, rotation: 4.712389f)
+				.AddFrame(20, alpha: 255)
+				.AddFrame(20, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(30, 39)
+				.AddFrame(30, position: new Vector2(6,17))
+				.AddFrame(30, rotation: 4.712389f)
+				.AddFrame(30, alpha: 178)
+				.AddFrame(30, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(50, 50, 50))
+				.EndFrameSet()
+				.BeginFrameSet(40, 49)
+				.AddFrame(40, position: new Vector2(6,17))
+				.AddFrame(40, rotation: 4.712389f)
+				.AddFrame(40, alpha: 255)
+				.AddFrame(40, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(50, 59)
+				.AddFrame(50, position: new Vector2(6,17))
+				.AddFrame(52, position: new Vector2(6,17))
+				.AddFrame(50, rotation: 4.712389f)
+				.AddFrame(52, rotation: 4.712389f)
+				.AddFrame(50, alpha: 255)
+				.AddFrame(52, alpha: 255)
+				.AddFrame(50, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.AddFrame(52, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(60, 69)
+				.AddFrame(60, position: new Vector2(6,6))
+				.AddFrame(60, rotation: 0)
+				.AddFrame(60, alpha: 255)
+				.AddFrame(60, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(70, 79)
+				.AddFrame(70, position: new Vector2(6,6))
+				.AddFrame(72, position: new Vector2(6,6))
+				.AddFrame(70, rotation: 0)
+				.AddFrame(72, rotation: 0)
+				.AddFrame(70, alpha: 255)
+				.AddFrame(72, alpha: 255)
+				.AddFrame(70, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.AddFrame(72, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(80, 89)
+				.AddFrame(80, position: new Vector2(6,7))
+				.AddFrame(80, rotation: 0)
+				.AddFrame(80, alpha: 255)
+				.AddFrame(80, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(90, 99)
+				.AddFrame(90, position: new Vector2(6,6))
+				.AddFrame(90, rotation: 0)
+				.AddFrame(90, alpha: 178)
+				.AddFrame(90, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(50, 50, 50))
+				.EndFrameSet()
+				.BeginFrameSet(100, 109)
+				.AddFrame(100, position: new Vector2(6,6))
+				.AddFrame(100, rotation: 0)
+				.AddFrame(100, alpha: 255)
+				.AddFrame(100, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(110, 120)
+				.AddFrame(110, position: new Vector2(6,6))
+				.AddFrame(112, position: new Vector2(6,6))
+				.AddFrame(110, rotation: 0)
+				.AddFrame(112, rotation: 0)
+				.AddFrame(110, alpha: 255)
+				.AddFrame(112, alpha: 255)
+				.AddFrame(110, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.AddFrame(112, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.Build()
+		);
+		
+		LabelNode.AddTimeline(new TimelineBuilder()
+				.BeginFrameSet(1, 9)
+				.AddFrame(1, position: new Vector2(20,0))
+				.AddFrame(1, alpha: 255)
+				.AddFrame(1, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(10, 19)
+				.AddFrame(10, position: new Vector2(20,0))
+				.AddFrame(10, alpha: 255)
+				.AddFrame(10, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(20, 29)
+				.AddFrame(20, position: new Vector2(20,1))
+				.AddFrame(20, alpha: 255)
+				.AddFrame(20, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(30, 39)
+				.AddFrame(30, position: new Vector2(20,0))
+				.AddFrame(30, alpha: 153)
+				.AddFrame(30, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(80, 80, 80))
+				.EndFrameSet()
+				.BeginFrameSet(40, 49)
+				.AddFrame(40, position: new Vector2(20,0))
+				.AddFrame(40, alpha: 255)
+				.AddFrame(40, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(50, 59)
+				.AddFrame(50, position: new Vector2(20,0))
+				.AddFrame(50, alpha: 255)
+				.AddFrame(50, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(60, 69)
+				.AddFrame(60, position: new Vector2(20,0))
+				.AddFrame(60, alpha: 255)
+				.AddFrame(60, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(70, 79)
+				.AddFrame(70, position: new Vector2(20,0))
+				.AddFrame(70, alpha: 255)
+				.AddFrame(70, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(80, 89)
+				.AddFrame(80, position: new Vector2(20,1))
+				.AddFrame(80, alpha: 255)
+				.AddFrame(80, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(90, 99)
+				.AddFrame(90, position: new Vector2(20,0))
+				.AddFrame(90, alpha: 153)
+				.AddFrame(90, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(80, 80, 80))
+				.EndFrameSet()
+				.BeginFrameSet(100, 109)
+				.AddFrame(100, position: new Vector2(20,0))
+				.AddFrame(100, alpha: 255)
+				.AddFrame(100, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(110, 120)
+				.AddFrame(110, position: new Vector2(20,0))
+				.AddFrame(110, alpha: 255)
+				.AddFrame(110, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.Build()
+		);
+		
+		BackgroundNode.AddTimeline(new TimelineBuilder()
+				.BeginFrameSet(1, 9)
+				.AddFrame(1, position: new Vector2(0,0))
+				.AddFrame(1, alpha: 255)
+				.AddFrame(1, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(10, 19)
+				.AddFrame(10, position: new Vector2(0,0))
+				.AddFrame(12, position: new Vector2(0,0))
+				.AddFrame(10, alpha: 255)
+				.AddFrame(12, alpha: 255)
+				.AddFrame(10, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.AddFrame(12, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(20, 29)
+				.AddFrame(20, position: new Vector2(0,1))
+				.AddFrame(20, alpha: 255)
+				.AddFrame(20, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(30, 39)
+				.AddFrame(30, position: new Vector2(0,0))
+				.AddFrame(30, alpha: 178)
+				.AddFrame(30, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(50, 50, 50))
+				.EndFrameSet()
+				.BeginFrameSet(40, 49)
+				.AddFrame(40, position: new Vector2(0,0))
+				.AddFrame(40, alpha: 255)
+				.AddFrame(40, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(50, 59)
+				.AddFrame(50, position: new Vector2(0,0))
+				.AddFrame(52, position: new Vector2(0,0))
+				.AddFrame(50, alpha: 255)
+				.AddFrame(52, alpha: 255)
+				.AddFrame(50, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.AddFrame(52, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(60, 69)
+				.AddFrame(60, position: new Vector2(0,0))
+				.AddFrame(60, alpha: 255)
+				.AddFrame(60, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(70, 79)
+				.AddFrame(70, position: new Vector2(0,0))
+				.AddFrame(72, position: new Vector2(0,0))
+				.AddFrame(70, alpha: 255)
+				.AddFrame(72, alpha: 255)
+				.AddFrame(70, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.AddFrame(72, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(80, 89)
+				.AddFrame(80, position: new Vector2(0,1))
+				.AddFrame(80, alpha: 255)
+				.AddFrame(80, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(90, 99)
+				.AddFrame(90, position: new Vector2(0,0))
+				.AddFrame(90, alpha: 178)
+				.AddFrame(90, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(50, 50, 50))
+				.EndFrameSet()
+				.BeginFrameSet(100, 109)
+				.AddFrame(100, position: new Vector2(0,0))
+				.AddFrame(100, alpha: 255)
+				.AddFrame(100, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.BeginFrameSet(110, 120)
+				.AddFrame(110, position: new Vector2(0,0))
+				.AddFrame(112, position: new Vector2(0,0))
+				.AddFrame(110, alpha: 255)
+				.AddFrame(112, alpha: 255)
+				.AddFrame(110, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
+				.AddFrame(112, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+				.EndFrameSet()
+				.Build()
+		);
+	}
+}
