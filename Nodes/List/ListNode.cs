@@ -204,8 +204,15 @@ public abstract unsafe class ListNode<T> : ListNode {
 		if (Options is null) return;
 		var maxStartIndex = Options.Count - Nodes.Count;
 		
-		CurrentStartIndex = Math.Clamp(CurrentStartIndex, 0, maxStartIndex);
+		var max = Math.Max(0, maxStartIndex);
+		CurrentStartIndex = Math.Clamp(CurrentStartIndex, 0, max);
 		UpdateSelected();
+	}
+
+	public void SelectDefaultOption() {
+		if (Options is not null) {
+			SelectedOption = Options.First();
+		}
 	}
 
 	public Action<T>? OnOptionSelected { get; set; }
