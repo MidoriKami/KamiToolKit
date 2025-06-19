@@ -99,6 +99,17 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     public void SetNumber(int number, bool showCommas = false, bool showPlusSign = false, int digits = 0, bool zeroPad = false)
         => InternalNode->SetNumber(number, showCommas, showPlusSign, (byte) digits, zeroPad);
 
+    public Vector2 GetTextDrawSize(SeString text) {
+        using var stringContainer = new Utf8String(text.TextValue);
+
+        ushort sizeX;
+        ushort sizeY;
+
+        InternalNode->GetTextDrawSize(&sizeX, &sizeY, stringContainer.StringPtr);
+        
+        return new Vector2(sizeX, sizeY);
+    }
+
     /// <summary>
     /// If you want the node to resize automatically, use TextFlags.AutoAdjustNodeSize <b><em>before</em></b> setting the Text property.
     /// </summary>
