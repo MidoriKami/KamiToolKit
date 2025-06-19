@@ -114,9 +114,16 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 		var distance = offScreenHeight - barHeight;
 
 		Component->ScrollbarLength = (short) barHeight;
-		Component->ScrollMaxPosition = distance;
-		Component->ContentNodeOffScreenLength = (short) distance;
-		Component->EmptyLength = barHeight - (int) ((float) barHeight / offScreenHeight * barHeight);
+		Component->ScrollMaxPosition = Math.Max(distance, 0);
+		Component->ContentNodeOffScreenLength = Math.Max((short) distance, (short) 0);
+		Component->EmptyLength = Math.Max(barHeight - (int) ((float) barHeight / offScreenHeight * barHeight), 0);
 		ForegroundButtonNode.Height = barHeight - Component->EmptyLength;
+
+		if (Component->EmptyLength is 0) {
+			ForegroundButtonNode.Y = 0.0f;
+			ContentNode.Y = 0;
+		}
+		
+		Component->SetEnabledState(Component->EmptyLength is not 0);
 	}
 }
