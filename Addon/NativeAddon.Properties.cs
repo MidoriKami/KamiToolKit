@@ -45,6 +45,8 @@ public abstract unsafe partial class NativeAddon {
 	public int AddonId => InternalAddon is null ? 0 : InternalAddon->Id;
 	
 	public bool RememberClosePosition { get; set; } = true;
+	
+	public static explicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
 
 	private void SetInitialState() {
 		WindowNode.SetTitle(Title, Subtitle);
