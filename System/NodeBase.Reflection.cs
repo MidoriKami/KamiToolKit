@@ -34,16 +34,12 @@ public abstract partial class NodeBase {
 		}
 	}
 
-	private static bool IsNodeMember(MemberInfo member) => member.MemberType switch {
-		MemberTypes.Field => (member as FieldInfo)?.FieldType.IsSubclassOf(typeof(NodeBase)) ?? false,
-		MemberTypes.Property => (member as PropertyInfo)?.PropertyType.IsSubclassOf(typeof(NodeBase)) ?? false,
-		_ => false,
-	};
+	private static bool IsNodeMember(MemberInfo member)
+		=> typeof(NodeBase).IsAssignableFrom(GetMemberType(member));
 
 	private static IEnumerable<MemberInfo> GetMemberInfo(NodeBase node)
 		=> node.GetType().GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-			.Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property)
-			.Where(member => member.MemberType is MemberTypes.Property && (member as PropertyInfo)?.GetIndexParameters().Length == 0);
+			.Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property);
 
 	private static NodeBase? GetNode(MemberInfo member, NodeBase node) => member.MemberType switch {
 		MemberTypes.Field => (member as FieldInfo)?.GetValue(node) as NodeBase,
@@ -53,22 +49,22 @@ public abstract partial class NodeBase {
 
 	private static IEnumerable<MemberInfo> GetEnumerableMemberInfo(NodeBase node) 
 		=> GetMemberInfo(node).Where(IsMemberEnumerable).Where(IsBaseNodeEnumerable);
+
+	private static bool IsMemberEnumerable(MemberInfo member)
+		=> GetMemberType(member)?.GetInterfaces().Contains(typeof(IEnumerable)) ?? false;
 	
-	private static bool IsMemberEnumerable(MemberInfo member) => member.MemberType switch {
-		MemberTypes.Field => (member as FieldInfo)?.FieldType.GetInterfaces().Contains(typeof(IEnumerable)) ?? false,
-		MemberTypes.Property => (member as PropertyInfo)?.PropertyType.GetInterfaces().Contains(typeof(IEnumerable)) ?? false,
-		_ => false,
-	};
-	
-	private static bool IsBaseNodeEnumerable(MemberInfo member) => member.MemberType switch {
-		MemberTypes.Field => (member as FieldInfo)?.FieldType.GetGenericArguments().FirstOrDefault()?.IsSubclassOf(typeof(NodeBase)) ?? false,
-		MemberTypes.Property => (member as PropertyInfo)?.PropertyType.GetGenericArguments().FirstOrDefault()?.IsSubclassOf(typeof(NodeBase)) ?? false,
-		_ => false,
-	};
+	private static bool IsBaseNodeEnumerable(MemberInfo member)
+		=> typeof(NodeBase).IsAssignableFrom(GetMemberType(member)?.GetGenericArguments().FirstOrDefault());
 	
 	private static IEnumerable<NodeBase?>? GetEnumerable(MemberInfo member, NodeBase node) => member.MemberType switch {
 		MemberTypes.Field => (member as FieldInfo)?.GetValue(node) as IEnumerable<NodeBase>,
 		MemberTypes.Property => (member as PropertyInfo)?.GetValue(node) as IEnumerable<NodeBase>,
+		_ => null,
+	};
+
+	private static Type? GetMemberType(MemberInfo member)  => member.MemberType switch {
+		MemberTypes.Field => (member as FieldInfo)?.FieldType,
+		MemberTypes.Property => (member as PropertyInfo)?.PropertyType,
 		_ => null,
 	};
 }
