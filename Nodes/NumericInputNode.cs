@@ -120,6 +120,14 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 			FocusBorderNode.Height = value + 4.0f;
 		}
 	}
+	
+	// These are likely somewhere in the component, some RE is required
+	
+	// todo: min number
+	
+	// todo: max number
+	
+	// todo: add/subtract amount
 
 	public int Value {
 		get => Component->Value;
