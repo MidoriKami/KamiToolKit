@@ -71,12 +71,16 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         return true;
     }
+    
+    public static explicit operator AtkResNode*(NodeBase node) => node.InternalResNode;
 }
 
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
     internal T* InternalNode { get; private set; }
 
     internal override sealed AtkResNode* InternalResNode => (AtkResNode*) InternalNode;
+
+    public static explicit operator T*(NodeBase<T> node) => (T*)node.InternalResNode;
 
     protected NodeBase(NodeType nodeType) {
         Log.Verbose($"Creating new node {GetType()}");
