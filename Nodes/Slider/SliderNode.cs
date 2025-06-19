@@ -116,7 +116,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 
 	public int Value {
 		get => Component->Value;
-		set => Component->Value = value;
+		set => Component->SetValue(value);
 	}
 	
 	private void BuildTimelines() {
