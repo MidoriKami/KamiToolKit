@@ -98,7 +98,10 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 
 	public required int Min {
 		get => Component->MinValue;
-		set => Component->SetMinValue(value);
+		set {
+			Component->SetMinValue(value);
+			Component->SetValue(value);
+		}
 	}
 
 	public required int Max {
