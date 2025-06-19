@@ -34,6 +34,11 @@ public class ImGuiIconButtonNode : ButtonBase {
 		}
 	}
 
+	public string TexturePath {
+		get => ImageNode.TexturePath;
+		set => ImageNode.TexturePath = value;
+	}
+
 	public void LoadTexture(IDalamudTextureWrap texture)
 		=> ImageNode.LoadTexture(texture);
 	
