@@ -9,7 +9,7 @@ public class TextureButtonNode : ButtonBase {
 		ImageNode = new ImGuiImageNode {
 			IsVisible = true,
 			NodeId = 3,
-			WrapMode = 1,
+			WrapMode = 2,
 			ImageNodeFlags = 0,
 		};
 		
