@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace KamiToolKit.Nodes;
 
@@ -39,6 +40,8 @@ public class TreeListNode : ResNode {
 		childContainer.Height += node.Height + CategoryVerticalSpacing;
 	}
 
+	public Action<float>? OnLayoutUpdate { get; set; }
+	
 	public void RefreshLayout() {
 		childContainer.Height = 0.0f;
 		
@@ -46,5 +49,7 @@ public class TreeListNode : ResNode {
 			child.Y = childContainer.Height;
 			childContainer.Height += child.Height + CategoryVerticalSpacing;
 		}
+		
+		OnLayoutUpdate?.Invoke(childContainer.Height);
 	}
 }
