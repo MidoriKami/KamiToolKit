@@ -15,16 +15,36 @@ public abstract unsafe partial class NativeAddon {
 
 	public int OpenWindowSoundEffectId { get; set; } = 23;
 
-	public TitleMenuOptions TitleMenuOptions { get; set; } = new() {
+	private TitleMenuOptions InternalTitleMenuOptions { get; set; } = new() {
 		Enable = true,
 		ShowClose = true,
 		ShowScale = true,
 	};
 
-	public WindowOptions WindowOptions { get; set; } = new() {
+	public TitleMenuOptions TitleMenuOptions {
+		get => InternalTitleMenuOptions;
+		set {
+			InternalTitleMenuOptions = value;
+			if (InternalAddon is not null) {
+				UpdateFlags();
+			}
+		}
+	}
+
+	private WindowOptions InternalWindowOptions { get; set; } = new() {
 		DisableClamping = true,
 	};
 
+	public WindowOptions WindowOptions {
+		get => InternalWindowOptions;
+		set {
+			InternalWindowOptions = value;
+			if (InternalAddon is not null) {
+				UpdateFlags();
+			}
+		}
+	}
+	
 	public required Vector2 Size { get; set; }
 
 	public Vector2 ContentStartPosition => WindowNode.ContentStartPosition + ContentPadding;
