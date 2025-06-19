@@ -115,12 +115,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		
 		Flags1 = TextInputFlags1.EnableIME | TextInputFlags1.AllowUpperCase | TextInputFlags1.AllowLowerCase | TextInputFlags1.EnableDictionary;
 		Flags2 = TextInputFlags2.AllowNumberInput | TextInputFlags2.AllowSymbolInput;
-		
-		Data->MaxWidth = 0;
-		Data->MaxLine = 1;
-		Data->MaxByte = 0;
-		Data->MaxChar = 40;
-		Data->CharSet = 0;
 
 		LoadTimelines();
 		
@@ -213,6 +207,11 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		}
 	}
 
+	public int MaxCharacters {
+		get => (int) Component->ComponentTextData.MaxChar;
+		set => Component->ComponentTextData.MaxChar = (uint) value;
+	}
+	
 	public bool ShowLimitText {
 		get => TextLimitsNode.IsVisible;
 		set => TextLimitsNode.IsVisible = value;
