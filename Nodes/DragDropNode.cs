@@ -44,6 +44,11 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 		Component->AtkDragDropInterface.ComponentNode = IconNode.InternalComponentNode;
 	}
 
+	public int IconId {
+		get => (int) IconNode.IconId;
+		set => IconNode.IconId = (uint) value;
+	}
+
 	private void LoadTimelines() {
 		AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 59)
