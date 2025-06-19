@@ -28,6 +28,22 @@ public class SliderForegroundButtonNode : ComponentNode<AtkComponentButton, AtkU
 		InitializeComponentEvents();
 	}
 
+	public override float Height {
+		get => base.Height;
+		set {
+			base.Height = value;
+			HandleNode.Height = value;
+		}
+	}
+
+	public override float Width {
+		get => base.Width;
+		set {
+			base.Width = value;
+			HandleNode.Width = value;
+		}
+	}
+
 	private void BuildTimelines() {
 		AddTimeline(new TimelineBuilder()
 				.BeginFrameSet(1, 20)

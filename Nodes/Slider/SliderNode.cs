@@ -18,7 +18,6 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 		SliderBackgroundButtonNode = new SliderBackgroundButtonNode {
 			NodeId = 5,
 			IsVisible = true,
-			Position = new Vector2(0.0f, 4.0f),
 		};
 
 		SliderBackgroundButtonNode.AttachNode(this);
@@ -91,8 +90,16 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 		get => base.Height;
 		set {
 			base.Height = value;
-			SliderBackgroundButtonNode.Height = value / 2.0f;
+			SliderBackgroundButtonNode.Height = value;
+			
+			SliderForegroundButtonNode.Height = value / 2.0f - 1.0f;
+			SliderForegroundButtonNode.Width = value / 2.0f;
+			SliderForegroundButtonNode.Y = value / 4.0f;
+			
 			ProgressTextureNode.Height = value / 2.0f - 1.0f;
+			ProgressTextureNode.Y = value / 4.0f;
+			
+			ValueNode.Y = value / 4.0f;
 		}
 	}
 

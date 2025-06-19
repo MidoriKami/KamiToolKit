@@ -44,7 +44,8 @@ public unsafe class SliderBackgroundButtonNode : ComponentNode<AtkComponentButto
 		get => base.Height;
 		set {
 			base.Height = value;
-			BackgroundTexture.Height = value;
+			BackgroundTexture.Height = value / 2.0f;
+			BackgroundTexture.Y = value / 4.0f; 
 		}
 	}
 
