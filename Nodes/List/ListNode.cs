@@ -105,10 +105,13 @@ public abstract unsafe class ListNode<T> : ListNode {
 		UpdateNodes();
 	}
 	
-	private void OnMouseWheel(AddonEventData obj) {
-		CurrentStartIndex -= ((AtkEventData*) obj.AtkEventDataPointer)->MouseData.WheelDirection;
+	private void OnMouseWheel(AddonEventData data) {
+		CurrentStartIndex -= ((AtkEventData*) data.AtkEventDataPointer)->MouseData.WheelDirection;
 		UpdateNodes();
 		ScrollBarNode.ScrollPosition = (int) ( CurrentStartIndex * NodeHeight + 9.0f );
+				
+		var nativeEvent = (AtkEvent*) data.AtkEventPointer;
+		nativeEvent->SetEventIsHandled(true);
 	}
 	
 	public int CurrentStartIndex { get; set; }
