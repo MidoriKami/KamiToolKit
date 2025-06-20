@@ -72,6 +72,11 @@ public unsafe class NativeController : IDisposable {
 
 	public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings) {
 		Framework.RunOnFrameworkThread(() => {
+			if (targetNode->GetNodeType() is not NodeType.Component) {
+				Log.Error("TargetNode type was expected to be Component but was not. Aborting attach.");
+				return;
+			}
+			
 			Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint) customNode.InternalResNode:X}] to a native AtkComponentNode");
 
 			var addon = GetAddonForNode((AtkResNode*) targetNode);
