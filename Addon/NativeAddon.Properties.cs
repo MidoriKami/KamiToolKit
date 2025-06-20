@@ -15,35 +15,21 @@ public abstract unsafe partial class NativeAddon {
 
 	public int OpenWindowSoundEffectId { get; set; } = 23;
 
-	private TitleMenuOptions InternalTitleMenuOptions { get; set; } = new() {
-		Enable = true,
-		ShowClose = true,
-		ShowScale = true,
-	};
-
 	public TitleMenuOptions TitleMenuOptions {
-		get => InternalTitleMenuOptions;
-		set {
-			InternalTitleMenuOptions = value;
+		get; set { field = value;
 			if (InternalAddon is not null) {
 				UpdateFlags();
 			}
 		}
-	}
-
-	private WindowOptions InternalWindowOptions { get; set; } = new() {
-		DisableClamping = true,
-	};
+	} = new();
 
 	public WindowOptions WindowOptions {
-		get => InternalWindowOptions;
-		set {
-			InternalWindowOptions = value;
+		get; set { field = value;
 			if (InternalAddon is not null) {
 				UpdateFlags();
 			}
 		}
-	}
+	} = new();
 	
 	public required Vector2 Size { get; set; }
 
@@ -89,6 +75,7 @@ public abstract unsafe partial class NativeAddon {
 		// Note, some flags are default on, need to invert enable to clear them
 		
 		UpdateFlag(ref InternalAddon->Flags1A3, 0x20, WindowOptions.DisableClamping);
+		UpdateFlag(ref InternalAddon->Flags1A3, 0x40, WindowOptions.EnableClickThrough);
 		UpdateFlag(ref InternalAddon->Flags1A3, 0x1, TitleMenuOptions.Enable);
 		UpdateFlag(ref InternalAddon->Flags1A1, 0x4, !TitleMenuOptions.ShowClose);
 		UpdateFlag(ref InternalAddon->Flags1C8, 0x800, !TitleMenuOptions.ShowScale);
@@ -126,23 +113,25 @@ public class TitleMenuOptions {
 	/// <summary>
 	/// Enables right-clicking on the window header to open the window context menu
 	/// </summary>
-	public bool Enable { get; set; }
-	
+	public bool Enable { get; set; } = true;
+
 	/// <summary>
 	/// Enable showing a close button in the context menu
 	/// </summary>
-	public bool ShowClose { get; set; }
-	
+	public bool ShowClose { get; set; } = true;
+
 	/// <summary>
 	/// Enable showing the scale selector in the window context menu
 	/// </summary>
-	public bool ShowScale { get; set; }
+	public bool ShowScale { get; set; } = true;
 }
 
 public class WindowOptions {
-	
+
 	/// <summary>
 	/// Setting to <em>True</em> allows the window to be moved past the edge of the window.
 	/// </summary>
-	public bool DisableClamping { get; set; }
+	public bool DisableClamping { get; set; } = true;
+
+	public bool EnableClickThrough { get; set; }
 }
