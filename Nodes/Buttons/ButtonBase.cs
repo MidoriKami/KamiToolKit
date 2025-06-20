@@ -21,9 +21,16 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 	private void ClickHandler(AddonEventData data) {
 		OnClick?.Invoke();
 	}
-	
-	public void SetEnabled(bool enable)
-		=> ComponentBase->SetEnabledState(enable);
+
+	public bool IsEnabled {
+		get => Component->IsEnabled;
+		set => Component->SetEnabledState(value);
+	}
+
+	public bool IsChecked {
+		get => Component->IsChecked;
+		set => Component->SetChecked(value);
+	}
 
 	public void Disable()
 		=> ComponentBase->SetEnabledState(false);
