@@ -13,21 +13,16 @@ namespace KamiToolKit.Nodes;
 
 /// Custom Implementation of a Node that contains other nodes
 [JsonObject(MemberSerialization.OptIn)]
-public unsafe class ListBoxNode<T> : ResNode where T : NodeBase {
+public unsafe class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
     [JsonProperty] protected readonly ResNode ContainerNode;
     private readonly List<T> nodeList = [];
     [JsonProperty] protected readonly BackgroundImageNode Background;
     [JsonProperty] protected readonly BorderNineGridNode Border;
 
-    private LayoutOrientation InternalLayoutOrientation { get; set; }
-    private LayoutAnchor InternalLayoutAnchor { get; set; } = LayoutAnchor.TopLeft;
-    private bool InternalBackgroundFitContents { get; set; }
-    private bool InternalBorderFitContents { get; set; }
-
     [JsonProperty] public LayoutAnchor LayoutAnchor {
-        get => InternalLayoutAnchor;
+        get;
         set {
-            InternalLayoutAnchor = value;
+            field = value;
             RecalculateLayout();
         }
     }
@@ -36,17 +31,17 @@ public unsafe class ListBoxNode<T> : ResNode where T : NodeBase {
     /// If enabled, the background is sized around the content, not the list itself.
     /// </summary>
     [JsonProperty] public bool BackgroundFitsContents {
-        get => InternalBackgroundFitContents;
+        get;
         set {
-            InternalBackgroundFitContents = value;
+            field = value;
             RecalculateLayout();
         }
     }
 
     [JsonProperty] public bool BorderFitsContents {
-        get => InternalBorderFitContents;
+        get;
         set {
-            InternalBorderFitContents = value;
+            field = value;
             RecalculateLayout();
         }
     }
@@ -94,9 +89,9 @@ public unsafe class ListBoxNode<T> : ResNode where T : NodeBase {
     }
     
     [JsonProperty] public LayoutOrientation LayoutOrientation {
-        get => InternalLayoutOrientation;
+        get;
         set {
-            InternalLayoutOrientation = value;
+            field = value;
             RecalculateLayout();
         } 
     }
@@ -140,15 +135,13 @@ public unsafe class ListBoxNode<T> : ResNode where T : NodeBase {
         }
     }
 
-    private Spacing InternalSpacing { get; set; } = new(0.0f);
-
     [JsonProperty] public Spacing ItemMargin {
-        get => InternalSpacing;
+        get;
         set {
-            InternalSpacing = value;
+            field = value;
             RecalculateLayout();
         }
-    }
+    } = new(0.0f);
 
     public void RecalculateLayout() {
         switch (LayoutOrientation) {
