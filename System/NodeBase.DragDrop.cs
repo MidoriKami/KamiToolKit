@@ -14,7 +14,7 @@ public abstract partial class NodeBase {
 
 	public Action? OnClickDragComplete { get; set; }
 
-	public void EnableClickDrag() {
+	public void EnableClickDrag(bool setEventFlags = false) {
 		if (clickDragEventsRegistered) return;
 		
 		AddEvent(AddonEventType.MouseOver, ClickDragMouseOver);
@@ -24,9 +24,13 @@ public abstract partial class NodeBase {
 		AddEvent(AddonEventType.MouseOut, ClickDragMouseOut);
 		
 		clickDragEventsRegistered = true;
+
+		if (setEventFlags) {
+			SetEventFlags();
+		}
 	}
 
-	public void DisableClickDrag() {
+	public void DisableClickDrag(bool clearEventFlags = false) {
 		if (!clickDragEventsRegistered) return;
 		
 		RemoveEvent(AddonEventType.MouseOver, ClickDragMouseOver);
@@ -36,6 +40,10 @@ public abstract partial class NodeBase {
 		RemoveEvent(AddonEventType.MouseOut, ClickDragMouseOut);
 		
 		clickDragEventsRegistered = false;
+
+		if (clearEventFlags) {
+			ClearEventFlags();
+		}
 	}
 
 	private void ClickDragMouseOver(AddonEventData eventData) {
