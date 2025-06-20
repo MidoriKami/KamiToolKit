@@ -3,23 +3,20 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.System;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
 [JsonObject(MemberSerialization.OptIn)]
-public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
+public class ProgressBarNode : SimpleComponentNode {
     [JsonProperty] protected readonly SimpleNineGridNode BackgroundImageNode;
     [JsonProperty] protected readonly SimpleNineGridNode ProgressNode;
     [JsonProperty] protected readonly SimpleNineGridNode BorderImageNode;
 
-    public ProgressBarNode() : base(NodeType.Res) {
-        InternalNode->SetWidth((ushort)160.0f);
-        InternalNode->SetHeight((ushort)20.0f);
-        
+    // Recommended aspect ratio for width:height is 8:1
+    public ProgressBarNode() {
         BackgroundImageNode = new SimpleNineGridNode {
-            NodeId = 100,
+            NodeId = 2,
             Size = new Vector2(160.0f, 20.0f),
             TextureSize = new Vector2(160.0f, 20.0f),
             TextureCoordinates = new Vector2(0.0f, 100.0f),
@@ -33,7 +30,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         BackgroundImageNode.AttachNode(this);
 
         ProgressNode = new SimpleNineGridNode {
-            NodeId = 200,
+            NodeId = 3,
             Size = new Vector2(160.0f, 20.0f),
             TextureSize = new Vector2(160.0f, 20.0f),
             TextureCoordinates = new Vector2(0.0f, 40.0f),
@@ -49,7 +46,7 @@ public unsafe class ProgressBarNode : NodeBase<AtkResNode> {
         ProgressNode.AttachNode(this);
 
         BorderImageNode = new SimpleNineGridNode {
-            NodeId = 300,
+            NodeId = 4,
             Size = new Vector2(160.0f, 20.0f),
             TextureSize = new Vector2(160.0f, 20.0f),
             TextureCoordinates = new Vector2(0.0f, 0.0f),
