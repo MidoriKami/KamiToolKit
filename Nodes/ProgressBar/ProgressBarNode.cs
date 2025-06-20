@@ -2,12 +2,13 @@
 
 namespace KamiToolKit.Nodes;
 
-public class BasicProgressBarNode : ResNode {
+public class ProgressBarNode : SimpleComponentNode {
 	protected readonly NineGridNode BackgroundNode;
 	protected readonly NineGridNode ForegroundNode;
 
-	public BasicProgressBarNode() {
+	public ProgressBarNode() {
 		BackgroundNode = new SimpleNineGridNode {
+			NodeId = 2,
 			TexturePath = "ui/uld/ToDoList.tex",
 			TextureCoordinates = new Vector2(108.0f, 8.0f),
 			TextureSize = new Vector2(44.0f, 12.0f),
@@ -19,6 +20,7 @@ public class BasicProgressBarNode : ResNode {
 		BackgroundNode.AttachNode(this);
 
 		ForegroundNode = new SimpleNineGridNode {
+			NodeId = 3,
 			TexturePath = "ui/uld/ToDoList.tex", 
 			TextureCoordinates = new Vector2(112.0f, 0.0f), 
 			TextureSize = new Vector2(40.0f, 8.0f),

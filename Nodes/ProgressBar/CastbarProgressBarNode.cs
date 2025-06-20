@@ -8,13 +8,13 @@ using Newtonsoft.Json;
 namespace KamiToolKit.Nodes;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class ProgressBarNode : SimpleComponentNode {
+public class CastBarProgressBarNode : SimpleComponentNode {
     [JsonProperty] protected readonly SimpleNineGridNode BackgroundImageNode;
     [JsonProperty] protected readonly SimpleNineGridNode ProgressNode;
     [JsonProperty] protected readonly SimpleNineGridNode BorderImageNode;
 
     // Recommended aspect ratio for width:height is 8:1
-    public ProgressBarNode() {
+    public CastBarProgressBarNode() {
         BackgroundImageNode = new SimpleNineGridNode {
             NodeId = 2,
             Size = new Vector2(160.0f, 20.0f),
