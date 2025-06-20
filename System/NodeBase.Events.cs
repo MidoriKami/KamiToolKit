@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using Newtonsoft.Json;
@@ -87,13 +88,10 @@ public abstract unsafe partial class NodeBase {
 		}
 	}
 
-	private SeString? internalTooltip;
-
 	public SeString? Tooltip {
-		get => internalTooltip;
-		set {
-			if (value is not null) {
-				internalTooltip = value;
+		get; set {
+			if (value is not null && !value.TextValue.IsNullOrEmpty()) {
+				field = value;
 
 				if (!TooltipRegistered) {
 					AddEvent(AddonEventType.MouseOver, ShowTooltip);
