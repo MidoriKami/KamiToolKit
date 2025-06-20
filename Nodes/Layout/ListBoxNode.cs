@@ -1,28 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 using KamiToolKit.System;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-/// Custom Implementation of a Node that contains other nodes
+/// Node that manages the layout of other nodes
 [JsonObject(MemberSerialization.OptIn)]
-public unsafe class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
-    [JsonProperty] protected readonly ResNode ContainerNode;
+public class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
     private readonly List<T> nodeList = [];
     [JsonProperty] protected readonly BackgroundImageNode Background;
     [JsonProperty] protected readonly BorderNineGridNode Border;
 
+    public ListBoxNode() {
+        Background = new BackgroundImageNode {
+            NodeId = 2,
+            Size = new Vector2(600.0f, 32.0f),
+            IsVisible = true,
+        };
+        Background.AttachNode(this);
+        
+        Border = new BorderNineGridNode {
+            NodeId = 3,
+            Size = new Vector2(600.0f, 32.0f),
+            Position = new Vector2(-15.0f, -15.0f),
+            IsVisible = false,
+        };
+        Border.AttachNode(this);
+    }
+    
     [JsonProperty] public LayoutAnchor LayoutAnchor {
-        get;
-        set {
-            field = value;
+        get; set { field = value;
             RecalculateLayout();
         }
     }
@@ -31,17 +43,13 @@ public unsafe class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
     /// If enabled, the background is sized around the content, not the list itself.
     /// </summary>
     [JsonProperty] public bool BackgroundFitsContents {
-        get;
-        set {
-            field = value;
+        get; set { field = value;
             RecalculateLayout();
         }
     }
 
     [JsonProperty] public bool BorderFitsContents {
-        get;
-        set {
-            field = value;
+        get; set { field = value;
             RecalculateLayout();
         }
     }
@@ -50,47 +58,19 @@ public unsafe class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
     /// If enabled, node contents will be clipped inside the container.
     /// </summary>
     [JsonProperty] public bool ClipListContents {
-        get => ContainerNode.NodeFlags.HasFlag(NodeFlags.Clip);
+        get => NodeFlags.HasFlag(NodeFlags.Clip);
         set {
             if (value) {
-                ContainerNode.AddFlags(NodeFlags.Clip);
+                AddFlags(NodeFlags.Clip);
             }
             else {
-                ContainerNode.RemoveFlags(NodeFlags.Clip);
+                RemoveFlags(NodeFlags.Clip);
             }
         }
     }
-
-    public ListBoxNode() {
-        ContainerNode = new ResNode {
-            NodeId = 103_000,
-            Size = new Vector2(600.0f, 32.0f),
-            IsVisible = true,
-        };
-        
-        ContainerNode.AttachNode(this, NodePosition.AsFirstChild);
-        
-        Border = new BorderNineGridNode {
-            NodeId = 102_000,
-            Size = new Vector2(600.0f, 32.0f),
-            Position = new Vector2(-15.0f, -15.0f),
-            IsVisible = false,
-        };
-        
-        Border.AttachNode(this, NodePosition.AsFirstChild);
-        
-        Background = new BackgroundImageNode {
-            NodeId = 101_000,
-            Size = new Vector2(600.0f, 32.0f),
-            IsVisible = true,
-        };
-        
-        Background.AttachNode(this, NodePosition.AsFirstChild);
-    }
     
     [JsonProperty] public LayoutOrientation LayoutOrientation {
-        get;
-        set {
+        get; set {
             field = value;
             RecalculateLayout();
         } 
@@ -111,34 +91,24 @@ public unsafe class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
         set => Border.IsVisible = value;
     }
 
-    public new float Width {
-        get => InternalResNode->GetWidth();
+    public override float Width {
+        get => base.Width;
         set {
-            InternalResNode->SetWidth((ushort) value);
+            base.Width = value;
             RecalculateLayout();
         }
     }
 
-    public new float Height {
-        get => InternalResNode->GetHeight();
+    public override float Height {
+        get => base.Height;
         set {
-            InternalResNode->SetHeight((ushort) value);
+            base.Height = value;
             RecalculateLayout();
-        }
-    }
-
-    [JsonProperty] public new Vector2 Size {
-        get => new(Width, Height);
-        set {
-            Width = value.X;
-            Height = value.Y;
         }
     }
 
     [JsonProperty] public Spacing ItemMargin {
-        get;
-        set {
-            field = value;
+        get; set { field = value;
             RecalculateLayout();
         }
     } = new(0.0f);
@@ -185,8 +155,6 @@ public unsafe class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
             Border.Size = Size + new Vector2(30.0f, 30.0f);
             Border.Position = - new Vector2(15.0f, 15.0f) - new Vector2(ItemMargin.Left, ItemMargin.Top);
         }
-        
-        ContainerNode.Size = Size;
     }
     
     /// <summary>
@@ -307,23 +275,33 @@ public unsafe class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
     };
     
     public void Add(T item) {
-        item.AttachNode(ContainerNode);
+        item.NodeId = (uint)(nodeList.Count + 4);
+        
+        item.AttachNode(this);
         nodeList.Add(item);
         
         RecalculateLayout();
     }
 
-    public IReadOnlyList<T> Items => nodeList.AsReadOnly();
+    public void Remove(T item) {
+        item.DetachNode();
+        nodeList.Remove(item);
 
+        RecalculateLayout();
+    }
+    
+    public void Clear() {
+        foreach (var node in nodeList) {
+            node.DetachNode();
+        }
+        
+        nodeList.Clear();
+        RecalculateLayout();
+    }
+    
     public override void DrawConfig() {
         base.DrawConfig();
-        
-        using (var container = ImRaii.TreeNode("Container")) {
-            if (container) {
-                ContainerNode.DrawConfig();
-            }
-        }
-    
+
         using (var backgroundNode = ImRaii.TreeNode("Background")) {
             if (backgroundNode) {
                 Background.DrawConfig();
@@ -336,26 +314,4 @@ public unsafe class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
             }
         }
     }
-
-    public void Clear()
-        => nodeList.Clear();
-}
-
-public enum LayoutAnchor {
-    [Description("Top Left")]
-    TopLeft,
-    
-    [Description("Top Right")]
-    TopRight,
-    
-    [Description("Bottom Left")]
-    BottomLeft,
-    
-    [Description("Bottom Right")]
-    BottomRight,
-}
-
-public enum LayoutOrientation {
-    Vertical,
-    Horizontal,
 }
