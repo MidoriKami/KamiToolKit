@@ -32,15 +32,6 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 		set => Component->SetChecked(value);
 	}
 
-	public void Disable()
-		=> ComponentBase->SetEnabledState(false);
-
-	public void Enable()
-		=> ComponentBase->SetEnabledState(true);
-
-	public void Toggle()
-		=> ComponentBase->SetEnabledState(!Component->IsEnabled);
-
 	protected void LoadTwoPartTimelines(NodeBase parent, NodeBase foreground) {
 		parent.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 59)
