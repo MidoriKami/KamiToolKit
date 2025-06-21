@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
@@ -12,7 +13,20 @@ public abstract unsafe partial class NativeAddon {
 	internal AtkUnitBase* InternalAddon;
 
 	protected ResNode RootNode = null!;
-	protected WindowNode WindowNode = null!;
+	protected WindowNode? WindowNode {
+		get; set {
+			if (value is null) throw new Exception("Cannot set a window node to null");
+			
+			if (field is not null) {
+				InternalAddon->WindowNode = null;
+				field.DetachNode();
+			}
+			
+			field = value;
+			value.AttachNode(RootNode, NodePosition.AsFirstChild);
+			InternalAddon->WindowNode = value.InternalComponentNode;
+		}
+	}
 	
 	private GCHandle? disposeHandle;
 
@@ -66,7 +80,7 @@ public abstract unsafe partial class NativeAddon {
 
 		LoadTimeline();
 
-		WindowNode.AttachNode(RootNode, NodePosition.AsFirstChild);
+		WindowNode!.AttachNode(RootNode, NodePosition.AsFirstChild);
 		InternalAddon->WindowNode = (AtkComponentNode*) WindowNode.InternalResNode;
 
 		InternalAddon->UldManager.UpdateDrawNodeList();
