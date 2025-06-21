@@ -45,6 +45,7 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 			if (!node.IsVisible) continue;
 			
 			node.X = startX;
+			AdjustNode(node);
 
 			switch (Alignment) {
 				case HorizontalListAnchor.Left:
@@ -57,6 +58,8 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 			}
 		}
 	}
+
+	protected virtual void AdjustNode(T node) { }
 
 	public void Add(params T[] items) {
 		foreach (var node in items) {
