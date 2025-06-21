@@ -274,6 +274,12 @@ public class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
         LayoutAnchor.BottomRight => new Vector2(Width, Height),
         _ => throw new ArgumentOutOfRangeException(),
     };
+
+    public void Add(params T[] items) {
+        foreach (var item in items) {
+            Add(item);
+        }
+    }
     
     public void Add(T item) {
         item.NodeId = (uint)(nodeList.Count + 4);
@@ -282,6 +288,12 @@ public class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
         nodeList.Add(item);
         
         RecalculateLayout();
+    }
+
+    public void Remove(params T[] items) {
+        foreach (var node in items) {
+            Remove(node);
+        }
     }
 
     public void Remove(T item) {

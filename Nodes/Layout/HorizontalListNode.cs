@@ -41,7 +41,7 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 		foreach (var node in nodeList) {
 			if (!node.IsVisible) continue;
 			
-			node.Y = startX;
+			node.X = startX;
 
 			switch (Alignment) {
 				case HorizontalListAnchor.Left:
@@ -55,7 +55,13 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 		}
 	}
 
-	public void AddNode(T node) {
+	public void Add(params T[] items) {
+		foreach (var node in items) {
+			Add(node);
+		}
+	}
+	
+	public void Add(T node) {
 		nodeList.Add(node);
 		
 		node.AttachNode(this);
@@ -64,7 +70,13 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 		RecalculateLayout();
 	}
 
-	public void RemoveNode(T node) {
+	public void Remove(params T[] items) {
+		foreach (var node in items) {
+			Remove(node);
+		}
+	}
+
+	public void Remove(T node) {
 		node.DetachNode();
 		nodeList.Remove(node);
 		RecalculateLayout();
