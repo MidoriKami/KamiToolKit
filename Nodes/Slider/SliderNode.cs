@@ -69,10 +69,10 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 		BuildTimelines();
 		
 		InitializeComponentEvents();
-		
-		Marshal.WriteInt16((nint)Component, 0xFC, 220);
-		Marshal.WriteInt16((nint)Component, 0xFA, 28);
-		Marshal.WriteInt16((nint)Component, 0xF8, 4);
+
+		Component->SliderSize = 220;
+		Component->OffsetR = 28;
+		Component->OffsetL = 4;
 	}
 
 	public override float Width {
@@ -82,7 +82,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 			SliderBackgroundButtonNode.Width = value - 24.0f;
 			ProgressTextureNode.Width = value;
 			ValueNode.X = value - 24.0f;
-			Marshal.WriteInt16((nint)Component, 0xFC, (short) Width);
+			Component->SliderSize = (short) Width;
 		}
 	}
 
