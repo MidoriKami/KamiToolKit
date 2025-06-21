@@ -16,6 +16,8 @@ public abstract partial class NodeBase {
 					DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
 						visitAction(child);
 					});
+					
+					child?.VisitChildren(visitAction);
 				}
 			}
 			catch (Exception e) {
