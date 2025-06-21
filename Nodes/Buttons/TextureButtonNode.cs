@@ -3,7 +3,7 @@
 namespace KamiToolKit.Nodes;
 
 public class TextureButtonNode : ButtonBase {
-	protected readonly SimpleImageNode ImageNode;
+	public readonly SimpleImageNode ImageNode;
 
 	public TextureButtonNode() {
 		ImageNode = new ImGuiImageNode {

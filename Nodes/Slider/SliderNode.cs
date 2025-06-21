@@ -6,10 +6,10 @@ namespace KamiToolKit.Nodes.Slider;
 
 public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldComponentDataSlider> {
 
-	protected readonly SliderBackgroundButtonNode SliderBackgroundButtonNode;
-	protected readonly NineGridNode ProgressTextureNode;
-	protected readonly SliderForegroundButtonNode SliderForegroundButtonNode;
-	protected readonly TextNode ValueNode;
+	public readonly SliderBackgroundButtonNode SliderBackgroundButtonNode;
+	public readonly NineGridNode ProgressTextureNode;
+	public readonly SliderForegroundButtonNode SliderForegroundButtonNode;
+	public readonly TextNode ValueNode;
 	
 	public SliderNode() {
 		SetInternalComponentType(ComponentType.Slider);

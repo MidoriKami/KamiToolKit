@@ -6,7 +6,7 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
 
-	protected readonly NineGridNode ButtonTexture;
+	public readonly NineGridNode ButtonTexture;
 	
 	public ScrollBarForegroundButtonNode() {
 		SetInternalComponentType(ComponentType.Button);

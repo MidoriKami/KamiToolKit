@@ -6,8 +6,8 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldComponentDataDragDrop> {
 
-	protected readonly ImageNode DragDropBackgroundNode;
-	protected readonly IconNode IconNode;
+	public readonly ImageNode DragDropBackgroundNode;
+	public readonly IconNode IconNode;
 	
 	public DragDropNode() {
 		SetInternalComponentType(ComponentType.DragDrop);

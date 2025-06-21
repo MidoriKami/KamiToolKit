@@ -7,22 +7,14 @@ namespace KamiToolKit.Nodes;
 
 public class LuminaListNode<T> : ListNode<T> where T : struct, IExcelRow<T> {
 
-	private Func<T, string>? InternalLabelResolver { get; set; }
-	
 	public Func<T, string>? LabelFunction {
-		get => InternalLabelResolver;
-		set {
-			InternalLabelResolver = value;
+		get; set { field = value;
 			ResolveOptions();
 		}
 	}
 
-	private Func<T, bool>? InternalFilterFunction { get; set; }
-
 	public Func<T, bool>? FilterFunction {
-		get => InternalFilterFunction;
-		set {
-			InternalFilterFunction = value;
+		get; set { field = value;
 			ResolveOptions();
 		}
 	}

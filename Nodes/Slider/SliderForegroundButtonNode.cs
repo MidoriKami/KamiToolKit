@@ -6,7 +6,7 @@ namespace KamiToolKit.Nodes.Slider;
 
 public class SliderForegroundButtonNode : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
 
-	protected readonly ImageNode HandleNode;
+	public readonly ImageNode HandleNode;
 
 	public SliderForegroundButtonNode() {
 		SetInternalComponentType(ComponentType.Button);

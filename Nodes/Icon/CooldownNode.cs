@@ -6,8 +6,8 @@ namespace KamiToolKit.Nodes;
 
 public class CooldownNode : ResNode {
 
-	protected readonly ImageNode GlossyImageFrame;
-	protected readonly ImageNode CooldownImage;
+	public readonly ImageNode GlossyImageFrame;
+	public readonly ImageNode CooldownImage;
 	
 	public CooldownNode() {
 		GlossyImageFrame = new ImageNode {

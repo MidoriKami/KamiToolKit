@@ -8,8 +8,8 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class TextInputButtonNode : ButtonBase {
 
-	protected readonly TextNode LabelNode;
-	protected readonly NineGridNode BackgroundNode;
+	public readonly TextNode LabelNode;
+	public readonly NineGridNode BackgroundNode;
 	
 	public TextInputButtonNode() {
 		BackgroundNode = new SimpleNineGridNode {

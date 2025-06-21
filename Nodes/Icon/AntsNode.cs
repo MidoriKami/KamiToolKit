@@ -6,7 +6,7 @@ namespace KamiToolKit.Nodes;
 
 public class AntsNode : ResNode {
 
-	protected readonly ImageNode AntsImageNode;
+	public readonly ImageNode AntsImageNode;
 
 	public AntsNode() {
 		AntsImageNode = new ImageNode {

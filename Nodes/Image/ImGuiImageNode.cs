@@ -15,13 +15,13 @@ public class ImGuiImageNode : SimpleImageNode {
     public void LoadTexture(IDalamudTextureWrap texture) 
         => PartsList[0].LoadTexture(texture);
 
-    private IDalamudTextureWrap? loadedTexture;
+    public IDalamudTextureWrap? LoadedTexture;
 
     public void LoadTextureFromFile(string fileSystemPath) {
         Task.Run(() => {
             Alpha = 0.0f;
-            loadedTexture = DalamudInterface.Instance.TextureProvider.GetFromFile(fileSystemPath).RentAsync().Result;
-            LoadTexture(loadedTexture);
+            LoadedTexture = DalamudInterface.Instance.TextureProvider.GetFromFile(fileSystemPath).RentAsync().Result;
+            LoadTexture(LoadedTexture);
             Alpha = 1.0f;
         });
     }
@@ -40,7 +40,7 @@ public class ImGuiImageNode : SimpleImageNode {
 
     protected override void Dispose(bool disposing) {
         if (disposing) {
-            loadedTexture?.Dispose();
+            LoadedTexture?.Dispose();
             
             base.Dispose(disposing);
         }

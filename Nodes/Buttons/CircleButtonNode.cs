@@ -3,7 +3,7 @@
 namespace KamiToolKit.Nodes;
 
 public class CircleButtonNode : ButtonBase {
-	protected readonly SimpleImageNode ImageNode;
+	public readonly SimpleImageNode ImageNode;
 
 	public CircleButtonNode() {
 		ImageNode = new SimpleImageNode {

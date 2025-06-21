@@ -6,7 +6,7 @@ namespace KamiToolKit.Nodes;
 
 public class IconIndicator : ResNode {
 
-	internal readonly ImageNode IconNode;
+	public readonly ImageNode IconNode;
 
 	public IconIndicator(uint innerNodeId) {
 		IconNode = new ImageNode {

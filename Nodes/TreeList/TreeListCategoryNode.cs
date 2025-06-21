@@ -14,11 +14,11 @@ public class TreeListCategoryNode : ResNode {
 
 	private List<NodeBase> children = [];
 	
-	protected readonly CollisionNode CollisionNode;
-	protected readonly NineGridNode BackgroundNode;
-	protected readonly ImageNode CollapseArrowNode;
-	protected readonly TextNode LabelNode;
-	protected readonly ResNode ChildContainer;
+	public readonly CollisionNode CollisionNode;
+	public readonly NineGridNode BackgroundNode;
+	public readonly ImageNode CollapseArrowNode;
+	public readonly TextNode LabelNode;
+	public readonly ResNode ChildContainer;
 	
 	public TreeListNode? ParentTreeListNode { get; set; }
 

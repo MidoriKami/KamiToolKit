@@ -8,12 +8,12 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, AtkUldComponentDataNumericInput> {
 
-	protected readonly NineGridNode BackgroundNode;
-	protected readonly ButtonBase AddButton;
-	protected readonly ButtonBase SubtractButton;
-	protected readonly TextNode ValueTextNode;
-	protected readonly NineGridNode FocusBorderNode;
-	protected readonly CursorNode CursorNode;
+	public readonly NineGridNode BackgroundNode;
+	public readonly ButtonBase AddButton;
+	public readonly ButtonBase SubtractButton;
+	public readonly TextNode ValueTextNode;
+	public readonly NineGridNode FocusBorderNode;
+	public readonly CursorNode CursorNode;
 	
 	public NumericInputNode() {
 		SetInternalComponentType(ComponentType.NumericInput);

@@ -8,11 +8,11 @@ namespace KamiToolKit.Nodes;
 
 public abstract class DropDownNode<T> : ResNode where T : ListNode, new() {
 
-	protected readonly CollisionNode CollisionNode;
-	protected readonly NineGridNode BackgroundNode;
-	protected readonly ImageNode CollapseArrowNode;
-	protected readonly TextNode LabelNode;
-	protected readonly T OptionListNode;
+	public readonly CollisionNode CollisionNode;
+	public readonly NineGridNode BackgroundNode;
+	public readonly ImageNode CollapseArrowNode;
+	public readonly TextNode LabelNode;
+	public readonly T OptionListNode;
 
 	public bool IsCollapsed { get; set; } = true;
 	
@@ -117,7 +117,16 @@ public abstract class DropDownNode<T> : ResNode where T : ListNode, new() {
 		Timeline?.StartAnimation(IsCollapsed ? 2 : 9);
 		OptionListNode.IsVisible = !IsCollapsed;
 	}
-	
+
+	public T? SelectedOption {
+		get => (OptionListNode as ListNode<T>)?.SelectedOption;
+		set {
+			if (OptionListNode is ListNode<T> list) {
+				list.SelectedOption = value;
+			}
+		}
+	}
+
 	private void BuildTimelines() {
 		AddTimeline(new TimelineBuilder()
 				.BeginFrameSet(1, 120)

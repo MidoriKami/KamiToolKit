@@ -6,7 +6,7 @@ namespace KamiToolKit.Nodes;
 
 public class CursorNode : ResNode {
 
-	protected readonly SimpleImageNode CursorImageNode;
+	public readonly SimpleImageNode CursorImageNode;
 	
 	public CursorNode() {
 		CursorImageNode = new SimpleImageNode {

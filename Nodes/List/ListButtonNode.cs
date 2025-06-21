@@ -8,9 +8,9 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class ListButtonNode : ButtonBase {
 
-	protected readonly NineGridNode HoverBackgroundNode;
-	protected readonly NineGridNode SelectedBackgroundNode;
-	protected readonly TextNode LabelNode;
+	public readonly NineGridNode HoverBackgroundNode;
+	public readonly NineGridNode SelectedBackgroundNode;
+	public readonly TextNode LabelNode;
 	
 	public ListButtonNode() {
 		HoverBackgroundNode = new SimpleNineGridNode {

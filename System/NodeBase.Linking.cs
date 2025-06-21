@@ -86,9 +86,7 @@ public abstract unsafe partial class NodeBase {
 
 	private void EnableChildEvents(NodeBase targetParent) {
 		if (targetParent.EventsActive) {
-			VisitChildren(childNode => {
-				childNode?.EnableEvents(targetParent.EventAddonPointer);
-			});
+			EnableEvents(targetParent.EventAddonPointer);
 		}
 	}
 	

@@ -15,12 +15,12 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldComponentDataTextInput> {
 
-	protected readonly NineGridNode BackgroundNode;
-	protected readonly NineGridNode FocusNode;
-	protected readonly TextNode TextLimitsNode;
-	protected readonly TextNode CurrentTextNode;
-	internal readonly TextInputSelectionListNode SelectionListNode;
-	protected readonly CursorNode CursorNode;
+	public readonly NineGridNode BackgroundNode;
+	public readonly NineGridNode FocusNode;
+	public readonly TextNode TextLimitsNode;
+	public readonly TextNode CurrentTextNode;
+	public readonly TextInputSelectionListNode SelectionListNode;
+	public readonly CursorNode CursorNode;
 	
 	public TextInputNode() {
 		SetInternalComponentType(ComponentType.TextInput);

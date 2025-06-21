@@ -4,10 +4,10 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class ScrollingAreaNode : ResNode {
 
-	protected readonly ResNode ContentAreaNode;
-	protected readonly ResNode ContentAreaClipNode;
-	protected readonly CollisionNode ScrollingCollisionNode;
-	protected readonly ScrollBarNode ScrollBarNode;
+	public readonly ResNode ContentAreaNode;
+	public readonly ResNode ContentAreaClipNode;
+	public readonly CollisionNode ScrollingCollisionNode;
+	public readonly ScrollBarNode ScrollBarNode;
 
 	public ScrollingAreaNode() {
 		ScrollingCollisionNode = new CollisionNode {

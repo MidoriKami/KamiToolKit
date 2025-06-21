@@ -6,7 +6,7 @@ namespace KamiToolKit.Nodes.Slider;
 
 public unsafe class SliderBackgroundButtonNode : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
 
-	protected readonly NineGridNode BackgroundTexture;
+	public readonly NineGridNode BackgroundTexture;
 
 	public SliderBackgroundButtonNode() {
 		SetInternalComponentType(ComponentType.Button);

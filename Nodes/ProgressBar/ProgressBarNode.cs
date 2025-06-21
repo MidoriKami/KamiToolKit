@@ -3,8 +3,8 @@
 namespace KamiToolKit.Nodes;
 
 public class ProgressBarNode : SimpleComponentNode {
-	protected readonly NineGridNode BackgroundNode;
-	protected readonly NineGridNode ForegroundNode;
+	public readonly NineGridNode BackgroundNode;
+	public readonly NineGridNode ForegroundNode;
 
 	public ProgressBarNode() {
 		BackgroundNode = new SimpleNineGridNode {

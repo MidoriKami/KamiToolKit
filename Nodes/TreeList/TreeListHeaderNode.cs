@@ -7,8 +7,8 @@ namespace KamiToolKit.Nodes;
 
 public class TreeListHeaderNode : ResNode {
 
-	protected readonly NineGridNode DecorationNode;
-	protected readonly TextNode LabelNode;
+	public readonly NineGridNode DecorationNode;
+	public readonly TextNode LabelNode;
 
 	public TreeListHeaderNode() {
 		DecorationNode = new SimpleNineGridNode {

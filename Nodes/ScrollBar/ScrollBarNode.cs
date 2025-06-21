@@ -8,8 +8,8 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldComponentDataScrollBar> {
 
-	protected readonly ScrollBarBackgroundButtonNode BackgroundButtonNode;
-	protected readonly ScrollBarForegroundButtonNode ForegroundButtonNode;
+	public readonly ScrollBarBackgroundButtonNode BackgroundButtonNode;
+	public readonly ScrollBarForegroundButtonNode ForegroundButtonNode;
 	
 	public ScrollBarNode() {
 		SetInternalComponentType(ComponentType.ScrollBar);
@@ -52,23 +52,17 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 		OnValueChanged?.Invoke(Component->PendingScrollPosition);
 	}
 
-	private NodeBase InternalContentNode { get; set; }
-	
-	public NodeBase ContentNode {
-		get => InternalContentNode;
-		set {
-			InternalContentNode = value;
+	public NodeBase? ContentNode {
+		get; set { 
+			field = value ?? throw new Exception("Unsupported Operation");
 			Component->ContentNode = value.InternalResNode;
 			UpdateScrollParams();
 		}
 	}
-	
-	private CollisionNode InternalCollisionNode { get; set; }
 
-	public CollisionNode ContentCollisionNode {
-		get => InternalCollisionNode;
-		set {
-			InternalCollisionNode = value;
+	public CollisionNode? ContentCollisionNode {
+		get; set {
+			field = value ?? throw new Exception("Unsupported Operation");
 			Component->ContentCollisionNode = value.InternalNode;
 			UpdateScrollParams();
 		}
@@ -121,7 +115,10 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 
 		if (Component->EmptyLength is 0) {
 			ForegroundButtonNode.Y = 0.0f;
-			ContentNode.Y = 0;
+
+			if (ContentNode is not null) {
+				ContentNode.Y = 0;
+			}
 		}
 		
 		Component->SetEnabledState(Component->EmptyLength is not 0);
