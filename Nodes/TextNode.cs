@@ -58,12 +58,12 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
 
     [JsonProperty] public AlignmentType AlignmentType {
         get => InternalNode->AlignmentType;
-        set => InternalNode->AlignmentType = value;
+        set => InternalNode->SetAlignment(value);
     }
 
     [JsonProperty] public FontType FontType {
         get => InternalNode->FontType;
-        set => InternalNode->FontType = value;
+        set => InternalNode->SetFont(value);
     }
 
     [JsonProperty] public TextFlags TextFlags {
