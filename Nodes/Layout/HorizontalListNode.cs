@@ -29,7 +29,7 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 		}
 	}
 	
-	[JsonProperty] public float ItemVerticalSpacing { get; set; }
+	[JsonProperty] public float HorizontalSpacing { get; set; }
 	
 	private void RecalculateLayout() {
 		var startY = Alignment switch {
@@ -45,11 +45,11 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 
 			switch (Alignment) {
 				case HorizontalListAnchor.Left:
-					startY += node.Height + ItemVerticalSpacing;
+					startY += node.Width + HorizontalSpacing;
 					break;
 				
 				case HorizontalListAnchor.Right:
-					startY -= node.Height + ItemVerticalSpacing;
+					startY -= node.Width + HorizontalSpacing;
 					break;
 			}
 		}
