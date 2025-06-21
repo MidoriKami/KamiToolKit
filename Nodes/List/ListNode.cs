@@ -21,7 +21,8 @@ public abstract unsafe class ListNode<T> : ListNode {
 	public T? SelectedOption { get; set; } 
 
 	public List<T>? Options {
-		get; set { field = value;
+		get; set { 
+			field = value;
 			RebuildNodeList();
 		}
 	}
