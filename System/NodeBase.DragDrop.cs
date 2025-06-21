@@ -73,20 +73,24 @@ public abstract partial class NodeBase {
 	}
 
 	private void ClickDragEnd(AddonEventData eventData) {
+		if (isDragging) {
+			OnClickDragComplete?.Invoke();
+		}
+		
 		isDragging = false;
 		SetCursor(AddonCursorType.Hand);
-		
-		OnClickDragComplete?.Invoke();
-		
+
 		eventData.SetHandled();
 	}
 
 	private void ClickDragMouseOut(AddonEventData eventData) {
+		if (isDragging) {
+			OnClickDragComplete?.Invoke();
+		}
+
 		isDragging = false;
 		ResetCursor();
 
-		OnClickDragComplete?.Invoke();
-		
 		eventData.SetHandled();
 	}
 }
