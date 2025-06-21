@@ -45,7 +45,6 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 			if (!node.IsVisible) continue;
 			
 			node.X = startX;
-			node.Y = 0.0f;
 
 			switch (Alignment) {
 				case HorizontalListAnchor.Left:

@@ -42,7 +42,6 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 
 		foreach (var node in nodeList) {
 			node.Y = startY;
-			node.X = 0.0f;
 
 			switch (Alignment) {
 				case VerticalListAnchor.Top:
