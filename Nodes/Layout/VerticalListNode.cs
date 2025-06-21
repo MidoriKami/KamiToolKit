@@ -31,15 +31,18 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 	
 	[JsonProperty] public float ItemVerticalSpacing { get; set; }
 	
+	[JsonProperty] public float FirstItemSpacing { get; set; }
+	
 	public void RecalculateLayout() {
 		var startY = Alignment switch {
-			VerticalListAnchor.Top => 0.0f,
-			VerticalListAnchor.Bottom => Height,
+			VerticalListAnchor.Top => 0.0f + FirstItemSpacing,
+			VerticalListAnchor.Bottom => Height - FirstItemSpacing,
 			_ => 0.0f,
 		};
 
 		foreach (var node in nodeList) {
 			node.Y = startY;
+			node.X = 0.0f;
 
 			switch (Alignment) {
 				case VerticalListAnchor.Top:
@@ -68,6 +71,13 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 		RecalculateLayout();
 	}
 
+	public void AddDummy(T dummyNode, float height) {
+		dummyNode.Width = Width;
+		dummyNode.Height = height;
+		dummyNode.IsVisible = true;
+		Add(dummyNode);
+	}
+	
 	public void Remove(params T[] items) {
 		foreach (var node in items) {
 			Remove(node);

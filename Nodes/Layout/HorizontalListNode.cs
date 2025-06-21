@@ -31,10 +31,13 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 	
 	[JsonProperty] public float ItemHorizontalSpacing { get; set; }
 	
+	[JsonProperty] public float FirstItemSpacing { get; set; }
+
+	
 	public void RecalculateLayout() {
 		var startX = Alignment switch {
-			HorizontalListAnchor.Left => 0.0f,
-			HorizontalListAnchor.Right => Width,
+			HorizontalListAnchor.Left => 0.0f + FirstItemSpacing,
+			HorizontalListAnchor.Right => Width - FirstItemSpacing,
 			_ => 0.0f,
 		};
 
@@ -42,6 +45,7 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 			if (!node.IsVisible) continue;
 			
 			node.X = startX;
+			node.Y = 0.0f;
 
 			switch (Alignment) {
 				case HorizontalListAnchor.Left:
@@ -68,6 +72,13 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 		node.NodeId = (uint) nodeList.Count + 1;
 		
 		RecalculateLayout();
+	}
+
+	public void AddDummy(T dummyNode, float width) {
+		dummyNode.Width = width;
+		dummyNode.Height = Height;
+		dummyNode.IsVisible = true;
+		Add(dummyNode);
 	}
 
 	public void Remove(params T[] items) {
