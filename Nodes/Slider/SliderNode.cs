@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
 
