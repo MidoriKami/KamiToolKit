@@ -97,6 +97,16 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 			Width = CollisionNode.Width;
 		}
 	}
+
+	public bool IsEnabled {
+		get => Component->IsEnabled;
+		set => Component->SetEnabledState(value);
+	}
+
+	public bool IsChecked {
+		get => Component->IsChecked;
+		set => Component->SetChecked(value);
+	}
 	
 	private void LoadTimelines() {
 		AddTimeline(new TimelineBuilder()
