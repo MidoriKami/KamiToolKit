@@ -117,7 +117,16 @@ public abstract class DropDownNode<T> : ResNode where T : ListNode, new() {
 		Timeline?.StartAnimation(IsCollapsed ? 2 : 9);
 		OptionListNode.IsVisible = !IsCollapsed;
 	}
-	
+
+	public T? SelectedOption {
+		get => (OptionListNode as ListNode<T>)?.SelectedOption;
+		set {
+			if (OptionListNode is ListNode<T> list) {
+				list.SelectedOption = value;
+			}
+		}
+	}
+
 	private void BuildTimelines() {
 		AddTimeline(new TimelineBuilder()
 				.BeginFrameSet(1, 120)
