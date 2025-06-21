@@ -6,14 +6,17 @@ namespace KamiToolKit.Extensions;
 
 public static unsafe class AddonEventDataExtensions {
 	public static void SetHandled(this AddonEventData data, bool forced = true)
-		=> data.GetEventData()->SetEventIsHandled(forced);
+		=> data.GetEvent()->SetEventIsHandled(forced);
 
 	public static Vector2 GetMousePosition(this AddonEventData data)
 		=> new(data.GetMouseData().PosX, data.GetMouseData().PosY);
 
 	private static ref AtkEventData.AtkMouseData GetMouseData(this AddonEventData data)
-		=> ref ((AtkEventData*) data.AtkEventDataPointer)->MouseData;
+		=> ref data.GetEventData()->MouseData;
 
-	private static AtkEvent* GetEventData(this AddonEventData data)
-		=>  (AtkEvent*)data.AtkEventDataPointer;
+	private static AtkEvent* GetEvent(this AddonEventData data)
+		=>  (AtkEvent*) data.AtkEventPointer;
+	
+	private static AtkEventData* GetEventData(this AddonEventData data)
+		=>  (AtkEventData*) data.AtkEventDataPointer;
 }

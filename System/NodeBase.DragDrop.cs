@@ -56,7 +56,7 @@ public abstract partial class NodeBase {
 		isDragging = true;
 		clickStart = eventData.GetMousePosition();
 		SetCursor(AddonCursorType.Grab);
-		
+
 		eventData.SetHandled();
 	}
 	
