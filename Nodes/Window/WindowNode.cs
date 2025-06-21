@@ -7,18 +7,18 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldComponentDataWindow> {
 
-	protected CollisionNode HeaderCollisionNode;
-	protected WindowBackgroundNode BackgroundNode;
-	protected WindowBackgroundNode BorderNode;
-	protected ImageNode BackgroundImageNode;
-	protected ResNode HeaderContainerNode;
+	protected readonly CollisionNode HeaderCollisionNode;
+	protected readonly WindowBackgroundNode BackgroundNode;
+	protected readonly WindowBackgroundNode BorderNode;
+	protected readonly ImageNode BackgroundImageNode;
+	protected readonly ResNode HeaderContainerNode;
 	
-	protected SimpleNineGridNode DividingLineNode;
-	protected TextureButtonNode CloseButtonNode;
-	protected TextureButtonNode ConfigurationButtonNode;
-	protected TextureButtonNode InformationButtonNode;
-	protected TextNode SubtitleNode;
-	protected TextNode TitleNode;
+	protected readonly SimpleNineGridNode DividingLineNode;
+	protected readonly TextureButtonNode CloseButtonNode;
+	protected readonly TextureButtonNode ConfigurationButtonNode;
+	protected readonly TextureButtonNode InformationButtonNode;
+	protected readonly TextNode SubtitleNode;
+	protected readonly TextNode TitleNode;
 
 	public WindowNode() {
 		SetInternalComponentType(ComponentType.Window);
