@@ -13,20 +13,21 @@ public abstract unsafe partial class NativeAddon {
 	internal AtkUnitBase* InternalAddon;
 
 	protected ResNode RootNode = null!;
-	protected WindowNode? WindowNode {
+
+	protected WindowNode WindowNode {
 		get; set {
 			if (value is null) throw new Exception("Cannot set a window node to null");
-			
-			if (field is not null) {
+
+			if (InternalAddon->WindowNode is not null) {
 				InternalAddon->WindowNode = null;
 				field.DetachNode();
 			}
-			
+
 			field = value;
 			value.AttachNode(RootNode, NodePosition.AsFirstChild);
 			InternalAddon->WindowNode = value.InternalComponentNode;
 		}
-	}
+	} = null!;
 	
 	private GCHandle? disposeHandle;
 
@@ -79,9 +80,6 @@ public abstract unsafe partial class NativeAddon {
 		InternalAddon->UldManager.AddNodeToObjectList(RootNode.InternalResNode);
 
 		LoadTimeline();
-
-		WindowNode!.AttachNode(RootNode, NodePosition.AsFirstChild);
-		InternalAddon->WindowNode = (AtkComponentNode*) WindowNode.InternalResNode;
 
 		InternalAddon->UldManager.UpdateDrawNodeList();
 		InternalAddon->UldManager.LoadedState = AtkLoadState.Loaded;
