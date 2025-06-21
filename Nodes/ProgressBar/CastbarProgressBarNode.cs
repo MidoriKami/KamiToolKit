@@ -9,9 +9,9 @@ namespace KamiToolKit.Nodes;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class CastBarProgressBarNode : SimpleComponentNode {
-    [JsonProperty] protected readonly SimpleNineGridNode BackgroundImageNode;
-    [JsonProperty] protected readonly SimpleNineGridNode ProgressNode;
-    [JsonProperty] protected readonly SimpleNineGridNode BorderImageNode;
+    [JsonProperty] public readonly SimpleNineGridNode BackgroundImageNode;
+    [JsonProperty] public readonly SimpleNineGridNode ProgressNode;
+    [JsonProperty] public readonly SimpleNineGridNode BorderImageNode;
 
     // Recommended aspect ratio for width:height is 8:1
     public CastBarProgressBarNode() {

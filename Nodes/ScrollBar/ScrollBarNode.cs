@@ -8,8 +8,8 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldComponentDataScrollBar> {
 
-	protected readonly ScrollBarBackgroundButtonNode BackgroundButtonNode;
-	protected readonly ScrollBarForegroundButtonNode ForegroundButtonNode;
+	public readonly ScrollBarBackgroundButtonNode BackgroundButtonNode;
+	public readonly ScrollBarForegroundButtonNode ForegroundButtonNode;
 	
 	public ScrollBarNode() {
 		SetInternalComponentType(ComponentType.ScrollBar);
@@ -55,20 +55,14 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 	private NodeBase InternalContentNode { get; set; }
 	
 	public NodeBase ContentNode {
-		get => InternalContentNode;
-		set {
-			InternalContentNode = value;
+		get; set { field = value;
 			Component->ContentNode = value.InternalResNode;
 			UpdateScrollParams();
 		}
 	}
 	
-	private CollisionNode InternalCollisionNode { get; set; }
-
 	public CollisionNode ContentCollisionNode {
-		get => InternalCollisionNode;
-		set {
-			InternalCollisionNode = value;
+		get; set { field = value;
 			Component->ContentCollisionNode = value.InternalNode;
 			UpdateScrollParams();
 		}

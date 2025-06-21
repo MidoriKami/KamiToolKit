@@ -9,8 +9,6 @@ namespace KamiToolKit.Nodes;
 
 public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
 
-	protected AtkComponentButton* ButtonNode => (AtkComponentButton*) InternalNode;
-
 	protected ButtonBase() {
 		SetInternalComponentType(ComponentType.Button);
 		AddEvent(AddonEventType.ButtonClick, ClickHandler);

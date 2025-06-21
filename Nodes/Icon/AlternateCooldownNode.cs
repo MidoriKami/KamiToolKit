@@ -6,7 +6,7 @@ namespace KamiToolKit.Nodes;
 
 public class AlternateCooldownNode : ResNode {
 
-	protected readonly ImageNode CooldownImage;
+	public readonly ImageNode CooldownImage;
 
 	public AlternateCooldownNode() {
 		CooldownImage = new ImageNode {

@@ -14,7 +14,7 @@ namespace KamiToolKit.Nodes;
 
 public class GifImageNode : ResNode {
 	
-	protected ImageNode ImageNode;
+	public ImageNode ImageNode;
 
 	public required string FilePath {
 		set {

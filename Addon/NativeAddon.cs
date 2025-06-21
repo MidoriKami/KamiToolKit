@@ -12,9 +12,9 @@ public abstract unsafe partial class NativeAddon {
 
 	internal AtkUnitBase* InternalAddon;
 
-	protected ResNode RootNode = null!;
+	public ResNode RootNode = null!;
 
-	protected WindowNode WindowNode {
+	public WindowNode WindowNode {
 		get; set {
 			if (value is null) throw new Exception("Cannot set a window node to null");
 

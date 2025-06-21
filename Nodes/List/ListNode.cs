@@ -13,19 +13,15 @@ public abstract class ListNode : ComponentNode<AtkComponentBase, AtkUldComponent
 /// Note, automatically inserts buttons to fill the set height, please ensure option count is greater than button count.
 public abstract unsafe class ListNode<T> : ListNode {
 
-	protected readonly NineGridNode BackgroundNode;
-	protected readonly ResNode ContainerNode;
-	protected List<ListButtonNode> Nodes = [];
-	protected readonly ScrollBarNode ScrollBarNode;
+	public readonly NineGridNode BackgroundNode;
+	public readonly ResNode ContainerNode;
+	public List<ListButtonNode> Nodes = [];
+	public readonly ScrollBarNode ScrollBarNode;
 
-	protected List<T>? InternalOptions = [];
-	
 	public T? SelectedOption { get; set; } 
 
 	public List<T>? Options {
-		get => InternalOptions;
-		set {
-			InternalOptions = value;
+		get; set { field = value;
 			RebuildNodeList();
 		}
 	}

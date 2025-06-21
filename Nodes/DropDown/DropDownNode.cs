@@ -8,11 +8,11 @@ namespace KamiToolKit.Nodes;
 
 public abstract class DropDownNode<T> : ResNode where T : ListNode, new() {
 
-	protected readonly CollisionNode CollisionNode;
-	protected readonly NineGridNode BackgroundNode;
-	protected readonly ImageNode CollapseArrowNode;
-	protected readonly TextNode LabelNode;
-	protected readonly T OptionListNode;
+	public readonly CollisionNode CollisionNode;
+	public readonly NineGridNode BackgroundNode;
+	public readonly ImageNode CollapseArrowNode;
+	public readonly TextNode LabelNode;
+	public readonly T OptionListNode;
 
 	public bool IsCollapsed { get; set; } = true;
 	

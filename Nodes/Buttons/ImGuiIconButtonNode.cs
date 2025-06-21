@@ -3,7 +3,7 @@
 namespace KamiToolKit.Nodes;
 
 public class ImGuiIconButtonNode : ButtonBase {
-	protected readonly ImGuiImageNode ImageNode;
+	public readonly ImGuiImageNode ImageNode;
 
 	public ImGuiIconButtonNode() {
 		ImageNode = new ImGuiImageNode {

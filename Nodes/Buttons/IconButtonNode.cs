@@ -6,8 +6,8 @@ namespace KamiToolKit.Nodes;
 /// Uses a GameIconId to display that icon as the decorator for the button.
 /// </summary>
 public class IconButtonNode : ButtonBase {
-	protected readonly IconImageNode ImageNode;
-	protected readonly NineGridNode BackgroundNode;
+	public readonly IconImageNode ImageNode;
+	public readonly NineGridNode BackgroundNode;
 
 	public IconButtonNode() {
 		BackgroundNode = new SimpleNineGridNode {

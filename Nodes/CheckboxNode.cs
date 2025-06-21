@@ -10,9 +10,9 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldComponentDataCheckBox> {
 
-	protected readonly ImageNode BoxBackground;
-	protected readonly ImageNode BoxForeground;
-	protected readonly TextNode Label;
+	public readonly ImageNode BoxBackground;
+	public readonly ImageNode BoxForeground;
+	public readonly TextNode Label;
 
 	public CheckboxNode() {
 		SetInternalComponentType(ComponentType.CheckBox);

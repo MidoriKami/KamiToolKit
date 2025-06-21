@@ -14,8 +14,8 @@ namespace KamiToolKit.Nodes;
 public class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
 
     private readonly List<T> nodeList = [];
-    [JsonProperty] protected readonly BackgroundImageNode Background;
-    [JsonProperty] protected readonly BorderNineGridNode Border;
+    [JsonProperty] public readonly BackgroundImageNode Background;
+    [JsonProperty] public readonly BorderNineGridNode Border;
 
     public ListBoxNode() {
         Background = new BackgroundImageNode {

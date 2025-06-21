@@ -6,10 +6,10 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDataIcon> {
 
-	protected readonly IconImageNode IconImage;
-	internal readonly IconExtras IconExtras;
-	protected readonly IconIndicator IconIndicator1;
-	protected readonly IconIndicator IconIndicator2;
+	public readonly IconImageNode IconImage;
+	public readonly IconExtras IconExtras;
+	public readonly IconIndicator IconIndicator1;
+	public readonly IconIndicator IconIndicator2;
 	
 	public IconNode() {
 		SetInternalComponentType(ComponentType.Icon);

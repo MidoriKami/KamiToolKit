@@ -6,22 +6,18 @@ using KamiToolKit.System;
 namespace KamiToolKit.Nodes;
 
 public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComponentNode>(nodeType) {
-	internal abstract AtkComponentBase* ComponentBase { get; }
-	internal abstract AtkUldComponentDataBase* DataBase { get; }
-	internal abstract AtkComponentNode* InternalComponentNode { get; }
-
-	public static explicit operator AtkComponentBase*(ComponentNode node) => node.ComponentBase;
+	public abstract AtkComponentBase* ComponentBase { get; }
+	public abstract AtkUldComponentDataBase* DataBase { get; }
+	public abstract AtkComponentNode* InternalComponentNode { get; }
 }
 
 public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable where TU : unmanaged {
 
-	protected readonly CollisionNode CollisionNode;
-	internal override AtkComponentBase* ComponentBase => (AtkComponentBase*) Component;
-	internal override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*) Data;
-	internal override AtkComponentNode* InternalComponentNode => (AtkComponentNode*) InternalResNode;
+	public readonly CollisionNode CollisionNode;
+	public override AtkComponentBase* ComponentBase => (AtkComponentBase*) Component;
+	public override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*) Data;
+	public override AtkComponentNode* InternalComponentNode => (AtkComponentNode*) InternalResNode;
 
-	public static explicit operator T*(ComponentNode<T, TU> component) => component.Component;
-	
 	protected ComponentNode() : base((NodeType) 1001) {
 		Component = NativeMemoryHelper.Create<T>();
 		var componentBase = (AtkComponentBase*) Component;

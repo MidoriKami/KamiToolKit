@@ -9,15 +9,15 @@ namespace KamiToolKit.Nodes;
 
 public class IconExtras : ResNode {
 
-	protected readonly ImageNode TimelineImageNode;
-	internal readonly CooldownNode CooldownNode;
-	protected readonly AlternateCooldownNode AlternateCooldownNode;
-	internal readonly AntsNode AntsNode;
-	protected readonly ImageNode HoveredBorderImageNode;
-	protected readonly ImageNode ChargeCountImageNode;
-	internal readonly TextNode QuantityTextNode;
-	internal readonly TextNode ResourceCostTextNode;
-	protected readonly ImageNode ClickFlashImageNode;
+	public readonly ImageNode TimelineImageNode;
+	public readonly CooldownNode CooldownNode;
+	public readonly AlternateCooldownNode AlternateCooldownNode;
+	public readonly AntsNode AntsNode;
+	public readonly ImageNode HoveredBorderImageNode;
+	public readonly ImageNode ChargeCountImageNode;
+	public readonly TextNode QuantityTextNode;
+	public readonly TextNode ResourceCostTextNode;
+	public readonly ImageNode ClickFlashImageNode;
 	
 	public IconExtras() {
 		TimelineImageNode = new SimpleImageNode {
