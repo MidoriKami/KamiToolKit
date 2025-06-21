@@ -3,27 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using KamiToolKit.Classes;
 
 namespace KamiToolKit.System;
 
 public abstract partial class NodeBase {
 	private void VisitChildren(Action<NodeBase?> visitAction) {
-		Task.Run(() => {
-			try {
-				foreach (var child in GetChildren(this)) {
-					DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-						visitAction(child);
-					});
-					
-					child?.VisitChildren(visitAction);
-				}
+		try {
+			foreach (var child in GetChildren(this)) {
+				DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+					visitAction(child);
+				});
 			}
-			catch (Exception e) {
-				Log.Exception(e);
-			}
-		});
+		}
+		catch (Exception e) {
+			Log.Exception(e);
+		}
 	}
 
 	private IEnumerable<NodeBase?> GetChildren(NodeBase parent) {
