@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.System;
 using Newtonsoft.Json;
@@ -29,10 +29,10 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 		}
 	}
 	
-	[JsonProperty] public float ItemVerticalSpacing { get; set; }
+	[JsonProperty] public float ItemHorizontalSpacing { get; set; }
 	
 	private void RecalculateLayout() {
-		var startY = Alignment switch {
+		var startX = Alignment switch {
 			HorizontalListAnchor.Left => 0.0f,
 			HorizontalListAnchor.Right => Width,
 			_ => 0.0f,
@@ -41,15 +41,15 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 		foreach (var node in nodeList) {
 			if (!node.IsVisible) continue;
 			
-			node.Y = startY;
+			node.X = startX;
 
 			switch (Alignment) {
 				case HorizontalListAnchor.Left:
-					startY += node.Height + ItemVerticalSpacing;
+					startX += node.Width + ItemHorizontalSpacing;
 					break;
 				
 				case HorizontalListAnchor.Right:
-					startY -= node.Height + ItemVerticalSpacing;
+					startX -= node.Width + ItemHorizontalSpacing;
 					break;
 			}
 		}
