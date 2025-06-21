@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.System;
 using Newtonsoft.Json;
 

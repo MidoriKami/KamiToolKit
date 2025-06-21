@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.Classes;
 
 public enum LayoutAnchor {
 	[Description("Top Left")]

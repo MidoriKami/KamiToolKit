@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.System;
 using Newtonsoft.Json;
 
