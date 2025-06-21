@@ -3,8 +3,7 @@
 namespace KamiToolKit.Nodes;
 
 public class CircleButtonNode : ButtonBase {
-	protected SimpleImageNode ImageNode;
-	private ButtonIcon currentIcon;
+	protected readonly SimpleImageNode ImageNode;
 
 	public CircleButtonNode() {
 		ImageNode = new SimpleImageNode {
@@ -24,12 +23,10 @@ public class CircleButtonNode : ButtonBase {
 	}
 
 	public ButtonIcon Icon {
-		get => currentIcon;
-		set {
+		get; set { field = value;
 			var uldInfo = GetTextureCoordinateForIcon(value);
 			ImageNode.TextureCoordinates = uldInfo.TextureCoordinates;
 			ImageNode.TextureSize = uldInfo.TextureSize;
-			currentIcon = value;
 		}
 	}
 
