@@ -31,7 +31,7 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 	
 	[JsonProperty] public float ItemVerticalSpacing { get; set; }
 	
-	private void RecalculateLayout() {
+	public void RecalculateLayout() {
 		var startY = Alignment switch {
 			VerticalListAnchor.Top => 0.0f,
 			VerticalListAnchor.Bottom => Height,

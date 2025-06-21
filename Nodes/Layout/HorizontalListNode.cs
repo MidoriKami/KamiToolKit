@@ -31,7 +31,7 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 	
 	[JsonProperty] public float ItemHorizontalSpacing { get; set; }
 	
-	private void RecalculateLayout() {
+	public void RecalculateLayout() {
 		var startX = Alignment switch {
 			HorizontalListAnchor.Left => 0.0f,
 			HorizontalListAnchor.Right => Width,
