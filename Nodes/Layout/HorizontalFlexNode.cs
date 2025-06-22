@@ -9,6 +9,9 @@ public class HorizontalFlexNode<T> : SimpleComponentNode where T : NodeBase {
 	private readonly List<T> nodeList = [];
 	
 	public bool FitHeight { get; set; }
+	public bool FitWidth { get; set; }
+
+	public float FitPadding { get; set; } = 4.0f;
 
 	public void RecalculateLayout() {
 		var step = Width / nodeList.Count;
@@ -22,6 +25,10 @@ public class HorizontalFlexNode<T> : SimpleComponentNode where T : NodeBase {
 
 			if (FitHeight) {
 				nodeList[index].Height = Height;
+			}
+
+			if (FitWidth) {
+				nodeList[index].Width = step - FitPadding;
 			}
 		}
 	}
