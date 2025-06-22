@@ -3,27 +3,20 @@ using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
+using KamiToolKit.Extensions;
 
 namespace KamiToolKit.Nodes;
 
-public abstract class DropDownNode<T> : ResNode where T : ListNode, new() {
+public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNode<TU>, new() {
 
-	public readonly CollisionNode CollisionNode;
 	public readonly NineGridNode BackgroundNode;
 	public readonly ImageNode CollapseArrowNode;
 	public readonly TextNode LabelNode;
 	public readonly T OptionListNode;
 
 	public bool IsCollapsed { get; set; } = true;
-	
-	public DropDownNode() {
-		CollisionNode = new CollisionNode {
-			Size = new Vector2(250.0f, 24.0f),
-			IsVisible = true,
-		};
-		
-		CollisionNode.AttachNode(this);
-		
+
+	protected DropDownNode() {
 		BackgroundNode = new SimpleNineGridNode {
 			TexturePath = "ui/uld/DropDownA.tex",
 			TextureSize = new Vector2(44.0f, 23.0f),
@@ -69,6 +62,7 @@ public abstract class DropDownNode<T> : ResNode where T : ListNode, new() {
 		OptionListNode = new T {
 			Position = new Vector2(4.0f, 21.0f),
 			Size = new Vector2(242.0f, 243.0f),
+			NodeFlags = NodeFlags.EmitsEvents,
 		};
 		
 		OptionListNode.AttachNode(this);
@@ -115,17 +109,12 @@ public abstract class DropDownNode<T> : ResNode where T : ListNode, new() {
 	public void Toggle() {
 		IsCollapsed = !IsCollapsed;
 		Timeline?.StartAnimation(IsCollapsed ? 2 : 9);
-		OptionListNode.IsVisible = !IsCollapsed;
-		OptionListNode.DrawFlags = 0x200000;
+		OptionListNode.Toggle(!IsCollapsed);
 	}
 
-	public T? SelectedOption {
-		get => (OptionListNode as ListNode<T>)?.SelectedOption;
-		set {
-			if (OptionListNode is ListNode<T> list) {
-				list.SelectedOption = value;
-			}
-		}
+	public TU? SelectedOption {
+		get => OptionListNode.SelectedOption;
+		set => OptionListNode.SelectedOption = value;
 	}
 
 	private void BuildTimelines() {

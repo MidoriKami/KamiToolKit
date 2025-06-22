@@ -3,7 +3,7 @@ using Lumina.Excel;
 
 namespace KamiToolKit.Nodes;
 
-public class LuminaDropDownNode<T> : DropDownNode<LuminaListNode<T>> where T : struct, IExcelRow<T> {
+public class LuminaDropDownNode<T> : DropDownNode<LuminaListNode<T>, T> where T : struct, IExcelRow<T> {
 
 	public LuminaDropDownNode() {
 		OptionListNode.OnOptionSelected += OptionSelectedHandler;
