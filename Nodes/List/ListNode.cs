@@ -180,6 +180,25 @@ public abstract unsafe class ListNode<T> : ListNode {
 	}
 
 	public Action<T>? OnOptionSelected { get; set; }
+
+	public void Show() {
+		IsVisible = true;
+		DrawFlags = 0x200000;
+	}
+
+	public void Hide() {
+		IsVisible = false;
+		DrawFlags = 0x100;
+	}
+
+	public void Toggle(bool newState) {
+		if (newState) {
+			Show();
+		}
+		else {
+			Hide();
+		}
+	}
 	
 	protected int GetNodeCount(float height)
 		=> (int) ( ( height - 18.0f ) / NodeHeight );
