@@ -5,6 +5,7 @@ using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
+using KamiToolKit.Extensions;
 
 namespace KamiToolKit.Nodes;
 
@@ -47,9 +48,6 @@ public abstract unsafe class ListNode<T> : ListNode {
 		
 		ContainerNode.AttachNode(this);
 
-		ContainerNode.SetEventFlags();
-		ContainerNode.AddEvent(AddonEventType.MouseWheel, OnMouseWheel);
-
 		ScrollBarNode = new ScrollBarNode {
 			Position = new Vector2(0.0f, 9.0f),
 			Size = new Vector2(8.0f, 0.0f),
@@ -61,7 +59,8 @@ public abstract unsafe class ListNode<T> : ListNode {
 		
 		BuildTimelines();
 		
-		InitializeComponentEvents();
+		ContainerNode.SetEventFlags();
+		ContainerNode.AddEvent(AddonEventType.MouseWheel, OnMouseWheel);
 	}
 
 	protected float NodeHeight { get; set; } = 22.0f;
@@ -107,8 +106,7 @@ public abstract unsafe class ListNode<T> : ListNode {
 		UpdateNodes();
 		ScrollBarNode.ScrollPosition = (int) ( CurrentStartIndex * NodeHeight + 9.0f );
 				
-		var nativeEvent = (AtkEvent*) data.AtkEventPointer;
-		nativeEvent->SetEventIsHandled(true);
+		data.SetHandled();
 	}
 	
 	public int CurrentStartIndex { get; set; }
