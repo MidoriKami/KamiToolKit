@@ -116,6 +116,7 @@ public abstract class DropDownNode<T> : ResNode where T : ListNode, new() {
 		IsCollapsed = !IsCollapsed;
 		Timeline?.StartAnimation(IsCollapsed ? 2 : 9);
 		OptionListNode.IsVisible = !IsCollapsed;
+		OptionListNode.DrawFlags = 0x200000;
 	}
 
 	public T? SelectedOption {
