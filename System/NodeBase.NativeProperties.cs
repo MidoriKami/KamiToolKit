@@ -46,7 +46,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     public virtual float Height {
-        get => InternalResNode->Height;
+        get => InternalResNode->GetHeight();
         set => InternalResNode->SetHeight((ushort) value);
     }
     
