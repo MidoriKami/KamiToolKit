@@ -1,4 +1,4 @@
-﻿namespace KamiToolKit.Nodes;
+﻿namespace KamiToolKit.Classes;
 
 public enum LayoutOrientation {
 	Vertical,

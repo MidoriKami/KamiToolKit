@@ -14,6 +14,21 @@ public abstract partial class NodeBase {
 
 	public Action? OnClickDragComplete { get; set; }
 
+	// Note: Event flags must be set to allow drag drop
+	public bool EnableDragDrop {
+		get;
+		set {
+			field = value;
+			if (value) {
+				EnableClickDrag();
+			}
+			else {
+				DisableClickDrag();
+			}
+		}
+	}
+
+	// Note: Event flags must be set to allow drag drop
 	public void EnableClickDrag(bool setEventFlags = false) {
 		if (clickDragEventsRegistered) return;
 		
@@ -30,6 +45,7 @@ public abstract partial class NodeBase {
 		}
 	}
 
+	// Note: Event flags must be set to allow drag drop
 	public void DisableClickDrag(bool clearEventFlags = false) {
 		if (!clickDragEventsRegistered) return;
 		

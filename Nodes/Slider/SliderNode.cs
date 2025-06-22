@@ -1,6 +1,4 @@
-﻿using System;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
 
@@ -74,8 +72,6 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 		Component->SliderSize = 220;
 		Component->OffsetR = 28;
 		Component->OffsetL = 4;
-		
-		AddEvent(AddonEventType.SliderValueUpdate, ValueUpdateHandler);
 	}
 
 	public override float Width {
@@ -104,12 +100,6 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 			
 			ValueNode.Y = value / 4.0f;
 		}
-	}
-	
-	public Action<int>? OnValueChanged { get; set; }
-	
-	private void ValueUpdateHandler(AddonEventData obj) {
-		OnValueChanged?.Invoke(Value);
 	}
 
 	public required int Min {
