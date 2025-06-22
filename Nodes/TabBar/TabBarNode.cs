@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
@@ -22,6 +23,8 @@ public class TabBarNode : ResNode {
 			Label = label,
 			OnClick = callback,
 		};
+
+		newButton.AddEvent(AddonEventType.ButtonClick, data => ClickHandler(data, newButton));
 		
 		radioButtons.Add(newButton);
 		newButton.AttachNode(this);
@@ -35,7 +38,7 @@ public class TabBarNode : ResNode {
 		return newButton;
 	}
 
-	private void ClickHandler(TabBarRadioButtonNode button) {
+	private void ClickHandler(AddonEventData obj, TabBarRadioButtonNode button) {
 		foreach (var radioButton in radioButtons) {
 			radioButton.IsChecked = false;
 			radioButton.IsSelected = false;
