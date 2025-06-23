@@ -51,7 +51,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 			IsVisible = true,
 			FontType = FontType.Axis,
 			FontSize = 12,
-			AlignmentType = AlignmentType.Center,
+			AlignmentType = AlignmentType.Left,
 		};
 		
 		ValueNode.AttachNode(this);
