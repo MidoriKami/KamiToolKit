@@ -91,9 +91,8 @@ public abstract unsafe partial class NativeAddon {
 		}
 	}
 
-	private void SetFlag<T>(ref T flagsField, int flag) where T : struct, IBinaryInteger<T> {
-		flagsField |= T.One << BitOperations.Log2((uint) flag);
-	}
+	private void SetFlag<T>(ref T flagsField, int flag) where T : struct, IBinaryInteger<T>
+		=> flagsField |= T.One << BitOperations.Log2((uint) flag);
 
 	private void ClearFlag<T>(ref T flagsField, int flag) where T : struct, IBinaryInteger<T>
 		=> flagsField &= ~(T.One << BitOperations.Log2((uint) flag));
