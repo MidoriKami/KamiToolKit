@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.NodeParts;
 using KamiToolKit.System;
 using Newtonsoft.Json;
@@ -31,6 +32,21 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
             
             base.Dispose(disposing);
         }
+    }
+
+    public string TexturePath {
+        get => PartsList[0].TexturePath;
+        set => PartsList[0].TexturePath = value;
+    }
+
+    public Vector2 TextureCoordinates {
+        get => PartsList[0].TextureCoordinates;
+        set => PartsList[0].TextureCoordinates = value;
+    }
+
+    public Vector2 TextureSize {
+        get => PartsList[0].Size;
+        set => PartsList[0].Size = value;
     }
 
     public uint PartId {
