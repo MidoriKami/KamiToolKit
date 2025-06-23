@@ -65,6 +65,26 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
 		set => TextNode.FontType = value;
 	}
 
+	public Vector4 TextOutlineColor {
+		get => TextNode.TextOutlineColor;
+		set => TextNode.TextOutlineColor = value;
+	}
+
+	public Vector4 TextColor {
+		get => TextNode.TextColor;
+		set => TextNode.TextColor = value;
+	}
+
+	public TextFlags TextFlags {
+		get => TextNode.TextFlags;
+		set => TextNode.TextFlags = value;
+	}
+
+	public TextFlags2 TextFlags2 {
+		get => TextNode.TextFlags2;
+		set => TextNode.TextFlags2 = value;
+	}
+
 	public override float Width {
 		get => base.Width;
 		set {
