@@ -10,13 +10,13 @@ public class HorizontalFlexNode<T> : SimpleComponentNode where T : NodeBase {
 	
 	public bool FitHeight { get; set; }
 	public bool FitWidth { get; set; }
-
 	public float FitPadding { get; set; } = 4.0f;
+	public bool FitContentHeight { get; set; }
 
 	public void RecalculateLayout() {
 		var step = Width / nodeList.Count;
 
-		if (nodeList.Count != 0) {
+		if (nodeList.Count != 0 && FitContentHeight) {
 			Height = nodeList.Max(node => node.Height);
 		}
 		
