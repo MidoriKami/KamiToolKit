@@ -13,7 +13,7 @@ public class TextDropDownNode : DropDownNode<TextListNode, string> {
 	
 	private void OptionSelectedHandler(string option) {
 		OnOptionSelected?.Invoke(option);
-		LabelNode.Text = option;
+		UpdateLabel(option);
 		Toggle();
 	}
 
@@ -22,7 +22,11 @@ public class TextDropDownNode : DropDownNode<TextListNode, string> {
 		set {
 			OptionListNode.Options = value;
 			OptionListNode.SelectDefaultOption();
-			LabelNode.Text = OptionListNode.SelectedOption ?? "ERROR: Invalid Default Option";
+			UpdateLabel(OptionListNode.SelectedOption);
 		}
+	}
+
+	protected override void UpdateLabel(string? option) {
+		LabelNode.Text = option ?? "ERROR: Invalid Default Option";
 	}
 }

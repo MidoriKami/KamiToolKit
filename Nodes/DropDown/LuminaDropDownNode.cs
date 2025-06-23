@@ -13,7 +13,7 @@ public class LuminaDropDownNode<T> : DropDownNode<LuminaListNode<T>, T> where T 
 	
 	private void OptionSelectedHandler(T option) {
 		OnOptionSelected?.Invoke(option);
-		LabelNode.Text = LabelFunction?.Invoke(option) ?? "ERROR: Label Function Not Set";
+		UpdateLabel(option);
 		Toggle();
 	}
 
@@ -39,5 +39,9 @@ public class LuminaDropDownNode<T> : DropDownNode<LuminaListNode<T>, T> where T 
 		
 		OptionListNode.SelectDefaultOption();
 		LabelNode.Text = LabelFunction.Invoke(OptionListNode.SelectedOption);
+	}
+
+	protected override void UpdateLabel(T option) {
+		LabelNode.Text = LabelFunction?.Invoke(option) ?? "ERROR: Label Function Not Set";
 	}
 }

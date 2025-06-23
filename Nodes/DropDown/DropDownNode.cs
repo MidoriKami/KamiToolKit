@@ -3,7 +3,6 @@ using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
-using KamiToolKit.Extensions;
 
 namespace KamiToolKit.Nodes;
 
@@ -114,8 +113,13 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
 
 	public TU? SelectedOption {
 		get => OptionListNode.SelectedOption;
-		set => OptionListNode.SelectedOption = value;
+		set {
+			OptionListNode.SelectedOption = value;
+			UpdateLabel(value);
+		}
 	}
+
+	protected abstract void UpdateLabel(TU? option);
 
 	private void BuildTimelines() {
 		AddTimeline(new TimelineBuilder()
