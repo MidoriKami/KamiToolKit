@@ -127,6 +127,8 @@ public class TreeListCategoryNode : ResNode {
 			ChildContainer.Height += child.Height + VerticalPadding;
 			Height = ChildContainer.Height + BackgroundNode.Height;
 		}
+		
+		UpdateCollapsed();
 	}
 
 	public void AddHeader(SeString label) {
