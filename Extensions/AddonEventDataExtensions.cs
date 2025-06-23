@@ -11,7 +11,7 @@ public static unsafe class AddonEventDataExtensions {
 	public static Vector2 GetMousePosition(this AddonEventData data)
 		=> new(data.GetMouseData().PosX, data.GetMouseData().PosY);
 
-	private static ref AtkEventData.AtkMouseData GetMouseData(this AddonEventData data)
+	public static ref AtkEventData.AtkMouseData GetMouseData(this AddonEventData data)
 		=> ref data.GetEventData()->MouseData;
 
 	private static AtkEvent* GetEvent(this AddonEventData data)
