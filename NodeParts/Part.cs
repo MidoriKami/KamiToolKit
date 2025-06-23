@@ -123,12 +123,13 @@ public unsafe class Part : IDisposable {
     /// and resolve through any texture substitutions defined by other plugins.
     /// </summary>
     /// <param name="path">Path to load</param>
-    public void LoadTexture(string path) {
+    /// <param name="resolveTheme">If set to false, will not load a themed version of the texture</param>
+    public void LoadTexture(string path, bool resolveTheme = true) {
         try {
             var texturePath = path.Replace("_hr1", string.Empty);
 
             var themedPath = texturePath.Replace("uld", GetThemePathModifier());
-            if (DalamudInterface.Instance.DataManager.FileExists(themedPath)) {
+            if (DalamudInterface.Instance.DataManager.FileExists(themedPath) && resolveTheme) {
                 texturePath = themedPath;
             }
         
