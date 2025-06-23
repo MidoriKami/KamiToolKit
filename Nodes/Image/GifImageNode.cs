@@ -49,6 +49,8 @@ public class GifImageNode : ResNode {
 	public Vector2 GifFrameSize { get; private set; }
 	
 	public bool FitNodeToGif { get; set; }
+	
+	public Action? OnGifLoaded { get; set; }
 
 	private async void LoadFrames(string filepath) {
 		try {
@@ -101,6 +103,10 @@ public class GifImageNode : ResNode {
 			unsafe {
 				InternalResNode->Timeline->PlayAnimation(AtkTimelineJumpBehavior.LoopForever, 200);
 			}
+
+			await DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+				OnGifLoaded?.Invoke();
+			});
 		}
 		catch (Exception e) {
 			Log.Exception(e);
