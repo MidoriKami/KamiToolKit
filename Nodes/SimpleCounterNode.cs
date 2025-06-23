@@ -11,9 +11,4 @@ public class SimpleCounterNode : CounterNode {
 			TextureCoordinates = Vector2.Zero,
 		};
 	}
-
-	public string TexturePath {
-		get => PartsList[0].TexturePath; 
-		set => PartsList[0].TexturePath = value;
-	}
 }
