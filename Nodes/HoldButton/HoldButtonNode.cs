@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
+using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
@@ -61,7 +63,15 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 		
 		InitializeComponentEvents();
 
+		AddEvent(AddonEventType.ButtonClick, ClickHandler);
+		
 		BuildTimelines();
+	}
+
+	public Action? OnClick { get; set; }
+	
+	private void ClickHandler(AddonEventData obj) {
+		OnClick?.Invoke();
 	}
 
 	public SeString Label {
