@@ -34,6 +34,9 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 	
 	[JsonProperty] public float FirstItemSpacing { get; set; }
 	
+	// Resizes this node to fit all elements
+	public bool FitContents { get; set; }
+	
 	public virtual void RecalculateLayout() {
 		var startY = Alignment switch {
 			VerticalListAnchor.Top => 0.0f + FirstItemSpacing,
@@ -56,6 +59,10 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 					startY -= node.Height + ItemVerticalSpacing;
 					break;
 			}
+		}
+
+		if (FitContents) {
+			Height = startY + FirstItemSpacing;
 		}
 	}
 
@@ -102,13 +109,5 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 		
 		nodeList.Clear();
 		RecalculateLayout();
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			RecalculateLayout();
-		}
 	}
 }
