@@ -73,7 +73,7 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->SetScale(value.X, value.Y);
     }
 
-    [JsonProperty] public virtual float Rotation {
+    public virtual float Rotation {
         get => InternalResNode->Rotation;
         set => InternalResNode->Rotation = value;
     }
@@ -88,7 +88,7 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->OriginY = value;
     }
 
-    [JsonProperty] public virtual Vector2 Origin {
+    public virtual Vector2 Origin {
         get => new(OriginX, OriginY);
         set {
             OriginX = value.X;
