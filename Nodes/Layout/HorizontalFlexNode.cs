@@ -43,13 +43,13 @@ public class HorizontalFlexNode<T> : SimpleComponentNode where T : NodeBase {
 		}
 	}
 	
-	public void Add(params T[] items) {
+	public void AddNode(params T[] items) {
 		foreach (var node in items) {
-			Add(node);
+			AddNode(node);
 		}
 	}
 	
-	public void Add(T node) {
+	public void AddNode(T node) {
 		nodeList.Add(node);
 		
 		node.AttachNode(this);
@@ -59,16 +59,16 @@ public class HorizontalFlexNode<T> : SimpleComponentNode where T : NodeBase {
 	}
 
 	public void AddDummy(T dummyNode, float width) {
-		Add(dummyNode);
+		AddNode(dummyNode);
 	}
 
-	public void Remove(params T[] items) {
+	public void RemoveNode(params T[] items) {
 		foreach (var node in items) {
-			Remove(node);
+			RemoveNode(node);
 		}
 	}
 
-	public void Remove(T node) {
+	public void RemoveNode(T node) {
 		node.DetachNode();
 		nodeList.Remove(node);
 		RecalculateLayout();

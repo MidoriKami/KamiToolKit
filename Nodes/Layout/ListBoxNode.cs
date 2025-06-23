@@ -276,13 +276,13 @@ public class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
         _ => throw new ArgumentOutOfRangeException(),
     };
 
-    public void Add(params T[] items) {
+    public void AddNode(params T[] items) {
         foreach (var item in items) {
-            Add(item);
+            AddNode(item);
         }
     }
     
-    public void Add(T item) {
+    public void AddNode(T item) {
         item.NodeId = (uint)(nodeList.Count + 4);
         
         item.AttachNode(this);
@@ -291,13 +291,13 @@ public class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
         RecalculateLayout();
     }
 
-    public void Remove(params T[] items) {
+    public void RemoveNode(params T[] items) {
         foreach (var node in items) {
-            Remove(node);
+            RemoveNode(node);
         }
     }
 
-    public void Remove(T item) {
+    public void RemoveNode(T item) {
         item.DetachNode();
         nodeList.Remove(item);
 

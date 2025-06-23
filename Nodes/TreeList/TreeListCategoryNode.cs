@@ -117,6 +117,18 @@ public class TreeListCategoryNode : ResNode {
 		ParentTreeListNode?.RefreshLayout();
 	}
 
+	public void RecalculateLayout() {
+		ChildContainer.Height = 0.0f;
+
+		foreach (var child in children) {
+			child.Y = ChildContainer.Height;
+			child.Width = ChildContainer.Width;
+		
+			ChildContainer.Height += child.Height + VerticalPadding;
+			Height = ChildContainer.Height + BackgroundNode.Height;
+		}
+	}
+
 	public void AddHeader(SeString label) {
 		var newHeaderNode = new TreeListHeaderNode {
 			Size = new Vector2(Width, 24.0f),
