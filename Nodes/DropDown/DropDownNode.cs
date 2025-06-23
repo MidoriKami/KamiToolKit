@@ -101,9 +101,9 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
 		}
 	}
 
-	public float OptionListHeight {
-		get => OptionListNode.Height;
-		set => OptionListNode.Height = value;
+	public int MaxListOptions {
+		get => OptionListNode.MaxButtons;
+		set => OptionListNode.MaxButtons = value;
 	}
 
 	public void Toggle() {

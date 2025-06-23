@@ -12,7 +12,7 @@ namespace KamiToolKit.Nodes;
 public abstract class ListNode : ComponentNode<AtkComponentBase, AtkUldComponentDataBase>;
 
 /// Note, automatically inserts buttons to fill the set height, please ensure option count is greater than button count.
-public abstract unsafe class ListNode<T> : ListNode {
+public abstract class ListNode<T> : ListNode {
 
 	public readonly NineGridNode BackgroundNode;
 	public readonly ResNode ContainerNode;
@@ -65,21 +65,15 @@ public abstract unsafe class ListNode<T> : ListNode {
 
 	protected float NodeHeight { get; set; } = 22.0f;
 	
-	public override float Height {
-		get => base.Height;
-		set {
-			var adjustedSize = GetNodeCount(value) * NodeHeight + 24.0f;
-			
-			base.Height = adjustedSize;
-			BackgroundNode.Height = adjustedSize;
-			ContainerNode.Height = adjustedSize;
-			ScrollBarNode.Height = adjustedSize - 23.0f;
+	private int ButtonCount { get; set; }
 
-			if (Options is not null && Options.Count != 0) {
-				RebuildNodeList();
-			}
+	public int MaxButtons {
+		get; 
+		set { 
+			field = value;
+			RebuildNodeList();
 		}
-	}
+	} = 5;
 
 	public override float Width {
 		get => base.Width;
@@ -112,14 +106,20 @@ public abstract unsafe class ListNode<T> : ListNode {
 	public int CurrentStartIndex { get; set; }
 
 	private void RebuildNodeList() {
-		var buttonCount = GetNodeCount(Height);
-
 		foreach (var button in Nodes) {
 			button.Dispose();
 		}
 		Nodes.Clear();
+		
+		ButtonCount = Math.Min(MaxButtons, Options?.Count ?? 0);
+		
+		var height = ButtonCount * NodeHeight + 24.0f;
+		Height = height;
+		BackgroundNode.Height = height;
+		ContainerNode.Height = height;
+		ScrollBarNode.Height = height - 23.0f;
 
-		foreach (var index in Enumerable.Range(0, buttonCount)) {
+		foreach (var index in Enumerable.Range(0, ButtonCount)) {
 			var newButton = new ListButtonNode {
 				NodeId = (uint) index,
 				Size = new Vector2(Width - 25.0f, NodeHeight),
@@ -152,7 +152,7 @@ public abstract unsafe class ListNode<T> : ListNode {
 	private void UpdateSelected() {
 		if (Options is null) return;
 		
-		foreach (var index in Enumerable.Range(0, Nodes.Count)) {
+		foreach (var index in Enumerable.Range(0, ButtonCount)) {
 			var option = Options[index + CurrentStartIndex];
 
 			Nodes[index].Selected = SelectedOption?.Equals(option) ?? false;
@@ -197,10 +197,7 @@ public abstract unsafe class ListNode<T> : ListNode {
 			Hide();
 		}
 	}
-	
-	protected int GetNodeCount(float height)
-		=> (int) ( ( height - 18.0f ) / NodeHeight );
-	
+
 	private void BuildTimelines() {
 		AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 29)
