@@ -9,7 +9,7 @@ namespace KamiToolKit.Nodes;
 public sealed class SimpleLabelNode : TextNode {
 	public SimpleLabelNode() {
 		Height = 16.0f;
-		TextFlags = TextFlags.AutoAdjustNodeSize;
+		TextFlags = TextFlags.AutoAdjustNodeSize | TextFlags.Emboss;
 		TextColor = ColorHelper.GetColor(2);
 		TextOutlineColor = KnownColor.Black.Vector();
 		FontType = FontType.Axis;
