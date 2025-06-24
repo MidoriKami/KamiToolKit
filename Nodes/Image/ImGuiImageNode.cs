@@ -19,10 +19,16 @@ public class ImGuiImageNode : SimpleImageNode {
 
     public void LoadTextureFromFile(string fileSystemPath) {
         Task.Run(() => {
-            Alpha = 0.0f;
+            DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+                Alpha = 0.0f;
+            });
+
             LoadedTexture = DalamudInterface.Instance.TextureProvider.GetFromFile(fileSystemPath).RentAsync().Result;
-            LoadTexture(LoadedTexture);
-            Alpha = 1.0f;
+
+            DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+                LoadTexture(LoadedTexture);
+                Alpha = 1.0f;
+            });
         });
     }
 
