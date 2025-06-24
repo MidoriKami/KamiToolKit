@@ -87,8 +87,17 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 		// IsEventFired
 		Marshal.WriteByte((nint)Component, 0x101, 0);
 		
+		// Progress.StartValue
+		Marshal.WriteInt32((nint)Component, 0x10C, 0);
+		
+		// Progress.TargetValue
+		Marshal.WriteInt32((nint)Component, 0x110, 0);
+
 		// Progress.CurrentValue
 		Marshal.WriteInt32((nint)Component, 0x114, 0);
+		
+		// Progress.EndValue
+		Marshal.WriteInt32((nint)Component, 0x118, 0);
 	}
 	
 	private void BuildTimelines() {
