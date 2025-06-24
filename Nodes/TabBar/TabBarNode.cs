@@ -8,7 +8,7 @@ using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes.TabBar;
 
-public class TabBarNode : ResNode {
+public class TabBarNode : SimpleComponentNode {
 
 	private List<TabBarRadioButtonNode> radioButtons = [];
 	
@@ -46,7 +46,10 @@ public class TabBarNode : ResNode {
 		button.IsSelected = true;
 	}
 
-	public void RemoveTab(TabBarRadioButtonNode button) {
+	public void RemoveTab(SeString label) {
+		var button = radioButtons.FirstOrDefault(button => button.Label == label);
+		if (button is null) return;
+		
 		button.Dispose();
 		radioButtons.Remove(button);
 		RecalculateLayout();
