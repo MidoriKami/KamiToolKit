@@ -130,9 +130,7 @@ public abstract unsafe partial class NodeBase {
 
 		Log.Verbose($"Registering ViewportEvent: {eventType}");
 
-		Experimental.Instance.RegisterViewportEvent?.Invoke(
-			Experimental.Instance.ViewportEventManager,
-			eventType,
+		Experimental.Instance.ViewportEventManager->RegisterEvent(eventType,
 			0,
 			InternalResNode,
 			(AtkEventTarget*) InternalResNode, 
@@ -145,8 +143,7 @@ public abstract unsafe partial class NodeBase {
 		
 		Log.Verbose($"Unregistering ViewportEvent: {eventType}");
 
-		Experimental.Instance.UnregisterViewportEvent?.Invoke(
-			Experimental.Instance.ViewportEventManager,
+		Experimental.Instance.ViewportEventManager->UnregisterEvent(
 			eventType,
 			0,
 			customEventListener.EventListener, 
