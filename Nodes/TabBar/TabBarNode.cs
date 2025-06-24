@@ -16,7 +16,7 @@ public class TabBarNode : ResNode {
 		BuildTimelines();
 	}
 
-	public TabBarRadioButtonNode AddTab(SeString label, Action callback) {
+	public void AddTab(SeString label, Action callback) {
 		var newButton = new TabBarRadioButtonNode {
 			Height = Height, 
 			IsVisible = true,
@@ -34,8 +34,6 @@ public class TabBarNode : ResNode {
 		}
 		
 		RecalculateLayout();
-		
-		return newButton;
 	}
 
 	private void ClickHandler(AddonEventData obj, TabBarRadioButtonNode button) {
@@ -49,14 +47,14 @@ public class TabBarNode : ResNode {
 	}
 
 	public void RemoveTab(TabBarRadioButtonNode button) {
-		button.DetachNode();
+		button.Dispose();
 		radioButtons.Remove(button);
 		RecalculateLayout();
 	}
 
 	public void Clear() {
 		foreach (var node in radioButtons) {
-			node.DetachNode();
+			node.Dispose();
 		}
 		
 		radioButtons.Clear();
