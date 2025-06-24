@@ -56,7 +56,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 		radioButtons.Clear();
 	}
 
-	public float VerticalPadding { get; set; } = 1.0f;
+	public float VerticalPadding { get; set; } = 2.0f;
 	
 	private void RecalculateLayout() {
 		var yPosition = 0.0f;
