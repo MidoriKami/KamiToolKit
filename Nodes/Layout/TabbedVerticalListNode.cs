@@ -2,7 +2,6 @@
 using System.Linq;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
-using Lumina.Text;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
