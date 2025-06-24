@@ -16,4 +16,9 @@ public sealed class SimpleLabelNode : TextNode {
 		FontSize = 14;
 		AlignmentType = AlignmentType.Left;
 	}
+
+	public override float Height {
+		get => base.Height;
+		set => base.Height = value + 8.0f; // Add extra height for padding
+	}
 }
