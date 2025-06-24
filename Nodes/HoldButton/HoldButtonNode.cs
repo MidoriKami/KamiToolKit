@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -77,6 +78,14 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 	public SeString Label {
 		get => TextNode.Text;
 		set => TextNode.Text = value;
+	}
+
+	public void Reset() {
+		// IsTargetReached
+		Marshal.WriteByte((nint)Component, 0x100, 0);
+		
+		// IsEventFired
+		Marshal.WriteByte((nint)Component, 0x101, 0);
 	}
 	
 	private void BuildTimelines() {
