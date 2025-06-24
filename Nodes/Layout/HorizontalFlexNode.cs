@@ -5,6 +5,8 @@ using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;
 
+public class HorizontalFlexNode : HorizontalListNode<NodeBase>;
+
 public class HorizontalFlexNode<T> : SimpleComponentNode where T : NodeBase {
 
 	private readonly List<T> nodeList = [];

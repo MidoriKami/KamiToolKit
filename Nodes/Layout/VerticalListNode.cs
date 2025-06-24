@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
+public class VerticalListNode : VerticalListNode<NodeBase>;
+
 [JsonObject(MemberSerialization.OptIn)]
 public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 	

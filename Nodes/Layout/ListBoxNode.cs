@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
+public class ListBoxNode : ListBoxNode<NodeBase>;
+
 /// Node that manages the layout of other nodes
 [JsonObject(MemberSerialization.OptIn)]
 public class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
