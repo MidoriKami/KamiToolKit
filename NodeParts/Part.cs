@@ -14,8 +14,6 @@ public unsafe class Part : IDisposable {
     internal AtkUldPart* InternalPart;
     private AtkUldAsset* internalAsset;
  
-    private bool customTextureLoaded;
-    
     private bool isDisposed;
     
     public Part() {
@@ -126,6 +124,8 @@ public unsafe class Part : IDisposable {
     /// <param name="resolveTheme">If set to false, will not load a themed version of the texture</param>
     public void LoadTexture(string path, bool resolveTheme = true) {
         try {
+            internalAsset->AtkTexture.ReleaseTexture();
+            
             var texturePath = path.Replace("_hr1", string.Empty);
 
             var themedPath = texturePath.Replace("uld", GetThemePathModifier());
@@ -151,8 +151,10 @@ public unsafe class Part : IDisposable {
     /// Loads a game icon via id
     /// </summary>
     /// <param name="iconId">Icon id to load</param>
-    public void LoadIcon(uint iconId)
-        => internalAsset->AtkTexture.LoadIconTexture(iconId, 0);
+    public void LoadIcon(uint iconId) {
+        internalAsset->AtkTexture.ReleaseTexture();
+        internalAsset->AtkTexture.LoadIconTexture(iconId, 0);
+    }
 
     /// <summary>
     /// Loads texture via an already constructed Texture*
@@ -160,15 +162,10 @@ public unsafe class Part : IDisposable {
     /// <remarks>This does not preserve any existing texture.</remarks>
     /// <param name="texture">Texture to assign to this image node.</param>
     public void LoadTexture(Texture* texture) {
-        // If a texture is already loaded, dec ref it to probably free it automatically
-        if (customTextureLoaded) {
-            internalAsset->AtkTexture.ReleaseTexture();
-        }
+        internalAsset->AtkTexture.ReleaseTexture();
 
         internalAsset->AtkTexture.KernelTexture = texture;
         internalAsset->AtkTexture.TextureType = TextureType.KernelTexture;
-
-        customTextureLoaded = true;
     }
 
     /// <summary>
