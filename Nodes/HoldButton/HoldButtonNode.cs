@@ -69,10 +69,16 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 		BuildTimelines();
 	}
 
+	public bool UnlockAfterClick { get; set; }
+	
 	public Action? OnClick { get; set; }
 	
 	private void ClickHandler(AddonEventData obj) {
 		OnClick?.Invoke();
+
+		if (UnlockAfterClick) {
+			Reset();
+		}
 	}
 
 	public SeString Label {
