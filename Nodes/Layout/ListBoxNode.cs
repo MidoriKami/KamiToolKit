@@ -38,7 +38,8 @@ public class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
     }
     
     [JsonProperty] public LayoutAnchor LayoutAnchor {
-        get; set { field = value;
+        get; set { 
+            field = value;
             RecalculateLayout();
         }
     }
@@ -47,13 +48,15 @@ public class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
     /// If enabled, the background is sized around the content, not the list itself.
     /// </summary>
     [JsonProperty] public bool BackgroundFitsContents {
-        get; set { field = value;
+        get; set { 
+            field = value;
             RecalculateLayout();
         }
     }
 
     [JsonProperty] public bool BorderFitsContents {
-        get; set { field = value;
+        get; set { 
+            field = value;
             RecalculateLayout();
         }
     }
@@ -112,7 +115,8 @@ public class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
     }
 
     [JsonProperty] public Spacing ItemMargin {
-        get; set { field = value;
+        get; set { 
+            field = value;
             RecalculateLayout();
         }
     } = new(0.0f);
