@@ -9,12 +9,12 @@ namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
 
-	private CustomEventListener? customEventListener;
+	private CustomEventListener? clickDragEventListener;
 
 	private bool clickDragEventsRegistered;
 
-	private bool isDragging;
-	private Vector2 clickStart = Vector2.Zero;
+	private bool isClickDragDragging;
+	private Vector2 clickDragClickStart = Vector2.Zero;
 
 	public Action? OnClickDragComplete { get; set; }
 
@@ -40,7 +40,7 @@ public abstract unsafe partial class NodeBase {
 		AddEvent(AddonEventType.MouseDown, ClickDragStart);
 		AddEvent(AddonEventType.MouseOut, ClickDragMouseOut);
 		
-		customEventListener ??= new CustomEventListener(OnViewportEvent);
+		clickDragEventListener ??= new CustomEventListener(OnViewportEvent);
 		
 		clickDragEventsRegistered = true;
 
@@ -51,14 +51,14 @@ public abstract unsafe partial class NodeBase {
 
 	// Note: Event flags must be set to allow drag drop
 	public void DisableClickDrag(bool clearEventFlags = false) {
-		if (!clickDragEventsRegistered || customEventListener is null) return;
+		if (!clickDragEventsRegistered || clickDragEventListener is null) return;
 		
 		RemoveEvent(AddonEventType.MouseOver, ClickDragMouseOver);
 		RemoveEvent(AddonEventType.MouseDown, ClickDragStart);
 		RemoveEvent(AddonEventType.MouseOut, ClickDragMouseOut);
 		
-		customEventListener?.Dispose();
-		customEventListener = null;
+		clickDragEventListener?.Dispose();
+		clickDragEventListener = null;
 		
 		clickDragEventsRegistered = false;
 
@@ -68,7 +68,7 @@ public abstract unsafe partial class NodeBase {
 	}
 
 	private void OnViewportEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-		if (!isDragging) return;
+		if (!isClickDragDragging) return;
 
 		ref var mouseData = ref atkEventData->MouseData;
 		
@@ -77,19 +77,19 @@ public abstract unsafe partial class NodeBase {
 				var mousePosition = new Vector2(mouseData.PosX,  mouseData.PosY);
 		
 				var newPosition = mousePosition;
-				var delta = newPosition - clickStart;
+				var delta = newPosition - clickDragClickStart;
 		
 				Position += delta;
-				clickStart = newPosition;
+				clickDragClickStart = newPosition;
 			}
 				break;
 
 			case AtkEventType.MouseUp: {
-				if (isDragging) {
+				if (isClickDragDragging) {
 					OnClickDragComplete?.Invoke();
 				}
 		
-				isDragging = false;
+				isClickDragDragging = false;
 				SetCursor(AddonCursorType.Hand);
 				
 				RemoveViewportEvent(AtkEventType.MouseMove);
@@ -108,8 +108,8 @@ public abstract unsafe partial class NodeBase {
 	}
 	
 	private void ClickDragStart(AddonEventData eventData) {
-		isDragging = true;
-		clickStart = eventData.GetMousePosition();
+		isClickDragDragging = true;
+		clickDragClickStart = eventData.GetMousePosition();
 		SetCursor(AddonCursorType.Grab);
 
 		AddViewportEvent(AtkEventType.MouseMove);
@@ -119,14 +119,14 @@ public abstract unsafe partial class NodeBase {
 	}
 	
 	private void ClickDragMouseOut(AddonEventData eventData) {
-		if (isDragging) return;
+		if (isClickDragDragging) return;
 		ResetCursor();
 		
 		eventData.SetHandled();
 	}
 
 	private void AddViewportEvent(AtkEventType eventType) {
-		if (customEventListener is null) return;
+		if (clickDragEventListener is null) return;
 
 		Log.Verbose($"Registering ViewportEvent: {eventType}");
 
@@ -134,19 +134,19 @@ public abstract unsafe partial class NodeBase {
 			0,
 			InternalResNode,
 			(AtkEventTarget*) InternalResNode, 
-			customEventListener.EventListener, 
+			clickDragEventListener.EventListener, 
 			false);
 	}
 
 	private void RemoveViewportEvent(AtkEventType eventType) {
-		if (customEventListener is null) return;
+		if (clickDragEventListener is null) return;
 		
 		Log.Verbose($"Unregistering ViewportEvent: {eventType}");
 
 		Experimental.Instance.ViewportEventManager->UnregisterEvent(
 			eventType,
 			0,
-			customEventListener.EventListener, 
+			clickDragEventListener.EventListener, 
 			false);
 	}
 }
