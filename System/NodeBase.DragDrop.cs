@@ -9,7 +9,7 @@ namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
 
-	private CustomEventListener? clickDragEventListener;
+	private ViewportEventListener? clickDragEventListener;
 
 	private bool clickDragEventsRegistered;
 
@@ -40,7 +40,7 @@ public abstract unsafe partial class NodeBase {
 		AddEvent(AddonEventType.MouseDown, ClickDragStart);
 		AddEvent(AddonEventType.MouseOut, ClickDragMouseOut);
 		
-		clickDragEventListener ??= new CustomEventListener(OnViewportEvent);
+		clickDragEventListener ??= new ViewportEventListener(OnViewportEvent);
 		
 		clickDragEventsRegistered = true;
 
@@ -92,8 +92,8 @@ public abstract unsafe partial class NodeBase {
 				isClickDragDragging = false;
 				SetCursor(AddonCursorType.Hand);
 				
-				RemoveViewportEvent(AtkEventType.MouseMove);
-				RemoveViewportEvent(AtkEventType.MouseUp);
+				clickDragEventListener!.RemoveEvent(AtkEventType.MouseMove, 1);
+				clickDragEventListener!.RemoveEvent(AtkEventType.MouseUp, 1);
 			}
 				break;
 		}
@@ -103,7 +103,6 @@ public abstract unsafe partial class NodeBase {
 
 	private void ClickDragMouseOver(AddonEventData eventData) {
 		SetCursor(AddonCursorType.Hand);
-		
 		eventData.SetHandled();
 	}
 	
@@ -112,41 +111,16 @@ public abstract unsafe partial class NodeBase {
 		clickDragClickStart = eventData.GetMousePosition();
 		SetCursor(AddonCursorType.Grab);
 
-		AddViewportEvent(AtkEventType.MouseMove);
-		AddViewportEvent(AtkEventType.MouseUp);
+		clickDragEventListener?.AddEvent(AtkEventType.MouseMove, 1, InternalResNode);
+		clickDragEventListener?.AddEvent(AtkEventType.MouseUp, 1, InternalResNode);
 
 		eventData.SetHandled();
 	}
 	
 	private void ClickDragMouseOut(AddonEventData eventData) {
 		if (isClickDragDragging) return;
+
 		ResetCursor();
-		
 		eventData.SetHandled();
-	}
-
-	private void AddViewportEvent(AtkEventType eventType) {
-		if (clickDragEventListener is null) return;
-
-		Log.Verbose($"Registering ViewportEvent: {eventType}");
-
-		Experimental.Instance.ViewportEventManager->RegisterEvent(eventType,
-			0,
-			InternalResNode,
-			(AtkEventTarget*) InternalResNode, 
-			clickDragEventListener.EventListener, 
-			false);
-	}
-
-	private void RemoveViewportEvent(AtkEventType eventType) {
-		if (clickDragEventListener is null) return;
-		
-		Log.Verbose($"Unregistering ViewportEvent: {eventType}");
-
-		Experimental.Instance.ViewportEventManager->UnregisterEvent(
-			eventType,
-			0,
-			clickDragEventListener.EventListener, 
-			false);
 	}
 }
