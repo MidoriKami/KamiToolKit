@@ -55,6 +55,9 @@ public abstract unsafe partial class NodeBase : IDisposable {
             Timeline?.Dispose();
             InternalResNode->Timeline = null;
 
+            clickDragEventListener?.Dispose();
+            resizeEventListener?.Dispose();
+            
             Dispose(true);
             GC.SuppressFinalize(this);
 
