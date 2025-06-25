@@ -95,15 +95,6 @@ public abstract unsafe partial class NodeBase {
 		resizeContainer.AttachNode(this);
 	}
 
-	private void OnMouseDown(AddonEventData data) {
-		if (resizeEventListener is null) return;
-		if (resizeContainer is null) return;
-		
-		isResizeDragging = true;
-		resizeEventListener.AddEvent(AtkEventType.MouseUp, resizeContainer.InternalResNode);
-		data.SetHandled();
-	}
-
 	private void OnResizeEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
 		if (resizeContainer is null) return;
 		if (bottomRightResizeNode is null) return;
