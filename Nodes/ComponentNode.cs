@@ -90,7 +90,13 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		ComponentBase->Setup();
 		ComponentBase->SetEnabledState(true);
 	}
-		
+
+	public bool CheckCollision(AtkEventData* eventData)
+		=> CheckCollision(eventData->MouseData.PosX,  eventData->MouseData.PosY);
+
+	public bool CheckCollision(short x, short y)
+		=> InternalComponentNode->CheckCollisionAtCoords(x, y, true);
+
 	public override float Width {
 		get => base.Width;
 		set {
