@@ -3,7 +3,6 @@ using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Extensions;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.System;
