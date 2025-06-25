@@ -19,7 +19,7 @@ public unsafe class CustomEventListener : IDisposable {
         EventListener->VirtualTable->ReceiveEvent = (delegate* unmanaged<AtkEventListener*, AtkEventType, int, AtkEvent*, AtkEventData*, void>) Marshal.GetFunctionPointerForDelegate(receiveEventDelegate);
     }
 
-    public void Dispose() {
+    public virtual void Dispose() {
         if (EventListener is null) return;
 
         NativeMemoryHelper.Free(EventListener->VirtualTable, (ulong) sizeof(void*) * 3);
