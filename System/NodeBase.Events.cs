@@ -171,24 +171,20 @@ public abstract unsafe partial class NodeBase {
 	/// <summary>
 	/// Sets EmitsEvents, HasCollision, and RespondToMouse flags for the EventTarget node to allow it to be interactable.
 	/// </summary>
-	public void SetEventFlags() {
-		AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
-	}
+	public void SetEventFlags()
+		=> AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
 
 	/// <summary>
 	/// Clears EmitsEvents, HasCollision, and RespondToMouse flags, for the EventTarget node to disable it stealing inputs
 	/// </summary>
-	public void ClearEventFlags() {
-		RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
-	}
+	public void ClearEventFlags()
+		=> RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
 
-	protected void SetCursor(AddonCursorType cursor) {
-		DalamudInterface.Instance.AddonEventManager.SetCursor(cursor);
-	}
+	protected void SetCursor(AddonCursorType cursor)
+		=> DalamudInterface.Instance.AddonEventManager.SetCursor(cursor);
 
-	protected void ResetCursor() {
-		DalamudInterface.Instance.AddonEventManager.ResetCursor();
-	}
+	protected void ResetCursor()
+		=> DalamudInterface.Instance.AddonEventManager.ResetCursor();
 
 	public void ShowTooltip() {
 		if (Tooltip is not null && TooltipRegistered) {
