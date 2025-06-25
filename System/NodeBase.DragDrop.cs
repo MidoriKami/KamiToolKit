@@ -51,7 +51,7 @@ public abstract unsafe partial class NodeBase {
 
 	// Note: Event flags must be set to allow drag drop
 	public void DisableClickDrag(bool clearEventFlags = false) {
-		if (!clickDragEventsRegistered || clickDragEventListener is null) return;
+		if (!clickDragEventsRegistered) return;
 		
 		RemoveEvent(AddonEventType.MouseOver, ClickDragMouseOver);
 		RemoveEvent(AddonEventType.MouseDown, ClickDragStart);
@@ -92,8 +92,8 @@ public abstract unsafe partial class NodeBase {
 				isClickDragDragging = false;
 				SetCursor(AddonCursorType.Hand);
 				
-				clickDragEventListener!.RemoveEvent(AtkEventType.MouseMove, 1);
-				clickDragEventListener!.RemoveEvent(AtkEventType.MouseUp, 1);
+				clickDragEventListener!.RemoveEvent(AtkEventType.MouseMove);
+				clickDragEventListener!.RemoveEvent(AtkEventType.MouseUp);
 			}
 				break;
 		}
@@ -111,8 +111,8 @@ public abstract unsafe partial class NodeBase {
 		clickDragClickStart = eventData.GetMousePosition();
 		SetCursor(AddonCursorType.Grab);
 
-		clickDragEventListener?.AddEvent(AtkEventType.MouseMove, 1, InternalResNode);
-		clickDragEventListener?.AddEvent(AtkEventType.MouseUp, 1, InternalResNode);
+		clickDragEventListener?.AddEvent(AtkEventType.MouseMove, InternalResNode);
+		clickDragEventListener?.AddEvent(AtkEventType.MouseUp, InternalResNode);
 
 		eventData.SetHandled();
 	}

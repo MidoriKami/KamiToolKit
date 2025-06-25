@@ -1,16 +1,39 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using System.Collections.Generic;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using FFXIVClientStructs.Interop;
 
 namespace KamiToolKit.Classes;
 
 public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEvent eventHandler) : CustomEventListener(eventHandler) {
 
-	public void AddEvent(AtkEventType eventType, uint param, AtkResNode* node) {
-		Log.Verbose($"Registering ViewportEvent: {eventType}");
-		Experimental.Instance.ViewportEventManager->RegisterEvent(eventType, param, node, (AtkEventTarget*) node, EventListener, false);
+	public void AddEvent(AtkEventType eventType, AtkResNode* node) {
+		DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+			Log.Verbose($"Registering ViewportEvent: {eventType}");
+			Experimental.Instance.ViewportEventManager->RegisterEvent(eventType, 0, node, (AtkEventTarget*) node, EventListener, false);
+		});
 	}
 
-	public void RemoveEvent(AtkEventType eventType, uint param) {
-		Log.Verbose($"Unregistering ViewportEvent: {eventType}");
-		Experimental.Instance.ViewportEventManager->UnregisterEvent(eventType, param, EventListener, false);
+	public void RemoveEvent(AtkEventType eventType) {
+		DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+			Log.Verbose($"Unregistering ViewportEvent: {eventType}");
+			Experimental.Instance.ViewportEventManager->UnregisterEvent(eventType, 0, EventListener, false);
+		});
+	}
+
+	public override void Dispose() {
+
+		var eventList = new List<Pointer<AtkEvent>>();
+
+		var currentEvent = Experimental.Instance.ViewportEventManager->Event;
+		while (currentEvent is not null) {
+			eventList.Add(currentEvent);
+			currentEvent = currentEvent->NextEvent;
+		}
+
+		foreach (var atkEvent in eventList) {
+			RemoveEvent(atkEvent.Value->State.EventType);
+		}
+		
+		base.Dispose();
 	}
 }
