@@ -4,11 +4,14 @@ using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Extensions;
+using KamiToolKit.Nodes;
 
 namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
 
+	private SimpleComponentNode? clickDragContainer;
+	
 	private ViewportEventListener? clickDragEventListener;
 
 	private bool clickDragEventsRegistered;
@@ -33,38 +36,42 @@ public abstract unsafe partial class NodeBase {
 	}
 
 	// Note: Event flags must be set to allow drag drop
-	public void EnableClickDrag(bool setEventFlags = false) {
+	public void EnableClickDrag() {
 		if (clickDragEventsRegistered) return;
+
+		clickDragContainer = new SimpleComponentNode {
+			Size = Size + new Vector2(32.0f, 32.0f), 
+			Position = new Vector2(-16.0f, -16.0f),
+			IsVisible = true,
+			EventFlagsSet = true,
+		};
 		
-		AddEvent(AddonEventType.MouseOver, ClickDragMouseOver);
-		AddEvent(AddonEventType.MouseDown, ClickDragStart);
-		AddEvent(AddonEventType.MouseOut, ClickDragMouseOut);
+		clickDragContainer.AttachNode(this);
+		
+		clickDragContainer?.AddEvent(AddonEventType.MouseOver, ClickDragMouseOver);
+		clickDragContainer?.AddEvent(AddonEventType.MouseDown, ClickDragStart);
+		clickDragContainer?.AddEvent(AddonEventType.MouseOut, ClickDragMouseOut);
 		
 		clickDragEventListener ??= new ViewportEventListener(OnViewportEvent);
 		
 		clickDragEventsRegistered = true;
-
-		if (setEventFlags) {
-			SetEventFlags();
-		}
 	}
 
 	// Note: Event flags must be set to allow drag drop
-	public void DisableClickDrag(bool clearEventFlags = false) {
+	public void DisableClickDrag() {
 		if (!clickDragEventsRegistered) return;
 		
-		RemoveEvent(AddonEventType.MouseOver, ClickDragMouseOver);
-		RemoveEvent(AddonEventType.MouseDown, ClickDragStart);
-		RemoveEvent(AddonEventType.MouseOut, ClickDragMouseOut);
+		clickDragContainer?.RemoveEvent(AddonEventType.MouseOver, ClickDragMouseOver);
+		clickDragContainer?.RemoveEvent(AddonEventType.MouseDown, ClickDragStart);
+		clickDragContainer?.RemoveEvent(AddonEventType.MouseOut, ClickDragMouseOut);
+		
+		clickDragContainer?.Dispose();
+		clickDragContainer = null;
 		
 		clickDragEventListener?.Dispose();
 		clickDragEventListener = null;
 		
 		clickDragEventsRegistered = false;
-
-		if (clearEventFlags) {
-			ClearEventFlags();
-		}
 	}
 
 	private void OnViewportEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
