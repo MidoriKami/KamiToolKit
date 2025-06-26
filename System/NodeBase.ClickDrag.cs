@@ -38,6 +38,10 @@ public abstract unsafe partial class NodeBase {
 	// Note: Event flags must be set to allow drag drop
 	public void EnableClickDrag() {
 		if (clickDragEventsRegistered) return;
+		if (EventAddonPointer is null) {
+			Log.Warning("Attempted to enable node events when not attached to native tree. Aborting.");
+			return;
+		}
 
 		clickDragContainer = new SimpleComponentNode {
 			Size = Size + new Vector2(32.0f, 32.0f), 

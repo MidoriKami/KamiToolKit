@@ -29,6 +29,10 @@ public abstract unsafe partial class NodeBase {
 
 	public void EnableResize() {
 		if (resizeEventsRegistered) return;
+		if (EventAddonPointer is null) {
+			Log.Warning("Attempted to enable node events when not attached to native tree. Aborting.");
+			return;
+		}
 
 		resizeEventListener ??= new ViewportEventListener(OnResizeEvent);
 		
