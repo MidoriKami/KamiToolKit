@@ -23,10 +23,6 @@ public abstract unsafe partial class NodeBase {
 	public Action? OnEditComplete { get; set; }
 
 	public void EnableEditMode(NodeEditMode mode) {
-		if (EventAddonPointer is null) {
-			Log.Warning("Attempted to enable edit mode to dangling node. Aborting.");
-			return;
-		}
 
 		currentEditMode |= mode;
 		
