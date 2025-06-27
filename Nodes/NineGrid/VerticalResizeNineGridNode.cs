@@ -11,6 +11,7 @@ public class VerticalResizeNineGridNode : SimpleComponentNode {
 			TexturePath = "ui/uld/WindowA_line.tex",
 			TextureCoordinates = new Vector2(0.0f, 0.0f),
 			TextureSize = new Vector2(32.0f, 4.0f),
+			Position = new Vector2(8.0f, 0.0f),
 			LeftOffset = 12,
 			RightOffset = 12,
 			PartsRenderType = 192,
