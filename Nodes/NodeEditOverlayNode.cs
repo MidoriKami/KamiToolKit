@@ -6,7 +6,7 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class NodeEditOverlayNode : SimpleComponentNode {
+internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
 	private VerticalResizeNineGridNode rightEditNode;
 	private HorizontalResizeNineGridNode bottomEditNode;
 	private VerticalResizeNineGridNode leftEditNode;
