@@ -27,6 +27,7 @@ public class ImGuiImageNode : SimpleImageNode {
 
             DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
                 LoadTexture(LoadedTexture);
+                TextureSize = LoadedTexture.Size;
                 Alpha = 1.0f;
             });
         });
