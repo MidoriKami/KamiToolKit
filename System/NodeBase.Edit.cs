@@ -56,11 +56,14 @@ public abstract unsafe partial class NodeBase {
 		if (currentEditMode.HasFlag(NodeEditMode.Resize) || currentEditMode.HasFlag(NodeEditMode.Move)) return;
 
 		if (editEventListener is not null) {
+			editEventListener.RemoveEvent(AtkEventType.MouseMove);
+			editEventListener.RemoveEvent(AtkEventType.MouseDown);
 			editEventListener.Dispose();
 			editEventListener = null;
 		}
 
 		if (overlayNode is not null) {
+			overlayNode.DetachNode();
 			overlayNode.Dispose();
 			overlayNode = null;
 		}
