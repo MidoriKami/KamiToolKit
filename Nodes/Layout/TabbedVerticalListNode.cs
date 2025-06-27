@@ -17,7 +17,7 @@ public class TabbedVerticalListNode<T>  : SimpleComponentNode where T : NodeBase
 	
 	[JsonProperty] public float ItemVerticalSpacing { get; set; }
 
-	private int TabStep { get; set; }
+	public int TabStep { get; set; }
 
 	// Adds tab amount to any following nodes being added
 	public void AddTab(int tabAmount) {
