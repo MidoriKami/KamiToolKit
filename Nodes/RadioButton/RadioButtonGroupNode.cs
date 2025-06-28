@@ -38,20 +38,20 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 
 		RecalculateLayout();
 	}
-	
-	public void SetSelectedButton(int index)
-	{
-		if (index < 0 || index >= radioButtons.Count) return;
 
-		foreach (var radioButton in radioButtons) {
-			radioButton.IsChecked = false;
-			radioButton.IsSelected = false;
+	public SeString? SelectedOption {
+		get => radioButtons.FirstOrDefault(button => button.IsSelected)?.Label;
+		set {
+			if (value == null)
+				return;
+
+			foreach (var radioButton in radioButtons) {
+				radioButton.IsChecked = radioButton.Label.TextValue == value.TextValue;
+				radioButton.IsSelected = radioButton.Label.TextValue == value.TextValue;
+			}
+
+			RecalculateLayout();
 		}
-
-		radioButtons[index].IsChecked = true;
-		radioButtons[index].IsSelected = true;
-
-		RecalculateLayout();
 	}
 
 	public void RemoveButton(SeString label) {
