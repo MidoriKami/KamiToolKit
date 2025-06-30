@@ -50,8 +50,8 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 			if (Alignment is HorizontalListAnchor.Right) {
 				startX -= node.Width + ItemHorizontalSpacing;
 			}
-			
-			node.Position = new Vector2(startX, node.Position.Y);
+
+			node.X = startX;
 			AdjustNode(node);
 
 			if (Alignment is HorizontalListAnchor.Left) {
