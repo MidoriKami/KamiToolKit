@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -38,7 +38,22 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 
 		RecalculateLayout();
 	}
-	
+
+	public SeString? SelectedOption {
+		get => radioButtons.FirstOrDefault(button => button.IsSelected)?.Label;
+		set {
+			if (value == null)
+				return;
+
+			foreach (var radioButton in radioButtons) {
+				radioButton.IsChecked = radioButton.Label.TextValue == value.TextValue;
+				radioButton.IsSelected = radioButton.Label.TextValue == value.TextValue;
+			}
+
+			RecalculateLayout();
+		}
+	}
+
 	public void RemoveButton(SeString label) {
 		var button = radioButtons.FirstOrDefault(button => button.Label == label);
 		if (button is null) return;
@@ -128,6 +143,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 				NodeId = 2,
 				Position = new Vector2(20.0f, 0.0f),
 				Size = new Vector2(98.0f, 16.0f),
+				FontSize = 14,
 				TextColor = ColorHelper.GetColor(8),
 				TextOutlineColor = ColorHelper.GetColor(7),
 				AlignmentType = AlignmentType.Left,
@@ -170,14 +186,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 			get => Component->IsSelected;
 			set {
 				Component->IsSelected = value;
-				if (value) {
-					SelectedImageNode.IsVisible = true;
-					UnselectedImageNode.IsVisible = false;
-				}
-				else {
-					SelectedImageNode.IsVisible = false;
-					UnselectedImageNode.IsVisible = true;
-				}
+				SelectedImageNode.IsVisible = value;
 			}
 		}
 
