@@ -56,6 +56,11 @@ public unsafe class ScrollingAreaNode : ResNode {
 
 	public ResNode ContentNode => ContentAreaNode;
 
+	public int ScrollPosition {
+		get => ScrollBarNode.ScrollPosition;
+		set => ScrollBarNode.ScrollPosition = value;
+	}
+
 	public required float ContentHeight {
 		get => ContentAreaNode.Height;
 		set {
