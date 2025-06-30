@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
@@ -38,8 +38,8 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 	
 	// Resizes this node to fit all elements
 	public bool FitContents { get; set; }
-	
-	public virtual void RecalculateLayout() {
+
+	public void RecalculateLayout() {
 		var startY = Alignment switch {
 			VerticalListAnchor.Top => 0.0f + FirstItemSpacing,
 			VerticalListAnchor.Bottom => Height - FirstItemSpacing,
@@ -49,17 +49,15 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 		foreach (var node in nodeList) {
 			if (!node.IsVisible) continue;
 
+			if (Alignment is VerticalListAnchor.Bottom) {
+				startY -= node.Height + ItemVerticalSpacing;
+			}
+
 			node.Y = startY;
 			AdjustNode(node);
 
-			switch (Alignment) {
-				case VerticalListAnchor.Top:
-					startY += node.Height + ItemVerticalSpacing;
-					break;
-				
-				case VerticalListAnchor.Bottom:
-					startY -= node.Height + ItemVerticalSpacing;
-					break;
+			if (Alignment is VerticalListAnchor.Top) {
+				startY += node.Height + ItemVerticalSpacing;
 			}
 		}
 
