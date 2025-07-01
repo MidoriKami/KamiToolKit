@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
@@ -92,8 +93,6 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 		Data->Nodes[2] = CursorNode.NodeId;
 		Data->Nodes[3] = AddButton.NodeId;
 		Data->Nodes[4] = SubtractButton.NodeId;
-
-		Data->Max = 99999;
 		
 		InitializeComponentEvents();
 		
@@ -120,18 +119,25 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 			FocusBorderNode.Height = value + 4.0f;
 		}
 	}
-	
-	// These are likely somewhere in the component, some RE is required
-	
-	// todo: min number
-	
-	// todo: max number
-	
-	// todo: add/subtract amount
 
 	public int Value {
 		get => Component->Value;
 		set => Component->Value = value;
+	}
+
+	public int Min {
+		get => Marshal.ReadInt32((nint) Component, 800);
+		set => Marshal.WriteInt32((nint) Component, 800, value);
+	}
+
+	public int Max {
+		get => Marshal.ReadInt32((nint) Component, 804);
+		set => Marshal.WriteInt32((nint) Component, 804, value);
+	}
+
+	public int Step {
+		get => Marshal.ReadInt32((nint) Component, 808);
+		set => Marshal.WriteInt32((nint) Component, 808, value);
 	}
 	
 	public Action<int>? OnValueUpdate { get; set; }
