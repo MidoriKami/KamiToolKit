@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
@@ -34,6 +35,16 @@ public abstract unsafe partial class NativeAddon {
 	private void AllocateAddon() {
 		if (InternalAddon is not null) {
 			Log.Warning("Tried to allocate addon that was already allocated.");
+			return;
+		}
+
+		var currentAddonCount = RaptureAtkUnitManager.Instance()->AllLoadedUnitsList.Count;
+		if (currentAddonCount >= 200) {
+			Log.Warning("WARNING: Current Addon Count is approaching hard limits. Please ensure custom Addons are not being used as overlays.");
+		}
+
+		if (currentAddonCount >= 225) {
+			Log.Error("ERROR: Current Addon Count is too high. Aborting allocation.");
 			return;
 		}
 
