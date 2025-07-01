@@ -226,6 +226,11 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		get => (TextInputFlags2) Data->Flags2;
 		set => Data->Flags2 = (byte) value;
 	}
+
+	public SeString String {
+		get => SeString.Parse(Component->UnkText1);
+		set => Component->SetText(value.ToString());
+	}
 	
 	private void LoadTimelines() {
 		AddTimeline(new TimelineBuilder()
