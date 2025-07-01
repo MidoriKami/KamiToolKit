@@ -138,8 +138,8 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 	}
 
 	public int Step {
-		get => Component->Data.Max;
-		set => Component->Data.Max = value;
+		get => Component->Data.Add;
+		set => Component->Data.Add = value;
 	}
 	
 	public Action<int>? OnValueUpdate { get; set; }
