@@ -1,12 +1,13 @@
 ﻿using System.Numerics;
 using Dalamud.Game.Addon.Events;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
 
-public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNode<TU>, new() {
+public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T : ListNode<TU>, new() {
 
 	public readonly NineGridNode BackgroundNode;
 	public readonly ImageNode CollapseArrowNode;
@@ -109,6 +110,18 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
 		IsCollapsed = !IsCollapsed;
 		Timeline?.StartAnimation(IsCollapsed ? 2 : 9);
 		OptionListNode.Toggle(!IsCollapsed);
+
+		var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
+		if (parentAddon is not null) {
+			OptionListNode.DetachNode();
+			
+			if (!IsCollapsed) {
+				OptionListNode.AttachNode(parentAddon->RootNode);
+			}
+			else {
+				OptionListNode.AttachNode(this);
+			}
+		}
 	}
 
 	public TU? SelectedOption {
