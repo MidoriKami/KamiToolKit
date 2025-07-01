@@ -123,8 +123,14 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 
 	public int Value {
 		get => Component->Value;
-		set => Component->Value = value;
+		set => Component->SetValue(value);
 	}
+
+	// Pending ClientStructs update
+	// public int DefaultValue {
+	// 	get => Component->Value;
+	// 	set => Component->SetValueSilent(value);
+	// }
 
 	public int Min {
 		get => Component->Data.Min;
