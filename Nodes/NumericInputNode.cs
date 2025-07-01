@@ -93,6 +93,8 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 		Data->Nodes[2] = CursorNode.NodeId;
 		Data->Nodes[3] = AddButton.NodeId;
 		Data->Nodes[4] = SubtractButton.NodeId;
+
+		Data->Max = int.MaxValue;
 		
 		InitializeComponentEvents();
 		
