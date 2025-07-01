@@ -53,17 +53,17 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 	}
 
 	public NodeBase? ContentNode {
-		get; set { 
-			field = value ?? throw new Exception("Unsupported Operation");
-			Component->ContentNode = value.InternalResNode;
+		get; set {
+			field = value;
+			Component->ContentNode = value is null ? null : value.InternalResNode;
 			UpdateScrollParams();
 		}
 	}
 
 	public CollisionNode? ContentCollisionNode {
 		get; set {
-			field = value ?? throw new Exception("Unsupported Operation");
-			Component->ContentCollisionNode = value.InternalNode;
+			field = value;
+			Component->ContentCollisionNode = value is null ? null : value.InternalNode;
 			UpdateScrollParams();
 		}
 	}
