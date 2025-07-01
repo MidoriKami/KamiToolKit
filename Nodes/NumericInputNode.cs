@@ -128,18 +128,18 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 	}
 
 	public int Min {
-		get => Marshal.ReadInt32((nint) Component, 800);
-		set => Marshal.WriteInt32((nint) Component, 800, value);
+		get => Component->Data.Min;
+		set => Component->Data.Min = value;
 	}
 
 	public int Max {
-		get => Marshal.ReadInt32((nint) Component, 804);
-		set => Marshal.WriteInt32((nint) Component, 804, value);
+		get => Component->Data.Max;
+		set => Component->Data.Max = value;
 	}
 
 	public int Step {
-		get => Marshal.ReadInt32((nint) Component, 808);
-		set => Marshal.WriteInt32((nint) Component, 808, value);
+		get => Component->Data.Max;
+		set => Component->Data.Max = value;
 	}
 	
 	public Action<int>? OnValueUpdate { get; set; }
