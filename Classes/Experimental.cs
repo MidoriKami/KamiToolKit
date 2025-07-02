@@ -21,6 +21,11 @@ internal unsafe class Experimental {
 	public nint AtkEventListenerVirtualTable = nint.Zero;
 
 	public AtkEventManager* ViewportEventManager => (AtkEventManager*)((nint)AtkStage.Instance() + 0x870);
+
+	public delegate void AtkComponentNumericInputSetValueDelegate(AtkComponentNumericInput* thisPtr, int value, bool triggerCallback, bool playSoundEffect);
+	
+	[Signature("E9 ?? ?? ?? ?? 33 D2 F7 F1")]
+	public AtkComponentNumericInputSetValueDelegate? AtkComponentNumericInputSetValueCallback;
 	
 #if DEBUG
 	// WARNING: May result in undefined state or accidental network requests

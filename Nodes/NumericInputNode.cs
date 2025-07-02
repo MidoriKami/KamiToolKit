@@ -2,6 +2,7 @@
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
@@ -123,14 +124,8 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 
 	public int Value {
 		get => Component->Value;
-		set => Component->SetValue(value);
+		set => Experimental.Instance.AtkComponentNumericInputSetValueCallback?.Invoke(Component, value, true, false);
 	}
-
-	// Pending ClientStructs update
-	// public int DefaultValue {
-	// 	get => Component->Value;
-	// 	set => Component->SetValueSilent(value);
-	// }
 
 	public int Min {
 		get => Component->Data.Min;
