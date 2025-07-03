@@ -117,7 +117,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
 	public void Toggle() {
 		IsCollapsed = !IsCollapsed;
-		Timeline?.StartAnimation(IsCollapsed ? 4 : 9);
+		Timeline?.StartAnimation(IsCollapsed ? 4 : 11);
 		OptionListNode.Toggle(!IsCollapsed);
 
 		var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
