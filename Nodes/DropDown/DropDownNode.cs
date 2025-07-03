@@ -9,6 +9,7 @@ namespace KamiToolKit.Nodes;
 
 public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T : ListNode<TU>, new() {
 
+	public readonly CollisionNode DropDownFocusCollisionNode;
 	public readonly NineGridNode BackgroundNode;
 	public readonly ImageNode CollapseArrowNode;
 	public readonly TextNode LabelNode;
@@ -67,6 +68,14 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 		
 		OptionListNode.AttachNode(this);
 
+		DropDownFocusCollisionNode = new CollisionNode {
+			IsVisible = true,
+			EventFlagsSet = true,
+		};
+		DropDownFocusCollisionNode.AttachNode(OptionListNode.CollisionNode, NodePosition.AfterTarget);
+		DropDownFocusCollisionNode.AddEvent(AddonEventType.MouseDown, _ => Toggle());
+		DropDownFocusCollisionNode.AddEvent(AddonEventType.MouseWheel, _ => Toggle());
+		
 		BuildTimelines();
 		
 		Timeline?.StartAnimation(4);
@@ -108,7 +117,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
 	public void Toggle() {
 		IsCollapsed = !IsCollapsed;
-		Timeline?.StartAnimation(IsCollapsed ? 2 : 9);
+		Timeline?.StartAnimation(IsCollapsed ? 4 : 9);
 		OptionListNode.Toggle(!IsCollapsed);
 
 		var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
@@ -116,6 +125,9 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 			OptionListNode.DetachNode();
 			
 			if (!IsCollapsed) {
+				DropDownFocusCollisionNode.Size = new Vector2(parentAddon->RootNode->Width, parentAddon->RootNode->Height);
+				DropDownFocusCollisionNode.Position = new Vector2(parentAddon->X, parentAddon->Y) - OptionListNode.ScreenPosition;
+
 				OptionListNode.AttachNode(parentAddon->RootNode);
 			}
 			else {
