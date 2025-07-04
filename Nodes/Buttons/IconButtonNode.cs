@@ -21,7 +21,6 @@ public class IconButtonNode : ButtonBase {
 			NodeId = 2,
 			IsVisible = true,
 		};
-
 		BackgroundNode.AttachNode(this);
 		
 		ImageNode = new IconImageNode {
@@ -29,7 +28,6 @@ public class IconButtonNode : ButtonBase {
 			TextureSize = new Vector2(32.0f, 32.0f),
 			NodeId = 3,
 		};
-		
 		ImageNode.AttachNode(this);
 
 		LoadTimelines();
