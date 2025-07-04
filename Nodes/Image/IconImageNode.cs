@@ -11,12 +11,9 @@ public class IconImageNode : SimpleImageNode {
 
 	public uint IconId {
 		get; set {
-			if (field != value) {
-				PartsList[0].LoadIcon(value);
-				field = value;
-
-				TextureSize = new Vector2(32.0f, 32.0f);
-			}
+			field = value;
+			PartsList[0].LoadIcon(value);
+			TextureSize = new Vector2(32.0f, 32.0f);
 		}
 	}
 
