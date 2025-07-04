@@ -5,6 +5,7 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Extensions;
 
 namespace KamiToolKit;
 
@@ -24,6 +25,12 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
 		pluginInterface.Inject(this);
 		
 		this.addonName = addonName;
+	}
+
+	public AddonController(IDalamudPluginInterface pluginInterface) {
+		pluginInterface.Inject(this);
+
+		addonName = AtkUnitBaseExtensions.GetAddonTypeName<T>();
 	}
 
 	public void Enable() {

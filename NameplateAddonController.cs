@@ -9,7 +9,7 @@ namespace KamiToolKit;
 /// Simplified controller for using AddonNamePlate for basic overlays.
 /// </summary>
 public unsafe class NameplateAddonController : AddonController<AddonNamePlate> {
-	public NameplateAddonController(IDalamudPluginInterface pluginInterface) : base(pluginInterface, "NamePlate") {
+	public NameplateAddonController(IDalamudPluginInterface pluginInterface) : base(pluginInterface) {
 		PostEnable += RefreshAddon;
 		PostDisable += RefreshAddon;
 	}
