@@ -1,4 +1,8 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using FFXIVClientStructs.Attributes;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.System;
 
 namespace KamiToolKit.Extensions;
@@ -20,4 +24,15 @@ public static unsafe class AtkUnitBaseExtensions {
 		=> nodeId >= NodeBase.NodeIdBase ? 
 			   addon.GetNodeById(nodeId) : 
 			   addon.GetNodeById(nodeId + NodeBase.NodeIdBase);
+
+	public static string GetAddonTypeName<T>() where T : unmanaged {
+		var type = typeof(T);
+		var attribute = type.GetCustomAttributes().OfType<AddonAttribute>().FirstOrDefault();
+		
+		if (attribute is null) throw new Exception("Unable to find AddonAttribute to resolve addon name.");
+		var addonName = attribute.AddonIdentifiers.FirstOrDefault();
+		
+		if (addonName is null) throw new Exception("Addon attribute names are empty.");
+		return addonName;
+	}
 }
