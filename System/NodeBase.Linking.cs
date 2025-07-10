@@ -48,6 +48,8 @@ public abstract unsafe partial class NodeBase {
 	}
 
 	internal void DetachNode() {
+		DisableEvents();
+		
 		NodeLinker.DetachNode(InternalResNode);
 
 		if (ParentUldManager is not null) {
