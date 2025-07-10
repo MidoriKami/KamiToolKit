@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
@@ -42,7 +43,7 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 	public void RecalculateLayout() {
 		var startY = Alignment switch {
 			VerticalListAnchor.Top => 0.0f + FirstItemSpacing,
-			VerticalListAnchor.Bottom => Height - FirstItemSpacing,
+			VerticalListAnchor.Bottom => Height,
 			_ => 0.0f,
 		};
 
@@ -62,7 +63,7 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 		}
 
 		if (FitContents) {
-			Height = startY + FirstItemSpacing;
+			Height = nodeList.Sum(node => node.IsVisible ? node.Height + ItemVerticalSpacing : 0.0f) + FirstItemSpacing;
 		}
 	}
 
