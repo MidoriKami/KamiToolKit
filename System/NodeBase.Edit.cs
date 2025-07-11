@@ -22,6 +22,32 @@ public abstract unsafe partial class NodeBase {
 	public Action? OnMoveComplete { get; set; }
 	public Action? OnEditComplete { get; set; }
 
+	public bool EnableMoving {
+		get;
+		set {
+			field = value;
+			if (value) {
+				EnableEditMode(NodeEditMode.Move);
+			}
+			else {
+				DisableEditMode(NodeEditMode.Move);
+			}
+		}
+	}
+
+	public bool EnableResizing {
+		get;
+		set {
+			field = value;
+			if (value) {
+				EnableEditMode(NodeEditMode.Resize);
+			}
+			else {
+				DisableEditMode(NodeEditMode.Resize);
+			}
+		}
+	}
+	
 	public void EnableEditMode(NodeEditMode mode) {
 
 		currentEditMode |= mode;
