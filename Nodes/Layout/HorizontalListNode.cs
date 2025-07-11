@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
-using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
 using Newtonsoft.Json;
@@ -10,9 +8,7 @@ namespace KamiToolKit.Nodes;
 public class HorizontalListNode : HorizontalListNode<NodeBase>;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
-	
-	private readonly List<T> nodeList = [];
+public class HorizontalListNode<T> : LayoutListNode<T> where T : NodeBase {
 	
 	[JsonProperty] public HorizontalListAnchor Alignment {
 		get; set {
@@ -37,14 +33,14 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 	
 	[JsonProperty] public float FirstItemSpacing { get; set; }
 	
-	public void RecalculateLayout() {
+	public override void RecalculateLayout() {
 		var startX = Alignment switch {
 			HorizontalListAnchor.Left => 0.0f + FirstItemSpacing,
 			HorizontalListAnchor.Right => Width - FirstItemSpacing,
 			_ => 0.0f,
 		};
 
-		foreach (var node in nodeList) {
+		foreach (var node in NodeList) {
 			if (!node.IsVisible) continue;
 
 			if (Alignment is HorizontalListAnchor.Right) {
@@ -60,49 +56,11 @@ public class HorizontalListNode<T> : SimpleComponentNode where T : NodeBase {
 		}
 	}
 
-	protected virtual void AdjustNode(T node) { }
-
-	public void AddNode(params T[] items) {
-		foreach (var node in items) {
-			AddNode(node);
-		}
-	}
-	
-	public void AddNode(T node) {
-		nodeList.Add(node);
-		
-		node.AttachNode(this);
-		node.NodeId = (uint) nodeList.Count + 1;
-		
-		RecalculateLayout();
-	}
-
 	public void AddDummy(T dummyNode, float width) {
 		dummyNode.Width = width;
 		dummyNode.Height = Height;
 		dummyNode.IsVisible = true;
 		AddNode(dummyNode);
-	}
-
-	public void RemoveNode(params T[] items) {
-		foreach (var node in items) {
-			RemoveNode(node);
-		}
-	}
-
-	public void RemoveNode(T node) {
-		node.DetachNode();
-		nodeList.Remove(node);
-		RecalculateLayout();
-	}
-
-	public void Clear() {
-		foreach (var node in nodeList) {
-			node.DetachNode();
-		}
-		
-		nodeList.Clear();
-		RecalculateLayout();
 	}
 
 	public override float Width {

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -10,9 +9,7 @@ namespace KamiToolKit.Nodes;
 public class VerticalListNode : VerticalListNode<NodeBase>;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
-	
-	private readonly List<T> nodeList = [];
+public class VerticalListNode<T> : LayoutListNode<T> where T : NodeBase {
 	
 	[JsonProperty] public VerticalListAnchor Alignment {
 		get; set {
@@ -40,14 +37,14 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 	// Resizes this node to fit all elements
 	public bool FitContents { get; set; }
 
-	public void RecalculateLayout() {
+	public override void RecalculateLayout() {
 		var startY = Alignment switch {
 			VerticalListAnchor.Top => 0.0f + FirstItemSpacing,
 			VerticalListAnchor.Bottom => Height,
 			_ => 0.0f,
 		};
 
-		foreach (var node in nodeList) {
+		foreach (var node in NodeList) {
 			if (!node.IsVisible) continue;
 
 			if (Alignment is VerticalListAnchor.Bottom) {
@@ -63,25 +60,8 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 		}
 
 		if (FitContents) {
-			Height = nodeList.Sum(node => node.IsVisible ? node.Height + ItemVerticalSpacing : 0.0f) + FirstItemSpacing;
+			Height = NodeList.Sum(node => node.IsVisible ? node.Height + ItemVerticalSpacing : 0.0f) + FirstItemSpacing;
 		}
-	}
-
-	protected virtual void AdjustNode(T node) { }
-
-	public void AddNode(params T[] items) {
-		foreach (var node in items) {
-			AddNode(node);
-		}
-	}
-	
-	public void AddNode(T node) {
-		nodeList.Add(node);
-		
-		node.AttachNode(this);
-		node.NodeId = (uint) nodeList.Count + 1;
-		
-		RecalculateLayout();
 	}
 
 	public void AddDummy(T dummyNode, float height) {
@@ -89,26 +69,5 @@ public class VerticalListNode<T> : SimpleComponentNode where T : NodeBase {
 		dummyNode.Height = height;
 		dummyNode.IsVisible = true;
 		AddNode(dummyNode);
-	}
-	
-	public void RemoveNode(params T[] items) {
-		foreach (var node in items) {
-			RemoveNode(node);
-		}
-	}
-
-	public void RemoveNode(T node) {
-		node.DetachNode();
-		nodeList.Remove(node);
-		RecalculateLayout();
-	}
-
-	public void Clear() {
-		foreach (var node in nodeList) {
-			node.DetachNode();
-		}
-		
-		nodeList.Clear();
-		RecalculateLayout();
 	}
 }
