@@ -70,6 +70,9 @@ public abstract unsafe partial class NodeBase {
 	private void UpdateNative() {
 		if (InternalResNode is null) return;
 
+		// Trigger redraw for this node
+		DrawFlags |= 1;
+
 		if (ParentUldManager is null) {
 			ParentUldManager = GetUldManagerForNode(InternalResNode);
 		}
