@@ -1,5 +1,4 @@
 using System.Linq;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
 using Newtonsoft.Json;
@@ -18,22 +17,6 @@ public class VerticalListNode<T> : LayoutListNode<T> where T : NodeBase {
 		}
 	}
 	
-	[JsonProperty] public bool ClipListContents {
-		get => NodeFlags.HasFlag(NodeFlags.Clip);
-		set {
-			if (value) {
-				AddFlags(NodeFlags.Clip);
-			}
-			else {
-				RemoveFlags(NodeFlags.Clip);
-			}
-		}
-	}
-	
-	[JsonProperty] public float ItemVerticalSpacing { get; set; }
-	
-	[JsonProperty] public float FirstItemSpacing { get; set; }
-	
 	// Resizes this node to fit all elements
 	public bool FitContents { get; set; }
 
@@ -48,19 +31,19 @@ public class VerticalListNode<T> : LayoutListNode<T> where T : NodeBase {
 			if (!node.IsVisible) continue;
 
 			if (Alignment is VerticalListAnchor.Bottom) {
-				startY -= node.Height + ItemVerticalSpacing;
+				startY -= node.Height + ItemSpacing;
 			}
 
 			node.Y = startY;
 			AdjustNode(node);
 
 			if (Alignment is VerticalListAnchor.Top) {
-				startY += node.Height + ItemVerticalSpacing;
+				startY += node.Height + ItemSpacing;
 			}
 		}
 
 		if (FitContents) {
-			Height = NodeList.Sum(node => node.IsVisible ? node.Height + ItemVerticalSpacing : 0.0f) + FirstItemSpacing;
+			Height = NodeList.Sum(node => node.IsVisible ? node.Height + ItemSpacing : 0.0f) + FirstItemSpacing;
 		}
 	}
 

@@ -1,5 +1,4 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+﻿using KamiToolKit.Classes;
 using KamiToolKit.System;
 using Newtonsoft.Json;
 
@@ -17,22 +16,6 @@ public class HorizontalListNode<T> : LayoutListNode<T> where T : NodeBase {
 		}
 	}
 	
-	[JsonProperty] public bool ClipListContents {
-		get => NodeFlags.HasFlag(NodeFlags.Clip);
-		set {
-			if (value) {
-				AddFlags(NodeFlags.Clip);
-			}
-			else {
-				RemoveFlags(NodeFlags.Clip);
-			}
-		}
-	}
-	
-	[JsonProperty] public float ItemHorizontalSpacing { get; set; }
-	
-	[JsonProperty] public float FirstItemSpacing { get; set; }
-	
 	public override void RecalculateLayout() {
 		var startX = Alignment switch {
 			HorizontalListAnchor.Left => 0.0f + FirstItemSpacing,
@@ -44,14 +27,14 @@ public class HorizontalListNode<T> : LayoutListNode<T> where T : NodeBase {
 			if (!node.IsVisible) continue;
 
 			if (Alignment is HorizontalListAnchor.Right) {
-				startX -= node.Width + ItemHorizontalSpacing;
+				startX -= node.Width + ItemSpacing;
 			}
 
 			node.X = startX;
 			AdjustNode(node);
 
 			if (Alignment is HorizontalListAnchor.Left) {
-				startX += node.Width + ItemHorizontalSpacing;
+				startX += node.Width + ItemSpacing;
 			}
 		}
 	}

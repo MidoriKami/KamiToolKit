@@ -1,14 +1,36 @@
 using System.Collections.Generic;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.System;
+using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
+public abstract class LayoutListNode : LayoutListNode<NodeBase>;
+
+[JsonObject(MemberSerialization.OptIn)]
 public abstract class LayoutListNode<T> : SimpleComponentNode where T : NodeBase {
 	protected readonly List<T> NodeList = [];
 
 	public abstract void RecalculateLayout();
 
 	protected virtual void AdjustNode(T node) { }
+	
+		
+	[JsonProperty] public bool ClipListContents {
+		get => NodeFlags.HasFlag(NodeFlags.Clip);
+		set {
+			if (value) {
+				AddFlags(NodeFlags.Clip);
+			}
+			else {
+				RemoveFlags(NodeFlags.Clip);
+			}
+		}
+	}
+	
+	[JsonProperty] public float ItemSpacing { get; set; }
+	
+	[JsonProperty] public float FirstItemSpacing { get; set; }
 
 	public void AddNode(params T[] items) {
 		foreach (var node in items) {
