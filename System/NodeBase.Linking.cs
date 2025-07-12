@@ -47,8 +47,18 @@ public abstract unsafe partial class NodeBase {
 		UpdateNative();
 	}
 
-	internal void DetachNode() {
-		DisableEvents();
+	internal void ReattachNode(AtkResNode* newTarget) {
+		DetachNode(false);
+		AttachNode(newTarget);
+	}
+
+	internal void ReattachNode(NodeBase target) {
+		DetachNode(false);
+		AttachNode(target);
+	}
+
+	internal void DetachNode(bool disableEvents = true) {
+		if (disableEvents) DisableEvents();
 		
 		NodeLinker.DetachNode(InternalResNode);
 
