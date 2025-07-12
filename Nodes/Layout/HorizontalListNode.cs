@@ -7,7 +7,7 @@ namespace KamiToolKit.Nodes;
 public class HorizontalListNode : HorizontalListNode<NodeBase>;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class HorizontalListNode<T> : LayoutListNode<T> where T : NodeBase {
+public abstract class HorizontalListNode<T> : LayoutListNode<T> where T : NodeBase {
 	
 	[JsonProperty] public HorizontalListAnchor Alignment {
 		get; set {

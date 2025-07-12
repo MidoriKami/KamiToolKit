@@ -6,7 +6,7 @@ namespace KamiToolKit.Nodes;
 
 public class HorizontalFlexNode : HorizontalFlexNode<NodeBase>;
 
-public class HorizontalFlexNode<T> : LayoutListNode<T> where T : NodeBase {
+public abstract class HorizontalFlexNode<T> : LayoutListNode<T> where T : NodeBase {
 
 	public FlexFlags AlignmentFlags { get; set; } = FlexFlags.FitContentHeight;
 	

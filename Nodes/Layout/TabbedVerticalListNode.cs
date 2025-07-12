@@ -9,7 +9,7 @@ namespace KamiToolKit.Nodes;
 public class TabbedVerticalListNode : TabbedVerticalListNode<NodeBase>;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class TabbedVerticalListNode<T>  : SimpleComponentNode where T : NodeBase {
+public abstract class TabbedVerticalListNode<T>  : SimpleComponentNode where T : NodeBase {
 
 	private List<TabbedNodeEntry<T>> nodeList = [];
 

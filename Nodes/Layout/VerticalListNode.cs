@@ -8,7 +8,7 @@ namespace KamiToolKit.Nodes;
 public class VerticalListNode : VerticalListNode<NodeBase>;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class VerticalListNode<T> : LayoutListNode<T> where T : NodeBase {
+public abstract class VerticalListNode<T> : LayoutListNode<T> where T : NodeBase {
 	
 	[JsonProperty] public VerticalListAnchor Alignment {
 		get; set {

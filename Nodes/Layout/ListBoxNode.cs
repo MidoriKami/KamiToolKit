@@ -14,7 +14,7 @@ public class ListBoxNode : ListBoxNode<NodeBase>;
 
 /// Node that manages the layout of other nodes
 [JsonObject(MemberSerialization.OptIn)]
-public class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
+public abstract class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
 
     private readonly List<T> nodeList = [];
     [JsonProperty] public readonly BackgroundImageNode Background;
