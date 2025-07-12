@@ -71,7 +71,9 @@ public abstract unsafe partial class NodeBase {
 		if (InternalResNode is null) return;
 
 		// Trigger redraw for this node
-		DrawFlags |= 1;
+		VisitChildren(InternalResNode, pointer => {
+			pointer.Value->DrawFlags |= 1;
+		});
 
 		if (ParentUldManager is null) {
 			ParentUldManager = GetUldManagerForNode(InternalResNode);
