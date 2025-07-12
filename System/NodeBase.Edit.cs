@@ -57,18 +57,19 @@ public abstract unsafe partial class NodeBase {
 				Position = new Vector2(-16.0f, -16.0f),
 				Size = Size + new Vector2(32.0f, 32.0f),
 				IsVisible = true,
+				EnableEventFlags = true,
 			};
+			overlayNode.AddEvent(AddonEventType.MouseOut, _ => ResetCursor());
 			overlayNode.AttachNode(this);
 		}
 		
-		overlayNode.ShowParts = mode.HasFlag(NodeEditMode.Resize);
+		overlayNode.ShowParts = currentEditMode.HasFlag(NodeEditMode.Resize);
 
 		if (editEventListener is null) {
 			editEventListener = new ViewportEventListener(OnEditEvent);
 			editEventListener.AddEvent(AtkEventType.MouseMove, overlayNode.InternalResNode);
 			editEventListener.AddEvent(AtkEventType.MouseDown, overlayNode.InternalResNode);
 		}
-		
 	}
 
 	public void DisableEditMode(NodeEditMode mode) {
@@ -165,7 +166,11 @@ public abstract unsafe partial class NodeBase {
 			} break;
 		}
 
-		ResetCursor();
+		// Only take control of the cursor if we are overing over our specific overlay node.
+		if (overlayNode.CheckCollision(atkEventData)) {
+			ResetCursor();
+		}
+
 		if (currentEditMode.HasFlag(NodeEditMode.Move)) {
 			if (isMoving) {
 				SetCursor(AddonCursorType.Grab);
