@@ -75,7 +75,10 @@ public abstract unsafe partial class NodeBase {
 
     public virtual float Rotation {
         get => InternalResNode->Rotation;
-        set => InternalResNode->Rotation = value;
+        set {
+            InternalResNode->Rotation = value;
+            DrawFlags |= 5;
+        }
     }
 
     public virtual float OriginX {

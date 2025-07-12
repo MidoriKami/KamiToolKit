@@ -11,11 +11,10 @@ public class VerticalResizeNineGridNode : SimpleComponentNode {
 			TexturePath = "ui/uld/WindowA_line.tex",
 			TextureCoordinates = new Vector2(0.0f, 0.0f),
 			TextureSize = new Vector2(32.0f, 4.0f),
-			Position = new Vector2(8.0f, 0.0f),
+			Position = new Vector2(4.0f, 0.0f),
 			LeftOffset = 12,
 			RightOffset = 12,
-			PartsRenderType = 192,
-			DrawFlags = 12,
+			DrawFlags = 4,
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
 		BorderNode.AttachNode(this);
@@ -35,9 +34,8 @@ public class VerticalResizeNineGridNode : SimpleComponentNode {
 	}
 
 	public override float Rotation {
-		get => base.Rotation;
+		get => BorderNode.Rotation;
 		set {
-			base.Rotation = value;
 			BorderNode.Rotation = value;
 			CollisionNode.Rotation = value;
 		}

@@ -31,7 +31,7 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
 		bottomEditNode.AttachNode(this);
 		
 		leftEditNode = new VerticalResizeNineGridNode {
-			Position = new Vector2(12.0f, 16.0f),
+			Position = new Vector2(16.0f, 16.0f),
 			Size = new Vector2 (8.0f, 0.0f),
 			Rotation = 1 * MathF.PI / 2.0f,
 			IsVisible = true,
