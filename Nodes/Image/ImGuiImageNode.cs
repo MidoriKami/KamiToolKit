@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Threading.Tasks;
 using Dalamud.Interface.Textures.TextureWraps;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
@@ -17,8 +16,18 @@ public class ImGuiImageNode : SimpleImageNode {
 
     public IDalamudTextureWrap? LoadedTexture;
 
-    public void LoadTextureFromFile(string fileSystemPath)
-        => Task.Run(() => LoadTextureFromFileTask(fileSystemPath) );
+    public void LoadTextureFromFile(string fileSystemPath) {
+        DalamudInterface.Instance.Framework.RunOnTick(async () => {
+            Alpha = 0.0f;
+
+            LoadedTexture = await DalamudInterface.Instance.TextureProvider.GetFromFile(fileSystemPath).RentAsync();
+
+            LoadTexture(LoadedTexture);
+            TextureSize = LoadedTexture.Size;
+            Alpha = 1.0f;
+            DrawFlags |= 1;
+        });
+    }
 
     public override string TexturePath { 
         get => base.TexturePath;
@@ -35,23 +44,8 @@ public class ImGuiImageNode : SimpleImageNode {
     protected override void Dispose(bool disposing) {
         if (disposing) {
             LoadedTexture?.Dispose();
-            
+
             base.Dispose(disposing);
         }
-    }
-
-    private void LoadTextureFromFileTask(string path) {
-        DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-            Alpha = 0.0f;
-        });
-
-        LoadedTexture = DalamudInterface.Instance.TextureProvider.GetFromFile(path).RentAsync().Result;
-
-        DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-            LoadTexture(LoadedTexture);
-            TextureSize = LoadedTexture.Size;
-            Alpha = 1.0f;
-            DrawFlags |= 1;
-        });
     }
 }
