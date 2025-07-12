@@ -122,16 +122,17 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
 		var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
 		if (parentAddon is not null) {
-			OptionListNode.DetachNode();
 			
 			if (!IsCollapsed) {
-				DropDownFocusCollisionNode.Size = new Vector2(parentAddon->RootNode->Width, parentAddon->RootNode->Height);
-				DropDownFocusCollisionNode.Position = new Vector2(parentAddon->X, parentAddon->Y) - OptionListNode.ScreenPosition;
+				OptionListNode.Position = ScreenPosition + Size with { X = 0.0f } - new Vector2(parentAddon->X, parentAddon->Y) - new Vector2(0.0f, 4.0f);
 
-				OptionListNode.AttachNode(parentAddon->RootNode);
+				DropDownFocusCollisionNode.Position = -OptionListNode.Position;
+				DropDownFocusCollisionNode.Size = new Vector2(parentAddon->RootNode->Width, parentAddon->RootNode->Height);
+
+				OptionListNode.ReattachNode(parentAddon->RootNode);
 			}
 			else {
-				OptionListNode.AttachNode(this);
+				OptionListNode.ReattachNode(this);
 			}
 		}
 	}

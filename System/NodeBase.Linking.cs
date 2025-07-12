@@ -47,8 +47,18 @@ public abstract unsafe partial class NodeBase {
 		UpdateNative();
 	}
 
-	internal void DetachNode() {
-		DisableEvents();
+	internal void ReattachNode(AtkResNode* newTarget) {
+		DetachNode(false);
+		AttachNode(newTarget);
+	}
+
+	internal void ReattachNode(NodeBase target) {
+		DetachNode(false);
+		AttachNode(target);
+	}
+
+	internal void DetachNode(bool disableEvents = true) {
+		if (disableEvents) DisableEvents();
 		
 		NodeLinker.DetachNode(InternalResNode);
 
@@ -71,7 +81,9 @@ public abstract unsafe partial class NodeBase {
 		if (InternalResNode is null) return;
 
 		// Trigger redraw for this node
-		DrawFlags |= 1;
+		VisitChildren(InternalResNode, pointer => {
+			pointer.Value->DrawFlags |= 1;
+		});
 
 		if (ParentUldManager is null) {
 			ParentUldManager = GetUldManagerForNode(InternalResNode);
