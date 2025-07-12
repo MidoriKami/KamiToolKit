@@ -113,8 +113,11 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		Data->IMEColor = new ByteColor { R = 67 };
 		Data->FocusColor = KnownColor.Black.Vector().ToByteColor();
 		
-		Flags1 = TextInputFlags1.EnableIME | TextInputFlags1.AllowUpperCase | TextInputFlags1.AllowLowerCase | TextInputFlags1.EnableDictionary;
-		Flags2 = TextInputFlags2.AllowNumberInput | TextInputFlags2.AllowSymbolInput;
+		// Flags1 = TextInputFlags1.EnableIME | TextInputFlags1.AllowUpperCase | TextInputFlags1.AllowLowerCase | TextInputFlags1.EnableDictionary;
+		// Flags2 = TextInputFlags2.AllowNumberInput | TextInputFlags2.AllowSymbolInput;
+		
+		Flags1 = (TextInputFlags1) 212;
+		Flags2 = (TextInputFlags2) 3;
 
 		LoadTimelines();
 		
