@@ -4,7 +4,7 @@ using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;
 
-public class HorizontalFlexNode : HorizontalListNode<NodeBase>;
+public class HorizontalFlexNode : HorizontalFlexNode<NodeBase>;
 
 public class HorizontalFlexNode<T> : LayoutListNode<T> where T : NodeBase {
 
