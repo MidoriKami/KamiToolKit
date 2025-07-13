@@ -14,6 +14,8 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
 	protected virtual void AdjustNode(NodeBase node) { }
 
+	protected virtual uint ListBaseId => 1;
+
 	[JsonProperty] public bool ClipListContents {
 		get => NodeFlags.HasFlag(NodeFlags.Clip);
 		set {
@@ -40,7 +42,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
 		NodeList.Add(node);
 		
 		node.AttachNode(this);
-		node.NodeId = (uint) NodeList.Count + 1;
+		node.NodeId = (uint) NodeList.Count + ListBaseId;
 		
 		RecalculateLayout();
 	}

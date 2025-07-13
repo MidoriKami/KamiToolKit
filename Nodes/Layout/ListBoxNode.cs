@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
@@ -12,7 +11,6 @@ namespace KamiToolKit.Nodes;
 /// Node that manages the layout of other nodes
 [JsonObject(MemberSerialization.OptIn)]
 public class ListBoxNode : LayoutListNode {
-    private readonly List<NodeBase> nodeList = [];
     [JsonProperty] public readonly BackgroundImageNode Background;
     [JsonProperty] public readonly BorderNineGridNode Border;
 
@@ -32,7 +30,9 @@ public class ListBoxNode : LayoutListNode {
         };
         Border.AttachNode(this);
     }
-    
+
+    protected override uint ListBaseId => 3;
+
     [JsonProperty] public LayoutAnchor LayoutAnchor {
         get; set { 
             field = value;
@@ -69,12 +69,12 @@ public class ListBoxNode : LayoutListNode {
         set => Background.Color = value;
     }
 
-    [JsonProperty] public bool BackgroundVisible {
+    [JsonProperty] public bool ShowBackground {
         get => Background.IsVisible;
         set => Background.IsVisible = value;
     }
 
-    [JsonProperty] public bool BorderVisible {
+    [JsonProperty] public bool ShowBorder {
         get => Border.IsVisible;
         set => Border.IsVisible = value;
     }
@@ -116,11 +116,11 @@ public class ListBoxNode : LayoutListNode {
         if (BackgroundFitsContents) {
             Background.Size = GetMinimumSize();
 
-            var topLeftNode = nodeList
+            var topLeftNode = NodeList
                 .Where(node => node.IsVisible)
                 .MinBy(node => node.Position.Length());
             
-            if (nodeList.Count is not 0 && topLeftNode is not null) {
+            if (NodeList.Count is not 0 && topLeftNode is not null) {
                 Background.Position = topLeftNode.Position - new Vector2(ItemMargin.Left, ItemMargin.Top);
             }
         }
@@ -132,11 +132,11 @@ public class ListBoxNode : LayoutListNode {
         if (BorderFitsContents) {
             Border.Size = GetMinimumSize() + new Vector2(30.0f, 30.0f);
 
-            var topLeftNode = nodeList
+            var topLeftNode = NodeList
                 .Where(node => node.IsVisible)
                 .MinBy(node => node.Position.Length());
             
-            if (nodeList.Count is not 0 && topLeftNode is not null) {
+            if (NodeList.Count is not 0 && topLeftNode is not null) {
                 Border.Position = topLeftNode.Position - new Vector2(15.0f, 15.0f) - new Vector2(ItemMargin.Left, ItemMargin.Top);
             }
         }
@@ -152,7 +152,7 @@ public class ListBoxNode : LayoutListNode {
     public Vector2 GetMinimumSize() {
         var size = Vector2.Zero;
         
-        foreach (var node in nodeList) {
+        foreach (var node in NodeList) {
             if (!node.IsVisible) continue;
 
             switch (LayoutOrientation) {
@@ -174,9 +174,9 @@ public class ListBoxNode : LayoutListNode {
     }
 
     private void CalculateVerticalLayout() {
-        var runningPosition = GetLayoutStartPosition();
+        var runningPosition = GetLayoutStartPosition() + new Vector2(0.0f, FirstItemSpacing);
         
-        foreach (var node in nodeList) {
+        foreach (var node in NodeList) {
             if (!node.IsVisible) continue;
 
             // if (!node.IsVisible) {
@@ -191,7 +191,7 @@ public class ListBoxNode : LayoutListNode {
             //     }
             // }
             
-            var netMargin = node.Margin + ItemMargin;
+            var netMargin = node.Margin + ItemMargin + new Spacing(ItemSpacing / 2.0f, 0.0f, 0.0f, ItemSpacing / 2.0f);
             
             switch (LayoutAnchor) {
                 case LayoutAnchor.TopLeft: {
@@ -224,10 +224,10 @@ public class ListBoxNode : LayoutListNode {
     private void CalculateHorizontalLayout() {
         var runningPosition = GetLayoutStartPosition();
 
-        foreach (var node in nodeList) {
+        foreach (var node in NodeList) {
             if (!node.IsVisible) continue;
             
-            var netMargin = node.Margin + ItemMargin;
+            var netMargin = node.Margin + ItemMargin + new Spacing(0.0f, ItemSpacing / 2.0f, ItemSpacing / 2.0f, 0.0f);
             
             switch (LayoutAnchor) {
                 case LayoutAnchor.TopLeft: {
