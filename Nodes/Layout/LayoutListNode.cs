@@ -8,7 +8,7 @@ namespace KamiToolKit.Nodes;
 
 [JsonObject(MemberSerialization.OptIn)]
 public abstract class LayoutListNode : SimpleComponentNode {
-	internal readonly List<NodeBase> NodeList = [];
+	protected readonly List<NodeBase> NodeList = [];
 
 	public abstract void RecalculateLayout();
 
