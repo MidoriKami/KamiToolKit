@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 
 namespace KamiToolKit.Addon;
 
@@ -74,11 +75,11 @@ public abstract unsafe partial class NativeAddon {
 	private void UpdateFlags() {
 		// Note, some flags are default on, need to invert enable to clear them
 		
-		UpdateFlag(ref InternalAddon->Flags1A3, 0x20, WindowOptions.DisableClamping);
-		UpdateFlag(ref InternalAddon->Flags1A3, 0x40, WindowOptions.EnableClickThrough);
-		UpdateFlag(ref InternalAddon->Flags1A3, 0x1, TitleMenuOptions.Enable);
-		UpdateFlag(ref InternalAddon->Flags1A1, 0x4, !TitleMenuOptions.ShowClose);
-		UpdateFlag(ref InternalAddon->Flags1C8, 0x800, !TitleMenuOptions.ShowScale);
+		FlagHelper.UpdateFlag(ref InternalAddon->Flags1A3, 0x20, WindowOptions.DisableClamping);
+		FlagHelper.UpdateFlag(ref InternalAddon->Flags1A3, 0x40, WindowOptions.EnableClickThrough);
+		FlagHelper.UpdateFlag(ref InternalAddon->Flags1A3, 0x1, TitleMenuOptions.Enable);
+		FlagHelper.UpdateFlag(ref InternalAddon->Flags1A1, 0x4, !TitleMenuOptions.ShowClose);
+		FlagHelper.UpdateFlag(ref InternalAddon->Flags1C8, 0x800, !TitleMenuOptions.ShowScale);
 	}
 
 	public Vector2 GetPosition()
@@ -88,21 +89,6 @@ public abstract unsafe partial class NativeAddon {
 		if (InternalPosition is { } position) {
 			InternalAddon->SetPosition((short) position.X, (short) position.Y);
 			InternalPosition = null;
-		}
-	}
-
-	private void SetFlag<T>(ref T flagsField, int flag) where T : struct, IBinaryInteger<T>
-		=> flagsField |= T.One << BitOperations.Log2((uint) flag);
-
-	private void ClearFlag<T>(ref T flagsField, int flag) where T : struct, IBinaryInteger<T>
-		=> flagsField &= ~(T.One << BitOperations.Log2((uint) flag));
-
-	private void UpdateFlag<T>(ref T flagsField, int flag, bool enable) where T : struct, IBinaryInteger<T> {
-		if (enable) {
-			SetFlag(ref flagsField, flag);
-		}
-		else {
-			ClearFlag(ref flagsField, flag);
 		}
 	}
 }
