@@ -57,9 +57,7 @@ public abstract unsafe partial class NodeBase {
 				Position = new Vector2(-16.0f, -16.0f),
 				Size = Size + new Vector2(32.0f, 32.0f),
 				IsVisible = true,
-				EnableEventFlags = true,
 			};
-			overlayNode.AddEvent(AddonEventType.MouseOut, _ => ResetCursor());
 			overlayNode.AttachNode(this);
 		}
 		
@@ -175,7 +173,7 @@ public abstract unsafe partial class NodeBase {
 			if (isMoving) {
 				SetCursor(AddonCursorType.Grab);
 			}
-			else if (overlayNode.CheckCollision(atkEventData)) {
+			else if (CheckCollision(atkEventData)) {
 				SetCursor(AddonCursorType.Hand);
 			}
 		}
