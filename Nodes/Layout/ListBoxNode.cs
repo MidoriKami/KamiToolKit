@@ -178,18 +178,6 @@ public class ListBoxNode : LayoutListNode {
         
         foreach (var node in NodeList) {
             if (!node.IsVisible) continue;
-
-            // if (!node.IsVisible) {
-            //     if (node.NodeFlags.HasFlag(NodeFlags.HasCollision)) {
-            //         node.RemoveFlags(NodeFlags.HasCollision);
-            //     }
-            //     continue;
-            // }
-            // else {
-            //     if (!node.NodeFlags.HasFlag(NodeFlags.HasCollision)) {
-            //         node.AddFlags(NodeFlags.HasCollision);
-            //     }
-            // }
             
             var netMargin = node.Margin + ItemMargin + new Spacing(ItemSpacing / 2.0f, 0.0f, 0.0f, ItemSpacing / 2.0f);
             
