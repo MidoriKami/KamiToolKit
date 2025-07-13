@@ -6,25 +6,15 @@ using Newtonsoft.Json;
 namespace KamiToolKit.Classes;
 
 public unsafe class DragDropPayload {
-	#region AtkDragDropInterface
+	[JsonProperty] public DragDropType Type { get; set; } = DragDropType.Nothing;
 
-	[JsonProperty]
-	public DragDropType Type { get; set; } = DragDropType.Nothing;
-
-	[JsonProperty]
-	public short ReferenceIndex { get; set; } = 0;
-
-	#endregion
-
-	#region AtkDragDropPayloadContainer
+	[JsonProperty] public short ReferenceIndex { get; set; }
 
 	/// <remarks> Index (like AtkDragDropInterface.ReferenceIndex), InventoryType, etc. </remarks>
-	[JsonProperty]
-	public int Int1 { get; set; } = 0;
+	[JsonProperty] public int Int1 { get; set; }
 
 	/// <remarks> ActionId, ItemId, EmoteId, InventorySlotIndex, ListIndex, MacroIndex etc. </remarks>
-	[JsonProperty]
-	public int Int2 { get; set; } = -1;
+	[JsonProperty] public int Int2 { get; set; } = -1;
 
 	// unknown usage
 	// public ulong Unk8 { get; set; }
@@ -33,31 +23,29 @@ public unsafe class DragDropPayload {
 	// public AtkValue* AtkValue { get; set; }
 
 	// TODO: not sure if [JsonProperty] works here
-	public ReadOnlySeString Text { get; set; } = default;
+	public ReadOnlySeString Text { get; set; }
 
 	// unknown usage
 	// public uint Flags { get; set; }
 
-	#endregion
-
-	public static DragDropPayload FromDragDropInterface(AtkDragDropInterface* ddi) {
-		var payloadContainer = ddi->GetPayloadContainer();
+	public static DragDropPayload FromDragDropInterface(AtkDragDropInterface* dragDropInterface) {
+		var payloadContainer = dragDropInterface->GetPayloadContainer();
 
 		return new DragDropPayload {
-			Type = ddi->DragDropType,
-			ReferenceIndex = ddi->DragDropReferenceIndex,
+			Type = dragDropInterface->DragDropType,
+			ReferenceIndex = dragDropInterface->DragDropReferenceIndex,
 			Int1 = payloadContainer->Int1,
 			Int2 = payloadContainer->Int2,
-			Text = new ReadOnlySeString(payloadContainer->Text)
+			Text = new ReadOnlySeString(payloadContainer->Text),
 		};
 	}
 
-	public void ToDragDropInterface(AtkDragDropInterface* ddi, bool writeToPayloadContainer = true) {
-		ddi->DragDropType = Type;
-		ddi->DragDropReferenceIndex = ReferenceIndex;
+	public void ToDragDropInterface(AtkDragDropInterface* dragDropInterface, bool writeToPayloadContainer = true) {
+		dragDropInterface->DragDropType = Type;
+		dragDropInterface->DragDropReferenceIndex = ReferenceIndex;
 
 		if(writeToPayloadContainer) {
-			var payloadContainer = ddi->GetPayloadContainer();
+			var payloadContainer = dragDropInterface->GetPayloadContainer();
 			payloadContainer->Clear();
 			payloadContainer->Int1 = Int1;
 			payloadContainer->Int2 = Int2;
@@ -66,8 +54,8 @@ public unsafe class DragDropPayload {
 				payloadContainer->Text.Clear();
 			}
 			else {
-				var sb = new SeStringBuilder().Append(Text);
-				payloadContainer->Text.SetString(sb.GetViewAsSpan());
+				var stringBuilder = new SeStringBuilder().Append(Text);
+				payloadContainer->Text.SetString(stringBuilder.GetViewAsSpan());
 			}
 		}
 	}
