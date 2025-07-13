@@ -193,6 +193,18 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 		set => Component->AtkDragDropInterface.DragDropSoundEffectSuppression = value;
 	}
 
+	public bool IsDraggable {
+		get => !Component->Flags.HasFlag(DragDropFlag.Unk2);
+		set {
+			if (value) {
+				Component->Flags &= ~DragDropFlag.Unk2;
+			}
+			else {
+				Component->Flags |= DragDropFlag.Unk2;
+			}
+		}
+	}
+
 	/// <summary>
 	/// When true, allows left-clicking the item to trigger OnClicked
 	/// </summary>
