@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
+using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
@@ -27,7 +29,6 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 			ImageNodeFlags = 0,
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
-
 		DragDropBackgroundNode.AttachNode(this);
 
 		IconNode = new IconNode {
@@ -35,17 +36,16 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 			Size = new Vector2(44.0f, 48.0f),
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
-
 		IconNode.AttachNode(this);
 
 		LoadTimelines();
 
 		Data->Nodes[0] = IconNode.NodeId;
 
-		AcceptedType = DragDropType.Nothing;
-		Payload = new();
+		AcceptedType = DragDropType.Everything;
+		Payload = new DragDropPayload();
 
-		Component->AtkDragDropInterface.DragDropType = DragDropType.Nothing;
+		Component->AtkDragDropInterface.DragDropType = DragDropType.Everything;
 		Component->AtkDragDropInterface.DragDropReferenceIndex = 0;
 
 		InitializeComponentEvents();
@@ -72,26 +72,24 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 	private void DragDropInsertHandler(AddonEventData data) {
 		data.SetHandled();
 
-		var evt = (AtkEvent*)data.AtkEventPointer;
-		evt->State.StateFlags |= AtkEventStateFlags.HasReturnFlags;
-		evt->State.ReturnFlags = 1;
+		var atkEvent = (AtkEvent*)data.AtkEventPointer;
+		atkEvent->State.StateFlags |= AtkEventStateFlags.HasReturnFlags;
+		atkEvent->State.ReturnFlags = 1;
 
 		var payload = DragDropPayload.FromDragDropInterface(data.GetDragDropData().DragDropInterface);
 
-		if(AcceptedType.Accepts(payload.Type)) {
-			OnPayloadAccepted?.Invoke(this, data, payload);
-		}
-		else {
-			OnPayloadRejected?.Invoke(this, data, payload);
-		}
+		Payload.Clear();
+		IconId = 0;
+		
+		OnPayloadAccepted?.Invoke(this, data, payload);
 	}
 
 	private void DragDropDiscardHandler(AddonEventData data) {
 		data.SetHandled();
 
-		var evt = (AtkEvent*)data.AtkEventPointer;
-		evt->State.StateFlags |= AtkEventStateFlags.HasReturnFlags;
-		evt->State.ReturnFlags = 1;
+		var atkEvent = (AtkEvent*)data.AtkEventPointer;
+		atkEvent->State.StateFlags |= AtkEventStateFlags.HasReturnFlags;
+		atkEvent->State.ReturnFlags = 1;
 
 		OnDiscard?.Invoke(this, data);
 	}
@@ -110,37 +108,32 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 	private void DragDropCancelHandler(AddonEventData data) {
 		data.SetHandled();
 
-		var evt = (AtkEvent*)data.AtkEventPointer;
-		evt->State.StateFlags |= AtkEventStateFlags.HasReturnFlags;
-		evt->State.ReturnFlags = 1;
+		var atkEvent = (AtkEvent*)data.AtkEventPointer;
+		atkEvent->State.StateFlags |= AtkEventStateFlags.HasReturnFlags;
+		atkEvent->State.ReturnFlags = 1;
 
 		OnClicked?.Invoke(this, data);
 	}
 
-	private void DragDropRollOverHandler(AddonEventData data) {
-		OnRollOver?.Invoke(this, data);
-	}
+	private void DragDropRollOverHandler(AddonEventData data)
+		=> OnRollOver?.Invoke(this, data);
 
-	private void DragDropRollOutHandler(AddonEventData data) {
-		OnRollOut?.Invoke(this, data);
-	}
+	private void DragDropRollOutHandler(AddonEventData data)
+		=> OnRollOut?.Invoke(this, data);
 
 	private bool IsDragDropEndRegistered { get; set; }
 
 	public Action<DragDropNode, AddonEventData>? OnBegin { get; set; }
 	public Action<DragDropNode, AddonEventData>? OnEnd { get; set; }
 	public Action<DragDropNode, AddonEventData, DragDropPayload>? OnPayloadAccepted { get; set; }
-	public Action<DragDropNode, AddonEventData, DragDropPayload>? OnPayloadRejected { get; set; }
 	public Action<DragDropNode, AddonEventData>? OnDiscard { get; set; }
 	public Action<DragDropNode, AddonEventData>? OnClicked { get; set; }
 	public Action<DragDropNode, AddonEventData>? OnRollOver { get; set; }
 	public Action<DragDropNode, AddonEventData>? OnRollOut { get; set; }
 
-	[JsonProperty]
-	public DragDropPayload Payload { get; set; }
+	[JsonProperty] public DragDropPayload Payload { get; set; }
 
-	[JsonProperty]
-	public uint IconId {
+	[JsonProperty] public uint IconId {
 		get => IconNode.IconId;
 		set {
 			IconNode.IconId = value;
@@ -148,8 +141,7 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 		}
 	}
 
-	[JsonProperty]
-	public bool IsIconDisabled {
+	[JsonProperty] public bool IsIconDisabled {
 		get => IconNode.IsIconDisabled;
 		set => IconNode.IsIconDisabled = value;
 	}
@@ -159,20 +151,17 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 		set => Component->SetQuantity(value);
 	}
 
-	[JsonProperty]
-	public string QuantityText {
+	[JsonProperty] public string QuantityText {
 		get => Component->GetQuantityText().ToString();
 		set => Component->SetQuantityText(value);
 	}
 
-	[JsonProperty]
-	public DragDropType AcceptedType {
+	[JsonProperty] public DragDropType AcceptedType {
 		get => Component->AcceptedType;
 		set => Component->AcceptedType = value;
 	}
 
-	[JsonProperty]
-	public AtkDragDropInterface.SoundEffectSuppression SoundEffectSuppression {
+	[JsonProperty] public AtkDragDropInterface.SoundEffectSuppression SoundEffectSuppression {
 		get => Component->AtkDragDropInterface.DragDropSoundEffectSuppression;
 		set => Component->AtkDragDropInterface.DragDropSoundEffectSuppression = value;
 	}
@@ -187,6 +176,31 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 				Component->Flags &= ~DragDropFlag.Clickable;
 			}
 		}
+	}
+
+	/// Clear the payload data and set iconId to zero
+	public void Clear() {
+		Payload.Clear();
+		IconId = 0;
+	}
+
+	// Show fancy tooltip for the currently stored data
+	public void ShowTooltip(AtkTooltipManager.AtkTooltipType type, ActionKind actionKind) {
+		if (AtkStage.Instance()->DragDropManager.IsDragging) return;
+
+		var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
+		if (addon is null) return;
+
+		var tooltipArgs = new AtkTooltipManager.AtkTooltipArgs();
+		tooltipArgs.Ctor();
+		tooltipArgs.TypeSpecificId = (ulong)Payload.Int2;
+		tooltipArgs.Unk_16 = (byte)actionKind;
+
+		AtkStage.Instance()->TooltipManager.ShowTooltip(
+			AtkTooltipManager.AtkTooltipType.Action,
+			addon->Id,
+			InternalResNode,
+			&tooltipArgs);
 	}
 
 	private void LoadTimelines() {
