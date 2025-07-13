@@ -166,7 +166,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     protected virtual NodeType NodeType {
-        get => InternalResNode->Type;
+        get => InternalResNode->GetNodeType();
         set => InternalResNode->Type = value;
     }
 
