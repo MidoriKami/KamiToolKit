@@ -94,15 +94,29 @@ public abstract unsafe partial class NodeBase {
 				field = value;
 
 				if (!TooltipRegistered) {
-					AddEvent(AddonEventType.MouseOver, ShowTooltip);
-					AddEvent(AddonEventType.MouseOut, HideTooltip);
+					if (IsDragDropComponent()) {
+						AddEvent(AddonEventType.DragDropRollOver, ShowTooltip);
+						AddEvent(AddonEventType.DragDropRollOut, HideTooltip);
+					}
+					else {
+						AddEvent(AddonEventType.MouseOver, ShowTooltip);
+						AddEvent(AddonEventType.MouseOut, HideTooltip);
+					}
+
 					TooltipRegistered = true;
 				}
 			}
 			else if (value is null) {
 				if (TooltipRegistered) {
-					RemoveEvent(AddonEventType.MouseOver, ShowTooltip);
-					RemoveEvent(AddonEventType.MouseOut, HideTooltip);
+					if (IsDragDropComponent()) {
+						RemoveEvent(AddonEventType.DragDropRollOver, ShowTooltip);
+						RemoveEvent(AddonEventType.DragDropRollOut, HideTooltip);
+					}
+					else {
+						RemoveEvent(AddonEventType.MouseOver, ShowTooltip);
+						RemoveEvent(AddonEventType.MouseOut, HideTooltip);
+					}
+
 					TooltipRegistered = false;
 				}
 			}
