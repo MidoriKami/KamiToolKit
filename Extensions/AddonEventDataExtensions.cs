@@ -14,6 +14,9 @@ public static unsafe class AddonEventDataExtensions {
 	public static ref AtkEventData.AtkMouseData GetMouseData(this AddonEventData data)
 		=> ref data.GetEventData()->MouseData;
 
+	public static ref AtkEventData.AtkDragDropData GetDragDropData(this AddonEventData data)
+		=> ref data.GetEventData()->DragDropData;
+
 	private static AtkEvent* GetEvent(this AddonEventData data)
 		=>  (AtkEvent*) data.AtkEventPointer;
 	
