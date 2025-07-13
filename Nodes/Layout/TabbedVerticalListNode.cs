@@ -6,12 +6,9 @@ using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-public class TabbedVerticalListNode : TabbedVerticalListNode<NodeBase>;
-
 [JsonObject(MemberSerialization.OptIn)]
-public abstract class TabbedVerticalListNode<T>  : SimpleComponentNode where T : NodeBase {
-
-	private List<TabbedNodeEntry<T>> nodeList = [];
+public class TabbedVerticalListNode : SimpleComponentNode {
+	private List<TabbedNodeEntry<NodeBase>> nodeList = [];
 
 	[JsonProperty] public float TabSize { get; set; } = 18.0f;
 	
@@ -29,18 +26,18 @@ public abstract class TabbedVerticalListNode<T>  : SimpleComponentNode where T :
 		TabStep -= tabAmount;
 	}
 
-	public void AddNode(params T[] nodes) {
+	public void AddNode(params NodeBase[] nodes) {
 		AddNode(0, nodes);
 	}
 	
-	public void AddNode(int tabIndex, params T[] nodes) {
+	public void AddNode(int tabIndex, params NodeBase[] nodes) {
 		foreach (var node in nodes) {
 			AddNode(tabIndex, node);
 		}
 	}
 
-	public void AddNode(int tabIndex, T node) {
-		nodeList.Add(new TabbedNodeEntry<T>(node, tabIndex + TabStep));
+	public void AddNode(int tabIndex, NodeBase node) {
+		nodeList.Add(new TabbedNodeEntry<NodeBase>(node, tabIndex + TabStep));
 		
 		node.AttachNode(this);
 		node.NodeId = (uint) nodeList.Count + 1;
@@ -48,13 +45,13 @@ public abstract class TabbedVerticalListNode<T>  : SimpleComponentNode where T :
 		RecalculateLayout();
 	}
 
-	public void RemoveNode(params T[] nodes) {
+	public void RemoveNode(params NodeBase[] nodes) {
 		foreach (var node in nodes) {
 			RemoveNode(node);
 		}
 	}
 
-	public void RemoveNode(T node) {
+	public void RemoveNode(NodeBase node) {
 		var target = nodeList.FirstOrDefault(item => item.Node == node);
 		if (target is null) return;
 		

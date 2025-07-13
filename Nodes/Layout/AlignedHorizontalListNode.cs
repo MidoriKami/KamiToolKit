@@ -2,12 +2,8 @@
 
 namespace KamiToolKit.Nodes;
 
-public class AlignedHorizontalListNode : AlignedHorizontalListNode<NodeBase>;
-
-public abstract class AlignedHorizontalListNode<T> : HorizontalListNode<T> where T : NodeBase {
-
-	protected override void AdjustNode(T node) {
+public class AlignedHorizontalListNode : HorizontalListNode {
+	protected override void AdjustNode(NodeBase node) {
 		node.Y = 0.0f;
 	}
-	
 }

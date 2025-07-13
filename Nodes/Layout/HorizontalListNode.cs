@@ -1,14 +1,10 @@
 ﻿using KamiToolKit.Classes;
-using KamiToolKit.System;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-public class HorizontalListNode : HorizontalListNode<NodeBase>;
-
 [JsonObject(MemberSerialization.OptIn)]
-public abstract class HorizontalListNode<T> : LayoutListNode<T> where T : NodeBase {
-	
+public class HorizontalListNode : LayoutListNode {
 	[JsonProperty] public HorizontalListAnchor Alignment {
 		get; set {
 			field = value;
@@ -37,13 +33,6 @@ public abstract class HorizontalListNode<T> : LayoutListNode<T> where T : NodeBa
 				startX += node.Width + ItemSpacing;
 			}
 		}
-	}
-
-	public void AddDummy(T dummyNode, float width) {
-		dummyNode.Width = width;
-		dummyNode.Height = Height;
-		dummyNode.IsVisible = true;
-		AddNode(dummyNode);
 	}
 
 	public override float Width {

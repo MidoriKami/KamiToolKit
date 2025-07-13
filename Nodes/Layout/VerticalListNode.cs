@@ -1,15 +1,11 @@
 using System.Linq;
 using KamiToolKit.Classes;
-using KamiToolKit.System;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-public class VerticalListNode : VerticalListNode<NodeBase>;
-
 [JsonObject(MemberSerialization.OptIn)]
-public abstract class VerticalListNode<T> : LayoutListNode<T> where T : NodeBase {
-	
+public class VerticalListNode : LayoutListNode {
 	[JsonProperty] public VerticalListAnchor Alignment {
 		get; set {
 			field = value;
@@ -45,12 +41,5 @@ public abstract class VerticalListNode<T> : LayoutListNode<T> where T : NodeBase
 		if (FitContents) {
 			Height = NodeList.Sum(node => node.IsVisible ? node.Height + ItemSpacing : 0.0f) + FirstItemSpacing;
 		}
-	}
-
-	public void AddDummy(T dummyNode, float height) {
-		dummyNode.Width = Width;
-		dummyNode.Height = height;
-		dummyNode.IsVisible = true;
-		AddNode(dummyNode);
 	}
 }

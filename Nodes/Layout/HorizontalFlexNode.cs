@@ -1,13 +1,9 @@
 ﻿using System.Linq;
 using KamiToolKit.Classes;
-using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;
 
-public class HorizontalFlexNode : HorizontalFlexNode<NodeBase>;
-
-public abstract class HorizontalFlexNode<T> : LayoutListNode<T> where T : NodeBase {
-
+public class HorizontalFlexNode : LayoutListNode {
 	public FlexFlags AlignmentFlags { get; set; } = FlexFlags.FitContentHeight;
 	
 	public float FitPadding { get; set; } = 4.0f;
@@ -40,10 +36,6 @@ public abstract class HorizontalFlexNode<T> : LayoutListNode<T> where T : NodeBa
 				NodeList[index].Width = step - FitPadding;
 			}
 		}
-	}
-
-	public void AddDummy(T dummyNode, float width) {
-		AddNode(dummyNode);
 	}
 
 	public override float Width {

@@ -1,21 +1,19 @@
 using System.Collections.Generic;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.System;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-public abstract class LayoutListNode : LayoutListNode<NodeBase>;
-
 [JsonObject(MemberSerialization.OptIn)]
-public abstract class LayoutListNode<T> : SimpleComponentNode where T : NodeBase {
-	protected readonly List<T> NodeList = [];
+public abstract class LayoutListNode : SimpleComponentNode {
+	internal readonly List<NodeBase> NodeList = [];
 
 	public abstract void RecalculateLayout();
 
-	protected virtual void AdjustNode(T node) { }
-	
-		
+	protected virtual void AdjustNode(NodeBase node) { }
+
 	[JsonProperty] public bool ClipListContents {
 		get => NodeFlags.HasFlag(NodeFlags.Clip);
 		set {
@@ -27,18 +25,18 @@ public abstract class LayoutListNode<T> : SimpleComponentNode where T : NodeBase
 			}
 		}
 	}
-	
+
 	[JsonProperty] public float ItemSpacing { get; set; }
-	
+
 	[JsonProperty] public float FirstItemSpacing { get; set; }
 
-	public void AddNode(params T[] items) {
+	public void AddNode(params NodeBase[] items) {
 		foreach (var node in items) {
 			AddNode(node);
 		}
 	}
 
-	public void AddNode(T node) {
+	public virtual void AddNode(NodeBase node) {
 		NodeList.Add(node);
 		
 		node.AttachNode(this);
@@ -47,19 +45,28 @@ public abstract class LayoutListNode<T> : SimpleComponentNode where T : NodeBase
 		RecalculateLayout();
 	}
 	
-	public void RemoveNode(params T[] items) {
+	public void RemoveNode(params NodeBase[] items) {
 		foreach (var node in items) {
 			RemoveNode(node);
 		}
 	}
 	
-	public void RemoveNode(T node) {
+	public virtual void RemoveNode(NodeBase node) {
 		node.DetachNode();
 		NodeList.Remove(node);
 		RecalculateLayout();
 	}
 	
-	public void Clear() {
+	public void AddDummy(float size = 0.0f) {
+		var dummyNode = new ResNode {
+			Size = new Vector2(size, size),
+			IsVisible = true,
+		};
+
+		AddNode(dummyNode);
+	}
+
+	public virtual void Clear() {
 		foreach (var node in NodeList) {
 			node.DetachNode();
 		}

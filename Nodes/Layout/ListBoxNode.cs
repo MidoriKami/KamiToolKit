@@ -3,20 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-public class ListBoxNode : ListBoxNode<NodeBase>;
-
 /// Node that manages the layout of other nodes
 [JsonObject(MemberSerialization.OptIn)]
-public abstract class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
-
-    private readonly List<T> nodeList = [];
+public class ListBoxNode : LayoutListNode {
+    private readonly List<NodeBase> nodeList = [];
     [JsonProperty] public readonly BackgroundImageNode Background;
     [JsonProperty] public readonly BorderNineGridNode Border;
 
@@ -61,21 +57,6 @@ public abstract class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
         }
     }
 
-    /// <summary>
-    /// If enabled, node contents will be clipped inside the container.
-    /// </summary>
-    [JsonProperty] public bool ClipListContents {
-        get => NodeFlags.HasFlag(NodeFlags.Clip);
-        set {
-            if (value) {
-                AddFlags(NodeFlags.Clip);
-            }
-            else {
-                RemoveFlags(NodeFlags.Clip);
-            }
-        }
-    }
-    
     [JsonProperty] public LayoutOrientation LayoutOrientation {
         get; set {
             field = value;
@@ -121,7 +102,7 @@ public abstract class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
         }
     } = new(0.0f);
 
-    public void RecalculateLayout() {
+    public override void RecalculateLayout() {
         switch (LayoutOrientation) {
             case LayoutOrientation.Vertical:
                 CalculateVerticalLayout();
@@ -196,17 +177,19 @@ public abstract class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
         var runningPosition = GetLayoutStartPosition();
         
         foreach (var node in nodeList) {
-            if (!node.IsVisible) {
-                if (node.NodeFlags.HasFlag(NodeFlags.HasCollision)) {
-                    node.RemoveFlags(NodeFlags.HasCollision);
-                }
-                continue;
-            }
-            else {
-                if (!node.NodeFlags.HasFlag(NodeFlags.HasCollision)) {
-                    node.AddFlags(NodeFlags.HasCollision);
-                }
-            }
+            if (!node.IsVisible) continue;
+
+            // if (!node.IsVisible) {
+            //     if (node.NodeFlags.HasFlag(NodeFlags.HasCollision)) {
+            //         node.RemoveFlags(NodeFlags.HasCollision);
+            //     }
+            //     continue;
+            // }
+            // else {
+            //     if (!node.NodeFlags.HasFlag(NodeFlags.HasCollision)) {
+            //         node.AddFlags(NodeFlags.HasCollision);
+            //     }
+            // }
             
             var netMargin = node.Margin + ItemMargin;
             
@@ -281,43 +264,6 @@ public abstract class ListBoxNode<T> : SimpleComponentNode where T : NodeBase {
         LayoutAnchor.BottomRight => new Vector2(Width, Height),
         _ => throw new ArgumentOutOfRangeException(),
     };
-
-    public void AddNode(params T[] items) {
-        foreach (var item in items) {
-            AddNode(item);
-        }
-    }
-    
-    public void AddNode(T item) {
-        item.NodeId = (uint)(nodeList.Count + 4);
-        
-        item.AttachNode(this);
-        nodeList.Add(item);
-        
-        RecalculateLayout();
-    }
-
-    public void RemoveNode(params T[] items) {
-        foreach (var node in items) {
-            RemoveNode(node);
-        }
-    }
-
-    public void RemoveNode(T item) {
-        item.DetachNode();
-        nodeList.Remove(item);
-
-        RecalculateLayout();
-    }
-    
-    public void Clear() {
-        foreach (var node in nodeList) {
-            node.DetachNode();
-        }
-        
-        nodeList.Clear();
-        RecalculateLayout();
-    }
     
     public override void DrawConfig() {
         base.DrawConfig();
