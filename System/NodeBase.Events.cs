@@ -208,12 +208,10 @@ public abstract unsafe partial class NodeBase {
 	}
 
 	public void HideTooltip() {
-		if (Tooltip is not null && TooltipRegistered) {
-			var addon = GetAddonForNode(InternalResNode);
-			if (addon is null) return;
+		var addon = GetAddonForNode(InternalResNode);
+		if (addon is null) return;
 
-			AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
-		}
+		AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
 	}
 	
 	private void ShowTooltip(AddonEventData data) 
