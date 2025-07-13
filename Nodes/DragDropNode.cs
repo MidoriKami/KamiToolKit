@@ -53,7 +53,6 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 		AddEvent(AddonEventType.DragDropBegin, DragDropBeginHandler);
 		AddEvent(AddonEventType.DragDropInsert, DragDropInsertHandler);
 		AddEvent(AddonEventType.DragDropDiscard, DragDropDiscardHandler);
-		AddEvent(AddonEventType.DragDropEnd, DragDropEndHandler);
 		AddEvent(AddonEventType.DragDropCancel, DragDropCancelHandler);
 		AddEvent(AddonEventType.DragDropRollOver, DragDropRollOverHandler);
 		AddEvent(AddonEventType.DragDropRollOut, DragDropRollOutHandler);
@@ -63,6 +62,11 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 		data.SetHandled();
 		Payload.ToDragDropInterface(data.GetDragDropData().DragDropInterface);
 		OnBegin?.Invoke(this, data);
+
+		if (!IsDragDropEndRegistered) {
+			AddEvent(AddonEventType.DragDropEnd, DragDropEndHandler);
+			IsDragDropEndRegistered = true;
+		}
 	}
 
 	private void DragDropInsertHandler(AddonEventData data) {
@@ -96,6 +100,11 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 		data.SetHandled();
 		data.GetDragDropData().DragDropInterface->GetPayloadContainer()->Clear();
 		OnEnd?.Invoke(this, data);
+
+		if (IsDragDropEndRegistered) {
+			RemoveEvent(AddonEventType.DragDropEnd, DragDropEndHandler);
+			IsDragDropEndRegistered = false;
+		}
 	}
 
 	private void DragDropCancelHandler(AddonEventData data) {
@@ -115,6 +124,8 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 	private void DragDropRollOutHandler(AddonEventData data) {
 		OnRollOut?.Invoke(this, data);
 	}
+
+	private bool IsDragDropEndRegistered { get; set; }
 
 	public Action<DragDropNode, AddonEventData>? OnBegin { get; set; }
 	public Action<DragDropNode, AddonEventData>? OnEnd { get; set; }
