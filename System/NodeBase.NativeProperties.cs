@@ -175,4 +175,10 @@ public abstract unsafe partial class NodeBase {
     public void MarkDirty() {
         DrawFlags |= 1;
     }
+
+    public bool CheckCollision(short x, short y)
+        => InternalResNode->CheckCollisionAtCoords(x, y, true);
+
+    public bool CheckCollision(AtkEventData* eventData)
+        => CheckCollision(eventData->MouseData.PosX,  eventData->MouseData.PosY);
 }
