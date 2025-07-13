@@ -55,6 +55,8 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 		AddEvent(AddonEventType.DragDropDiscard, DragDropDiscardHandler);
 		AddEvent(AddonEventType.DragDropEnd, DragDropEndHandler);
 		AddEvent(AddonEventType.DragDropCancel, DragDropCancelHandler);
+		AddEvent(AddonEventType.DragDropRollOver, DragDropRollOverHandler);
+		AddEvent(AddonEventType.DragDropRollOut, DragDropRollOutHandler);
 	}
 
 	private void DragDropBeginHandler(AddonEventData data) {
@@ -106,12 +108,22 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 		OnClicked?.Invoke(this, data);
 	}
 
+	private void DragDropRollOverHandler(AddonEventData data) {
+		OnRollOver?.Invoke(this, data);
+	}
+
+	private void DragDropRollOutHandler(AddonEventData data) {
+		OnRollOut?.Invoke(this, data);
+	}
+
 	public Action<DragDropNode, AddonEventData>? OnBegin { get; set; }
 	public Action<DragDropNode, AddonEventData>? OnEnd { get; set; }
 	public Action<DragDropNode, AddonEventData, DragDropPayload>? OnPayloadAccepted { get; set; }
 	public Action<DragDropNode, AddonEventData, DragDropPayload>? OnPayloadRejected { get; set; }
 	public Action<DragDropNode, AddonEventData>? OnDiscard { get; set; }
 	public Action<DragDropNode, AddonEventData>? OnClicked { get; set; }
+	public Action<DragDropNode, AddonEventData>? OnRollOver { get; set; }
+	public Action<DragDropNode, AddonEventData>? OnRollOut { get; set; }
 
 	[JsonProperty]
 	public DragDropPayload Payload { get; set; }
