@@ -179,7 +179,14 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 
 	public bool IsClickable {
 		get => Component->Flags.HasFlag(DragDropFlag.Clickable);
-		set => Component->Flags |= DragDropFlag.Clickable;
+		set {
+			if (value) {
+				Component->Flags |= DragDropFlag.Clickable;
+			}
+			else {
+				Component->Flags &= ~DragDropFlag.Clickable;
+			}
+		}
 	}
 
 	private void LoadTimelines() {
