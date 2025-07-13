@@ -25,7 +25,7 @@ public class ImGuiImageNode : SimpleImageNode {
             LoadTexture(LoadedTexture);
             TextureSize = LoadedTexture.Size;
             Alpha = 1.0f;
-            DrawFlags |= 1;
+            MarkDirty();
         });
     }
 

@@ -171,4 +171,8 @@ public abstract unsafe partial class NodeBase {
     }
 
     public virtual int ChildCount => InternalResNode->ChildCount;
+
+    public void MarkDirty() {
+        DrawFlags |= 1;
+    }
 }
