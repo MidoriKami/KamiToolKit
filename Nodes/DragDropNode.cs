@@ -123,12 +123,39 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 
 	private bool IsDragDropEndRegistered { get; set; }
 
+	/// <summary>
+	/// Event that is triggered when a DragDrop is beginning
+	/// </summary>
 	public Action<DragDropNode, AddonEventData>? OnBegin { get; set; }
+	
+	/// <summary>
+	/// Event that is triggered when a DragDrop has finished
+	/// </summary>
 	public Action<DragDropNode, AddonEventData>? OnEnd { get; set; }
+	
+	/// <summary>
+	/// Event that is triggered when a compatible DragDrop is dropped onto this node
+	/// </summary>
 	public Action<DragDropNode, AddonEventData, DragDropPayload>? OnPayloadAccepted { get; set; }
+	
+	/// <summary>
+	/// Event that is triggered when the item in this drag drop is being dropped onto the world
+	/// </summary>
 	public Action<DragDropNode, AddonEventData>? OnDiscard { get; set; }
+	
+	/// <summary>
+	/// Event that is triggered when the item is clicked
+	/// </summary>
 	public Action<DragDropNode, AddonEventData>? OnClicked { get; set; }
+	
+	/// <summary>
+	/// Event that is triggered when the item is being moused over
+	/// </summary>
 	public Action<DragDropNode, AddonEventData>? OnRollOver { get; set; }
+	
+	/// <summary>
+	/// Event that is triggered when the item is no longer being moused over
+	/// </summary>
 	public Action<DragDropNode, AddonEventData>? OnRollOut { get; set; }
 
 	[JsonProperty] public DragDropPayload Payload { get; set; }
@@ -166,6 +193,9 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 		set => Component->AtkDragDropInterface.DragDropSoundEffectSuppression = value;
 	}
 
+	/// <summary>
+	/// When true, allows left-clicking the item to trigger OnClicked
+	/// </summary>
 	public bool IsClickable {
 		get => Component->Flags.HasFlag(DragDropFlag.Clickable);
 		set {
