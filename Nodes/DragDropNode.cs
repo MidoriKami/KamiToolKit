@@ -240,4 +240,12 @@ public unsafe record DragDropPayload {
 			}
 		}
 	}
+
+	public void Clear() {
+		Type = DragDropType.Nothing;
+		ReferenceIndex = 0;
+		Int1 = 0;
+		Int2 = -1;
+		Text = default;
+	}
 }
