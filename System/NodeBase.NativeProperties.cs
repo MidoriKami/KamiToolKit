@@ -134,7 +134,7 @@ public abstract unsafe partial class NodeBase {
 
     public virtual float Alpha {
         get => InternalResNode->Color.A;
-        set => InternalResNode->Color.A = (byte)(value * 255.0f);
+        set => InternalResNode->SetAlpha((byte) (value * 255.0f));
     }
 
     [JsonProperty] public virtual Vector3 AddColor {
