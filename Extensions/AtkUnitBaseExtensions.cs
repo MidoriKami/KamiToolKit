@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using FFXIVClientStructs.Attributes;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -35,4 +36,7 @@ public static unsafe class AtkUnitBaseExtensions {
 		if (addonName is null) throw new Exception("Addon attribute names are empty.");
 		return addonName;
 	}
+
+	public static Vector2 Size(ref this AtkUnitBase addon)
+		=> new(addon.RootNode->Width, addon.RootNode->Height);
 }
