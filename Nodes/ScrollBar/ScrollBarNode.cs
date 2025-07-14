@@ -91,6 +91,11 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 		set => Component->SetScrollPosition(value);
 	}
 
+	public int ScrollSpeed {
+		get => Component->MouseWheelSpeed;
+		set => Component->MouseWheelSpeed = (short) value;
+	}
+
 	/// <summary>
 	/// Updates from attached Content and Collision nodes
 	/// </summary>
