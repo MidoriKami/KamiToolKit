@@ -39,4 +39,7 @@ public static unsafe class AtkUnitBaseExtensions {
 
 	public static Vector2 Size(ref this AtkUnitBase addon)
 		=> new(addon.RootNode->Width, addon.RootNode->Height);
+	
+	public static Vector2 Position(ref this AtkUnitBase addon)
+		=> new(addon.X, addon.Y);
 }
