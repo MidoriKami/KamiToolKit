@@ -60,13 +60,13 @@ public unsafe class NativeController : IDisposable {
 			}
 		});
 
-	public void AttachNode(NodeBase customNode, AtkResNode* targetNode, NodePosition position = NodePosition.AsLastChild)
+	public void AttachNode(NodeBase customNode, AtkResNode* targetNode, NodePosition? position = null)
 		=> Framework.RunOnFrameworkThread(() => {
 			Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint) customNode.InternalResNode:X}] to a native AtkResNode");
 			var addon = GetAddonForNode(targetNode);
 
 			customNode.RegisterAutoDetach(addon);
-			customNode.AttachNode(targetNode, position);
+			customNode.AttachNode(targetNode, position ?? NodePosition.AsLastChild);
 			customNode.EnableEvents(addon);
 		});
 
@@ -93,11 +93,11 @@ public unsafe class NativeController : IDisposable {
 		});
 	}
 
-	public void AttachNode(NodeBase customNode, NativeAddon targetAddon, NodePosition position = NodePosition.AsLastChild) {
+	public void AttachNode(NodeBase customNode, NativeAddon targetAddon, NodePosition? position = null) {
 		Framework.RunOnFrameworkThread(() => {
 			Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint) customNode.InternalResNode:X}] to a Custom Addon [{targetAddon.GetType()}]");
 
-			customNode.AttachNode(targetAddon, position);
+			customNode.AttachNode(targetAddon, position ?? NodePosition.AsLastChild);
 			customNode.EnableEvents(targetAddon.InternalAddon);
 		});
 	}
