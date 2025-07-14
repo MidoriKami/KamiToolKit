@@ -34,31 +34,42 @@ public class ListBoxNode : LayoutListNode {
     protected override uint ListBaseId => 3;
 
     [JsonProperty] public LayoutAnchor LayoutAnchor {
-        get; set { 
+        get; 
+        set { 
             field = value;
             RecalculateLayout();
         }
     }
 
-    /// <summary>
-    /// If enabled, the background is sized around the content, not the list itself.
-    /// </summary>
     [JsonProperty] public bool BackgroundFitsContents {
-        get; set { 
+        get; 
+        set { 
             field = value;
             RecalculateLayout();
         }
     }
 
     [JsonProperty] public bool BorderFitsContents {
-        get; set { 
+        get; 
+        set { 
             field = value;
             RecalculateLayout();
         }
     }
 
+    [JsonProperty] public bool FitContents {
+        get;
+        set {
+            field = value;
+            BackgroundFitsContents = value;
+            BorderFitsContents = value;
+            RecalculateLayout();
+        }
+    }
+
     [JsonProperty] public LayoutOrientation LayoutOrientation {
-        get; set {
+        get; 
+        set {
             field = value;
             RecalculateLayout();
         } 
@@ -77,22 +88,6 @@ public class ListBoxNode : LayoutListNode {
     [JsonProperty] public bool ShowBorder {
         get => Border.IsVisible;
         set => Border.IsVisible = value;
-    }
-
-    public override float Width {
-        get => base.Width;
-        set {
-            base.Width = value;
-            RecalculateLayout();
-        }
-    }
-
-    public override float Height {
-        get => base.Height;
-        set {
-            base.Height = value;
-            RecalculateLayout();
-        }
     }
 
     [JsonProperty] public Spacing ItemMargin {
@@ -143,6 +138,10 @@ public class ListBoxNode : LayoutListNode {
         else {
             Border.Size = Size + new Vector2(30.0f, 30.0f);
             Border.Position = - new Vector2(15.0f, 15.0f) - new Vector2(ItemMargin.Left, ItemMargin.Top);
+        }
+        
+        if (FitContents) {
+            Size = GetMinimumSize();
         }
     }
     
