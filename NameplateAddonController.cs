@@ -15,10 +15,10 @@ public unsafe class NameplateAddonController : AddonController<AddonNamePlate> {
 	}
 
 	public override void Dispose() {
+		base.Dispose();
+		
 		PostEnable -= RefreshAddon;
 		PostDisable -= RefreshAddon;
-		
-		base.Dispose();
 	}
 
 	private void RefreshAddon(AddonNamePlate* addon) {
