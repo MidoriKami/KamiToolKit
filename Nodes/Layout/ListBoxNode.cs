@@ -173,8 +173,15 @@ public class ListBoxNode : LayoutListNode {
     }
 
     private void CalculateVerticalLayout() {
-        var runningPosition = GetLayoutStartPosition() + new Vector2(0.0f, FirstItemSpacing);
-        
+        var runningPosition = GetLayoutStartPosition();
+
+        if (LayoutAnchor is LayoutAnchor.TopLeft or LayoutAnchor.TopRight) {
+            runningPosition += new Vector2(0.0f, FirstItemSpacing);
+        }
+        else if (LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.BottomRight) {
+            runningPosition -= new Vector2(0.0f, FirstItemSpacing);
+        }
+
         foreach (var node in NodeList) {
             if (!node.IsVisible) continue;
             
@@ -211,6 +218,13 @@ public class ListBoxNode : LayoutListNode {
     private void CalculateHorizontalLayout() {
         var runningPosition = GetLayoutStartPosition();
 
+        if (LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.TopLeft) {
+            runningPosition += new Vector2(FirstItemSpacing, 0.0f);
+        }
+        else if (LayoutAnchor is LayoutAnchor.BottomRight or LayoutAnchor.TopRight) {
+            runningPosition -= new Vector2(FirstItemSpacing, 0.0f);
+        }
+        
         foreach (var node in NodeList) {
             if (!node.IsVisible) continue;
             
