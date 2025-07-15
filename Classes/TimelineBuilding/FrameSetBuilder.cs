@@ -45,11 +45,12 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 	}
 	
 	public FrameSetBuilder AddFrame(int frameId, Vector2? position = null, byte? alpha = null, Vector3? addColor = null, Vector3? multiplyColor = null,
-		float? rotation = null, Vector2? scale = null, Vector3? textColor = null, Vector3? textOutlineColor = null, uint? partId = null) {
+		float? rotation = null, Vector2? scale = null, Vector3? textColor = null, Vector3? textOutlineColor = null, uint? partId = null, AtkTimelineInterpolation? interpolation = null) {
 		if (position is not null) {
 			animationKeyFrames.Add(new TimelineAnimationKeyFrame {
 				FrameIndex = frameId,
 				Position = position.Value,
+				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			});
 		}
 
@@ -57,6 +58,7 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 			animationKeyFrames.Add(new TimelineAnimationKeyFrame {
 				FrameIndex = frameId,
 				Alpha = alpha.Value,
+				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			});
 		}
 
@@ -65,6 +67,7 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 				FrameIndex = frameId,
 				AddColor = addColor ?? new Vector3(0.0f, 0.0f, 0.0f),
 				MultiplyColor = multiplyColor ?? new Vector3(100.0f, 100.0f, 100.0f),
+				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			});
 		}
 
@@ -72,6 +75,7 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 			animationKeyFrames.Add(new TimelineAnimationKeyFrame {
 				FrameIndex = frameId,
 				Rotation = rotation.Value,
+				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			});
 		}
 
@@ -79,6 +83,7 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 			animationKeyFrames.Add(new TimelineAnimationKeyFrame {
 				FrameIndex = frameId,
 				Scale = scale.Value,
+				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			});
 		}
 
@@ -86,6 +91,7 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 			animationKeyFrames.Add(new TimelineAnimationKeyFrame {
 				FrameIndex = frameId,
 				TextColor = textColor.Value,
+				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			});
 		}
 
@@ -93,6 +99,7 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 			animationKeyFrames.Add(new TimelineAnimationKeyFrame {
 				FrameIndex = frameId,
 				TextEdgeColor = textOutlineColor.Value,
+				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			});
 		}
 
@@ -100,6 +107,7 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 			animationKeyFrames.Add(new TimelineAnimationKeyFrame {
 				FrameIndex = frameId,
 				PartId = partId.Value,
+				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			});
 		}
 		
