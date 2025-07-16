@@ -13,6 +13,7 @@ using Dalamud.Utility;
 using ImGuiNET;
 using KamiToolKit.Classes;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace KamiToolKit.System;
 
@@ -30,6 +31,14 @@ public partial class NodeBase {
 	public void Load(string filePath) {
 		try {
 			var fileData = File.ReadAllText(filePath);
+			if (OnLoadOmittedProperties.Count != 0) {
+				var jObject = JObject.Parse(fileData);
+				foreach (var property in OnLoadOmittedProperties) {
+					jObject.Remove(property);
+				}
+				fileData = jObject.ToString();
+			}
+			
 			if (!fileData.IsNullOrEmpty()) {
 				JsonConvert.PopulateObject(fileData, this);
 			}
@@ -41,6 +50,12 @@ public partial class NodeBase {
 			Log.Exception(e);
 		}
 	}
+
+	/// <summary>
+	/// Setting these properties will prevent Load operations from setting those properties.
+	/// </summary>
+	/// <example>Setting "Position" will prevent a position value from the json from overwriting the nodes position</example>
+	protected virtual List<string> OnLoadOmittedProperties { get; set; } = [];
 
 	private bool TagListGenerated { get; set; }
 	
