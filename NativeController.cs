@@ -108,6 +108,7 @@ public unsafe class NativeController : IDisposable {
 				Log.Verbose($"[NativeController] Detaching [{customNode.GetType()}:{(nint) customNode.InternalResNode:X}] from all sources.");
 			}
 
+			customNode?.DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
 			customNode?.UnregisterAutoDetach();
 			customNode?.DisableEvents();
 			customNode?.DetachNode();
