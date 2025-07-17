@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using KamiToolKit.Classes;
@@ -17,14 +16,12 @@ public class ListBoxNode : LayoutListNode {
     public ListBoxNode() {
         Background = new BackgroundImageNode {
             NodeId = 2,
-            Size = new Vector2(600.0f, 32.0f),
             IsVisible = true,
         };
         Background.AttachNode(this);
         
         Border = new BorderNineGridNode {
             NodeId = 3,
-            Size = new Vector2(600.0f, 32.0f),
             Position = new Vector2(-15.0f, -15.0f),
             IsVisible = false,
         };
@@ -41,28 +38,10 @@ public class ListBoxNode : LayoutListNode {
         }
     }
 
-    [JsonProperty] public bool BackgroundFitsContents {
-        get; 
-        set { 
-            field = value;
-            RecalculateLayout();
-        }
-    }
-
-    [JsonProperty] public bool BorderFitsContents {
-        get; 
-        set { 
-            field = value;
-            RecalculateLayout();
-        }
-    }
-
     [JsonProperty] public bool FitContents {
         get;
         set {
             field = value;
-            BackgroundFitsContents = value;
-            BorderFitsContents = value;
             RecalculateLayout();
         }
     }
@@ -97,6 +76,34 @@ public class ListBoxNode : LayoutListNode {
         }
     } = new(0.0f);
 
+    public override float Height {
+        get;
+        set {
+            field = FitContents ? GetMinimumSize().Y : value;
+            
+            base.Height = field;
+            
+            Background.Height = field;
+            Border.Height = field + 30.0f;
+            
+            RecalculateLayout();
+        }
+    }
+
+    public override float Width { 
+        get;
+        set {
+            field = FitContents ? GetMinimumSize().X : value;
+
+            base.Width = field;
+            
+            Background.Width = field;
+            Border.Width = field + 30.0f;
+            
+            RecalculateLayout();
+        }
+    }
+
     public override void RecalculateLayout() {
         switch (LayoutOrientation) {
             case LayoutOrientation.Vertical:
@@ -106,42 +113,6 @@ public class ListBoxNode : LayoutListNode {
             case LayoutOrientation.Horizontal:
                 CalculateHorizontalLayout();
                 break;
-        }
-
-        if (BackgroundFitsContents) {
-            Background.Size = GetMinimumSize();
-
-            var topLeftNode = NodeList
-                .Where(node => node.IsVisible)
-                .MinBy(node => node.Position.Length());
-            
-            if (NodeList.Count is not 0 && topLeftNode is not null) {
-                Background.Position = topLeftNode.Position - new Vector2(ItemMargin.Left, ItemMargin.Top);
-            }
-        }
-        else {
-            Background.Size = Size;
-            Background.Position = Vector2.Zero - new Vector2(ItemMargin.Left, ItemMargin.Top);
-        }
-        
-        if (BorderFitsContents) {
-            Border.Size = GetMinimumSize() + new Vector2(30.0f, 30.0f);
-
-            var topLeftNode = NodeList
-                .Where(node => node.IsVisible)
-                .MinBy(node => node.Position.Length());
-            
-            if (NodeList.Count is not 0 && topLeftNode is not null) {
-                Border.Position = topLeftNode.Position - new Vector2(15.0f, 15.0f) - new Vector2(ItemMargin.Left, ItemMargin.Top);
-            }
-        }
-        else {
-            Border.Size = Size + new Vector2(30.0f, 30.0f);
-            Border.Position = - new Vector2(15.0f, 15.0f) - new Vector2(ItemMargin.Left, ItemMargin.Top);
-        }
-        
-        if (FitContents) {
-            Size = GetMinimumSize();
         }
     }
     
