@@ -24,14 +24,14 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
 		rightEditNode.AttachNode(this);
 		
 		bottomEditNode = new HorizontalResizeNineGridNode {
-			Position = new Vector2(16.0f, 0.0f),
+			Position = new Vector2(14.0f, 0.0f),
 			Size = new Vector2(0.0f, 8.0f),
 			IsVisible = true,
 		};
 		bottomEditNode.AttachNode(this);
 		
 		leftEditNode = new VerticalResizeNineGridNode {
-			Position = new Vector2(16.0f, 16.0f),
+			Position = new Vector2(18.0f, 16.0f),
 			Size = new Vector2 (8.0f, 0.0f),
 			Rotation = 1 * MathF.PI / 2.0f,
 			IsVisible = true,
@@ -39,7 +39,7 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
 		leftEditNode.AttachNode(this);
 		
 		topEditNode = new HorizontalResizeNineGridNode {
-			Position = new Vector2(16.0f, 12.0f), 
+			Position = new Vector2(14.0f, 12.0f), 
 			Size = new Vector2(0.0f, 8.0f), 
 			IsVisible = true,
 		};
@@ -67,7 +67,7 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
 		set {
 			base.Height = value;
 			rightEditNode.Height = value - 32.0f;
-			bottomEditNode.Y = value - 20.0f;
+			bottomEditNode.Y = value - 22.0f;
 			leftEditNode.Height = value - 32.0f;
 			rightCornerEditNode.Y = value - 44.0f;
 			leftCornerEditNode.Y = value - 44.0f;
@@ -78,9 +78,9 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
 		get => base.Width;
 		set {
 			base.Width = value;
-			rightEditNode.X = value - 18.0f;
-			bottomEditNode.Width = value - 32.0f;
-			topEditNode.Width = value - 32.0f;
+			rightEditNode.X = value - 16.0f;
+			bottomEditNode.Width = value - 28.0f;
+			topEditNode.Width = value - 28.0f;
 			rightCornerEditNode.X = value - 44.0f;
 		}
 	}
