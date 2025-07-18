@@ -7,8 +7,8 @@ public abstract unsafe partial class NodeBase {
 	public Timeline? Timeline { get; private set; }
 
 	public void AddTimeline(Timeline timeline) {
-		if (Timeline is not null) return;
-		
+		Timeline?.Dispose();
+
 		Timeline = timeline;
 		InternalResNode->Timeline = timeline.InternalTimeline;
 		timeline.OwnerNode = InternalResNode;
