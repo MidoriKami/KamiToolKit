@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using KamiToolKit.NodeParts;
+using KamiToolKit.Extensions;
 
 namespace KamiToolKit.Nodes;
 
@@ -17,6 +18,6 @@ public class IconImageNode : SimpleImageNode {
 		}
 	}
 
-	public uint? LoadedIconId 
-		=> PartsList[0].GetLoadedIconId();
+	public unsafe uint? LoadedIconId 
+		=> InternalNode->GetIconId();
 }

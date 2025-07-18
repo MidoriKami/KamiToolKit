@@ -92,17 +92,6 @@ public unsafe class Part : IDisposable {
         get => GetLoadedPath();
         set => LoadTexture(value);
     }
-    
-    /// <summary>
-    /// Gets the icon id of the currently loaded texture
-    /// </summary>
-    /// <returns>IconId or null</returns>
-    public uint? GetLoadedIconId() {
-        if (!internalAsset->AtkTexture.IsTextureReady()) return null;
-        if (internalAsset->AtkTexture.Resource is null) return null;
-
-        return internalAsset->AtkTexture.Resource->IconId;
-    }
 
     /// <summary>
     /// Gets the loaded tex file resource handle texture, string.Empty if null
