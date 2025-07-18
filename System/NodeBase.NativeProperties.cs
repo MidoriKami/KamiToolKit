@@ -165,6 +165,11 @@ public abstract unsafe partial class NodeBase {
         internal set => InternalResNode->DrawFlags = value;
     }
 
+    public int Priority {
+        get => InternalResNode->GetPriority();
+        set => InternalResNode->SetPriority((ushort)value);
+    }
+
     protected virtual NodeType NodeType {
         get => InternalResNode->GetNodeType();
         set => InternalResNode->Type = value;
