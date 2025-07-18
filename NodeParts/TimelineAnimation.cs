@@ -24,6 +24,8 @@ public unsafe class TimelineAnimation : IDisposable {
 	}
 	
 	public void Dispose() {
+		if (InternalAnimation is null) return;
+		
 		foreach (ref var spanGroup in InternalAnimation->KeyGroups) {
 			NativeMemoryHelper.UiFree(spanGroup.KeyFrames);
 			spanGroup.KeyFrames = null;
