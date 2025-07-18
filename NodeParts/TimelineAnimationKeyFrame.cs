@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
-using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.STD;
+using KamiToolKit.Extensions;
 
 namespace KamiToolKit.NodeParts;
 
@@ -84,11 +84,7 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
 		get => new Vector3(Value.RGB.R, Value.RGB.G, Value.RGB.B) * 255.0f;
 		set {
 			Value = new AtkTimelineKeyValue {
-				RGB = new ByteColor {
-					R = (byte) ( value.X / 255.0f ),
-					G = (byte) ( value.Y / 255.0f ),
-					B = (byte) ( value.Z / 255.0f ),
-				},
+				RGB = value.AsVector4().ToByteColor(),
 			};
 
 			GroupType = AtkTimelineKeyGroupType.RGB;
@@ -100,11 +96,7 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
 		get => new Vector3(Value.RGB.R, Value.RGB.G, Value.RGB.B) * 255.0f;
 		set {
 			Value = new AtkTimelineKeyValue {
-				RGB = new ByteColor {
-					R = (byte) ( value.X / 255.0f ),
-					G = (byte) ( value.Y / 255.0f ),
-					B = (byte) ( value.Z / 255.0f ),
-				},
+				RGB = value.AsVector4().ToByteColor(),
 			};
 
 			GroupType = AtkTimelineKeyGroupType.RGB;
