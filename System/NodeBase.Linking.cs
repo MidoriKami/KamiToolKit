@@ -38,7 +38,17 @@ public abstract unsafe partial class NodeBase {
 	}
 
 	internal void AttachNode(AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings) {
-		NodeLinker.AttachNode(InternalResNode, targetNode->Component->UldManager.RootNode, position);
+		void* attachTarget = position switch {
+			NodePosition.AfterTarget => targetNode,
+			NodePosition.BeforeTarget => targetNode,
+			NodePosition.AfterAllSiblings => targetNode,
+			NodePosition.BeforeAllSiblings => targetNode,
+			NodePosition.AsLastChild => targetNode->Component->UldManager.RootNode,
+			NodePosition.AsFirstChild => targetNode->Component->UldManager.RootNode,
+			_ => throw new ArgumentOutOfRangeException(nameof(position), position, null),
+		};
+		
+		NodeLinker.AttachNode(InternalResNode, (AtkResNode*) attachTarget, position);
 		UpdateNative();
 	}
 
