@@ -10,7 +10,6 @@ public unsafe class Timeline : IDisposable {
 	internal AtkTimeline* InternalTimeline;
 	
 	private readonly TimelineResource internalTimelineResource;
-	// private readonly TimelineResource internalLabelSetResource;
 	
 	public Timeline() {
 		InternalTimeline = NativeMemoryHelper.UiAlloc<AtkTimeline>();
@@ -18,8 +17,6 @@ public unsafe class Timeline : IDisposable {
 		internalTimelineResource = new TimelineResource();
 		InternalTimeline->Resource = internalTimelineResource.InternalResource;
 		
-		// internalLabelSetResource = new TimelineResource();
-		// InternalTimeline->LabelResource = internalLabelSetResource.InternalResource;
 		InternalTimeline->LabelResource = null;
 		
 		InternalTimeline->FrameTime = 0.033333335f;
@@ -35,7 +32,6 @@ public unsafe class Timeline : IDisposable {
 
 	public void Dispose() {
 		internalTimelineResource.Dispose();
-		// internalLabelSetResource.Dispose();
 		
 		NativeMemoryHelper.UiFree(InternalTimeline);
 		InternalTimeline = null;
