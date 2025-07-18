@@ -78,11 +78,11 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 		
 		BuildTimelines();
 		
-		Timeline?.StartAnimation(4);
+		Timeline?.PlayAnimation(4);
 		
 		CollisionNode.SetEventFlags();
-		CollisionNode.AddEvent(AddonEventType.MouseOver, _ => Timeline?.StartAnimation(IsCollapsed ? 2 : 9));
-		CollisionNode.AddEvent(AddonEventType.MouseOut, _ => Timeline?.StartAnimation(IsCollapsed ? 4 : 11));
+		CollisionNode.AddEvent(AddonEventType.MouseOver, _ => Timeline?.PlayAnimation(IsCollapsed ? 2 : 9));
+		CollisionNode.AddEvent(AddonEventType.MouseOut, _ => Timeline?.PlayAnimation(IsCollapsed ? 4 : 11));
 		CollisionNode.AddEvent(AddonEventType.MouseClick, _ => Toggle());
 	}
 
@@ -117,7 +117,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
 	public void Toggle() {
 		IsCollapsed = !IsCollapsed;
-		Timeline?.StartAnimation(IsCollapsed ? 4 : 11);
+		Timeline?.PlayAnimation(IsCollapsed ? 4 : 11);
 		OptionListNode.Toggle(!IsCollapsed);
 
 		var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);

@@ -34,6 +34,6 @@ public class CursorNode : ResNode {
 			.EndFrameSet()
 			.Build());
 
-		Timeline?.StartAnimation(101);
+		Timeline?.PlayAnimation(101);
 	}
 }

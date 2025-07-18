@@ -70,7 +70,7 @@ internal class ResizeButtonNode : SimpleComponentNode {
 			.Build()
 		);
 		
-		Timeline?.StartAnimation(1);
+		Timeline?.PlayAnimation(1);
 	}
 
 	public bool IsHovered {

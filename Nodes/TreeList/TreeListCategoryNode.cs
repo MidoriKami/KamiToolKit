@@ -91,8 +91,8 @@ public class TreeListCategoryNode : ResNode {
 		BuildTimelines();
 
 		CollisionNode.SetEventFlags();
-		CollisionNode.AddEvent(AddonEventType.MouseOver, _ => Timeline?.StartAnimation(IsCollapsed ? 2 : 9));
-		CollisionNode.AddEvent(AddonEventType.MouseOut, _ => Timeline?.StartAnimation(IsCollapsed ? 1 : 8));
+		CollisionNode.AddEvent(AddonEventType.MouseOver, _ => Timeline?.PlayAnimation(IsCollapsed ? 2 : 9));
+		CollisionNode.AddEvent(AddonEventType.MouseOut, _ => Timeline?.PlayAnimation(IsCollapsed ? 1 : 8));
 		CollisionNode.AddEvent(AddonEventType.MouseClick, _ => {
 			IsCollapsed = !IsCollapsed;
 			UpdateCollapsed();
@@ -106,12 +106,12 @@ public class TreeListCategoryNode : ResNode {
 		set {
 			InternalIsCollapsed = value;
 			UpdateCollapsed();
-			Timeline?.StartAnimation(IsCollapsed ? 1 : 8);
+			Timeline?.PlayAnimation(IsCollapsed ? 1 : 8);
 		}
 	}
 	
 	private void UpdateCollapsed() {
-		Timeline?.StartAnimation(IsCollapsed ? 1 : 8);
+		Timeline?.PlayAnimation(IsCollapsed ? 1 : 8);
 		ChildContainer.IsVisible = !IsCollapsed;
 		Height = IsCollapsed ? BackgroundNode.Height : ChildContainer.Height + BackgroundNode.Height;
 		ParentTreeListNode?.RefreshLayout();
