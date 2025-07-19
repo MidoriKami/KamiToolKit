@@ -55,7 +55,7 @@ public partial class NodeBase {
 	/// Setting these properties will prevent Load operations from setting those properties.
 	/// </summary>
 	/// <example>Setting "Position" will prevent a position value from the json from overwriting the nodes position</example>
-	protected virtual List<string> OnLoadOmittedProperties { get; set; } = [];
+	public virtual List<string> OnLoadOmittedProperties { get; set; } = [];
 
 	private bool TagListGenerated { get; set; }
 	
