@@ -177,9 +177,8 @@ public abstract unsafe partial class NodeBase {
 
     public virtual int ChildCount => InternalResNode->ChildCount;
 
-    public void MarkDirty() {
-        DrawFlags |= 1;
-    }
+    public void MarkDirty()
+        => VisitChildren(InternalResNode, pointer => pointer.Value->DrawFlags |= 1);
 
     public bool CheckCollision(short x, short y)
         => InternalResNode->CheckCollisionAtCoords(x, y, true);
