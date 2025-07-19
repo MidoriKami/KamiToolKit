@@ -41,6 +41,7 @@ public partial class NodeBase {
 			
 			if (!fileData.IsNullOrEmpty()) {
 				JsonConvert.PopulateObject(fileData, this);
+				MarkDirty();
 			}
 		}
 		catch (FileNotFoundException) {
