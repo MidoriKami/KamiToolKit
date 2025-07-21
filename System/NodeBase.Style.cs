@@ -52,6 +52,18 @@ public partial class NodeBase {
 		}
 	}
 
+	public void Load(NodeBase otherNode, params string[] omittedProperties) {
+		var serializedOther = JsonConvert.SerializeObject(otherNode, Formatting.Indented);
+		var reserialized = (JObject?) JsonConvert.DeserializeObject(serializedOther);
+		if (reserialized is not null) {
+			foreach (var property in omittedProperties) {
+				reserialized.Remove(property);
+			}
+			
+			JsonConvert.PopulateObject(reserialized.ToString(), this);
+		}
+	}
+
 	/// <summary>
 	/// Setting these properties will prevent Load operations from setting those properties.
 	/// </summary>
