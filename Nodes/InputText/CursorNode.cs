@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
@@ -18,17 +17,9 @@ public class CursorNode : ResNode {
 			WrapMode = 1,
 			ImageNodeFlags = 0x0,
 		};
-		
 		CursorImageNode.AttachNode(this);
-		
-		AddTimeline(new TimelineBuilder()
-			.BeginFrameSet(1, 15)
-			.AddLabel(1, 101, AtkTimelineJumpBehavior.Start, 0)
-			.AddLabel(15, 0, AtkTimelineJumpBehavior.LoopForever, 101)
-			.EndFrameSet()
-			.Build());
-		
-		CursorImageNode.AddTimeline(new TimelineBuilder()
+
+        CursorImageNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 8)
 			.AddEmptyFrame(1)
 			.EndFrameSet()

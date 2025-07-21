@@ -270,9 +270,10 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			.Build());
 		
 		CursorNode.AddTimeline(new TimelineBuilder()
-			.BeginFrameSet(1, 19)
-			.AddEmptyFrame(1)
-			.EndFrameSet()
-			.Build());
+           .BeginFrameSet(1, 15)
+           .AddLabel(1, 101, AtkTimelineJumpBehavior.Start, 0)
+           .AddLabel(15, 0, AtkTimelineJumpBehavior.LoopForever, 101)
+           .EndFrameSet()
+           .Build());
 	}
 }
