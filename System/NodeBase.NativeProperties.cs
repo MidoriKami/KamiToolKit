@@ -40,16 +40,24 @@ public abstract unsafe partial class NodeBase {
         }
     }
     
+    protected virtual void OnSizeChanged() { }
+    
     public virtual float Width {
         get => InternalResNode->GetWidth();
-        set => InternalResNode->SetWidth((ushort)value);
+        set {
+            InternalResNode->SetWidth((ushort)value);
+            OnSizeChanged();
+        }
     }
 
     public virtual float Height {
         get => InternalResNode->GetHeight();
-        set => InternalResNode->SetHeight((ushort) value);
+        set {
+            InternalResNode->SetHeight((ushort)value);
+            OnSizeChanged();
+        }
     }
-    
+
     [JsonProperty] public virtual Vector2 Size {
         get => new(Width, Height);
         set {
