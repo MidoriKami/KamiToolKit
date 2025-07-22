@@ -164,6 +164,10 @@ public class TreeListCategoryNode : ResNode {
 			LabelNode.Width = value - 23.0f;
 			ChildContainer.Width = value;
 			CollisionNode.Width = value;
+
+            foreach (var node in children) {
+                node.Width = value;
+            }
 		}
 	}
 
