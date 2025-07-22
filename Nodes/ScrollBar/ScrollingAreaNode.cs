@@ -1,10 +1,11 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class ScrollingAreaNode : ResNode {
+public unsafe class ScrollingAreaNode<T> : ResNode where T : NodeBase, new() {
 
-	public readonly ResNode ContentAreaNode;
+	public readonly T ContentAreaNode;
 	public readonly ResNode ContentAreaClipNode;
 	public readonly CollisionNode ScrollingCollisionNode;
 	public readonly ScrollBarNode ScrollBarNode;
@@ -23,10 +24,9 @@ public unsafe class ScrollingAreaNode : ResNode {
 		};
 		ContentAreaClipNode.AttachNode(this);
 		
-		ContentAreaNode = new ResNode {
+		ContentAreaNode = new T {
 			IsVisible = true,
 		};
-
 		ContentAreaNode.AttachNode(ContentAreaClipNode);
 		
 		ScrollBarNode = new ScrollBarNode {
@@ -54,9 +54,9 @@ public unsafe class ScrollingAreaNode : ResNode {
 			false);
 	}
 
-	public ResNode ContentNode => ContentAreaNode;
+	public virtual T ContentNode => ContentAreaNode;
 
-	public int ScrollPosition {
+    public int ScrollPosition {
 		get => ScrollBarNode.ScrollPosition;
 		set => ScrollBarNode.ScrollPosition = value;
 	}
