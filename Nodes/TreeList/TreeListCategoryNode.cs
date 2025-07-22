@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Text.SeStringHandling;
@@ -96,10 +97,13 @@ public class TreeListCategoryNode : ResNode {
 		CollisionNode.AddEvent(AddonEventType.MouseClick, _ => {
 			IsCollapsed = !IsCollapsed;
 			UpdateCollapsed();
-		});
+            OnToggle?.Invoke(!IsCollapsed);
+        });
 	}
 
 	private bool InternalIsCollapsed { get; set; }
+
+    public Action<bool>? OnToggle;
 
 	public bool IsCollapsed {
 		get => InternalIsCollapsed;
