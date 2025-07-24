@@ -46,6 +46,8 @@ public class TreeListNode : ResNode {
 		childContainer.Height = 0.0f;
 		
 		foreach (var child in children) {
+            if (!child.IsVisible) continue;
+            
 			child.Y = childContainer.Height;
 			childContainer.Height += child.Height + CategoryVerticalSpacing;
 		}

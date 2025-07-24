@@ -125,6 +125,8 @@ public class TreeListCategoryNode : ResNode {
 		ChildContainer.Height = 0.0f;
 
 		foreach (var child in children) {
+            if (!child.IsVisible) continue;
+            
 			child.Y = ChildContainer.Height;
 			child.Width = ChildContainer.Width;
 		
