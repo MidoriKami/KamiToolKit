@@ -121,8 +121,7 @@ internal static unsafe class NodeLinker {
 
     private static void EmplaceAsLastChild(AtkResNode* node, AtkResNode* attachTargetNode) {
         // If the child list is empty
-        if (attachTargetNode->ChildNode is null && attachTargetNode->GetNodeType() is not NodeType.Component)
-        {
+        if (attachTargetNode->ChildNode is null && attachTargetNode->GetNodeType() is not NodeType.Component) {
             if (attachTargetNode->GetNodeType() is not NodeType.Component) {
                 attachTargetNode->ChildNode = node;
                 node->ParentNode = attachTargetNode;
@@ -136,8 +135,7 @@ internal static unsafe class NodeLinker {
         else
         {
             var currentNode = attachTargetNode->ChildNode;
-            while (currentNode is not null && currentNode->PrevSiblingNode != null)
-            {
+            while (currentNode is not null && currentNode->PrevSiblingNode != null) {
                 currentNode = currentNode->PrevSiblingNode;
             }
 
@@ -152,8 +150,7 @@ internal static unsafe class NodeLinker {
     
     private static void EmplaceAsFirstChild(AtkResNode* node, AtkResNode* attachTargetNode) {
         // If the child list is empty
-        if (attachTargetNode->ChildNode is null && attachTargetNode->ChildCount is 0)
-        {
+        if (attachTargetNode->ChildNode is null && attachTargetNode->ChildCount is 0) {
             if (attachTargetNode->GetNodeType() is not NodeType.Component) {
                 attachTargetNode->ChildNode = node;
                 node->ParentNode = attachTargetNode;
