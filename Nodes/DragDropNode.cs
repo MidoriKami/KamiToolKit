@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
+using FFXIVClientStructs.FFXIV.Client.Enums;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -194,13 +195,13 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 	}
 
 	public bool IsDraggable {
-		get => !Component->Flags.HasFlag(DragDropFlag.Unk2);
+		get => !Component->Flags.HasFlag(DragDropFlag.Locked);
 		set {
 			if (value) {
-				Component->Flags &= ~DragDropFlag.Unk2;
+				Component->Flags &= ~DragDropFlag.Locked;
 			}
 			else {
-				Component->Flags |= DragDropFlag.Unk2;
+				Component->Flags |= DragDropFlag.Locked;
 			}
 		}
 	}
@@ -227,6 +228,7 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 	}
 
 	// Show fancy tooltip for the currently stored data
+    // Note: This is an initial implementation and needs work.
 	public void ShowTooltip(AtkTooltipManager.AtkTooltipType type, ActionKind actionKind) {
 		if (AtkStage.Instance()->DragDropManager.IsDragging) return;
 
@@ -235,8 +237,8 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 
 		var tooltipArgs = new AtkTooltipManager.AtkTooltipArgs();
 		tooltipArgs.Ctor();
-		tooltipArgs.TypeSpecificId = (ulong)Payload.Int2;
-		tooltipArgs.Unk_16 = (byte)actionKind;
+		tooltipArgs.ActionArgs.Id = Payload.Int2;
+		tooltipArgs.ActionArgs.Kind = (DetailKind) actionKind;
 
 		AtkStage.Instance()->TooltipManager.ShowTooltip(
 			AtkTooltipManager.AtkTooltipType.Action,
