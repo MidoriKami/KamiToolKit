@@ -20,6 +20,7 @@ namespace KamiToolKit.System;
 public partial class NodeBase {
 	public void Save(string filePath) {
 		try {
+			Log.Debug($"[NodeBase] Saving {filePath}");
 			var fileText = JsonConvert.SerializeObject(this, Formatting.Indented);
 			FilesystemUtil.WriteAllTextSafe(filePath, fileText);
 		}
@@ -30,6 +31,7 @@ public partial class NodeBase {
 
 	public void Load(string filePath) {
 		try {
+			Log.Debug($"[NodeBase] Loading {filePath}");
 			var fileData = File.ReadAllText(filePath);
 			if (OnLoadOmittedProperties.Count != 0) {
 				var jObject = JObject.Parse(fileData);
@@ -45,6 +47,7 @@ public partial class NodeBase {
 			}
 		}
 		catch (FileNotFoundException) {
+			Log.Debug("[NodeBase] File not found, creating a new one.");
 			Save(filePath);
 		}
 		catch (Exception e) {
