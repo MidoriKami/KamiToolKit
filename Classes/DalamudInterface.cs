@@ -1,5 +1,6 @@
 ﻿using System;
 using Dalamud.IoC;
+using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
 namespace KamiToolKit.Classes;
@@ -14,6 +15,7 @@ internal class DalamudInterface {
 	[PluginService] public ITextureProvider TextureProvider { get; set; } = null!;
 	[PluginService] public IFramework Framework { get; set; } = null!;
 	[PluginService] public IAddonEventManager AddonEventManager { get; set; } = null!;
+    [PluginService] public IDalamudPluginInterface PluginInterface { get; set; } = null!;
 }
 
 internal static class Log {
