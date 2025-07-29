@@ -91,6 +91,8 @@ public abstract unsafe partial class NodeBase {
 		
 	}
 
+    private bool isCursorSet;
+    
 	private void OnEditEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
 		if (overlayNode is null) return;
 		if (editEventListener is null) return;
@@ -164,22 +166,25 @@ public abstract unsafe partial class NodeBase {
 			} break;
 		}
 
-		// Only take control of the cursor if we are overing over our specific overlay node.
-		if (overlayNode.CheckCollision(atkEventData)) {
+		if (isCursorSet) {
 			ResetCursor();
-		}
+            isCursorSet = false;
+        }
 
 		if (currentEditMode.HasFlag(NodeEditMode.Move)) {
 			if (isMoving) {
 				SetCursor(AddonCursorType.Grab);
-			}
+                isCursorSet = true;
+            }
 			else if (CheckCollision(atkEventData)) {
 				SetCursor(AddonCursorType.Hand);
-			}
+                isCursorSet = true;
+            }
 		}
 		
 		if (overlayNode.AnyHovered() && currentEditMode.HasFlag(NodeEditMode.Resize)) {
 			overlayNode.SetCursor();
-		}
+            isCursorSet = true;
+        }
 	}
 }
