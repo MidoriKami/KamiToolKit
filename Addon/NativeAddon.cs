@@ -16,7 +16,8 @@ public abstract unsafe partial class NativeAddon {
 	public ResNode RootNode = null!;
 
 	public WindowNode WindowNode {
-		get; set {
+		get; 
+		set {
 			if (value is null) throw new Exception("Cannot set a window node to null");
 
 			if (InternalAddon->WindowNode is not null) {

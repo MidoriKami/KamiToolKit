@@ -6,6 +6,7 @@ namespace KamiToolKit.Nodes;
 /// Uses a GameIconId to display that icon as the decorator for the button.
 /// </summary>
 public class IconButtonNode : ButtonBase {
+
 	public readonly IconImageNode ImageNode;
 	public readonly NineGridNode BackgroundNode;
 
@@ -58,6 +59,12 @@ public class IconButtonNode : ButtonBase {
 			BackgroundNode.Height = value;
 			base.Height = value;
 		}
+	}
+
+	protected override void OnSizeChanged() {
+		ImageNode.Size = Size - new Vector2(16.0f, 16.0f);
+		ImageNode.Position = BackgroundNode.Position + new Vector2(BackgroundNode.LeftOffset, BackgroundNode.TopOffset);
+		BackgroundNode.Size = Size;
 	}
 
 	private void LoadTimelines()

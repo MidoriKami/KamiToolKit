@@ -8,6 +8,7 @@ public unsafe class Experimental {
 #else
 internal unsafe class Experimental {
 #endif
+
 	private static Experimental? instance;
 	public static Experimental Instance => instance ??= new Experimental();
 
@@ -25,23 +26,21 @@ internal unsafe class Experimental {
 	public delegate void AtkComponentNumericInputSetValueDelegate(AtkComponentNumericInput* thisPtr, int value, bool triggerCallback, bool playSoundEffect);
 	
 	[Signature("E9 ?? ?? ?? ?? 33 D2 F7 F1")]
-	public AtkComponentNumericInputSetValueDelegate? AtkComponentNumericInputSetValueCallback;
+	public AtkComponentNumericInputSetValueDelegate? AtkComponentNumericInputSetValueCallback = null;
 	
 #if DEBUG
 	// WARNING: May result in undefined state or accidental network requests
 	// Use at your own risk.
-	public static void ForceOpenAddon(AgentId agentId) {
-		DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+	public static void ForceOpenAddon(AgentId agentId)
+		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
 			AgentModule.Instance()->GetAgentByInternalId(agentId)->Show();
 		});
-	}
 
 	// WARNING: May result in undefined state or accidental network requests
 	// Use at your own risk.
-	public static void ForceCloseAddon(AgentId agentId) {
-		DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+	public static void ForceCloseAddon(AgentId agentId)
+		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
 			AgentModule.Instance()->GetAgentByInternalId(agentId)->Hide();
 		});
-	}
 #endif
 }

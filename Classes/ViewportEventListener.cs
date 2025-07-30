@@ -21,7 +21,6 @@ public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEven
 	}
 
 	public override void Dispose() {
-
 		var eventList = new List<Pointer<AtkEvent>>();
 
 		var currentEvent = Experimental.Instance.ViewportEventManager->Event;

@@ -11,6 +11,7 @@ namespace KamiToolKit.NodeParts;
 /// Wrapper around a AtkUldPart and AtkUldAsset, loads and holds graphics textures for display in image, and image-like nodes.
 /// </summary>
 public unsafe class Part : IDisposable {
+
     internal AtkUldPart* InternalPart;
     private AtkUldAsset* internalAsset;
  

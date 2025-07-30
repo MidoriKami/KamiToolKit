@@ -7,6 +7,7 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.NodeParts;
 
 public unsafe class TimelineLabelSetArray : IDisposable {
+
 	internal AtkTimelineLabelSet* InternalLabelSetArray = null;
 	
 	public uint Count { get; private set; }

@@ -3,6 +3,7 @@
 namespace KamiToolKit.NodeParts;
 
 public abstract class TimelineKeyFrame {
+
 	public KeyFrameGroupType GroupSelector { get; set; }
 	public AtkTimelineKeyGroupType GroupType { get; set; }
 
