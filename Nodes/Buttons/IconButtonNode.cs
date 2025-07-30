@@ -41,28 +41,8 @@ public class IconButtonNode : ButtonBase {
 		set => ImageNode.IconId = value;
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			ImageNode.Width = value - 16.0f;
-			ImageNode.Position = ImageNode.Position with { X = BackgroundNode.Position.X + BackgroundNode.LeftOffset };
-			BackgroundNode.Width = value;
-			base.Width = value;
-		}
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			ImageNode.Height = value - 16.0f;
-			ImageNode.Position = ImageNode.Position with { Y = BackgroundNode.Position.Y + BackgroundNode.TopOffset };
-			BackgroundNode.Height = value;
-			base.Height = value;
-		}
-	}
-
 	protected override void OnSizeChanged() {
-		ImageNode.Size = Size - new Vector2(16.0f, 16.0f);
+		base.OnSizeChanged();		ImageNode.Size = Size - new Vector2(16.0f, 16.0f);
 		ImageNode.Position = BackgroundNode.Position + new Vector2(BackgroundNode.LeftOffset, BackgroundNode.TopOffset);
 		BackgroundNode.Size = Size;
 	}

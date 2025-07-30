@@ -85,21 +85,8 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
 		set => TextNode.TextFlags2 = value;
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			BackgroundNineGrid.Width = value;
-			TextNode.Width = value - 8.0f;
-		}
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			BackgroundNineGrid.Height = value;
-			TextNode.Height = value - 2.0f;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		BackgroundNineGrid.Size = Size;
+		TextNode.Size = Size - new Vector2(8.0f, 2.0f);
 	}
 }

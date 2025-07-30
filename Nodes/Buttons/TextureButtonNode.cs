@@ -3,6 +3,7 @@
 namespace KamiToolKit.Nodes;
 
 public class TextureButtonNode : ButtonBase {
+
 	public readonly SimpleImageNode ImageNode;
 
 	public TextureButtonNode() {
@@ -34,21 +35,9 @@ public class TextureButtonNode : ButtonBase {
 		get => ImageNode.TextureSize;
 		set => ImageNode.TextureSize = value;
 	}
-	
-	public override float Width {
-		get => base.Width;
-		set {
-			ImageNode.Width = value;
-			base.Width = value;
-		}
-	}
 
-	public override float Height {
-		get => base.Height;
-		set {
-			ImageNode.Height = value;
-			base.Height = value;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		ImageNode.Size = Size;
 	}
 
 	private void LoadTimelines()

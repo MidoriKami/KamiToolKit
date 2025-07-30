@@ -5,6 +5,7 @@ using System.Numerics;
 namespace KamiToolKit.Nodes;
 
 public class GridNode : SimpleComponentNode {
+
 	private List<SimpleComponentNode> gridNodes = [];
 
 	public SimpleComponentNode this[int row, int column] {

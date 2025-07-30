@@ -226,32 +226,21 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 		set => InformationButtonNode.IsVisible = value;
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			HeaderContainerNode.Width = value;
-			HeaderCollisionNode.Width = value - 14.0f;
-			BackgroundNode.Width = value;
-			BorderNode.Width = value;
-			BackgroundImageNode.Width = value - 8.0f;
-			BackgroundImageNode.X = 4.0f;
-			CloseButtonNode.X = value - 33.0f;
-			ConfigurationButtonNode.X = value - 47.0f;
-			InformationButtonNode.X = value - 61.0f;
-			DividingLineNode.Width = value - 20.0f;
-		}
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			BackgroundNode.Height = value;
-			BorderNode.Height = value;
-			BackgroundImageNode.Height = value - 16.0f;
-			BackgroundImageNode.Y = 4.0f;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();
+		
+		HeaderContainerNode.Width = Width;
+		HeaderCollisionNode.Width = Width - 14.0f;
+		BackgroundNode.Size = Size;
+		BorderNode.Size = Size;
+		BackgroundImageNode.Size = new Vector2(Width - 8.0f, Height - 16.0f);
+		BackgroundImageNode.Position = new Vector2(4.0f, 4.0f);
+		
+		CloseButtonNode.X = Width - 33.0f;
+		ConfigurationButtonNode.X = Width - 47.0f;
+		InformationButtonNode.X = Width - 61.0f;
+		DividingLineNode.Width = Width - 20.0f;
+		
 	}
 
 	public bool Focused {

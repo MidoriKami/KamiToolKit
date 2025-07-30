@@ -51,24 +51,10 @@ public unsafe class ListButtonNode : ButtonBase {
 		InitializeComponentEvents();
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			HoverBackgroundNode.Width = value;
-			SelectedBackgroundNode.Width = value;
-			LabelNode.Width = value - 10.0f;
-		}
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			HoverBackgroundNode.Height = value;
-			SelectedBackgroundNode.Height = value;
-			LabelNode.Height = value - 1.0f;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		HoverBackgroundNode.Size = Size;
+		SelectedBackgroundNode.Size = Size;
+		LabelNode.Size = new Vector2(Width - 10.0f, Height - 1.0f);
 	}
 
 	public bool Selected {

@@ -4,6 +4,7 @@ using KamiToolKit.System;
 namespace KamiToolKit.Nodes;
 
 public unsafe class CollisionNode() : NodeBase<AtkCollisionNode>(NodeType.Collision) {
+
     public virtual CollisionType CollisionType {
         get => (CollisionType)InternalNode->CollisionType;
         set => InternalNode->CollisionType = (ushort) value;

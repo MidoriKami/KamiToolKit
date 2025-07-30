@@ -65,24 +65,10 @@ public class CastBarProgressBarNode : SimpleComponentNode {
         set => ProgressNode.Width = Width * value;
     }
 
-    public override float Width {
-        get => base.Width;
-        set {
-            BackgroundImageNode.Width = value;
-            ProgressNode.Width = value;
-            BorderImageNode.Width = value;
-            base.Width = value;
-        }
-    }
-
-    public override float Height {
-        get => base.Height;
-        set {
-            BackgroundImageNode.Height = value;
-            ProgressNode.Height = value;
-            BorderImageNode.Height = value;
-            base.Height = value;
-        }
+    protected override void OnSizeChanged() {
+        BackgroundImageNode.Size = Size;
+        ProgressNode.Size = Size;
+        BorderImageNode.Size = Size;
     }
 
     public Vector4 BackgroundColor {

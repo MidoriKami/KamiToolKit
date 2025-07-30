@@ -11,6 +11,7 @@ namespace KamiToolKit.Nodes;
 /// </summary>
 [JsonObject(MemberSerialization.OptIn)]
 public unsafe class CounterNode : NodeBase<AtkCounterNode> {
+
     public readonly PartsList PartsList;
     
     public CounterNode() : base(NodeType.Counter) {

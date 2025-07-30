@@ -4,6 +4,7 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.Nodes;
 
 public class HorizontalFlexNode : LayoutListNode {
+
 	public FlexFlags AlignmentFlags { get; set; } = FlexFlags.FitContentHeight;
 	
 	public float FitPadding { get; set; } = 4.0f;

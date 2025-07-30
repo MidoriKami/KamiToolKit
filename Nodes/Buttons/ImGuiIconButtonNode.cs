@@ -4,6 +4,7 @@ using Dalamud.Interface.Textures.TextureWraps;
 namespace KamiToolKit.Nodes;
 
 public class ImGuiIconButtonNode : ButtonBase {
+
 	public readonly NineGridNode BackgroundNode;
 	public readonly ImGuiImageNode ImageNode;
 
@@ -33,24 +34,10 @@ public class ImGuiIconButtonNode : ButtonBase {
 		InitializeComponentEvents();
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			ImageNode.Width = value - 16.0f;
-			ImageNode.Position = ImageNode.Position with { X = BackgroundNode.Position.X + BackgroundNode.LeftOffset };
-			BackgroundNode.Width = value;
-		}
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			ImageNode.Height = value - 16.0f;
-			ImageNode.Position = ImageNode.Position with { Y = BackgroundNode.Position.Y + BackgroundNode.TopOffset };
-			BackgroundNode.Height = value;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		ImageNode.Size = Size - new Vector2(16.0f, 16.0f);
+		ImageNode.Position = BackgroundNode.Position + new Vector2(BackgroundNode.LeftOffset, BackgroundNode.TopOffset);
+		BackgroundNode.Size = Size;
 	}
 
 	public bool ShowBackground {

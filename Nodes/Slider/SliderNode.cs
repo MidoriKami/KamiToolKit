@@ -78,34 +78,17 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 		AddEvent(AddonEventType.SliderValueUpdate, ValueChangedHandler);
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			SliderBackgroundButtonNode.Width = value - 24.0f;
-			ProgressTextureNode.Width = value;
-			ValueNode.X = value - 24.0f;
-			Component->SliderSize = (short) Width;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		SliderBackgroundButtonNode.Size = new Vector2(Width - 24.0f, Height);
+		ProgressTextureNode.Size = new Vector2(Width, Height / 2.0f - 1.0f);
+		ProgressTextureNode.Y = Height / 4.0f;
+		ValueNode.Position = new Vector2(Width - 24.0f, Height / 4.0f);
+		SliderForegroundButtonNode.Size = new Vector2(Height / 2.0f, Height / 2.0f - 1.0f);
+		SliderForegroundButtonNode.Y = Height / 4.0f;
+		
+		Component->SliderSize = (short) Width;
 	}
 
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			SliderBackgroundButtonNode.Height = value;
-			
-			SliderForegroundButtonNode.Height = value / 2.0f - 1.0f;
-			SliderForegroundButtonNode.Width = value / 2.0f;
-			SliderForegroundButtonNode.Y = value / 4.0f;
-			
-			ProgressTextureNode.Height = value / 2.0f - 1.0f;
-			ProgressTextureNode.Y = value / 4.0f;
-			
-			ValueNode.Y = value / 4.0f;
-		}
-	}
-	
 	public Action<int>? OnValueChanged { get; set; }
 	
 	private void ValueChangedHandler(AddonEventData obj) {

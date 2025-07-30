@@ -4,6 +4,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 namespace KamiToolKit.Nodes;
 
 internal class HorizontalResizeNineGridNode : SimpleComponentNode {
+
 	public readonly NineGridNode BorderNode;
 
 	public HorizontalResizeNineGridNode() {
@@ -42,19 +43,7 @@ internal class HorizontalResizeNineGridNode : SimpleComponentNode {
 		}
 	}
 
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			BorderNode.Height = value;
-		}
-	}
-
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			BorderNode.Width = value;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		BorderNode.Size = Size;
 	}
 }

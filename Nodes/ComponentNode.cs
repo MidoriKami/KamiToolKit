@@ -91,22 +91,10 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		ComponentBase->SetEnabledState(true);
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			CollisionNode.Width = value;
-			ComponentBase->UldManager.RootNodeWidth = (ushort) value;
-			base.Width = value;
-		}
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			CollisionNode.Height = value;
-			ComponentBase->UldManager.RootNodeHeight = (ushort) value;
-			base.Height = value;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		CollisionNode.Size = Size;
+		ComponentBase->UldManager.RootNodeHeight = (ushort) Height;
+		ComponentBase->UldManager.RootNodeWidth = (ushort) Width;
 	}
 
 	public override int ChildCount => ComponentBase->UldManager.NodeListCount;

@@ -19,12 +19,8 @@ public class TreeListNode : ResNode {
 		childContainer.AttachNode(this);
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			childContainer.Width = value;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		childContainer.Width = Width;
 	}
 
 	public void AddCategoryNode(TreeListCategoryNode node) {

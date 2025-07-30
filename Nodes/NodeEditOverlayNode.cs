@@ -7,6 +7,7 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.Nodes;
 
 internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
+
 	private VerticalResizeNineGridNode rightEditNode;
 	private HorizontalResizeNineGridNode bottomEditNode;
 	private VerticalResizeNineGridNode leftEditNode;
@@ -62,27 +63,17 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
 		leftCornerEditNode.AttachNode(this);
 	}
 
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			rightEditNode.Height = value - 32.0f;
-			bottomEditNode.Y = value - 22.0f;
-			leftEditNode.Height = value - 32.0f;
-			rightCornerEditNode.Y = value - 44.0f;
-			leftCornerEditNode.Y = value - 44.0f;
-		}
-	}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		rightEditNode.X = Width - 16.0f;
+		bottomEditNode.Width = Width - 28.0f;
+		topEditNode.Width = Width - 28.0f;
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			rightEditNode.X = value - 16.0f;
-			bottomEditNode.Width = value - 28.0f;
-			topEditNode.Width = value - 28.0f;
-			rightCornerEditNode.X = value - 44.0f;
-		}
+		rightEditNode.Height = Height - 32.0f;
+		bottomEditNode.Y = Height - 22.0f;
+		leftEditNode.Height = Height - 32.0f;
+		leftCornerEditNode.Y = Height - 44.0f;
+
+		rightCornerEditNode.Position = Size - new Vector2(44.0f, 44.0f);
 	}
 
 	public bool ShowParts {

@@ -101,25 +101,13 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 		AddEvent(AddonEventType.ValueUpdate, ValueUpdateHandler);
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			BackgroundNode.Width = value - 46.0f;
-			AddButton.X = value - 50.0f;
-			SubtractButton.X = value - 28.0f;
-			ValueTextNode.Width = value - 58.0f;
-			FocusBorderNode.Width = value - 40.0f;
-		}
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			ValueTextNode.Height = value / 2.0f;
-			FocusBorderNode.Height = value + 4.0f;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		ValueTextNode.Size = new Vector2(Width - 58.0f, Height / 2.0f);
+		FocusBorderNode.Size = new Vector2(Width - 40.0f, Height + 4.0f);
+		
+		BackgroundNode.Width = Width - 46.0f;
+		AddButton.X = Width - 50.0f;
+		SubtractButton.X = Width - 28.0f;
 	}
 
 	public int Value {

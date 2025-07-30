@@ -6,6 +6,7 @@ using KamiToolKit.System;
 namespace KamiToolKit.Nodes;
 
 public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
+
     public readonly PartsList PartsList;
     
     public NineGridNode() : base(NodeType.NineGrid) {
