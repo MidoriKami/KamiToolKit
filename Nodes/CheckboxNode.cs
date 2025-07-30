@@ -57,7 +57,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 			LineSpacing = 14,
 			TextColor = ColorHelper.GetColor(8),
 			TextOutlineColor = ColorHelper.GetColor(7),
-			TextFlags = TextFlags.Emboss | TextFlags.AutoAdjustNodeSize,
+			TextFlags = TextFlags.AutoAdjustNodeSize,
 		};
 
 		Label.AttachNode(this);
