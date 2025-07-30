@@ -16,8 +16,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     private Utf8String* stringBuffer = Utf8String.CreateEmpty();
 
     public TextNode() : base(NodeType.Text) {
-        TextColor = ColorHelper.GetColor(1);
-        TextOutlineColor = ColorHelper.GetColor(2);
+        TextColor = ColorHelper.GetColor(50);
+        TextOutlineColor = ColorHelper.GetColor(7);
         FontSize = 12;
         FontType = FontType.Axis;
     }
