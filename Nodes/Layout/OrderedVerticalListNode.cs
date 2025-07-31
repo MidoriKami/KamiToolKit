@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
@@ -11,12 +10,14 @@ public class OrderedVerticalListNode<T, TU> : VerticalListNode where T : NodeBas
     public Func<T,TU>? OrderSelector { get; set; }
 
     public override void RecalculateLayout() {
-        if (NodeList is not List<T> typedNodeList || OrderSelector is null) {
+        var typedList = NodeList.OfType<T>();
+        
+        if (OrderSelector is null) {
             base.RecalculateLayout();
             return;
         }
         
-        var orderedList = typedNodeList.OrderBy(OrderSelector).ToList();
+        var orderedList = typedList.OrderBy(OrderSelector).ToList();
         
         var startY = Alignment switch {
             VerticalListAnchor.Top => 0.0f + FirstItemSpacing,

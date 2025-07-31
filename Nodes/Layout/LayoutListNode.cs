@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.System;
@@ -15,6 +16,8 @@ public abstract class LayoutListNode : SimpleComponentNode {
 	protected virtual void AdjustNode(NodeBase node) { }
 
 	protected virtual uint ListBaseId => 1;
+
+    public int MaxNodes { get; set; } = 100;
 
 	[JsonProperty] public bool ClipListContents {
 		get => NodeFlags.HasFlag(NodeFlags.Clip);
@@ -43,6 +46,10 @@ public abstract class LayoutListNode : SimpleComponentNode {
 		
 		node.AttachNode(this);
 		node.NodeId = (uint) NodeList.Count + ListBaseId;
+
+        if (MaxNodes >= 1 && NodeList.Count >= MaxNodes) {
+            RemoveNode(NodeList.First());
+        }
 		
 		RecalculateLayout();
 	}
@@ -69,8 +76,8 @@ public abstract class LayoutListNode : SimpleComponentNode {
 	}
 
 	public virtual void Clear() {
-		foreach (var node in NodeList) {
-			node.DetachNode();
+		foreach (var node in NodeList.ToList()) {
+            RemoveNode(node);
 		}
 		
 		NodeList.Clear();
