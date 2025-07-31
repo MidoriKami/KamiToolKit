@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;
@@ -74,27 +75,13 @@ public unsafe class ScrollingAreaNode<T> : ResNode where T : NodeBase, new() {
 		}
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			ContentAreaNode.Width = value - 16.0f;
-			ScrollingCollisionNode.Width = value - 16.0f;
-			ContentAreaClipNode.Width = value - 16.0f;
-			ScrollBarNode.Width = 8.0f;
-			ScrollBarNode.X = Width - 8.0f; 
-			ScrollBarNode.UpdateScrollParams();
-		}
-	}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		ContentAreaNode.Width = Width - 16.0f;
+		ScrollingCollisionNode.Size = new Vector2(Width - 16.0f, Height);
+		ContentAreaClipNode.Size = new Vector2(Width - 16.0f, Height);
+		ScrollBarNode.Size = new Vector2(8.0f, Height);
+		ScrollBarNode.UpdateScrollParams();
 
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			ScrollingCollisionNode.Height = value;
-			ContentAreaClipNode.Height = value;
-			ScrollBarNode.Height = value;
-			ScrollBarNode.UpdateScrollParams();
-		}
+		ScrollBarNode.X = Width - 8.0f;
 	}
 }

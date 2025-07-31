@@ -73,15 +73,11 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
 		set => Component->SetText(value.ToString());
 	}
 	
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			CollisionNode.Width = value;
-			UnselectedNineGridNode.Width = value + 4.0f;
-			SelectedNineGridNode.Width = value + 4.0f;
-			LabelNode.Width = value - 25.0f;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		CollisionNode.Size = Size;
+		UnselectedNineGridNode.Size = new Vector2(Width + 4.0f, Height + 2.0f);
+		SelectedNineGridNode.Size = new Vector2(Width + 4.0f, Height + 2.0f);
+		LabelNode.Size = new Vector2(Width - 25.0f, Height - 4.0f);
 	}
 
 	public bool IsSelected {
@@ -107,17 +103,6 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
 	public bool IsChecked {
 		get => Component->IsChecked;
 		set => Component->SetChecked(value);
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			CollisionNode.Height = value;
-			UnselectedNineGridNode.Height = value + 2.0f;
-			SelectedNineGridNode.Height = value + 2.0f;
-			LabelNode.Height = value - 4.0f;
-		}
 	}
 
 	private void BuildTimelines() {

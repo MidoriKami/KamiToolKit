@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 namespace KamiToolKit.Classes;
 
 public unsafe class DragDropPayload {
+
 	[JsonProperty] public DragDropType Type { get; set; } = DragDropType.Nothing;
 
 	[JsonProperty] public short ReferenceIndex { get; set; }
@@ -22,7 +23,6 @@ public unsafe class DragDropPayload {
 	// unknown usage
 	// public AtkValue* AtkValue { get; set; }
 
-	// TODO: not sure if [JsonProperty] works here
 	public ReadOnlySeString Text { get; set; }
 
 	// unknown usage

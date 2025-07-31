@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -87,23 +86,12 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 	}
 
 	public void Reset() {
-		// IsTargetReached
-		Marshal.WriteByte((nint)Component, 0x100, 0);
-		
-		// IsEventFired
-		Marshal.WriteByte((nint)Component, 0x101, 0);
-		
-		// Progress.StartValue
-		Marshal.WriteInt32((nint)Component, 0x10C, 0);
-		
-		// Progress.TargetValue
-		Marshal.WriteInt32((nint)Component, 0x110, 0);
-
-		// Progress.CurrentValue
-		Marshal.WriteInt32((nint)Component, 0x114, 0);
-		
-		// Progress.EndValue
-		Marshal.WriteInt32((nint)Component, 0x118, 0);
+		Component->IsTargetReached = false;
+		Component->IsEventFired = false;
+		Component->Progress.StartValue = 0;
+		Component->Progress.TargetValue = 0;
+		Component->Progress.CurrentValue = 0;
+		Component->Progress.EndValue = 0;
 	}
 	
 	private void BuildTimelines() {

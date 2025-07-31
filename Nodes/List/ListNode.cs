@@ -75,19 +75,17 @@ public abstract class ListNode<T> : ListNode {
 		}
 	} = 5;
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			BackgroundNode.Width = value;
-			ContainerNode.Width = value - 25.0f;
-			foreach (var buttonNode in Nodes) {
-				buttonNode.Width = value - 25.0f;
-			}
-			ScrollBarNode.X = value - 17.0f;
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		BackgroundNode.Size = Size;
+		ContainerNode.Size = new Vector2(Width - 25.0f, Height);
+		
+		foreach (var buttonNode in Nodes) {
+			buttonNode.Width = Width - 25.0f;
 		}
+
+		ScrollBarNode.X = Width - 17.0f;
 	}
-	
+
 	private void OnScrollUpdate(int scrollPosition) {
 		var index = scrollPosition / 22.0f;
 		

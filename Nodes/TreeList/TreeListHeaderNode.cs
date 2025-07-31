@@ -40,21 +40,8 @@ public class TreeListHeaderNode : ResNode {
 		set => LabelNode.Text = value;
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			DecorationNode.Width = value;
-			LabelNode.Width = value - 22.0f;
-			base.Width = value;
-		}
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			DecorationNode.Height = value;
-			LabelNode.Height = value;
-			base.Height = value;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		DecorationNode.Size = Size;
+		LabelNode.Size = new Vector2(Width - 22.0f, Height);
 	}
 }

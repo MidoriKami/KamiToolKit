@@ -161,19 +161,15 @@ public class TreeListCategoryNode : ResNode {
 
 	public float VerticalPadding { get; set; } = 4.0f;
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			BackgroundNode.Width = value;
-			CollapseArrowNode.Width = 24.0f;
-			LabelNode.Width = value - 23.0f;
-			ChildContainer.Width = value;
-			CollisionNode.Width = value;
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		BackgroundNode.Width = Width;
+		CollapseArrowNode.Width = 24.0f;
+		LabelNode.Width = Width - 23.0f;
+		ChildContainer.Width = Width;
+		CollisionNode.Width = Width;
 
-            foreach (var node in children) {
-                node.Width = value;
-            }
+		foreach (var node in children) {
+			node.Width = Width;
 		}
 	}
 

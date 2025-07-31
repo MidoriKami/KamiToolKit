@@ -28,20 +28,8 @@ public class SliderForegroundButtonNode : ComponentNode<AtkComponentButton, AtkU
 		InitializeComponentEvents();
 	}
 
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			HandleNode.Height = value;
-		}
-	}
-
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			HandleNode.Width = value;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		HandleNode.Size = Size;
 	}
 
 	private void BuildTimelines() {

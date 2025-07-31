@@ -17,7 +17,9 @@ public abstract unsafe partial class NativeAddon {
 	public int OpenWindowSoundEffectId { get; set; } = 23;
 
 	public TitleMenuOptions TitleMenuOptions {
-		get; set { field = value;
+		get; 
+		set { 
+			field = value;
 			if (InternalAddon is not null) {
 				UpdateFlags();
 			}
@@ -25,7 +27,9 @@ public abstract unsafe partial class NativeAddon {
 	} = new();
 
 	public WindowOptions WindowOptions {
-		get; set { field = value;
+		get; 
+		set { 
+			field = value;
 			if (InternalAddon is not null) {
 				UpdateFlags();
 			}

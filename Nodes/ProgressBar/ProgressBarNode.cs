@@ -31,25 +31,12 @@ public class ProgressBarNode : SimpleComponentNode {
 
 		ForegroundNode.AttachNode(this);
 	}
-	
-	public override float Width {
-		get => base.Width;
-		set {
-			BackgroundNode.Width = value;
-			ForegroundNode.Width = value;
-			base.Width = value;
-		}
+
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		BackgroundNode.Size = Size;
+		ForegroundNode.Size = Size;
 	}
 
-	public override float Height {
-		get => base.Height;
-		set {
-			BackgroundNode.Height = value;
-			ForegroundNode.Height = value;
-			base.Height = value;
-		}
-	}
-	
 	public Vector4 BackgroundColor {
 		get => BackgroundNode.Color;
 		set => BackgroundNode.Color = value;

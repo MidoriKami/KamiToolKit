@@ -68,22 +68,9 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 		}
 	}
 
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			BackgroundButtonNode.Height = value;
-			ForegroundButtonNode.Height = value;
-		}
-	}
-
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			BackgroundButtonNode.Width = value;
-			ForegroundButtonNode.Width = value;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		BackgroundButtonNode.Size = Size;
+		ForegroundButtonNode.Size = Size;
 	}
 
 	public int ScrollPosition {

@@ -86,28 +86,13 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 		CollisionNode.AddEvent(AddonEventType.MouseClick, _ => Toggle());
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			CollisionNode.Width = value;
-			BackgroundNode.Width = value;
-			LabelNode.Width = value - 32.0f;
-			LabelNode.X = 20.0f;
-			OptionListNode.Width = value - 8.0f;
-			OptionListNode.X = 4.0f;
-		}
-	}
-	
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			CollisionNode.Height = value;
-			BackgroundNode.Height = value - 1.0f;
-			LabelNode.Height = value - 3.0f;
-			OptionListNode.Y = Height - 3.0f;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		CollisionNode.Size = Size;
+		BackgroundNode.Size = new Vector2(Width, Height - 1.0f);
+		LabelNode.Size = new Vector2(Width - 32.0f, Height - 3.0f);
+		
+		OptionListNode.Width = Width - 8.0f;
+		OptionListNode.Position = new Vector2(4.0f, Height - 3.0f);
 	}
 
 	public int MaxListOptions {

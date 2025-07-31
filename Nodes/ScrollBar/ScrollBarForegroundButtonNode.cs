@@ -31,20 +31,8 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
 		InitializeComponentEvents();
 	}
 
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			ButtonTexture.Height = value;
-		}
-	}
-
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			ButtonTexture.Width = value;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		ButtonTexture.Size = Size;
 	}
 
 	private void BuildTimelines() {

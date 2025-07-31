@@ -3,6 +3,7 @@
 namespace KamiToolKit.Nodes;
 
 public class CircleButtonNode : ButtonBase {
+
 	public readonly SimpleImageNode ImageNode;
 
 	public CircleButtonNode() {
@@ -30,20 +31,8 @@ public class CircleButtonNode : ButtonBase {
 		}
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			ImageNode.Width = value;
-			base.Width = value;
-		}
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			ImageNode.Height = value;
-			base.Height = value;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		ImageNode.Size = Size;
 	}
 
 	private UldTextureInfo GetTextureCoordinateForIcon(ButtonIcon icon) => icon switch {

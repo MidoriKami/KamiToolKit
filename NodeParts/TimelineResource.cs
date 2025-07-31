@@ -6,6 +6,7 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.NodeParts;
 
 public unsafe class TimelineResource : IDisposable {
+
 	internal AtkTimelineResource* InternalResource;
 	
 	private readonly TimelineAnimationArray animationArray;

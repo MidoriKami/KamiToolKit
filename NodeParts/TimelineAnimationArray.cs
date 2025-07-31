@@ -7,6 +7,7 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.NodeParts;
 
 public unsafe class TimelineAnimationArray : IDisposable {
+
 	internal AtkTimelineAnimation* InternalTimelineArray = null;
 	public uint Count { get; private set; }
 	

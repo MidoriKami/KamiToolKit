@@ -8,6 +8,7 @@ namespace KamiToolKit.Nodes;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class TabbedVerticalListNode : SimpleComponentNode {
+
 	private List<TabbedNodeEntry<NodeBase>> nodeList = [];
 
 	[JsonProperty] public float TabSize { get; set; } = 18.0f;

@@ -41,22 +41,9 @@ public unsafe class TextButtonNode : ButtonBase {
 		set => LabelNode.Text = value;
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			BackgroundNode.Width = value;
-			LabelNode.Width = value - BackgroundNode.LeftOffset - BackgroundNode.RightOffset;
-			base.Width = value;
-		}
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			BackgroundNode.Height = value;
-			LabelNode.Height = value - 8.0f;
-			base.Height = value;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		LabelNode.Size = new Vector2(Width - 32.0f, Height - 8.0f);
+		BackgroundNode.Size = Size;
 	}
 
 	private void LoadTimelines()

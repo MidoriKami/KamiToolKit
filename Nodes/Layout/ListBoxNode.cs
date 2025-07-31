@@ -10,6 +10,7 @@ namespace KamiToolKit.Nodes;
 /// Node that manages the layout of other nodes
 [JsonObject(MemberSerialization.OptIn)]
 public class ListBoxNode : LayoutListNode {
+
     [JsonProperty] public readonly BackgroundImageNode Background;
     [JsonProperty] public readonly BorderNineGridNode Border;
 

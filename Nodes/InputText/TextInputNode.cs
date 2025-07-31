@@ -196,26 +196,11 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 	private void InputComplete(AddonEventData data)
         => OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
 
-    public override float Width {
-		get => base.Width;
-		set {
-			BackgroundNode.Width = value;
-			FocusNode.Width = value;
-			TextLimitsNode.Width = value + 18.0f;
-			CurrentTextNode.Width = value - 20.0f;
-			base.Width = value;
-		}
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			BackgroundNode.Height = value;
-			FocusNode.Height = value;
-			TextLimitsNode.Height = value - 9.0f;
-			CurrentTextNode.Height = value - 10.0f;
-			base.Height = value;
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		BackgroundNode.Size = Size;
+		FocusNode.Size = Size;
+		TextLimitsNode.Size = new Vector2(Width + 18.0f, Height - 9.0f);
+		CurrentTextNode.Size = new Vector2(Width - 20.0f, Height - 10.0f);
 	}
 
 	public int MaxCharacters {

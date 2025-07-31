@@ -32,21 +32,9 @@ public unsafe class SliderBackgroundButtonNode : ComponentNode<AtkComponentButto
 		InitializeComponentEvents();
 	}
 
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			BackgroundTexture.Width = value;
-		}
-	}
-
-	public override float Height {
-		get => base.Height;
-		set {
-			base.Height = value;
-			BackgroundTexture.Height = value / 2.0f;
-			BackgroundTexture.Y = value / 4.0f; 
-		}
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();		BackgroundTexture.Size = new Vector2(Width, Height / 2.0f);
+		BackgroundTexture.Y = Height / 4.0f;
 	}
 
 	private void BuildTimelines() {

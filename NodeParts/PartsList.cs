@@ -11,6 +11,7 @@ namespace KamiToolKit.NodeParts;
 /// Wrapper around a AtkUldPartsList, manages adding and removing multiple parts more easily.
 /// </summary>
 public unsafe class PartsList : IList<Part>, IDisposable {
+
     internal AtkUldPartsList* InternalPartsList;
     private readonly List<Part> parts = [];
 
