@@ -76,7 +76,9 @@ public abstract class ListNode<T> : ListNode {
 	} = 5;
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		BackgroundNode.Size = Size;
+		base.OnSizeChanged();		
+        
+        BackgroundNode.Size = Size;
 		ContainerNode.Size = new Vector2(Width - 25.0f, Height);
 		
 		foreach (var buttonNode in Nodes) {

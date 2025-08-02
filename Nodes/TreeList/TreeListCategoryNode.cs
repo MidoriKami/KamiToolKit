@@ -162,7 +162,9 @@ public class TreeListCategoryNode : ResNode {
 	public float VerticalPadding { get; set; } = 4.0f;
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		BackgroundNode.Width = Width;
+		base.OnSizeChanged();		
+        
+        BackgroundNode.Width = Width;
 		CollapseArrowNode.Width = 24.0f;
 		LabelNode.Width = Width - 23.0f;
 		ChildContainer.Width = Width;

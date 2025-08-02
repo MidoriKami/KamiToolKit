@@ -32,7 +32,9 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		ButtonTexture.Size = Size;
+		base.OnSizeChanged();		
+        
+        ButtonTexture.Size = Size;
 	}
 
 	private void BuildTimelines() {

@@ -42,7 +42,9 @@ public unsafe class TextButtonNode : ButtonBase {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		LabelNode.Size = new Vector2(Width - 32.0f, Height - 8.0f);
+		base.OnSizeChanged();		
+        
+        LabelNode.Size = new Vector2(Width - 32.0f, Height - 8.0f);
 		BackgroundNode.Size = Size;
 	}
 

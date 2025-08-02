@@ -41,7 +41,9 @@ public class TreeListHeaderNode : ResNode {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		DecorationNode.Size = Size;
+		base.OnSizeChanged();		
+        
+        DecorationNode.Size = Size;
 		LabelNode.Size = new Vector2(Width - 22.0f, Height);
 	}
 }

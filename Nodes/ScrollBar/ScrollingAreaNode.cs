@@ -76,7 +76,9 @@ public unsafe class ScrollingAreaNode<T> : ResNode where T : NodeBase, new() {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		ContentAreaNode.Width = Width - 16.0f;
+		base.OnSizeChanged();		
+        
+        ContentAreaNode.Width = Width - 16.0f;
 		ScrollingCollisionNode.Size = new Vector2(Width - 16.0f, Height);
 		ContentAreaClipNode.Size = new Vector2(Width - 16.0f, Height);
 		ScrollBarNode.Size = new Vector2(8.0f, Height);

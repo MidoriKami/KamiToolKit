@@ -197,7 +197,9 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         => OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		BackgroundNode.Size = Size;
+		base.OnSizeChanged();		
+        
+        BackgroundNode.Size = Size;
 		FocusNode.Size = Size;
 		TextLimitsNode.Size = new Vector2(Width + 18.0f, Height - 9.0f);
 		CurrentTextNode.Size = new Vector2(Width - 20.0f, Height - 10.0f);

@@ -69,7 +69,9 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		BackgroundButtonNode.Size = Size;
+		base.OnSizeChanged();		
+        
+        BackgroundButtonNode.Size = Size;
 		ForegroundButtonNode.Size = Size;
 	}
 

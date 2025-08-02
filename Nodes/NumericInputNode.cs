@@ -102,7 +102,9 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		ValueTextNode.Size = new Vector2(Width - 58.0f, Height / 2.0f);
+		base.OnSizeChanged();		
+        
+        ValueTextNode.Size = new Vector2(Width - 58.0f, Height / 2.0f);
 		FocusBorderNode.Size = new Vector2(Width - 40.0f, Height + 4.0f);
 		
 		BackgroundNode.Width = Width - 46.0f;

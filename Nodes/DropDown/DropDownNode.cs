@@ -87,7 +87,9 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		CollisionNode.Size = Size;
+		base.OnSizeChanged();		
+        
+        CollisionNode.Size = Size;
 		BackgroundNode.Size = new Vector2(Width, Height - 1.0f);
 		LabelNode.Size = new Vector2(Width - 32.0f, Height - 3.0f);
 		

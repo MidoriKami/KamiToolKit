@@ -42,7 +42,9 @@ public class IconButtonNode : ButtonBase {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		ImageNode.Size = Size - new Vector2(16.0f, 16.0f);
+		base.OnSizeChanged();		
+        
+        ImageNode.Size = Size - new Vector2(16.0f, 16.0f);
 		ImageNode.Position = BackgroundNode.Position + new Vector2(BackgroundNode.LeftOffset, BackgroundNode.TopOffset);
 		BackgroundNode.Size = Size;
 	}

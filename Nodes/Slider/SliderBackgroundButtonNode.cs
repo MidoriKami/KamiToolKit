@@ -33,7 +33,9 @@ public unsafe class SliderBackgroundButtonNode : ComponentNode<AtkComponentButto
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		BackgroundTexture.Size = new Vector2(Width, Height / 2.0f);
+		base.OnSizeChanged();		
+        
+        BackgroundTexture.Size = new Vector2(Width, Height / 2.0f);
 		BackgroundTexture.Y = Height / 4.0f;
 	}
 

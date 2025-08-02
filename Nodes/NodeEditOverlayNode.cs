@@ -64,7 +64,9 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		rightEditNode.X = Width - 16.0f;
+		base.OnSizeChanged();		
+        
+        rightEditNode.X = Width - 16.0f;
 		bottomEditNode.Width = Width - 28.0f;
 		topEditNode.Width = Width - 28.0f;
 

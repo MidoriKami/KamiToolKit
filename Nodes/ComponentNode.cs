@@ -92,7 +92,9 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		CollisionNode.Size = Size;
+		base.OnSizeChanged();		
+        
+        CollisionNode.Size = Size;
 		ComponentBase->UldManager.RootNodeHeight = (ushort) Height;
 		ComponentBase->UldManager.RootNodeWidth = (ushort) Width;
 	}

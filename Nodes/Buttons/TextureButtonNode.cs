@@ -37,7 +37,9 @@ public class TextureButtonNode : ButtonBase {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		ImageNode.Size = Size;
+		base.OnSizeChanged();		
+        
+        ImageNode.Size = Size;
 	}
 
 	private void LoadTimelines()
