@@ -7,12 +7,21 @@ namespace KamiToolKit.Nodes;
 public class HorizontalListNode : LayoutListNode {
 
 	[JsonProperty] public HorizontalListAnchor Alignment {
-		get; set {
+		get;
+		set {
 			field = value;
 			RecalculateLayout();
 		}
 	}
-	
+
+	public override float Width {
+		get => base.Width;
+		set {
+			base.Width = value;
+			RecalculateLayout();
+		}
+	}
+
 	public override void RecalculateLayout() {
 		var startX = Alignment switch {
 			HorizontalListAnchor.Left => 0.0f + FirstItemSpacing,
@@ -33,14 +42,6 @@ public class HorizontalListNode : LayoutListNode {
 			if (Alignment is HorizontalListAnchor.Left) {
 				startX += node.Width + ItemSpacing;
 			}
-		}
-	}
-
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			RecalculateLayout();
 		}
 	}
 }

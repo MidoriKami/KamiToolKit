@@ -9,16 +9,17 @@ namespace KamiToolKit.Nodes;
 
 public class IconExtras : ResNode {
 
-	public readonly ImageNode TimelineImageNode;
-	public readonly CooldownNode CooldownNode;
 	public readonly AlternateCooldownNode AlternateCooldownNode;
 	public readonly AntsNode AntsNode;
-	public readonly ImageNode HoveredBorderImageNode;
 	public readonly ImageNode ChargeCountImageNode;
+	public readonly ImageNode ClickFlashImageNode;
+	public readonly CooldownNode CooldownNode;
+	public readonly ImageNode HoveredBorderImageNode;
 	public readonly TextNode QuantityTextNode;
 	public readonly TextNode ResourceCostTextNode;
-	public readonly ImageNode ClickFlashImageNode;
-	
+
+	public readonly ImageNode TimelineImageNode;
+
 	public IconExtras() {
 		TimelineImageNode = new SimpleImageNode {
 			NodeId = 19,
@@ -29,32 +30,25 @@ public class IconExtras : ResNode {
 			DrawFlags = 0x102,
 			ImageNodeFlags = ImageNodeFlags.AutoFit,
 		};
-		
+
 		TimelineImageNode.AttachNode(this);
 
 		CooldownNode = new CooldownNode {
-			NodeId = 16,
-			Size = new Vector2(48.0f, 48.0f),
-			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+			NodeId = 16, Size = new Vector2(48.0f, 48.0f), NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
-		
+
 		CooldownNode.AttachNode(this);
 
 		AlternateCooldownNode = new AlternateCooldownNode {
-			NodeId = 14,
-			Size = new Vector2(44.0f, 48.0f),
-			Position = new Vector2(2.0f, 0.0f),
-			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+			NodeId = 14, Size = new Vector2(44.0f, 48.0f), Position = new Vector2(2.0f, 0.0f), NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
-		
+
 		AlternateCooldownNode.AttachNode(this);
 
 		AntsNode = new AntsNode {
-			NodeId = 12,
-			Size = new Vector2(48.0f, 48.0f),
-			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+			NodeId = 12, Size = new Vector2(48.0f, 48.0f), NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
-		
+
 		AntsNode.AttachNode(this);
 
 		HoveredBorderImageNode = new ImageNode {
@@ -67,9 +61,9 @@ public class IconExtras : ResNode {
 			ImageNodeFlags = 0,
 			DrawFlags = 0x02,
 		};
-		
+
 		IconNodeTextureHelper.LoadIconAFrameTexture(HoveredBorderImageNode);
-		
+
 		HoveredBorderImageNode.AttachNode(this);
 
 		ChargeCountImageNode = new ImageNode {
@@ -80,18 +74,15 @@ public class IconExtras : ResNode {
 			WrapMode = 1,
 			ImageNodeFlags = 0,
 		};
-		
-		foreach(var yIndex in Enumerable.Range(0, 2))
+
+		foreach (var yIndex in Enumerable.Range(0, 2))
 		foreach (var xIndex in Enumerable.Range(0, 5)) {
 			var coordinate = new Vector2(xIndex * 20.0f, yIndex * 20.0f);
 			ChargeCountImageNode.AddPart(new Part {
-				TexturePath = "ui/uld/IconA_ChargeIcon.tex",
-				TextureCoordinates = coordinate,
-				Size = new Vector2(20.0f, 20.0f),
-				Id = (uint) (xIndex + yIndex),
+				TexturePath = "ui/uld/IconA_ChargeIcon.tex", TextureCoordinates = coordinate, Size = new Vector2(20.0f, 20.0f), Id = (uint) (xIndex + yIndex),
 			});
 		}
-		
+
 		ChargeCountImageNode.AttachNode(this);
 
 		QuantityTextNode = new TextNode {
@@ -104,9 +95,9 @@ public class IconExtras : ResNode {
 			AlignmentType = AlignmentType.Right,
 			DrawFlags = 0x102,
 		};
-		
+
 		QuantityTextNode.AttachNode(this);
-		
+
 		// Also cooldown time text for non-globals
 		ResourceCostTextNode = new TextNode {
 			NodeId = 8,
@@ -117,7 +108,7 @@ public class IconExtras : ResNode {
 			TextOutlineColor = ColorHelper.GetColor(51),
 			AlignmentType = AlignmentType.Left,
 		};
-		
+
 		ResourceCostTextNode.AttachNode(this);
 
 		ClickFlashImageNode = new ImageNode {
@@ -131,14 +122,14 @@ public class IconExtras : ResNode {
 			ImageNodeFlags = 0,
 			PartId = 17,
 		};
-		
+
 		IconNodeTextureHelper.LoadIconAFrameTexture(ClickFlashImageNode);
-		
+
 		ClickFlashImageNode.AttachNode(this);
 
 		BuildTimelines();
 	}
-	
+
 	private void BuildTimelines() {
 		TimelineImageNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(10, 19)
@@ -156,7 +147,7 @@ public class IconExtras : ResNode {
 			.AddFrame(52, alpha: 0, multiplyColor: new Vector3(100.0f), addColor: new Vector3(255.0f))
 			.EndFrameSet()
 			.Build());
-		
+
 		CooldownNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 165)
 			.AddLabel(1, 19, AtkTimelineJumpBehavior.PlayOnce, 0)
@@ -181,7 +172,7 @@ public class IconExtras : ResNode {
 			.AddFrame(52, multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f))
 			.EndFrameSet()
 			.Build());
-		
+
 		AlternateCooldownNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 205)
 			.AddLabel(1, 17, AtkTimelineJumpBehavior.PlayOnce, 0)
@@ -193,7 +184,7 @@ public class IconExtras : ResNode {
 			.AddLabel(205, 0, AtkTimelineJumpBehavior.LoopForever, 103)
 			.EndFrameSet()
 			.Build());
-		
+
 		AntsNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 9)
 			.AddLabel(1, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
@@ -201,7 +192,7 @@ public class IconExtras : ResNode {
 			.AddLabel(9, 0, AtkTimelineJumpBehavior.LoopForever, 26)
 			.EndFrameSet()
 			.Build());
-		
+
 		HoveredBorderImageNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(10, 19)
 			.AddFrame(10, alpha: 0, multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f))
@@ -218,7 +209,7 @@ public class IconExtras : ResNode {
 			.AddFrame(52, alpha: 0, multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f))
 			.EndFrameSet()
 			.Build());
-		
+
 		ClickFlashImageNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(20, 29)
 			.AddFrame(20, alpha: 255, scale: new Vector2(0.1f))

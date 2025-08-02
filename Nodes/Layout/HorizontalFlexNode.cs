@@ -6,8 +6,16 @@ namespace KamiToolKit.Nodes;
 public class HorizontalFlexNode : LayoutListNode {
 
 	public FlexFlags AlignmentFlags { get; set; } = FlexFlags.FitContentHeight;
-	
+
 	public float FitPadding { get; set; } = 4.0f;
+
+	public override float Width {
+		get => base.Width;
+		set {
+			base.Width = value;
+			RecalculateLayout();
+		}
+	}
 
 	public override void RecalculateLayout() {
 		var step = Width / NodeList.Count;
@@ -15,7 +23,7 @@ public class HorizontalFlexNode : LayoutListNode {
 		if (NodeList.Count != 0 && AlignmentFlags.HasFlag(FlexFlags.FitContentHeight)) {
 			Height = NodeList.Max(node => node.Height);
 		}
-		
+
 		foreach (var index in Enumerable.Range(0, NodeList.Count)) {
 
 			if (AlignmentFlags.HasFlag(FlexFlags.CenterHorizontally)) {
@@ -28,7 +36,7 @@ public class HorizontalFlexNode : LayoutListNode {
 			if (AlignmentFlags.HasFlag(FlexFlags.FitHeight)) {
 				NodeList[index].Height = Height;
 			}
-			
+
 			if (AlignmentFlags.HasFlag(FlexFlags.CenterVertically)) {
 				NodeList[index].Y = Height / 2 - NodeList[index].Height / 2;
 			}
@@ -36,14 +44,6 @@ public class HorizontalFlexNode : LayoutListNode {
 			if (AlignmentFlags.HasFlag(FlexFlags.FitWidth)) {
 				NodeList[index].Width = step - FitPadding;
 			}
-		}
-	}
-
-	public override float Width {
-		get => base.Width;
-		set {
-			base.Width = value;
-			RecalculateLayout();
 		}
 	}
 }

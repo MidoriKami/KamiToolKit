@@ -9,16 +9,24 @@ namespace KamiToolKit.NodeParts;
 public unsafe class TimelineLabelSetArray : IDisposable {
 
 	internal AtkTimelineLabelSet* InternalLabelSetArray = null;
-	
-	public uint Count { get; private set; }
 
 	private List<TimelineLabelSet> labelSets = [];
+
+	public uint Count { get; private set; }
+
+	public List<TimelineLabelSet> LabelSets {
+		get => labelSets;
+		set {
+			labelSets = value;
+			Resync();
+		}
+	}
 
 	public void Dispose() {
 		foreach (var labelSet in labelSets) {
 			labelSet.Dispose();
 		}
-    
+
 		NativeMemoryHelper.UiFree(InternalLabelSetArray, Count);
 		InternalLabelSetArray = null;
 	}
@@ -39,13 +47,5 @@ public unsafe class TimelineLabelSetArray : IDisposable {
 		}
 
 		Count = (uint) labelSets.Count;
-	}
-
-	public List<TimelineLabelSet> LabelSets {
-		get => labelSets;
-		set {
-			labelSets = value;
-			Resync();
-		}
 	}
 }

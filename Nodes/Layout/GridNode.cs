@@ -14,10 +14,10 @@ public class GridNode : SimpleComponentNode {
 	}
 
 	/// <summary>
-	/// Warning: Changing this value will detach any existing layout nodes.
-	/// You will have to re-attach your nodes after-wards.
+	///     Warning: Changing this value will detach any existing layout nodes.
+	///     You will have to re-attach your nodes after-wards.
 	/// </summary>
-	public int NumRows { 
+	public int NumRows {
 		get;
 		set {
 			field = value;
@@ -26,8 +26,8 @@ public class GridNode : SimpleComponentNode {
 	}
 
 	/// <summary>
-	/// Warning: Changing this value will detach any existing layout nodes.
-	/// You will have to re-attach your nodes after-wards.
+	///     Warning: Changing this value will detach any existing layout nodes.
+	///     You will have to re-attach your nodes after-wards.
 	/// </summary>
 	public int NumColumns {
 		get;
@@ -49,7 +49,7 @@ public class GridNode : SimpleComponentNode {
 
 		RecalculateLayout();
 	}
-	
+
 	public void RecalculateLayout() {
 		var gridWidth = Width / NumColumns;
 		var gridHeight = Height / NumRows;
@@ -57,11 +57,11 @@ public class GridNode : SimpleComponentNode {
 		foreach (var yIndex in Enumerable.Range(0, NumRows)) {
 			foreach (var xIndex in Enumerable.Range(0, NumColumns)) {
 				var actualIndex = yIndex * NumColumns + xIndex;
-				
+
 				gridNodes[actualIndex].Size = new Vector2(gridWidth, gridHeight);
 				gridNodes[actualIndex].Position = new Vector2(xIndex * gridWidth, yIndex * gridHeight);
 				gridNodes[actualIndex].IsVisible = true;
-				
+
 				gridNodes[actualIndex].AttachNode(this);
 			}
 		}

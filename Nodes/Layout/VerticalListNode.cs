@@ -8,12 +8,13 @@ namespace KamiToolKit.Nodes;
 public class VerticalListNode : LayoutListNode {
 
 	[JsonProperty] public VerticalListAnchor Alignment {
-		get; set {
+		get;
+		set {
 			field = value;
 			RecalculateLayout();
 		}
 	}
-	
+
 	// Resizes this node to fit all elements
 	public bool FitContents { get; set; }
 

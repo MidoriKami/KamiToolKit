@@ -6,8 +6,8 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class TextButtonNode : ButtonBase {
 
-	public readonly TextNode LabelNode;
 	public readonly NineGridNode BackgroundNode;
+	public readonly TextNode LabelNode;
 
 	public TextButtonNode() {
 		Data->Nodes[0] = 3;
@@ -22,17 +22,15 @@ public unsafe class TextButtonNode : ButtonBase {
 		};
 
 		BackgroundNode.AttachNode(this);
-		
+
 		LabelNode = new TextNode {
-			AlignmentType = AlignmentType.Center,
-			Position = new Vector2(16.0f, 3.0f),
-			NodeId = 3,
+			AlignmentType = AlignmentType.Center, Position = new Vector2(16.0f, 3.0f), NodeId = 3,
 		};
-		
+
 		LabelNode.AttachNode(this);
-		
+
 		LoadTimelines();
-		
+
 		InitializeComponentEvents();
 	}
 
@@ -42,9 +40,9 @@ public unsafe class TextButtonNode : ButtonBase {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        LabelNode.Size = new Vector2(Width - 32.0f, Height - 8.0f);
+		base.OnSizeChanged();
+
+		LabelNode.Size = new Vector2(Width - 32.0f, Height - 8.0f);
 		BackgroundNode.Size = Size;
 	}
 

@@ -3,9 +3,9 @@
 namespace KamiToolKit.NodeParts;
 
 public class TimelineLabelSetKeyFrame : TimelineKeyFrame {
-	
+
 	private AtkTimelineLabel data;
-	
+
 	public AtkTimelineJumpBehavior JumpBehavior {
 		get => data.JumpBehavior;
 		set {
@@ -34,7 +34,7 @@ public class TimelineLabelSetKeyFrame : TimelineKeyFrame {
 		Value = new AtkTimelineKeyValue {
 			Label = data,
 		};
-		
+
 		GroupType = AtkTimelineKeyGroupType.Label;
 		SpeedEnd = 0.0f;
 		Interpolation = AtkTimelineInterpolation.None;

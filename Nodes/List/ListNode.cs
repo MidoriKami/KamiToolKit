@@ -16,17 +16,8 @@ public abstract class ListNode<T> : ListNode {
 
 	public readonly NineGridNode BackgroundNode;
 	public readonly ResNode ContainerNode;
-	public List<ListButtonNode> Nodes = [];
 	public readonly ScrollBarNode ScrollBarNode;
-
-	public T? SelectedOption { get; set; } 
-
-	public List<T>? Options {
-		get; set { 
-			field = value;
-			RebuildNodeList();
-		}
-	}
+	public List<ListButtonNode> Nodes = [];
 
 	protected ListNode() {
 		SetInternalComponentType(ComponentType.Base);
@@ -35,52 +26,65 @@ public abstract class ListNode<T> : ListNode {
 			TexturePath = "ui/uld/ListB.tex",
 			TextureCoordinates = new Vector2(0.0f, 0.0f),
 			TextureSize = new Vector2(32.0f, 32.0f),
-			TopOffset = 10, BottomOffset = 12, LeftOffset = 10, RightOffset = 10,
+			TopOffset = 10,
+			BottomOffset = 12,
+			LeftOffset = 10,
+			RightOffset = 10,
 			IsVisible = true,
 		};
-		
+
 		BackgroundNode.AttachNode(this);
 
 		ContainerNode = new ResNode {
-			NodeFlags = NodeFlags.Clip,
-			IsVisible = true,
+			NodeFlags = NodeFlags.Clip, IsVisible = true,
 		};
-		
+
 		ContainerNode.AttachNode(this);
 
 		ScrollBarNode = new ScrollBarNode {
-			Position = new Vector2(0.0f, 9.0f),
-			Size = new Vector2(8.0f, 0.0f),
-			IsVisible = true,
-			OnValueChanged = OnScrollUpdate,
+			Position = new Vector2(0.0f, 9.0f), Size = new Vector2(8.0f, 0.0f), IsVisible = true, OnValueChanged = OnScrollUpdate,
 		};
-		
+
 		ScrollBarNode.AttachNode(this);
-		
+
 		BuildTimelines();
-		
+
 		ContainerNode.SetEventFlags();
 		ContainerNode.AddEvent(AddonEventType.MouseWheel, OnMouseWheel);
 	}
 
+	public T? SelectedOption { get; set; }
+
+	public List<T>? Options {
+		get;
+		set {
+			field = value;
+			RebuildNodeList();
+		}
+	}
+
 	protected float NodeHeight { get; set; } = 22.0f;
-	
+
 	private int ButtonCount { get; set; }
 
 	public int MaxButtons {
-		get; 
-		set { 
+		get;
+		set {
 			field = value;
 			RebuildNodeList();
 		}
 	} = 5;
 
+	public int CurrentStartIndex { get; set; }
+
+	public Action<T>? OnOptionSelected { get; set; }
+
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        BackgroundNode.Size = Size;
+		base.OnSizeChanged();
+
+		BackgroundNode.Size = Size;
 		ContainerNode.Size = new Vector2(Width - 25.0f, Height);
-		
+
 		foreach (var buttonNode in Nodes) {
 			buttonNode.Width = Width - 25.0f;
 		}
@@ -90,29 +94,27 @@ public abstract class ListNode<T> : ListNode {
 
 	private void OnScrollUpdate(int scrollPosition) {
 		var index = scrollPosition / 22.0f;
-		
+
 		CurrentStartIndex = (int) index;
 		UpdateNodes();
 	}
-	
+
 	private void OnMouseWheel(AddonEventData data) {
 		CurrentStartIndex -= data.GetMouseData().WheelDirection;
 		UpdateNodes();
-		ScrollBarNode.ScrollPosition = (int) ( CurrentStartIndex * NodeHeight + 9.0f );
-				
+		ScrollBarNode.ScrollPosition = (int) (CurrentStartIndex * NodeHeight + 9.0f);
+
 		data.SetHandled();
 	}
-	
-	public int CurrentStartIndex { get; set; }
 
 	private void RebuildNodeList() {
 		foreach (var button in Nodes) {
 			button.Dispose();
 		}
 		Nodes.Clear();
-		
+
 		ButtonCount = Math.Min(MaxButtons, Options?.Count ?? 0);
-		
+
 		var height = ButtonCount * NodeHeight + 24.0f;
 		Height = height;
 		BackgroundNode.Height = height;
@@ -128,13 +130,13 @@ public abstract class ListNode<T> : ListNode {
 				Label = $"Button {index}",
 				OnClick = () => OnOptionClick(index),
 			};
-			
+
 			Nodes.Add(newButton);
 			newButton.AttachNode(ContainerNode);
 		}
 
 		if (Options is not null) {
-			ScrollBarNode.UpdateScrollParams((int) ScrollBarNode.Height, (int) ( Options.Count * NodeHeight + 24.0f ) );
+			ScrollBarNode.UpdateScrollParams((int) ScrollBarNode.Height, (int) (Options.Count * NodeHeight + 24.0f));
 		}
 
 		UpdateNodes();
@@ -142,16 +144,16 @@ public abstract class ListNode<T> : ListNode {
 
 	protected virtual void OnOptionClick(int nodeId) {
 		if (Options is null) return;
-		
+
 		SelectedOption = Options[nodeId + CurrentStartIndex];
 		OnOptionSelected?.Invoke(Options[nodeId + CurrentStartIndex]);
-		
+
 		UpdateSelected();
 	}
 
 	private void UpdateSelected() {
 		if (Options is null) return;
-		
+
 		foreach (var index in Enumerable.Range(0, ButtonCount)) {
 			var option = Options[index + CurrentStartIndex];
 
@@ -159,13 +161,13 @@ public abstract class ListNode<T> : ListNode {
 			Nodes[index].Label = GetLabelForOption(option);
 		}
 	}
-	
+
 	protected abstract string GetLabelForOption(T option);
-	
+
 	protected void UpdateNodes() {
 		if (Options is null) return;
 		var maxStartIndex = Options.Count - Nodes.Count;
-		
+
 		var max = Math.Max(0, maxStartIndex);
 		CurrentStartIndex = Math.Clamp(CurrentStartIndex, 0, max);
 		UpdateSelected();
@@ -176,8 +178,6 @@ public abstract class ListNode<T> : ListNode {
 			SelectedOption = Options.First();
 		}
 	}
-
-	public Action<T>? OnOptionSelected { get; set; }
 
 	public void Show() {
 		IsVisible = true;

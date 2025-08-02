@@ -10,12 +10,6 @@ public class LuminaDropDownNode<T> : DropDownNode<LuminaListNode<T>, T> where T 
 	}
 
 	public Action<T>? OnOptionSelected { get; set; }
-	
-	private void OptionSelectedHandler(T option) {
-		OnOptionSelected?.Invoke(option);
-		UpdateLabel(option);
-		Toggle();
-	}
 
 	public Func<T, string>? LabelFunction {
 		get => OptionListNode.LabelFunction;
@@ -33,10 +27,16 @@ public class LuminaDropDownNode<T> : DropDownNode<LuminaListNode<T>, T> where T 
 		}
 	}
 
+	private void OptionSelectedHandler(T option) {
+		OnOptionSelected?.Invoke(option);
+		UpdateLabel(option);
+		Toggle();
+	}
+
 	private void ResolveOptions() {
 		if (LabelFunction is null) return;
 		if (FilterFunction is null) return;
-		
+
 		OptionListNode.SelectDefaultOption();
 		LabelNode.Text = LabelFunction.Invoke(OptionListNode.SelectedOption);
 	}

@@ -6,20 +6,23 @@ using Dalamud.Plugin.Services;
 namespace KamiToolKit.Classes;
 
 internal class DalamudInterface {
+
 	private static DalamudInterface? instance;
 	public static DalamudInterface Instance => instance ??= new DalamudInterface();
-	
+
 	[PluginService] public IPluginLog Log { get; set; } = null!;
 	[PluginService] public IAddonLifecycle AddonLifecycle { get; set; } = null!;
 	[PluginService] public IDataManager DataManager { get; set; } = null!;
 	[PluginService] public ITextureProvider TextureProvider { get; set; } = null!;
 	[PluginService] public IFramework Framework { get; set; } = null!;
 	[PluginService] public IAddonEventManager AddonEventManager { get; set; } = null!;
-    [PluginService] public IDalamudPluginInterface PluginInterface { get; set; } = null!;
-    [PluginService] public IGameGui GameGui { get; set; } = null!;
+	[PluginService] public IDalamudPluginInterface PluginInterface { get; set; } = null!;
+	[PluginService] public IGameGui GameGui { get; set; } = null!;
+	[PluginService] public IGameInteropProvider GameInteropProvider { get; set; } = null!;
 }
 
 internal static class Log {
+
 	private static readonly bool ExcessiveLogging = false;
 
 	internal static void Debug(string message) {

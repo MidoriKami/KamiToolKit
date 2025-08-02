@@ -20,7 +20,7 @@ public class AntsNode : ResNode {
 		};
 
 		IconNodeTextureHelper.LoadIconAFrameTexture(AntsImageNode);
-		
+
 		AntsImageNode.AttachNode(this);
 
 		BuildTimeline();

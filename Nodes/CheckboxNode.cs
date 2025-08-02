@@ -28,7 +28,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 			WrapMode = 1,
 			ImageNodeFlags = 0,
 		};
-		
+
 		BoxBackground.AttachNode(this);
 
 		BoxForeground = new SimpleImageNode {
@@ -43,7 +43,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 			ImageNodeFlags = 0,
 			DrawFlags = 0,
 		};
-		
+
 		BoxForeground.AttachNode(this);
 
 		Label = new TextNode {
@@ -63,32 +63,28 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 		Label.AttachNode(this);
 
 		Component->Flags = 606464;
-		
+
 		Data->Nodes[0] = Label.NodeId;
 		Data->Nodes[1] = BoxBackground.NodeId;
 		Data->Nodes[2] = 0;
-		
+
 		LoadTimelines();
 
 		AddEvent(AddonEventType.ButtonClick, ClickHandler);
-		
+
 		InitializeComponentEvents();
 		Component->Left = 20;
 		Component->Right = 20;
 		Component->Top = 0;
 		Component->Bottom = 0;
-		
+
 		BoxForeground.IsVisible = Component->IsChecked;
 		BoxForeground.DrawFlags = 0;
-		
+
 	}
 
 	public Action<bool>? OnClick { get; set; }
-	
-	private void ClickHandler(AddonEventData data) {
-		OnClick?.Invoke(Component->IsChecked);
-	}
-	
+
 	public SeString LabelText {
 		get => Label.Text;
 		set {
@@ -107,7 +103,11 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 		get => Component->IsChecked;
 		set => Component->SetChecked(value);
 	}
-	
+
+	private void ClickHandler(AddonEventData data) {
+		OnClick?.Invoke(Component->IsChecked);
+	}
+
 	private void LoadTimelines() {
 		AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 155)
@@ -129,44 +129,44 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 			.AddLabelPair(146, 155, 16)
 			.EndFrameSet()
 			.Build());
-		
+
 		CollisionNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 155)
 			.AddEmptyFrame(1)
 			.EndFrameSet()
 			.Build());
-		
+
 		BoxBackground.AddTimeline(new TimelineBuilder()
-			.AddFrameSetWithFrame(1, 10, 1, position: new Vector2(0.0f, 2.0f), alpha: 255, multiplyColor: new Vector3(100.0f))
+			.AddFrameSetWithFrame(1, 10, 1, new Vector2(0.0f, 2.0f), 255, multiplyColor: new Vector3(100.0f))
 			.BeginFrameSet(11, 20)
-			.AddFrame(11, position: new Vector2(0.0f, 2.0f), alpha: 255, multiplyColor: new Vector3(100.0f))
-			.AddFrame(13, position: new Vector2(0.0f, 2.0f), alpha: 255, addColor: new Vector3(16.0f), multiplyColor: new Vector3(100.0f))
+			.AddFrame(11, new Vector2(0.0f, 2.0f), 255, multiplyColor: new Vector3(100.0f))
+			.AddFrame(13, new Vector2(0.0f, 2.0f), 255, new Vector3(16.0f), new Vector3(100.0f))
 			.EndFrameSet()
-			.AddFrameSetWithFrame(21, 30, 21, position: new Vector2(0.0f, 2.0f), alpha: 255, addColor: new Vector3(16.0f), multiplyColor: new Vector3(100.0f))
-			.AddFrameSetWithFrame(31, 40, 31, position: new Vector2(0.0f, 2.0f), alpha: 102, multiplyColor: new Vector3(80.0f))
-			.AddFrameSetWithFrame(41, 50, 41, position: new Vector2(0.0f, 2.0f), alpha: 255, addColor: new Vector3(16.0f), multiplyColor: new Vector3(100.0f))
+			.AddFrameSetWithFrame(21, 30, 21, new Vector2(0.0f, 2.0f), 255, new Vector3(16.0f), new Vector3(100.0f))
+			.AddFrameSetWithFrame(31, 40, 31, new Vector2(0.0f, 2.0f), 102, multiplyColor: new Vector3(80.0f))
+			.AddFrameSetWithFrame(41, 50, 41, new Vector2(0.0f, 2.0f), 255, new Vector3(16.0f), new Vector3(100.0f))
 			.BeginFrameSet(51, 60)
-			.AddFrame(51, position: new Vector2(0.0f, 2.0f), alpha: 255, addColor: new Vector3(16.0f), multiplyColor: new Vector3(100.0f))
-			.AddFrame(60, position: new Vector2(0.0f, 2.0f), alpha: 255, multiplyColor: new Vector3(100.0f))
+			.AddFrame(51, new Vector2(0.0f, 2.0f), 255, new Vector3(16.0f), new Vector3(100.0f))
+			.AddFrame(60, new Vector2(0.0f, 2.0f), 255, multiplyColor: new Vector3(100.0f))
 			.EndFrameSet()
-			.AddFrameSetWithFrame(61, 70, 61, position: new Vector2(0.0f, 2.0f), alpha: 255, multiplyColor: new Vector3(100.0f))
+			.AddFrameSetWithFrame(61, 70, 61, new Vector2(0.0f, 2.0f), 255, multiplyColor: new Vector3(100.0f))
 			.BeginFrameSet(71, 80)
-			.AddFrame(71, position: new Vector2(0.0f, 2.0f), alpha: 255, multiplyColor: new Vector3(100.0f))
-			.AddFrame(73, position: new Vector2(0.0f, 2.0f), alpha: 255, addColor: new Vector3(16.0f), multiplyColor: new Vector3(100.0f))
+			.AddFrame(71, new Vector2(0.0f, 2.0f), 255, multiplyColor: new Vector3(100.0f))
+			.AddFrame(73, new Vector2(0.0f, 2.0f), 255, new Vector3(16.0f), new Vector3(100.0f))
 			.EndFrameSet()
-			.AddFrameSetWithFrame(81, 90, 81, position: new Vector2(0.0f, 2.0f), alpha: 255, addColor: new Vector3(16.0f), multiplyColor: new Vector3(100.0f))
-			.AddFrameSetWithFrame(91, 100, 91, position: new Vector2(0.0f, 2.0f), alpha: 102, multiplyColor: new Vector3(80.0f))
-			.AddFrameSetWithFrame(101, 110, 101, position: new Vector2(0.0f, 2.0f), alpha: 255, addColor: new Vector3(16.0f), multiplyColor: new Vector3(100.0f))
+			.AddFrameSetWithFrame(81, 90, 81, new Vector2(0.0f, 2.0f), 255, new Vector3(16.0f), new Vector3(100.0f))
+			.AddFrameSetWithFrame(91, 100, 91, new Vector2(0.0f, 2.0f), 102, multiplyColor: new Vector3(80.0f))
+			.AddFrameSetWithFrame(101, 110, 101, new Vector2(0.0f, 2.0f), 255, new Vector3(16.0f), new Vector3(100.0f))
 			.BeginFrameSet(111, 115)
-			.AddFrame(111, position: new Vector2(0.0f, 2.0f), alpha: 255, addColor: new Vector3(16.0f), multiplyColor: new Vector3(100.0f))
-			.AddFrame(115, position: new Vector2(0.0f, 2.0f), alpha: 255, multiplyColor: new Vector3(100.0f))
+			.AddFrame(111, new Vector2(0.0f, 2.0f), 255, new Vector3(16.0f), new Vector3(100.0f))
+			.AddFrame(115, new Vector2(0.0f, 2.0f), 255, multiplyColor: new Vector3(100.0f))
 			.EndFrameSet()
-			.AddFrameSetWithFrame(116, 125, 116, position: new Vector2(0.0f, 2.0f), addColor: new Vector3(16.0f), multiplyColor: new Vector3(100.0f))
-			.AddFrameSetWithFrame(126, 135, 126, position: new Vector2(0.0f, 2.0f), alpha: 255, addColor: new Vector3(16.0f), multiplyColor: new Vector3(100.0f))
-			.AddFrameSetWithFrame(136, 145, 126, position: new Vector2(0.0f, 2.0f), alpha: 255, multiplyColor: new Vector3(100.0f))
-			.AddFrameSetWithFrame(146, 155, 146, position: new Vector2(0.0f, 2.0f), alpha: 255, multiplyColor: new Vector3(100.0f))
+			.AddFrameSetWithFrame(116, 125, 116, new Vector2(0.0f, 2.0f), addColor: new Vector3(16.0f), multiplyColor: new Vector3(100.0f))
+			.AddFrameSetWithFrame(126, 135, 126, new Vector2(0.0f, 2.0f), 255, new Vector3(16.0f), new Vector3(100.0f))
+			.AddFrameSetWithFrame(136, 145, 126, new Vector2(0.0f, 2.0f), 255, multiplyColor: new Vector3(100.0f))
+			.AddFrameSetWithFrame(146, 155, 146, new Vector2(0.0f, 2.0f), 255, multiplyColor: new Vector3(100.0f))
 			.Build());
-		
+
 		BoxForeground.AddTimeline(new TimelineBuilder()
 			.AddFrameSetWithFrame(61, 70, 61, alpha: 255, multiplyColor: new Vector3(100.0f))
 			.BeginFrameSet(71, 80)
@@ -197,7 +197,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 			.AddFrame(150, alpha: 0, multiplyColor: new Vector3(100.0f))
 			.EndFrameSet()
 			.Build());
-		
+
 		Label.AddTimeline(new TimelineBuilder()
 			.AddFrameSetWithFrame(1, 10, 1, alpha: 255, multiplyColor: new Vector3(100.0f))
 			.AddFrameSetWithFrame(11, 20, 11, alpha: 255, multiplyColor: new Vector3(100.0f))

@@ -9,13 +9,13 @@ public class TimelineBuilder {
 
 	internal List<TimelineAnimation> Animations = [];
 	internal List<TimelineLabelSet> LabelSets = [];
-	
+
 	public FrameSetBuilder BeginFrameSet(int startFrameId, int endFrameId)
 		=> new(this, startFrameId, endFrameId);
 
 	public TimelineBuilder AddFrameSetWithFrame(int startFrameId, int endFrameId, int frameId, Vector2? position = null, byte? alpha = null, Vector3? addColor = null, Vector3? multiplyColor = null,
 		float? rotation = null, Vector2? scale = null, Vector3? textColor = null, Vector3? textOutlineColor = null, uint? partId = null) {
-		
+
 		new FrameSetBuilder(this, startFrameId, endFrameId)
 			.AddFrame(frameId, position, alpha, addColor, multiplyColor, rotation, scale, textColor, textOutlineColor, partId)
 			.EndFrameSet();
@@ -38,7 +38,7 @@ public class TimelineBuilder {
 		if (Animations.Count != 0) {
 			newTimeline.Animations = Animations;
 		}
-		
+
 		return newTimeline;
 	}
 }

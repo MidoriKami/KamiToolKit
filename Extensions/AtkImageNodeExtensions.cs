@@ -9,7 +9,7 @@ public static unsafe class AtkImageNodeExtensions {
 		if (node.PartsList->Parts->UldAsset is null) return 0;
 		if (node.PartsList->Parts->UldAsset->AtkTexture.TextureType is not TextureType.Resource) return 0;
 		if (node.PartsList->Parts->UldAsset->AtkTexture.Resource is null) return 0;
-		
+
 		return node.PartsList->Parts->UldAsset->AtkTexture.Resource->IconId;
 	}
 }

@@ -14,30 +14,25 @@ public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComp
 public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable where TU : unmanaged {
 
 	public readonly CollisionNode CollisionNode;
-	public override AtkComponentBase* ComponentBase => (AtkComponentBase*) Component;
-	public override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*) Data;
-	public override AtkComponentNode* InternalComponentNode => (AtkComponentNode*) InternalResNode;
 
 	protected ComponentNode() : base((NodeType) 1001) {
 		Component = NativeMemoryHelper.Create<T>();
 		var componentBase = (AtkComponentBase*) Component;
-		
+
 		Data = NativeMemoryHelper.UiAlloc<TU>();
 
 		componentBase->Initialize();
-					
+
 		CollisionNode = new CollisionNode {
-			NodeId = 1,
-			LinkedComponent = componentBase,
-			NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents,
+			NodeId = 1, LinkedComponent = componentBase, NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents,
 		};
 
 		CollisionNode.InternalResNode->ParentNode = InternalResNode;
-		
+
 		componentBase->OwnerNode = InternalNode;
 		componentBase->AtkResNode = CollisionNode.InternalResNode;
 		componentBase->ComponentFlags = 1;
-		
+
 		ref var uldManager = ref componentBase->UldManager;
 
 		uldManager.Objects = (AtkUldObjectInfo*) NativeMemoryHelper.UiAlloc<AtkUldComponentInfo>();
@@ -48,17 +43,21 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		objects->NodeList[0] = CollisionNode.InternalResNode;
 		objects->NodeCount = 1;
 		objects->Id = 1001;
-		
+
 		uldManager.InitializeResourceRendererManager();
 		uldManager.RootNode = CollisionNode.InternalResNode;
-		
+
 		uldManager.UpdateDrawNodeList();
 		uldManager.ResourceFlags = AtkUldManagerResourceFlag.Initialized | AtkUldManagerResourceFlag.ArraysAllocated;
 		uldManager.LoadedState = AtkLoadState.Loaded;
 	}
 
+	public override AtkComponentBase* ComponentBase => (AtkComponentBase*) Component;
+	public override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*) Data;
+	public override AtkComponentNode* InternalComponentNode => (AtkComponentNode*) InternalResNode;
+
 	internal T* Component {
-		get => (T*)InternalNode->Component;
+		get => (T*) InternalNode->Component;
 		set => InternalNode->Component = (AtkComponentBase*) value;
 	}
 
@@ -66,6 +65,8 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 		get => (TU*) InternalNode->Component->UldManager.ComponentData;
 		set => InternalNode->Component->UldManager.ComponentData = (AtkUldComponentDataBase*) value;
 	}
+
+	public override int ChildCount => ComponentBase->UldManager.NodeListCount;
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
@@ -80,24 +81,22 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
 	protected void SetInternalComponentType(ComponentType type) {
 		var componentInfo = (AtkUldComponentInfo*) ComponentBase->UldManager.Objects;
-		
+
 		componentInfo->ComponentType = type;
 	}
 
 	protected void InitializeComponentEvents() {
 		ComponentBase->InitializeFromComponentData(DataBase);
-		
+
 		ComponentBase->Setup();
 		ComponentBase->SetEnabledState(true);
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        CollisionNode.Size = Size;
+		base.OnSizeChanged();
+
+		CollisionNode.Size = Size;
 		ComponentBase->UldManager.RootNodeHeight = (ushort) Height;
 		ComponentBase->UldManager.RootNodeWidth = (ushort) Width;
 	}
-
-	public override int ChildCount => ComponentBase->UldManager.NodeListCount;
 }

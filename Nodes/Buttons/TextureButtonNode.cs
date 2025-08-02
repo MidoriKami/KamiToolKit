@@ -8,16 +8,13 @@ public class TextureButtonNode : ButtonBase {
 
 	public TextureButtonNode() {
 		ImageNode = new ImGuiImageNode {
-			IsVisible = true,
-			NodeId = 3,
-			WrapMode = 2,
-			ImageNodeFlags = 0,
+			IsVisible = true, NodeId = 3, WrapMode = 2, ImageNodeFlags = 0,
 		};
-		
+
 		ImageNode.AttachNode(this);
-				
+
 		LoadTimelines();
-		
+
 		InitializeComponentEvents();
 	}
 
@@ -37,9 +34,9 @@ public class TextureButtonNode : ButtonBase {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        ImageNode.Size = Size;
+		base.OnSizeChanged();
+
+		ImageNode.Size = Size;
 	}
 
 	private void LoadTimelines()

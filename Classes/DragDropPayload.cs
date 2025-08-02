@@ -44,13 +44,13 @@ public unsafe class DragDropPayload {
 		dragDropInterface->DragDropType = Type;
 		dragDropInterface->DragDropReferenceIndex = ReferenceIndex;
 
-		if(writeToPayloadContainer) {
+		if (writeToPayloadContainer) {
 			var payloadContainer = dragDropInterface->GetPayloadContainer();
 			payloadContainer->Clear();
 			payloadContainer->Int1 = Int1;
 			payloadContainer->Int2 = Int2;
 
-			if(Text.IsEmpty) {
+			if (Text.IsEmpty) {
 				payloadContainer->Text.Clear();
 			}
 			else {

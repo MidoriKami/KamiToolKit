@@ -44,8 +44,8 @@ internal class HorizontalResizeNineGridNode : SimpleComponentNode {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        BorderNode.Size = Size;
+		base.OnSizeChanged();
+
+		BorderNode.Size = Size;
 	}
 }

@@ -9,13 +9,14 @@ using KamiToolKit.Extensions;
 namespace KamiToolKit;
 
 /// <summary>
-/// This class provides functionality to add-and manage custom elements for any Addon
+///     This class provides functionality to add-and manage custom elements for any Addon
 /// </summary>
 public unsafe class AddonController<T> : IDisposable where T : unmanaged {
+
+	public delegate void AddonControllerEvent(T* addon);
+
 	private readonly string addonName;
-	private AtkUnitBase* AddonPointer => (AtkUnitBase*)DalamudInterface.Instance.GameGui.GetAddonByName(addonName);
-	private bool IsEnabled { get; set; }
-	
+
 	public AddonController(string addonName) {
 		this.addonName = addonName;
 	}
@@ -25,6 +26,11 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
 
 		addonName = AtkUnitBaseExtensions.GetAddonTypeName<T>();
 	}
+
+	private AtkUnitBase* AddonPointer => (AtkUnitBase*) DalamudInterface.Instance.GameGui.GetAddonByName(addonName);
+	private bool IsEnabled { get; set; }
+
+	public virtual void Dispose() => Disable();
 
 	public void Enable() {
 		DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
@@ -55,15 +61,15 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
 			case AddonEvent.PostSetup:
 				OnAttach?.Invoke(addon);
 				return;
-			
+
 			case AddonEvent.PreFinalize:
 				OnDetach?.Invoke(addon);
 				return;
-			
+
 			case AddonEvent.PostRefresh or AddonEvent.PostRequestedUpdate:
 				OnRefresh?.Invoke(addon);
 				return;
-			
+
 			case AddonEvent.PostUpdate:
 				OnUpdate?.Invoke(addon);
 				return;
@@ -88,15 +94,11 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
 		});
 	}
 
-	public virtual void Dispose() => Disable();
-
-	public delegate void AddonControllerEvent(T* addon);
-
 	public event AddonControllerEvent? OnAttach;
 	public event AddonControllerEvent? OnDetach;
 	public event AddonControllerEvent? OnRefresh;
 	public event AddonControllerEvent? OnUpdate;
-	
+
 	public event AddonControllerEvent? PreEnable;
 	public event AddonControllerEvent? PostEnable;
 	public event AddonControllerEvent? PreDisable;

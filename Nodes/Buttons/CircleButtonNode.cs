@@ -19,12 +19,14 @@ public class CircleButtonNode : ButtonBase {
 		ImageNode.AttachNode(this);
 
 		LoadTimelines();
-		
+
 		InitializeComponentEvents();
 	}
 
 	public ButtonIcon Icon {
-		get; set { field = value;
+		get;
+		set {
+			field = value;
 			var uldInfo = GetTextureCoordinateForIcon(value);
 			ImageNode.TextureCoordinates = uldInfo.TextureCoordinates;
 			ImageNode.TextureSize = uldInfo.TextureSize;
@@ -32,9 +34,9 @@ public class CircleButtonNode : ButtonBase {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        ImageNode.Size = Size;
+		base.OnSizeChanged();
+
+		ImageNode.Size = Size;
 	}
 
 	private UldTextureInfo GetTextureCoordinateForIcon(ButtonIcon icon) => icon switch {
@@ -47,7 +49,7 @@ public class CircleButtonNode : ButtonBase {
 		ButtonIcon.LeftArrow => new UldTextureInfo(168.0f, 0.0f, 28.0f, 28.0f),
 		ButtonIcon.UpArrow => new UldTextureInfo(196.0f, 0.0f, 28.0f, 28.0f),
 		ButtonIcon.Chest => new UldTextureInfo(224.0f, 0.0f, 28.0f, 28.0f),
-		
+
 		ButtonIcon.Document => new UldTextureInfo(0.0f, 28.0f, 28.0f, 28.0f),
 		ButtonIcon.Edit => new UldTextureInfo(28.0f, 28.0f, 28.0f, 28.0f),
 		ButtonIcon.Add => new UldTextureInfo(56.0f, 28.0f, 28.0f, 28.0f),
@@ -56,7 +58,7 @@ public class CircleButtonNode : ButtonBase {
 		ButtonIcon.Sprout => new UldTextureInfo(140.0f, 28.0f, 28.0f, 28.0f),
 		ButtonIcon.Dice => new UldTextureInfo(168.0f, 28.0f, 28.0f, 28.0f),
 		ButtonIcon.ArrowDown => new UldTextureInfo(196.0f, 28.0f, 28.0f, 28.0f),
-		
+
 		ButtonIcon.Eye => new UldTextureInfo(0.0f, 56.0f, 28.0f, 28.0f),
 		ButtonIcon.Envelope => new UldTextureInfo(28.0f, 56.0f, 28.0f, 28.0f),
 		ButtonIcon.Volume => new UldTextureInfo(56.0f, 56.0f, 28.0f, 28.0f),
@@ -65,7 +67,7 @@ public class CircleButtonNode : ButtonBase {
 		ButtonIcon.CheckedBox => new UldTextureInfo(140.0f, 56.0f, 28.0f, 28.0f),
 		ButtonIcon.Cross => new UldTextureInfo(168.0f, 56.0f, 28.0f, 28.0f),
 		ButtonIcon.Globe => new UldTextureInfo(196.0f, 56.0f, 28.0f, 28.0f),
-		
+
 		ButtonIcon.ActiveGearCog => new UldTextureInfo(0.0f, 84.0f, 28.0f, 28.0f),
 		ButtonIcon.ActiveFilter => new UldTextureInfo(28.0f, 84.0f, 28.0f, 28.0f),
 		ButtonIcon.Update => new UldTextureInfo(56.0f, 84.0f, 28.0f, 28.0f),
@@ -74,7 +76,7 @@ public class CircleButtonNode : ButtonBase {
 		ButtonIcon.InsetDocument => new UldTextureInfo(140.0f, 84.0f, 28.0f, 28.0f),
 		ButtonIcon.GearCogWithChatBubble => new UldTextureInfo(168.0f, 84.0f, 28.0f, 28.0f),
 		ButtonIcon.FlatbedCartBoxes => new UldTextureInfo(196.0f, 84.0f, 28.0f, 28.0f),
-		
+
 		ButtonIcon.MagnifyingGlass => new UldTextureInfo(0.0f, 128.0f, 24.0f, 24.0f),
 		ButtonIcon.EditSmall => new UldTextureInfo(24.0f, 112.0f, 24.0f, 24.0f),
 		ButtonIcon.WeaponDraw => new UldTextureInfo(48.0f, 112.0f, 24.0f, 24.0f),
@@ -82,16 +84,16 @@ public class CircleButtonNode : ButtonBase {
 		ButtonIcon.Sword => new UldTextureInfo(96.0f, 112.0f, 24.0f, 24.0f),
 		ButtonIcon.Emotes => new UldTextureInfo(120.0f, 112.0f, 24.0f, 24.0f),
 		ButtonIcon.PersonStanding => new UldTextureInfo(144.0f, 112.0f, 24.0f, 24.0f),
-		
+
 		ButtonIcon.PaintBucket => new UldTextureInfo(0.0f, 136.0f, 24.0f, 24.0f),
 		ButtonIcon.EyeSmall => new UldTextureInfo(24.0f, 136.0f, 24.0f, 24.0f),
 		ButtonIcon.Undo => new UldTextureInfo(48.0f, 136.0f, 24.0f, 24.0f),
 		ButtonIcon.PinPaper => new UldTextureInfo(72.0f, 136.0f, 24.0f, 24.0f),
 		ButtonIcon.CrossSmall => new UldTextureInfo(96.0f, 136.0f, 24.0f, 24.0f),
-		
+
 		_ => new UldTextureInfo(0.0f, 0.0f, 28.0f, 28.0f),
 	};
-	
+
 	private void LoadTimelines()
 		=> LoadTwoPartTimelines(this, ImageNode);
 }

@@ -10,13 +10,13 @@ namespace KamiToolKit.Nodes;
 public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUldComponentDataHoldButton> {
 
 	public readonly NineGridNode BackgroundNode;
-	public readonly HoldButtonProgressNode ProgressNode;
 	public readonly NineGridNode FrameNode;
+	public readonly HoldButtonProgressNode ProgressNode;
 	public readonly TextNode TextNode;
 
 	public HoldButtonNode() {
 		SetInternalComponentType(ComponentType.HoldButton);
-		
+
 		BackgroundNode = new SimpleNineGridNode {
 			NodeId = 6,
 			TexturePath = "ui/uld/LongPressButtonA.tex",
@@ -30,9 +30,7 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 		BackgroundNode.AttachNode(this);
 
 		ProgressNode = new HoldButtonProgressNode {
-			NodeId = 4,
-			Size = new Vector2(100.0f, 36.0f),
-			NodeFlags = NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.Visible | NodeFlags.EmitsEvents,
+			NodeId = 4, Size = new Vector2(100.0f, 36.0f), NodeFlags = NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.Visible | NodeFlags.EmitsEvents,
 		};
 		ProgressNode.AttachNode(this);
 
@@ -55,34 +53,34 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 			NodeFlags = NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
 		TextNode.AttachNode(this);
-		
+
 		Data->Nodes[0] = TextNode.NodeId;
 		Data->Nodes[1] = BackgroundNode.NodeId;
 		Data->Nodes[2] = ProgressNode.NodeId;
 		Data->Nodes[3] = ProgressNode.ImageNode.NodeId;
-		
+
 		InitializeComponentEvents();
 
 		AddEvent(AddonEventType.ButtonClick, ClickHandler);
-		
+
 		BuildTimelines();
 	}
 
 	public bool UnlockAfterClick { get; set; }
-	
+
 	public Action? OnClick { get; set; }
-	
+
+	public SeString Label {
+		get => TextNode.Text;
+		set => TextNode.Text = value;
+	}
+
 	private void ClickHandler(AddonEventData obj) {
 		OnClick?.Invoke();
 
 		if (UnlockAfterClick) {
 			Reset();
 		}
-	}
-
-	public SeString Label {
-		get => TextNode.Text;
-		set => TextNode.Text = value;
 	}
 
 	public void Reset() {
@@ -93,7 +91,7 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 		Component->Progress.CurrentValue = 0;
 		Component->Progress.EndValue = 0;
 	}
-	
+
 	private void BuildTimelines() {
 		AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 20)
@@ -104,52 +102,52 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 			.EndFrameSet()
 			.Build()
 		);
-		
+
 		BackgroundNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 10)
-			.AddFrame(1, position: new Vector2(0,0))
+			.AddFrame(1, new Vector2(0, 0))
 			.AddFrame(1, alpha: 255)
 			.AddFrame(1, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(11, 17)
-			.AddFrame(11, position: new Vector2(0,0))
-			.AddFrame(13, position: new Vector2(0,0))
+			.AddFrame(11, new Vector2(0, 0))
+			.AddFrame(13, new Vector2(0, 0))
 			.AddFrame(11, alpha: 255)
 			.AddFrame(13, alpha: 255)
 			.AddFrame(11, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.AddFrame(13, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(18, 26)
-			.AddFrame(18, position: new Vector2(0,1))
+			.AddFrame(18, new Vector2(0, 1))
 			.AddFrame(18, alpha: 255)
 			.AddFrame(18, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(27, 36)
-			.AddFrame(27, position: new Vector2(0,0))
+			.AddFrame(27, new Vector2(0, 0))
 			.AddFrame(27, alpha: 178)
 			.AddFrame(27, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(50, 50, 50))
 			.EndFrameSet()
 			.BeginFrameSet(37, 46)
-			.AddFrame(37, position: new Vector2(0,0))
+			.AddFrame(37, new Vector2(0, 0))
 			.AddFrame(37, alpha: 255)
 			.AddFrame(37, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(47, 53)
-			.AddFrame(47, position: new Vector2(0,0))
-			.AddFrame(53, position: new Vector2(0,0))
+			.AddFrame(47, new Vector2(0, 0))
+			.AddFrame(53, new Vector2(0, 0))
 			.AddFrame(47, alpha: 255)
 			.AddFrame(53, alpha: 255)
 			.AddFrame(47, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
 			.AddFrame(53, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(54, 64)
-			.AddFrame(54, position: new Vector2(0,0))
+			.AddFrame(54, new Vector2(0, 0))
 			.AddFrame(54, alpha: 255)
 			.AddFrame(54, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(65, 71)
-			.AddFrame(65, position: new Vector2(0,0))
-			.AddFrame(71, position: new Vector2(0,0))
+			.AddFrame(65, new Vector2(0, 0))
+			.AddFrame(71, new Vector2(0, 0))
 			.AddFrame(65, alpha: 255)
 			.AddFrame(71, alpha: 255)
 			.AddFrame(65, addColor: new Vector3(16, 16, 16), multiplyColor: new Vector3(100, 100, 100))
@@ -157,7 +155,7 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 			.EndFrameSet()
 			.Build()
 		);
-		
+
 		ProgressNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 83)
 			.AddLabel(1, 29, AtkTimelineJumpBehavior.Start, 0)
@@ -178,52 +176,52 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 			.EndFrameSet()
 			.Build()
 		);
-		
+
 		FrameNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 10)
-			.AddFrame(1, position: new Vector2(0,0))
+			.AddFrame(1, new Vector2(0, 0))
 			.AddFrame(1, alpha: 255)
 			.AddFrame(1, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(11, 17)
-			.AddFrame(11, position: new Vector2(0,0))
-			.AddFrame(13, position: new Vector2(0,0))
+			.AddFrame(11, new Vector2(0, 0))
+			.AddFrame(13, new Vector2(0, 0))
 			.AddFrame(11, alpha: 255)
 			.AddFrame(13, alpha: 255)
 			.AddFrame(11, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.AddFrame(13, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(95, 95, 95))
 			.EndFrameSet()
 			.BeginFrameSet(18, 26)
-			.AddFrame(18, position: new Vector2(0,0))
+			.AddFrame(18, new Vector2(0, 0))
 			.AddFrame(18, alpha: 255)
 			.AddFrame(18, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(95, 95, 95))
 			.EndFrameSet()
 			.BeginFrameSet(27, 36)
-			.AddFrame(27, position: new Vector2(0,0))
+			.AddFrame(27, new Vector2(0, 0))
 			.AddFrame(27, alpha: 178)
 			.AddFrame(27, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(50, 50, 50))
 			.EndFrameSet()
 			.BeginFrameSet(37, 46)
-			.AddFrame(37, position: new Vector2(0,0))
+			.AddFrame(37, new Vector2(0, 0))
 			.AddFrame(37, alpha: 255)
 			.AddFrame(37, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(95, 95, 95))
 			.EndFrameSet()
 			.BeginFrameSet(47, 53)
-			.AddFrame(47, position: new Vector2(0,0))
-			.AddFrame(53, position: new Vector2(0,0))
+			.AddFrame(47, new Vector2(0, 0))
+			.AddFrame(53, new Vector2(0, 0))
 			.AddFrame(47, alpha: 255)
 			.AddFrame(53, alpha: 255)
 			.AddFrame(47, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(95, 95, 95))
 			.AddFrame(53, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(54, 64)
-			.AddFrame(54, position: new Vector2(0,0))
+			.AddFrame(54, new Vector2(0, 0))
 			.AddFrame(54, alpha: 255)
 			.AddFrame(54, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(95, 95, 95))
 			.EndFrameSet()
 			.BeginFrameSet(65, 71)
-			.AddFrame(65, position: new Vector2(0,0))
-			.AddFrame(71, position: new Vector2(0,0))
+			.AddFrame(65, new Vector2(0, 0))
+			.AddFrame(71, new Vector2(0, 0))
 			.AddFrame(65, alpha: 255)
 			.AddFrame(71, alpha: 255)
 			.AddFrame(65, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(95, 95, 95))
@@ -231,45 +229,45 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 			.EndFrameSet()
 			.Build()
 		);
-		
+
 		TextNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 10)
-			.AddFrame(1, position: new Vector2(16,8))
+			.AddFrame(1, new Vector2(16, 8))
 			.AddFrame(1, alpha: 255)
 			.AddFrame(1, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(11, 17)
-			.AddFrame(11, position: new Vector2(16,8))
+			.AddFrame(11, new Vector2(16, 8))
 			.AddFrame(11, alpha: 255)
 			.AddFrame(11, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(18, 26)
-			.AddFrame(18, position: new Vector2(16,9))
+			.AddFrame(18, new Vector2(16, 9))
 			.AddFrame(18, alpha: 255)
 			.AddFrame(18, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(27, 36)
-			.AddFrame(27, position: new Vector2(16,8))
+			.AddFrame(27, new Vector2(16, 8))
 			.AddFrame(27, alpha: 153)
 			.AddFrame(27, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(80, 80, 80))
 			.EndFrameSet()
 			.BeginFrameSet(37, 46)
-			.AddFrame(37, position: new Vector2(16,8))
+			.AddFrame(37, new Vector2(16, 8))
 			.AddFrame(37, alpha: 255)
 			.AddFrame(37, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(47, 53)
-			.AddFrame(47, position: new Vector2(16,8))
+			.AddFrame(47, new Vector2(16, 8))
 			.AddFrame(47, alpha: 255)
 			.AddFrame(47, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(54, 64)
-			.AddFrame(54, position: new Vector2(16,8))
+			.AddFrame(54, new Vector2(16, 8))
 			.AddFrame(54, alpha: 255)
 			.AddFrame(54, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()
 			.BeginFrameSet(65, 71)
-			.AddFrame(65, position: new Vector2(16,8))
+			.AddFrame(65, new Vector2(16, 8))
 			.AddFrame(65, alpha: 255)
 			.AddFrame(65, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
 			.EndFrameSet()

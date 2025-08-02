@@ -21,25 +21,16 @@ public class ImGuiIconButtonNode : ButtonBase {
 			IsVisible = true,
 		};
 		BackgroundNode.AttachNode(this);
-		
-		ImageNode = new ImGuiImageNode {
-			IsVisible = true,
-			NodeId = 3,
-		};
-		
-		ImageNode.AttachNode(this);
-				
-		LoadTimelines();
-		
-		InitializeComponentEvents();
-	}
 
-	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        ImageNode.Size = Size - new Vector2(16.0f, 16.0f);
-		ImageNode.Position = BackgroundNode.Position + new Vector2(BackgroundNode.LeftOffset, BackgroundNode.TopOffset);
-		BackgroundNode.Size = Size;
+		ImageNode = new ImGuiImageNode {
+			IsVisible = true, NodeId = 3,
+		};
+
+		ImageNode.AttachNode(this);
+
+		LoadTimelines();
+
+		InitializeComponentEvents();
 	}
 
 	public bool ShowBackground {
@@ -52,13 +43,20 @@ public class ImGuiIconButtonNode : ButtonBase {
 		set => ImageNode.TexturePath = value;
 	}
 
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();
+
+		ImageNode.Size = Size - new Vector2(16.0f, 16.0f);
+		ImageNode.Position = BackgroundNode.Position + new Vector2(BackgroundNode.LeftOffset, BackgroundNode.TopOffset);
+		BackgroundNode.Size = Size;
+	}
+
 	public void LoadTexture(IDalamudTextureWrap texture)
 		=> ImageNode.LoadTexture(texture);
-	
+
 	public void LoadTextureFromFile(string path)
 		=> ImageNode.LoadTextureFromFile(path);
-	
+
 	private void LoadTimelines()
 		=> LoadThreePartTimelines(this, BackgroundNode, ImageNode, new Vector2(8.0f, 8.0f));
-
 }

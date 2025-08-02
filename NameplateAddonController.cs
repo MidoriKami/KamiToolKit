@@ -6,7 +6,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 namespace KamiToolKit;
 
 /// <summary>
-/// Simplified controller for using AddonNamePlate for basic overlays.
+///     Simplified controller for using AddonNamePlate for basic overlays.
 /// </summary>
 public unsafe class NameplateAddonController : AddonController<AddonNamePlate> {
 	public NameplateAddonController(IDalamudPluginInterface pluginInterface) : base(pluginInterface) {
@@ -16,7 +16,7 @@ public unsafe class NameplateAddonController : AddonController<AddonNamePlate> {
 
 	public override void Dispose() {
 		base.Dispose();
-		
+
 		PostEnable -= RefreshAddon;
 		PostDisable -= RefreshAddon;
 	}
@@ -26,9 +26,9 @@ public unsafe class NameplateAddonController : AddonController<AddonNamePlate> {
 			if (addon->UldManager.LoadedState is AtkLoadState.Loaded) {
 				addon->UldManager.UpdateDrawNodeList();
 			}
-			
+
 			addon->UpdateCollisionNodeList(false);
-			
+
 			addon->DoFullUpdate = 1;
 			NamePlateNumberArray.Instance()->DoFullUpdate = true;
 		}

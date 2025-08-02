@@ -9,20 +9,20 @@ namespace KamiToolKit.Nodes;
 // Not intended for public use, this is specialized for KamiToolKit.NodeBase.Resize
 internal class ResizeButtonNode : SimpleComponentNode {
 
-	public readonly ImageNode UnselectedImageNode;
-	public readonly ImageNode SelectedImageNode;
-
 	private readonly ResizeDirection resizeDirection;
-	
+
+	public readonly ImageNode SelectedImageNode;
+	public readonly ImageNode UnselectedImageNode;
+
 	public ResizeButtonNode(ResizeDirection direction) {
 		resizeDirection = direction;
-		
+
 		var rotation = direction switch {
 			ResizeDirection.BottomRight => 1.0f * MathF.PI / 2.0f,
 			ResizeDirection.BottomLeft => 2.0f * MathF.PI / 2.0f,
 			_ => 0.0f,
 		};
-		
+
 		UnselectedImageNode = new SimpleImageNode {
 			NodeId = 3,
 			TexturePath = "ui/uld/ChatLog.tex",
@@ -48,28 +48,28 @@ internal class ResizeButtonNode : SimpleComponentNode {
 			ImageNodeFlags = 0,
 		};
 		SelectedImageNode.AttachNode(this);
-		
+
 		AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 30)
 			.AddLabel(1, 1, AtkTimelineJumpBehavior.Start, 0)
 			.AddLabel(30, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
 			.EndFrameSet()
 			.Build());
-		
+
 		UnselectedImageNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 30)
 			.AddFrame(1, rotation: rotation)
 			.EndFrameSet()
 			.Build()
 		);
-		
+
 		SelectedImageNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 30)
 			.AddFrame(1, rotation: rotation)
 			.EndFrameSet()
 			.Build()
 		);
-		
+
 		Timeline?.PlayAnimation(1);
 	}
 

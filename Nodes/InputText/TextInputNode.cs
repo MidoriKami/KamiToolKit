@@ -15,16 +15,27 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldComponentDataTextInput> {
 
+	public delegate void TextInputVirtualFuncDelegate(AtkTextInput.AtkTextInputEventInterface* listener, ushort* numEvents);
+
 	public readonly NineGridNode BackgroundNode;
-	public readonly NineGridNode FocusNode;
-	public readonly TextNode TextLimitsNode;
 	public readonly TextNode CurrentTextNode;
-	public readonly TextInputSelectionListNode SelectionListNode;
 	public readonly CursorNode CursorNode;
-	
+	public readonly NineGridNode FocusNode;
+	public readonly TextInputSelectionListNode SelectionListNode;
+	public readonly TextNode TextLimitsNode;
+
+	public Action? OnFocused;
+
+	public Action? OnUnfocused;
+
+	private delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, ushort*, void> originalFunction;
+	private TextInputVirtualFuncDelegate? pinnedFunction;
+
+	private AtkTextInputEventInterfaceVirtualTable* virtualTable;
+
 	public TextInputNode() {
 		SetInternalComponentType(ComponentType.TextInput);
-		
+
 		BackgroundNode = new SimpleNineGridNode {
 			NodeId = 19,
 			TexturePath = "ui/uld/TextInputA.tex",
@@ -34,7 +45,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			Offsets = new Vector4(10.0f),
 			Size = new Vector2(152.0f, 28.0f),
 		};
-		
+
 		BackgroundNode.AttachNode(this);
 
 		FocusNode = new SimpleNineGridNode {
@@ -47,7 +58,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			Size = new Vector2(152.0f, 28.0f),
 			IsVisible = true,
 		};
-		
+
 		FocusNode.AttachNode(this);
 
 		TextLimitsNode = new TextNode {
@@ -59,7 +70,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			AlignmentType = (AlignmentType) 21,
 			NodeFlags = NodeFlags.AnchorBottom | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
-		
+
 		TextLimitsNode.AttachNode(this);
 
 		CurrentTextNode = new TextNode {
@@ -70,16 +81,13 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorBottom | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 			TextFlags = TextFlags.AutoAdjustNodeSize,
 		};
-		
+
 		CurrentTextNode.AttachNode(this);
 
 		SelectionListNode = new TextInputSelectionListNode {
-			NodeId = 4,
-			Position = new Vector2(0.0f, 22.0f),
-			Size = new Vector2(186.0f, 208.0f),
-			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+			NodeId = 4, Position = new Vector2(0.0f, 22.0f), Size = new Vector2(186.0f, 208.0f), NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
-		
+
 		SelectionListNode.AttachNode(this);
 
 		CursorNode = new CursorNode {
@@ -89,9 +97,9 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			OriginY = 4.0f,
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 		};
-		
+
 		CursorNode.AttachNode(this);
-		
+
 		Data->Nodes[0] = CurrentTextNode.NodeId;
 		Data->Nodes[1] = BackgroundNode.NodeId;
 		Data->Nodes[2] = CursorNode.NodeId;
@@ -109,107 +117,40 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		Data->Nodes[14] = SelectionListNode.BackgroundNode.NodeId;
 		Data->Nodes[15] = TextLimitsNode.NodeId;
 
-		Data->CandidateColor = new ByteColor { R = 66 };
-		Data->IMEColor = new ByteColor { R = 67 };
+		Data->CandidateColor = new ByteColor {
+			R = 66,
+		};
+		Data->IMEColor = new ByteColor {
+			R = 67,
+		};
 		Data->FocusColor = KnownColor.Black.Vector().ToByteColor();
-		
+
 		// Flags1 = TextInputFlags1.EnableIME | TextInputFlags1.AllowUpperCase | TextInputFlags1.AllowLowerCase | TextInputFlags1.EnableDictionary;
 		// Flags2 = TextInputFlags2.AllowNumberInput | TextInputFlags2.AllowSymbolInput;
-		
+
 		Flags1 = (TextInputFlags1) 212;
 		Flags2 = (TextInputFlags2) 3;
 
 		LoadTimelines();
-		
+
 		SetupVirtualTable();
-		
+
 		InitializeComponentEvents();
-		
+
 		CollisionNode.AddEvent(AddonEventType.InputReceived, InputComplete);
-        CollisionNode.AddEvent(AddonEventType.FocusStart, _ => OnFocused?.Invoke());
-        CollisionNode.AddEvent(AddonEventType.FocusStop, _ => OnUnfocused?.Invoke());
-    }
-
-    public Action? OnFocused;
-
-    public Action? OnUnfocused;
-
-    private void FocusStart(AddonEventData obj)
-        => OnFocused?.Invoke();
-
-    private AtkTextInputEventInterfaceVirtualTable* virtualTable;
-	
-	public delegate void TextInputVirtualFuncDelegate(AtkTextInput.AtkTextInputEventInterface* listener, ushort* numEvents);
-
-	private delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, ushort*, void> originalFunction;
-	private TextInputVirtualFuncDelegate? pinnedFunction;
-
-	[StructLayout(LayoutKind.Explicit, Size = 0x8)]
-	public struct AtkTextInputEventInterface {
-		[FieldOffset(0)] public AtkTextInputEventInterfaceVirtualTable* VirtualTable;
+		CollisionNode.AddEvent(AddonEventType.FocusStart, _ => OnFocused?.Invoke());
+		CollisionNode.AddEvent(AddonEventType.FocusStop, _ => OnUnfocused?.Invoke());
 	}
 
-	[StructLayout(LayoutKind.Explicit, Size = 0x8 * 5)]
-	public struct AtkTextInputEventInterfaceVirtualTable {
-		[FieldOffset(8)] public delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, ushort*, void> OnInputReceived;
-	}
-	
-	private void SetupVirtualTable() {
-
-		// Note: This virtual table only has 5 entries, but we will make it have 10 in-case square enix adds another entry
-		var eventInterface = (AtkTextInputEventInterface*) &Component->AtkTextInputEventInterface;
-		
-		virtualTable = (AtkTextInputEventInterfaceVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 10);
-		NativeMemory.Copy(eventInterface->VirtualTable, virtualTable,0x8 * 10);
-		
-		eventInterface->VirtualTable = virtualTable;
-		
-		pinnedFunction = OnInputChanged;
-		
-		originalFunction = virtualTable->OnInputReceived;
-		virtualTable->OnInputReceived = (delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, ushort*, void>) Marshal.GetFunctionPointerForDelegate(pinnedFunction);
-	}
-	
 	public Action<SeString>? OnInputReceived { get; set; }
 
-	private void OnInputChanged(AtkTextInput.AtkTextInputEventInterface* listener, ushort* numEvents) {
-		originalFunction(listener, numEvents);
-		
-		try {
-			OnInputReceived?.Invoke(SeString.Parse(Component->UnkText1));
-		}
-		catch (Exception e) {
-			Log.Exception(e);
-		}
-	}
-	
 	public Action<SeString>? OnInputComplete { get; set; }
-	
-	protected override void Dispose(bool disposing) {
-		if (disposing) {
-            NativeMemoryHelper.Free(virtualTable, 0x8 * 10);
-			
-			base.Dispose(disposing);
-		}
-	}
-	
-	private void InputComplete(AddonEventData data)
-        => OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
-
-	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        BackgroundNode.Size = Size;
-		FocusNode.Size = Size;
-		TextLimitsNode.Size = new Vector2(Width + 18.0f, Height - 9.0f);
-		CurrentTextNode.Size = new Vector2(Width - 20.0f, Height - 10.0f);
-	}
 
 	public int MaxCharacters {
 		get => (int) Component->ComponentTextData.MaxChar;
 		set => Component->ComponentTextData.MaxChar = (uint) value;
 	}
-	
+
 	public bool ShowLimitText {
 		get => TextLimitsNode.IsVisible;
 		set => TextLimitsNode.IsVisible = value;
@@ -229,16 +170,66 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 		get => SeString.Parse(Component->UnkText1);
 		set => Component->SetText(value.ToString());
 	}
-	
+
+	private void FocusStart(AddonEventData obj)
+		=> OnFocused?.Invoke();
+
+	private void SetupVirtualTable() {
+
+		// Note: This virtual table only has 5 entries, but we will make it have 10 in-case square enix adds another entry
+		var eventInterface = (AtkTextInputEventInterface*) &Component->AtkTextInputEventInterface;
+
+		virtualTable = (AtkTextInputEventInterfaceVirtualTable*) NativeMemoryHelper.Malloc(0x8 * 10);
+		NativeMemory.Copy(eventInterface->VirtualTable, virtualTable, 0x8 * 10);
+
+		eventInterface->VirtualTable = virtualTable;
+
+		pinnedFunction = OnInputChanged;
+
+		originalFunction = virtualTable->OnInputReceived;
+		virtualTable->OnInputReceived = (delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, ushort*, void>) Marshal.GetFunctionPointerForDelegate(pinnedFunction);
+	}
+
+	private void OnInputChanged(AtkTextInput.AtkTextInputEventInterface* listener, ushort* numEvents) {
+		originalFunction(listener, numEvents);
+
+		try {
+			OnInputReceived?.Invoke(SeString.Parse(Component->UnkText1));
+		}
+		catch (Exception e) {
+			Log.Exception(e);
+		}
+	}
+
+	protected override void Dispose(bool disposing) {
+		if (disposing) {
+			NativeMemoryHelper.Free(virtualTable, 0x8 * 10);
+
+			base.Dispose(disposing);
+		}
+	}
+
+	private void InputComplete(AddonEventData data)
+		=> OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
+
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();
+
+		BackgroundNode.Size = Size;
+		FocusNode.Size = Size;
+		TextLimitsNode.Size = new Vector2(Width + 18.0f, Height - 9.0f);
+		CurrentTextNode.Size = new Vector2(Width - 20.0f, Height - 10.0f);
+	}
+
 	private void LoadTimelines() {
 		AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 29)
 			.AddLabelPair(1, 9, 17)
 			.AddLabelPair(10, 19, 18)
-			.AddLabelPair(20, 29,  7)
+			.AddLabelPair(20, 29, 7)
 			.EndFrameSet()
 			.Build());
-		
+
 		BackgroundNode.AddTimeline(new TimelineBuilder()
 			.AddFrameSetWithFrame(1, 9, 1, alpha: 255)
 			.BeginFrameSet(10, 19)
@@ -247,14 +238,14 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			.EndFrameSet()
 			.AddFrameSetWithFrame(20, 29, 20, alpha: 127)
 			.Build());
-		
+
 		FocusNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(10, 19)
 			.AddFrame(10, alpha: 0)
 			.AddFrame(12, alpha: 255)
 			.EndFrameSet()
 			.Build());
-		
+
 		TextLimitsNode.AddTimeline(new TimelineBuilder()
 			.AddFrameSetWithFrame(1, 9, 1, alpha: 102)
 			.BeginFrameSet(10, 19)
@@ -263,12 +254,22 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 			.EndFrameSet()
 			.AddFrameSetWithFrame(20, 29, 20, alpha: 76)
 			.Build());
-		
+
 		CursorNode.AddTimeline(new TimelineBuilder()
-           .BeginFrameSet(1, 15)
-           .AddLabel(1, 101, AtkTimelineJumpBehavior.Start, 0)
-           .AddLabel(15, 0, AtkTimelineJumpBehavior.LoopForever, 101)
-           .EndFrameSet()
-           .Build());
+			.BeginFrameSet(1, 15)
+			.AddLabel(1, 101, AtkTimelineJumpBehavior.Start, 0)
+			.AddLabel(15, 0, AtkTimelineJumpBehavior.LoopForever, 101)
+			.EndFrameSet()
+			.Build());
+	}
+
+	[StructLayout(LayoutKind.Explicit, Size = 0x8)]
+	public struct AtkTextInputEventInterface {
+		[FieldOffset(0)] public AtkTextInputEventInterfaceVirtualTable* VirtualTable;
+	}
+
+	[StructLayout(LayoutKind.Explicit, Size = 0x8 * 5)]
+	public struct AtkTextInputEventInterfaceVirtualTable {
+		[FieldOffset(8)] public delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, ushort*, void> OnInputReceived;
 	}
 }

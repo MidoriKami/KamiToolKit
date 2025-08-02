@@ -18,8 +18,8 @@ public static unsafe class AddonEventDataExtensions {
 		=> ref data.GetEventData()->DragDropData;
 
 	private static AtkEvent* GetEvent(this AddonEventData data)
-		=>  (AtkEvent*) data.AtkEventPointer;
-	
+		=> (AtkEvent*) data.AtkEventPointer;
+
 	private static AtkEventData* GetEventData(this AddonEventData data)
-		=>  (AtkEventData*) data.AtkEventDataPointer;
+		=> (AtkEventData*) data.AtkEventDataPointer;
 }

@@ -9,10 +9,10 @@ namespace KamiToolKit.NodeParts;
 
 public unsafe class Timeline : IDisposable {
 
-	internal AtkTimeline* InternalTimeline;
-	
 	private readonly TimelineResource internalTimelineResource;
-	
+
+	internal AtkTimeline* InternalTimeline;
+
 	public Timeline() {
 		InternalTimeline = NativeMemoryHelper.UiAlloc<AtkTimeline>();
 
@@ -21,13 +21,6 @@ public unsafe class Timeline : IDisposable {
 		InternalTimeline->LabelResource = null;
 		InternalTimeline->ActiveAnimation = null;
 		InternalTimeline->OwnerNode = null;
-	}
-
-	public void Dispose() {
-		internalTimelineResource.Dispose();
-		
-		NativeMemoryHelper.UiFree(InternalTimeline);
-		InternalTimeline = null;
 	}
 
 	internal AtkResNode* OwnerNode {
@@ -78,8 +71,15 @@ public unsafe class Timeline : IDisposable {
 		set => internalTimelineResource.LabelSets = value;
 	}
 
+	public void Dispose() {
+		internalTimelineResource.Dispose();
+
+		NativeMemoryHelper.UiFree(InternalTimeline);
+		InternalTimeline = null;
+	}
+
 	/// <summary>
-	/// Plays the specified animation via label ID
+	///     Plays the specified animation via label ID
 	/// </summary>
 	/// <param name="labelId">The label ID to play</param>
 	/// <param name="force">Force the animation to restart even if it was already playing</param>
@@ -97,69 +97,52 @@ public unsafe class Timeline : IDisposable {
 
 		var keyFrame = GetKeyFrame(groupType, frameId);
 		if (keyFrame is null) return;
-		
+
 		if (position is not null) {
 			*keyFrame = new TimelineAnimationKeyFrame {
-				FrameIndex = frameId,
-				Position = position.Value,
-				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
+				FrameIndex = frameId, Position = position.Value, Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			};
 		}
 
 		if (alpha is not null) {
 			*keyFrame = new TimelineAnimationKeyFrame {
-				FrameIndex = frameId,
-				Alpha = alpha.Value,
-				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
+				FrameIndex = frameId, Alpha = alpha.Value, Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			};
 		}
 
 		if (addColor is not null || multiplyColor is not null) {
 			*keyFrame = new TimelineAnimationKeyFrame {
-				FrameIndex = frameId,
-				AddColor = addColor ?? new Vector3(0.0f, 0.0f, 0.0f),
-				MultiplyColor = multiplyColor ?? new Vector3(100.0f, 100.0f, 100.0f),
-				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
+				FrameIndex = frameId, AddColor = addColor ?? new Vector3(0.0f, 0.0f, 0.0f), MultiplyColor = multiplyColor ?? new Vector3(100.0f, 100.0f, 100.0f), Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			};
 		}
 
 		if (rotation is not null) {
 			*keyFrame = new TimelineAnimationKeyFrame {
-				FrameIndex = frameId,
-				Rotation = rotation.Value,
-				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
+				FrameIndex = frameId, Rotation = rotation.Value, Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			};
 		}
 
 		if (scale is not null) {
 			*keyFrame = new TimelineAnimationKeyFrame {
-				FrameIndex = frameId,
-				Scale = scale.Value,
-				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
+				FrameIndex = frameId, Scale = scale.Value, Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			};
 		}
 
 		if (textColor is not null) {
 			*keyFrame = new TimelineAnimationKeyFrame {
-				FrameIndex = frameId,
-				TextColor = textColor.Value,
-				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
+				FrameIndex = frameId, TextColor = textColor.Value, Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			};
 		}
 
 		if (textOutlineColor is not null) {
 			*keyFrame = new TimelineAnimationKeyFrame {
-				FrameIndex = frameId,
-				TextEdgeColor = textOutlineColor.Value,
-				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
+				FrameIndex = frameId, TextEdgeColor = textOutlineColor.Value, Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			};
 		}
 
 		if (partId is not null) {
 			*keyFrame = new TimelineAnimationKeyFrame {
-				FrameIndex = frameId,
-				PartId = partId.Value,
-				Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
+				FrameIndex = frameId, PartId = partId.Value, Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
 			};
 		}
 	}
@@ -183,10 +166,10 @@ public unsafe class Timeline : IDisposable {
 	private AtkTimelineAnimation* GetAnimationForFrameId(int frameId) {
 		if (InternalTimeline is null) return null;
 		if (InternalTimeline->Resource is null) return null;
-		
-		for(var index = 0; index < InternalTimeline->Resource->AnimationCount; index++) {
+
+		for (var index = 0; index < InternalTimeline->Resource->AnimationCount; index++) {
 			var animation = &InternalTimeline->Resource->Animations[index];
-			
+
 			if (animation->StartFrameIdx <= frameId && frameId <= animation->EndFrameIdx)
 				return animation;
 		}

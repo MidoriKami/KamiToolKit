@@ -52,28 +52,28 @@ public abstract partial class NodeBase {
 		_ => null,
 	};
 
-	private static IEnumerable<MemberInfo> GetEnumerableMemberInfo(NodeBase node) 
+	private static IEnumerable<MemberInfo> GetEnumerableMemberInfo(NodeBase node)
 		=> GetMemberInfo(node).Where(IsMemberEnumerable).Where(IsBaseNodeEnumerable).Where(IsMemberSingleIndexable);
 
 	private static bool IsMemberEnumerable(MemberInfo member)
 		=> GetMemberType(member)?.GetInterfaces().Contains(typeof(IEnumerable)) ?? false;
-	
+
 	private static bool IsBaseNodeEnumerable(MemberInfo member)
 		=> typeof(NodeBase).IsAssignableFrom(GetMemberType(member)?.GetGenericArguments().FirstOrDefault());
 
 	private static bool IsMemberSingleIndexable(MemberInfo member) {
 		if (member is not PropertyInfo property) return true;
-		
+
 		return property.GetIndexParameters().Length is 0;
 	}
-	
+
 	private static IEnumerable<NodeBase?>? GetEnumerable(MemberInfo member, NodeBase node) => member.MemberType switch {
 		MemberTypes.Field => (member as FieldInfo)?.GetValue(node) as IEnumerable<NodeBase>,
 		MemberTypes.Property => (member as PropertyInfo)?.GetValue(node) as IEnumerable<NodeBase>,
 		_ => null,
 	};
 
-	private static Type? GetMemberType(MemberInfo member)  => member.MemberType switch {
+	private static Type? GetMemberType(MemberInfo member) => member.MemberType switch {
 		MemberTypes.Field => (member as FieldInfo)?.FieldType,
 		MemberTypes.Property => (member as PropertyInfo)?.PropertyType,
 		_ => null,

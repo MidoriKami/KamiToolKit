@@ -7,21 +7,16 @@ namespace KamiToolKit.NodeParts;
 
 public unsafe class TimelineLabelSet : IDisposable {
 
-	internal AtkTimelineLabelSet* InternalLabelSet;
-	
 	private List<TimelineKeyFrame> internalKeyFrames = [];
-	
+
+	internal AtkTimelineLabelSet* InternalLabelSet;
+
 	public TimelineLabelSet() {
 		InternalLabelSet = NativeMemoryHelper.UiAlloc<AtkTimelineLabelSet>();
 
 		InternalLabelSet->StartFrameIdx = 0;
 		InternalLabelSet->EndFrameIdx = 0;
 		InternalLabelSet->LabelKeyGroup.Type = AtkTimelineKeyGroupType.Label;
-	}
-	
-	public void Dispose() {
-		NativeMemoryHelper.UiFree(InternalLabelSet);
-		InternalLabelSet = null;
 	}
 
 	public int StartFrameId {
@@ -34,9 +29,22 @@ public unsafe class TimelineLabelSet : IDisposable {
 		set => InternalLabelSet->EndFrameIdx = (ushort) value;
 	}
 
+	public List<TimelineKeyFrame> Labels {
+		get => internalKeyFrames;
+		set {
+			internalKeyFrames = value;
+			Resync();
+		}
+	}
+
+	public void Dispose() {
+		NativeMemoryHelper.UiFree(InternalLabelSet);
+		InternalLabelSet = null;
+	}
+
 	private void Resync() {
 		ref var keyGroup = ref InternalLabelSet->LabelKeyGroup;
-		
+
 		// Free existing array, we will completely rebuild it
 		if (keyGroup.KeyFrames is null) {
 			NativeMemoryHelper.UiFree(keyGroup.KeyFrames, keyGroup.KeyFrameCount);
@@ -51,15 +59,7 @@ public unsafe class TimelineLabelSet : IDisposable {
 			keyGroup.KeyFrames[index] = keyFrame;
 			index++;
 		}
-		
-		keyGroup.KeyFrameCount = (ushort) internalKeyFrames.Count;
-	}
 
-	public List<TimelineKeyFrame> Labels {
-		get => internalKeyFrames;
-		set {
-			internalKeyFrames = value;
-			Resync();
-		}
+		keyGroup.KeyFrameCount = (ushort) internalKeyFrames.Count;
 	}
 }

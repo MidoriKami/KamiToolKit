@@ -9,7 +9,7 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
 
 	public readonly NineGridNode BackgroundNineGrid;
 	public readonly TextNode TextNode;
-	
+
 	public TextNineGridNode() {
 		SetInternalComponentType(ComponentType.TextNineGrid);
 
@@ -41,7 +41,7 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
 
 		Data->Nodes[0] = TextNode.NodeId;
 		Data->Nodes[1] = 0;
-		
+
 		InitializeComponentEvents();
 	}
 
@@ -86,9 +86,9 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        BackgroundNineGrid.Size = Size;
+		base.OnSizeChanged();
+
+		BackgroundNineGrid.Size = Size;
 		TextNode.Size = Size - new Vector2(8.0f, 2.0f);
 	}
 }

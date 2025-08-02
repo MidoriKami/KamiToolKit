@@ -5,7 +5,6 @@ using FFXIVClientStructs.Interop;
 namespace KamiToolKit.Classes;
 
 public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEvent eventHandler) : CustomEventListener(eventHandler) {
-
 	public void AddEvent(AtkEventType eventType, AtkResNode* node) {
 		DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
 			Log.Verbose($"Registering ViewportEvent: {eventType}");
@@ -32,7 +31,7 @@ public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEven
 		foreach (var atkEvent in eventList) {
 			RemoveEvent(atkEvent.Value->State.EventType);
 		}
-		
+
 		base.Dispose();
 	}
 }

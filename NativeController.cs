@@ -1,7 +1,5 @@
 ﻿using System;
-using Dalamud.IoC;
 using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
@@ -12,28 +10,27 @@ using KamiToolKit.System;
 namespace KamiToolKit;
 
 /// <summary>
-/// Controller for custom native nodes, this class is required to attach custom nodes to native ui, this service will also keep track of the allocated nodes to prevent memory leaks.
+///     Controller for custom native nodes, this class is required to attach custom nodes to native ui, this service will
+///     also keep track of the allocated nodes to prevent memory leaks.
 /// </summary>
 public unsafe class NativeController : IDisposable {
-	[PluginService] private IFramework Framework { get; set; } = null!;
-	[PluginService] private IGameInteropProvider GameInteropProvider { get; set; } = null!;
 
 	public NativeController(IDalamudPluginInterface pluginInterface) {
 		pluginInterface.Inject(this);
 
 		// Inject non-Experimental Properties
 		pluginInterface.Inject(DalamudInterface.Instance);
-		GameInteropProvider.InitializeFromAttributes(DalamudInterface.Instance);
+		DalamudInterface.Instance.GameInteropProvider.InitializeFromAttributes(DalamudInterface.Instance);
 
 		// Inject Experimental Properties
 		pluginInterface.Inject(Experimental.Instance);
-		GameInteropProvider.InitializeFromAttributes(Experimental.Instance);
+		DalamudInterface.Instance.GameInteropProvider.InitializeFromAttributes(Experimental.Instance);
 
 		Experimental.Instance.EnableHooks();
 	}
 
 	public void Dispose()
-		=> Framework.RunOnFrameworkThread(() => {
+		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
 			NodeBase.DisposeNodes();
 			NativeAddon.DisposeAddons();
 
@@ -41,20 +38,20 @@ public unsafe class NativeController : IDisposable {
 		});
 
 	public void AttachNode(NodeBase customNode, NodeBase targetNode, NodePosition? position = null)
-		=> Framework.RunOnFrameworkThread(() => AttachToNodeBase(customNode, targetNode, position));
+		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => AttachToNodeBase(customNode, targetNode, position));
 
 	public void AttachNode(NodeBase customNode, AtkResNode* targetNode, NodePosition? position = null)
-		=> Framework.RunOnFrameworkThread(() => AttachToAtkResNode(customNode, targetNode, position));
+		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => AttachToAtkResNode(customNode, targetNode, position));
 
 	public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings)
-		=> Framework.RunOnFrameworkThread(() => AttachToAtkComponentNode(customNode, targetNode, position));
+		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => AttachToAtkComponentNode(customNode, targetNode, position));
 
 	public void AttachNode(NodeBase customNode, NativeAddon targetAddon, NodePosition? position = null)
-		=> Framework.RunOnFrameworkThread(() => AttachToNativeAddon(customNode, targetAddon, position));
+		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => AttachToNativeAddon(customNode, targetAddon, position));
 
 	public void DetachNode(NodeBase? customNode, Action? disposeAction = null)
-		=> Framework.RunOnFrameworkThread(() => DetachNodeTask(customNode, disposeAction));
-	
+		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => DetachNodeTask(customNode, disposeAction));
+
 	private void AttachToNodeBase(NodeBase customNode, NodeBase targetNode, NodePosition? position) {
 
 		Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}] to another Custom Node [{targetNode.GetType()}]");
@@ -74,7 +71,7 @@ public unsafe class NativeController : IDisposable {
 				return;
 		}
 	}
-	
+
 	private void AttachToAtkResNode(NodeBase customNode, AtkResNode* targetNode, NodePosition? position) {
 		Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint) customNode.InternalResNode:X}] to a native AtkResNode");
 		var addon = GetAddonForNode(targetNode);
@@ -96,7 +93,7 @@ public unsafe class NativeController : IDisposable {
 			Log.Error("TargetNode type was expected to be Component but was not. Aborting attach.");
 			return;
 		}
-			
+
 		Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint) customNode.InternalResNode:X}] to a native AtkComponentNode");
 
 		var addon = GetAddonForNode((AtkResNode*) targetNode);

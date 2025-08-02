@@ -18,6 +18,19 @@ using Newtonsoft.Json.Linq;
 namespace KamiToolKit.System;
 
 public partial class NodeBase {
+
+	private List<PropertyInfo> taggedFields = [];
+
+	/// <summary>
+	///     Setting these properties will prevent Load operations from setting those properties.
+	/// </summary>
+	/// <remarks>This only applies to the object that .Load is being called on.</remarks>
+	/// <example>Setting "Position" will prevent a position value from the json from overwriting the nodes position</example>
+	public virtual List<string> OnLoadOmittedProperties { get; set; } = [];
+
+	private bool TagListGenerated { get; set; }
+	private IOrderedEnumerable<PropertyInfo> OrderedPrimitives => taggedFields.OrderByDescending(property => property.PropertyType.Name);
+
 	public void Save(string filePath) {
 		try {
 			Log.Debug($"[NodeBase] Saving {GetShortPath(filePath)}");
@@ -40,7 +53,7 @@ public partial class NodeBase {
 				}
 				fileData = jObject.ToString();
 			}
-			
+
 			if (!fileData.IsNullOrEmpty()) {
 				JsonConvert.PopulateObject(fileData, this);
 				MarkDirty();
@@ -62,32 +75,20 @@ public partial class NodeBase {
 			foreach (var property in omittedProperties) {
 				reserialized.Remove(property);
 			}
-			
+
 			JsonConvert.PopulateObject(reserialized.ToString(), this);
 		}
 	}
 
-    private string GetShortPath(string filePath) {
-        var pluginDirectoryPath = DalamudInterface.Instance.PluginInterface.ConfigDirectory.FullName;
+	private string GetShortPath(string filePath) {
+		var pluginDirectoryPath = DalamudInterface.Instance.PluginInterface.ConfigDirectory.FullName;
 
-        if (filePath.StartsWith(pluginDirectoryPath, StringComparison.OrdinalIgnoreCase)) {
-            return filePath[pluginDirectoryPath.Length..].TrimStart(Path.DirectorySeparatorChar);
-        }
+		if (filePath.StartsWith(pluginDirectoryPath, StringComparison.OrdinalIgnoreCase)) {
+			return filePath[pluginDirectoryPath.Length..].TrimStart(Path.DirectorySeparatorChar);
+		}
 
-        return filePath;
-    }
-
-	/// <summary>
-	/// Setting these properties will prevent Load operations from setting those properties.
-	/// </summary>
-	/// <remarks>This only applies to the object that .Load is being called on.</remarks>
-	/// <example>Setting "Position" will prevent a position value from the json from overwriting the nodes position</example>
-	public virtual List<string> OnLoadOmittedProperties { get; set; } = [];
-
-	private bool TagListGenerated { get; set; }
-	
-	private List<PropertyInfo> taggedFields = [];
-	private IOrderedEnumerable<PropertyInfo> OrderedPrimitives => taggedFields.OrderByDescending(property => property.PropertyType.Name);
+		return filePath;
+	}
 
 	private void DrawTaggedFields() {
 		foreach (var primitive in OrderedPrimitives) {
@@ -99,14 +100,14 @@ public partial class NodeBase {
 		foreach (var memberInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
 			if (memberInfo is not { MemberType: MemberTypes.Field or MemberTypes.Property }) continue;
 			if (!memberInfo.GetCustomAttributesData().Any(attribute => attribute.AttributeType == typeof(JsonPropertyAttribute))) continue;
-			
+
 			taggedFields.Add(memberInfo);
 		}
 	}
 
 	private void GeneratePropertyList() {
 		var stopWatch = Stopwatch.StartNew();
-		
+
 		if (!TagListGenerated) {
 			GenerateTypeList(GetType());
 			TagListGenerated = true;
@@ -120,7 +121,7 @@ public partial class NodeBase {
 
 		ImGui.TableNextColumn();
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-		
+
 		if (info.PropertyType == typeof(Vector4)) {
 			var value = (Vector4) info.GetValue(this)!;
 			if (ImGui.ColorEdit4($"##{info.Name}", ref value, ImGuiColorEditFlags.AlphaPreviewHalf)) {
@@ -154,12 +155,12 @@ public partial class NodeBase {
 		else if (info.PropertyType == typeof(uint)) {
 			var value = Convert.ToInt32(info.GetValue(this)!);
 			if (ImGui.InputInt($"##{info.Name}", ref value, 0, 0)) {
-				info.SetValue(this, (uint)value);
+				info.SetValue(this, (uint) value);
 			}
 		}
 		else if (info.PropertyType.IsEnum) {
 			var hasFlags = info.PropertyType.GetCustomAttribute<FlagsAttribute>() != null;
-			
+
 			var value = (Enum) info.GetValue(this)!;
 			if (ComboHelper.EnumCombo($"##{info.Name}", ref value, hasFlags)) {
 				info.SetValue(this, value);
@@ -167,9 +168,11 @@ public partial class NodeBase {
 		}
 		else if (info.PropertyType == typeof(string)) {
 			var standardHeight = ImGuiHelpers.GetButtonSize("A").Y;
-			
-			var value = (string)info.GetValue(this)!;
-			if (ImGui.InputTextMultiline($"##{info.Name}", ref value, 2000, ImGui.GetContentRegionAvail() with { Y = standardHeight * 2.0f })) {
+
+			var value = (string) info.GetValue(this)!;
+			if (ImGui.InputTextMultiline($"##{info.Name}", ref value, 2000, ImGui.GetContentRegionAvail() with {
+				    Y = standardHeight * 2.0f,
+			    })) {
 				info.SetValue(this, value);
 			}
 		}
@@ -188,7 +191,7 @@ public partial class NodeBase {
 			}
 		}
 	}
-	
+
 	public virtual void DrawConfig() {
 		GeneratePropertyList();
 

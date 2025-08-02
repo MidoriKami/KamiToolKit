@@ -20,9 +20,9 @@ public class AlternateCooldownNode : ResNode {
 			DrawFlags = 0x102,
 			PartId = 80,
 		};
-		
+
 		IconNodeTextureHelper.LoadIconARecast2Texture(CooldownImage);
-		
+
 		CooldownImage.AttachNode(this);
 
 		BuildTimeline();

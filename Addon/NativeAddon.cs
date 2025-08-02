@@ -11,12 +11,14 @@ namespace KamiToolKit.Addon;
 
 public abstract unsafe partial class NativeAddon {
 
+	private GCHandle? disposeHandle;
+
 	internal AtkUnitBase* InternalAddon;
 
 	public ResNode RootNode = null!;
 
 	public WindowNode WindowNode {
-		get; 
+		get;
 		set {
 			if (value is null) throw new Exception("Cannot set a window node to null");
 
@@ -30,8 +32,6 @@ public abstract unsafe partial class NativeAddon {
 			InternalAddon->WindowNode = value.InternalComponentNode;
 		}
 	} = null!;
-	
-	private GCHandle? disposeHandle;
 
 	private void AllocateAddon() {
 		if (InternalAddon is not null) {
@@ -52,14 +52,13 @@ public abstract unsafe partial class NativeAddon {
 		Log.Verbose($"[{InternalName}] Beginning Native Addon Allocation");
 
 		InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
-		
+
 		RegisterVirtualTable();
 
 		InternalAddon->Flags1A2 |= 0b0100_0000; // don't save/load AddonConfig
 
 		RootNode = new ResNode {
-			NodeId = 1,
-			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
+			NodeId = 1, NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
 		};
 
 		WindowNode = new WindowNode();
@@ -67,7 +66,7 @@ public abstract unsafe partial class NativeAddon {
 		InternalAddon->NameString = GetInternalNameSafe();
 
 		InternalAddon->OpenSoundEffectId = (short) OpenWindowSoundEffectId;
-		
+
 		Log.Verbose($"[{InternalName}] Allocation Complete");
 	}
 
@@ -79,9 +78,7 @@ public abstract unsafe partial class NativeAddon {
 		widgetInfo->NodeCount = 0;
 		widgetInfo->NodeList = null;
 		widgetInfo->WidgetAlignment = new AtkWidgetAlignment {
-			AlignmentType = AlignmentType.Center, 
-			X = 50.0f, 
-			Y = 50.0f,
+			AlignmentType = AlignmentType.Center, X = 50.0f, Y = 50.0f,
 		};
 
 		InternalAddon->UldManager.Objects = (AtkUldObjectInfo*) widgetInfo;
@@ -98,12 +95,12 @@ public abstract unsafe partial class NativeAddon {
 
 		// UldManager finished loading the uld
 		InternalAddon->Flags198 |= 2 << 0x1C;
-		
+
 		// LoadUldByName called
 		InternalAddon->Flags1A2 |= 4;
 
 		InternalAddon->UpdateCollisionNodeList(false);
-		
+
 		// Now that we have constructed this instance, track it for auto-dispose
 		CreatedAddons.Add(this);
 
@@ -111,7 +108,7 @@ public abstract unsafe partial class NativeAddon {
 	}
 
 	/// <summary>
-	/// Initializes and Opens this instance of Addon
+	///     Initializes and Opens this instance of Addon
 	/// </summary>
 	/// <param name="depthLayer">Which UI layer to attach the Addon to</param>
 	public void Open(int depthLayer = 4)
@@ -132,7 +129,7 @@ public abstract unsafe partial class NativeAddon {
 			}
 		});
 
-	public void Close() 
+	public void Close()
 		=> DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
 			Log.Verbose($"[{InternalName}] Close");
 
@@ -171,7 +168,7 @@ public abstract unsafe partial class NativeAddon {
 		if (noSpaces.Length > 31) {
 			noSpaces = noSpaces[..31];
 		}
-		
+
 		noSpaces += char.MinValue;
 		return noSpaces;
 	}

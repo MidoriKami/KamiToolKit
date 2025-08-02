@@ -4,8 +4,8 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using KamiToolKit.Addon;
 using KamiToolKit.Classes;
-using KamiToolKit.Nodes;
 using KamiToolKit.Extensions;
+using KamiToolKit.Nodes;
 
 namespace KamiToolKit.System;
 
@@ -25,7 +25,7 @@ public abstract unsafe partial class NodeBase {
 			AttachNode(node);
 			return;
 		}
-		
+
 		NodeLinker.AttachNode(InternalResNode, target.InternalResNode, position);
 		EnableChildEvents(target);
 		UpdateNative();
@@ -47,7 +47,7 @@ public abstract unsafe partial class NodeBase {
 			NodePosition.AsFirstChild => targetNode->Component->UldManager.RootNode,
 			_ => throw new ArgumentOutOfRangeException(nameof(position), position, null),
 		};
-		
+
 		NodeLinker.AttachNode(InternalResNode, (AtkResNode*) attachTarget, position);
 		UpdateNative();
 	}
@@ -69,7 +69,7 @@ public abstract unsafe partial class NodeBase {
 
 	internal void DetachNode(bool disableEvents = true) {
 		if (disableEvents) DisableEvents();
-		
+
 		NodeLinker.DetachNode(InternalResNode);
 
 		if (ParentUldManager is not null) {
@@ -118,7 +118,7 @@ public abstract unsafe partial class NodeBase {
 			EnableEvents(targetParent.EventAddonPointer);
 		}
 	}
-	
+
 	private AtkUldManager* GetUldManagerForNode(AtkResNode* node) {
 		if (node is null) return null;
 
@@ -146,7 +146,7 @@ public abstract unsafe partial class NodeBase {
 
 		return null;
 	}
-	
+
 	private void VisitChildren(AtkResNode* parent, Action<Pointer<AtkResNode>> visitAction) {
 		visitAction(parent);
 

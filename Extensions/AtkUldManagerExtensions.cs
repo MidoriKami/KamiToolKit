@@ -8,23 +8,21 @@ using KamiToolKit.System;
 namespace KamiToolKit.Extensions;
 
 public static unsafe class AtkUldManagerExtensions {
-	
+
 	/// <summary>
-	/// Gets a pointer to the specified node id
-	/// Automatically adds base id, so instead of specifying "100,000,021", you only need to provide "21"
+	///     Gets a pointer to the specified node id
+	///     Automatically adds base id, so instead of specifying "100,000,021", you only need to provide "21"
 	/// </summary>
 	/// <param name="manager">AtkUldManager to search</param>
 	/// <param name="nodeId">Node ID to search for</param>
 	/// <returns>Pointer to desired node, or null</returns>
 	public static AtkResNode* GetCustomNodeById(ref this AtkUldManager manager, uint nodeId)
-		=> nodeId >= NodeBase.NodeIdBase ? 
-			   manager.SearchNodeById(nodeId) : 
-			   manager.SearchNodeById(nodeId + NodeBase.NodeIdBase);
+		=> nodeId >= NodeBase.NodeIdBase ? manager.SearchNodeById(nodeId) : manager.SearchNodeById(nodeId + NodeBase.NodeIdBase);
 
 	// WARNING, volatile if called on a component that has nodes from other addons. 
 	public static void ResyncData(ref this AtkUldManager parentUldManager) {
 		parentUldManager.UpdateDrawNodeList();
-		
+
 		// Process ObjectListAdditions
 		foreach (var index in Enumerable.Range(0, parentUldManager.NodeListCount)) {
 			var nodePointer = parentUldManager.NodeList[index];
@@ -34,7 +32,7 @@ public static unsafe class AtkUldManagerExtensions {
 				parentUldManager.AddNodeToObjectList(nodePointer);
 			}
 		}
-		
+
 		// Process ObjectListRemovals
 		foreach (var index in Enumerable.Range(0, parentUldManager.Objects->NodeCount)) {
 			var nodePointer = parentUldManager.Objects->NodeList[index];
@@ -50,7 +48,7 @@ public static unsafe class AtkUldManagerExtensions {
 		foreach (var objectNode in uldManager.GetObjectsNodeSpan()) {
 			if (objectNode.Value == node) return true;
 		}
-		
+
 		return false;
 	}
 
@@ -65,19 +63,19 @@ public static unsafe class AtkUldManagerExtensions {
 	public static void AddNodeToObjectList(ref this AtkUldManager uldManager, AtkResNode* newNode) {
 		// If the node is already in the object list, skip.
 		if (uldManager.IsNodeInObjectList(newNode)) return;
-		
+
 		var oldSize = uldManager.Objects->NodeCount;
 		var newSize = oldSize + 1;
-		var newBuffer = (AtkResNode**) NativeMemoryHelper.Malloc((ulong)(newSize * 8));
+		var newBuffer = (AtkResNode**) NativeMemoryHelper.Malloc((ulong) (newSize * 8));
 
 		if (oldSize > 0) {
 			foreach (var index in Enumerable.Range(0, oldSize)) {
 				newBuffer[index] = uldManager.Objects->NodeList[index];
 			}
-        
-			NativeMemoryHelper.Free(uldManager.Objects->NodeList, (ulong)(oldSize * 8));
+
+			NativeMemoryHelper.Free(uldManager.Objects->NodeList, (ulong) (oldSize * 8));
 		}
-        
+
 		newBuffer[newSize - 1] = newNode;
 
 		uldManager.Objects->NodeList = newBuffer;
@@ -87,10 +85,10 @@ public static unsafe class AtkUldManagerExtensions {
 	public static void RemoveNodeFromObjectList(ref this AtkUldManager uldManager, AtkResNode* node) {
 		// If the node isn't in the object list, skip.
 		if (!uldManager.IsNodeInObjectList(node)) return;
-		
+
 		var oldSize = uldManager.Objects->NodeCount;
 		var newSize = oldSize - 1;
-		var newBuffer = (AtkResNode**) NativeMemoryHelper.Malloc((ulong)(newSize * 8));
+		var newBuffer = (AtkResNode**) NativeMemoryHelper.Malloc((ulong) (newSize * 8));
 
 		var newIndex = 0;
 		foreach (var index in Enumerable.Range(0, oldSize)) {
@@ -100,17 +98,17 @@ public static unsafe class AtkUldManagerExtensions {
 			}
 		}
 
-		NativeMemoryHelper.Free(uldManager.Objects->NodeList, (ulong)(oldSize * 8));
+		NativeMemoryHelper.Free(uldManager.Objects->NodeList, (ulong) (oldSize * 8));
 		uldManager.Objects->NodeList = newBuffer;
 		uldManager.Objects->NodeCount = newSize;
 	}
 
 	public static void PrintObjectList(ref this AtkUldManager uldManager) {
 		Log.Debug("Beginning NodeList");
-		
+
 		foreach (var index in Enumerable.Range(0, uldManager.Objects->NodeCount)) {
 			var nodePointer = uldManager.Objects->NodeList[index];
-			Log.Debug($"[{index}]: {(nint)nodePointer:X}");
+			Log.Debug($"[{index}]: {(nint) nodePointer:X}");
 		}
 	}
 

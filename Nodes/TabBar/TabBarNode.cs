@@ -11,28 +11,25 @@ namespace KamiToolKit.Nodes.TabBar;
 public class TabBarNode : SimpleComponentNode {
 
 	private List<TabBarRadioButtonNode> radioButtons = [];
-	
+
 	public TabBarNode() {
 		BuildTimelines();
 	}
 
 	public void AddTab(SeString label, Action callback) {
 		var newButton = new TabBarRadioButtonNode {
-			Height = Height, 
-			IsVisible = true,
-			Label = label,
-			OnClick = callback,
+			Height = Height, IsVisible = true, Label = label, OnClick = callback,
 		};
 
 		newButton.AddEvent(AddonEventType.ButtonClick, data => ClickHandler(data, newButton));
-		
+
 		radioButtons.Add(newButton);
 		newButton.AttachNode(this);
 
 		if (radioButtons.Count is 1) {
 			newButton.IsSelected = true;
 		}
-		
+
 		RecalculateLayout();
 	}
 
@@ -41,7 +38,7 @@ public class TabBarNode : SimpleComponentNode {
 			radioButton.IsChecked = false;
 			radioButton.IsSelected = false;
 		}
-		
+
 		button.IsChecked = true;
 		button.IsSelected = true;
 	}
@@ -49,7 +46,7 @@ public class TabBarNode : SimpleComponentNode {
 	public void RemoveTab(SeString label) {
 		var button = radioButtons.FirstOrDefault(button => button.Label == label);
 		if (button is null) return;
-		
+
 		button.Dispose();
 		radioButtons.Remove(button);
 		RecalculateLayout();
@@ -59,16 +56,16 @@ public class TabBarNode : SimpleComponentNode {
 		foreach (var node in radioButtons) {
 			node.Dispose();
 		}
-		
+
 		radioButtons.Clear();
 	}
 
 	private void RecalculateLayout() {
 		var step = Width / radioButtons.Count;
-		
+
 		foreach (var index in Enumerable.Range(0, radioButtons.Count)) {
 			var button = radioButtons[index];
-			
+
 			button.Width = step + 5.0f;
 			button.X = step * index - 5.0f;
 		}

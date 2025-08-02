@@ -3,7 +3,6 @@
 namespace KamiToolKit.Nodes;
 
 public unsafe class ScrollBarBackgroundButtonNode : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
-
 	public ScrollBarBackgroundButtonNode() {
 		SetInternalComponentType(ComponentType.Button);
 

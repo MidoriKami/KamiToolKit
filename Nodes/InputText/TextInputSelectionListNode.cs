@@ -7,8 +7,8 @@ namespace KamiToolKit.Nodes;
 public class TextInputSelectionListNode : ResNode {
 
 	public readonly NineGridNode BackgroundNode;
-	public readonly TextNode LabelNode;
 	public readonly TextInputButtonNode[] Buttons = new TextInputButtonNode[9];
+	public readonly TextNode LabelNode;
 
 	public TextInputSelectionListNode() {
 
@@ -25,7 +25,7 @@ public class TextInputSelectionListNode : ResNode {
 			PartsRenderType = 4,
 			NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
 		};
-		
+
 		BackgroundNode.AttachNode(this);
 
 		LabelNode = new TextNode {
@@ -36,17 +36,14 @@ public class TextInputSelectionListNode : ResNode {
 			AlignmentType = (AlignmentType) 21,
 			FontType = FontType.MiedingerMed,
 		};
-		
+
 		LabelNode.AttachNode(this);
 
 		foreach (var index in Enumerable.Range(0, 9)) {
 			Buttons[index] = new TextInputButtonNode {
-				NodeId = (uint)( 13 - index ),
-				Position = new Vector2(13.0f, 164.0f - 20.0f * index),
-				Size = new Vector2(160.0f, 24.0f),
-				IsVisible = true,
+				NodeId = (uint) (13 - index), Position = new Vector2(13.0f, 164.0f - 20.0f * index), Size = new Vector2(160.0f, 24.0f), IsVisible = true,
 			};
-			
+
 			Buttons[index].AttachNode(this);
 		}
 	}

@@ -10,26 +10,22 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 
 	public readonly ScrollBarBackgroundButtonNode BackgroundButtonNode;
 	public readonly ScrollBarForegroundButtonNode ForegroundButtonNode;
-	
+
 	public ScrollBarNode() {
 		SetInternalComponentType(ComponentType.ScrollBar);
 
 		BackgroundButtonNode = new ScrollBarBackgroundButtonNode {
-			NodeId = 3,
-			Size = new Vector2(8.0f, 306.0f),
-			IsVisible = true,
+			NodeId = 3, Size = new Vector2(8.0f, 306.0f), IsVisible = true,
 		};
-		
+
 		BackgroundButtonNode.AttachNode(this);
 
 		ForegroundButtonNode = new ScrollBarForegroundButtonNode {
-			NodeId = 2,
-			Size = new Vector2(8.0f, 306.0f), 
-			IsVisible = true,
+			NodeId = 2, Size = new Vector2(8.0f, 306.0f), IsVisible = true,
 		};
-		
+
 		ForegroundButtonNode.AttachNode(this);
-		
+
 		Data->Nodes[0] = ForegroundButtonNode.NodeId;
 		Data->Nodes[1] = 0; // Arrow Up Button
 		Data->Nodes[2] = 0; // Arrow Down Button
@@ -47,13 +43,10 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 	}
 
 	public Action<int>? OnValueChanged { get; set; }
-	
-	private void UpdateHandler(AddonEventData obj) {
-		OnValueChanged?.Invoke(Component->PendingScrollPosition);
-	}
 
 	public NodeBase? ContentNode {
-		get; set {
+		get;
+		set {
 			field = value;
 			Component->ContentNode = value is null ? null : value.InternalResNode;
 			UpdateScrollParams();
@@ -61,18 +54,12 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 	}
 
 	public CollisionNode? ContentCollisionNode {
-		get; set {
+		get;
+		set {
 			field = value;
 			Component->ContentCollisionNode = value is null ? null : value.InternalNode;
 			UpdateScrollParams();
 		}
-	}
-
-	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        BackgroundButtonNode.Size = Size;
-		ForegroundButtonNode.Size = Size;
 	}
 
 	public int ScrollPosition {
@@ -85,8 +72,19 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 		set => Component->MouseWheelSpeed = (short) value;
 	}
 
+	private void UpdateHandler(AddonEventData obj) {
+		OnValueChanged?.Invoke(Component->PendingScrollPosition);
+	}
+
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();
+
+		BackgroundButtonNode.Size = Size;
+		ForegroundButtonNode.Size = Size;
+	}
+
 	/// <summary>
-	/// Updates from attached Content and Collision nodes
+	///     Updates from attached Content and Collision nodes
 	/// </summary>
 	public void UpdateScrollParams() {
 		if (Component->ContentNode is null) return;
@@ -107,9 +105,9 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 		Component->EmptyLength = Math.Max(barHeight - (int) ((float) barHeight / offScreenHeight * barHeight), 0);
 		ForegroundButtonNode.Height = barHeight - Component->EmptyLength;
 
-        if (Component->ScrollPosition > Component->ScrollMaxPosition) {
-            Component->SetScrollPosition(Component->ScrollMaxPosition);
-        }
+		if (Component->ScrollPosition > Component->ScrollMaxPosition) {
+			Component->SetScrollPosition(Component->ScrollMaxPosition);
+		}
 
 		if (Component->EmptyLength is 0) {
 			ForegroundButtonNode.Y = 0.0f;
@@ -118,7 +116,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 				ContentNode.Y = 0;
 			}
 		}
-		
+
 		Component->SetEnabledState(Component->EmptyLength is not 0);
 	}
 }

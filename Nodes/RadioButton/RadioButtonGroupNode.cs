@@ -18,27 +18,6 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 		BuildTimelines();
 	}
 
-	public void AddButton(SeString label, Action callback) {
-		var newRadioButton = new RadioButtonNode {
-			Height = 16.0f,
-			IsVisible = true,
-			Label = label,
-			Callback = callback,
-		};
-
-		newRadioButton.AddEvent(AddonEventType.ButtonClick, data => ClickHandler(data, newRadioButton));
-		
-		radioButtons.Add(newRadioButton);
-		newRadioButton.AttachNode(this);
-
-		if (radioButtons.Count is 1) {
-			newRadioButton.IsChecked = true;
-			newRadioButton.IsSelected = true;
-		}
-
-		RecalculateLayout();
-	}
-
 	public SeString? SelectedOption {
 		get => radioButtons.FirstOrDefault(button => button.IsSelected)?.Label;
 		set {
@@ -54,10 +33,30 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 		}
 	}
 
+	public float VerticalPadding { get; set; } = 2.0f;
+
+	public void AddButton(SeString label, Action callback) {
+		var newRadioButton = new RadioButtonNode {
+			Height = 16.0f, IsVisible = true, Label = label, Callback = callback,
+		};
+
+		newRadioButton.AddEvent(AddonEventType.ButtonClick, data => ClickHandler(data, newRadioButton));
+
+		radioButtons.Add(newRadioButton);
+		newRadioButton.AttachNode(this);
+
+		if (radioButtons.Count is 1) {
+			newRadioButton.IsChecked = true;
+			newRadioButton.IsSelected = true;
+		}
+
+		RecalculateLayout();
+	}
+
 	public void RemoveButton(SeString label) {
 		var button = radioButtons.FirstOrDefault(button => button.Label == label);
 		if (button is null) return;
-		
+
 		button.Dispose();
 		radioButtons.Remove(button);
 		RecalculateLayout();
@@ -67,22 +66,20 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 		foreach (var node in radioButtons) {
 			node.Dispose();
 		}
-		
+
 		radioButtons.Clear();
 	}
 
-	public float VerticalPadding { get; set; } = 2.0f;
-	
 	private void RecalculateLayout() {
 		var yPosition = 0.0f;
-		
+
 		foreach (var index in Enumerable.Range(0, radioButtons.Count)) {
 			var button = radioButtons[index];
-			
+
 			button.Y = yPosition;
 			yPosition += button.Height + VerticalPadding;
 		}
-		
+
 		Height = yPosition;
 	}
 
@@ -107,10 +104,10 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 	}
 
 	private unsafe class RadioButtonNode : ComponentNode<AtkComponentRadioButton, AtkUldComponentDataRadioButton> {
+		public readonly TextNode LabelNode;
+		public readonly ImageNode SelectedImageNode;
 
 		public readonly ImageNode UnselectedImageNode;
-		public readonly ImageNode SelectedImageNode;
-		public readonly TextNode LabelNode;
 
 		public RadioButtonNode() {
 			SetInternalComponentType(ComponentType.RadioButton);
@@ -150,24 +147,20 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 				NodeFlags = NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
 			};
 			LabelNode.AttachNode(this);
-			
+
 			BuildTimelines();
-			
+
 			Data->Nodes[0] = LabelNode.NodeId;
 			Data->Nodes[1] = UnselectedImageNode.NodeId;
 			Data->Nodes[2] = 0;
 			Data->Nodes[3] = 0;
-			
+
 			AddEvent(AddonEventType.ButtonClick, ClickHandler);
-			
+
 			InitializeComponentEvents();
 		}
 
 		public Action? Callback { get; set; }
-		
-		private void ClickHandler(AddonEventData obj) {
-			Callback?.Invoke();
-		}
 
 		public SeString Label {
 			get => LabelNode.Text;
@@ -190,24 +183,28 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 			}
 		}
 
+		private void ClickHandler(AddonEventData obj) {
+			Callback?.Invoke();
+		}
+
 		private void BuildTimelines() {
 			AddTimeline(new TimelineBuilder()
 				.BeginFrameSet(1, 9)
-				.AddFrame(1, position: new Vector2(24,62))
+				.AddFrame(1, new Vector2(24, 62))
 				.EndFrameSet()
 				.BeginFrameSet(10, 19)
-				.AddFrame(10, position: new Vector2(24,44))
+				.AddFrame(10, new Vector2(24, 44))
 				.EndFrameSet()
 				.Build()
 			);
-			
+
 			CollisionNode.AddTimeline(new TimelineBuilder()
 				.BeginFrameSet(1, 159)
 				.AddEmptyFrame(1)
 				.EndFrameSet()
 				.Build()
 			);
-			
+
 			UnselectedImageNode.AddTimeline(new TimelineBuilder()
 				.BeginFrameSet(1, 9)
 				.AddFrame(1, alpha: 255)
@@ -283,7 +280,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 				.EndFrameSet()
 				.Build()
 			);
-			
+
 			SelectedImageNode.AddTimeline(new TimelineBuilder()
 				.BeginFrameSet(60, 69)
 				.AddFrame(60, alpha: 255)
@@ -339,7 +336,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 				.EndFrameSet()
 				.Build()
 			);
-			
+
 			LabelNode.AddTimeline(new TimelineBuilder()
 				.BeginFrameSet(1, 9)
 				.AddFrame(1, alpha: 255)

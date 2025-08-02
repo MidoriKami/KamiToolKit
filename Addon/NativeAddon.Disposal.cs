@@ -9,14 +9,6 @@ public abstract partial class NativeAddon : IDisposable {
 	private static readonly List<NativeAddon> CreatedAddons = [];
 
 	private bool isDisposed;
-	
-	~NativeAddon() => Dispose(false);
-
-	protected virtual void Dispose(bool disposing) {
-		if (disposing) {
-			Dispose();
-		}
-	}
 
 	public void Dispose() {
 		if (!isDisposed) {
@@ -31,15 +23,25 @@ public abstract partial class NativeAddon : IDisposable {
 
 			GC.SuppressFinalize(this);
 		}
-        
+
 		isDisposed = true;
+	}
+
+	~NativeAddon() {
+		Dispose(false);
+	}
+
+	protected virtual void Dispose(bool disposing) {
+		if (disposing) {
+			Dispose();
+		}
 	}
 
 	internal static void DisposeAddons() {
 		foreach (var addon in CreatedAddons.ToArray()) {
 			Log.Warning($"Addon {addon.GetType()} was not disposed properly please ensure you call dispose at an appropriate time.");
 			Log.Debug($"Automatically disposing addon {addon.GetType()} as a safety measure.");
-			
+
 			addon.Dispose();
 		}
 	}

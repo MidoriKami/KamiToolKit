@@ -7,11 +7,11 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.NodeParts;
 
 public unsafe class TimelineAnimation : IDisposable {
-	
+
 	internal AtkTimelineAnimation* InternalAnimation;
-	
+
 	private List<TimelineKeyFrame> internalKeyFrames = [];
-	
+
 	public TimelineAnimation() {
 		InternalAnimation = NativeMemoryHelper.UiAlloc<AtkTimelineAnimation>();
 
@@ -22,19 +22,6 @@ public unsafe class TimelineAnimation : IDisposable {
 			value.Type = AtkTimelineKeyGroupType.None;
 		}
 	}
-	
-	public void Dispose() {
-		if (InternalAnimation is null) return;
-		
-		foreach (ref var spanGroup in InternalAnimation->KeyGroups) {
-			NativeMemoryHelper.UiFree(spanGroup.KeyFrames);
-			spanGroup.KeyFrames = null;
-			spanGroup.KeyFrameCount = 0;
-		}
-		
-		NativeMemoryHelper.UiFree(InternalAnimation);
-		InternalAnimation = null;
-	}
 
 	public int StartFrameId {
 		get => InternalAnimation->StartFrameIdx;
@@ -44,6 +31,27 @@ public unsafe class TimelineAnimation : IDisposable {
 	public int EndFrameId {
 		get => InternalAnimation->EndFrameIdx;
 		set => InternalAnimation->EndFrameIdx = (ushort) value;
+	}
+
+	public List<TimelineKeyFrame> KeyFrames {
+		get => internalKeyFrames;
+		set {
+			internalKeyFrames = value;
+			Resync();
+		}
+	}
+
+	public void Dispose() {
+		if (InternalAnimation is null) return;
+
+		foreach (ref var spanGroup in InternalAnimation->KeyGroups) {
+			NativeMemoryHelper.UiFree(spanGroup.KeyFrames);
+			spanGroup.KeyFrames = null;
+			spanGroup.KeyFrameCount = 0;
+		}
+
+		NativeMemoryHelper.UiFree(InternalAnimation);
+		InternalAnimation = null;
 	}
 
 	private void Resync() {
@@ -63,16 +71,8 @@ public unsafe class TimelineAnimation : IDisposable {
 				keyFrameGroup.KeyFrames[index] = keyframe;
 				index++;
 			}
-			
-			keyFrameGroup.KeyFrameCount = (ushort) keyFrameSet.Count();
-		}
-	}
 
-	public List<TimelineKeyFrame> KeyFrames {
-		get => internalKeyFrames;
-		set {
-			internalKeyFrames = value;
-			Resync();
+			keyFrameGroup.KeyFrameCount = (ushort) keyFrameSet.Count();
 		}
 	}
 }
@@ -83,10 +83,10 @@ public enum KeyFrameGroupType {
 	Scale = 2,
 	Alpha = 3,
 	Tint = 4,
-	
+
 	PartId = 5,
 	TextColor = 5,
-	
+
 	TextEdge = 6,
 	TextLabel = 7,
 }

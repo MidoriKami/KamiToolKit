@@ -6,41 +6,41 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class ImageNode : NodeBase<AtkImageNode> {
 
-    public readonly PartsList PartsList;
+	public readonly PartsList PartsList;
 
-    public ImageNode() : base(NodeType.Image) {
-        PartsList = new PartsList();
+	public ImageNode() : base(NodeType.Image) {
+		PartsList = new PartsList();
 
-        WrapMode = 1;
-        ImageNodeFlags = ImageNodeFlags.AutoFit;
+		WrapMode = 1;
+		ImageNodeFlags = ImageNodeFlags.AutoFit;
 
-        InternalNode->DrawFlags = 0x100;
-        InternalNode->PartsList = PartsList.InternalPartsList;
-    }
-    
-    protected override void Dispose(bool disposing) {
-        if (disposing) {
-            PartsList.Dispose();
-            
-            base.Dispose(disposing);
-        }
-    }
+		InternalNode->DrawFlags = 0x100;
+		InternalNode->PartsList = PartsList.InternalPartsList;
+	}
 
-    public uint PartId {
-        get => InternalNode->PartId;
-        set => InternalNode->PartId = (ushort) value;
-    }
+	public uint PartId {
+		get => InternalNode->PartId;
+		set => InternalNode->PartId = (ushort) value;
+	}
 
-    public byte WrapMode {
-        get => InternalNode->WrapMode;
-        set => InternalNode->WrapMode = value;
-    } 
+	public byte WrapMode {
+		get => InternalNode->WrapMode;
+		set => InternalNode->WrapMode = value;
+	}
 
-    public ImageNodeFlags ImageNodeFlags {
-        get => (ImageNodeFlags) InternalNode->Flags;
-        set => InternalNode->Flags = (byte) value;
-    }
+	public ImageNodeFlags ImageNodeFlags {
+		get => (ImageNodeFlags) InternalNode->Flags;
+		set => InternalNode->Flags = (byte) value;
+	}
 
-    public void AddPart(Part part)
-        => PartsList.Add(part);
+	protected override void Dispose(bool disposing) {
+		if (disposing) {
+			PartsList.Dispose();
+
+			base.Dispose(disposing);
+		}
+	}
+
+	public void AddPart(Part part)
+		=> PartsList.Add(part);
 }

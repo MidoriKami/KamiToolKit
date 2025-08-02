@@ -7,6 +7,8 @@ namespace KamiToolKit.NodeParts;
 
 public class TimelineAnimationKeyFrame : TimelineKeyFrame {
 
+	private readonly NodeTint nodeTint = new();
+
 	public Vector2 Position {
 		get => new(Value.Float2.Item1, Value.Float2.Item2);
 		set {
@@ -25,13 +27,11 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
 			Value = new AtkTimelineKeyValue {
 				Byte = value,
 			};
-			
+
 			GroupType = AtkTimelineKeyGroupType.Byte;
 			GroupSelector = KeyFrameGroupType.Alpha;
 		}
 	}
-
-	private readonly NodeTint nodeTint = new();
 
 	public Vector3 AddColor {
 		set {
@@ -47,22 +47,13 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
 		}
 	}
 
-	private void UpdateNodeTint() {
-		Value = new AtkTimelineKeyValue {
-			NodeTint = nodeTint,
-		};
-			
-		GroupType = AtkTimelineKeyGroupType.NodeTint;
-		GroupSelector = KeyFrameGroupType.Tint;
-	}
-
 	public float Rotation {
 		get => Value.Float;
 		set {
 			Value = new AtkTimelineKeyValue {
 				Float = value,
 			};
-			
+
 			GroupType = AtkTimelineKeyGroupType.Float;
 			GroupSelector = KeyFrameGroupType.Rotation;
 		}
@@ -91,7 +82,7 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
 			GroupSelector = KeyFrameGroupType.TextColor;
 		}
 	}
-	
+
 	public Vector3 TextEdgeColor {
 		get => new Vector3(Value.RGB.R, Value.RGB.G, Value.RGB.B) * 255.0f;
 		set {
@@ -103,15 +94,24 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
 			GroupSelector = KeyFrameGroupType.TextEdge;
 		}
 	}
-	
+
 	public uint PartId {
 		set {
 			Value = new AtkTimelineKeyValue {
 				UShort = (ushort) value,
 			};
-			
+
 			GroupType = AtkTimelineKeyGroupType.UShort;
 			GroupSelector = KeyFrameGroupType.PartId;
 		}
+	}
+
+	private void UpdateNodeTint() {
+		Value = new AtkTimelineKeyValue {
+			NodeTint = nodeTint,
+		};
+
+		GroupType = AtkTimelineKeyGroupType.NodeTint;
+		GroupSelector = KeyFrameGroupType.Tint;
 	}
 }

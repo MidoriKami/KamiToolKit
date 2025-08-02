@@ -10,12 +10,6 @@ public class TextDropDownNode : DropDownNode<TextListNode, string> {
 	}
 
 	public Action<string>? OnOptionSelected { get; set; }
-	
-	private void OptionSelectedHandler(string option) {
-		OnOptionSelected?.Invoke(option);
-		UpdateLabel(option);
-		Toggle();
-	}
 
 	public required List<string>? Options {
 		get => OptionListNode.Options;
@@ -24,6 +18,12 @@ public class TextDropDownNode : DropDownNode<TextListNode, string> {
 			OptionListNode.SelectDefaultOption();
 			UpdateLabel(OptionListNode.SelectedOption);
 		}
+	}
+
+	private void OptionSelectedHandler(string option) {
+		OnOptionSelected?.Invoke(option);
+		UpdateLabel(option);
+		Toggle();
 	}
 
 	protected override void UpdateLabel(string? option) {

@@ -9,13 +9,13 @@ namespace KamiToolKit.Nodes.TabBar;
 
 public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButton, AtkUldComponentDataRadioButton> {
 
-	public readonly NineGridNode UnselectedNineGridNode;
-	public readonly NineGridNode SelectedNineGridNode;
 	public readonly TextNode LabelNode;
-	
+	public readonly NineGridNode SelectedNineGridNode;
+	public readonly NineGridNode UnselectedNineGridNode;
+
 	public TabBarRadioButtonNode() {
 		SetInternalComponentType(ComponentType.RadioButton);
-		
+
 		UnselectedNineGridNode = new SimpleNineGridNode {
 			NodeId = 4,
 			Position = new Vector2(-2.0f, -1.0f),
@@ -56,30 +56,17 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
 		Data->Nodes[1] = UnselectedNineGridNode.NodeId;
 		Data->Nodes[2] = 0;
 		Data->Nodes[3] = 0;
-		
+
 		AddEvent(AddonEventType.ButtonClick, ClickHandler);
-		
+
 		InitializeComponentEvents();
 	}
-	
+
 	public Action? OnClick { get; set; }
-	
-	private void ClickHandler(AddonEventData obj) {
-		OnClick?.Invoke();
-	}
 
 	public SeString Label {
 		get => LabelNode.Text;
 		set => Component->SetText(value.ToString());
-	}
-	
-	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        CollisionNode.Size = Size;
-		UnselectedNineGridNode.Size = new Vector2(Width + 4.0f, Height + 2.0f);
-		SelectedNineGridNode.Size = new Vector2(Width + 4.0f, Height + 2.0f);
-		LabelNode.Size = new Vector2(Width - 25.0f, Height - 4.0f);
 	}
 
 	public bool IsSelected {
@@ -107,14 +94,27 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
 		set => Component->SetChecked(value);
 	}
 
+	private void ClickHandler(AddonEventData obj) {
+		OnClick?.Invoke();
+	}
+
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();
+
+		CollisionNode.Size = Size;
+		UnselectedNineGridNode.Size = new Vector2(Width + 4.0f, Height + 2.0f);
+		SelectedNineGridNode.Size = new Vector2(Width + 4.0f, Height + 2.0f);
+		LabelNode.Size = new Vector2(Width - 25.0f, Height - 4.0f);
+	}
+
 	private void BuildTimelines() {
 		AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(11, 20)
-			.AddFrame(11, position: new Vector2(525,0))
+			.AddFrame(11, new Vector2(525, 0))
 			.EndFrameSet()
 			.Build()
 		);
-		
+
 		UnselectedNineGridNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 9)
 			.AddFrame(1, alpha: 255)
@@ -170,7 +170,7 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
 			.EndFrameSet()
 			.Build()
 		);
-		
+
 		SelectedNineGridNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(60, 69)
 			.AddFrame(60, alpha: 255)
@@ -226,7 +226,7 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
 			.EndFrameSet()
 			.Build()
 		);
-		
+
 		LabelNode.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(1, 9)
 			.AddFrame(1, alpha: 255)

@@ -4,8 +4,8 @@ namespace KamiToolKit.Classes;
 
 public static class FlagHelper {
 	public static bool ReadFlag<T>(ref T flagsField, int flag) where T : struct, IBinaryInteger<T>
-		=> (flagsField & T.One << BitOperations.Log2((uint)flag)) != T.Zero;
-	
+		=> (flagsField & T.One << BitOperations.Log2((uint) flag)) != T.Zero;
+
 	public static void SetFlag<T>(ref T flagsField, int flag) where T : struct, IBinaryInteger<T>
 		=> flagsField |= T.One << BitOperations.Log2((uint) flag);
 

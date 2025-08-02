@@ -5,10 +5,10 @@ using KamiToolKit.Classes.TimelineBuilding;
 namespace KamiToolKit.Nodes;
 
 public class CooldownNode : ResNode {
-
-	public readonly ImageNode GlossyImageFrame;
-	public readonly ImageNode CooldownImage;
 	
+	public readonly ImageNode CooldownImage;
+	public readonly ImageNode GlossyImageFrame;
+
 	public CooldownNode() {
 		GlossyImageFrame = new ImageNode {
 			NodeId = 18,
@@ -19,7 +19,7 @@ public class CooldownNode : ResNode {
 			ImageNodeFlags = 0,
 		};
 
-        IconNodeTextureHelper.LoadIconAFrameTexture(GlossyImageFrame);
+		IconNodeTextureHelper.LoadIconAFrameTexture(GlossyImageFrame);
 
 		GlossyImageFrame.AttachNode(this);
 
@@ -35,12 +35,12 @@ public class CooldownNode : ResNode {
 		};
 
 		IconNodeTextureHelper.LoadIconARecastTexture(CooldownImage);
-		
+
 		CooldownImage.AttachNode(this);
 
 		BuildTimelines();
 	}
-	
+
 	private void BuildTimelines() {
 		GlossyImageFrame.AddTimeline(new TimelineBuilder()
 			.AddFrameSetWithFrame(1, 10, 1, partId: 0)
@@ -51,7 +51,7 @@ public class CooldownNode : ResNode {
 			.AddFrameSetWithFrame(51, 60, 51, partId: 19)
 			.AddFrameSetWithFrame(143, 165, 143, partId: 0)
 			.Build());
-		
+
 		CooldownImage.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(61, 142)
 			.AddFrame(61, alpha: 255, partId: 1)

@@ -12,7 +12,7 @@ public class TabbedVerticalListNode : SimpleComponentNode {
 	private List<TabbedNodeEntry<NodeBase>> nodeList = [];
 
 	[JsonProperty] public float TabSize { get; set; } = 18.0f;
-	
+
 	[JsonProperty] public float ItemVerticalSpacing { get; set; }
 
 	public int TabStep { get; set; }
@@ -30,7 +30,7 @@ public class TabbedVerticalListNode : SimpleComponentNode {
 	public void AddNode(params NodeBase[] nodes) {
 		AddNode(0, nodes);
 	}
-	
+
 	public void AddNode(int tabIndex, params NodeBase[] nodes) {
 		foreach (var node in nodes) {
 			AddNode(tabIndex, node);
@@ -39,10 +39,10 @@ public class TabbedVerticalListNode : SimpleComponentNode {
 
 	public void AddNode(int tabIndex, NodeBase node) {
 		nodeList.Add(new TabbedNodeEntry<NodeBase>(node, tabIndex + TabStep));
-		
+
 		node.AttachNode(this);
 		node.NodeId = (uint) nodeList.Count + 1;
-		
+
 		RecalculateLayout();
 	}
 
@@ -55,17 +55,17 @@ public class TabbedVerticalListNode : SimpleComponentNode {
 	public void RemoveNode(NodeBase node) {
 		var target = nodeList.FirstOrDefault(item => item.Node == node);
 		if (target is null) return;
-		
+
 		target.Node.DetachNode();
 		nodeList.Remove(target);
 		RecalculateLayout();
 	}
 
-	public void Clea() {
+	public void Clear() {
 		foreach (var nodeEntry in nodeList) {
 			nodeEntry.Node.DetachNode();
 		}
-		
+
 		nodeList.Clear();
 		RecalculateLayout();
 	}
@@ -75,12 +75,12 @@ public class TabbedVerticalListNode : SimpleComponentNode {
 
 		foreach (var (node, tab) in nodeList) {
 			if (!node.IsVisible) continue;
-			
+
 			node.Y = startY;
 			node.X = tab * TabSize;
 			startY += node.Height + ItemVerticalSpacing;
 		}
-		
+
 		Height = startY + ItemVerticalSpacing;
 	}
 }

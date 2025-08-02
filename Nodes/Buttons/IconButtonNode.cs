@@ -3,12 +3,12 @@
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Uses a GameIconId to display that icon as the decorator for the button.
+///     Uses a GameIconId to display that icon as the decorator for the button.
 /// </summary>
 public class IconButtonNode : ButtonBase {
 
-	public readonly IconImageNode ImageNode;
 	public readonly NineGridNode BackgroundNode;
+	public readonly IconImageNode ImageNode;
 
 	public IconButtonNode() {
 		BackgroundNode = new SimpleNineGridNode {
@@ -23,28 +23,26 @@ public class IconButtonNode : ButtonBase {
 			IsVisible = true,
 		};
 		BackgroundNode.AttachNode(this);
-		
+
 		ImageNode = new IconImageNode {
-			IsVisible = true,
-			TextureSize = new Vector2(32.0f, 32.0f),
-			NodeId = 3,
+			IsVisible = true, TextureSize = new Vector2(32.0f, 32.0f), NodeId = 3,
 		};
 		ImageNode.AttachNode(this);
 
 		LoadTimelines();
-		
+
 		InitializeComponentEvents();
 	}
-	
+
 	public uint IconId {
 		get => ImageNode.IconId;
 		set => ImageNode.IconId = value;
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        ImageNode.Size = Size - new Vector2(16.0f, 16.0f);
+		base.OnSizeChanged();
+
+		ImageNode.Size = Size - new Vector2(16.0f, 16.0f);
 		ImageNode.Position = BackgroundNode.Position + new Vector2(BackgroundNode.LeftOffset, BackgroundNode.TopOffset);
 		BackgroundNode.Size = Size;
 	}

@@ -8,17 +8,16 @@ namespace KamiToolKit.Nodes.Slider;
 
 public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldComponentDataSlider> {
 
-	public readonly SliderBackgroundButtonNode SliderBackgroundButtonNode;
 	public readonly NineGridNode ProgressTextureNode;
+	public readonly SliderBackgroundButtonNode SliderBackgroundButtonNode;
 	public readonly SliderForegroundButtonNode SliderForegroundButtonNode;
 	public readonly TextNode ValueNode;
-	
+
 	public SliderNode() {
 		SetInternalComponentType(ComponentType.Slider);
-		
+
 		SliderBackgroundButtonNode = new SliderBackgroundButtonNode {
-			NodeId = 5,
-			IsVisible = true,
+			NodeId = 5, IsVisible = true,
 		};
 
 		SliderBackgroundButtonNode.AttachNode(this);
@@ -34,15 +33,13 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 			RightOffset = 8,
 			IsVisible = true,
 		};
-		
+
 		ProgressTextureNode.AttachNode(this);
 
 		SliderForegroundButtonNode = new SliderForegroundButtonNode {
-			NodeId = 3,
-			Size = new Vector2(16.0f, 16.0f), 
-			IsVisible = true,
+			NodeId = 3, Size = new Vector2(16.0f, 16.0f), IsVisible = true,
 		};
-		
+
 		SliderForegroundButtonNode.AttachNode(this);
 
 		ValueNode = new TextNode {
@@ -53,7 +50,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 			FontSize = 12,
 			AlignmentType = AlignmentType.Left,
 		};
-		
+
 		ValueNode.AttachNode(this);
 
 		Data->Step = 1;
@@ -66,37 +63,20 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 		Data->Nodes[1] = SliderForegroundButtonNode.NodeId;
 		Data->Nodes[2] = ValueNode.NodeId;
 		Data->Nodes[3] = SliderBackgroundButtonNode.NodeId;
-		
+
 		BuildTimelines();
-		
+
 		InitializeComponentEvents();
 
 		Component->SliderSize = 220;
 		Component->OffsetR = 28;
 		Component->OffsetL = 4;
-		
+
 		AddEvent(AddonEventType.SliderValueUpdate, ValueChangedHandler);
 	}
 
-	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		
-        
-        SliderBackgroundButtonNode.Size = new Vector2(Width - 24.0f, Height);
-		ProgressTextureNode.Size = new Vector2(Width, Height / 2.0f - 1.0f);
-		ProgressTextureNode.Y = Height / 4.0f;
-		ValueNode.Position = new Vector2(Width - 24.0f, Height / 4.0f);
-		SliderForegroundButtonNode.Size = new Vector2(Height / 2.0f, Height / 2.0f - 1.0f);
-		SliderForegroundButtonNode.Y = Height / 4.0f;
-		
-		Component->SliderSize = (short) Width;
-	}
-
 	public Action<int>? OnValueChanged { get; set; }
-	
-	private void ValueChangedHandler(AddonEventData obj) {
-		OnValueChanged?.Invoke(Value);
-	}
-	
+
 	public required int Min {
 		get => Component->MinValue;
 		set {
@@ -119,35 +99,52 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 		get => Component->Value;
 		set => Component->SetValue(value);
 	}
-	
+
+	protected override void OnSizeChanged() {
+		base.OnSizeChanged();
+
+		SliderBackgroundButtonNode.Size = new Vector2(Width - 24.0f, Height);
+		ProgressTextureNode.Size = new Vector2(Width, Height / 2.0f - 1.0f);
+		ProgressTextureNode.Y = Height / 4.0f;
+		ValueNode.Position = new Vector2(Width - 24.0f, Height / 4.0f);
+		SliderForegroundButtonNode.Size = new Vector2(Height / 2.0f, Height / 2.0f - 1.0f);
+		SliderForegroundButtonNode.Y = Height / 4.0f;
+
+		Component->SliderSize = (short) Width;
+	}
+
+	private void ValueChangedHandler(AddonEventData obj) {
+		OnValueChanged?.Invoke(Value);
+	}
+
 	private void BuildTimelines() {
 		AddTimeline(new TimelineBuilder()
-				.BeginFrameSet(1, 30)
-				.AddLabel(1, 17, AtkTimelineJumpBehavior.PlayOnce, 0)
-				.AddLabel(11, 18, AtkTimelineJumpBehavior.PlayOnce, 0)
-				.AddLabel(21, 7, AtkTimelineJumpBehavior.PlayOnce, 0)
-				.EndFrameSet()
-				.Build()
-			);
-		
+			.BeginFrameSet(1, 30)
+			.AddLabel(1, 17, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.AddLabel(11, 18, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.AddLabel(21, 7, AtkTimelineJumpBehavior.PlayOnce, 0)
+			.EndFrameSet()
+			.Build()
+		);
+
 		ProgressTextureNode.AddTimeline(new TimelineBuilder()
-				.BeginFrameSet(1, 20)
-				.AddFrame(1, alpha: 255)
-				.EndFrameSet()
-				.BeginFrameSet(21, 30)
-				.AddFrame(21, alpha: 127)
-				.EndFrameSet()
-				.Build()
-			);
-		
+			.BeginFrameSet(1, 20)
+			.AddFrame(1, alpha: 255)
+			.EndFrameSet()
+			.BeginFrameSet(21, 30)
+			.AddFrame(21, alpha: 127)
+			.EndFrameSet()
+			.Build()
+		);
+
 		ValueNode.AddTimeline(new TimelineBuilder()
-				.BeginFrameSet(1, 20)
-				.AddFrame(1, alpha: 255)
-				.EndFrameSet()
-				.BeginFrameSet(21, 30)
-				.AddFrame(21, alpha: 153)
-				.EndFrameSet()
-				.Build()
-			);
+			.BeginFrameSet(1, 20)
+			.AddFrame(1, alpha: 255)
+			.EndFrameSet()
+			.BeginFrameSet(21, 30)
+			.AddFrame(21, alpha: 153)
+			.EndFrameSet()
+			.Build()
+		);
 	}
 }
