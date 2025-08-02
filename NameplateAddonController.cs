@@ -10,15 +10,15 @@ namespace KamiToolKit;
 /// </summary>
 public unsafe class NameplateAddonController : AddonController<AddonNamePlate> {
     public NameplateAddonController(IDalamudPluginInterface pluginInterface) : base(pluginInterface) {
-        PostEnable += RefreshAddon;
-        PostDisable += RefreshAddon;
+        OnPostEnable += RefreshAddon;
+        OnPostDisable += RefreshAddon;
     }
 
     public override void Dispose() {
         base.Dispose();
 
-        PostEnable -= RefreshAddon;
-        PostDisable -= RefreshAddon;
+        OnPostEnable -= RefreshAddon;
+        OnPostDisable -= RefreshAddon;
     }
 
     private void RefreshAddon(AddonNamePlate* addon) {

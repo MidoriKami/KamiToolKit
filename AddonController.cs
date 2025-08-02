@@ -36,7 +36,7 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
         DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
             if (IsEnabled) return;
 
-            PreEnable?.Invoke((T*)AddonPointer);
+            OnPreEnable?.Invoke((T*)AddonPointer);
 
             DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, addonName, OnAddonEvent);
             DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnAddonEvent);
@@ -50,7 +50,7 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
 
             IsEnabled = true;
 
-            PostEnable?.Invoke((T*)AddonPointer);
+            OnPostEnable?.Invoke((T*)AddonPointer);
         });
     }
 
@@ -80,7 +80,7 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
         DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
             if (!IsEnabled) return;
 
-            PreDisable?.Invoke((T*)AddonPointer);
+            OnPreDisable?.Invoke((T*)AddonPointer);
 
             DalamudInterface.Instance.AddonLifecycle.UnregisterListener(OnAddonEvent);
 
@@ -90,7 +90,7 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
 
             IsEnabled = false;
 
-            PostDisable?.Invoke((T*)AddonPointer);
+            OnPostDisable?.Invoke((T*)AddonPointer);
         });
     }
 
@@ -99,8 +99,8 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
     public event AddonControllerEvent? OnRefresh;
     public event AddonControllerEvent? OnUpdate;
 
-    public event AddonControllerEvent? PreEnable;
-    public event AddonControllerEvent? PostEnable;
-    public event AddonControllerEvent? PreDisable;
-    public event AddonControllerEvent? PostDisable;
+    public event AddonControllerEvent? OnPreEnable;
+    public event AddonControllerEvent? OnPostEnable;
+    public event AddonControllerEvent? OnPreDisable;
+    public event AddonControllerEvent? OnPostDisable;
 }
