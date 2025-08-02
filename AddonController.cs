@@ -1,10 +1,9 @@
 ﻿using System;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
-using Dalamud.IoC;
 using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Extensions;
 
 namespace KamiToolKit;
@@ -13,17 +12,11 @@ namespace KamiToolKit;
 /// This class provides functionality to add-and manage custom elements for any Addon
 /// </summary>
 public unsafe class AddonController<T> : IDisposable where T : unmanaged {
-	[PluginService] public IAddonLifecycle AddonLifecycle { get; set; } = null!;
-	[PluginService] public IGameGui GameGui { get; set; } = null!;
-	[PluginService] public IFramework Framework { get; set; } = null!;
-
 	private readonly string addonName;
-	private AtkUnitBase* AddonPointer => (AtkUnitBase*)GameGui.GetAddonByName(addonName);
+	private AtkUnitBase* AddonPointer => (AtkUnitBase*)DalamudInterface.Instance.GameGui.GetAddonByName(addonName);
 	private bool IsEnabled { get; set; }
 	
-	public AddonController(IDalamudPluginInterface pluginInterface, string addonName) {
-		pluginInterface.Inject(this);
-		
+	public AddonController(string addonName) {
 		this.addonName = addonName;
 	}
 
@@ -34,16 +27,16 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
 	}
 
 	public void Enable() {
-		Framework.RunOnFrameworkThread(() => {
+		DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
 			if (IsEnabled) return;
 
 			PreEnable?.Invoke((T*) AddonPointer);
 
-			AddonLifecycle.RegisterListener(AddonEvent.PostSetup, addonName, OnAddonEvent);
-			AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnAddonEvent);
-			AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, addonName, OnAddonEvent);
-			AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, addonName, OnAddonEvent);
-			AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, addonName, OnAddonEvent);
+			DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, addonName, OnAddonEvent);
+			DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnAddonEvent);
+			DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, addonName, OnAddonEvent);
+			DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, addonName, OnAddonEvent);
+			DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, addonName, OnAddonEvent);
 
 			if (AddonPointer is not null) {
 				OnAttach?.Invoke((T*) AddonPointer);
@@ -78,12 +71,12 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
 	}
 
 	public void Disable() {
-		Framework.RunOnFrameworkThread(() => {
+		DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
 			if (!IsEnabled) return;
 
 			PreDisable?.Invoke((T*) AddonPointer);
 
-			AddonLifecycle.UnregisterListener(OnAddonEvent);
+			DalamudInterface.Instance.AddonLifecycle.UnregisterListener(OnAddonEvent);
 
 			if (AddonPointer is not null) {
 				OnDetach?.Invoke((T*) AddonPointer);

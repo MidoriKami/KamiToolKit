@@ -16,6 +16,7 @@ internal class DalamudInterface {
 	[PluginService] public IFramework Framework { get; set; } = null!;
 	[PluginService] public IAddonEventManager AddonEventManager { get; set; } = null!;
     [PluginService] public IDalamudPluginInterface PluginInterface { get; set; } = null!;
+    [PluginService] public IGameGui GameGui { get; set; } = null!;
 }
 
 internal static class Log {
