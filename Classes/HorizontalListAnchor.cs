@@ -3,9 +3,9 @@
 namespace KamiToolKit.Classes;
 
 public enum HorizontalListAnchor {
-	[Description("Left")]
-	Left,
+    [Description("Left")]
+    Left,
 
-	[Description("Right")]
-	Right,
+    [Description("Right")]
+    Right,
 }

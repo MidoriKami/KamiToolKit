@@ -9,28 +9,28 @@ namespace KamiToolKit;
 ///     Simplified controller for using AddonNamePlate for basic overlays.
 /// </summary>
 public unsafe class NameplateAddonController : AddonController<AddonNamePlate> {
-	public NameplateAddonController(IDalamudPluginInterface pluginInterface) : base(pluginInterface) {
-		PostEnable += RefreshAddon;
-		PostDisable += RefreshAddon;
-	}
+    public NameplateAddonController(IDalamudPluginInterface pluginInterface) : base(pluginInterface) {
+        PostEnable += RefreshAddon;
+        PostDisable += RefreshAddon;
+    }
 
-	public override void Dispose() {
-		base.Dispose();
+    public override void Dispose() {
+        base.Dispose();
 
-		PostEnable -= RefreshAddon;
-		PostDisable -= RefreshAddon;
-	}
+        PostEnable -= RefreshAddon;
+        PostDisable -= RefreshAddon;
+    }
 
-	private void RefreshAddon(AddonNamePlate* addon) {
-		if (addon is not null) {
-			if (addon->UldManager.LoadedState is AtkLoadState.Loaded) {
-				addon->UldManager.UpdateDrawNodeList();
-			}
+    private void RefreshAddon(AddonNamePlate* addon) {
+        if (addon is not null) {
+            if (addon->UldManager.LoadedState is AtkLoadState.Loaded) {
+                addon->UldManager.UpdateDrawNodeList();
+            }
 
-			addon->UpdateCollisionNodeList(false);
+            addon->UpdateCollisionNodeList(false);
 
-			addon->DoFullUpdate = 1;
-			NamePlateNumberArray.Instance()->DoFullUpdate = true;
-		}
-	}
+            addon->DoFullUpdate = 1;
+            NamePlateNumberArray.Instance()->DoFullUpdate = true;
+        }
+    }
 }

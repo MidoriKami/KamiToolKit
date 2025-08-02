@@ -6,98 +6,98 @@ namespace KamiToolKit.Classes.TimelineBuilding;
 
 public class KeyFrameBuilder(FrameSetBuilder parent, int frame) {
 
-	private readonly List<TimelineKeyFrame> animationKeyFrames = [];
+    private readonly List<TimelineKeyFrame> animationKeyFrames = [];
 
-	public KeyFrameBuilder Position(Vector2 position) {
-		animationKeyFrames.Add(new TimelineAnimationKeyFrame {
-			FrameIndex = frame, Position = position,
-		});
+    public KeyFrameBuilder Position(Vector2 position) {
+        animationKeyFrames.Add(new TimelineAnimationKeyFrame {
+            FrameIndex = frame, Position = position,
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	public KeyFrameBuilder Alpha(byte alpha) {
-		animationKeyFrames.Add(new TimelineAnimationKeyFrame {
-			FrameIndex = frame, Alpha = alpha,
-		});
+    public KeyFrameBuilder Alpha(byte alpha) {
+        animationKeyFrames.Add(new TimelineAnimationKeyFrame {
+            FrameIndex = frame, Alpha = alpha,
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	public KeyFrameBuilder AddColor(Vector3 color) {
-		animationKeyFrames.Add(new TimelineAnimationKeyFrame {
-			FrameIndex = frame, AddColor = color,
-		});
+    public KeyFrameBuilder AddColor(Vector3 color) {
+        animationKeyFrames.Add(new TimelineAnimationKeyFrame {
+            FrameIndex = frame, AddColor = color,
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	public KeyFrameBuilder MultiplyColor(Vector3 color) {
-		animationKeyFrames.Add(new TimelineAnimationKeyFrame {
-			FrameIndex = frame, MultiplyColor = color,
-		});
+    public KeyFrameBuilder MultiplyColor(Vector3 color) {
+        animationKeyFrames.Add(new TimelineAnimationKeyFrame {
+            FrameIndex = frame, MultiplyColor = color,
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	public KeyFrameBuilder MultiplyColor(float color) {
-		animationKeyFrames.Add(new TimelineAnimationKeyFrame {
-			FrameIndex = frame, MultiplyColor = new Vector3(color, color, color),
-		});
+    public KeyFrameBuilder MultiplyColor(float color) {
+        animationKeyFrames.Add(new TimelineAnimationKeyFrame {
+            FrameIndex = frame, MultiplyColor = new Vector3(color, color, color),
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	public KeyFrameBuilder Rotation(float rotation) {
-		animationKeyFrames.Add(new TimelineAnimationKeyFrame {
-			FrameIndex = frame, Rotation = rotation,
-		});
+    public KeyFrameBuilder Rotation(float rotation) {
+        animationKeyFrames.Add(new TimelineAnimationKeyFrame {
+            FrameIndex = frame, Rotation = rotation,
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	public KeyFrameBuilder Scale(Vector2 scale) {
-		animationKeyFrames.Add(new TimelineAnimationKeyFrame {
-			FrameIndex = frame, Scale = scale,
-		});
+    public KeyFrameBuilder Scale(Vector2 scale) {
+        animationKeyFrames.Add(new TimelineAnimationKeyFrame {
+            FrameIndex = frame, Scale = scale,
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	public KeyFrameBuilder Scale(float scale) {
-		animationKeyFrames.Add(new TimelineAnimationKeyFrame {
-			FrameIndex = frame, Scale = new Vector2(scale, scale),
-		});
+    public KeyFrameBuilder Scale(float scale) {
+        animationKeyFrames.Add(new TimelineAnimationKeyFrame {
+            FrameIndex = frame, Scale = new Vector2(scale, scale),
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	public KeyFrameBuilder TextColor(Vector3 textColor) {
-		animationKeyFrames.Add(new TimelineAnimationKeyFrame {
-			FrameIndex = frame, TextColor = textColor,
-		});
+    public KeyFrameBuilder TextColor(Vector3 textColor) {
+        animationKeyFrames.Add(new TimelineAnimationKeyFrame {
+            FrameIndex = frame, TextColor = textColor,
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	public KeyFrameBuilder TextOutlineColor(Vector3 textColor) {
-		animationKeyFrames.Add(new TimelineAnimationKeyFrame {
-			FrameIndex = frame, TextEdgeColor = textColor,
-		});
+    public KeyFrameBuilder TextOutlineColor(Vector3 textColor) {
+        animationKeyFrames.Add(new TimelineAnimationKeyFrame {
+            FrameIndex = frame, TextEdgeColor = textColor,
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	public KeyFrameBuilder Part(uint partId) {
-		animationKeyFrames.Add(new TimelineAnimationKeyFrame {
-			FrameIndex = frame, PartId = partId,
-		});
+    public KeyFrameBuilder Part(uint partId) {
+        animationKeyFrames.Add(new TimelineAnimationKeyFrame {
+            FrameIndex = frame, PartId = partId,
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	public FrameSetBuilder EndFrameBuilder() {
-		parent.AddFrame(animationKeyFrames.ToArray());
-		return parent;
-	}
+    public FrameSetBuilder EndFrameBuilder() {
+        parent.AddFrame(animationKeyFrames.ToArray());
+        return parent;
+    }
 }

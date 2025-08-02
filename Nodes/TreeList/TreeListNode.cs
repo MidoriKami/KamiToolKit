@@ -5,51 +5,51 @@ namespace KamiToolKit.Nodes;
 
 public class TreeListNode : ResNode {
 
-	private readonly ResNode childContainer;
+    private readonly ResNode childContainer;
 
-	private List<TreeListCategoryNode> children = [];
+    private List<TreeListCategoryNode> children = [];
 
-	public TreeListNode() {
-		childContainer = new ResNode {
-			IsVisible = true,
-		};
+    public TreeListNode() {
+        childContainer = new ResNode {
+            IsVisible = true,
+        };
 
-		childContainer.AttachNode(this);
-	}
+        childContainer.AttachNode(this);
+    }
 
-	public float CategoryVerticalSpacing { get; set; } = 4.0f;
+    public float CategoryVerticalSpacing { get; set; } = 4.0f;
 
-	public Action<float>? OnLayoutUpdate { get; set; }
+    public Action<float>? OnLayoutUpdate { get; set; }
 
-	protected override void OnSizeChanged() {
-		base.OnSizeChanged();
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
 
-		childContainer.Width = Width;
-	}
+        childContainer.Width = Width;
+    }
 
-	public void AddCategoryNode(TreeListCategoryNode node) {
-		RefreshLayout();
+    public void AddCategoryNode(TreeListCategoryNode node) {
+        RefreshLayout();
 
-		children.Add(node);
+        children.Add(node);
 
-		node.Width = childContainer.Width;
-		node.Y = childContainer.Height;
-		node.AttachNode(childContainer);
-		node.ParentTreeListNode = this;
+        node.Width = childContainer.Width;
+        node.Y = childContainer.Height;
+        node.AttachNode(childContainer);
+        node.ParentTreeListNode = this;
 
-		childContainer.Height += node.Height + CategoryVerticalSpacing;
-	}
+        childContainer.Height += node.Height + CategoryVerticalSpacing;
+    }
 
-	public void RefreshLayout() {
-		childContainer.Height = 0.0f;
+    public void RefreshLayout() {
+        childContainer.Height = 0.0f;
 
-		foreach (var child in children) {
-			if (!child.IsVisible) continue;
+        foreach (var child in children) {
+            if (!child.IsVisible) continue;
 
-			child.Y = childContainer.Height;
-			childContainer.Height += child.Height + CategoryVerticalSpacing;
-		}
+            child.Y = childContainer.Height;
+            childContainer.Height += child.Height + CategoryVerticalSpacing;
+        }
 
-		OnLayoutUpdate?.Invoke(childContainer.Height);
-	}
+        OnLayoutUpdate?.Invoke(childContainer.Height);
+    }
 }

@@ -10,15 +10,15 @@ namespace KamiToolKit.Nodes;
 /// <remarks>This node is not intended to be used with multiple <see cref="Part" />'s.</remarks>
 public class IconImageNode : SimpleImageNode {
 
-	public uint IconId {
-		get;
-		set {
-			field = value;
-			PartsList[0].LoadIcon(value);
-			TextureSize = new Vector2(32.0f, 32.0f);
-		}
-	}
+    public uint IconId {
+        get;
+        set {
+            field = value;
+            PartsList[0].LoadIcon(value);
+            TextureSize = new Vector2(32.0f, 32.0f);
+        }
+    }
 
-	public unsafe uint? LoadedIconId
-		=> InternalNode->GetIconId();
+    public unsafe uint? LoadedIconId
+        => InternalNode->GetIconId();
 }

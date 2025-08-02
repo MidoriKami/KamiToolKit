@@ -4,41 +4,41 @@ namespace KamiToolKit.Nodes;
 
 public class TextureButtonNode : ButtonBase {
 
-	public readonly SimpleImageNode ImageNode;
+    public readonly SimpleImageNode ImageNode;
 
-	public TextureButtonNode() {
-		ImageNode = new ImGuiImageNode {
-			IsVisible = true, NodeId = 3, WrapMode = 2, ImageNodeFlags = 0,
-		};
+    public TextureButtonNode() {
+        ImageNode = new ImGuiImageNode {
+            IsVisible = true, NodeId = 3, WrapMode = 2, ImageNodeFlags = 0,
+        };
 
-		ImageNode.AttachNode(this);
+        ImageNode.AttachNode(this);
 
-		LoadTimelines();
+        LoadTimelines();
 
-		InitializeComponentEvents();
-	}
+        InitializeComponentEvents();
+    }
 
-	public string TexturePath {
-		get => ImageNode.TexturePath;
-		set => ImageNode.TexturePath = value;
-	}
+    public string TexturePath {
+        get => ImageNode.TexturePath;
+        set => ImageNode.TexturePath = value;
+    }
 
-	public Vector2 TextureCoordinates {
-		get => ImageNode.TextureCoordinates;
-		set => ImageNode.TextureCoordinates = value;
-	}
+    public Vector2 TextureCoordinates {
+        get => ImageNode.TextureCoordinates;
+        set => ImageNode.TextureCoordinates = value;
+    }
 
-	public Vector2 TextureSize {
-		get => ImageNode.TextureSize;
-		set => ImageNode.TextureSize = value;
-	}
+    public Vector2 TextureSize {
+        get => ImageNode.TextureSize;
+        set => ImageNode.TextureSize = value;
+    }
 
-	protected override void OnSizeChanged() {
-		base.OnSizeChanged();
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
 
-		ImageNode.Size = Size;
-	}
+        ImageNode.Size = Size;
+    }
 
-	private void LoadTimelines()
-		=> LoadTwoPartTimelines(this, ImageNode);
+    private void LoadTimelines()
+        => LoadTwoPartTimelines(this, ImageNode);
 }

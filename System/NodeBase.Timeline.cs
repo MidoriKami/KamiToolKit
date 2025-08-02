@@ -4,13 +4,13 @@ namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
 
-	public Timeline? Timeline { get; private set; }
+    public Timeline? Timeline { get; private set; }
 
-	public void AddTimeline(Timeline timeline) {
-		Timeline?.Dispose();
+    public void AddTimeline(Timeline timeline) {
+        Timeline?.Dispose();
 
-		Timeline = timeline;
-		InternalResNode->Timeline = timeline.InternalTimeline;
-		timeline.OwnerNode = InternalResNode;
-	}
+        Timeline = timeline;
+        InternalResNode->Timeline = timeline.InternalTimeline;
+        timeline.OwnerNode = InternalResNode;
+    }
 }

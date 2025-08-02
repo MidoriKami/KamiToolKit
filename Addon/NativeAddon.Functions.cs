@@ -6,98 +6,98 @@ namespace KamiToolKit.Addon;
 
 public abstract unsafe partial class NativeAddon {
 
-	protected virtual void OnSetup(AtkUnitBase* addon) { }
-	protected virtual void OnShow(AtkUnitBase* addon) { }
-	protected virtual void OnDraw(AtkUnitBase* addon) { }
-	protected virtual void OnUpdate(AtkUnitBase* addon) { }
-	protected virtual void OnHide(AtkUnitBase* addon) { }
-	protected virtual void OnFinalize(AtkUnitBase* addon) { }
+    protected virtual void OnSetup(AtkUnitBase* addon) { }
+    protected virtual void OnShow(AtkUnitBase* addon) { }
+    protected virtual void OnDraw(AtkUnitBase* addon) { }
+    protected virtual void OnUpdate(AtkUnitBase* addon) { }
+    protected virtual void OnHide(AtkUnitBase* addon) { }
+    protected virtual void OnFinalize(AtkUnitBase* addon) { }
 
-	private void Initialize(AtkUnitBase* thisPtr) {
-		Log.Verbose($"[{InternalName}] Initialize");
+    private void Initialize(AtkUnitBase* thisPtr) {
+        Log.Verbose($"[{InternalName}] Initialize");
 
-		AtkUnitBase.StaticVirtualTablePointer->Initialize(thisPtr);
+        AtkUnitBase.StaticVirtualTablePointer->Initialize(thisPtr);
 
-		thisPtr->UldManager.InitializeResourceRendererManager();
+        thisPtr->UldManager.InitializeResourceRendererManager();
 
-		InitializeAddon();
-	}
+        InitializeAddon();
+    }
 
-	private void Setup(AtkUnitBase* addon, uint valueCount, AtkValue* values) {
-		Log.Verbose($"[{InternalName}] Setup");
+    private void Setup(AtkUnitBase* addon, uint valueCount, AtkValue* values) {
+        Log.Verbose($"[{InternalName}] Setup");
 
-		SetInitialState();
+        SetInitialState();
 
-		AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);
+        AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);
 
-		OnSetup(addon);
-	}
+        OnSetup(addon);
+    }
 
-	private void Show(AtkUnitBase* addon, bool silenceOpenSoundEffect, uint unsetShowHideFlags) {
-		Log.Verbose($"[{InternalName}] Show");
+    private void Show(AtkUnitBase* addon, bool silenceOpenSoundEffect, uint unsetShowHideFlags) {
+        Log.Verbose($"[{InternalName}] Show");
 
-		OnShow(addon);
+        OnShow(addon);
 
-		AtkUnitBase.StaticVirtualTablePointer->Show(addon, silenceOpenSoundEffect, unsetShowHideFlags);
-	}
+        AtkUnitBase.StaticVirtualTablePointer->Show(addon, silenceOpenSoundEffect, unsetShowHideFlags);
+    }
 
-	private void Update(AtkUnitBase* addon, float delta) {
-		Log.Excessive($"[{InternalName}] Update");
+    private void Update(AtkUnitBase* addon, float delta) {
+        Log.Excessive($"[{InternalName}] Update");
 
-		OnUpdate(addon);
+        OnUpdate(addon);
 
-		AtkUnitBase.StaticVirtualTablePointer->Update(addon, delta);
-	}
+        AtkUnitBase.StaticVirtualTablePointer->Update(addon, delta);
+    }
 
-	private void Draw(AtkUnitBase* addon) {
-		Log.Excessive($"[{InternalName}] Draw");
+    private void Draw(AtkUnitBase* addon) {
+        Log.Excessive($"[{InternalName}] Draw");
 
-		OnDraw(addon);
+        OnDraw(addon);
 
-		AtkUnitBase.StaticVirtualTablePointer->Draw(addon);
-	}
+        AtkUnitBase.StaticVirtualTablePointer->Draw(addon);
+    }
 
-	private void Hide(AtkUnitBase* addon, bool unkBool, bool callHideCallback, uint setShowHideFlags) {
-		Log.Verbose($"[{InternalName}] Hide");
+    private void Hide(AtkUnitBase* addon, bool unkBool, bool callHideCallback, uint setShowHideFlags) {
+        Log.Verbose($"[{InternalName}] Hide");
 
-		OnHide(addon);
+        OnHide(addon);
 
-		AtkUnitBase.StaticVirtualTablePointer->Hide(addon, unkBool, callHideCallback, setShowHideFlags);
-	}
+        AtkUnitBase.StaticVirtualTablePointer->Hide(addon, unkBool, callHideCallback, setShowHideFlags);
+    }
 
-	private void Hide2(AtkUnitBase* addon) {
-		Log.Verbose($"[{InternalName}] Hide2");
+    private void Hide2(AtkUnitBase* addon) {
+        Log.Verbose($"[{InternalName}] Hide2");
 
-		AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
-	}
+        AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
+    }
 
-	private void Finalizer(AtkUnitBase* addon) {
-		Log.Verbose($"[{InternalName}] Finalize");
+    private void Finalizer(AtkUnitBase* addon) {
+        Log.Verbose($"[{InternalName}] Finalize");
 
-		OnFinalize(addon);
+        OnFinalize(addon);
 
-		if (RememberClosePosition) {
-			Position = new Vector2(InternalAddon->X, InternalAddon->Y);
-		}
+        if (RememberClosePosition) {
+            Position = new Vector2(InternalAddon->X, InternalAddon->Y);
+        }
 
-		AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
-	}
+        AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
+    }
 
-	private AtkEventListener* Destructor(AtkUnitBase* addon, byte flags) {
-		Log.Verbose($"[{InternalName}] Destructor");
+    private AtkEventListener* Destructor(AtkUnitBase* addon, byte flags) {
+        Log.Verbose($"[{InternalName}] Destructor");
 
-		var result = AtkUnitBase.StaticVirtualTablePointer->Dtor(addon, flags);
+        var result = AtkUnitBase.StaticVirtualTablePointer->Dtor(addon, flags);
 
-		if ((flags & 1) == 1) {
-			InternalAddon = null;
-			disposeHandle?.Free();
-			disposeHandle = null;
-			CreatedAddons.Remove(this);
+        if ((flags & 1) == 1) {
+            InternalAddon = null;
+            disposeHandle?.Free();
+            disposeHandle = null;
+            CreatedAddons.Remove(this);
 
-			// Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
-			NativeMemoryHelper.Free(virtualTable, 0x8 * 100);
-		}
+            // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
+            NativeMemoryHelper.Free(virtualTable, 0x8 * 100);
+        }
 
-		return result;
-	}
+        return result;
+    }
 }
