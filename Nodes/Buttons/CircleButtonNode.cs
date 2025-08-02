@@ -32,7 +32,9 @@ public class CircleButtonNode : ButtonBase {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		ImageNode.Size = Size;
+		base.OnSizeChanged();		
+        
+        ImageNode.Size = Size;
 	}
 
 	private UldTextureInfo GetTextureCoordinateForIcon(ButtonIcon icon) => icon switch {

@@ -52,7 +52,9 @@ public unsafe class ListButtonNode : ButtonBase {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		HoverBackgroundNode.Size = Size;
+		base.OnSizeChanged();		
+        
+        HoverBackgroundNode.Size = Size;
 		SelectedBackgroundNode.Size = Size;
 		LabelNode.Size = new Vector2(Width - 10.0f, Height - 1.0f);
 	}

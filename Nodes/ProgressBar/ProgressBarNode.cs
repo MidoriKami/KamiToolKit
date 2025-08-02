@@ -33,7 +33,9 @@ public class ProgressBarNode : SimpleComponentNode {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		BackgroundNode.Size = Size;
+		base.OnSizeChanged();		
+        
+        BackgroundNode.Size = Size;
 		ForegroundNode.Size = Size;
 	}
 

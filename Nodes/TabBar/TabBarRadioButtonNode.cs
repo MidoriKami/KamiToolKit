@@ -74,7 +74,9 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
 	}
 	
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		CollisionNode.Size = Size;
+		base.OnSizeChanged();		
+        
+        CollisionNode.Size = Size;
 		UnselectedNineGridNode.Size = new Vector2(Width + 4.0f, Height + 2.0f);
 		SelectedNineGridNode.Size = new Vector2(Width + 4.0f, Height + 2.0f);
 		LabelNode.Size = new Vector2(Width - 25.0f, Height - 4.0f);

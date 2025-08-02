@@ -20,7 +20,9 @@ public class TreeListNode : ResNode {
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		childContainer.Width = Width;
+		base.OnSizeChanged();		
+        
+        childContainer.Width = Width;
 	}
 
 	public void AddCategoryNode(TreeListCategoryNode node) {

@@ -29,7 +29,9 @@ public class SliderForegroundButtonNode : ComponentNode<AtkComponentButton, AtkU
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		HandleNode.Size = Size;
+		base.OnSizeChanged();		
+        
+        HandleNode.Size = Size;
 	}
 
 	private void BuildTimelines() {

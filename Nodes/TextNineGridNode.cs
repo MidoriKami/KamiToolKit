@@ -86,7 +86,9 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
 	}
 
 	protected override void OnSizeChanged() {
-		base.OnSizeChanged();		BackgroundNineGrid.Size = Size;
+		base.OnSizeChanged();		
+        
+        BackgroundNineGrid.Size = Size;
 		TextNode.Size = Size - new Vector2(8.0f, 2.0f);
 	}
 }

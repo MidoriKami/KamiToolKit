@@ -66,6 +66,7 @@ public class CastBarProgressBarNode : SimpleComponentNode {
     }
 
     protected override void OnSizeChanged() {
+        base.OnSizeChanged();
         BackgroundImageNode.Size = Size;
         ProgressNode.Size = Size;
         BorderImageNode.Size = Size;
