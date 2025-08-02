@@ -78,8 +78,16 @@ public unsafe class Timeline : IDisposable {
 		set => internalTimelineResource.LabelSets = value;
 	}
 
-	public void PlayAnimation(int i)
-		=> InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, (byte) i);
+	/// <summary>
+	/// Plays the specified animation via label ID
+	/// </summary>
+	/// <param name="labelId">The label ID to play</param>
+	/// <param name="force">Force the animation to restart even if it was already playing</param>
+	public void PlayAnimation(int labelId, bool force = false) {
+		if (InternalTimeline->ActiveLabelId != labelId || force) {
+			InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, (byte) labelId);
+		}
+	}
 
 	public void StopAnimation()
 		=> InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, 0);
