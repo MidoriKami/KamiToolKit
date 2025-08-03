@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Dalamud.Plugin;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -52,8 +53,12 @@ public unsafe class NativeController : IDisposable {
     public void DetachNode(NodeBase? customNode, Action? disposeAction = null)
         => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => DetachNodeTask(customNode, disposeAction));
 
-    private void AttachToNodeBase(NodeBase customNode, NodeBase targetNode, NodePosition? position) {
+    public void DisposeNode<T>(ref T? customNode) where T : NodeBase {
+        var node = Interlocked.Exchange(ref customNode, null);
+        DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => DisposeNodeTask(node));
+    }
 
+    private void AttachToNodeBase(NodeBase customNode, NodeBase targetNode, NodePosition? position) {
         Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}] to another Custom Node [{targetNode.GetType()}]");
         var addon = GetAddonForNode(targetNode.InternalResNode);
 
@@ -119,6 +124,18 @@ public unsafe class NativeController : IDisposable {
         customNode?.DisableEvents();
         customNode?.DetachNode();
         disposeAction?.Invoke();
+    }
+    
+    private void DisposeNodeTask(NodeBase? customNode) {
+        if (customNode is not null) {
+            Log.Verbose($"[NativeController] Disposing [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] from all sources.");
+        }
+
+        customNode?.DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
+        customNode?.UnregisterAutoDetach();
+        customNode?.DisableEvents();
+        customNode?.DetachNode();
+        customNode?.Dispose();
     }
 
     private AtkUnitBase* GetAddonForNode(AtkResNode* node)
