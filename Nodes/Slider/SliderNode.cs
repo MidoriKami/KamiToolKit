@@ -119,32 +119,32 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 
     private void BuildTimelines() {
         AddTimeline(new TimelineBuilder()
-                    .BeginFrameSet(1, 30)
-                    .AddLabel(1, 17, AtkTimelineJumpBehavior.PlayOnce, 0)
-                    .AddLabel(11, 18, AtkTimelineJumpBehavior.PlayOnce, 0)
-                    .AddLabel(21, 7, AtkTimelineJumpBehavior.PlayOnce, 0)
-                    .EndFrameSet()
-                    .Build()
+            .BeginFrameSet(1, 30)
+            .AddLabel(1, 17, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(11, 18, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(21, 7, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .EndFrameSet()
+            .Build()
         );
 
         ProgressTextureNode.AddTimeline(new TimelineBuilder()
-                                        .BeginFrameSet(1, 20)
-                                        .AddFrame(1, alpha: 255)
-                                        .EndFrameSet()
-                                        .BeginFrameSet(21, 30)
-                                        .AddFrame(21, alpha: 127)
-                                        .EndFrameSet()
-                                        .Build()
+            .BeginFrameSet(1, 20)
+            .AddFrame(1, alpha: 255)
+            .EndFrameSet()
+            .BeginFrameSet(21, 30)
+            .AddFrame(21, alpha: 127)
+            .EndFrameSet()
+            .Build()
         );
 
         ValueNode.AddTimeline(new TimelineBuilder()
-                              .BeginFrameSet(1, 20)
-                              .AddFrame(1, alpha: 255)
-                              .EndFrameSet()
-                              .BeginFrameSet(21, 30)
-                              .AddFrame(21, alpha: 153)
-                              .EndFrameSet()
-                              .Build()
+            .BeginFrameSet(1, 20)
+            .AddFrame(1, alpha: 255)
+            .EndFrameSet()
+            .BeginFrameSet(21, 30)
+            .AddFrame(21, alpha: 153)
+            .EndFrameSet()
+            .Build()
         );
     }
 }

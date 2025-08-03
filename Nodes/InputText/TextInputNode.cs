@@ -223,44 +223,44 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
     private void LoadTimelines() {
         AddTimeline(new TimelineBuilder()
-                    .BeginFrameSet(1, 29)
-                    .AddLabelPair(1, 9, 17)
-                    .AddLabelPair(10, 19, 18)
-                    .AddLabelPair(20, 29, 7)
-                    .EndFrameSet()
-                    .Build());
+            .BeginFrameSet(1, 29)
+            .AddLabelPair(1, 9, 17)
+            .AddLabelPair(10, 19, 18)
+            .AddLabelPair(20, 29, 7)
+            .EndFrameSet()
+            .Build());
 
         BackgroundNode.AddTimeline(new TimelineBuilder()
-                                   .AddFrameSetWithFrame(1, 9, 1, alpha: 255)
-                                   .BeginFrameSet(10, 19)
-                                   .AddFrame(10, alpha: 255)
-                                   .AddFrame(12, alpha: 255)
-                                   .EndFrameSet()
-                                   .AddFrameSetWithFrame(20, 29, 20, alpha: 127)
-                                   .Build());
+            .AddFrameSetWithFrame(1, 9, 1, alpha: 255)
+            .BeginFrameSet(10, 19)
+            .AddFrame(10, alpha: 255)
+            .AddFrame(12, alpha: 255)
+            .EndFrameSet()
+            .AddFrameSetWithFrame(20, 29, 20, alpha: 127)
+            .Build());
 
         FocusNode.AddTimeline(new TimelineBuilder()
-                              .BeginFrameSet(10, 19)
-                              .AddFrame(10, alpha: 0)
-                              .AddFrame(12, alpha: 255)
-                              .EndFrameSet()
-                              .Build());
+            .BeginFrameSet(10, 19)
+            .AddFrame(10, alpha: 0)
+            .AddFrame(12, alpha: 255)
+            .EndFrameSet()
+            .Build());
 
         TextLimitsNode.AddTimeline(new TimelineBuilder()
-                                   .AddFrameSetWithFrame(1, 9, 1, alpha: 102)
-                                   .BeginFrameSet(10, 19)
-                                   .AddFrame(10, alpha: 102)
-                                   .AddFrame(12, alpha: 127)
-                                   .EndFrameSet()
-                                   .AddFrameSetWithFrame(20, 29, 20, alpha: 76)
-                                   .Build());
+            .AddFrameSetWithFrame(1, 9, 1, alpha: 102)
+            .BeginFrameSet(10, 19)
+            .AddFrame(10, alpha: 102)
+            .AddFrame(12, alpha: 127)
+            .EndFrameSet()
+            .AddFrameSetWithFrame(20, 29, 20, alpha: 76)
+            .Build());
 
         CursorNode.AddTimeline(new TimelineBuilder()
-                               .BeginFrameSet(1, 15)
-                               .AddLabel(1, 101, AtkTimelineJumpBehavior.Start, 0)
-                               .AddLabel(15, 0, AtkTimelineJumpBehavior.LoopForever, 101)
-                               .EndFrameSet()
-                               .Build());
+            .BeginFrameSet(1, 15)
+            .AddLabel(1, 101, AtkTimelineJumpBehavior.Start, 0)
+            .AddLabel(15, 0, AtkTimelineJumpBehavior.LoopForever, 101)
+            .EndFrameSet()
+            .Build());
     }
 
     [StructLayout(LayoutKind.Explicit, Size = 0x8)]

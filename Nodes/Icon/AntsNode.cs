@@ -28,10 +28,10 @@ public class AntsNode : ResNode {
 
     private void BuildTimeline() {
         AntsImageNode.AddTimeline(new TimelineBuilder()
-                                  .BeginFrameSet(2, 9)
-                                  .AddFrame(2, partId: 6)
-                                  .AddFrame(9, partId: 13)
-                                  .EndFrameSet()
-                                  .Build());
+            .BeginFrameSet(2, 9)
+            .AddFrame(2, partId: 6)
+            .AddFrame(9, partId: 13)
+            .EndFrameSet()
+            .Build());
     }
 }

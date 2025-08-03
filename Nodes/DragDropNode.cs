@@ -245,14 +245,14 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 
     private void LoadTimelines() {
         AddTimeline(new TimelineBuilder()
-                    .BeginFrameSet(1, 59)
-                    .AddLabelPair(1, 10, 1)
-                    .AddLabelPair(11, 19, 2)
-                    .AddLabelPair(20, 29, 3)
-                    .AddLabelPair(30, 39, 7)
-                    .AddLabelPair(40, 49, 6)
-                    .AddLabelPair(50, 59, 4)
-                    .EndFrameSet()
-                    .Build());
+            .BeginFrameSet(1, 59)
+            .AddLabelPair(1, 10, 1)
+            .AddLabelPair(11, 19, 2)
+            .AddLabelPair(20, 29, 3)
+            .AddLabelPair(30, 39, 7)
+            .AddLabelPair(40, 49, 6)
+            .AddLabelPair(50, 59, 4)
+            .EndFrameSet()
+            .Build());
     }
 }

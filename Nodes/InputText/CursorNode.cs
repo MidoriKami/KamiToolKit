@@ -20,10 +20,10 @@ public class CursorNode : ResNode {
         CursorImageNode.AttachNode(this);
 
         CursorImageNode.AddTimeline(new TimelineBuilder()
-                                    .BeginFrameSet(1, 8)
-                                    .AddEmptyFrame(1)
-                                    .EndFrameSet()
-                                    .Build());
+            .BeginFrameSet(1, 8)
+            .AddEmptyFrame(1)
+            .EndFrameSet()
+            .Build());
 
         Timeline?.PlayAnimation(101);
     }

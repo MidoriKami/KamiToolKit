@@ -251,24 +251,24 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
 
     private void LoadTimelines() {
         AddTimeline(new TimelineBuilder()
-                    .BeginFrameSet(1, 29)
-                    .AddLabelPair(1, 9, 17)
-                    .AddLabelPair(10, 19, 18)
-                    .AddLabelPair(20, 29, 7)
-                    .EndFrameSet()
-                    .Build());
+            .BeginFrameSet(1, 29)
+            .AddLabelPair(1, 9, 17)
+            .AddLabelPair(10, 19, 18)
+            .AddLabelPair(20, 29, 7)
+            .EndFrameSet()
+            .Build());
 
         BackgroundNode.AddTimeline(new TimelineBuilder()
-                                   .AddFrameSetWithFrame(1, 9, 1, multiplyColor: new Vector3(100.0f))
-                                   .AddFrameSetWithFrame(10, 19, 10, multiplyColor: new Vector3(100.0f))
-                                   .AddFrameSetWithFrame(20, 29, 20, multiplyColor: new Vector3(50.0f))
-                                   .Build());
+            .AddFrameSetWithFrame(1, 9, 1, multiplyColor: new Vector3(100.0f))
+            .AddFrameSetWithFrame(10, 19, 10, multiplyColor: new Vector3(100.0f))
+            .AddFrameSetWithFrame(20, 29, 20, multiplyColor: new Vector3(50.0f))
+            .Build());
 
         BorderNode.AddTimeline(new TimelineBuilder()
-                               .BeginFrameSet(10, 19)
-                               .AddFrame(10, alpha: 0)
-                               .AddFrame(12, alpha: 255)
-                               .EndFrameSet()
-                               .Build());
+            .BeginFrameSet(10, 19)
+            .AddFrame(10, alpha: 0)
+            .AddFrame(12, alpha: 255)
+            .EndFrameSet()
+            .Build());
     }
 }

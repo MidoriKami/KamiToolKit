@@ -30,19 +30,19 @@ public class AlternateCooldownNode : ResNode {
 
     private void BuildTimeline() {
         CooldownImage.AddTimeline(new TimelineBuilder()
-                                  .BeginFrameSet(11, 92)
-                                  .AddFrame(11, alpha: 255, scale: new Vector2(1.0f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f), partId: 1)
-                                  .AddFrame(92, alpha: 255, scale: new Vector2(1.0f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f), partId: 79)
-                                  .EndFrameSet()
-                                  .BeginFrameSet(93, 174)
-                                  .AddFrame(93, alpha: 255, scale: new Vector2(1.0f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f), partId: 82)
-                                  .AddFrame(174, alpha: 255, scale: new Vector2(1.0f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f), partId: 160)
-                                  .EndFrameSet()
-                                  .BeginFrameSet(175, 205)
-                                  .AddFrame(175, alpha: 255, scale: new Vector2(1.0f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f), partId: 80)
-                                  .AddFrame(191, alpha: 255, scale: new Vector2(1.2f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(200.0f), partId: 80)
-                                  .AddFrame(205, alpha: 0, scale: new Vector2(1.25f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(200.0f), partId: 80)
-                                  .EndFrameSet()
-                                  .Build());
+            .BeginFrameSet(11, 92)
+            .AddFrame(11, alpha: 255, scale: new Vector2(1.0f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f), partId: 1)
+            .AddFrame(92, alpha: 255, scale: new Vector2(1.0f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f), partId: 79)
+            .EndFrameSet()
+            .BeginFrameSet(93, 174)
+            .AddFrame(93, alpha: 255, scale: new Vector2(1.0f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f), partId: 82)
+            .AddFrame(174, alpha: 255, scale: new Vector2(1.0f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f), partId: 160)
+            .EndFrameSet()
+            .BeginFrameSet(175, 205)
+            .AddFrame(175, alpha: 255, scale: new Vector2(1.0f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(0.0f), partId: 80)
+            .AddFrame(191, alpha: 255, scale: new Vector2(1.2f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(200.0f), partId: 80)
+            .AddFrame(205, alpha: 0, scale: new Vector2(1.25f), multiplyColor: new Vector3(100.0f), addColor: new Vector3(200.0f), partId: 80)
+            .EndFrameSet()
+            .Build());
     }
 }

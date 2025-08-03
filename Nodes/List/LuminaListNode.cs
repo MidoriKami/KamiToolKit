@@ -28,8 +28,8 @@ public class LuminaListNode<T> : ListNode<T> where T : struct, IExcelRow<T> {
         if (FilterFunction is null) return;
 
         Options = DalamudInterface.Instance.DataManager.GetExcelSheet<T>()
-                                  .Where(FilterFunction)
-                                  .ToList();
+            .Where(FilterFunction)
+            .ToList();
     }
 
     protected override string GetLabelForOption(T option)

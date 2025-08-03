@@ -125,7 +125,7 @@ public unsafe class NativeController : IDisposable {
         customNode?.DetachNode();
         disposeAction?.Invoke();
     }
-    
+
     private void DisposeNodeTask(NodeBase? customNode) {
         if (customNode is not null) {
             Log.Verbose($"[NativeController] Disposing [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] from all sources.");

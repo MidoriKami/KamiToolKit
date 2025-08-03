@@ -148,18 +148,18 @@ public abstract unsafe partial class NativeAddon {
 
     private void LoadTimeline() {
         RootNode.AddTimeline(new TimelineBuilder()
-                             .BeginFrameSet(1, 89)
-                             .AddLabel(1, 101, AtkTimelineJumpBehavior.PlayOnce, 0)
-                             .AddLabel(10, 102, AtkTimelineJumpBehavior.PlayOnce, 0)
-                             .AddLabel(20, 103, AtkTimelineJumpBehavior.PlayOnce, 0)
-                             .AddLabel(30, 104, AtkTimelineJumpBehavior.PlayOnce, 0)
-                             .AddLabel(40, 105, AtkTimelineJumpBehavior.PlayOnce, 0)
-                             .AddLabel(50, 106, AtkTimelineJumpBehavior.PlayOnce, 0)
-                             .AddLabel(60, 107, AtkTimelineJumpBehavior.PlayOnce, 0)
-                             .AddLabel(70, 108, AtkTimelineJumpBehavior.PlayOnce, 0)
-                             .AddLabel(80, 109, AtkTimelineJumpBehavior.PlayOnce, 0)
-                             .EndFrameSet()
-                             .Build());
+            .BeginFrameSet(1, 89)
+            .AddLabel(1, 101, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(10, 102, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(20, 103, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(30, 104, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(40, 105, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(50, 106, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(60, 107, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(70, 108, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(80, 109, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .EndFrameSet()
+            .Build());
     }
 
     private string GetInternalNameSafe() {

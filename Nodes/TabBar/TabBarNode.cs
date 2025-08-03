@@ -73,11 +73,11 @@ public class TabBarNode : SimpleComponentNode {
 
     private void BuildTimelines() {
         AddTimeline(new TimelineBuilder()
-                    .BeginFrameSet(1, 20)
-                    .AddLabel(1, 101, AtkTimelineJumpBehavior.PlayOnce, 0)
-                    .AddLabel(11, 102, AtkTimelineJumpBehavior.PlayOnce, 0)
-                    .EndFrameSet()
-                    .Build()
+            .BeginFrameSet(1, 20)
+            .AddLabel(1, 101, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(11, 102, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .EndFrameSet()
+            .Build()
         );
     }
 }

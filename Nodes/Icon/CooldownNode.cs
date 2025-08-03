@@ -43,24 +43,24 @@ public class CooldownNode : ResNode {
 
     private void BuildTimelines() {
         GlossyImageFrame.AddTimeline(new TimelineBuilder()
-                                     .AddFrameSetWithFrame(1, 10, 1, partId: 0)
-                                     .AddFrameSetWithFrame(11, 20, 11, partId: 1)
-                                     .AddFrameSetWithFrame(21, 30, 21, partId: 2)
-                                     .AddFrameSetWithFrame(31, 40, 31, partId: 3)
-                                     .AddFrameSetWithFrame(41, 50, 41, partId: 18)
-                                     .AddFrameSetWithFrame(51, 60, 51, partId: 19)
-                                     .AddFrameSetWithFrame(143, 165, 143, partId: 0)
-                                     .Build());
+            .AddFrameSetWithFrame(1, 10, 1, partId: 0)
+            .AddFrameSetWithFrame(11, 20, 11, partId: 1)
+            .AddFrameSetWithFrame(21, 30, 21, partId: 2)
+            .AddFrameSetWithFrame(31, 40, 31, partId: 3)
+            .AddFrameSetWithFrame(41, 50, 41, partId: 18)
+            .AddFrameSetWithFrame(51, 60, 51, partId: 19)
+            .AddFrameSetWithFrame(143, 165, 143, partId: 0)
+            .Build());
 
         CooldownImage.AddTimeline(new TimelineBuilder()
-                                  .BeginFrameSet(61, 142)
-                                  .AddFrame(61, alpha: 255, partId: 1)
-                                  .AddFrame(142, alpha: 255, partId: 79)
-                                  .EndFrameSet()
-                                  .BeginFrameSet(143, 165)
-                                  .AddFrame(143, alpha: 255, partId: 80)
-                                  .AddFrame(165, alpha: 0, partId: 79)
-                                  .EndFrameSet()
-                                  .Build());
+            .BeginFrameSet(61, 142)
+            .AddFrame(61, alpha: 255, partId: 1)
+            .AddFrame(142, alpha: 255, partId: 79)
+            .EndFrameSet()
+            .BeginFrameSet(143, 165)
+            .AddFrame(143, alpha: 255, partId: 80)
+            .AddFrame(165, alpha: 0, partId: 79)
+            .EndFrameSet()
+            .Build());
     }
 }

@@ -51,33 +51,33 @@ public unsafe class TextInputButtonNode : ButtonBase {
 
     private void LoadTimeline() {
         AddTimeline(new TimelineBuilder()
-                    .BeginFrameSet(1, 59)
-                    .AddLabelPair(1, 9, 1)
-                    .AddLabelPair(10, 19, 2)
-                    .AddLabelPair(20, 29, 3)
-                    .AddLabelPair(30, 39, 7)
-                    .AddLabelPair(40, 49, 6)
-                    .AddLabelPair(50, 59, 4)
-                    .EndFrameSet()
-                    .Build());
+            .BeginFrameSet(1, 59)
+            .AddLabelPair(1, 9, 1)
+            .AddLabelPair(10, 19, 2)
+            .AddLabelPair(20, 29, 3)
+            .AddLabelPair(30, 39, 7)
+            .AddLabelPair(40, 49, 6)
+            .AddLabelPair(50, 59, 4)
+            .EndFrameSet()
+            .Build());
 
         BackgroundNode.AddTimeline(new TimelineBuilder()
-                                   .BeginFrameSet(10, 19)
-                                   .AddFrame(10, alpha: 0)
-                                   .AddFrame(13, alpha: 255)
-                                   .EndFrameSet()
-                                   .AddFrameSetWithFrame(20, 29, 20, alpha: 255)
-                                   .AddFrameSetWithFrame(40, 49, 40, alpha: 255)
-                                   .BeginFrameSet(50, 59)
-                                   .AddFrame(50, alpha: 255)
-                                   .AddFrame(52, alpha: 0)
-                                   .EndFrameSet()
-                                   .Build());
+            .BeginFrameSet(10, 19)
+            .AddFrame(10, alpha: 0)
+            .AddFrame(13, alpha: 255)
+            .EndFrameSet()
+            .AddFrameSetWithFrame(20, 29, 20, alpha: 255)
+            .AddFrameSetWithFrame(40, 49, 40, alpha: 255)
+            .BeginFrameSet(50, 59)
+            .AddFrame(50, alpha: 255)
+            .AddFrame(52, alpha: 0)
+            .EndFrameSet()
+            .Build());
 
         LabelNode.AddTimeline(new TimelineBuilder()
-                              .AddFrameSetWithFrame(1, 29, 1, alpha: 255, multiplyColor: new Vector3(100.0f))
-                              .AddFrameSetWithFrame(30, 39, 30, alpha: 153, multiplyColor: new Vector3(80.0f))
-                              .AddFrameSetWithFrame(40, 59, 40, alpha: 255, multiplyColor: new Vector3(100.0f))
-                              .Build());
+            .AddFrameSetWithFrame(1, 29, 1, alpha: 255, multiplyColor: new Vector3(100.0f))
+            .AddFrameSetWithFrame(30, 39, 30, alpha: 153, multiplyColor: new Vector3(80.0f))
+            .AddFrameSetWithFrame(40, 59, 40, alpha: 255, multiplyColor: new Vector3(100.0f))
+            .Build());
     }
 }

@@ -50,24 +50,24 @@ internal class ResizeButtonNode : SimpleComponentNode {
         SelectedImageNode.AttachNode(this);
 
         AddTimeline(new TimelineBuilder()
-                    .BeginFrameSet(1, 30)
-                    .AddLabel(1, 1, AtkTimelineJumpBehavior.Start, 0)
-                    .AddLabel(30, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
-                    .EndFrameSet()
-                    .Build());
+            .BeginFrameSet(1, 30)
+            .AddLabel(1, 1, AtkTimelineJumpBehavior.Start, 0)
+            .AddLabel(30, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .EndFrameSet()
+            .Build());
 
         UnselectedImageNode.AddTimeline(new TimelineBuilder()
-                                        .BeginFrameSet(1, 30)
-                                        .AddFrame(1, rotation: rotation)
-                                        .EndFrameSet()
-                                        .Build()
+            .BeginFrameSet(1, 30)
+            .AddFrame(1, rotation: rotation)
+            .EndFrameSet()
+            .Build()
         );
 
         SelectedImageNode.AddTimeline(new TimelineBuilder()
-                                      .BeginFrameSet(1, 30)
-                                      .AddFrame(1, rotation: rotation)
-                                      .EndFrameSet()
-                                      .Build()
+            .BeginFrameSet(1, 30)
+            .AddFrame(1, rotation: rotation)
+            .EndFrameSet()
+            .Build()
         );
 
         Timeline?.PlayAnimation(1);

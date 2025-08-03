@@ -86,18 +86,18 @@ public class GifImageNode : ResNode {
             }
 
             ImageNode.AddTimeline(new TimelineBuilder()
-                                  .BeginFrameSet(1, frameCount)
-                                  .AddFrame(0, partId: 0)
-                                  .AddFrame(frameCount, partId: currentPartId)
-                                  .EndFrameSet()
-                                  .Build());
+                .BeginFrameSet(1, frameCount)
+                .AddFrame(0, partId: 0)
+                .AddFrame(frameCount, partId: currentPartId)
+                .EndFrameSet()
+                .Build());
 
             AddTimeline(new TimelineBuilder()
-                        .BeginFrameSet(1, frameCount)
-                        .AddLabel(1, 200, AtkTimelineJumpBehavior.Start, 0)
-                        .AddLabel(frameCount, 0, AtkTimelineJumpBehavior.LoopForever, 200)
-                        .EndFrameSet()
-                        .Build());
+                .BeginFrameSet(1, frameCount)
+                .AddLabel(1, 200, AtkTimelineJumpBehavior.Start, 0)
+                .AddLabel(frameCount, 0, AtkTimelineJumpBehavior.LoopForever, 200)
+                .EndFrameSet()
+                .Build());
 
             unsafe {
                 InternalResNode->Timeline->PlayAnimation(AtkTimelineJumpBehavior.LoopForever, 200);

@@ -98,32 +98,32 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
 
     private void BuildTimeline() {
         IconExtras.AddTimeline(new TimelineBuilder()
-                               .BeginFrameSet(1, 59)
-                               .AddLabelPair(1, 9, 1)
-                               .AddLabelPair(10, 19, 2)
-                               .AddLabelPair(20, 29, 3)
-                               .AddLabelPair(30, 39, 7)
-                               .AddLabelPair(40, 49, 6)
-                               .AddLabelPair(50, 59, 4)
-                               .EndFrameSet()
-                               .Build());
+            .BeginFrameSet(1, 59)
+            .AddLabelPair(1, 9, 1)
+            .AddLabelPair(10, 19, 2)
+            .AddLabelPair(20, 29, 3)
+            .AddLabelPair(30, 39, 7)
+            .AddLabelPair(40, 49, 6)
+            .AddLabelPair(50, 59, 4)
+            .EndFrameSet()
+            .Build());
 
         var iconIndicatorTimeline = new TimelineBuilder()
-                                    .BeginFrameSet(1, 129)
-                                    .AddLabel(1, 17, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .AddLabel(11, 101, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .AddLabel(21, 102, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .AddLabel(31, 103, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .AddLabel(41, 104, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .AddLabel(51, 105, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .AddLabel(61, 106, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .AddLabel(71, 107, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .AddLabel(80, 108, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .AddLabel(90, 109, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .AddLabel(100, 110, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .AddLabel(110, 111, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .AddLabel(120, 112, AtkTimelineJumpBehavior.PlayOnce, 0)
-                                    .EndFrameSet();
+            .BeginFrameSet(1, 129)
+            .AddLabel(1, 17, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(11, 101, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(21, 102, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(31, 103, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(41, 104, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(51, 105, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(61, 106, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(71, 107, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(80, 108, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(90, 109, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(100, 110, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(110, 111, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(120, 112, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .EndFrameSet();
 
         IconIndicator1.AddTimeline(iconIndicatorTimeline.Build());
         IconIndicator2.AddTimeline(iconIndicatorTimeline.Build());
