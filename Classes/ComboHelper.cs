@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
-using ImGuiNET;
 
 namespace KamiToolKit.Classes;
 

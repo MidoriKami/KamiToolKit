@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Dalamud.Game.Addon.Events;
+using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
@@ -157,13 +158,13 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     }
 
     public TextInputFlags1 Flags1 {
-        get => (TextInputFlags1)Data->Flags1;
-        set => Data->Flags1 = (byte)value;
+        get => Data->Flags1;
+        set => Data->Flags1 = value;
     }
 
     public TextInputFlags2 Flags2 {
-        get => (TextInputFlags2)Data->Flags2;
-        set => Data->Flags2 = (byte)value;
+        get => Data->Flags2;
+        set => Data->Flags2 = value;
     }
 
     public SeString String {

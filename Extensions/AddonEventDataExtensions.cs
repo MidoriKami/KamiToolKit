@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Dalamud.Game.Addon.Events;
+using Dalamud.Game.Addon.Events.EventDataTypes;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Extensions;
