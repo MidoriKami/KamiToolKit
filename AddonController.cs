@@ -27,7 +27,7 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
         addonName = AtkUnitBaseExtensions.GetAddonTypeName<T>();
     }
 
-    private AtkUnitBase* AddonPointer => (AtkUnitBase*)DalamudInterface.Instance.GameGui.GetAddonByName(addonName);
+    private AtkUnitBase* AddonPointer => (AtkUnitBase*)DalamudInterface.Instance.GameGui.GetAddonByName(addonName).Address;
     private bool IsEnabled { get; set; }
 
     public virtual void Dispose() => Disable();
@@ -55,7 +55,7 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
     }
 
     private void OnAddonEvent(AddonEvent type, AddonArgs args) {
-        var addon = (T*)args.Addon;
+        var addon = (T*)args.Addon.Address;
 
         switch (type) {
             case AddonEvent.PostSetup:
