@@ -58,13 +58,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     }
 
     [JsonProperty] public TextFlags TextFlags {
-        get => (TextFlags)InternalNode->TextFlags;
-        set => InternalNode->TextFlags = (byte)value;
-    }
-
-    [JsonProperty] public TextFlags2 TextFlags2 {
-        get => (TextFlags2)InternalNode->TextFlags2;
-        set => InternalNode->TextFlags2 = (byte)value;
+        get => InternalNode->TextFlags;
+        set => InternalNode->TextFlags = value;
     }
 
     [JsonProperty] public uint FontSize {

@@ -80,11 +80,6 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
         set => TextNode.TextFlags = value;
     }
 
-    public TextFlags2 TextFlags2 {
-        get => TextNode.TextFlags2;
-        set => TextNode.TextFlags2 = value;
-    }
-
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
