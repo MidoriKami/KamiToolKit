@@ -19,11 +19,11 @@ internal unsafe class Experimental {
     [Signature("4C 8D 3D ?? ?? ?? ?? 4C 89 3F 41 F6 C4")]
     public nint AtkEventListenerVirtualTable = nint.Zero;
 
-    public AtkEventManager* ViewportEventManager => (AtkEventManager*)((nint)AtkStage.Instance() + 0x870);
+    public AtkEventManager ViewportEventManager => AtkStage.Instance()->ViewportEventManager;
 
     public delegate void AtkComponentNumericInputSetValueDelegate(AtkComponentNumericInput* thisPtr, int value, bool triggerCallback, bool playSoundEffect);
 
-    [Signature("E9 ?? ?? ?? ?? 33 D2 F7 F1")]
+    [Signature("E8 ?? ?? ?? ?? 40 80 FE ?? 74")]
     public AtkComponentNumericInputSetValueDelegate? AtkComponentNumericInputSetValueCallback = null;
 
 #if DEBUG
