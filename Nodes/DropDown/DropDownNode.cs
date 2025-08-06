@@ -52,7 +52,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
             TextOutlineColor = ColorHelper.GetColor(2),
             IsVisible = true,
             Text = "Demo",
-            TextFlags = TextFlags.Emboss|(TextFlags)132,
+            TextFlags = TextFlags.AutoAdjustNodeSize | TextFlags.Emboss,
         };
 
         LabelNode.AttachNode(this);
