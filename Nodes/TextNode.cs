@@ -83,10 +83,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     }
 
     /// <summary>
-    ///     If you want the node to resize automatically, use TextFlags.AutoAdjustNodeSize
-    ///     <b>
-    ///         <em>before</em>
-    ///     </b>
+    ///     If you want the node to resize automatically,
+    ///     use TextFlags.AutoAdjustNodeSize <b><em>before</em></b>
     ///     setting the Text property.
     /// </summary>
     public SeString Text {
