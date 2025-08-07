@@ -154,7 +154,7 @@ public partial class NodeBase {
         }
         else if (info.PropertyType == typeof(uint)) {
             var value = Convert.ToInt32(info.GetValue(this)!);
-            if (ImGui.InputInt($"##{info.Name}", ref value, 0, 0)) {
+            if (ImGui.InputInt($"##{info.Name}", ref value)) {
                 info.SetValue(this, (uint)value);
             }
         }

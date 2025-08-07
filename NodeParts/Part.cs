@@ -145,7 +145,7 @@ public unsafe class Part : IDisposable {
     /// <param name="iconId">Icon id to load</param>
     public void LoadIcon(uint iconId) {
         internalAsset->AtkTexture.ReleaseTexture();
-        internalAsset->AtkTexture.LoadIconTexture(iconId, 0);
+        internalAsset->AtkTexture.LoadIconTexture(iconId);
     }
 
     /// <summary>
