@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Text;
 using Dalamud.Interface.Textures.TextureWraps;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -141,10 +144,8 @@ public unsafe class Part : IDisposable {
     ///     Loads a game icon via id
     /// </summary>
     /// <param name="iconId">Icon id to load</param>
-    public void LoadIcon(uint iconId) {
-        internalAsset->AtkTexture.ReleaseTexture();
-        internalAsset->AtkTexture.LoadIconTexture(iconId);
-    }
+    public void LoadIcon(uint iconId) 
+        => LoadTexture(GetPathForIcon(iconId));
 
     /// <summary>
     ///     Loads texture via an already constructed Texture*
@@ -166,5 +167,33 @@ public unsafe class Part : IDisposable {
     public void LoadTexture(IDalamudTextureWrap texture) {
         var texturePointer = (Texture*)DalamudInterface.Instance.TextureProvider.ConvertToKernelTexture(texture, true);
         LoadTexture(texturePointer);
+    }
+    
+    public static string GetPathForIcon(uint iconId) {
+        var textureManager = AtkStage.Instance()->AtkTextureResourceManager;
+        var buffer = new byte[0x100];
+        string pathResult;
+        
+        fixed (byte* bufferPointer = buffer) {
+            var textureScale = textureManager->DefaultTextureScale;
+            var adjustedLanguageIndex = textureManager->IconLanguage;
+            
+            // Try to resolve the path using the current language
+            Experimental.Instance.GetIconPath?.Invoke(bufferPointer, iconId, textureScale, (IconSubFolder)adjustedLanguageIndex);
+            pathResult = GetString(bufferPointer);
+            
+            // If the resolved path doesn't exist, re-process with default folder
+            if (!DalamudInterface.Instance.DataManager.FileExists(pathResult)) {
+                Experimental.Instance.GetIconPath?.Invoke(bufferPointer, iconId, textureScale, 0);
+                pathResult = GetString(bufferPointer);
+            }
+        }
+        
+        return pathResult;
+    }
+
+    private static string GetString(byte* bytes) {
+        var span = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(bytes);
+        return Encoding.UTF8.GetString(span);
     }
 }

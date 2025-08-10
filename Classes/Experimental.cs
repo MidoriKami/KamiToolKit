@@ -16,6 +16,11 @@ internal unsafe class Experimental {
 
     public void DisposeHooks() { }
 
+    public delegate int GetIconFormatStringDelegate(byte* buffer, uint iconId, int textureScale, IconSubFolder subFolder);
+    
+    [Signature("E8 ?? ?? ?? ?? 90 48 FF C7")]
+    public GetIconFormatStringDelegate? GetIconPath = null;
+    
     [Signature("4C 8D 3D ?? ?? ?? ?? 4C 89 3F 41 F6 C4")]
     public nint AtkEventListenerVirtualTable = nint.Zero;
 
