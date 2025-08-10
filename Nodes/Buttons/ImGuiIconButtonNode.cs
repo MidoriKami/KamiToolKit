@@ -5,7 +5,7 @@ namespace KamiToolKit.Nodes;
 
 public class ImGuiIconButtonNode : ButtonBase {
 
-    public readonly NineGridNode BackgroundNode;
+    public readonly SimpleNineGridNode BackgroundNode;
     public readonly ImGuiImageNode ImageNode;
 
     public ImGuiIconButtonNode() {
