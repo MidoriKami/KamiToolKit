@@ -179,12 +179,12 @@ public unsafe class Part : IDisposable {
             alternateFolder ??= (IconSubFolder)textureManager->IconLanguage;
             
             // Try to resolve the path using the current language
-            AtkTexture.GetIconPath(bufferPointer, iconId, textureScale, alternateFolder.Value);
+            Experimental.Instance.GetIconPath?.Invoke(bufferPointer, iconId, textureScale, alternateFolder.Value);
             pathResult = GetString(bufferPointer);
             
             // If the resolved path doesn't exist, re-process with default folder
             if (!DalamudInterface.Instance.DataManager.FileExists(pathResult)) {
-                AtkTexture.GetIconPath(bufferPointer, iconId, textureScale, 0);
+                Experimental.Instance.GetIconPath?.Invoke(bufferPointer, iconId, textureScale, 0);
                 pathResult = GetString(bufferPointer);
             }
         }

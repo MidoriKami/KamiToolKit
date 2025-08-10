@@ -101,7 +101,7 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 
     public int Value {
         get => Component->Value;
-        set => Component->InnerSetValue(value, true, false);
+        set => Experimental.Instance.AtkComponentNumericInputSetValueCallback?.Invoke(Component, value, true, false);
     }
 
     public int Min {
