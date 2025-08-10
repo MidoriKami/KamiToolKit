@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Dalamud.Interface.Textures.TextureWraps;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -144,8 +143,9 @@ public unsafe class Part : IDisposable {
     ///     Loads a game icon via id
     /// </summary>
     /// <param name="iconId">Icon id to load</param>
-    public void LoadIcon(uint iconId) 
-        => LoadTexture(GetPathForIcon(iconId));
+    /// <param name="alternateFolder">Language folder to try and load icon from</param>
+    public void LoadIcon(uint iconId, IconSubFolder? alternateFolder = null) 
+        => LoadTexture(GetPathForIcon(iconId, alternateFolder));
 
     /// <summary>
     ///     Loads texture via an already constructed Texture*
@@ -168,18 +168,18 @@ public unsafe class Part : IDisposable {
         var texturePointer = (Texture*)DalamudInterface.Instance.TextureProvider.ConvertToKernelTexture(texture, true);
         LoadTexture(texturePointer);
     }
-    
-    public static string GetPathForIcon(uint iconId) {
+
+    public static string GetPathForIcon(uint iconId, IconSubFolder? alternateFolder = null) {
         var textureManager = AtkStage.Instance()->AtkTextureResourceManager;
         var buffer = new byte[0x100];
         string pathResult;
         
         fixed (byte* bufferPointer = buffer) {
             var textureScale = textureManager->DefaultTextureScale;
-            var adjustedLanguageIndex = textureManager->IconLanguage;
+            alternateFolder ??= (IconSubFolder)textureManager->IconLanguage;
             
             // Try to resolve the path using the current language
-            Experimental.Instance.GetIconPath?.Invoke(bufferPointer, iconId, textureScale, (IconSubFolder)adjustedLanguageIndex);
+            Experimental.Instance.GetIconPath?.Invoke(bufferPointer, iconId, textureScale, alternateFolder.Value);
             pathResult = GetString(bufferPointer);
             
             // If the resolved path doesn't exist, re-process with default folder
