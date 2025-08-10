@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.NodeParts;
 
 namespace KamiToolKit.Nodes;
@@ -56,4 +57,7 @@ public class SimpleImageNode : ImageNode {
 
     public void LoadTexture(string path)
         => PartsList[0].LoadTexture(path);
+    
+    public void LoadIcon(uint iconId, IconSubFolder? language = null)
+        => PartsList[0].LoadIcon(iconId, language);
 }
