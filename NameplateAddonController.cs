@@ -14,13 +14,6 @@ public unsafe class NameplateAddonController : AddonController<AddonNamePlate> {
         OnPostDisable += RefreshAddon;
     }
 
-    public override void Dispose() {
-        base.Dispose();
-
-        OnPostEnable -= RefreshAddon;
-        OnPostDisable -= RefreshAddon;
-    }
-
     private void RefreshAddon(AddonNamePlate* addon) {
         if (addon is not null) {
             if (addon->UldManager.LoadedState is AtkLoadState.Loaded) {
