@@ -172,20 +172,21 @@ public unsafe class Part : IDisposable {
 
     public static string GetPathForIcon(uint iconId, IconSubFolder? alternateFolder = null) {
         var textureManager = AtkStage.Instance()->AtkTextureResourceManager;
-        var buffer = stackalloc byte[0x100];
-        Unsafe.InitBlockUnaligned(buffer, 0, 0x100);
+        Span<byte> buffer = stackalloc byte[0x100];
+        buffer.Clear();
+        var bytePointer = (byte*) Unsafe.AsPointer(ref buffer[0]);
 
         var textureScale = textureManager->DefaultTextureScale;
         alternateFolder ??= (IconSubFolder)textureManager->IconLanguage;
         
         // Try to resolve the path using the current language
-        Experimental.Instance.GetIconPath?.Invoke(buffer, iconId, textureScale, alternateFolder.Value);
-        var pathResult = GetString(buffer);
+        Experimental.Instance.GetIconPath?.Invoke(bytePointer, iconId, textureScale, alternateFolder.Value);
+        var pathResult = GetString(bytePointer);
 
         // If the resolved path doesn't exist, re-process with default folder
         if (!DalamudInterface.Instance.DataManager.FileExists(pathResult)) {
-            Experimental.Instance.GetIconPath?.Invoke(buffer, iconId, textureScale, 0);
-            pathResult = GetString(buffer);
+            Experimental.Instance.GetIconPath?.Invoke(bytePointer, iconId, textureScale, 0);
+            pathResult = GetString(bytePointer);
         }
         
         return pathResult;
