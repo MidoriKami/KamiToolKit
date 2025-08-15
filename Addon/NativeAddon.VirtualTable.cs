@@ -15,6 +15,8 @@ public abstract unsafe partial class NativeAddon {
     private AtkUnitBase.Delegates.Show showFunction = null!;
     private AtkUnitBase.Delegates.Hide2 softHideFunction = null!;
     private AtkUnitBase.Delegates.Update updateFunction = null!;
+    private AtkUnitBase.Delegates.OnRequestedUpdate onRequestedUpdateFunction = null!;
+    private AtkUnitBase.Delegates.OnRefresh onRefreshFunction = null!;
 
     private AtkUnitBase.AtkUnitBaseVirtualTable* virtualTable;
 
@@ -35,6 +37,8 @@ public abstract unsafe partial class NativeAddon {
         softHideFunction = Hide2;
         finalizerFunction = Finalizer;
         destructorFunction = Destructor;
+        onRequestedUpdateFunction = RequestedUpdate;
+        onRefreshFunction = Refresh;
 
         virtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(initializeFunction);
         virtualTable->OnSetup = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, void>)Marshal.GetFunctionPointerForDelegate(onSetupFunction);
@@ -45,5 +49,7 @@ public abstract unsafe partial class NativeAddon {
         virtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(softHideFunction);
         virtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(finalizerFunction);
         virtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>)Marshal.GetFunctionPointerForDelegate(destructorFunction);
+        virtualTable->OnRequestedUpdate = (delegate* unmanaged<AtkUnitBase*, NumberArrayData**, StringArrayData**, void>)Marshal.GetFunctionPointerForDelegate(onRequestedUpdateFunction);
+        virtualTable->OnRefresh = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, bool>)Marshal.GetFunctionPointerForDelegate(onRefreshFunction);
     }
 }

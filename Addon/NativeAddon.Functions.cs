@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -12,6 +13,8 @@ public abstract unsafe partial class NativeAddon {
     protected virtual void OnUpdate(AtkUnitBase* addon) { }
     protected virtual void OnHide(AtkUnitBase* addon) { }
     protected virtual void OnFinalize(AtkUnitBase* addon) { }
+    protected virtual void OnRequestedUpdate(AtkUnitBase* addon, NumberArrayData** numberArrayData, StringArrayData** stringArrayData) { }
+    protected virtual void OnRefresh(AtkUnitBase* addon, Span<AtkValue> atkValues) { }
 
     private void Initialize(AtkUnitBase* thisPtr) {
         Log.Verbose($"[{InternalName}] Initialize");
@@ -99,5 +102,21 @@ public abstract unsafe partial class NativeAddon {
         }
 
         return result;
+    }
+
+    private void RequestedUpdate(AtkUnitBase* thisPtr, NumberArrayData** numberArrayData, StringArrayData** stringArrayData) {
+        Log.Verbose($"[{InternalName}] RequestedUpdate");
+        
+        OnRequestedUpdate(thisPtr, numberArrayData, stringArrayData);
+        
+        AtkUnitBase.StaticVirtualTablePointer->OnRequestedUpdate(InternalAddon, numberArrayData, stringArrayData);
+    }
+
+    private bool Refresh(AtkUnitBase* thisPtr, uint valueCount, AtkValue* values) {
+        Log.Verbose($"[{InternalName}] Refresh");
+        
+        OnRefresh(thisPtr, new Span<AtkValue>(values, (int)valueCount));
+        
+        return AtkUnitBase.StaticVirtualTablePointer->OnRefresh(InternalAddon,  valueCount, values);
     }
 }
