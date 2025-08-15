@@ -88,7 +88,7 @@ public abstract unsafe partial class NodeBase {
     public bool IsEventRegistered(AddonEventType eventType)
         => eventHandlers.ContainsKey(eventType);
 
-    public void AddEvent(AddonEventType eventType, Action<AddonEventData> action, bool enableEventFlags = false) {
+    public void AddEvent(AddonEventType eventType, Action<AddonEventData> action, bool enableEventFlags = false, bool addClickHelpers = false) {
         // Check if this eventType is already registered
         if (eventHandlers.TryGetValue(eventType, out var handler)) {
             handler.EventAction += action;
@@ -103,7 +103,7 @@ public abstract unsafe partial class NodeBase {
             }
 
             // If we have added a click event, we need to also make the cursor change when hovering this node
-            if (eventType is AddonEventType.MouseClick && !CursorEventsSet) {
+            if (eventType is AddonEventType.MouseClick && !CursorEventsSet && addClickHelpers) {
                 AddEvent(AddonEventType.MouseOver, SetCursorMouseover);
                 AddEvent(AddonEventType.MouseOut, ResetCursorMouseover);
                 CursorEventsSet = true;
