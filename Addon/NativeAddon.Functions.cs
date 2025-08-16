@@ -16,6 +16,8 @@ public abstract unsafe partial class NativeAddon {
     protected virtual void OnRequestedUpdate(AtkUnitBase* addon, NumberArrayData** numberArrayData, StringArrayData** stringArrayData) { }
     protected virtual void OnRefresh(AtkUnitBase* addon, Span<AtkValue> atkValues) { }
 
+    private bool isSetup;
+
     private void Initialize(AtkUnitBase* thisPtr) {
         Log.Verbose($"[{InternalName}] Initialize");
 
@@ -34,6 +36,7 @@ public abstract unsafe partial class NativeAddon {
         AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);
 
         OnSetup(addon);
+        isSetup = true;
     }
 
     private void Show(AtkUnitBase* addon, bool silenceOpenSoundEffect, uint unsetShowHideFlags) {
@@ -84,6 +87,7 @@ public abstract unsafe partial class NativeAddon {
         }
 
         AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
+        isSetup = false;
     }
 
     private AtkEventListener* Destructor(AtkUnitBase* addon, byte flags) {
@@ -106,8 +110,11 @@ public abstract unsafe partial class NativeAddon {
 
     private void RequestedUpdate(AtkUnitBase* thisPtr, NumberArrayData** numberArrayData, StringArrayData** stringArrayData) {
         Log.Verbose($"[{InternalName}] RequestedUpdate");
-        
-        OnRequestedUpdate(thisPtr, numberArrayData, stringArrayData);
+
+        // Prevent calls to OnRequestedUpdate before Setup is completed. The game will try to call this after Show but before Setup
+        if (isSetup) {
+            OnRequestedUpdate(thisPtr, numberArrayData, stringArrayData);
+        }
         
         AtkUnitBase.StaticVirtualTablePointer->OnRequestedUpdate(InternalAddon, numberArrayData, stringArrayData);
     }
