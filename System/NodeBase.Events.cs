@@ -88,7 +88,7 @@ public abstract unsafe partial class NodeBase {
     public bool IsEventRegistered(AddonEventType eventType)
         => eventHandlers.ContainsKey(eventType);
 
-    public void AddEvent(AddonEventType eventType, Action<AddonEventData> action, bool enableEventFlags = false, bool addClickHelpers = false) {
+    public void AddEvent(AddonEventType eventType, Action<AddonEventData> action, bool enableEventFlags = false, bool addClickHelpers = true) {
         // Check if this eventType is already registered
         if (eventHandlers.TryGetValue(eventType, out var handler)) {
             handler.EventAction += action;
