@@ -12,9 +12,13 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     protected readonly List<NodeBase> NodeList = [];
 
+    public IEnumerable<T> GetNodes<T>() where T : NodeBase => NodeList.OfType<T>();
+
+    public IReadOnlyList<NodeBase> Nodes => NodeList;
+
     protected virtual uint ListBaseId => 1;
 
-    public int MaxNodes { get; set; } = 100;
+    public int MaxNodes { get; set; }
 
     [JsonProperty] public bool ClipListContents {
         get => NodeFlags.HasFlag(NodeFlags.Clip);
@@ -49,7 +53,9 @@ public abstract class LayoutListNode : SimpleComponentNode {
         node.NodeId = (uint)NodeList.Count + ListBaseId;
 
         if (MaxNodes >= 1 && NodeList.Count >= MaxNodes) {
-            RemoveNode(NodeList.First());
+            var firstNode = NodeList.First();
+            node.NodeId = firstNode.NodeId;
+            RemoveNode(firstNode);
         }
 
         RecalculateLayout();
@@ -64,6 +70,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
     public virtual void RemoveNode(NodeBase node) {
         node.DetachNode();
         NodeList.Remove(node);
+        node.Dispose();
         RecalculateLayout();
     }
 
