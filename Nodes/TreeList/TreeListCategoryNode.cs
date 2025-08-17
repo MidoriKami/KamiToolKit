@@ -53,11 +53,17 @@ public class TreeListCategoryNode : ResNode {
         };
 
         CollapseArrowNode.AddPart(new Part {
-            TexturePath = "ui/uld/ListItemB.tex", TextureCoordinates = new Vector2(0.0f, 0.0f), Size = new Vector2(24.0f, 24.0f), Id = 0,
+            TexturePath = "ui/uld/ListItemB.tex", 
+            TextureCoordinates = new Vector2(0.0f, 0.0f), 
+            Size = new Vector2(24.0f, 24.0f), 
+            Id = 0,
         });
 
         CollapseArrowNode.AddPart(new Part {
-            TexturePath = "ui/uld/ListItemB.tex", TextureCoordinates = new Vector2(24.0f, 0.0f), Size = new Vector2(24.0f, 24.0f), Id = 1,
+            TexturePath = "ui/uld/ListItemB.tex", 
+            TextureCoordinates = new Vector2(24.0f, 0.0f), 
+            Size = new Vector2(24.0f, 24.0f), 
+            Id = 1,
         });
 
         CollapseArrowNode.AttachNode(this);
@@ -68,8 +74,8 @@ public class TreeListCategoryNode : ResNode {
             FontSize = 14,
             Height = 28.0f,
             AlignmentType = AlignmentType.Left,
-            TextColor = ColorHelper.GetColor(1),
-            TextOutlineColor = ColorHelper.GetColor(2),
+            TextColor = ColorHelper.GetColor(50),
+            TextOutlineColor = ColorHelper.GetColor(7),
             IsVisible = true,
         };
 

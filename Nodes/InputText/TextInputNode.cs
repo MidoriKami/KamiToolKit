@@ -81,12 +81,16 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             AlignmentType = AlignmentType.TopLeft,
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorBottom | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TextFlags = TextFlags.AutoAdjustNodeSize,
+            TextColor = ColorHelper.GetColor(1),
         };
 
         CurrentTextNode.AttachNode(this);
 
         SelectionListNode = new TextInputSelectionListNode {
-            NodeId = 4, Position = new Vector2(0.0f, 22.0f), Size = new Vector2(186.0f, 208.0f), NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeId = 4, 
+            Position = new Vector2(0.0f, 22.0f), 
+            Size = new Vector2(186.0f, 208.0f), 
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
 
         SelectionListNode.AttachNode(this);
