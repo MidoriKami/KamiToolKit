@@ -29,7 +29,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
         CollisionNode.InternalResNode->ParentNode = InternalResNode;
 
-        componentBase->OwnerNode = InternalNode;
+        componentBase->OwnerNode = Node;
         componentBase->AtkResNode = CollisionNode.InternalResNode;
         componentBase->ComponentFlags = 1;
 
@@ -57,13 +57,13 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     public override AtkComponentNode* InternalComponentNode => (AtkComponentNode*)InternalResNode;
 
     internal T* Component {
-        get => (T*)InternalNode->Component;
-        set => InternalNode->Component = (AtkComponentBase*)value;
+        get => (T*)Node->Component;
+        set => Node->Component = (AtkComponentBase*)value;
     }
 
     internal TU* Data {
-        get => (TU*)InternalNode->Component->UldManager.ComponentData;
-        set => InternalNode->Component->UldManager.ComponentData = (AtkUldComponentDataBase*)value;
+        get => (TU*)Node->Component->UldManager.ComponentData;
+        set => Node->Component->UldManager.ComponentData = (AtkUldComponentDataBase*)value;
     }
 
     public override int ChildCount => ComponentBase->UldManager.NodeListCount;

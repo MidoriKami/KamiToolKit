@@ -20,5 +20,5 @@ public class IconImageNode : SimpleImageNode {
     }
 
     public unsafe uint? LoadedIconId
-        => InternalNode->GetIconId();
+        => Node->GetIconId();
 }

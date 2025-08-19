@@ -14,23 +14,23 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         WrapMode = 1;
         ImageNodeFlags = ImageNodeFlags.AutoFit;
 
-        InternalNode->DrawFlags = 0x100;
-        InternalNode->PartsList = PartsList.InternalPartsList;
+        Node->DrawFlags = 0x100;
+        Node->PartsList = PartsList.InternalPartsList;
     }
 
     public uint PartId {
-        get => InternalNode->PartId;
-        set => InternalNode->PartId = (ushort)value;
+        get => Node->PartId;
+        set => Node->PartId = (ushort)value;
     }
 
     public byte WrapMode {
-        get => InternalNode->WrapMode;
-        set => InternalNode->WrapMode = value;
+        get => Node->WrapMode;
+        set => Node->WrapMode = value;
     }
 
     public ImageNodeFlags ImageNodeFlags {
-        get => (ImageNodeFlags)InternalNode->Flags;
-        set => InternalNode->Flags = (byte)value;
+        get => (ImageNodeFlags)Node->Flags;
+        set => Node->Flags = (byte)value;
     }
 
     protected override void Dispose(bool disposing) {

@@ -18,7 +18,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         PartsList = new PartsList();
         PartsList.Add(new Part());
 
-        InternalNode->PartsList = PartsList.InternalPartsList;
+        Node->PartsList = PartsList.InternalPartsList;
 
         NumberWidth = 10;
         CommaWidth = 8;
@@ -43,43 +43,43 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
     }
 
     public uint PartId {
-        get => InternalNode->PartId;
-        set => InternalNode->PartId = value;
+        get => Node->PartId;
+        set => Node->PartId = value;
     }
 
     [JsonProperty] public uint NumberWidth {
-        get => InternalNode->NumberWidth;
-        set => InternalNode->NumberWidth = (byte)value;
+        get => Node->NumberWidth;
+        set => Node->NumberWidth = (byte)value;
     }
 
     [JsonProperty] public uint CommaWidth {
-        get => InternalNode->CommaWidth;
-        set => InternalNode->CommaWidth = (byte)value;
+        get => Node->CommaWidth;
+        set => Node->CommaWidth = (byte)value;
     }
 
     [JsonProperty] public uint SpaceWidth {
-        get => InternalNode->SpaceWidth;
-        set => InternalNode->SpaceWidth = (byte)value;
+        get => Node->SpaceWidth;
+        set => Node->SpaceWidth = (byte)value;
     }
 
     [JsonProperty] public ushort TextAlignment {
-        get => InternalNode->TextAlign;
-        set => InternalNode->TextAlign = value;
+        get => Node->TextAlign;
+        set => Node->TextAlign = value;
     }
 
     [JsonProperty] public float CounterWidth {
-        get => InternalNode->CounterWidth;
-        set => InternalNode->CounterWidth = value;
+        get => Node->CounterWidth;
+        set => Node->CounterWidth = value;
     }
 
     public int Number {
-        get => int.Parse(InternalNode->NodeText.ToString());
-        set => InternalNode->SetNumber(value);
+        get => int.Parse(Node->NodeText.ToString());
+        set => Node->SetNumber(value);
     }
 
     public string Text {
-        get => InternalNode->NodeText.ToString();
-        set => InternalNode->SetText($"{int.Parse(value):n0}");
+        get => Node->NodeText.ToString();
+        set => Node->SetText($"{int.Parse(value):n0}");
     }
 
     protected override void Dispose(bool disposing) {

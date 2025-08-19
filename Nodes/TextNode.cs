@@ -23,63 +23,63 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     }
 
     [JsonProperty] public Vector4 TextColor {
-        get => InternalNode->TextColor.ToVector4();
-        set => InternalNode->TextColor = value.ToByteColor();
+        get => Node->TextColor.ToVector4();
+        set => Node->TextColor = value.ToByteColor();
     }
 
     [JsonProperty] public Vector4 TextOutlineColor {
-        get => InternalNode->EdgeColor.ToVector4();
-        set => InternalNode->EdgeColor = value.ToByteColor();
+        get => Node->EdgeColor.ToVector4();
+        set => Node->EdgeColor = value.ToByteColor();
     }
 
     [JsonProperty] public Vector4 BackgroundColor {
-        get => InternalNode->BackgroundColor.ToVector4();
-        set => InternalNode->BackgroundColor = value.ToByteColor();
+        get => Node->BackgroundColor.ToVector4();
+        set => Node->BackgroundColor = value.ToByteColor();
     }
 
     public uint SelectStart {
-        get => InternalNode->SelectStart;
-        set => InternalNode->SelectStart = value;
+        get => Node->SelectStart;
+        set => Node->SelectStart = value;
     }
 
     public uint SelectEnd {
-        get => InternalNode->SelectEnd;
-        set => InternalNode->SelectEnd = value;
+        get => Node->SelectEnd;
+        set => Node->SelectEnd = value;
     }
 
     [JsonProperty] public AlignmentType AlignmentType {
-        get => InternalNode->AlignmentType;
-        set => InternalNode->SetAlignment(value);
+        get => Node->AlignmentType;
+        set => Node->SetAlignment(value);
     }
 
     [JsonProperty] public FontType FontType {
-        get => InternalNode->FontType;
-        set => InternalNode->SetFont(value);
+        get => Node->FontType;
+        set => Node->SetFont(value);
     }
 
     [JsonProperty] public TextFlags TextFlags {
-        get => InternalNode->TextFlags;
-        set => InternalNode->TextFlags = value;
+        get => Node->TextFlags;
+        set => Node->TextFlags = value;
     }
 
     [JsonProperty] public uint FontSize {
-        get => InternalNode->FontSize;
-        set => InternalNode->FontSize = (byte)value;
+        get => Node->FontSize;
+        set => Node->FontSize = (byte)value;
     }
 
     [JsonProperty] public uint LineSpacing {
-        get => InternalNode->LineSpacing;
-        set => InternalNode->LineSpacing = (byte)value;
+        get => Node->LineSpacing;
+        set => Node->LineSpacing = (byte)value;
     }
 
     [JsonProperty] public uint CharSpacing {
-        get => InternalNode->CharSpacing;
-        set => InternalNode->CharSpacing = (byte)value;
+        get => Node->CharSpacing;
+        set => Node->CharSpacing = (byte)value;
     }
 
     public uint TextId {
-        get => InternalNode->TextId;
-        set => InternalNode->TextId = value;
+        get => Node->TextId;
+        set => Node->TextId = value;
     }
 
     /// <summary>
@@ -88,11 +88,11 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     ///     setting the Text property.
     /// </summary>
     public SeString Text {
-        get => InternalNode->GetText().AsDalamudSeString();
+        get => Node->GetText().AsDalamudSeString();
         set {
             stringBuffer->SetString(value.EncodeWithNullTerminator());
             if (stringBuffer->StringPtr.Value is not null) {
-                InternalNode->SetText(stringBuffer->StringPtr);
+                Node->SetText(stringBuffer->StringPtr);
             }
         }
     }
@@ -112,7 +112,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     }
 
     public void SetNumber(int number, bool showCommas = false, bool showPlusSign = false, int digits = 0, bool zeroPad = false)
-        => InternalNode->SetNumber(number, showCommas, showPlusSign, (byte)digits, zeroPad);
+        => Node->SetNumber(number, showCommas, showPlusSign, (byte)digits, zeroPad);
 
     public Vector2 GetTextDrawSize(SeString text) {
         using var stringContainer = new Utf8String(text.TextValue);
@@ -120,7 +120,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         ushort sizeX;
         ushort sizeY;
 
-        InternalNode->GetTextDrawSize(&sizeX, &sizeY, stringContainer.StringPtr);
+        Node->GetTextDrawSize(&sizeX, &sizeY, stringContainer.StringPtr);
 
         return new Vector2(sizeX, sizeY);
     }

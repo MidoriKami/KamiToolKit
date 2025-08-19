@@ -58,7 +58,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         get;
         set {
             field = value;
-            Component->ContentCollisionNode = value is null ? null : value.InternalNode;
+            Component->ContentCollisionNode = value is null ? null : value.Node;
             UpdateScrollParams();
         }
     }

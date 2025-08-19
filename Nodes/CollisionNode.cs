@@ -5,17 +5,17 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class CollisionNode() : NodeBase<AtkCollisionNode>(NodeType.Collision) {
     public virtual CollisionType CollisionType {
-        get => InternalNode->CollisionType;
-        set => InternalNode->CollisionType = value;
+        get => Node->CollisionType;
+        set => Node->CollisionType = value;
     }
 
     public virtual uint Uses {
-        get => InternalNode->Uses;
-        set => InternalNode->Uses = (ushort)value;
+        get => Node->Uses;
+        set => Node->Uses = (ushort)value;
     }
 
     public virtual AtkComponentBase* LinkedComponent {
-        get => InternalNode->LinkedComponent;
-        set => InternalNode->LinkedComponent = value;
+        get => Node->LinkedComponent;
+        set => Node->LinkedComponent = value;
     }
 }
