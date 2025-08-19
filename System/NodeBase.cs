@@ -71,7 +71,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     private bool IsNodeValid() {
         if (InternalResNode is null) return false;
         if (InternalResNode->VirtualTable is null) return false;
-        if ((nint)InternalResNode->VirtualTable == Experimental.Instance.AtkEventListenerVirtualTable) return false;
+        if (InternalResNode->VirtualTable == AtkEventTarget.StaticVirtualTablePointer) return false;
 
         return true;
     }

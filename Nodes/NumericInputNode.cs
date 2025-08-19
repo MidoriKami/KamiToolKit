@@ -3,7 +3,6 @@ using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Addon.Events.EventDataTypes;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
@@ -101,7 +100,7 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 
     public int Value {
         get => Component->Value;
-        set => Experimental.Instance.AtkComponentNumericInputSetValueCallback?.Invoke(Component, value, true, false);
+        set => Component->InnerSetValue(value, true, false);
     }
 
     public int Min {
