@@ -76,6 +76,16 @@ public class CastBarProgressBarNode : SimpleComponentNode {
         set => ProgressNode.Color = value;
     }
 
+    public Vector3 BorderAddColor {
+        get => BorderImageNode.AddColor;
+        set => BorderImageNode.AddColor = value;
+    }
+
+    public bool BorderVisible {
+        get => BorderImageNode.IsVisible;
+        set => BorderImageNode.IsVisible = value;
+    }
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
         BackgroundImageNode.Size = Size;
