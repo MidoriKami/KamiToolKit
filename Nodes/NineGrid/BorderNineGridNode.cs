@@ -9,7 +9,9 @@ namespace KamiToolKit.Nodes;
 public class BorderNineGridNode : NineGridNode {
     public BorderNineGridNode() {
         var renderPart = new Part {
-            TextureCoordinates = new Vector2(0.0f, 0.0f), Size = new Vector2(64.0f, 64.0f), Id = 0,
+            TextureCoordinates = new Vector2(0.0f, 0.0f), 
+            Size = new Vector2(64.0f, 64.0f), 
+            Id = 0,
         };
 
         renderPart.LoadTexture("ui/uld/PartyListTargetBase.tex");

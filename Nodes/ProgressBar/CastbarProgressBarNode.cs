@@ -3,12 +3,13 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Extensions;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class CastBarProgressBarNode : SimpleComponentNode {
+public unsafe class CastBarProgressBarNode : SimpleComponentNode {
 
     [JsonProperty] public readonly SimpleNineGridNode BackgroundImageNode;
     [JsonProperty] public readonly SimpleNineGridNode BorderImageNode;
@@ -67,13 +68,32 @@ public class CastBarProgressBarNode : SimpleComponentNode {
     }
 
     public Vector4 BackgroundColor {
-        get => BackgroundImageNode.Color;
-        set => BackgroundImageNode.Color = value;
+        get => new(BackgroundImageNode.AddColor.X, BackgroundImageNode.AddColor.Y, BackgroundImageNode.AddColor.Z, BackgroundImageNode.InternalResNode->Color.A / 255.0f);
+        set {
+            BackgroundImageNode.InternalResNode->Color = new Vector4(0.0f, 0.0f, 0.0f, value.W).ToByteColor();
+            BackgroundImageNode.AddColor = value.AsVector3Color();
+        }
+    }
+
+    public Vector4 BorderColor {
+        get => new(BorderImageNode.AddColor.X, BorderImageNode.AddColor.Y, BorderImageNode.AddColor.Z, BorderImageNode.InternalResNode->Color.A / 255.0f);
+        set {
+            BorderImageNode.InternalResNode->Color = new Vector4(0.0f, 0.0f, 0.0f, value.W).ToByteColor();
+            BorderImageNode.AddColor = value.AsVector3Color();
+        }
     }
 
     public Vector4 BarColor {
-        get => ProgressNode.Color;
-        set => ProgressNode.Color = value;
+        get => new(ProgressNode.AddColor.X, ProgressNode.AddColor.Y, ProgressNode.AddColor.Z, ProgressNode.InternalResNode->Color.A / 255.0f);
+        set {
+            ProgressNode.InternalResNode->Color = new Vector4(0.0f, 0.0f, 0.0f, value.W).ToByteColor();
+            ProgressNode.AddColor = value.AsVector3Color();
+        }
+    }
+    
+    public bool BorderVisible {
+        get => BorderImageNode.IsVisible;
+        set => BorderImageNode.IsVisible = value;
     }
 
     protected override void OnSizeChanged() {
