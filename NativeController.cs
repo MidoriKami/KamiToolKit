@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Dalamud.Plugin;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
 using KamiToolKit.Classes;
+using KamiToolKit.Extensions;
 using KamiToolKit.Nodes;
 using KamiToolKit.System;
 
@@ -16,6 +23,9 @@ namespace KamiToolKit;
 /// </summary>
 public unsafe class NativeController : IDisposable {
 
+    internal static readonly ConcurrentDictionary<Type, List<MemberInfo>> ChildMembers = [];
+    internal static readonly ConcurrentDictionary<Type, List<MemberInfo>> EnumerableMembers = [];
+    
     public NativeController(IDalamudPluginInterface pluginInterface) {
         pluginInterface.Inject(this);
 
@@ -28,6 +38,9 @@ public unsafe class NativeController : IDisposable {
         DalamudInterface.Instance.GameInteropProvider.InitializeFromAttributes(Experimental.Instance);
 
         Experimental.Instance.EnableHooks();
+
+        GenerateKamiToolKitTypeMaps();
+        GenerateCallingAssemblyTypeMap(Assembly.GetCallingAssembly());
     }
 
     public void Dispose()
@@ -140,4 +153,78 @@ public unsafe class NativeController : IDisposable {
 
     private AtkUnitBase* GetAddonForNode(AtkResNode* node)
         => RaptureAtkUnitManager.Instance()->GetAddonByNode(node);
+
+
+    private void GenerateKamiToolKitTypeMaps() {
+        var stopwatch = Stopwatch.StartNew();
+        
+        var types = Assembly.GetExecutingAssembly().GetTypes();
+        var nodeBaseTypes = types.Where(type => typeof(NodeBase).IsAssignableFrom(type));
+
+        foreach (var type in nodeBaseTypes) {
+            Log.Verbose($"Generating TypeMap for: {type}");
+            
+            var members = GetMembers(type);
+            if (members.Count is not 0) {
+                ChildMembers.TryAdd(type, members);
+            }
+
+            var enumerableMembers = GetEnumerables(type);
+            if (enumerableMembers.Count is not 0) {
+                EnumerableMembers.TryAdd(type, enumerableMembers);
+            }
+        }
+        
+        stopwatch.LogTime("KTK TYPEMAP");
+    }
+
+    private static void GenerateCallingAssemblyTypeMap(Assembly callingAssembly) {
+        var stopwatch = Stopwatch.StartNew();
+        
+        var types = callingAssembly.GetTypes();
+        var nodeBaseTypes = types.Where(type => typeof(NodeBase).IsAssignableFrom(type));
+
+        foreach (var type in nodeBaseTypes) {
+            Log.Verbose($"Generating TypeMap for: {type}");
+            
+            var members = GetMembers(type);
+            if (members.Count is not 0) {
+                ChildMembers.TryAdd(type, members);
+            }
+
+            var enumerableMembers = GetEnumerables(type);
+            if (enumerableMembers.Count is not 0) {
+                EnumerableMembers.TryAdd(type, enumerableMembers);
+            }
+        }
+        
+        stopwatch.LogTime("CALLER ASSEMBLY");
+    }
+    
+    private static List<MemberInfo> GetMembers(Type type)
+        => type.GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+            .Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property)
+            .Where(member => typeof(NodeBase).IsAssignableFrom(GetMemberType(member)))
+            .Where(IsMemberSingleIndexable)
+            .ToList();
+
+    private static List<MemberInfo> GetEnumerables(Type type)
+        => type.GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+            .Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property)
+            .Where(member => GetMemberType(member)?.GetInterfaces().Contains(typeof(IEnumerable)) ?? false)
+            .Where(member => typeof(NodeBase).IsAssignableFrom(GetMemberType(member)?.GetGenericArguments().FirstOrDefault()))
+            .Where(IsMemberSingleIndexable)
+            .ToList();
+    
+    private static Type? GetMemberType(MemberInfo member) => member.MemberType switch {
+        MemberTypes.Field => (member as FieldInfo)?.FieldType,
+        MemberTypes.Property => (member as PropertyInfo)?.PropertyType,
+        _ => null,
+    };
+    
+    private static bool IsMemberSingleIndexable(MemberInfo member) {
+        if (member is not PropertyInfo property) return true;
+
+        return property.GetIndexParameters().Length is 0;
+    }
 }
