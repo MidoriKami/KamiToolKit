@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.System;
 using Newtonsoft.Json;
 
@@ -88,6 +90,36 @@ public abstract class LayoutListNode : SimpleComponentNode {
         }
 
         NodeList.Clear();
+        RecalculateLayout();
+    }
+
+    public delegate TU CreateNewNode<in T, out TU>(T data) where TU : NodeBase;
+
+    public delegate T GetDataFromNode<out T, in TU>(TU node) where TU : NodeBase;
+    
+    public void SyncWithListData<T, TU>(IList<T> dataList, GetDataFromNode<T?,TU> getDataFromNode, CreateNewNode<T, TU> createNodeMethod) where TU : NodeBase {
+        var nodesOfType = GetNodes<TU>().ToList();
+        
+        var nodesToRemove = nodesOfType.Where(node => !dataList.Any(dataEntry => Equals(dataEntry, getDataFromNode(node)))).ToList();
+        
+        Log.Verbose($"Removing: {nodesToRemove.Count} Nodes");
+        foreach (var node in nodesToRemove) {
+            RemoveNode(node);
+        }
+        
+        var dataToAdd = dataList.Where(data => !nodesOfType.Any(node => Equals(data, getDataFromNode(node)))).ToList();
+        var selectedData = dataToAdd.Select(data => createNodeMethod(data)).ToList();
+        
+        Log.Verbose($"Adding: {dataToAdd.Count} Nodes");
+        foreach (var newNode in selectedData) {
+            AddNode(newNode);
+        }
+        
+        RecalculateLayout();
+    }
+
+    public void ReorderNodes(Comparison<NodeBase> comparison) {
+        NodeList.Sort(comparison);
         RecalculateLayout();
     }
 }
