@@ -2,6 +2,7 @@
     <PropertyGroup>
         <Use_DalamudPackager>false</Use_DalamudPackager>
         <LangVersion>preview</LangVersion>
+        <DebugType>portable</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
