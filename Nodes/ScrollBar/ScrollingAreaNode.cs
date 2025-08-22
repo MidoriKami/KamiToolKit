@@ -42,6 +42,14 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
 
         ScrollBarNode.AttachNode(this);
 
+        ContentAreaClipNode.InternalResNode->AtkEventManager.RegisterEvent(
+            AtkEventType.MouseWheel,
+            5,
+            null,
+            (AtkEventTarget*)ScrollingCollisionNode.InternalResNode,
+            (AtkEventListener*)ScrollBarNode.Component,
+            false);
+        
         ScrollingCollisionNode.InternalResNode->AtkEventManager.RegisterEvent(
             AtkEventType.MouseWheel,
             5,
