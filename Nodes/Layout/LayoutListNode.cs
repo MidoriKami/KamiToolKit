@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Extensions;
 using KamiToolKit.System;
 using Newtonsoft.Json;
 
@@ -44,11 +46,13 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     public void AddNode(params NodeBase[] items) {
         foreach (var node in items) {
-            AddNode(node);
+            AddNode(node, true);
         }
+        
+        RecalculateLayout();
     }
 
-    public virtual void AddNode(NodeBase node) {
+    public virtual void AddNode(NodeBase node, bool suppressRecalculateLayout = false) {
         NodeList.Add(node);
 
         node.AttachNode(this);
@@ -60,20 +64,27 @@ public abstract class LayoutListNode : SimpleComponentNode {
             RemoveNode(firstNode);
         }
 
-        RecalculateLayout();
+        if (!suppressRecalculateLayout) {
+            RecalculateLayout();
+        }
     }
 
     public void RemoveNode(params NodeBase[] items) {
         foreach (var node in items) {
-            RemoveNode(node);
+            RemoveNode(node, true);
         }
+        
+        RecalculateLayout();
     }
 
-    public virtual void RemoveNode(NodeBase node) {
+    public virtual void RemoveNode(NodeBase node, bool suppressRecalculateLayout = false) {
         node.DetachNode();
         NodeList.Remove(node);
         node.Dispose();
-        RecalculateLayout();
+
+        if (!suppressRecalculateLayout) {
+            RecalculateLayout();
+        }
     }
 
     public void AddDummy(float size = 0.0f) {
@@ -104,7 +115,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
         
         Log.Verbose($"Removing: {nodesToRemove.Count} Nodes");
         foreach (var node in nodesToRemove) {
-            RemoveNode(node);
+            RemoveNode(node, true);
         }
         
         var dataToAdd = dataList.Where(data => !nodesOfType.Any(node => Equals(data, getDataFromNode(node)))).ToList();
@@ -112,7 +123,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
         
         Log.Verbose($"Adding: {dataToAdd.Count} Nodes");
         foreach (var newNode in selectedData) {
-            AddNode(newNode);
+            AddNode(newNode, true);
         }
         
         RecalculateLayout();
