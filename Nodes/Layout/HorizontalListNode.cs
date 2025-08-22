@@ -1,4 +1,5 @@
-﻿using KamiToolKit.Classes;
+﻿using System.Linq;
+using KamiToolKit.Classes;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
@@ -44,4 +45,6 @@ public class HorizontalListNode : LayoutListNode {
             }
         }
     }
+    
+    public float AreaRemaining => Width - NodeList.Sum(node => node.Width + ItemSpacing) - ItemSpacing;
 }
