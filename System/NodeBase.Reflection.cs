@@ -10,7 +10,10 @@ public abstract partial class NodeBase {
 
     private void VisitChildren(Action<NodeBase?> visitAction) {
         try {
-            if (NativeController.ChildMembers.TryGetValue(GetType(), out var members)) {
+            var callingType = GetType();
+            NativeController.TryAddRuntimeType(callingType);
+            
+            if (NativeController.ChildMembers.TryGetValue(callingType, out var members)) {
                 foreach (var memberInfo in members) {
                     if (GetNode(memberInfo, this) is { } node) {
                         DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
@@ -20,11 +23,13 @@ public abstract partial class NodeBase {
                 }
             }
 
-            if (NativeController.EnumerableMembers.TryGetValue(GetType(), out var enumerableMembers)) {
+            if (NativeController.EnumerableMembers.TryGetValue(callingType, out var enumerableMembers)) {
                 foreach (var node in enumerableMembers.SelectMany(member => GetEnumerable(member, this) ?? [])) {
-                    DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-                        visitAction(node);
-                    });
+                    if (node is not null) {
+                        DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+                            visitAction(node);
+                        });
+                    }
                 }
             }
         }

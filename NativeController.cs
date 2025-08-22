@@ -227,4 +227,30 @@ public unsafe class NativeController : IDisposable {
 
         return property.GetIndexParameters().Length is 0;
     }
+
+    private static readonly HashSet<Type> ParsedRuntimeTypes = [];
+
+    internal static void TryAddRuntimeType(Type type) {
+        if (!type.IsGenericType) return;
+        if (!ParsedRuntimeTypes.Add(type)) return;
+
+        Log.Verbose($"Generating Runtime Type for: {type}");
+        var stopwatch = Stopwatch.StartNew();
+
+        if (!ChildMembers.ContainsKey(type)) {
+            var members = GetMembers(type);
+            if (members.Count is not 0) {
+                ChildMembers.TryAdd(type, members);
+            }
+        }
+
+        if (!EnumerableMembers.ContainsKey(type)) {
+            var enumerableMembers = GetEnumerables(type);
+            if (enumerableMembers.Count is not 0) {
+                EnumerableMembers.TryAdd(type, enumerableMembers);
+            }
+        }
+        
+        stopwatch.LogTime("RUNTIMETYPE");
+    }
 }
