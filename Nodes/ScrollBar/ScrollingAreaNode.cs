@@ -4,32 +4,40 @@ using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class ScrollingAreaNode<T> : ResNode where T : NodeBase, new() {
+public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBase, new() {
 
-    public readonly ResNode ContentAreaClipNode;
+    public readonly SimpleComponentNode ContentAreaClipNode;
     public readonly T ContentAreaNode;
     public readonly ScrollBarNode ScrollBarNode;
     public readonly CollisionNode ScrollingCollisionNode;
 
     public ScrollingAreaNode() {
         ScrollingCollisionNode = new CollisionNode {
-            IsVisible = true, EventFlagsSet = true,
+            NodeId = 2,
+            IsVisible = true, 
+            EventFlagsSet = true,
         };
 
         ScrollingCollisionNode.AttachNode(this);
 
-        ContentAreaClipNode = new ResNode {
-            NodeFlags = NodeFlags.Clip, IsVisible = true,
+        ContentAreaClipNode = new SimpleComponentNode {
+            NodeId = 3,
+            NodeFlags = NodeFlags.Clip | NodeFlags.EmitsEvents, 
+            IsVisible = true,
         };
         ContentAreaClipNode.AttachNode(this);
 
         ContentAreaNode = new T {
+            NodeId = 4,
             IsVisible = true,
         };
         ContentAreaNode.AttachNode(ContentAreaClipNode);
 
         ScrollBarNode = new ScrollBarNode {
-            ContentNode = ContentAreaNode, ContentCollisionNode = ScrollingCollisionNode, IsVisible = true,
+            NodeId = 5,
+            ContentNode = ContentAreaNode, 
+            ContentCollisionNode = ScrollingCollisionNode, 
+            IsVisible = true,
         };
 
         ScrollBarNode.AttachNode(this);
