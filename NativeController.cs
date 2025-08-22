@@ -234,7 +234,7 @@ public unsafe class NativeController : IDisposable {
         if (!type.IsGenericType) return;
         if (!ParsedRuntimeTypes.Add(type)) return;
 
-        Log.Verbose($"Generating Runtime Type for: {type}");
+        Log.Debug($"Generating Runtime Type Mapping for: {type}");
         var stopwatch = Stopwatch.StartNew();
 
         if (!ChildMembers.ContainsKey(type)) {
