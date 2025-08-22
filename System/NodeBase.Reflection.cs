@@ -8,14 +8,23 @@ namespace KamiToolKit.System;
 
 public abstract partial class NodeBase {
 
+    private static bool enableLogging;
+    private static int indent;
+    
     private void VisitChildren(Action<NodeBase?> visitAction) {
         try {
             var callingType = GetType();
             NativeController.TryAddRuntimeType(callingType);
+
+            if (enableLogging) {
+                Log.Debug($"{new string('\t', indent++)} {callingType}");
+            }
             
             if (NativeController.ChildMembers.TryGetValue(callingType, out var members)) {
                 foreach (var memberInfo in members) {
                     if (GetNode(memberInfo, this) is { } node) {
+                        
+                        node.VisitChildren(visitAction);
                         DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
                             visitAction(node);
                         });
@@ -26,11 +35,17 @@ public abstract partial class NodeBase {
             if (NativeController.EnumerableMembers.TryGetValue(callingType, out var enumerableMembers)) {
                 foreach (var node in enumerableMembers.SelectMany(member => GetEnumerable(member, this) ?? [])) {
                     if (node is not null) {
+                        
+                        node.VisitChildren(visitAction);
                         DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
                             visitAction(node);
                         });
                     }
                 }
+            }
+
+            if (enableLogging) {
+                indent--;
             }
         }
         catch (Exception e) {
