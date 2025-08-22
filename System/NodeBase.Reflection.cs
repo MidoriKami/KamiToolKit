@@ -8,10 +8,9 @@ namespace KamiToolKit.System;
 
 public abstract partial class NodeBase {
 
-    private static bool enableLogging;
     private static int indent;
     
-    private void VisitChildren(Action<NodeBase?> visitAction) {
+    private void VisitChildren(Action<NodeBase?> visitAction, bool enableLogging = false) {
         try {
             var callingType = GetType();
             NativeController.TryAddRuntimeType(callingType);
