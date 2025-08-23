@@ -50,6 +50,11 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
         set => Component->SetText(value.ToString());
     }
 
+    public string String {
+        get => TextNode.String;
+        set => TextNode.String = value;
+    }
+
     public int Number {
         get => int.Parse(TextNode.String);
         set => TextNode.String = value.ToString();
