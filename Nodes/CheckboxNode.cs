@@ -87,9 +87,9 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
     public Action<bool>? OnClick { get; set; }
 
     public SeString LabelText {
-        get => Label.Text;
+        get => Label.SeString;
         set {
-            Label.Text = value;
+            Label.SeString = value;
             CollisionNode.Width = BoxBackground.Width + Label.Width + Label.X - X;
             Width = CollisionNode.Width;
         }

@@ -66,7 +66,7 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
     public Action? OnClick { get; set; }
 
     public SeString Label {
-        get => LabelNode.Text;
+        get => LabelNode.SeString;
         set => Component->SetText(value.ToString());
     }
 

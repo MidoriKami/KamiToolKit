@@ -36,8 +36,8 @@ public class TreeListHeaderNode : ResNode {
     }
 
     public SeString Label {
-        get => LabelNode.Text;
-        set => LabelNode.Text = value;
+        get => LabelNode.SeString;
+        set => LabelNode.SeString = value;
     }
 
     protected override void OnSizeChanged() {

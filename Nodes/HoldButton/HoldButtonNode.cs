@@ -72,8 +72,8 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
     public Action? OnClick { get; set; }
 
     public SeString Label {
-        get => TextNode.Text;
-        set => TextNode.Text = value;
+        get => TextNode.SeString;
+        set => TextNode.SeString = value;
     }
 
     private void ClickHandler(AddonEventData obj) {

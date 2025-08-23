@@ -41,7 +41,7 @@ public unsafe class ListButtonNode : ButtonBase {
             FontSize = 14,
             AlignmentType = AlignmentType.Left,
             IsVisible = true,
-            Text = "Label Not Set",
+            SeString = "Label Not Set",
         };
 
         LabelNode.AttachNode(this);
@@ -57,8 +57,8 @@ public unsafe class ListButtonNode : ButtonBase {
     }
 
     public SeString Label {
-        get => LabelNode.Text;
-        set => LabelNode.Text = value;
+        get => LabelNode.SeString;
+        set => LabelNode.SeString = value;
     }
 
     protected override void OnSizeChanged() {

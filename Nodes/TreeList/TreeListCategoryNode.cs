@@ -115,8 +115,8 @@ public class TreeListCategoryNode : ResNode {
     public float VerticalPadding { get; set; } = 4.0f;
 
     public SeString Label {
-        get => LabelNode.Text;
-        set => LabelNode.Text = value;
+        get => LabelNode.SeString;
+        set => LabelNode.SeString = value;
     }
 
     private void UpdateCollapsed() {

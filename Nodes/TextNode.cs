@@ -6,14 +6,14 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Extensions;
 using KamiToolKit.System;
+using Lumina.Text.ReadOnly;
 using Newtonsoft.Json;
+using SeStringBuilder = Lumina.Text.SeStringBuilder;
 
 namespace KamiToolKit.Nodes;
 
 [JsonObject(MemberSerialization.OptIn)]
 public unsafe class TextNode : NodeBase<AtkTextNode> {
-
-    private Utf8String* stringBuffer = Utf8String.CreateEmpty();
 
     public TextNode() : base(NodeType.Text) {
         TextColor = ColorHelper.GetColor(50);
@@ -82,33 +82,19 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         set => Node->TextId = value;
     }
 
-    /// <summary>
-    ///     If you want the node to resize automatically,
-    ///     use TextFlags.AutoAdjustNodeSize <b><em>before</em></b>
-    ///     setting the Text property.
-    /// </summary>
-    public SeString Text {
+    public SeString SeString {
         get => Node->GetText().AsDalamudSeString();
-        set {
-            stringBuffer->SetString(value.EncodeWithNullTerminator());
-            if (stringBuffer->StringPtr.Value is not null) {
-                Node->SetText(stringBuffer->StringPtr);
-            }
-        }
+        set => Node->SetText(value.EncodeWithNullTerminator());
+    }
+
+    public ReadOnlySeString ReadOnlySeString {
+        get => Node->GetText().AsReadOnlySeString();
+        set => Node->SetText(new SeStringBuilder().Append(value).GetViewAsSpan());
     }
 
     [JsonProperty] public string String {
-        get => Text.ToString();
-        set => Text = value;
-    }
-
-    protected override void Dispose(bool disposing) {
-        if (disposing) {
-            stringBuffer->Dtor(true);
-            stringBuffer = null;
-        }
-
-        base.Dispose(disposing);
+        get => Node->GetText().ToString();
+        set => SeString = value;
     }
 
     public void SetNumber(int number, bool showCommas = false, bool showPlusSign = false, int digits = 0, bool zeroPad = false)

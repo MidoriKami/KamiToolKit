@@ -164,9 +164,9 @@ public class RadioButtonGroupNode : SimpleComponentNode {
         public Action? Callback { get; set; }
 
         public SeString Label {
-            get => LabelNode.Text;
+            get => LabelNode.SeString;
             set {
-                LabelNode.Text = value;
+                LabelNode.SeString = value;
                 Width = LabelNode.Width + LabelNode.Position.X;
             }
         }
