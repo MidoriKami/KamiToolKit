@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -145,8 +146,15 @@ public unsafe class Part : IDisposable {
     /// </summary>
     /// <param name="iconId">Icon id to load</param>
     /// <param name="alternateFolder">Language folder to try and load icon from</param>
-    public void LoadIcon(uint iconId, IconSubFolder? alternateFolder = null) 
-        => LoadTexture(GetPathForIcon(iconId, alternateFolder));
+    public void LoadIcon(uint iconId, IconSubFolder? alternateFolder = null) {
+        var iconPath = GetPathForIcon(iconId, alternateFolder);
+        if (iconPath != string.Empty) {
+            LoadTexture(GetPathForIcon(iconId, alternateFolder));
+        }
+        else {
+            Log.Warning($"Unable to get texture path for icon: {iconId}");
+        }
+    }
 
     /// <summary>
     ///     Loads texture via an already constructed Texture*
@@ -188,8 +196,8 @@ public unsafe class Part : IDisposable {
             AtkTexture.GetIconPath(bytePointer, iconId, textureScale, 0);
             pathResult = GetString(bytePointer);
         }
-        
-        return pathResult;
+
+        return DalamudInterface.Instance.DataManager.FileExists(pathResult) ? pathResult : string.Empty;
     }
 
     private static string GetString(byte* buffer)
