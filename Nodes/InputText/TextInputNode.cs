@@ -171,7 +171,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         set => Data->Flags2 = value;
     }
 
-    public SeString String {
+    public SeString SeString {
         get => SeString.Parse(Component->UnkText1);
         set => Component->SetText(value.ToString());
     }
