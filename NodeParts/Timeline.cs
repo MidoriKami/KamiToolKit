@@ -85,7 +85,7 @@ public unsafe class Timeline : IDisposable {
     /// <param name="force">Force the animation to restart even if it was already playing</param>
     public void PlayAnimation(int labelId, bool force = false) {
         if (InternalTimeline->ActiveLabelId != labelId || force) {
-            InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, (byte)labelId);
+            InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, (ushort)labelId);
         }
     }
 
