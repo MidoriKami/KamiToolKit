@@ -31,7 +31,7 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
         OnClick?.Invoke();
     }
 
-    protected void LoadTwoPartTimelines(NodeBase parent, NodeBase foreground) {
+    protected static void LoadTwoPartTimelines(NodeBase parent, NodeBase foreground) {
         parent.AddTimeline(new TimelineBuilder()
             .BeginFrameSet(1, 59)
             .AddLabelPair(1, 9, 1)
@@ -62,7 +62,7 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
             .Build());
     }
 
-    protected void LoadThreePartTimelines(NodeBase parent, NodeBase background, NodeBase foreground, Vector2 foregroundPositionOffset) {
+    protected static void LoadThreePartTimelines(NodeBase parent, NodeBase background, NodeBase foreground, Vector2 foregroundPositionOffset) {
         parent.AddTimeline(new TimelineBuilder()
             .BeginFrameSet(1, 53)
             .AddLabelPair(1, 10, 1)

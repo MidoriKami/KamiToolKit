@@ -80,7 +80,7 @@ public partial class NodeBase {
         }
     }
 
-    private string GetShortPath(string filePath) {
+    private static string GetShortPath(string filePath) {
         var pluginDirectoryPath = DalamudInterface.Instance.PluginInterface.ConfigDirectory.FullName;
 
         if (filePath.StartsWith(pluginDirectoryPath, StringComparison.OrdinalIgnoreCase)) {

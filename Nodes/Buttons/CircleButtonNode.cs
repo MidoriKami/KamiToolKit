@@ -39,7 +39,7 @@ public class CircleButtonNode : ButtonBase {
         ImageNode.Size = Size;
     }
 
-    private UldTextureInfo GetTextureCoordinateForIcon(ButtonIcon icon) => icon switch {
+    private static UldTextureInfo GetTextureCoordinateForIcon(ButtonIcon icon) => icon switch {
         ButtonIcon.GearCog => new UldTextureInfo(0.0f, 0.0f, 28.0f, 28.0f),
         ButtonIcon.Filter => new UldTextureInfo(28.0f, 0.0f, 28.0f, 28.0f),
         ButtonIcon.Sort => new UldTextureInfo(56.0f, 0.0f, 28.0f, 28.0f),
