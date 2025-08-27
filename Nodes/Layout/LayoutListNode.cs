@@ -106,7 +106,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     public delegate T GetDataFromNode<out T, in TU>(TU node) where TU : NodeBase;
     
-    public void SyncWithListData<T, TU>(IList<T> dataList, GetDataFromNode<T?,TU> getDataFromNode, CreateNewNode<T, TU> createNodeMethod) where TU : NodeBase {
+    public void SyncWithListData<T, TU>(IEnumerable<T> dataList, GetDataFromNode<T?,TU> getDataFromNode, CreateNewNode<T, TU> createNodeMethod) where TU : NodeBase {
         var nodesOfType = GetNodes<TU>().ToList();
         
         var nodesToRemove = nodesOfType.Where(node => !dataList.Any(dataEntry => Equals(dataEntry, getDataFromNode(node)))).ToList();
