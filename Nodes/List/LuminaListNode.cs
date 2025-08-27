@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using KamiToolKit.Classes;
 using Lumina.Excel;
 
@@ -7,7 +6,11 @@ namespace KamiToolKit.Nodes;
 
 public class LuminaListNode<T> : ListNode<T> where T : struct, IExcelRow<T> {
 
-    public Func<T, string>? LabelFunction {
+    public delegate string GetLabel(T excelRow);
+
+    public delegate bool ShouldShow(T excelRow);
+    
+    public GetLabel? LabelFunction {
         get;
         set {
             field = value;
@@ -15,7 +18,7 @@ public class LuminaListNode<T> : ListNode<T> where T : struct, IExcelRow<T> {
         }
     }
 
-    public Func<T, bool>? FilterFunction {
+    public ShouldShow? FilterFunction {
         get;
         set {
             field = value;
@@ -28,7 +31,7 @@ public class LuminaListNode<T> : ListNode<T> where T : struct, IExcelRow<T> {
         if (FilterFunction is null) return;
 
         Options = DalamudInterface.Instance.DataManager.GetExcelSheet<T>()
-            .Where(FilterFunction)
+            .Where(row => FilterFunction(row))
             .ToList();
     }
 

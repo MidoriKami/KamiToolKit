@@ -11,7 +11,7 @@ public class LuminaDropDownNode<T> : DropDownNode<LuminaListNode<T>, T> where T 
 
     public Action<T>? OnOptionSelected { get; set; }
 
-    public Func<T, string>? LabelFunction {
+    public LuminaListNode<T>.GetLabel? LabelFunction {
         get => OptionListNode.LabelFunction;
         set {
             OptionListNode.LabelFunction = value;
@@ -19,7 +19,7 @@ public class LuminaDropDownNode<T> : DropDownNode<LuminaListNode<T>, T> where T 
         }
     }
 
-    public Func<T, bool>? FilterFunction {
+    public LuminaListNode<T>.ShouldShow? FilterFunction {
         get => OptionListNode.FilterFunction;
         set {
             OptionListNode.FilterFunction = value;
