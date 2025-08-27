@@ -114,9 +114,14 @@ public class TreeListCategoryNode : ResNode {
 
     public float VerticalPadding { get; set; } = 4.0f;
 
-    public SeString Label {
+    public SeString SeString {
         get => LabelNode.SeString;
         set => LabelNode.SeString = value;
+    }
+
+    public string String {
+        get => LabelNode.String;
+        set => LabelNode.String = value;
     }
 
     private void UpdateCollapsed() {
@@ -144,7 +149,7 @@ public class TreeListCategoryNode : ResNode {
 
     public void AddHeader(SeString label) {
         var newHeaderNode = new TreeListHeaderNode {
-            Size = new Vector2(Width, 24.0f), Label = label, IsVisible = true,
+            Size = new Vector2(Width, 24.0f), SeString = label, IsVisible = true,
         };
 
         AddNode(newHeaderNode);

@@ -38,10 +38,10 @@ public class LuminaDropDownNode<T> : DropDownNode<LuminaListNode<T>, T> where T 
         if (FilterFunction is null) return;
 
         OptionListNode.SelectDefaultOption();
-        LabelNode.SeString = LabelFunction.Invoke(OptionListNode.SelectedOption);
+        LabelNode.String = LabelFunction.Invoke(OptionListNode.SelectedOption);
     }
 
     protected override void UpdateLabel(T option) {
-        LabelNode.SeString = LabelFunction?.Invoke(option) ?? "ERROR: Label Function Not Set";
+        LabelNode.String = LabelFunction?.Invoke(option) ?? "ERROR: Label Function Not Set";
     }
 }

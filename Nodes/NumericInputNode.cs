@@ -61,7 +61,7 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
             FontSize = 12,
             AlignmentType = AlignmentType.Top,
             IsVisible = true,
-            SeString = "999",
+            String = "999",
         };
 
         ValueTextNode.AttachNode(this);

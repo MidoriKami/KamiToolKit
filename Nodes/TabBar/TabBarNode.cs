@@ -19,7 +19,7 @@ public class TabBarNode : SimpleComponentNode {
 
     public void AddTab(SeString label, Action callback) {
         var newButton = new TabBarRadioButtonNode {
-            Height = Height, IsVisible = true, Label = label, OnClick = callback,
+            Height = Height, IsVisible = true, SeString = label, OnClick = callback,
         };
 
         newButton.AddEvent(AddonEventType.ButtonClick, data => ClickHandler(data, newButton));
@@ -45,7 +45,7 @@ public class TabBarNode : SimpleComponentNode {
     }
 
     public void RemoveTab(SeString label) {
-        var button = radioButtons.FirstOrDefault(button => button.Label == label);
+        var button = radioButtons.FirstOrDefault(button => button.SeString == label);
         if (button is null) return;
 
         button.Dispose();

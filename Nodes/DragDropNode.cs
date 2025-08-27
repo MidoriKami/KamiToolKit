@@ -115,7 +115,7 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         set => Component->SetQuantity(value);
     }
 
-    [JsonProperty] public string QuantityText {
+    [JsonProperty] public string QuantityString {
         get => Component->GetQuantityText().ToString();
         set => Component->SetQuantityText(value);
     }

@@ -20,14 +20,14 @@ public class RadioButtonGroupNode : SimpleComponentNode {
     }
 
     public SeString? SelectedOption {
-        get => radioButtons.FirstOrDefault(button => button.IsSelected)?.Label;
+        get => radioButtons.FirstOrDefault(button => button.IsSelected)?.SeString;
         set {
             if (value == null)
                 return;
 
             foreach (var radioButton in radioButtons) {
-                radioButton.IsChecked = radioButton.Label.TextValue == value.TextValue;
-                radioButton.IsSelected = radioButton.Label.TextValue == value.TextValue;
+                radioButton.IsChecked = radioButton.SeString.TextValue == value.TextValue;
+                radioButton.IsSelected = radioButton.SeString.TextValue == value.TextValue;
             }
 
             RecalculateLayout();
@@ -38,7 +38,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 
     public void AddButton(SeString label, Action callback) {
         var newRadioButton = new RadioButtonNode {
-            Height = 16.0f, IsVisible = true, Label = label, Callback = callback,
+            Height = 16.0f, IsVisible = true, SeString = label, Callback = callback,
         };
 
         newRadioButton.AddEvent(AddonEventType.ButtonClick, data => ClickHandler(data, newRadioButton));
@@ -55,7 +55,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
     }
 
     public void RemoveButton(SeString label) {
-        var button = radioButtons.FirstOrDefault(button => button.Label == label);
+        var button = radioButtons.FirstOrDefault(button => button.SeString == label);
         if (button is null) return;
 
         button.Dispose();
@@ -163,12 +163,17 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 
         public Action? Callback { get; set; }
 
-        public SeString Label {
+        public SeString SeString {
             get => LabelNode.SeString;
             set {
                 LabelNode.SeString = value;
                 Width = LabelNode.Width + LabelNode.Position.X;
             }
+        }
+
+        public string String {
+            get => LabelNode.String;
+            set => LabelNode.String = value;
         }
 
         public bool IsChecked {

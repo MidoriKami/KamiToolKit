@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -8,9 +9,9 @@ public abstract unsafe partial class NativeAddon {
 
     public required string InternalName { get; init; } = "NameNotSet";
 
-    public required string Title { get; set; } = "TitleNotSet";
+    public required SeString Title { get; set; } = "TitleNotSet";
 
-    public string Subtitle { get; set; } = string.Empty;
+    public SeString Subtitle { get; set; } = string.Empty;
 
     public required NativeController NativeController { get; init; }
 
@@ -60,7 +61,7 @@ public abstract unsafe partial class NativeAddon {
     public static explicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
 
     private void SetInitialState() {
-        WindowNode.SetTitle(Title, Subtitle);
+        WindowNode.SetTitle(Title.ToString(), Subtitle.ToString());
 
         InternalAddon->OpenSoundEffectId = (short)OpenWindowSoundEffectId;
 

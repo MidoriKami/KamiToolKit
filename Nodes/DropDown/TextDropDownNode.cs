@@ -27,6 +27,6 @@ public class TextDropDownNode : DropDownNode<TextListNode, string> {
     }
 
     protected override void UpdateLabel(string? option) {
-        LabelNode.SeString = option ?? "ERROR: Invalid Default Option";
+        LabelNode.String = option ?? "ERROR: Invalid Default Option";
     }
 }

@@ -176,6 +176,11 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         set => Component->SetText(value.ToString());
     }
 
+    public string String {
+        get => Component->UnkText1.ToString();
+        set => Component->UnkText1.SetString(value);
+    }
+
     private void FocusStart(AddonEventData obj)
         => OnFocused?.Invoke();
 
