@@ -29,7 +29,6 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
             WrapMode = 2,
             ImageNodeFlags = 0,
         };
-
         BoxBackground.AttachNode(this);
 
         BoxForeground = new SimpleImageNode {
@@ -44,7 +43,6 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
             ImageNodeFlags = 0,
             DrawFlags = 0,
         };
-
         BoxForeground.AttachNode(this);
 
         Label = new TextNode {
@@ -60,7 +58,6 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
             TextOutlineColor = ColorHelper.GetColor(7),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
         };
-
         Label.AttachNode(this);
 
         Component->Flags = 606464;
@@ -81,7 +78,6 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 
         BoxForeground.IsVisible = Component->IsChecked;
         BoxForeground.DrawFlags = 0;
-
     }
 
     public Action<bool>? OnClick { get; set; }
@@ -90,8 +86,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
         get => Label.SeString;
         set {
             Label.SeString = value;
-            CollisionNode.Width = BoxBackground.Width + Label.Width + Label.X - X;
-            Width = CollisionNode.Width;
+            Width = Height + Label.Width + 4.0f;
         }
     }
 
@@ -99,8 +94,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
         get => Label.String;
         set {
             Label.String = value;
-            CollisionNode.Width = BoxBackground.Width + Label.Width + Label.X - X;
-            Width = CollisionNode.Width;
+            Width = Height + Label.Width + 4.0f;
         }
     }
 
