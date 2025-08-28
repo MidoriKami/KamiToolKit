@@ -26,7 +26,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
             Size = new Vector2(16.0f, 16.0f),
             Position = new Vector2(0.0f, 2.0f),
             NodeFlags = NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 1,
+            WrapMode = 2,
             ImageNodeFlags = 0,
         };
 
@@ -40,7 +40,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
             Size = new Vector2(16.0f, 16.0f),
             Position = new Vector2(0.0f, 2.0f),
             NodeFlags = NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 1,
+            WrapMode = 2,
             ImageNodeFlags = 0,
             DrawFlags = 0,
         };
@@ -116,6 +116,15 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 
     private void ClickHandler(AddonEventData data) {
         OnClick?.Invoke(Component->IsChecked);
+    }
+
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
+
+        BoxBackground.Size = new Vector2(Height, Height) - new Vector2(4.0f, 4.0f);
+        BoxForeground.Size = new Vector2(Height, Height) - new Vector2(4.0f, 4.0f);
+        Label.Height = Height;
+        Label.X = Height;
     }
 
     private void LoadTimelines() {
