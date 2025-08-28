@@ -1,5 +1,9 @@
-﻿using System.Numerics;
+﻿using System;
+using System.IO;
+using System.Numerics;
+using System.Text.Json;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -46,6 +50,8 @@ public abstract unsafe partial class NativeAddon {
     public Vector2 ContentPadding => new(8.0f, 8.0f);
 
     private Vector2? InternalPosition { get; set; }
+    
+    public float Scale { get; set; }
 
     public Vector2 Position {
         get => GetPosition();
@@ -65,13 +71,24 @@ public abstract unsafe partial class NativeAddon {
 
         InternalAddon->OpenSoundEffectId = (short)OpenWindowSoundEffectId;
 
+        var addonConfig = LoadAddonConfig();
+        if (addonConfig.Position != Vector2.Zero) {
+            Position = addonConfig.Position;
+            InternalAddon->SetPosition((short)Position.X, (short)Position.Y);
+        }
+        else {
+            var screenSize = new Vector2(AtkStage.Instance()->ScreenSize.Width, AtkStage.Instance()->ScreenSize.Height);
+            var defaultPosition = screenSize / 2.0f - Size / 2.0f;
+            InternalAddon->SetPosition((short)defaultPosition.X, (short)defaultPosition.Y);
+        }
+
+        if (addonConfig.Scale is not 1.0f) {
+            Scale = addonConfig.Scale;
+            InternalAddon->SetScale(Scale, true);
+        }
+
         InternalAddon->SetSize((ushort)Size.X, (ushort)Size.Y);
         WindowNode.Size = Size;
-
-        var screenSize = new Vector2(AtkStage.Instance()->ScreenSize.Width, AtkStage.Instance()->ScreenSize.Height);
-        var defaultPosition = screenSize / 2.0f - Size / 2.0f;
-
-        InternalAddon->SetPosition((short)defaultPosition.X, (short)defaultPosition.Y);
 
         UpdateFlags();
         UpdatePosition();
@@ -95,6 +112,48 @@ public abstract unsafe partial class NativeAddon {
             InternalAddon->SetPosition((short)position.X, (short)position.Y);
             InternalPosition = null;
         }
+    }
+
+    private readonly JsonSerializerOptions serializerOptions = new() {
+        WriteIndented = true,
+        IncludeFields = true,
+    };
+    
+    private AddonConfig LoadAddonConfig() {
+        var directory = DalamudInterface.Instance.PluginInterface.ConfigDirectory;
+        var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
+        if (!file.Exists) {
+            file.Create().Close();
+            return new AddonConfig();
+        }
+
+        AddonConfig? addonConfig;
+        
+        try {
+            var data = File.ReadAllText(file.FullName);
+            addonConfig = JsonSerializer.Deserialize<AddonConfig>(data, serializerOptions);
+            addonConfig ??= new AddonConfig();
+        }
+        catch (Exception e) {
+            DalamudInterface.Instance.Log.Error(e, "Exception while deserializing AddonConfig, creating new config.");
+            addonConfig = new AddonConfig();
+        }
+        
+        return addonConfig;
+    }
+    
+    private void SaveAddonConfig() {
+        var directory = DalamudInterface.Instance.PluginInterface.ConfigDirectory;
+        var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
+
+        var configData = new AddonConfig {
+            Position = Position,
+            Scale = InternalAddon->Scale,
+        };
+        
+        var data = JsonSerializer.Serialize(configData, serializerOptions);
+        
+        FilesystemUtil.WriteAllTextSafe(file.FullName, data);
     }
 }
 

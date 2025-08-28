@@ -67,6 +67,7 @@ public abstract unsafe partial class NativeAddon {
         Log.Verbose($"[{InternalName}] Hide");
 
         OnHide(addon);
+        SaveAddonConfig();
 
         AtkUnitBase.StaticVirtualTablePointer->Hide(addon, unkBool, callHideCallback, setShowHideFlags);
     }
