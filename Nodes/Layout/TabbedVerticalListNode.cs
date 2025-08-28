@@ -14,6 +14,8 @@ public class TabbedVerticalListNode : SimpleComponentNode {
     [JsonProperty] public float TabSize { get; set; } = 18.0f;
 
     [JsonProperty] public float ItemVerticalSpacing { get; set; }
+    
+    public bool FitWidth { get; set; }
 
     public int TabStep { get; set; }
 
@@ -78,6 +80,11 @@ public class TabbedVerticalListNode : SimpleComponentNode {
 
             node.Y = startY;
             node.X = tab * TabSize;
+
+            if (FitWidth) {
+                node.Width = Width - node.X - ItemVerticalSpacing;
+            }
+            
             startY += node.Height + ItemVerticalSpacing;
         }
 
