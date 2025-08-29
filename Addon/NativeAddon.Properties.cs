@@ -2,7 +2,6 @@
 using System.IO;
 using System.Numerics;
 using System.Text.Json;
-using Dalamud.Game.Config;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
