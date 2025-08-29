@@ -84,7 +84,9 @@ public abstract unsafe partial class NativeAddon {
         }
 
         if (addonConfig.Scale is not 1.0f) {
-            Scale = addonConfig.Scale;
+            var newScale = Math.Clamp(addonConfig.Scale, 0.25f, 6.0f);
+            
+            Scale = newScale;
             InternalAddon->SetScale(Scale, true);
         }
 
