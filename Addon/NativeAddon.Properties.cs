@@ -2,6 +2,7 @@
 using System.IO;
 using System.Numerics;
 using System.Text.Json;
+using Dalamud.Game.Config;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -146,14 +147,30 @@ public abstract unsafe partial class NativeAddon {
         var directory = DalamudInterface.Instance.PluginInterface.ConfigDirectory;
         var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
 
+        var scaleSetting = GetResolutionScale();
+
         var configData = new AddonConfig {
             Position = Position,
-            Scale = InternalAddon->Scale,
+            Scale = InternalAddon->Scale / scaleSetting,
         };
         
         var data = JsonSerializer.Serialize(configData, serializerOptions);
         
         FilesystemUtil.WriteAllTextSafe(file.FullName, data);
+    }
+
+    private static float GetResolutionScale() {
+        if (DalamudInterface.Instance.GameConfig.TryGet(SystemConfigOption.UiHighScale, out uint value)) {
+            return value switch {
+                0 => 1.0f,
+                1 => 1.5f,
+                2 => 2.0f,
+                3 => 3.0f,
+                _ => 1.0f,
+            };
+        }
+
+        return 1.0f;
     }
 }
 
