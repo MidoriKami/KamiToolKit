@@ -185,4 +185,13 @@ public class WindowOptions {
     public bool DisableClamping { get; set; } = true;
 
     public bool EnableClickThrough { get; set; }
+
+    /// <summary>
+    ///     Setting to <em>False</em> will cause this window to not close when the game tries to close all open windows.
+    /// </summary>
+    /// <example>
+    ///     When pressing <em>Escape</em> with no window focused, will close all open windows. 
+    ///     When moving between zones, all open windows will be closed.
+    /// </example>
+    public bool RespectCloseAll { get; set; } = true;
 }
