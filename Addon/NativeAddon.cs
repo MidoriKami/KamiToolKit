@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -13,8 +12,6 @@ namespace KamiToolKit.Addon;
 public abstract unsafe partial class NativeAddon {
 
     private GCHandle? disposeHandle;
-
-    private static Hook<AtkUnitBase.Delegates.FireCallback>? fireCallbackHook;
 
     internal AtkUnitBase* InternalAddon;
 
@@ -54,9 +51,7 @@ public abstract unsafe partial class NativeAddon {
 
         Log.Verbose($"[{InternalName}] Beginning Native Addon Allocation");
 
-        fireCallbackHook ??= DalamudInterface.Instance.GameInteropProvider
-            .HookFromAddress<AtkUnitBase.Delegates.FireCallback>(AtkUnitBase.Addresses.FireCallback.Value, OnFireCallback);
-        fireCallbackHook.Enable();
+        InitializeExtras();
 
         InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
 
@@ -153,15 +148,6 @@ public abstract unsafe partial class NativeAddon {
         else {
             Open();
         }
-    }
-    
-    private bool OnFireCallback(AtkUnitBase* thisPtr, uint valueCount, AtkValue* values, bool close) {
-        if (thisPtr == InternalAddon && close && WindowOptions.RespectCloseAll) {
-            Close();
-            return true;
-        }
-        
-        return fireCallbackHook!.Original(thisPtr, valueCount, values, close);
     }
 
     private void LoadTimeline() {

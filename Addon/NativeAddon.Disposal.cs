@@ -26,9 +26,7 @@ public abstract partial class NativeAddon : IDisposable {
 
         isDisposed = true;
 
-        if (CreatedAddons.Count is 0) {
-            fireCallbackHook?.Dispose();
-        }
+        DisposeExtras();
     }
 
     ~NativeAddon() {
