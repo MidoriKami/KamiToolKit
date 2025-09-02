@@ -1,4 +1,5 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
 using KamiToolKit.System;
 
@@ -23,9 +24,9 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         set => Node->PartId = (ushort)value;
     }
 
-    public byte WrapMode {
-        get => Node->WrapMode;
-        set => Node->WrapMode = value;
+    public WrapMode WrapMode {
+        get => (WrapMode) Node->WrapMode;
+        set => Node->WrapMode = (byte) value;
     }
 
     public ImageNodeFlags ImageNodeFlags {
