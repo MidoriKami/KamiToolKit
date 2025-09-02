@@ -99,9 +99,7 @@ public class GifImageNode : ResNode {
                 .EndFrameSet()
                 .Build());
 
-            unsafe {
-                InternalResNode->Timeline->PlayAnimation(AtkTimelineJumpBehavior.LoopForever, 200);
-            }
+            Timeline?.PlayAnimation( AtkTimelineJumpBehavior.LoopForever, 200);
 
             await DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
                 OnGifLoaded?.Invoke();
