@@ -87,6 +87,7 @@ public unsafe class Part : IDisposable {
     public void Dispose() {
         if (!isDisposed) {
             internalAsset->AtkTexture.ReleaseTexture();
+            internalAsset->AtkTexture.TextureType = 0;
             internalAsset->AtkTexture.Destroy(true);
 
             NativeMemoryHelper.UiFree(internalAsset);
@@ -120,6 +121,7 @@ public unsafe class Part : IDisposable {
     public void LoadTexture(string path, bool resolveTheme = true) {
         try {
             internalAsset->AtkTexture.ReleaseTexture();
+            internalAsset->AtkTexture.TextureType = 0;
 
             var texturePath = path.Replace("_hr1", string.Empty);
 
@@ -162,6 +164,7 @@ public unsafe class Part : IDisposable {
     /// <param name="texture">Texture to assign to this image node.</param>
     public void LoadTexture(Texture* texture) {
         internalAsset->AtkTexture.ReleaseTexture();
+        internalAsset->AtkTexture.TextureType = 0;
 
         internalAsset->AtkTexture.KernelTexture = texture;
         internalAsset->AtkTexture.TextureType = TextureType.KernelTexture;
