@@ -12,10 +12,6 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
     public ImageNode() : base(NodeType.Image) {
         PartsList = new PartsList();
 
-        WrapMode = 1;
-        ImageNodeFlags = ImageNodeFlags.AutoFit;
-
-        Node->DrawFlags = 0x100;
         Node->PartsList = PartsList.InternalPartsList;
     }
 
