@@ -130,7 +130,9 @@ public unsafe class Part : IDisposable {
                 texturePath = themedPath;
             }
 
-            internalAsset->AtkTexture.LoadTextureWithDefaultVersion(texturePath);
+            if (DalamudInterface.Instance.DataManager.FileExists(texturePath)) {
+                internalAsset->AtkTexture.LoadTextureWithDefaultVersion(texturePath);
+            }
         }
         catch (Exception e) {
             Log.Exception(e);
