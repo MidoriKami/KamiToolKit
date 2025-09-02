@@ -16,12 +16,15 @@ public class ListBoxNode : LayoutListNode {
 
     public ListBoxNode() {
         Background = new BackgroundImageNode {
-            NodeId = 2, IsVisible = true,
+            NodeId = 2, 
+            IsVisible = true,
         };
         Background.AttachNode(this);
 
         Border = new BorderNineGridNode {
-            NodeId = 3, Position = new Vector2(-15.0f, -15.0f), IsVisible = false,
+            NodeId = 3, 
+            Position = new Vector2(-15.0f, -15.0f), 
+            IsVisible = false,
         };
         Border.AttachNode(this);
     }

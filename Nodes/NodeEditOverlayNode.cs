@@ -17,32 +17,48 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
 
     public NodeEditOverlayNode() {
         rightEditNode = new VerticalResizeNineGridNode {
-            Position = new Vector2(0.0f, 16.0f), Size = new Vector2(8.0f, 0.0f), Rotation = 1 * MathF.PI / 2.0f, IsVisible = true,
+            Position = new Vector2(0.0f, 16.0f), 
+            Size = new Vector2(8.0f, 0.0f), 
+            Rotation = 1 * MathF.PI / 2.0f, 
+            IsVisible = true,
         };
         rightEditNode.AttachNode(this);
 
         bottomEditNode = new HorizontalResizeNineGridNode {
-            Position = new Vector2(14.0f, 0.0f), Size = new Vector2(0.0f, 8.0f), IsVisible = true,
+            Position = new Vector2(14.0f, 0.0f), 
+            Size = new Vector2(0.0f, 8.0f), 
+            IsVisible = true,
         };
         bottomEditNode.AttachNode(this);
 
         leftEditNode = new VerticalResizeNineGridNode {
-            Position = new Vector2(18.0f, 16.0f), Size = new Vector2(8.0f, 0.0f), Rotation = 1 * MathF.PI / 2.0f, IsVisible = true,
+            Position = new Vector2(18.0f, 16.0f), 
+            Size = new Vector2(8.0f, 0.0f), 
+            Rotation = 1 * MathF.PI / 2.0f, 
+            IsVisible = true,
         };
         leftEditNode.AttachNode(this);
 
         topEditNode = new HorizontalResizeNineGridNode {
-            Position = new Vector2(14.0f, 12.0f), Size = new Vector2(0.0f, 8.0f), IsVisible = true,
+            Position = new Vector2(14.0f, 12.0f), 
+            Size = new Vector2(0.0f, 8.0f), 
+            IsVisible = true,
         };
         topEditNode.AttachNode(this);
 
         rightCornerEditNode = new ResizeButtonNode(ResizeDirection.BottomRight) {
-            Size = new Vector2(28.0f, 28.0f), Origin = new Vector2(14.0f, 14.0f), IsVisible = true, EnableEventFlags = true,
+            Size = new Vector2(28.0f, 28.0f), 
+            Origin = new Vector2(14.0f, 14.0f), 
+            IsVisible = true, 
+            EnableEventFlags = true,
         };
         rightCornerEditNode.AttachNode(this);
 
         leftCornerEditNode = new ResizeButtonNode(ResizeDirection.BottomLeft) {
-            Position = new Vector2(16.0f, 0.0f), Size = new Vector2(28.0f, 28.0f), Origin = new Vector2(14.0f, 14.0f), IsVisible = true,
+            Position = new Vector2(16.0f, 0.0f), 
+            Size = new Vector2(28.0f, 28.0f), 
+            Origin = new Vector2(14.0f, 14.0f), 
+            IsVisible = true,
         };
         leftCornerEditNode.AttachNode(this);
     }

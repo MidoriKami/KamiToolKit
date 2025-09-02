@@ -25,7 +25,6 @@ public class TextInputSelectionListNode : ResNode {
             PartsRenderType = 4,
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
         };
-
         BackgroundNode.AttachNode(this);
 
         LabelNode = new TextNode {
@@ -36,7 +35,6 @@ public class TextInputSelectionListNode : ResNode {
             AlignmentType = (AlignmentType)21,
             FontType = FontType.MiedingerMed,
         };
-
         LabelNode.AttachNode(this);
 
         foreach (var index in Enumerable.Range(0, 9)) {

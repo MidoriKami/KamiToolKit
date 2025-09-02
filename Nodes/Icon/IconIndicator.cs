@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
@@ -13,9 +14,7 @@ public class IconIndicator : ResNode {
             NodeId = innerNodeId,
             Size = new Vector2(18, 18),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 2,
-            ImageNodeFlags = 0,
-            DrawFlags = 0x02,
+            WrapMode = WrapMode.Stretch,
             PartId = (uint)(innerNodeId == 5 ? 25 : 30),
         };
 

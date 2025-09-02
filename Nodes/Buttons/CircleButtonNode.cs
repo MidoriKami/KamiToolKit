@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
@@ -13,10 +14,8 @@ public class CircleButtonNode : ButtonBase {
             TextureSize = new Vector2(24.0f, 24.0f),
             TextureCoordinates = new Vector2(0.0f, 112.0f),
             IsVisible = true,
-            WrapMode = 2,
-            ImageNodeFlags = 0,
+            WrapMode = WrapMode.Stretch,
         };
-
         ImageNode.AttachNode(this);
 
         LoadTimelines();

@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
@@ -14,9 +15,7 @@ public class CooldownNode : ResNode {
             NodeId = 18,
             Size = new Vector2(48.0f, 48.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 1,
-            DrawFlags = 0,
-            ImageNodeFlags = 0,
+            WrapMode = WrapMode.Tile,
         };
 
         IconNodeTextureHelper.LoadIconAFrameTexture(GlossyImageFrame);
@@ -28,9 +27,7 @@ public class CooldownNode : ResNode {
             Size = new Vector2(44.0f, 46.0f),
             Position = new Vector2(2.0f, 2.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 1,
-            ImageNodeFlags = 0,
-            DrawFlags = 0x02,
+            WrapMode = WrapMode.Tile,
             PartId = 80,
         };
 

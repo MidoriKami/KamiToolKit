@@ -20,7 +20,6 @@ public unsafe class ListButtonNode : ButtonBase {
             LeftOffset = 16,
             RightOffset = 1,
         };
-
         HoverBackgroundNode.AttachNode(this);
 
         SelectedBackgroundNode = new SimpleNineGridNode {
@@ -30,7 +29,6 @@ public unsafe class ListButtonNode : ButtonBase {
             LeftOffset = 16,
             RightOffset = 1,
         };
-
         SelectedBackgroundNode.AttachNode(this);
 
         LabelNode = new TextNode {
@@ -43,7 +41,6 @@ public unsafe class ListButtonNode : ButtonBase {
             IsVisible = true,
             String = "Label Not Set",
         };
-
         LabelNode.AttachNode(this);
 
         LoadTimelines();

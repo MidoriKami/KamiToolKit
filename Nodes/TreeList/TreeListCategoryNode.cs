@@ -27,7 +27,6 @@ public class TreeListCategoryNode : ResNode {
         CollisionNode = new CollisionNode {
             Height = 28.0f, IsVisible = true,
         };
-
         CollisionNode.AttachNode(this);
 
         BackgroundNode = new SimpleNineGridNode {
@@ -41,14 +40,12 @@ public class TreeListCategoryNode : ResNode {
             RightOffset = 12.0f,
             BottomOffset = 12.0f,
         };
-
         BackgroundNode.AttachNode(this);
 
         CollapseArrowNode = new ImageNode {
             Position = new Vector2(0.0f, 1.0f),
             Size = new Vector2(24.0f, 24.0f),
             IsVisible = true,
-            ImageNodeFlags = 0,
             PartId = 1,
         };
 
@@ -65,7 +62,6 @@ public class TreeListCategoryNode : ResNode {
             Size = new Vector2(24.0f, 24.0f), 
             Id = 1,
         });
-
         CollapseArrowNode.AttachNode(this);
 
         LabelNode = new TextNode {
@@ -78,13 +74,11 @@ public class TreeListCategoryNode : ResNode {
             TextOutlineColor = ColorHelper.GetColor(7),
             IsVisible = true,
         };
-
         LabelNode.AttachNode(this);
 
         ChildContainer = new ResNode {
             Position = new Vector2(0.0f, 24.0f + VerticalPadding), IsVisible = true,
         };
-
         ChildContainer.AttachNode(this);
 
         BuildTimelines();

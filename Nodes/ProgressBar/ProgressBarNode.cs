@@ -17,7 +17,6 @@ public class ProgressBarNode : SimpleComponentNode {
             LeftOffset = 6,
             RightOffset = 6,
         };
-
         BackgroundNode.AttachNode(this);
 
         ForegroundNode = new SimpleNineGridNode {
@@ -29,7 +28,6 @@ public class ProgressBarNode : SimpleComponentNode {
             LeftOffset = 4,
             RightOffset = 4,
         };
-
         ForegroundNode.AttachNode(this);
     }
 

@@ -26,29 +26,31 @@ public class IconExtras : ResNode {
             Size = new Vector2(40.0f, 40.0f),
             Position = new Vector2(4.0f, 4.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 1,
-            DrawFlags = 0x102,
+            WrapMode = WrapMode.Tile,
             ImageNodeFlags = ImageNodeFlags.AutoFit,
         };
-
         TimelineImageNode.AttachNode(this);
 
         CooldownNode = new CooldownNode {
-            NodeId = 16, Size = new Vector2(48.0f, 48.0f), NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeId = 16, 
+            Size = new Vector2(48.0f, 48.0f), 
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
-
         CooldownNode.AttachNode(this);
 
         AlternateCooldownNode = new AlternateCooldownNode {
-            NodeId = 14, Size = new Vector2(44.0f, 48.0f), Position = new Vector2(2.0f, 0.0f), NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeId = 14, 
+            Size = new Vector2(44.0f, 48.0f),
+            Position = new Vector2(2.0f, 0.0f), 
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
-
         AlternateCooldownNode.AttachNode(this);
 
         AntsNode = new AntsNode {
-            NodeId = 12, Size = new Vector2(48.0f, 48.0f), NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeId = 12, 
+            Size = new Vector2(48.0f, 48.0f), 
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
-
         AntsNode.AttachNode(this);
 
         HoveredBorderImageNode = new ImageNode {
@@ -57,9 +59,7 @@ public class IconExtras : ResNode {
             Position = new Vector2(-12.0f, -12.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             PartId = 16,
-            WrapMode = 1,
-            ImageNodeFlags = 0,
-            DrawFlags = 0x02,
+            WrapMode = WrapMode.Tile,
         };
 
         IconNodeTextureHelper.LoadIconAFrameTexture(HoveredBorderImageNode);
@@ -71,8 +71,7 @@ public class IconExtras : ResNode {
             Size = new Vector2(20.0f, 20.0f),
             Position = new Vector2(28.0f, 28.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 1,
-            ImageNodeFlags = 0,
+            WrapMode = WrapMode.Tile,
         };
 
         foreach (var yIndex in Enumerable.Range(0, 2))
@@ -82,7 +81,6 @@ public class IconExtras : ResNode {
                 TexturePath = "ui/uld/IconA_ChargeIcon.tex", TextureCoordinates = coordinate, Size = new Vector2(20.0f, 20.0f), Id = (uint)(xIndex + yIndex),
             });
         }
-
         ChargeCountImageNode.AttachNode(this);
 
         QuantityTextNode = new TextNode {
@@ -95,7 +93,6 @@ public class IconExtras : ResNode {
             AlignmentType = AlignmentType.Right,
             DrawFlags = 0x102,
         };
-
         QuantityTextNode.AttachNode(this);
 
         // Also cooldown time text for non-globals
@@ -108,7 +105,6 @@ public class IconExtras : ResNode {
             TextOutlineColor = ColorHelper.GetColor(51),
             AlignmentType = AlignmentType.Left,
         };
-
         ResourceCostTextNode.AttachNode(this);
 
         ClickFlashImageNode = new ImageNode {
@@ -116,10 +112,8 @@ public class IconExtras : ResNode {
             Size = new Vector2(64, 64),
             Position = new Vector2(-8.0f, -8.0f),
             Origin = new Vector2(32.0f, 32.0f),
-            DrawFlags = 4,
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 1,
-            ImageNodeFlags = 0,
+            WrapMode = WrapMode.Tile,
             PartId = 17,
         };
 

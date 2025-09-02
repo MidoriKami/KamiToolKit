@@ -20,7 +20,6 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
             BottomOffset = 4,
             IsVisible = true,
         };
-
         ButtonTexture.AttachNode(this);
 
         Data->Nodes[0] = 0;

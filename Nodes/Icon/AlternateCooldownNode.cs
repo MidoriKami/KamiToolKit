@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
@@ -15,9 +16,7 @@ public class AlternateCooldownNode : ResNode {
             Position = new Vector2(0.0f, 2.0f),
             Origin = new Vector2(22.0f, 23.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 1,
-            ImageNodeFlags = 0,
-            DrawFlags = 0x102,
+            WrapMode = WrapMode.Tile,
             PartId = 80,
         };
 

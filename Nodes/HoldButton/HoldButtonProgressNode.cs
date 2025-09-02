@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
@@ -15,9 +16,8 @@ public class HoldButtonProgressNode : ResNode {
             TextureCoordinates = new Vector2(0.0f, 36.0f),
             TextureSize = new Vector2(100.0f, 36.0f),
             Size = new Vector2(0.0f, 36.0f),
-            WrapMode = 1,
+            WrapMode = WrapMode.Tile,
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            ImageNodeFlags = 0,
         };
         ImageNode.AttachNode(this);
 

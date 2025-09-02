@@ -20,7 +20,6 @@ public unsafe class TextButtonNode : ButtonBase {
             RightOffset = 16.0f,
             NodeId = 2,
         };
-
         BackgroundNode.AttachNode(this);
 
         LabelNode = new TextNode {

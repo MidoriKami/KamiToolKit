@@ -18,9 +18,9 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         SetInternalComponentType(ComponentType.Slider);
 
         SliderBackgroundButtonNode = new SliderBackgroundButtonNode {
-            NodeId = 5, IsVisible = true,
+            NodeId = 5, 
+            IsVisible = true,
         };
-
         SliderBackgroundButtonNode.AttachNode(this);
 
         ProgressTextureNode = new SimpleNineGridNode {
@@ -34,13 +34,13 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
             RightOffset = 8,
             IsVisible = true,
         };
-
         ProgressTextureNode.AttachNode(this);
 
         SliderForegroundButtonNode = new SliderForegroundButtonNode {
-            NodeId = 3, Size = new Vector2(16.0f, 16.0f), IsVisible = true,
+            NodeId = 3, 
+            Size = new Vector2(16.0f, 16.0f), 
+            IsVisible = true,
         };
-
         SliderForegroundButtonNode.AttachNode(this);
 
         ValueNode = new TextNode {
@@ -51,7 +51,6 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
             FontSize = 12,
             AlignmentType = AlignmentType.Left,
         };
-
         ValueNode.AttachNode(this);
 
         Data->Step = 1;

@@ -10,6 +10,7 @@ public class ImGuiIconButtonNode : ButtonBase {
 
     public ImGuiIconButtonNode() {
         BackgroundNode = new SimpleNineGridNode {
+            NodeId = 2,
             TexturePath = "ui/uld/BgParts.tex",
             TextureSize = new Vector2(32.0f, 32.0f),
             TextureCoordinates = new Vector2(33.0f, 65.0f),
@@ -17,15 +18,15 @@ public class ImGuiIconButtonNode : ButtonBase {
             LeftOffset = 8.0f,
             RightOffset = 8.0f,
             BottomOffset = 8.0f,
-            NodeId = 2,
             IsVisible = true,
         };
         BackgroundNode.AttachNode(this);
 
         ImageNode = new ImGuiImageNode {
-            IsVisible = true, NodeId = 3,
+            NodeId = 3,
+            IsVisible = true, 
+            FitTexture = true,
         };
-
         ImageNode.AttachNode(this);
 
         LoadTimelines();

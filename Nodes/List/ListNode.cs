@@ -33,19 +33,20 @@ public abstract class ListNode<T> : ListNode {
             RightOffset = 10,
             IsVisible = true,
         };
-
         BackgroundNode.AttachNode(this);
 
         ContainerNode = new ResNode {
-            NodeFlags = NodeFlags.Clip, IsVisible = true,
+            NodeFlags = NodeFlags.Clip, 
+            IsVisible = true,
         };
-
         ContainerNode.AttachNode(this);
 
         ScrollBarNode = new ScrollBarNode {
-            Position = new Vector2(0.0f, 9.0f), Size = new Vector2(8.0f, 0.0f), IsVisible = true, OnValueChanged = OnScrollUpdate,
+            Position = new Vector2(0.0f, 9.0f), 
+            Size = new Vector2(8.0f, 0.0f), 
+            IsVisible = true, 
+            OnValueChanged = OnScrollUpdate,
         };
-
         ScrollBarNode.AttachNode(this);
 
         BuildTimelines();

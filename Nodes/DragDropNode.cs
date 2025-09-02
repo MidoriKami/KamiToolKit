@@ -27,14 +27,15 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
             TexturePath = "ui/uld/DragTargetA.tex",
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             TextureSize = new Vector2(44.0f, 44.0f),
-            WrapMode = 1,
-            ImageNodeFlags = 0,
+            WrapMode = WrapMode.Tile,
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         DragDropBackgroundNode.AttachNode(this);
 
         IconNode = new IconNode {
-            NodeId = 2, Size = new Vector2(44.0f, 48.0f), NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeId = 2, 
+            Size = new Vector2(44.0f, 48.0f), 
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         IconNode.AttachNode(this);
 

@@ -26,8 +26,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
             Size = new Vector2(16.0f, 16.0f),
             Position = new Vector2(0.0f, 2.0f),
             NodeFlags = NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 2,
-            ImageNodeFlags = 0,
+            WrapMode = WrapMode.Stretch,
         };
         BoxBackground.AttachNode(this);
 
@@ -39,9 +38,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
             Size = new Vector2(16.0f, 16.0f),
             Position = new Vector2(0.0f, 2.0f),
             NodeFlags = NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 2,
-            ImageNodeFlags = 0,
-            DrawFlags = 0,
+            WrapMode = WrapMode.Stretch,
         };
         BoxForeground.AttachNode(this);
 

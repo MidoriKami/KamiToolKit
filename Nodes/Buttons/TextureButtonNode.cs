@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
@@ -8,9 +9,10 @@ public class TextureButtonNode : ButtonBase {
 
     public TextureButtonNode() {
         ImageNode = new ImGuiImageNode {
-            IsVisible = true, NodeId = 3, WrapMode = 2, ImageNodeFlags = 0,
+            IsVisible = true, 
+            NodeId = 3, 
+            WrapMode = WrapMode.Stretch, 
         };
-
         ImageNode.AttachNode(this);
 
         LoadTimelines();

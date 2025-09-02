@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes.Slider;
@@ -17,10 +18,8 @@ public class SliderForegroundButtonNode : ComponentNode<AtkComponentButton, AtkU
             TextureSize = new Vector2(14.0f, 15.0f),
             Size = new Vector2(14.0f, 15.0f),
             IsVisible = true,
-            WrapMode = 1,
-            ImageNodeFlags = 0,
+            WrapMode = WrapMode.Tile,
         };
-
         HandleNode.AttachNode(this);
 
         BuildTimelines();

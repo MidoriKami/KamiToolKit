@@ -37,6 +37,19 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
             base.Dispose(disposing);
         }
     }
+    
+    /// <summary>
+    ///     When set to true, will cause the loaded texture to
+    ///     fit itself to the size of the node
+    /// </summary>
+    public bool FitTexture {
+        set {
+            if (value) {
+                ImageNodeFlags = ImageNodeFlags.AutoFit;
+                WrapMode = WrapMode.Stretch;
+            }
+        }
+    }
 
     public void AddPart(Part part)
         => PartsList.Add(part);

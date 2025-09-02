@@ -23,7 +23,6 @@ public unsafe class TextInputButtonNode : ButtonBase {
             TextureCoordinates = new Vector2(0.0f, 22.0f),
             TextureSize = new Vector2(63.0f, 22.0f),
         };
-
         BackgroundNode.AttachNode(this);
 
         LabelNode = new TextNode {
@@ -38,7 +37,6 @@ public unsafe class TextInputButtonNode : ButtonBase {
             BackgroundColor = KnownColor.Black.Vector(),
             IsVisible = true,
         };
-
         LabelNode.AttachNode(this);
 
         Data->Nodes[0] = LabelNode.NodeId;

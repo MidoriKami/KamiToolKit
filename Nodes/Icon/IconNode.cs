@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
@@ -19,28 +20,33 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
             Size = new Vector2(40.0f, 40.0f),
             Position = new Vector2(2.0f, 3.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 1,
+            WrapMode = WrapMode.Tile,
             ImageNodeFlags = ImageNodeFlags.AutoFit,
         };
-
         IconImage.AttachNode(this);
 
         IconExtras = new IconExtras {
-            NodeId = 6, Size = new Vector2(60, 60), Position = new Vector2(-2.0f, 0.0f), NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeId = 6, 
+            Size = new Vector2(60, 60), 
+            Position = new Vector2(-2.0f, 0.0f), 
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
-
         IconExtras.AttachNode(this);
 
         IconIndicator1 = new IconIndicator(5) {
-            NodeId = 4, Size = new Vector2(18.0f, 18.0f), Position = new Vector2(27.0f, 11.0f), NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeId = 4, 
+            Size = new Vector2(18.0f, 18.0f), 
+            Position = new Vector2(27.0f, 11.0f), 
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
-
         IconIndicator1.AttachNode(this);
 
         IconIndicator2 = new IconIndicator(3) {
-            NodeId = 2, Size = new Vector2(18.0f, 18.0f), Position = new Vector2(27.0f, -2.0f), NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeId = 2, 
+            Size = new Vector2(18.0f, 18.0f), 
+            Position = new Vector2(27.0f, -2.0f), 
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
-
         IconIndicator2.AttachNode(this);
 
         BuildTimeline();

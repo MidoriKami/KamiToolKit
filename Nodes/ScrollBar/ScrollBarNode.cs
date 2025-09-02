@@ -18,13 +18,11 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         BackgroundButtonNode = new ScrollBarBackgroundButtonNode {
             NodeId = 3, Size = new Vector2(8.0f, 306.0f), IsVisible = true,
         };
-
         BackgroundButtonNode.AttachNode(this);
 
         ForegroundButtonNode = new ScrollBarForegroundButtonNode {
             NodeId = 2, Size = new Vector2(8.0f, 306.0f), IsVisible = true,
         };
-
         ForegroundButtonNode.AttachNode(this);
 
         Data->Nodes[0] = ForegroundButtonNode.NodeId;

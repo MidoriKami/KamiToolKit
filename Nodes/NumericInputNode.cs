@@ -29,7 +29,6 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
             Offsets = new Vector4(10.0f),
             IsVisible = true,
         };
-
         BackgroundNode.AttachNode(this);
 
         AddButton = new TextureButtonNode {
@@ -40,7 +39,6 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
             Size = new Vector2(28.0f, 28.0f),
             IsVisible = true,
         };
-
         AddButton.AttachNode(this);
 
         SubtractButton = new TextureButtonNode {
@@ -51,7 +49,6 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
             Size = new Vector2(28.0f, 28.0f),
             IsVisible = true,
         };
-
         SubtractButton.AttachNode(this);
 
         ValueTextNode = new TextNode {
@@ -63,7 +60,6 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
             IsVisible = true,
             String = "999",
         };
-
         ValueTextNode.AttachNode(this);
 
         FocusBorderNode = new SimpleNineGridNode {
@@ -74,7 +70,6 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
             Position = new Vector2(-3.0f, -2.0f),
             Offsets = new Vector4(10.0f),
         };
-
         FocusBorderNode.AttachNode(this);
 
         CursorNode = new CursorNode {

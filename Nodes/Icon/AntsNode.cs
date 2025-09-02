@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
@@ -13,9 +14,7 @@ public class AntsNode : ResNode {
             NodeId = 13,
             Size = new Vector2(48, 48),
             NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            WrapMode = 1,
-            ImageNodeFlags = 0,
-            DrawFlags = 0x02,
+            WrapMode = WrapMode.Tile,
             PartId = 13,
         };
 

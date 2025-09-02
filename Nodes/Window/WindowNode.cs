@@ -32,7 +32,6 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             Position = new Vector2(8.0f, 8.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.EmitsEvents,
         };
-
         HeaderCollisionNode.AttachNode(this);
 
         BackgroundNode = new WindowBackgroundNode(false) {
@@ -42,7 +41,6 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
             PartsRenderType = 19,
         };
-
         BackgroundNode.AttachNode(this);
 
         BorderNode = new WindowBackgroundNode(true) {
@@ -52,23 +50,22 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
             PartsRenderType = 7,
         };
-
         BorderNode.AttachNode(this);
 
         BackgroundImageNode = new SimpleImageNode {
             NodeId = 9,
-            WrapMode = 2,
-            ImageNodeFlags = 0,
+            WrapMode = WrapMode.Stretch,
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorBottom | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TexturePath = "ui/uld/WindowA_Gradation.tex",
             TextureCoordinates = new Vector2(6.0f, 2.0f),
             TextureSize = new Vector2(24.0f, 24.0f),
         };
-
         BackgroundImageNode.AttachNode(this);
 
         HeaderContainerNode = new ResNode {
-            Size = new Vector2(477.0f, 38.0f), NodeId = 2, IsVisible = true,
+            NodeId = 2, 
+            Size = new Vector2(477.0f, 38.0f), 
+            IsVisible = true,
         };
         HeaderContainerNode.AttachNode(this);
 
@@ -83,7 +80,6 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             RightOffset = 12.0f,
             Position = new Vector2(10.0f, 33.0f),
         };
-
         DividingLineNode.AttachNode(HeaderContainerNode);
 
         CloseButtonNode = new TextureButtonNode {
@@ -95,7 +91,6 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             TextureSize = new Vector2(28.0f, 28.0f),
         };
-
         CloseButtonNode.AttachNode(HeaderContainerNode);
 
         ConfigurationButtonNode = new TextureButtonNode {
@@ -108,7 +103,6 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             TextureSize = new Vector2(16.0f, 16.0f),
             IsVisible = true,
         };
-
         ConfigurationButtonNode.AttachNode(HeaderContainerNode);
 
         InformationButtonNode = new TextureButtonNode {
@@ -121,7 +115,6 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             TextureSize = new Vector2(16.0f, 16.0f),
             IsVisible = true,
         };
-
         InformationButtonNode.AttachNode(HeaderContainerNode);
 
         SubtitleNode = new TextNode {
@@ -137,7 +130,6 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             Size = new Vector2(46.0f, 20.0f),
             Position = new Vector2(83.0f, 17.0f),
         };
-
         SubtitleNode.AttachNode(HeaderContainerNode);
 
         TitleNode = new TextNode {
@@ -153,7 +145,6 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             Size = new Vector2(86.0f, 31.0f),
             Position = new Vector2(12.0f, 7.0f),
         };
-
         TitleNode.AttachNode(HeaderContainerNode);
 
         Data->ShowCloseButton = 1;

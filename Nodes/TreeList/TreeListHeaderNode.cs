@@ -20,7 +20,6 @@ public class TreeListHeaderNode : ResNode {
             LeftOffset = 25.0f,
             RightOffset = 20.0f,
         };
-
         DecorationNode.AttachNode(this);
 
         LabelNode = new TextNode {
@@ -31,7 +30,6 @@ public class TreeListHeaderNode : ResNode {
             FontSize = 12,
             FontType = FontType.Axis,
         };
-
         LabelNode.AttachNode(this);
     }
 

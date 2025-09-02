@@ -17,7 +17,6 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
             IsVisible = true, 
             EventFlagsSet = true,
         };
-
         ScrollingCollisionNode.AttachNode(this);
 
         ContentAreaClipNode = new SimpleComponentNode {
@@ -39,7 +38,6 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
             ContentCollisionNode = ScrollingCollisionNode, 
             IsVisible = true,
         };
-
         ScrollBarNode.AttachNode(this);
 
         ContentAreaClipNode.InternalResNode->AtkEventManager.RegisterEvent(
