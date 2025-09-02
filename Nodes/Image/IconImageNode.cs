@@ -15,7 +15,6 @@ public class IconImageNode : SimpleImageNode {
         set {
             field = value;
             PartsList[0].LoadIcon(value);
-            TextureSize = new Vector2(32.0f, 32.0f);
         }
     }
 
