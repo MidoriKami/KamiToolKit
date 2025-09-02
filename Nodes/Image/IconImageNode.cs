@@ -10,6 +10,10 @@ namespace KamiToolKit.Nodes;
 /// <remarks>This node is not intended to be used with multiple <see cref="Part" />'s.</remarks>
 public class IconImageNode : SimpleImageNode {
 
+    public IconImageNode() {
+        TextureSize = new Vector2(32.0f, 32.0f);
+    }
+    
     public uint IconId {
         get;
         set {
