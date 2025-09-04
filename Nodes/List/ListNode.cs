@@ -55,7 +55,13 @@ public abstract class ListNode<T> : ListNode {
         ContainerNode.AddEvent(AddonEventType.MouseWheel, OnMouseWheel);
     }
 
-    public T? SelectedOption { get; set; }
+    public T? SelectedOption {
+        get;
+        set {
+            field = value;
+            UpdateSelected();
+        }
+    }
 
     public List<T>? Options {
         get;
