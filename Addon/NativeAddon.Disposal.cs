@@ -10,7 +10,7 @@ public abstract partial class NativeAddon : IDisposable {
 
     private bool isDisposed;
 
-    public void Dispose() {
+    public virtual void Dispose() {
         if (!isDisposed) {
             Log.Debug($"Disposing addon {GetType()}");
 
@@ -25,19 +25,10 @@ public abstract partial class NativeAddon : IDisposable {
         }
 
         isDisposed = true;
-
         DisposeExtras();
     }
 
-    ~NativeAddon() {
-        Dispose(false);
-    }
-
-    protected virtual void Dispose(bool disposing) {
-        if (disposing) {
-            Dispose();
-        }
-    }
+    ~NativeAddon() => Dispose();
 
     internal static void DisposeAddons() {
         foreach (var addon in CreatedAddons.ToArray()) {
