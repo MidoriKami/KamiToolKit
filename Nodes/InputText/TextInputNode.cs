@@ -6,6 +6,7 @@ using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -24,6 +25,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     public readonly NineGridNode FocusNode;
     public readonly TextInputSelectionListNode SelectionListNode;
     public readonly TextNode TextLimitsNode;
+    public readonly TextNode PlaceholderTextNode;
 
     public Action? OnFocused;
 
@@ -99,6 +101,13 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         };
         CursorNode.AttachNode(this);
 
+        PlaceholderTextNode = new TextNode {
+            Position = new Vector2(10.0f, 6.0f),
+            IsVisible = true,
+            TextColor = ColorHelper.GetColor(3),
+        };
+        PlaceholderTextNode.AttachNode(this);
+
         Data->Nodes[0] = CurrentTextNode.NodeId;
         Data->Nodes[1] = BackgroundNode.NodeId;
         Data->Nodes[2] = CursorNode.NodeId;
@@ -124,11 +133,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         };
         Data->FocusColor = KnownColor.Black.Vector().ToByteColor();
 
-        // Flags1 = TextInputFlags1.EnableIME | TextInputFlags1.AllowUpperCase | TextInputFlags1.AllowLowerCase | TextInputFlags1.EnableDictionary;
-        // Flags2 = TextInputFlags2.AllowNumberInput | TextInputFlags2.AllowSymbolInput;
-
-        Flags1 = (TextInputFlags1)212;
-        Flags2 = (TextInputFlags2)3;
+        Flags1 = TextInputFlags1.EnableIME | TextInputFlags1.AllowUpperCase | TextInputFlags1.AllowLowerCase | TextInputFlags1.EnableDictionary;
+        Flags2 = TextInputFlags2.AllowNumberInput | TextInputFlags2.AllowSymbolInput;
 
         LoadTimelines();
 
@@ -137,8 +143,18 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         InitializeComponentEvents();
 
         CollisionNode.AddEvent(AddonEventType.InputReceived, InputComplete);
-        CollisionNode.AddEvent(AddonEventType.FocusStart, _ => OnFocused?.Invoke());
-        CollisionNode.AddEvent(AddonEventType.FocusStop, _ => OnUnfocused?.Invoke());
+        CollisionNode.AddEvent(AddonEventType.FocusStart, _ => {
+            PlaceholderTextNode.IsVisible = false;
+            OnFocused?.Invoke();
+        });
+        
+        CollisionNode.AddEvent(AddonEventType.FocusStop, _ => {
+            OnUnfocused?.Invoke();
+            if (!PlaceholderString.IsNullOrEmpty()) {
+                PlaceholderTextNode.IsVisible = true;
+                PlaceholderTextNode.String = PlaceholderString;
+            }
+        });
     }
 
     public Action<SeString>? OnInputReceived { get; set; }
@@ -173,6 +189,14 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     public string String {
         get => Component->UnkText1.ToString();
         set => Component->SetText(value);
+    }
+
+    public string? PlaceholderString {
+        get;
+        set {
+            field = value;
+            PlaceholderTextNode.String = value ?? string.Empty;
+        }
     }
 
     private void FocusStart(AddonEventData obj)
@@ -221,6 +245,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
         BackgroundNode.Size = Size;
         FocusNode.Size = Size;
+        PlaceholderTextNode.Size = Size;
         TextLimitsNode.Size = new Vector2(Width + 18.0f, Height - 9.0f);
         CurrentTextNode.Size = new Vector2(Width - 20.0f, Height - 10.0f);
     }
