@@ -150,7 +150,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         
         CollisionNode.AddEvent(AddonEventType.FocusStop, _ => {
             OnUnfocused?.Invoke();
-            if (!PlaceholderString.IsNullOrEmpty()) {
+            if (!PlaceholderString.IsNullOrEmpty() && String.IsNullOrEmpty()) {
                 PlaceholderTextNode.IsVisible = true;
                 PlaceholderTextNode.String = PlaceholderString;
             }
