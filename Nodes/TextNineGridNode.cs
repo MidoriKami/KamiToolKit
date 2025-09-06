@@ -85,6 +85,11 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
         set => TextNode.TextFlags = value;
     }
 
+    public AlignmentType AlignmentType {
+        get => TextNode.AlignmentType;
+        set => TextNode.AlignmentType = value;
+    }
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
