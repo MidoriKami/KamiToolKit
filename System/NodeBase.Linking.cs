@@ -70,13 +70,6 @@ public abstract unsafe partial class NodeBase {
     internal void DetachNode(bool disableEvents = true) {
         if (disableEvents) DisableEvents();
 
-        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
-        if (parentAddon is not null) {
-            if (RaptureAtkUnitManager.Instance()->FocusedUnitsList.Entries.Contains(parentAddon)) {
-                Experimental.Instance.SetFocus?.Invoke(AtkStage.Instance()->AtkInputManager, parentAddon->RootNode, parentAddon, 0);
-            }
-        }
-        
         NodeLinker.DetachNode(InternalResNode);
 
         if (ParentUldManager is not null) {

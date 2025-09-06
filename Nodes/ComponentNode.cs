@@ -24,7 +24,9 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         componentBase->Initialize();
 
         CollisionNode = new CollisionNode {
-            NodeId = 1, LinkedComponent = componentBase, NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents,
+            NodeId = 1,
+            LinkedComponent = componentBase,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents,
         };
 
         CollisionNode.InternalResNode->ParentNode = InternalResNode;
@@ -70,6 +72,23 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
     protected override void Dispose(bool disposing) {
         if (disposing) {
+
+            var inputManager = AtkStage.Instance()->AtkInputManager;
+
+            foreach (var focusEntry in inputManager->FocusList) {
+                if (focusEntry.AtkEventListener is null) continue;
+                if (focusEntry.AtkEventTarget is null) continue;
+
+                // Potentially Explosive, may need to consider checking if this is an AtkUnitBase
+                var addon = (AtkUnitBase*)focusEntry.AtkEventListener;
+
+                // If this focus entry has our custom node focused, redirect the focus to RootNode
+                if (focusEntry.AtkEventTarget == CollisionNode.Node) {
+                    Log.Debug($"Custom Node was focused during dispose, Addon: {addon->NameString}, unfocusing node.");
+                    Experimental.Instance.SetFocus?.Invoke(inputManager, addon->RootNode, addon, focusEntry.Unk10);
+                }
+            }
+
             NativeMemoryHelper.UiFree(Data);
             Data = null;
 
