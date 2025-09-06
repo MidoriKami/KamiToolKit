@@ -39,7 +39,10 @@ public class TextInputSelectionListNode : ResNode {
 
         foreach (var index in Enumerable.Range(0, 9)) {
             Buttons[index] = new TextInputButtonNode {
-                NodeId = (uint)(13 - index), Position = new Vector2(13.0f, 164.0f - 20.0f * index), Size = new Vector2(160.0f, 24.0f), IsVisible = true,
+                NodeId = (uint)(13 - index), 
+                Position = new Vector2(13.0f, 164.0f - 20.0f * index), 
+                Size = new Vector2(160.0f, 24.0f), 
+                IsVisible = true,
             };
 
             Buttons[index].AttachNode(this);
