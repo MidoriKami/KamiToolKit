@@ -32,7 +32,6 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         CollisionNode.InternalResNode->ParentNode = InternalResNode;
 
         componentBase->OwnerNode = Node;
-        componentBase->AtkResNode = CollisionNode.InternalResNode;
         componentBase->ComponentFlags = 1;
 
         ref var uldManager = ref componentBase->UldManager;
