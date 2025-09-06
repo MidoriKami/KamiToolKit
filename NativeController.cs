@@ -212,10 +212,10 @@ public unsafe class NativeController : IDisposable {
         => type.GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
             .Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property)
             .Where(member => GetMemberType(member)?.GetInterfaces().Contains(typeof(IEnumerable)) ?? false)
-            .Where(member => typeof(NodeBase).IsAssignableFrom(GetMemberType(member)?.GetGenericArguments().FirstOrDefault()))
+            .Where(IsEnumerableOrArray)
             .Where(IsMemberSingleIndexable)
             .ToList();
-    
+
     private static Type? GetMemberType(MemberInfo member) => member.MemberType switch {
         MemberTypes.Field => (member as FieldInfo)?.FieldType,
         MemberTypes.Property => (member as PropertyInfo)?.PropertyType,
@@ -226,6 +226,15 @@ public unsafe class NativeController : IDisposable {
         if (member is not PropertyInfo property) return true;
 
         return property.GetIndexParameters().Length is 0;
+    }
+
+    private static bool IsEnumerableOrArray(MemberInfo member) {
+        var memberType = GetMemberType(member);
+
+        if (typeof(NodeBase).IsAssignableFrom(memberType?.GetGenericArguments().FirstOrDefault())) return true;
+        if (typeof(NodeBase).IsAssignableFrom(memberType?.GetElementType())) return true;
+        
+        return false;
     }
 
     private static readonly HashSet<Type> ParsedRuntimeTypes = [];
