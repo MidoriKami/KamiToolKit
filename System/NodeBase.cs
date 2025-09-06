@@ -30,6 +30,13 @@ public abstract unsafe partial class NodeBase : IDisposable {
             Log.Verbose($"Disposing node {GetType()}");
 
             ClearFocus();
+
+            // Automatically dispose any fields/properties that are managed nodes.
+            VisitChildren(node => {
+                ClearFocus();
+                node?.Dispose();
+            });
+
             TryForceDetach(false);
 
             Timeline?.Dispose();
@@ -40,9 +47,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
             Dispose(true);
             GC.SuppressFinalize(this);
 
-            // Automatically dispose any fields/properties that are managed nodes.
-            VisitChildren(node => node?.Dispose());
-            
             CreatedNodes.Remove(this);
         }
 
