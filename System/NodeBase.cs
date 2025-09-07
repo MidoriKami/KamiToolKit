@@ -112,7 +112,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         return true;
     }
 
-    public static explicit operator AtkResNode*(NodeBase node) => node.InternalResNode;
+    public static implicit operator AtkResNode*(NodeBase node) => node.InternalResNode;
 }
 
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
