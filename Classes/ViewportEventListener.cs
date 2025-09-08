@@ -19,6 +19,7 @@ public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEven
         });
     }
 
+    // Todo: maybe use Unregister All event type to do this better?
     public override void Dispose() {
         var eventList = new List<Pointer<AtkEvent>>();
 
