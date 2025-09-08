@@ -3,12 +3,9 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Classes;
-#if DEBUG
-public unsafe class Experimental {
-#else
-internal unsafe class Experimental {
-#endif
 
+/// WARNING: These features are potentially extremely volatile, use at your own risk.
+public unsafe class Experimental {
     private static Experimental? instance;
     public static Experimental Instance => instance ??= new Experimental();
 
