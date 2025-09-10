@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Addon.Events.EventDataTypes;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
 using KamiToolKit.Extensions;
@@ -13,7 +14,7 @@ namespace KamiToolKit.Nodes;
 public abstract class ListNode : ComponentNode<AtkComponentBase, AtkUldComponentDataBase>;
 
 /// Note, automatically inserts buttons to fill the set height, please ensure option count is greater than button count.
-public abstract class ListNode<T> : ListNode {
+public abstract unsafe class ListNode<T> : ListNode {
 
     public readonly NineGridNode BackgroundNode;
     public readonly ResNode ContainerNode;
@@ -53,6 +54,19 @@ public abstract class ListNode<T> : ListNode {
 
         ContainerNode.SetEventFlags();
         ContainerNode.AddEvent(AddonEventType.MouseWheel, OnMouseWheel);
+    }
+    
+    protected override void Dispose(bool disposing) {
+        if (disposing) {
+            if (isFocusSet) {
+                var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
+                if (parentAddon is not null) {
+                    ClearFocusable(parentAddon);
+                }
+            }
+
+            base.Dispose(disposing);
+        }
     }
 
     public T? SelectedOption {
@@ -190,11 +204,21 @@ public abstract class ListNode<T> : ListNode {
     public void Show() {
         IsVisible = true;
         DrawFlags = 0x200000;
+
+        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
+        if (parentAddon is not null) {
+            SetFocusable(parentAddon);
+        }
     }
 
     public void Hide() {
         IsVisible = false;
-        DrawFlags = 0x100;
+        DrawFlags = 0x0;
+
+        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
+        if (parentAddon is not null) {
+            ClearFocusable(parentAddon);
+        }
     }
 
     public void Toggle(bool newState) {
@@ -203,6 +227,26 @@ public abstract class ListNode<T> : ListNode {
         }
         else {
             Hide();
+        }
+    }
+
+    private bool isFocusSet;
+
+    public void SetFocusable(AtkUnitBase* addon) {
+        foreach (ref var focusableNode in addon->AdditionalFocusableNodes) {
+            if (focusableNode.Value is null) {
+                focusableNode = InternalResNode;
+                isFocusSet = true;
+            }
+        }
+    }
+
+    public void ClearFocusable(AtkUnitBase* addon) {
+        foreach (ref var focusableNode in addon->AdditionalFocusableNodes) {
+            if (focusableNode.Value == InternalResNode) {
+                focusableNode = null;
+                isFocusSet = false;
+            }
         }
     }
 
