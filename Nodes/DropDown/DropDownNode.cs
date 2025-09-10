@@ -1,13 +1,13 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using Dalamud.Game.Addon.Events;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
 
-public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T : ListNode<TU>, new() {
+public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNode<TU>, new() {
 
     public readonly NineGridNode BackgroundNode;
     public readonly ImageNode CollapseArrowNode;
@@ -110,27 +110,25 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         OptionListNode.Position = new Vector2(4.0f, Height - 3.0f);
     }
 
+    public Action<bool>? OnCollapseToggled { get; set; }
+    public Action? OnUncollapsed { get; set; }
+    public Action? OnCollapsed { get; set; }
+
+    public bool IsEnabled { get; set; } = true;
+    
     public void Toggle() {
+        if (!IsEnabled) return;
+
         IsCollapsed = !IsCollapsed;
         Timeline?.PlayAnimation(IsCollapsed ? 4 : 11);
         OptionListNode.Toggle(!IsCollapsed);
 
-        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
-        if (parentAddon is not null) {
-
-            if (!IsCollapsed) {
-                OptionListNode.Position = ScreenPosition + Size with {
-                    X = 0.0f,
-                } - new Vector2(parentAddon->X, parentAddon->Y) - new Vector2(0.0f, 4.0f);
-
-                DropDownFocusCollisionNode.Position = -OptionListNode.Position;
-                DropDownFocusCollisionNode.Size = new Vector2(parentAddon->RootNode->Width, parentAddon->RootNode->Height);
-
-                OptionListNode.ReattachNode(parentAddon->RootNode);
-            }
-            else {
-                OptionListNode.ReattachNode(this);
-            }
+        OnCollapseToggled?.Invoke(IsCollapsed);
+        if (IsCollapsed) {
+            OnCollapsed?.Invoke();
+        }
+        else {
+            OnUncollapsed?.Invoke();
         }
     }
 
