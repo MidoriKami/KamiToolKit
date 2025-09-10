@@ -19,7 +19,7 @@ public abstract unsafe partial class NodeBase {
 
     private readonly Dictionary<AddonEventType, EventHandler> eventHandlers = [];
 
-    public SeString? Tooltip {
+    public virtual SeString? Tooltip {
         get;
         set {
             if (value is not null && !value.TextValue.IsNullOrEmpty()) {
