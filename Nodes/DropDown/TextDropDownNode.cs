@@ -11,7 +11,7 @@ public class TextDropDownNode : DropDownNode<TextListNode, string> {
 
     public Action<string>? OnOptionSelected { get; set; }
 
-    public required List<string>? Options {
+    public required List<string>? Options { // todo: Investigate why changing this after init, explodes.
         get => OptionListNode.Options;
         set {
             OptionListNode.Options = value;
