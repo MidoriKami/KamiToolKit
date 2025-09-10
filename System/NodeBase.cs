@@ -57,14 +57,18 @@ public abstract unsafe partial class NodeBase : IDisposable {
     ///     If our node is focused via AtkInputManager, change the focus to be the windows root node instead.
     /// </summary>
     private void ClearFocus() {
+        if (InternalResNode is null) return;
+        
         var inputManager = AtkStage.Instance()->AtkInputManager;
-
+        if (inputManager is null) return;
+        
         foreach (var focusEntry in inputManager->FocusList) {
             if (focusEntry.AtkEventListener is null) continue;
             if (focusEntry.AtkEventTarget is null) continue;
 
             // Potentially Explosive, may need to consider checking if this is an AtkUnitBase
             var addon = (AtkUnitBase*)focusEntry.AtkEventListener;
+            if (addon->RootNode is null) continue;
 
             // If this focus entry has our custom node focused, redirect the focus to RootNode
             if (focusEntry.AtkEventTarget == InternalResNode) {
