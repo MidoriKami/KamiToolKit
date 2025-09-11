@@ -68,6 +68,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
             // Potentially Explosive, may need to consider checking if this is an AtkUnitBase
             var addon = (AtkUnitBase*)focusEntry.AtkEventListener;
+            if (addon->VirtualTable != AtkUnitBase.StaticVirtualTablePointer) continue;
             if (addon->RootNode is null) continue;
 
             // If this focus entry has our custom node focused, redirect the focus to RootNode
