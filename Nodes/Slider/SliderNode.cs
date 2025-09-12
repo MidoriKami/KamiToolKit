@@ -49,7 +49,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
             IsVisible = true,
             FontType = FontType.Axis,
             FontSize = 12,
-            AlignmentType = AlignmentType.Left,
+            AlignmentType = AlignmentType.TopLeft,
         };
         ValueNode.AttachNode(this);
 
@@ -103,19 +103,23 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        SliderBackgroundButtonNode.Size = new Vector2(Width - 24.0f, Height);
-        ProgressTextureNode.Size = new Vector2(Width, Height / 2.0f - 1.0f);
-        ProgressTextureNode.Y = Height / 4.0f;
-        ValueNode.Position = new Vector2(Width - 24.0f, Height / 4.0f);
-        SliderForegroundButtonNode.Size = new Vector2(Height / 2.0f, Height / 2.0f - 1.0f);
-        SliderForegroundButtonNode.Y = Height / 4.0f;
+        SliderBackgroundButtonNode.Size = new Vector2(Width - 24.0f, Height / 2.0f);
+        SliderBackgroundButtonNode.Position = new Vector2(0.0f, 4.0f);
+
+        ProgressTextureNode.Size = new Vector2(0.0f, Height / 2.0f - 1.0f);
+        ProgressTextureNode.Position = new Vector2(0.0f, 4.0f);
+
+        SliderForegroundButtonNode.Size = new Vector2(Height - 4.0f, Height - 4.0f);
+        SliderForegroundButtonNode.Position = new Vector2(0.0f, 0.0f);
+
+        ValueNode.Size = new Vector2(0.0f, Height);
+        ValueNode.Position = new Vector2(Width - 22.0f, 0.0f);
 
         Component->SliderSize = (short)Width;
     }
 
-    private void ValueChangedHandler(AddonEventData obj) {
-        OnValueChanged?.Invoke(Value);
-    }
+    private void ValueChangedHandler(AddonEventData obj)
+        => OnValueChanged?.Invoke(Value);
 
     private void BuildTimelines() {
         AddTimeline(new TimelineBuilder()

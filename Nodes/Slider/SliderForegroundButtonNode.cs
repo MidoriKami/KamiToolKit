@@ -18,7 +18,7 @@ public class SliderForegroundButtonNode : ComponentNode<AtkComponentButton, AtkU
             TextureSize = new Vector2(14.0f, 15.0f),
             Size = new Vector2(14.0f, 15.0f),
             IsVisible = true,
-            WrapMode = WrapMode.Tile,
+            WrapMode = WrapMode.Stretch,
         };
         HandleNode.AttachNode(this);
 
