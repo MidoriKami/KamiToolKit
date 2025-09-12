@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
@@ -116,12 +117,30 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
 
     public bool IsEnabled { get; set; } = true;
     
-    public void Toggle() {
+    public unsafe void Toggle() {
         if (!IsEnabled) return;
 
         IsCollapsed = !IsCollapsed;
         Timeline?.PlayAnimation(IsCollapsed ? 4 : 11);
         OptionListNode.Toggle(!IsCollapsed);
+        
+        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
+        if (parentAddon is not null) {
+
+            if (!IsCollapsed) {
+                OptionListNode.Position = ScreenPosition + Size with {
+                    X = 0.0f,
+                } - new Vector2(parentAddon->X, parentAddon->Y) - new Vector2(0.0f, 4.0f);
+
+                DropDownFocusCollisionNode.Position = -OptionListNode.Position;
+                DropDownFocusCollisionNode.Size = new Vector2(parentAddon->RootNode->Width, parentAddon->RootNode->Height);
+
+                OptionListNode.ReattachNode(parentAddon->RootNode);
+            }
+            else {
+                OptionListNode.ReattachNode(this);
+            }
+        }
 
         OnCollapseToggled?.Invoke(IsCollapsed);
         if (IsCollapsed) {
