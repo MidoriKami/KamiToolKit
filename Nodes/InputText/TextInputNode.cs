@@ -125,16 +125,12 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         Data->Nodes[14] = SelectionListNode.BackgroundNode.NodeId;
         Data->Nodes[15] = TextLimitsNode.NodeId;
 
-        Data->CandidateColor = new ByteColor {
-            R = 66,
-        };
-        Data->IMEColor = new ByteColor {
-            R = 67,
-        };
+        Data->CandidateColor = new ByteColor { R = 66 }; 
+        Data->IMEColor = new ByteColor { R = 67 };
         Data->FocusColor = KnownColor.Black.Vector().ToByteColor();
 
-        Flags1 = TextInputFlags1.EnableIME | TextInputFlags1.AllowUpperCase | TextInputFlags1.AllowLowerCase | TextInputFlags1.EnableDictionary;
-        Flags2 = TextInputFlags2.AllowNumberInput | TextInputFlags2.AllowSymbolInput;
+        Flags = TextInputFlags.EnableIme | TextInputFlags.AllowUpperCase | TextInputFlags.AllowLowerCase | 
+                TextInputFlags.EnableDictionary | TextInputFlags.AllowNumberInput | TextInputFlags.AllowSymbolInput;
 
         LoadTimelines();
 
@@ -171,14 +167,12 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         set => TextLimitsNode.IsVisible = value;
     }
 
-    public TextInputFlags1 Flags1 {
-        get => Data->Flags1;
-        set => Data->Flags1 = value;
-    }
-
-    public TextInputFlags2 Flags2 {
-        get => Data->Flags2;
-        set => Data->Flags2 = value;
+    public TextInputFlags Flags {
+        get => (TextInputFlags) ((byte)Data->Flags1 | (byte)Data->Flags2 << 8);
+        set {
+            Data->Flags1 = (TextInputFlags1)((ushort)value & 0xFF);
+            Data->Flags2 = (TextInputFlags2)((ushort)value >> 8);
+        }
     }
 
     public SeString SeString {
