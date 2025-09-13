@@ -125,7 +125,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        SliderBackgroundButtonNode.Size = new Vector2(Width - 24.0f, Height / 2.0f);
+        SliderBackgroundButtonNode.Size = new Vector2(Width - 18.0f, Height / 2.0f);
         SliderBackgroundButtonNode.Position = new Vector2(0.0f, 4.0f);
 
         ProgressTextureNode.Size = new Vector2(0.0f, Height / 2.0f - 1.0f);
@@ -135,10 +135,10 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         SliderForegroundButtonNode.Position = new Vector2(0.0f, 0.0f);
 
         ValueNode.Size = new Vector2(0.0f, Height);
-        ValueNode.Position = new Vector2(Width - 22.0f, 0.0f);
+        ValueNode.Position = new Vector2(Width - 18.0f, 0.0f);
         
         FloatValueNode.Size = new Vector2(0.0f, Height);
-        FloatValueNode.Position = new Vector2(Width - 22.0f, 0.0f);
+        FloatValueNode.Position = new Vector2(Width - 18.0f, 0.0f);
 
         Component->SliderSize = (short)Width;
     }
