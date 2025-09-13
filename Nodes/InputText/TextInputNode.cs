@@ -196,7 +196,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         get => Component->UnkText1.ToString();
         set {
             Component->SetText(value);
-            PlaceholderTextNode.IsVisible = PlaceholderString is not null && value.IsNullOrEmpty();
+            PlaceholderTextNode.IsVisible = PlaceholderString is not null && value.IsNullOrEmpty() && !FocusNode.IsVisible;
         }
     }
 
