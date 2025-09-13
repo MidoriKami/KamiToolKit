@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -201,20 +200,25 @@ public unsafe class NativeController : IDisposable {
         stopwatch.LogTime("CALLER ASSEMBLY");
     }
     
-    private static List<MemberInfo> GetMembers(Type type)
-        => type.GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-            .Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property)
-            .Where(member => typeof(NodeBase).IsAssignableFrom(GetMemberType(member)))
-            .Where(IsMemberSingleIndexable)
-            .ToList();
+    private static List<MemberInfo> GetMembers(Type type) {
+        var members = type.GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+        var targetMembers = members.Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property);
+        var assignableMembers = targetMembers.Where(member => typeof(NodeBase).IsAssignableFrom(GetMemberType(member)));
+        var indexableMembers = assignableMembers.Where(IsMemberSingleIndexable);
+        var finalList = indexableMembers.ToList();
+        
+        return finalList;
+    }
 
-    private static List<MemberInfo> GetEnumerables(Type type)
-        => type.GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-            .Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property)
-            .Where(member => GetMemberType(member)?.GetInterfaces().Contains(typeof(IEnumerable)) ?? false)
-            .Where(IsEnumerableOrArray)
-            .Where(IsMemberSingleIndexable)
-            .ToList();
+    private static List<MemberInfo> GetEnumerables(Type type) {
+        var members = type.GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+        var targetMembers = members.Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property);
+        var enumerableMembers = targetMembers.Where(IsEnumerableOrArray);
+        var indexableMembers = enumerableMembers.Where(IsMemberSingleIndexable);
+        var finalList = indexableMembers.ToList();
+        
+        return finalList;
+    }
 
     private static Type? GetMemberType(MemberInfo member) => member.MemberType switch {
         MemberTypes.Field => (member as FieldInfo)?.FieldType,
