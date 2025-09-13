@@ -139,6 +139,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         InitializeComponentEvents();
 
         CollisionNode.AddEvent(AddonEventType.InputReceived, InputComplete);
+
         CollisionNode.AddEvent(AddonEventType.FocusStart, _ => {
             PlaceholderTextNode.IsVisible = false;
             OnFocused?.Invoke();
@@ -151,6 +152,14 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
                 PlaceholderTextNode.String = PlaceholderString;
             }
         });
+    }
+
+    protected override void Dispose(bool disposing) {
+        if (disposing) {
+            NativeMemoryHelper.Free(virtualTable, 0x8 * 10);
+
+            base.Dispose(disposing);
+        }
     }
 
     public Action<SeString>? OnInputReceived { get; set; }
