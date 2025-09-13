@@ -1,4 +1,8 @@
-﻿using Dalamud.Bindings.ImGui;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 
@@ -13,7 +17,25 @@ public class ReflectionDebugWindow() : Window("Reflection Debug Window") {
     }
 
     public override void Draw() {
-        foreach (var (type, subtypes) in NativeController.ChildMembers) {
+        Dictionary<Type, List<MemberInfo>> combinedTypes = [];
+
+        foreach (var (type, members) in NativeController.ChildMembers) {
+            combinedTypes.TryAdd(type, []);
+
+            foreach (var member in members) {
+                combinedTypes[type].Add(member);
+            }
+        }
+
+        foreach (var (type, members) in NativeController.EnumerableMembers) {
+            combinedTypes.TryAdd(type, []);
+
+            foreach (var member in members) {
+                combinedTypes[type].Add(member);
+            }
+        }
+        
+        foreach (var (type, subtypes) in combinedTypes.OrderBy(pair => pair.Key.Name)) {
             using var header = ImRaii.TreeNode(type.ToString());
             if (header) {
                 foreach (var subtype in subtypes) {
