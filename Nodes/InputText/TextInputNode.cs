@@ -17,7 +17,7 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldComponentDataTextInput> {
 
-    public delegate void TextInputVirtualFuncDelegate(AtkTextInput.AtkTextInputEventInterface* listener, ushort* numEvents);
+    public delegate void TextInputVirtualFuncDelegate(AtkTextInput.AtkTextInputEventInterface* listener, TextSelectionInfo* numEvents);
 
     public readonly NineGridNode BackgroundNode;
     public readonly TextNode CurrentTextNode;
@@ -31,7 +31,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
     public Action? OnUnfocused;
 
-    private delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, ushort*, void> originalFunction;
+    private delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, TextSelectionInfo*, void> originalFunction;
     private TextInputVirtualFuncDelegate? pinnedFunction;
 
     private AtkTextInputEventInterfaceVirtualTable* virtualTable;
@@ -208,8 +208,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    private void FocusStart(AddonEventData obj)
-        => OnFocused?.Invoke();
+    public bool AutoSelectAll { get; set; }
 
     private void SetupVirtualTable() {
 
@@ -221,28 +220,32 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
         eventInterface->VirtualTable = virtualTable;
 
-        pinnedFunction = OnInputChanged;
+        pinnedFunction = OnCursorChanged;
 
-        originalFunction = virtualTable->OnInputReceived;
-        virtualTable->OnInputReceived = (delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, ushort*, void>)Marshal.GetFunctionPointerForDelegate(pinnedFunction);
+        originalFunction = virtualTable->UpdateCursor;
+        virtualTable->UpdateCursor = (delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, TextSelectionInfo*, void>)Marshal.GetFunctionPointerForDelegate(pinnedFunction);
     }
+    
+    private void OnCursorChanged(AtkTextInput.AtkTextInputEventInterface* listener, TextSelectionInfo* numEvents) {
+        var applySelectAll = !FocusNode.IsVisible && AutoSelectAll;
 
-    private void OnInputChanged(AtkTextInput.AtkTextInputEventInterface* listener, ushort* numEvents) {
+        if (applySelectAll) {
+            numEvents->SelectionStart = 0;
+            numEvents->SelectionEnd = numEvents->StringLength;
+        }
+
         originalFunction(listener, numEvents);
+
+        if (applySelectAll) {
+            Marshal.WriteInt16((nint)AtkStage.Instance()->AtkInputManager->TextInput, 222, 0);
+            Marshal.WriteInt16((nint)AtkStage.Instance()->AtkInputManager->TextInput, 224, (short)numEvents->StringLength);
+        }
 
         try {
             OnInputReceived?.Invoke(SeString.Parse(Component->UnkText1));
         }
         catch (Exception e) {
             Log.Exception(e);
-        }
-    }
-
-    protected override void Dispose(bool disposing) {
-        if (disposing) {
-            NativeMemoryHelper.Free(virtualTable, 0x8 * 10);
-
-            base.Dispose(disposing);
         }
     }
 
@@ -308,6 +311,14 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
     [StructLayout(LayoutKind.Explicit, Size = 0x8 * 5)]
     public struct AtkTextInputEventInterfaceVirtualTable {
-        [FieldOffset(8)] public delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, ushort*, void> OnInputReceived;
+        [FieldOffset(8)] public delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, TextSelectionInfo*, void> UpdateCursor;
+    }
+
+    [StructLayout(LayoutKind.Explicit, Size = 0x8)]
+    public struct TextSelectionInfo {
+        [FieldOffset(0x0)] public bool CharacterAdded;
+        [FieldOffset(0x2)] public ushort SelectionStart;
+        [FieldOffset(0x4)] public ushort SelectionEnd;
+        [FieldOffset(0x6)] public ushort StringLength;
     }
 }
