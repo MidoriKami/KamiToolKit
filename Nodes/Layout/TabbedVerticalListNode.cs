@@ -11,6 +11,9 @@ public class TabbedVerticalListNode : SimpleComponentNode {
 
     private List<TabbedNodeEntry<NodeBase>> nodeList = [];
 
+    // Secondary list maintained so reflection can find the contained nodes to enable/dispose
+    private List<NodeBase> internalNodes = [];
+
     [JsonProperty] public float TabSize { get; set; } = 18.0f;
 
     [JsonProperty] public float ItemVerticalSpacing { get; set; }
@@ -41,6 +44,7 @@ public class TabbedVerticalListNode : SimpleComponentNode {
 
     public void AddNode(int tabIndex, NodeBase node) {
         nodeList.Add(new TabbedNodeEntry<NodeBase>(node, tabIndex + TabStep));
+        internalNodes.Add(node);
 
         node.AttachNode(this);
         node.NodeId = (uint)nodeList.Count + 1;
@@ -60,6 +64,7 @@ public class TabbedVerticalListNode : SimpleComponentNode {
 
         target.Node.DetachNode();
         nodeList.Remove(target);
+        internalNodes.Remove(node);
         RecalculateLayout();
     }
 
