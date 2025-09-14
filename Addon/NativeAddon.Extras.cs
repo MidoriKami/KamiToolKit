@@ -30,6 +30,7 @@ public abstract unsafe partial class NativeAddon {
     private static void DisposeExtras() {
         if (CreatedAddons.Count is 0) {
             fireCallbackHook?.Dispose();
+            fireCallbackHook = null;
         }
     }
 }
