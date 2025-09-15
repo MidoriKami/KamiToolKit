@@ -70,6 +70,8 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         get => Component->MouseWheelSpeed;
         set => Component->MouseWheelSpeed = (short)value;
     }
+    
+    public bool HideWhenDisabled { get; set; }
 
     private void UpdateHandler(AddonEventData obj) {
         OnValueChanged?.Invoke(Component->PendingScrollPosition);
@@ -116,6 +118,13 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
             }
         }
 
-        Component->SetEnabledState(Component->EmptyLength is not 0);
+        var enabledState = Component->EmptyLength is not 0;
+        
+        Component->SetEnabledState(enabledState);
+
+        if (HideWhenDisabled) {
+            BackgroundButtonNode.IsVisible = enabledState;
+            ForegroundButtonNode.IsVisible = enabledState;
+        }
     }
 }

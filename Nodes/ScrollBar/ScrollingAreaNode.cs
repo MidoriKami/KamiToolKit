@@ -85,6 +85,11 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
         }
     }
 
+    public bool AutoHideScrollBar {
+        get => ScrollBarNode.HideWhenDisabled;
+        set => ScrollBarNode.HideWhenDisabled = value;
+    }
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
