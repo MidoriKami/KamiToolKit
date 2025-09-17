@@ -128,9 +128,8 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
         if (parentAddon is not null) {
 
             if (!IsCollapsed) {
-                OptionListNode.Position = ScreenPosition + Size with {
-                    X = 0.0f,
-                } - new Vector2(parentAddon->X, parentAddon->Y) - new Vector2(0.0f, 4.0f);
+                OptionListNode.Position = Position + Size with { X = 0.0f } - new Vector2(4.0f, 4.0f);
+                MoveListOnScreen();
 
                 DropDownFocusCollisionNode.Position = -OptionListNode.Position;
                 DropDownFocusCollisionNode.Size = new Vector2(parentAddon->RootNode->Width, parentAddon->RootNode->Height);
@@ -139,6 +138,8 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
             }
             else {
                 OptionListNode.ReattachNode(this);
+                // Need to reset position after reattaching, so screen position is recalculated correctly
+                OptionListNode.Position = Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
             }
         }
 
@@ -148,6 +149,27 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
         }
         else {
             OnUncollapsed?.Invoke();
+        }
+    }
+    
+    private unsafe void MoveListOnScreen() {
+        var screenSize = AtkStage.Instance()->ScreenSize;
+        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
+        if (parentAddon == null) {
+            return;
+        }
+
+        var scale = parentAddon->Scale;
+        var scaledListSize = OptionListNode.Size * scale;
+        if (ScreenPosition.X + scaledListSize.X > screenSize.Width) {
+            OptionListNode.X += (screenSize.Width - OptionListNode.ScreenPosition.X - scaledListSize.X - 4f) / scale;
+        }
+        else if (ScreenPosition.X < 0) {
+            OptionListNode.X -= OptionListNode.ScreenPosition.X / scale;
+        }
+
+        if (OptionListNode.ScreenPosition.Y + scaledListSize.Y > screenSize.Height) {
+            OptionListNode.Y += (screenSize.Height - OptionListNode.ScreenPosition.Y - scaledListSize.Y) / scale;
         }
     }
 
