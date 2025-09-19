@@ -8,6 +8,14 @@ using KamiToolKit.Extensions;
 
 namespace KamiToolKit;
 
+public class AddonController : AddonController<AtkUnitBase> {
+    public AddonController(string addonName) : base(addonName) {
+    }
+
+    public AddonController(IDalamudPluginInterface pluginInterface) : base(pluginInterface) {
+    }
+}
+
 /// <summary>
 ///     This class provides functionality to add-and manage custom elements for any Addon
 /// </summary>
