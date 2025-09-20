@@ -129,7 +129,6 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
 
             if (!IsCollapsed) {
                 OptionListNode.Position = Position + Size with { X = 0.0f } - new Vector2(4.0f, 4.0f);
-                MoveListOnScreen();
 
                 DropDownFocusCollisionNode.Position = -OptionListNode.Position;
                 DropDownFocusCollisionNode.Size = new Vector2(parentAddon->RootNode->Width, parentAddon->RootNode->Height);
@@ -138,8 +137,6 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
             }
             else {
                 OptionListNode.ReattachNode(this);
-                // Need to reset position after reattaching, so screen position is recalculated correctly
-                OptionListNode.Position = Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
             }
         }
 
@@ -149,19 +146,6 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
         }
         else {
             OnUncollapsed?.Invoke();
-        }
-    }
-    
-    private unsafe void MoveListOnScreen() {
-        var screenSize = AtkStage.Instance()->ScreenSize;
-        if (OptionListNode.ScreenPosition.X + OptionListNode.Width > screenSize.Width) {
-            OptionListNode.X += screenSize.Width - (OptionListNode.ScreenPosition.X + OptionListNode.Width) + 9f;
-        } else if (OptionListNode.ScreenPosition.X < 0) {
-            OptionListNode.X -= OptionListNode.ScreenPosition.X;
-        }
-
-        if (OptionListNode.ScreenPosition.Y + OptionListNode.Height > screenSize.Height) {
-            OptionListNode.Y += screenSize.Height - (OptionListNode.ScreenPosition.Y + OptionListNode.Height);
         }
     }
 
