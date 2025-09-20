@@ -128,7 +128,9 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
         if (parentAddon is not null) {
 
             if (!IsCollapsed) {
-                OptionListNode.Position = Position + Size with { X = 0.0f } - new Vector2(4.0f, 4.0f);
+                OptionListNode.Position = ScreenPosition + Size with {
+                    X = 0.0f,
+                } - new Vector2(parentAddon->X, parentAddon->Y) - new Vector2(0.0f, 4.0f);
 
                 DropDownFocusCollisionNode.Position = -OptionListNode.Position;
                 DropDownFocusCollisionNode.Size = new Vector2(parentAddon->RootNode->Width, parentAddon->RootNode->Height);
