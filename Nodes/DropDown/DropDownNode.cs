@@ -154,22 +154,14 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
     
     private unsafe void MoveListOnScreen() {
         var screenSize = AtkStage.Instance()->ScreenSize;
-        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
-        if (parentAddon == null) {
-            return;
+        if (OptionListNode.ScreenPosition.X + OptionListNode.Width > screenSize.Width) {
+            OptionListNode.X += screenSize.Width - (OptionListNode.ScreenPosition.X + OptionListNode.Width) + 9f;
+        } else if (OptionListNode.ScreenPosition.X < 0) {
+            OptionListNode.X -= OptionListNode.ScreenPosition.X;
         }
 
-        var scale = parentAddon->Scale;
-        var scaledListSize = OptionListNode.Size * scale;
-        if (ScreenPosition.X + scaledListSize.X > screenSize.Width) {
-            OptionListNode.X += (screenSize.Width - ScreenPosition.X - scaledListSize.X - 9f) / scale;
-        }
-        else if (ScreenPosition.X < 0) {
-            OptionListNode.X -= ScreenPosition.X / scale;
-        }
-
-        if (OptionListNode.ScreenPosition.Y + scaledListSize.Y > screenSize.Height) {
-            OptionListNode.Y += (screenSize.Height - OptionListNode.ScreenPosition.Y - scaledListSize.Y + 4f) / scale;
+        if (OptionListNode.ScreenPosition.Y + OptionListNode.Height > screenSize.Height) {
+            OptionListNode.Y += screenSize.Height - (OptionListNode.ScreenPosition.Y + OptionListNode.Height);
         }
     }
 
