@@ -9,14 +9,14 @@ namespace KamiToolKit.Nodes;
 /// </summary>
 public unsafe class TextureImageNode : SimpleImageNode {
     public void SetTexture(Texture* texture) {
-        var asset = PartsList[0].InternalPart->UldAsset;
+        var asset = PartsList[0]->UldAsset;
         asset->AtkTexture.KernelTexture = texture;
         asset->AtkTexture.TextureType = TextureType.KernelTexture;
     }
 
     protected override void Dispose(bool disposing) {
         if (disposing) {
-            var asset = PartsList[0].InternalPart->UldAsset;
+            var asset = PartsList[0]->UldAsset;
             asset->AtkTexture.KernelTexture = null;
             asset->AtkTexture.TextureType = 0;
         }

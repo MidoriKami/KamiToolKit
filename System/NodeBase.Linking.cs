@@ -4,7 +4,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using KamiToolKit.Addon;
 using KamiToolKit.Classes;
-using KamiToolKit.Extensions;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.System;

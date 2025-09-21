@@ -4,7 +4,7 @@ using KamiToolKit.NodeParts;
 
 namespace KamiToolKit.Nodes;
 
-public static class IconNodeTextureHelper {
+public static unsafe class IconNodeTextureHelper {
     public static void LoadIconAFrameTexture(ImageNode image) {
         image.AddPart(new Part {
             Id = 0, TexturePath = "ui/uld/IconA_Frame.tex", Size = new Vector2(48.0f, 48.0f),

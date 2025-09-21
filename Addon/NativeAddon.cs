@@ -4,7 +4,6 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
-using KamiToolKit.Extensions;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Addon;

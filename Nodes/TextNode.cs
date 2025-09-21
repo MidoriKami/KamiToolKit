@@ -4,7 +4,6 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Extensions;
 using KamiToolKit.System;
 using Lumina.Text.ReadOnly;
 using Newtonsoft.Json;

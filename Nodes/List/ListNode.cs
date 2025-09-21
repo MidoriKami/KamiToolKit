@@ -7,7 +7,6 @@ using Dalamud.Game.Addon.Events.EventDataTypes;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
-using KamiToolKit.Extensions;
 
 namespace KamiToolKit.Nodes;
 

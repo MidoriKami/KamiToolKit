@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -8,11 +6,9 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.NodeParts;
 
 /// <summary>
-///     Wrapper around a AtkUldPartsList, manages adding and removing multiple parts more easily.
+///     Wrapper around a AtkUldPartsList, manages adding multiple parts more easily.
 /// </summary>
-public unsafe class PartsList : IList<Part>, IDisposable {
-
-    private readonly List<Part> parts = [];
+public unsafe class PartsList : IDisposable {
 
     internal AtkUldPartsList* InternalPartsList;
 
@@ -26,20 +22,19 @@ public unsafe class PartsList : IList<Part>, IDisposable {
         InternalPartsList->Id = 0;
     }
 
-    public uint PartCount {
-        get => InternalPartsList->PartCount;
-        internal set => InternalPartsList->PartCount = value;
-    }
-
-    public uint Id {
-        get => InternalPartsList->Id;
-        set => InternalPartsList->Id = value;
-    }
-
     public void Dispose() {
         if (!isDisposed) {
-            foreach (var part in parts.ToList()) {
-                Remove(part);
+            foreach (var partIndex in Enumerable.Range(0, (int)PartCount)) {
+                ref var part = ref InternalPartsList->Parts[partIndex];
+
+                if (part.UldAsset is not null && part.UldAsset->AtkTexture.TextureType is not 0) {
+                    part.UldAsset->AtkTexture.ReleaseTexture();
+                    part.UldAsset->AtkTexture.TextureType = 0;
+                    part.UldAsset->AtkTexture.Destroy(true);
+                }
+                
+                NativeMemoryHelper.UiFree(part.UldAsset);
+                part.UldAsset = null;
             }
 
             NativeMemoryHelper.UiFree(InternalPartsList);
@@ -49,90 +44,41 @@ public unsafe class PartsList : IList<Part>, IDisposable {
         isDisposed = true;
     }
 
-    public IEnumerator<Part> GetEnumerator()
-        => parts.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator()
-        => GetEnumerator();
-
-    public void Add(Part item) {
-        NativeMemoryHelper.ResizeArray(ref InternalPartsList->Parts, PartCount, PartCount + 1);
-
-        // Add new part on end of buffer
-        InternalPartsList->Parts[PartCount] = *item.InternalPart;
-
-        // Now that we have the data copied into the new array, update the pointer and free old memory
-        var allocatedPart = item.InternalPart;
-        item.InternalPart = &InternalPartsList->Parts[PartCount];
-        NativeMemoryHelper.UiFree(allocatedPart);
-
-        // Update Parts List
-        PartCount++;
-        parts.Add(item);
-    }
-
-    public void Clear() {
-        NativeMemoryHelper.UiFree(InternalPartsList->Parts, PartCount);
-        PartCount = 0;
-    }
-
-    public bool Contains(Part item)
-        => parts.Contains(item);
-
-    public void CopyTo(Part[] array, int arrayIndex)
-        => parts.CopyTo(array, arrayIndex);
-
-    public bool Remove(Part item) {
-        if (!Contains(item)) return false;
-
-        // Make new buffer to fit new part
-        var newBuffer = NativeMemoryHelper.UiAlloc<AtkUldPart>(PartCount - 1);
-
-        foreach (var index in Enumerable.Range(0, (int)PartCount)) {
-
-            // If this is the item we want to remove, skip.
-            if (&InternalPartsList->Parts[index] == item.InternalPart) continue;
-
-            newBuffer[index] = InternalPartsList->Parts[index];
-        }
-
-        // Free the old buffer
-        NativeMemoryHelper.UiFree(InternalPartsList->Parts, PartCount);
-
-        // Remove the item from the stored collection
-        PartCount--;
-        parts.Remove(item);
-
-        // Assign new parts list to native parts list
-        InternalPartsList->Parts = newBuffer;
-
-        return true;
-    }
-
-    public int Count => parts.Count;
-
-    public bool IsReadOnly => false;
-
-    public int IndexOf(Part item)
-        => parts.IndexOf(item);
-
-    public void Insert(int index, Part item)
-        => throw new Exception("Inserting a part into arbitrary index is not supported.");
-
-    public void RemoveAt(int index)
-        => Remove(parts[index]);
-
-    public Part this[int index] {
-        get => parts[index];
-        set {
-            parts[index] = value;
-            InternalPartsList->Parts[index] = *value.InternalPart;
-        }
+    private uint PartCount {
+        get => InternalPartsList->PartCount;
+        set => InternalPartsList->PartCount = value;
     }
 
     public void Add(params Part[] items) {
         foreach (var part in items) {
             Add(part);
+        }
+    }
+
+    public AtkUldPart* Add(Part item) {
+        NativeMemoryHelper.ResizeArray(ref InternalPartsList->Parts, PartCount, PartCount + 1);
+
+        ref var newPart = ref InternalPartsList->Parts[PartCount];
+
+        newPart.Width = (ushort) item.Width;
+        newPart.Height = (ushort) item.Height;
+        newPart.U = (ushort) item.U;
+        newPart.V = (ushort) item.V;
+        
+        newPart.UldAsset = NativeMemoryHelper.UiAlloc<AtkUldAsset>();
+        newPart.UldAsset->Id = item.Id;
+        newPart.UldAsset->AtkTexture.Ctor();
+        newPart.LoadTexture(item.TexturePath);
+
+        return &InternalPartsList->Parts[PartCount++];
+    }
+
+    public AtkUldPart* this[int index] {
+        get {
+            if (InternalPartsList is null) return null;
+            if (PartCount <= index) return null;
+
+            return &InternalPartsList->Parts[index];
         }
     }
 }

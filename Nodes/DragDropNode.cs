@@ -8,7 +8,6 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
-using KamiToolKit.Extensions;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;

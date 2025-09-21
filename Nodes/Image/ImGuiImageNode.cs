@@ -14,20 +14,20 @@ public class ImGuiImageNode : SimpleImageNode {
 
     public IDalamudTextureWrap? LoadedTexture;
 
-    public override string TexturePath {
+    public override unsafe string TexturePath {
         get => base.TexturePath;
         set {
             if (Path.IsPathRooted(value)) {
                 LoadTextureFromFile(value);
             }
             else if (DalamudInterface.Instance.DataManager.FileExists(value)) {
-                PartsList[0].LoadTexture(value);
+                PartsList[0]->LoadTexture(value);
             }
         }
     }
 
-    public void LoadTexture(IDalamudTextureWrap texture)
-        => PartsList[0].LoadTexture(texture);
+    public unsafe void LoadTexture(IDalamudTextureWrap texture)
+        => PartsList[0]->LoadTexture(texture);
 
     public void LoadTextureFromFile(string fileSystemPath) {
         DalamudInterface.Instance.Framework.RunOnTick(async () => {

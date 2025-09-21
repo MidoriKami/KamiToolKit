@@ -11,7 +11,6 @@ using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
-using KamiToolKit.Extensions;
 
 namespace KamiToolKit.Nodes;
 

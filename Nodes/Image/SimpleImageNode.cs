@@ -9,19 +9,19 @@ namespace KamiToolKit.Nodes;
 ///     part.
 /// </summary>
 /// <remarks>This node is not intended to be used with multiple <see cref="Part" />'s.</remarks>
-public class SimpleImageNode : ImageNode {
+public unsafe class SimpleImageNode : ImageNode {
     public SimpleImageNode() {
         PartsList.Add(new Part());
     }
 
     public float U {
-        get => PartsList[0].U;
-        set => PartsList[0].U = (ushort)value;
+        get => PartsList[0]->U;
+        set => PartsList[0]->U = (ushort)value;
     }
 
     public float V {
-        get => PartsList[0].V;
-        set => PartsList[0].V = (ushort)value;
+        get => PartsList[0]->V;
+        set => PartsList[0]->V = (ushort)value;
     }
 
     public Vector2 TextureCoordinates {
@@ -33,13 +33,13 @@ public class SimpleImageNode : ImageNode {
     }
 
     public float TextureHeight {
-        get => PartsList[0].Height;
-        set => PartsList[0].Height = (ushort)value;
+        get => PartsList[0]->Height;
+        set => PartsList[0]->Height = (ushort)value;
     }
 
     public float TextureWidth {
-        get => PartsList[0].Width;
-        set => PartsList[0].Width = (ushort)value;
+        get => PartsList[0]->Width;
+        set => PartsList[0]->Width = (ushort)value;
     }
 
     public Vector2 TextureSize {
@@ -51,13 +51,13 @@ public class SimpleImageNode : ImageNode {
     }
 
     public virtual string TexturePath {
-        get => PartsList[0].GetLoadedPath();
-        set => PartsList[0].LoadTexture(value);
+        get => PartsList[0]->GetLoadedPath();
+        set => PartsList[0]->LoadTexture(value);
     }
 
     public void LoadTexture(string path)
-        => PartsList[0].LoadTexture(path);
+        => PartsList[0]->LoadTexture(path);
     
     public void LoadIcon(uint iconId, IconSubFolder? language = null)
-        => PartsList[0].LoadIcon(iconId, language);
+        => PartsList[0]->LoadIcon(iconId, language);
 }

@@ -1,7 +1,6 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.STD;
-using KamiToolKit.Extensions;
 
 namespace KamiToolKit.NodeParts;
 

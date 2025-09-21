@@ -77,12 +77,14 @@ public class GifImageNode : ResNode {
 
                 var texture = await DalamudInterface.Instance.TextureProvider.CreateFromRawAsync(RawImageSpecification.Rgba32(frame.Width, frame.Height), buffer);
 
-                var texturePart = new Part {
-                    Size = texture.Size, Id = currentPartId++,
-                };
-
-                texturePart.LoadTexture(texture);
-                ImageNode.AddPart(texturePart);
+                unsafe {
+                    var newPart = ImageNode.AddPart(new Part {
+                        Size = texture.Size, 
+                        Id = currentPartId++,
+                    });
+                
+                    newPart->LoadTexture(texture);
+                }
             }
 
             ImageNode.AddTimeline(new TimelineBuilder()

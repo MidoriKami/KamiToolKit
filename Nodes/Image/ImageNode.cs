@@ -33,7 +33,6 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
     protected override void Dispose(bool disposing) {
         if (disposing) {
             PartsList.Dispose();
-
             base.Dispose(disposing);
         }
     }
@@ -51,6 +50,6 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         }
     }
 
-    public void AddPart(Part part)
+    public AtkUldPart* AddPart(Part part)
         => PartsList.Add(part);
 }

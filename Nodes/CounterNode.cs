@@ -28,18 +28,24 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
     }
 
     public string TexturePath {
-        get => PartsList[0].TexturePath;
-        set => PartsList[0].TexturePath = value;
+        get => PartsList[0]->GetLoadedPath();
+        set => PartsList[0]->LoadTexture(value);
     }
 
     public Vector2 TextureCoordinates {
-        get => PartsList[0].TextureCoordinates;
-        set => PartsList[0].TextureCoordinates = value;
+        get => new(PartsList[0]->U, PartsList[0]->V);
+        set {
+            PartsList[0]->U = (ushort) value.X;
+            PartsList[0]->V = (ushort) value.X;
+        }
     }
 
     public Vector2 TextureSize {
-        get => PartsList[0].Size;
-        set => PartsList[0].Size = value;
+        get => new(PartsList[0]->Width, PartsList[0]->Height);
+        set {
+            PartsList[0]->Width = (ushort) value.X;
+            PartsList[0]->Height = (ushort) value.X;
+        }
     }
 
     public uint PartId {

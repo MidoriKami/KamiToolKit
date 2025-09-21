@@ -11,7 +11,7 @@ using KamiToolKit.System;
 
 namespace KamiToolKit.Nodes;
 
-public class TreeListCategoryNode : ResNode {
+public unsafe class TreeListCategoryNode : ResNode {
 
     public readonly NineGridNode BackgroundNode;
     public readonly ResNode ChildContainer;

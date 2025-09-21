@@ -7,7 +7,7 @@ using KamiToolKit.NodeParts;
 
 namespace KamiToolKit.Nodes;
 
-public class IconExtras : ResNode {
+public unsafe class IconExtras : ResNode {
 
     public readonly AlternateCooldownNode AlternateCooldownNode;
     public readonly AntsNode AntsNode;
@@ -78,7 +78,10 @@ public class IconExtras : ResNode {
         foreach (var xIndex in Enumerable.Range(0, 5)) {
             var coordinate = new Vector2(xIndex * 20.0f, yIndex * 20.0f);
             ChargeCountImageNode.AddPart(new Part {
-                TexturePath = "ui/uld/IconA_ChargeIcon.tex", TextureCoordinates = coordinate, Size = new Vector2(20.0f, 20.0f), Id = (uint)(xIndex + yIndex),
+                TexturePath = "ui/uld/IconA_ChargeIcon.tex", 
+                TextureCoordinates = coordinate, 
+                Size = new Vector2(20.0f, 20.0f), 
+                Id = (uint)(xIndex + yIndex),
             });
         }
         ChargeCountImageNode.AttachNode(this);

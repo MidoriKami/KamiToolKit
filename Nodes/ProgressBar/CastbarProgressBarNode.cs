@@ -2,7 +2,6 @@
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
-using KamiToolKit.Extensions;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;

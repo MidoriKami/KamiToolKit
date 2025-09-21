@@ -26,6 +26,7 @@ public class WindowBackgroundNode : NineGridNode {
                 TextureCoordinates = new Vector2(0.0f, 64.0f), Size = new Vector2(32.0f, 32.0f), Id = 7, TexturePath = $"{basePath}_H.tex",
             }, new Part {
                 TextureCoordinates = new Vector2(16.0f, 64.0f), Size = new Vector2(16.0f, 32.0f), Id = 8, TexturePath = $"{basePath}_Corner.tex",
-            });
+            }
+        );
     }
 }
