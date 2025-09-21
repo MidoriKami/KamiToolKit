@@ -52,4 +52,7 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
 
     public AtkUldPart* AddPart(Part part)
         => PartsList.Add(part);
+    
+    public void AddPart(params Part[] parts)
+        => PartsList.Add(parts);
 }
