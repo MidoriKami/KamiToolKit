@@ -68,7 +68,9 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
         }
     }
 
-    /// The image node will take ownership of any parts added, be sure not to share parts between nodes
-    public void AddPart(Part part)
+    public AtkUldPart* AddPart(Part part)
         => PartsList.Add(part);
+    
+    public void AddPart(params Part[] parts)
+        => PartsList.Add(parts);
 }
