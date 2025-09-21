@@ -15,9 +15,16 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         Node->PartsList = PartsList.InternalPartsList;
     }
 
+    protected override void Dispose(bool disposing) {
+        if (disposing) {
+            PartsList.Dispose();
+            base.Dispose(disposing);
+        }
+    }
+
     public uint PartId {
         get => Node->PartId;
-        set => Node->PartId = (ushort)value;
+        set => Node->PartId = (ushort) value;
     }
 
     public WrapMode WrapMode {
@@ -27,14 +34,7 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
 
     public ImageNodeFlags ImageNodeFlags {
         get => (ImageNodeFlags)Node->Flags;
-        set => Node->Flags = (byte)value;
-    }
-
-    protected override void Dispose(bool disposing) {
-        if (disposing) {
-            PartsList.Dispose();
-            base.Dispose(disposing);
-        }
+        set => Node->Flags = (byte) value;
     }
     
     /// <summary>
