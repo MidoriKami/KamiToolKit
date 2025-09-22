@@ -1,4 +1,5 @@
-﻿using Dalamud.Utility.Signatures;
+﻿using System.Diagnostics;
+using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
@@ -18,9 +19,9 @@ public unsafe class Experimental {
     [Signature("E8 ?? ?? ?? ?? 49 8B 84 FF ?? ?? ?? ??")]
     public SetFocusDelegate? SetFocus = null;
 
-#if DEBUG
     // WARNING: May result in undefined state or accidental network requests
     // Use at your own risk.
+    [Conditional("DEBUG")]
     public static void ForceOpenAddon(AgentId agentId)
         => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
             AgentModule.Instance()->GetAgentByInternalId(agentId)->Show();
@@ -28,9 +29,9 @@ public unsafe class Experimental {
 
     // WARNING: May result in undefined state or accidental network requests
     // Use at your own risk.
+    [Conditional("DEBUG")]
     public static void ForceCloseAddon(AgentId agentId)
         => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
             AgentModule.Instance()->GetAgentByInternalId(agentId)->Hide();
         });
-#endif
 }
