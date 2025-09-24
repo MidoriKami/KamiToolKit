@@ -16,8 +16,10 @@ public unsafe class IconImageNode : SimpleImageNode {
     public uint IconId {
         get;
         set {
-            field = value;
-            PartsList[0]->LoadIcon(value);
+            if (value != field) {
+                field = value;
+                PartsList[0]->LoadIcon(value);
+            }
         }
     }
 
