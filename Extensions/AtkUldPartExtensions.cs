@@ -13,8 +13,7 @@ public static unsafe class AtkUldPartExtensions {
         try {
             if (part.UldAsset is null) return;
 
-            part.UldAsset->AtkTexture.ReleaseTexture();
-            part.UldAsset->AtkTexture.TextureType = 0;
+            part.TryUnloadTexture();
 
             var texturePath = path.Replace("_hr1", string.Empty);
 
@@ -45,9 +44,7 @@ public static unsafe class AtkUldPartExtensions {
     public static void LoadTexture(ref this AtkUldPart part, Texture* texture) {
         if (part.UldAsset is null) return;
         
-        part.UldAsset->AtkTexture.ReleaseTexture();
-        part.UldAsset->AtkTexture.TextureType = 0;
-
+        part.TryUnloadTexture();
         part.UldAsset->AtkTexture.KernelTexture = texture;
         part.UldAsset->AtkTexture.TextureType = TextureType.KernelTexture;
     }
@@ -94,4 +91,15 @@ public static unsafe class AtkUldPartExtensions {
     
     private static string GetString(byte* buffer)
         => MemoryMarshal.CreateReadOnlySpanFromNullTerminated(buffer).GetString();
+
+    private static void TryUnloadTexture(ref this AtkUldPart part) {
+        if (part.UldAsset is null) return;
+        if (!part.UldAsset->AtkTexture.IsTextureReady()) return;
+        if (part.UldAsset->AtkTexture.TextureType is not TextureType.KernelTexture) return;
+        if (part.UldAsset->AtkTexture.KernelTexture is null) return;
+
+        part.UldAsset->AtkTexture.ReleaseTexture();
+        part.UldAsset->AtkTexture.KernelTexture = null;
+        part.UldAsset->AtkTexture.TextureType = 0;
+    }
 }
