@@ -62,18 +62,14 @@ public abstract unsafe partial class NodeBase : IDisposable {
         var inputManager = AtkStage.Instance()->AtkInputManager;
         if (inputManager is null) return;
         
-        foreach (var focusEntry in inputManager->FocusList) {
+        foreach (ref var focusEntry in inputManager->FocusList) {
             if (focusEntry.AtkEventListener is null) continue;
-            if (focusEntry.AtkEventTarget is null) continue;
 
-            // Potentially Explosive, may need to consider checking if this is an AtkUnitBase
-            var addon = (AtkUnitBase*)focusEntry.AtkEventListener;
-            if (addon->RootNode is null) continue;
-
-            // If this focus entry has our custom node focused, redirect the focus to RootNode
+            // If this focus entry has our custom node focused, unfocus the node.
             if (focusEntry.AtkEventTarget == InternalResNode) {
-                Log.Debug($"Custom Node was focused during dispose, Addon: {addon->NameString}, unfocusing node.");
-                Experimental.Instance.SetFocus?.Invoke(inputManager, addon->RootNode, addon, focusEntry.Unk10);
+                Log.Debug($"Custom Node was focused during dispose, Addon: {((AtkUnitBase*)focusEntry.AtkEventListener)->NameString}, unfocusing node.");
+                focusEntry.AtkEventTarget = null;
+                focusEntry.Unk10 = 0;
             }
         }
     }
