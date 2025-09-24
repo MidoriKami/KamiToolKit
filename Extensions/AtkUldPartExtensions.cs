@@ -31,15 +31,8 @@ public static unsafe class AtkUldPartExtensions {
         }
     }
 
-    public static void LoadIcon(ref this AtkUldPart part, uint iconId, IconSubFolder? alternateFolder = null) {
-        var iconPath = GetPathForIcon(iconId, alternateFolder);
-        if (iconPath != string.Empty) {
-            part.LoadTexture(GetPathForIcon(iconId, alternateFolder));
-        }
-        else {
-            Log.Warning($"Unable to get texture path for icon: {iconId}");
-        }
-    }
+    public static void LoadIcon(ref this AtkUldPart part, uint iconId)
+        => part.UldAsset->AtkTexture.LoadIconTexture(iconId, GetIconSubFolder(iconId));
 
     public static void LoadTexture(ref this AtkUldPart part, Texture* texture) {
         if (part.UldAsset is null) return;
@@ -66,36 +59,28 @@ public static unsafe class AtkUldPartExtensions {
 
         return part.UldAsset->AtkTexture.Resource->TexFileResourceHandle->FileName.ToString();
     }
-    
-    public static string GetPathForIcon(uint iconId, IconSubFolder? alternateFolder = null) {
+
+    public static IconSubFolder GetIconSubFolder(uint iconId) {
         var textureManager = AtkStage.Instance()->AtkTextureResourceManager;
         Span<byte> buffer = stackalloc byte[0x100];
         buffer.Clear();
         var bytePointer = (byte*) Unsafe.AsPointer(ref buffer[0]);
 
         var textureScale = textureManager->DefaultTextureScale;
-        alternateFolder ??= (IconSubFolder)textureManager->IconLanguage;
+        var targetFolder = (IconSubFolder)textureManager->IconLanguage;
         
         // Try to resolve the path using the current language
-        AtkTexture.GetIconPath(bytePointer, iconId, textureScale, alternateFolder.Value);
-        var pathResult = GetString(bytePointer);
+        AtkTexture.GetIconPath(bytePointer, iconId, textureScale, targetFolder);
+        var pathResult = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(bytePointer).GetString();
 
         // If the resolved path doesn't exist, re-process with default folder
-        if (!DalamudInterface.Instance.DataManager.FileExists(pathResult)) {
-            AtkTexture.GetIconPath(bytePointer, iconId, textureScale, 0);
-            pathResult = GetString(bytePointer);
-        }
-
-        return DalamudInterface.Instance.DataManager.FileExists(pathResult) ? pathResult : string.Empty;
+        return DalamudInterface.Instance.DataManager.FileExists(pathResult) ? targetFolder : IconSubFolder.None;
     }
-    
-    private static string GetString(byte* buffer)
-        => MemoryMarshal.CreateReadOnlySpanFromNullTerminated(buffer).GetString();
 
     private static void TryUnloadTexture(ref this AtkUldPart part) {
         if (part.UldAsset is null) return;
         if (!part.UldAsset->AtkTexture.IsTextureReady()) return;
-        if (part.UldAsset->AtkTexture.TextureType is not TextureType.KernelTexture) return;
+        if (part.UldAsset->AtkTexture.TextureType is 0) return;
         if (part.UldAsset->AtkTexture.KernelTexture is null) return;
 
         part.UldAsset->AtkTexture.ReleaseTexture();
