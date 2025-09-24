@@ -27,8 +27,9 @@ public unsafe class PartsList : IDisposable {
             foreach (var partIndex in Enumerable.Range(0, (int)PartCount)) {
                 ref var part = ref InternalPartsList->Parts[partIndex];
 
-                if (part.UldAsset is not null) {
+                if (part.UldAsset is not null && part.UldAsset->AtkTexture.IsTextureReady()) {
                     part.UldAsset->AtkTexture.ReleaseTexture();
+                    part.UldAsset->AtkTexture.KernelTexture = null;
                     part.UldAsset->AtkTexture.TextureType = 0;
                     part.UldAsset->AtkTexture.Destroy(true);
                 }
