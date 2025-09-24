@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -70,6 +71,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
                 Log.Debug($"Custom Node was focused during dispose, Addon: {((AtkUnitBase*)focusEntry.AtkEventListener)->NameString}, unfocusing node.");
                 focusEntry.AtkEventTarget = null;
                 focusEntry.Unk10 = 0;
+                Marshal.WriteInt64((nint)inputManager, 0x1880, 0);
+                AtkStage.Instance()->AtkCollisionManager->IntersectingCollisionNode = null;
             }
         }
     }
