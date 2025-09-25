@@ -143,7 +143,9 @@ public unsafe class TreeListCategoryNode : ResNode {
 
     public void AddHeader(SeString label) {
         var newHeaderNode = new TreeListHeaderNode {
-            Size = new Vector2(Width, 24.0f), SeString = label, IsVisible = true,
+            Size = new Vector2(Width, 24.0f), 
+            SeString = label, 
+            IsVisible = true,
         };
 
         AddNode(newHeaderNode);
