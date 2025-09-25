@@ -12,6 +12,7 @@ using KamiToolKit.Addon;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using KamiToolKit.System;
+using Serilog.Events;
 
 namespace KamiToolKit;
 
@@ -39,6 +40,9 @@ public unsafe class NativeController : IDisposable {
 
         GenerateKamiToolKitTypeMaps();
         GenerateCallingAssemblyTypeMap(Assembly.GetCallingAssembly());
+
+        // Force enable Verbose so that users are able to get advanced logging information on request.
+        DalamudInterface.Instance.Log.MinimumLogLevel = LogEventLevel.Verbose;
     }
 
     public void Dispose()
