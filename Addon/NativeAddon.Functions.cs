@@ -126,6 +126,6 @@ public abstract unsafe partial class NativeAddon {
         
         OnRefresh(thisPtr, new Span<AtkValue>(values, (int)valueCount));
         
-        return AtkUnitBase.StaticVirtualTablePointer->OnRefresh(InternalAddon,  valueCount, values);
+        return AtkUnitBase.StaticVirtualTablePointer->OnRefresh(InternalAddon, valueCount, values);
     }
 }

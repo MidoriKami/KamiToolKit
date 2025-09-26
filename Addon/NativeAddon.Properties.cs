@@ -11,61 +11,6 @@ namespace KamiToolKit.Addon;
 
 public abstract unsafe partial class NativeAddon {
 
-    public required string InternalName { get; init; } = "NameNotSet";
-
-    public required SeString Title { get; set; } = "TitleNotSet";
-
-    public SeString Subtitle { get; set; } = string.Empty;
-
-    public required NativeController NativeController { get; init; }
-
-    public int OpenWindowSoundEffectId { get; set; } = 23;
-
-    public TitleMenuOptions TitleMenuOptions {
-        get;
-        set {
-            field = value;
-            if (InternalAddon is not null) {
-                UpdateFlags();
-            }
-        }
-    } = new();
-
-    public WindowOptions WindowOptions {
-        get;
-        set {
-            field = value;
-            if (InternalAddon is not null) {
-                UpdateFlags();
-            }
-        }
-    } = new();
-
-    public required Vector2 Size { get; set; }
-
-    public Vector2 ContentStartPosition => WindowNode.ContentStartPosition + ContentPadding;
-
-    public Vector2 ContentSize => WindowNode.ContentSize - ContentPadding * 2.0f;
-
-    public Vector2 ContentPadding => new(8.0f, 8.0f);
-
-    private Vector2? InternalPosition { get; set; }
-    
-    public float Scale { get; set; }
-
-    public Vector2 Position {
-        get => GetPosition();
-        set => InternalPosition = value;
-    }
-
-    public bool IsOpen => InternalAddon is not null && InternalAddon->IsVisible;
-
-    public int AddonId => InternalAddon is null ? 0 : InternalAddon->Id;
-
-    public bool RememberClosePosition { get; set; } = true;
-
-    public static explicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
-
     private void SetInitialState() {
         WindowNode.SetTitle(Title.ToString(), Subtitle.ToString());
 
@@ -120,7 +65,7 @@ public abstract unsafe partial class NativeAddon {
         WriteIndented = true,
         IncludeFields = true,
     };
-    
+
     private AddonConfig LoadAddonConfig() {
         var directory = DalamudInterface.Instance.PluginInterface.ConfigDirectory;
         var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
@@ -143,7 +88,7 @@ public abstract unsafe partial class NativeAddon {
         
         return addonConfig;
     }
-    
+
     private void SaveAddonConfig() {
         var directory = DalamudInterface.Instance.PluginInterface.ConfigDirectory;
         var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
@@ -157,6 +102,61 @@ public abstract unsafe partial class NativeAddon {
         
         FilesystemUtil.WriteAllTextSafe(file.FullName, data);
     }
+
+    public required string InternalName { get; init; } = "NameNotSet";
+
+    public required SeString Title { get; set; } = "TitleNotSet";
+
+    public SeString Subtitle { get; set; } = string.Empty;
+
+    public required NativeController NativeController { get; init; }
+
+    public int OpenWindowSoundEffectId { get; set; } = 23;
+
+    public TitleMenuOptions TitleMenuOptions {
+        get;
+        set {
+            field = value;
+            if (InternalAddon is not null) {
+                UpdateFlags();
+            }
+        }
+    } = new();
+
+    public WindowOptions WindowOptions {
+        get;
+        set {
+            field = value;
+            if (InternalAddon is not null) {
+                UpdateFlags();
+            }
+        }
+    } = new();
+
+    public required Vector2 Size { get; set; }
+
+    public Vector2 ContentStartPosition => WindowNode.ContentStartPosition + ContentPadding;
+
+    public Vector2 ContentSize => WindowNode.ContentSize - ContentPadding * 2.0f;
+
+    public Vector2 ContentPadding => new(8.0f, 8.0f);
+
+    private Vector2? InternalPosition { get; set; }
+
+    public float Scale { get; set; }
+
+    public Vector2 Position {
+        get => GetPosition();
+        set => InternalPosition = value;
+    }
+
+    public bool IsOpen => InternalAddon is not null && InternalAddon->IsVisible;
+
+    public int AddonId => InternalAddon is null ? 0 : InternalAddon->Id;
+
+    public bool RememberClosePosition { get; set; } = true;
+
+    public static implicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
 }
 
 public class TitleMenuOptions {
@@ -184,7 +184,7 @@ public class WindowOptions {
     /// </summary>
     public bool DisableClamping { get; set; } = true;
 
-    public bool EnableClickThrough { get; set; }
+    public bool EnableClickThrough { get; set; } = false;
 
     /// <summary>
     ///     Setting to <em>False</em> will cause this window to not close when the game tries to close all open windows.
