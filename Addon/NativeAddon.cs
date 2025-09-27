@@ -113,8 +113,7 @@ public abstract unsafe partial class NativeAddon {
     /// <summary>
     ///     Initializes and Opens this instance of Addon
     /// </summary>
-    /// <param name="depthLayer">Which UI layer to attach the Addon to</param>
-    public void Open(int depthLayer = 4)
+    public void Open()
         => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
             Log.Verbose($"[{InternalName}] Open Called");
 
@@ -123,7 +122,7 @@ public abstract unsafe partial class NativeAddon {
 
                 if (InternalAddon is not null) {
                     AtkStage.Instance()->RaptureAtkUnitManager->InitializeAddon(InternalAddon, InternalName);
-                    InternalAddon->Open((uint)depthLayer);
+                    InternalAddon->Open((uint)DepthLayer);
                     disposeHandle = GCHandle.Alloc(this);
                 }
             }

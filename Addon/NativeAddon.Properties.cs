@@ -145,6 +145,8 @@ public abstract unsafe partial class NativeAddon {
 
     public float Scale { get; set; }
 
+    public int DepthLayer { get; set; } = 4;
+
     public Vector2 Position {
         get => GetPosition();
         set => InternalPosition = value;
