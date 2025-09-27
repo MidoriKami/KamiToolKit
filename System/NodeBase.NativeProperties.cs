@@ -100,10 +100,7 @@ public abstract unsafe partial class NodeBase {
 
     public virtual Vector2 Origin {
         get => new(OriginX, OriginY);
-        set {
-            OriginX = value.X;
-            OriginY = value.Y;
-        }
+        set => InternalResNode->SetOrigin(value.X, value.Y);
     }
 
     [JsonProperty] public virtual bool IsVisible {
