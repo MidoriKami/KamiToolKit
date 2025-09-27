@@ -15,7 +15,6 @@ public class VerticalResizeNineGridNode : SimpleComponentNode {
             Position = new Vector2(4.0f, 0.0f),
             LeftOffset = 12,
             RightOffset = 12,
-            DrawFlags = 4,
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         BorderNode.AttachNode(this);

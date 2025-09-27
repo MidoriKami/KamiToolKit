@@ -104,8 +104,7 @@ public abstract unsafe partial class NodeBase {
 
             // If we have added a click event, we need to also make the cursor change when hovering this node
             if (eventType is AddonEventType.MouseClick && !CursorEventsSet && addClickHelpers) {
-                AddEvent(AddonEventType.MouseOver, SetCursorMouseover);
-                AddEvent(AddonEventType.MouseOut, ResetCursorMouseover);
+                DrawFlags |= DrawFlags.ClickableCursor;
                 CursorEventsSet = true;
             }
         }
@@ -135,8 +134,7 @@ public abstract unsafe partial class NodeBase {
 
                 // If we removed the last MouseClick event, we should also remove the cursor modification events
                 if (eventType is AddonEventType.MouseClick && CursorEventsSet) {
-                    RemoveEvent(AddonEventType.MouseOver, SetCursorMouseover);
-                    RemoveEvent(AddonEventType.MouseOut, ResetCursorMouseover);
+                    DrawFlags &= ~DrawFlags.ClickableCursor;
                     CursorEventsSet = false;
                 }
             }
@@ -221,10 +219,4 @@ public abstract unsafe partial class NodeBase {
 
     private void HideTooltip(AddonEventData data)
         => HideTooltip();
-
-    private void SetCursorMouseover(AddonEventData data)
-        => SetCursor(AddonCursorType.Clickable);
-
-    private void ResetCursorMouseover(AddonEventData data)
-        => ResetCursor();
 }

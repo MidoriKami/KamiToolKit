@@ -15,7 +15,6 @@ internal class HorizontalResizeNineGridNode : SimpleComponentNode {
             LeftOffset = 12,
             RightOffset = 12,
             PartsRenderType = 192,
-            DrawFlags = 12,
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         BorderNode.AttachNode(this);

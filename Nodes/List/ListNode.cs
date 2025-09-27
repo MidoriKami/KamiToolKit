@@ -6,6 +6,7 @@ using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Addon.Events.EventDataTypes;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
@@ -205,7 +206,7 @@ public abstract unsafe class ListNode<T> : ListNode {
 
     public void Show() {
         IsVisible = true;
-        DrawFlags = 0x200000;
+        DrawFlags = DrawFlags.RenderOnTop;
 
         var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
         if (parentAddon is not null) {
@@ -215,7 +216,7 @@ public abstract unsafe class ListNode<T> : ListNode {
 
     public void Hide() {
         IsVisible = false;
-        DrawFlags = 0x0;
+        DrawFlags = DrawFlags.None;
 
         var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
         if (parentAddon is not null) {

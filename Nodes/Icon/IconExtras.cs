@@ -94,7 +94,6 @@ public unsafe class IconExtras : ResNode {
             Color = ColorHelper.GetColor(50),
             TextOutlineColor = ColorHelper.GetColor(51),
             AlignmentType = AlignmentType.Right,
-            DrawFlags = 0x102,
         };
         QuantityTextNode.AttachNode(this);
 
