@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.System;
@@ -146,9 +147,14 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->NodeId = value;
     }
 
-    public virtual uint DrawFlags {
-        get => InternalResNode->DrawFlags;
-        internal set => InternalResNode->DrawFlags = value;
+    public virtual DrawFlags DrawFlags {
+        get => (DrawFlags) InternalResNode->DrawFlags;
+        set => InternalResNode->DrawFlags = (uint) value & 0xFFFE03FF | InternalResNode->DrawFlags & 0xC03FF;
+    }
+
+    public virtual int ClipCount {
+        get => (int)((InternalResNode->DrawFlags & 0xFFFE03FF) >> 10);
+        set => InternalResNode->DrawFlags = (uint)(value << 10 & 0xC03FF) | InternalResNode->DrawFlags & 0xFFFE03FF;
     }
 
     public int Priority {
