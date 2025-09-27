@@ -64,7 +64,6 @@ public abstract unsafe partial class NodeBase {
 
     private bool EventsActive { get; set; }
     private bool TooltipRegistered { get; set; }
-    private bool CursorEventsSet { get; set; }
 
     public bool EnableEventFlags {
         get => EventFlagsSet;
@@ -103,9 +102,8 @@ public abstract unsafe partial class NodeBase {
             }
 
             // If we have added a click event, we need to also make the cursor change when hovering this node
-            if (eventType is AddonEventType.MouseClick && !CursorEventsSet && addClickHelpers) {
+            if (eventType is AddonEventType.MouseClick && addClickHelpers) {
                 DrawFlags |= DrawFlags.ClickableCursor;
-                CursorEventsSet = true;
             }
         }
 
@@ -133,9 +131,8 @@ public abstract unsafe partial class NodeBase {
                 }
 
                 // If we removed the last MouseClick event, we should also remove the cursor modification events
-                if (eventType is AddonEventType.MouseClick && CursorEventsSet) {
+                if (eventType is AddonEventType.MouseClick) {
                     DrawFlags &= ~DrawFlags.ClickableCursor;
-                    CursorEventsSet = false;
                 }
             }
         }
