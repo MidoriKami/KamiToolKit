@@ -149,12 +149,14 @@ public abstract unsafe partial class NodeBase {
 
     public virtual DrawFlags DrawFlags {
         get => (DrawFlags) InternalResNode->DrawFlags;
-        set => InternalResNode->DrawFlags = (uint) value & 0xFFFE03FF | InternalResNode->DrawFlags & 0xC03FF;
+        set => InternalResNode->DrawFlags = (uint) value & 0b1111_1111_1111_1100_0000_0011_1111_1111 | 
+                                            InternalResNode->DrawFlags & 0b0000_0000_0000_0011_1111_1100_0000_0000;
     }
 
     public virtual int ClipCount {
-        get => (int)((InternalResNode->DrawFlags & 0xFFFE03FF) >> 10);
-        set => InternalResNode->DrawFlags = (uint)(value << 10 & 0xC03FF) | InternalResNode->DrawFlags & 0xFFFE03FF;
+        get => (int)((InternalResNode->DrawFlags & 0b0000_0000_0000_0011_1111_1100_0000_0000) >> 10);
+        set => InternalResNode->DrawFlags = (uint)(value << 10 & 0b0000_0000_0000_0011_1111_1100_0000_0000) 
+                                            | InternalResNode->DrawFlags & 0b1111_1111_1111_1100_0000_0011_1111_1111;
     }
 
     public int Priority {
