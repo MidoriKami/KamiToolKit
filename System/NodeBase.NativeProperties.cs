@@ -79,11 +79,13 @@ public abstract unsafe partial class NodeBase {
     }
 
     public virtual float Rotation {
-        get => InternalResNode->Rotation;
-        set {
-            InternalResNode->Rotation = value;
-            DrawFlags |= 5;
-        }
+        get => InternalResNode->GetRotation();
+        set => InternalResNode->SetRotation(value);
+    }
+
+    public virtual float RotationDegrees {
+        get => InternalResNode->GetRotationDegrees();
+        set => InternalResNode->SetRotationDegrees(value);
     }
 
     public virtual float OriginX {
