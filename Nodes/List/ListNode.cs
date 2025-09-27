@@ -156,11 +156,14 @@ public abstract unsafe class ListNode<T> : ListNode {
             newButton.AttachNode(ContainerNode);
         }
 
+        RecalculateScrollParams();
+        UpdateNodes();
+    }
+
+    public void RecalculateScrollParams() {
         if (Options is not null) {
             ScrollBarNode.UpdateScrollParams((int)ScrollBarNode.Height, (int)(Options.Count * NodeHeight + 24.0f));
         }
-
-        UpdateNodes();
     }
 
     protected virtual void OnOptionClick(int nodeId) {

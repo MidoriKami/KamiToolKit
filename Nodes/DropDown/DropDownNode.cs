@@ -151,6 +151,9 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
             OnUncollapsed?.Invoke();
         }
     }
+
+    public void RecalculateScrollParams()
+        => OptionListNode.RecalculateScrollParams();
     
     private unsafe void MoveListOnScreen() {
         var screenSize = AtkStage.Instance()->ScreenSize;
