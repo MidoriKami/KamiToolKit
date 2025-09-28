@@ -40,7 +40,7 @@ public class MultiAddonController : IDisposable {
         }
     }
     
-    public virtual event AddonController.AddonControllerEvent? OnAttach {
+    public event AddonController.AddonControllerEvent? OnAttach {
         add {
             foreach (var addonController in addonControllers) {
                 addonController.OnAttach += value;
@@ -49,7 +49,7 @@ public class MultiAddonController : IDisposable {
         remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
     }
 
-    public virtual event AddonController.AddonControllerEvent? OnDetach {
+    public event AddonController.AddonControllerEvent? OnDetach {
         add {
             foreach (var addonController in addonControllers) {
                 addonController.OnDetach += value;
@@ -58,7 +58,7 @@ public class MultiAddonController : IDisposable {
         remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
     }
     
-    public virtual event AddonController.AddonControllerEvent? OnRefresh {
+    public event AddonController.AddonControllerEvent? OnRefresh {
         add {
             foreach (var addonController in addonControllers) {
                 addonController.OnRefresh += value;
@@ -66,7 +66,7 @@ public class MultiAddonController : IDisposable {
         }
         remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
     }
-    public virtual event AddonController.AddonControllerEvent? OnUpdate {
+    public event AddonController.AddonControllerEvent? OnUpdate {
         add {
             foreach (var addonController in addonControllers) {
                 addonController.OnUpdate += value;
@@ -75,7 +75,7 @@ public class MultiAddonController : IDisposable {
         remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
     }
 
-    public virtual event AddonController.AddonControllerEvent? OnPreEnable {
+    public event AddonController.AddonControllerEvent? OnPreEnable {
         add {
             foreach (var addonController in addonControllers) {
                 addonController.OnPreEnable += value;
@@ -84,7 +84,7 @@ public class MultiAddonController : IDisposable {
         remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
     }
     
-    public virtual event AddonController.AddonControllerEvent? OnPostEnable {
+    public event AddonController.AddonControllerEvent? OnPostEnable {
         add {
             foreach (var addonController in addonControllers) {
                 addonController.OnPostEnable += value;
@@ -93,7 +93,7 @@ public class MultiAddonController : IDisposable {
         remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
     }
 
-    public virtual event AddonController.AddonControllerEvent? OnPreDisable {
+    public event AddonController.AddonControllerEvent? OnPreDisable {
         add {
             foreach (var addonController in addonControllers) {
                 addonController.OnPreDisable += value;
@@ -102,7 +102,7 @@ public class MultiAddonController : IDisposable {
         remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
     }
 
-    public virtual event AddonController.AddonControllerEvent? OnPostDisable {
+    public event AddonController.AddonControllerEvent? OnPostDisable {
         add {
             foreach (var addonController in addonControllers) {
                 addonController.OnPostDisable += value;
