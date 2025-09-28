@@ -22,19 +22,19 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
 
     public delegate void AddonControllerEvent(T* addon);
 
-    private readonly string addonName;
+    internal readonly string AddonName;
 
     public AddonController(string addonName) {
-        this.addonName = addonName;
+        this.AddonName = addonName;
     }
 
     public AddonController(IDalamudPluginInterface pluginInterface) {
         pluginInterface.Inject(this);
 
-        addonName = AtkUnitBaseExtensions.GetAddonTypeName<T>();
+        AddonName = AtkUnitBaseExtensions.GetAddonTypeName<T>();
     }
 
-    private AtkUnitBase* AddonPointer => (AtkUnitBase*)DalamudInterface.Instance.GameGui.GetAddonByName(addonName).Address;
+    private AtkUnitBase* AddonPointer => (AtkUnitBase*)DalamudInterface.Instance.GameGui.GetAddonByName(AddonName).Address;
     private bool IsEnabled { get; set; }
 
     public virtual void Dispose() => Disable();
@@ -45,11 +45,11 @@ public unsafe class AddonController<T> : IDisposable where T : unmanaged {
 
             OnInnerPreEnable?.Invoke((T*)AddonPointer);
 
-            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, addonName, OnAddonEvent);
-            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnAddonEvent);
-            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, addonName, OnAddonEvent);
-            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, addonName, OnAddonEvent);
-            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, addonName, OnAddonEvent);
+            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonEvent);
+            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, AddonName, OnAddonEvent);
+            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, AddonName, OnAddonEvent);
+            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, AddonName, OnAddonEvent);
+            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, AddonName, OnAddonEvent);
 
             if (AddonPointer is not null) {
                 OnInnerAttach?.Invoke((T*)AddonPointer);
