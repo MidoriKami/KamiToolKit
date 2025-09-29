@@ -183,12 +183,12 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    public virtual SeString SeString {
+    public SeString SeString {
         get => SeString.Parse(Component->UnkText1);
         set => Component->SetText(value.ToString());
     }
 
-    public virtual string String {
+    public string String {
         get => Component->UnkText1.ToString();
         set => Component->SetText(value);
     }
@@ -219,7 +219,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         virtualTable->UpdateCursor = (delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, TextSelectionInfo*, void>)Marshal.GetFunctionPointerForDelegate(pinnedFunction);
     }
     
-    protected virtual void OnCursorChanged(AtkTextInput.AtkTextInputEventInterface* listener, TextSelectionInfo* numEvents) {
+    private void OnCursorChanged(AtkTextInput.AtkTextInputEventInterface* listener, TextSelectionInfo* numEvents) {
         var applySelectAll = !FocusNode.IsVisible && AutoSelectAll;
 
         if (applySelectAll) {
