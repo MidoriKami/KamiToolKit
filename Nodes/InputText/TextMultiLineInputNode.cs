@@ -14,7 +14,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 
-
 namespace KamiToolKit.Nodes;
 
 public unsafe class TextMultiLineInputNode : ComponentNode<AtkComponentTextInput, AtkUldComponentDataTextInput> {
