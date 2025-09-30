@@ -16,7 +16,8 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
     private int startLineIndex = 0;
     private SeString fullText = " ";
     private SeString lastDisplayedText = " ";
-    private bool isUpdating = false;
+    private bool isInternallyUpdatingDisplay = false;
+    private bool isProgrammaticTextSet = false;
 
     public TextMultiLineInputNodeScrollable() : base() {
         TextLimitsNode.AlignmentType = AlignmentType.BottomRight;
@@ -27,9 +28,12 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
         Flags |= TextInputFlags.MultiLine;
 
         OnInputReceived += _ => {
+            if (isProgrammaticTextSet || isInternallyUpdatingDisplay) return;
+
             var currentComponentText = Component->UnkText1.ToString();
             ApplyDisplayChangesToFullText(currentComponentText);
-            UpdateCurrentTextDisplay();
+            lastDisplayedText = currentComponentText;
+            UpdateLineCountDisplay();
         };
 
         CollisionNode.AddEvent(AddonEventType.InputReceived, InputComplete);
@@ -68,16 +72,20 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
     public override string String {
         get => fullText.TextValue;
         set {
+            isProgrammaticTextSet = true;
             fullText = value;
             UpdateCurrentTextDisplay();
+            isProgrammaticTextSet = false;
         }
     }
 
     public override SeString SeString {
         get => fullText;
         set {
+            isProgrammaticTextSet = true;
             fullText = value;
             UpdateCurrentTextDisplay();
+            isProgrammaticTextSet = false;
         }
     }
 
@@ -110,9 +118,7 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
         lastDisplayedText = newDisplayedText;
     }
 
-    private void UpdateCurrentTextDisplay() {
-        if (isUpdating) return;
-
+    private void UpdateLineCountDisplay() {
         var lines = fullText.TextValue.Split(['\r', '\n'], StringSplitOptions.None);
         var lineHeight = CurrentTextNode.LineSpacing;
         var totalLines = lines.Length;
@@ -125,22 +131,39 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
         var currentEndLine = Math.Min(startLineIndex + maxVisibleLines, totalLines);
         var limitText = $"{startLineIndex + 1}-{currentEndLine}/{totalLines}";
 
+        TextLimitsNode.SeString = limitText;
+    }
+
+    private void UpdateCurrentTextDisplay() {
+        if (isInternallyUpdatingDisplay) return;
+
+        var lines = fullText.TextValue.Split(['\r', '\n'], StringSplitOptions.None);
+        var lineHeight = CurrentTextNode.LineSpacing;
+        var maxVisibleLines = (int)(originalHeight / lineHeight);
+
+        if (maxVisibleLines <= 0) return;
+
+        startLineIndex = Math.Clamp(startLineIndex, 0, Math.Max(0, lines.Length - maxVisibleLines));
+
         var displayText = startLineIndex > 0 && startLineIndex < lines.Length
             ? string.Join("\r", lines.Skip(startLineIndex).Take(maxVisibleLines))
             : fullText.TextValue;
 
         lastDisplayedText = displayText;
+        var capturedProgrammaticFlag = isProgrammaticTextSet;
 
         DalamudInterface.Instance.Framework.RunOnTick(() => {
             try {
-                isUpdating = true;
+                isInternallyUpdatingDisplay = true;
+                isProgrammaticTextSet = capturedProgrammaticFlag;
                 Component->SetText(displayText);
-                TextLimitsNode.SeString = limitText;
+                UpdateLineCountDisplay();
             }
             catch (Exception) {
             }
             finally {
-                isUpdating = false;
+                isInternallyUpdatingDisplay = false;
+                isProgrammaticTextSet = false;
             }
         });
     }
