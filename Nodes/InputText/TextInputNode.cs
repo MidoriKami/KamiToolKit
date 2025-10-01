@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -183,12 +183,12 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    public SeString SeString {
+    public virtual SeString SeString {
         get => SeString.Parse(Component->UnkText1);
         set => Component->SetText(value.ToString());
     }
 
-    public string String {
+    public virtual string String {
         get => Component->UnkText1.ToString();
         set => Component->SetText(value);
     }
