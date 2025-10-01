@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -161,9 +161,9 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    public Action<SeString>? OnInputReceived { get; set; }
+    public virtual Action<SeString>? OnInputReceived { get; set; }
 
-    public Action<SeString>? OnInputComplete { get; set; }
+    public virtual Action<SeString>? OnInputComplete { get; set; }
 
     public int MaxCharacters {
         get => (int)Component->ComponentTextData.MaxChar;
