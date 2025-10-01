@@ -45,12 +45,17 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
             var lineHeight = CurrentTextNode.LineSpacing;
             var maxVisibleLines = (int)(originalHeight / lineHeight);
 
+            var oldStartLineIndex = startLineIndex;
+
             if (mouse.WheelDirection > 0)
                 startLineIndex = Math.Max(0, startLineIndex - 1);
             else if (mouse.WheelDirection < 0)
                 startLineIndex = Math.Min(Math.Max(0, lines.Length - maxVisibleLines), startLineIndex + 1);
 
-            UpdateCurrentTextDisplay();
+            if (oldStartLineIndex != startLineIndex) {
+                UpdateCurrentTextDisplay();
+                evt.SetHandled();
+            }
         });
 
         Component->InputSanitizationFlags = (AllowedEntities)639;
