@@ -12,8 +12,6 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class TextMultiLineInputNode : TextInputNode {
 
-    private float originalHeight;
-
     public TextMultiLineInputNode() {
         TextLimitsNode.AlignmentType = AlignmentType.BottomRight;
 
@@ -21,8 +19,6 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
         CurrentTextNode.LineSpacing = 14;
 
         Flags |= TextInputFlags.MultiLine;
-
-        OnInputReceived += _ => UpdateHeightForContent();
 
         CollisionNode.AddEvent(AddonEventType.InputReceived, InputComplete);
 
@@ -32,8 +28,8 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
 
         Component->ComponentTextData.Flags2 = TextInputFlags2.MultiLine | TextInputFlags2.AllowSymbolInput | TextInputFlags2.AllowNumberInput;
 
-        Component->ComponentTextData.MaxLine = 255;
-        Component->ComponentTextData.MaxByte = 65535;
+        Component->ComponentTextData.MaxLine = byte.MaxValue;
+        Component->ComponentTextData.MaxByte = ushort.MaxValue;
     }
 
     public uint MaxLines {
@@ -64,12 +60,28 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
         }
     }
 
+    public override Action<SeString>? OnInputReceived {
+        get => base.OnInputReceived;
+        set {
+            base.OnInputReceived = _ => UpdateHeightForContent();
+            base.OnInputReceived += value;
+        }
+    }
+    
+    public Action<float>? HeightChanged { get; set; }
+
     private void UpdateHeightForContent() {
         var text = String;
         var lineCount = Math.Max(1, text.Split('\r', '\n').Length);
         var lineHeight = CurrentTextNode.LineSpacing;
-        var contentHeight = Math.Max(originalHeight, (lineCount * lineHeight) + 20);
+        var contentHeight = Math.Max(Height, lineCount * lineHeight + 20);
+        
+        var oldHeight = Height;
         Height = contentHeight;
+
+        if (Math.Abs(contentHeight - oldHeight) > 0.1f) {
+            HeightChanged?.Invoke(Height);
+        }
     }
 
     private void InputComplete(AddonEventData data) {
@@ -82,20 +94,11 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
                 textInputComponent->WriteString(&utf8String);
             }
 
-            DalamudInterface.Instance.Framework.RunOnTick(() => {
-                textInputComponent->CursorPos = cursorPos + 1;
-                textInputComponent->SelectionStart = cursorPos + 1;
-                textInputComponent->SelectionEnd = cursorPos + 1;
-            });
+            textInputComponent->CursorPos = cursorPos + 1;
+            textInputComponent->SelectionStart = cursorPos + 1;
+            textInputComponent->SelectionEnd = cursorPos + 1;
         }
 
         OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
-    }
-
-    protected override void OnSizeChanged() {
-        base.OnSizeChanged();
-
-        if (originalHeight <= 0f)
-            originalHeight = Height;
     }
 }
