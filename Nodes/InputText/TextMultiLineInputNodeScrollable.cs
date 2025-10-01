@@ -13,13 +13,15 @@ namespace KamiToolKit.Nodes;
 public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
 
     private float originalHeight;
-    private int startLineIndex = 0;
-    private SeString fullText = " ";
-    private SeString lastDisplayedText = " ";
-    private bool isInternallyUpdatingDisplay = false;
-    private bool isProgrammaticTextSet = false;
+    private int startLineIndex;
 
-    public TextMultiLineInputNodeScrollable() : base() {
+    private bool isInternallyUpdatingDisplay;
+    private bool isProgrammaticTextSet;
+    
+    private SeString fullText = string.Empty;
+    private SeString lastDisplayedText = string.Empty;
+
+    public TextMultiLineInputNodeScrollable() {
         TextLimitsNode.AlignmentType = AlignmentType.BottomRight;
 
         CurrentTextNode.TextFlags |= TextFlags.MultiLine;
@@ -157,20 +159,10 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
         lastDisplayedText = displayText;
         var capturedProgrammaticFlag = isProgrammaticTextSet;
 
-        DalamudInterface.Instance.Framework.RunOnTick(() => {
-            try {
-                isInternallyUpdatingDisplay = true;
-                isProgrammaticTextSet = capturedProgrammaticFlag;
-                Component->SetText(displayText);
-                UpdateLineCountDisplay();
-            }
-            catch (Exception) {
-            }
-            finally {
-                isInternallyUpdatingDisplay = false;
-                isProgrammaticTextSet = false;
-            }
-        });
+        isInternallyUpdatingDisplay = true;
+        isProgrammaticTextSet = capturedProgrammaticFlag;
+        Component->SetText(displayText);
+        UpdateLineCountDisplay();
     }
 
     private void InputComplete(AddonEventData data) {

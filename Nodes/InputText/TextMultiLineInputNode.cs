@@ -14,7 +14,7 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
 
     private float originalHeight;
 
-    public TextMultiLineInputNode() : base() {
+    public TextMultiLineInputNode() {
         TextLimitsNode.AlignmentType = AlignmentType.BottomRight;
 
         CurrentTextNode.TextFlags |= TextFlags.MultiLine;
@@ -26,8 +26,12 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
 
         CollisionNode.AddEvent(AddonEventType.InputReceived, InputComplete);
 
-        Component->InputSanitizationFlags = (AllowedEntities)639;
-        Component->ComponentTextData.Flags2 = (TextInputFlags2)11;
+        Component->InputSanitizationFlags = AllowedEntities.UppercaseLetters | AllowedEntities.LowercaseLetters | AllowedEntities.Numbers | 
+                                            AllowedEntities.SpecialCharacters | AllowedEntities.CharacterList | AllowedEntities.OtherCharacters |
+                                            AllowedEntities.Payloads | AllowedEntities.Unknown9;
+
+        Component->ComponentTextData.Flags2 = TextInputFlags2.MultiLine | TextInputFlags2.AllowSymbolInput | TextInputFlags2.AllowNumberInput;
+
         Component->ComponentTextData.MaxLine = 255;
         Component->ComponentTextData.MaxByte = 65535;
     }
