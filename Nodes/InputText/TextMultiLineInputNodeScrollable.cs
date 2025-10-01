@@ -10,12 +10,14 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
 
-    private float originalHeight;
+/// <summary>
+///     Needs More Work.
+/// </summary>
+internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
+
     private int startLineIndex;
 
-    private bool isInternallyUpdatingDisplay;
     private bool isProgrammaticTextSet;
     
     private SeString fullText = string.Empty;
@@ -29,41 +31,17 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
 
         Flags |= TextInputFlags.MultiLine;
 
-        OnInputReceived += _ => {
-            if (isProgrammaticTextSet || isInternallyUpdatingDisplay) return;
-
-            var currentComponentText = Component->UnkText1.ToString();
-            ApplyDisplayChangesToFullText(currentComponentText);
-            lastDisplayedText = currentComponentText;
-            UpdateLineCountDisplay();
-        };
-
         CollisionNode.AddEvent(AddonEventType.InputReceived, InputComplete);
+        CollisionNode.AddEvent(AddonEventType.MouseWheel, OnMouseScrolled);
 
-        AddEvent(AddonEventType.MouseWheel, evt => {
-            var mouse = evt.GetMouseData();
+        Component->InputSanitizationFlags = AllowedEntities.UppercaseLetters | AllowedEntities.LowercaseLetters | AllowedEntities.Numbers | 
+                                            AllowedEntities.SpecialCharacters | AllowedEntities.CharacterList | AllowedEntities.OtherCharacters |
+                                            AllowedEntities.Payloads | AllowedEntities.Unknown9;
 
-            var lines = fullText.TextValue.Split(['\r', '\n'], StringSplitOptions.None);
-            var lineHeight = CurrentTextNode.LineSpacing;
-            var maxVisibleLines = (int)(originalHeight / lineHeight);
+        Component->ComponentTextData.Flags2 = TextInputFlags2.MultiLine | TextInputFlags2.AllowSymbolInput | TextInputFlags2.AllowNumberInput;
 
-            var oldStartLineIndex = startLineIndex;
-
-            if (mouse.WheelDirection > 0)
-                startLineIndex = Math.Max(0, startLineIndex - 1);
-            else if (mouse.WheelDirection < 0)
-                startLineIndex = Math.Min(Math.Max(0, lines.Length - maxVisibleLines), startLineIndex + 1);
-
-            if (oldStartLineIndex != startLineIndex) {
-                UpdateCurrentTextDisplay();
-                evt.SetHandled();
-            }
-        });
-
-        Component->InputSanitizationFlags = (AllowedEntities)639;
-        Component->ComponentTextData.Flags2 = (TextInputFlags2)11;
-        Component->ComponentTextData.MaxLine = 255;
-        Component->ComponentTextData.MaxByte = 65535;
+        Component->ComponentTextData.MaxLine = byte.MaxValue;
+        Component->ComponentTextData.MaxByte = ushort.MaxValue;
     }
 
     public uint MaxLines {
@@ -94,6 +72,43 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
             UpdateCurrentTextDisplay();
             isProgrammaticTextSet = false;
         }
+    }
+    
+    public override Action<SeString>? OnInputReceived {
+        get => base.OnInputReceived;
+        set {
+            base.OnInputReceived = currentComponentText => {
+                if (isProgrammaticTextSet) return;
+
+                ApplyDisplayChangesToFullText(currentComponentText.ToString());
+                lastDisplayedText = currentComponentText;
+                UpdateLineCountDisplay();
+            };
+
+            base.OnInputReceived += value;
+        }
+    }
+    
+    private void OnMouseScrolled(AddonEventData eventData) {
+        var mouse = eventData.GetMouseData();
+
+        var lines = fullText.TextValue.Split(['\r', '\n'], StringSplitOptions.None);
+        var lineHeight = CurrentTextNode.LineSpacing;
+        var maxVisibleLines = (int)(Height / lineHeight);
+
+        var oldStartLineIndex = startLineIndex;
+
+        if (mouse.WheelDirection > 0)
+            startLineIndex = Math.Max(0, startLineIndex - 1);
+
+        else if (mouse.WheelDirection < 0)
+            startLineIndex = Math.Min(Math.Max(0, lines.Length - maxVisibleLines), startLineIndex + 1);
+
+        if (oldStartLineIndex != startLineIndex) {
+            UpdateCurrentTextDisplay();
+        }
+
+        eventData.SetHandled();
     }
 
     private void ApplyDisplayChangesToFullText(string newDisplayedText) {
@@ -129,7 +144,7 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
         var lines = fullText.TextValue.Split(['\r', '\n'], StringSplitOptions.None);
         var lineHeight = CurrentTextNode.LineSpacing;
         var totalLines = lines.Length;
-        var maxVisibleLines = (int)(originalHeight / lineHeight);
+        var maxVisibleLines = (int)(Height / lineHeight);
 
         if (maxVisibleLines <= 0) return;
 
@@ -142,11 +157,9 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
     }
 
     private void UpdateCurrentTextDisplay() {
-        if (isInternallyUpdatingDisplay) return;
-
         var lines = fullText.TextValue.Split(['\r', '\n'], StringSplitOptions.None);
         var lineHeight = CurrentTextNode.LineSpacing;
-        var maxVisibleLines = (int)(originalHeight / lineHeight);
+        var maxVisibleLines = (int)(Height / lineHeight);
 
         if (maxVisibleLines <= 0) return;
 
@@ -159,7 +172,6 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
         lastDisplayedText = displayText;
         var capturedProgrammaticFlag = isProgrammaticTextSet;
 
-        isInternallyUpdatingDisplay = true;
         isProgrammaticTextSet = capturedProgrammaticFlag;
         Component->SetText(displayText);
         UpdateLineCountDisplay();
@@ -175,20 +187,11 @@ public unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
                 textInputComponent->WriteString(&utf8String);
             }
 
-            DalamudInterface.Instance.Framework.RunOnTick(() => {
-                textInputComponent->CursorPos = cursorPos + 1;
-                textInputComponent->SelectionStart = cursorPos + 1;
-                textInputComponent->SelectionEnd = cursorPos + 1;
-            });
+            textInputComponent->CursorPos = cursorPos + 1;
+            textInputComponent->SelectionStart = cursorPos + 1;
+            textInputComponent->SelectionEnd = cursorPos + 1;
         }
 
         OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
-    }
-
-    protected override void OnSizeChanged() {
-        base.OnSizeChanged();
-
-        if (originalHeight <= 0f)
-            originalHeight = Height;
     }
 }
