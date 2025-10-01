@@ -1,38 +1,21 @@
 ﻿using System;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
-using Dalamud.Plugin;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
 namespace KamiToolKit;
 
-public class AddonController : AddonController<AtkUnitBase> {
-    public AddonController(string addonName) : base(addonName) {
-    }
-
-    public AddonController(IDalamudPluginInterface pluginInterface) : base(pluginInterface) {
-    }
-}
+public class AddonController(string addonName) : AddonController<AtkUnitBase>(addonName);
 
 /// <summary>
 ///     This class provides functionality to add-and manage custom elements for any Addon
 /// </summary>
-public unsafe class AddonController<T> : IDisposable where T : unmanaged {
+public unsafe class AddonController<T>(string addonName) : IDisposable where T : unmanaged {
 
     public delegate void AddonControllerEvent(T* addon);
 
-    internal readonly string AddonName;
-
-    public AddonController(string addonName) {
-        this.AddonName = addonName;
-    }
-
-    public AddonController(IDalamudPluginInterface pluginInterface) {
-        pluginInterface.Inject(this);
-
-        AddonName = AtkUnitBaseExtensions.GetAddonTypeName<T>();
-    }
+    internal readonly string AddonName = addonName;
 
     private AtkUnitBase* AddonPointer => (AtkUnitBase*)DalamudInterface.Instance.GameGui.GetAddonByName(AddonName).Address;
     private bool IsEnabled { get; set; }

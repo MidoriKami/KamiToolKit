@@ -1,5 +1,4 @@
-﻿using Dalamud.Plugin;
-using FFXIVClientStructs.FFXIV.Client.UI;
+﻿using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Arrays;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -10,7 +9,7 @@ namespace KamiToolKit;
 ///     Simplified controller for using AddonNamePlate for basic overlays.
 /// </summary>
 public sealed unsafe class NameplateAddonController : AddonController<AddonNamePlate> {
-    public NameplateAddonController(IDalamudPluginInterface pluginInterface) : base(pluginInterface) {
+    public NameplateAddonController() : base("NamePlate") {
         OnPostEnable += RefreshAddon;
         OnPostDisable += RefreshAddon;
         base.OnUpdate += UpdateNamePlate;
@@ -34,7 +33,7 @@ public sealed unsafe class NameplateAddonController : AddonController<AddonNameP
             NamePlateNumberArray.Instance()->DoFullUpdate = true;
         }
     }
-    
+
     private event AddonControllerEvent? OnInnerUpdate;
 
     public override event AddonControllerEvent? OnUpdate {
