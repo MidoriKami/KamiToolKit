@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -121,6 +122,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
 
     protected NodeBase(NodeType nodeType) {
+        ThreadSafety.AssertMainThread("Attempted to allocate a node while not on main thread. This is not supported.");
+        
         Log.Verbose($"Creating new node {GetType()}");
         Node = NativeMemoryHelper.Create<T>();
         InternalResNode->Type = nodeType;
