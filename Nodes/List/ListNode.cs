@@ -200,7 +200,7 @@ public abstract unsafe class ListNode<T> : ListNode {
     }
 
     public void SelectDefaultOption() {
-        if (Options is not null) {
+        if (Options is not null && Options.Count > 0) {
             SelectedOption = Options.First();
         }
     }
