@@ -131,6 +131,7 @@ public abstract unsafe class ListNode<T> : ListNode {
 
     private void RebuildNodeList() {
         foreach (var button in Nodes) {
+            button.DetachNode();
             button.Dispose();
         }
         Nodes.Clear();
