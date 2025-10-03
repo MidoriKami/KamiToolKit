@@ -139,7 +139,7 @@ public abstract unsafe partial class NativeAddon {
 
     public Vector2 ContentSize => WindowNode.ContentSize - ContentPadding * 2.0f;
 
-    public Vector2 ContentPadding => new(8.0f, 8.0f);
+    public Vector2 ContentPadding => new(8.0f, 0.0f);
 
     private Vector2? InternalPosition { get; set; }
 
