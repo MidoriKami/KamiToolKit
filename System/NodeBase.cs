@@ -19,6 +19,10 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     internal abstract AtkResNode* InternalResNode { get; }
 
+    private AtkResNode.Delegates.Destroy destructorFunction = null!;
+    
+    private AtkResNode.AtkResNodeVirtualTable* virtualTable;
+
     public void Dispose() {
         // If the node was invalidated before dispose, we want to skip trying to free it.
         if (!IsNodeValid()) {
@@ -117,6 +121,30 @@ public abstract unsafe partial class NodeBase : IDisposable {
     }
 
     public static implicit operator AtkResNode*(NodeBase node) => node.InternalResNode;
+
+    protected void BuildVirtualTable() {
+        // Overwrite virtual table with a custom copy,
+        // Note: Currently there are only 2 vfuncs, but there's no harm in copying more for if they ever add more vfuncs to the game.
+        virtualTable = (AtkResNode.AtkResNodeVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 4);
+        NativeMemory.Copy(InternalResNode->VirtualTable, virtualTable, 0x8 * 4);
+        InternalResNode->VirtualTable = virtualTable;
+        
+        // Pin managed function to virtual table entry
+        destructorFunction = NativeDestroyAtkResNode;
+
+        // Replace native destructor with 
+        virtualTable->Destroy = (delegate* unmanaged<AtkResNode*, bool, void>) Marshal.GetFunctionPointerForDelegate(destructorFunction);
+    }
+
+    private void NativeDestroyAtkResNode(AtkResNode* thisPtr, bool free) {
+        Experimental.Instance.StaticAtkResNodeDestroyFunction?.Invoke(thisPtr, free);
+        DisposeManagedResources();
+    }
+
+    /// <summary>
+    /// Use this dispose method to free any non-native resources, KTK will automatically free any native resources on dispose.
+    /// </summary>
+    protected virtual void DisposeManagedResources() { }
 }
 
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
@@ -126,6 +154,9 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
         
         Log.Verbose($"Creating new node {GetType()}");
         Node = NativeMemoryHelper.Create<T>();
+
+        BuildVirtualTable();
+
         InternalResNode->Type = nodeType;
         InternalResNode->NodeId = NodeIdBase + CurrentOffset++;
 
