@@ -139,14 +139,14 @@ internal unsafe class SearchInfoNode<T> : SimpleComponentNode {
         iconNode.Size = new Vector2(Height - 4.0f, Height - 4.0f);
         iconNode.Position = new Vector2(2.0f, 2.0f);
 
-        labelTextNode.Size = new Vector2(Width - Height - 2.0f - 25.0f, Height / 2.0f);
+        labelTextNode.Size = new Vector2(Width - Height - 2.0f - 30.0f, Height / 2.0f);
         labelTextNode.Position = new Vector2(Height + 2.0f, 0.0f);
 
         subLabelTextNode.Size = new Vector2(Width - Height - 2.0f - 10.0f, Height / 2.0f);
         subLabelTextNode.Position = new Vector2(Height + 2.0f + 10.0f, Height / 2.0f);
-        
-        idTextNode.Size = new Vector2(25.0f, Height / 2.0f);
-        idTextNode.Position = new Vector2(Width - 25.0f, 0.0f);
+
+        idTextNode.Size = new Vector2(30.0f, Height / 2.0f);
+        idTextNode.Position = new Vector2(Width - 30.0f, 0.0f);
     }
 
     public required OptionInfo<T> OptionInfo {
