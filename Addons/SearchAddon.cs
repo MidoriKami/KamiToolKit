@@ -69,9 +69,13 @@ public class SearchAddon<T> : NativeAddon {
         foreach (var option in SearchOptions) {
             listNode.ContentNode.AddNode(BuildOptionNode(GetOptionInfo(option)), true);
         }
-        
-        listNode.ContentHeight = listNode.ContentNode.Nodes.Sum(node => node.IsVisible ? node.Height : 0.0f) + 10.0f;
+
         listNode.ContentNode.RecalculateLayout();
+        listNode.ContentHeight = listNode.ContentNode.Nodes.Sum(node => node.IsVisible ? node.Height : 0.0f);
+
+        if (SortingOptions.Count > 0) {
+            OnSortOrderUpdated(SortingOptions.First(), false);
+        }
     }
 
     private void OnCancelClicked() {
