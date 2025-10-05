@@ -11,8 +11,10 @@ using KamiToolKit.Widgets;
 
 namespace KamiToolKit.Addons;
 
+/// <summary>
+/// A generic window for selecting a single entry among a list of options.
+/// </summary>
 public class SearchAddon<T> : NativeAddon {
-
     public required List<string> SortingOptions { get; init; }
 
     private SearchWidget? searchWidget;
@@ -41,6 +43,7 @@ public class SearchAddon<T> : NativeAddon {
             AutoHideScrollBar = true,
             ContentHeight = 10.0f,
         };
+        listNode.ContentNode.FitContents = true;
         AttachNode(listNode);
 
         const float buttonPadding = 20.0f;
@@ -71,7 +74,7 @@ public class SearchAddon<T> : NativeAddon {
         }
 
         listNode.ContentNode.RecalculateLayout();
-        listNode.ContentHeight = listNode.ContentNode.Nodes.Sum(node => node.IsVisible ? node.Height : 0.0f);
+        listNode.ContentHeight = listNode.ContentNode.Height;
 
         if (SortingOptions.Count > 0) {
             OnSortOrderUpdated(SortingOptions.First(), false);
@@ -139,8 +142,8 @@ public class SearchAddon<T> : NativeAddon {
             node.IsVisible = node.OptionInfo.ContainsSearchTerm(searchString);
         }
 
-        listNode.ContentHeight = listNode.ContentNode.Nodes.Sum(node => node.IsVisible ? node.Height : 0.0f) + 10.0f;
         listNode.ContentNode.RecalculateLayout();
+        listNode.ContentHeight = listNode.ContentNode.Height;
     }
 
     public required List<T> SearchOptions { get; init; }
