@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Game.Text.SeStringHandling;
 using KamiToolKit.Nodes;
@@ -25,6 +26,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
             IsVisible = true,
             PlaceholderString = "Search . . .",
             SeString = searchText,
+            OnInputReceived = SearchTextChanged,
         };
         InputNode.AttachNode(this);
 
@@ -33,6 +35,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
             Options = [],
             IsVisible = false,
             SelectedOption = sortOption == string.Empty ? null : sortOption,
+            OnOptionSelected = DropDownChanged,
         };
         SortOrderDropDown.AttachNode(this);
 
@@ -47,13 +50,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
         InternalResNode->SetHeight(38);
     }
 
-    public required SortUpdated OnSortOrderChanged {
-        get;
-        set {
-            field = value;
-            SortOrderDropDown.OnOptionSelected = DropDownChanged;
-        }
-    }
+    public required SortUpdated OnSortOrderChanged { get; set; }
 
     private void OnReverseButtonClicked() {
         reverseSort = !reverseSort;
@@ -65,13 +62,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
         OnSortOrderChanged(newOption, reverseSort);
     }
 
-    public required SearchUpdated OnSearchUpdated {
-        get;
-        set {
-            field = value;
-            InputNode.OnInputReceived = SearchTextChanged;
-        }
-    }
+    public required SearchUpdated OnSearchUpdated { get; set; }
 
     private void SearchTextChanged(SeString newSearchString) {
         searchText = newSearchString.ToString();
@@ -108,6 +99,10 @@ public unsafe class SearchWidget : SimpleComponentNode {
             ReverseButtonNode.IsVisible = value.Count > 0;
             
             InternalResNode->SetHeight((ushort)(value.Count > 0 ? 69 : 38));
+
+            if (FilterOptions.Count > 0) {
+                sortOption = value.First();
+            }
         }
     }
 
