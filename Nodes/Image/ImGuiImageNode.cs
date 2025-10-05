@@ -42,11 +42,9 @@ public class ImGuiImageNode : SimpleImageNode {
         });
     }
 
-    protected override void Dispose(bool disposing) {
-        if (disposing) {
-            LoadedTexture?.Dispose();
+    protected override void DisposeManagedResources() {
+        base.DisposeManagedResources();
 
-            base.Dispose(disposing);
-        }
+        LoadedTexture?.Dispose();
     }
 }
