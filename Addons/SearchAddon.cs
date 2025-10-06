@@ -142,6 +142,12 @@ public class SearchAddon<T> : NativeAddon {
             node.IsVisible = node.OptionInfo.ContainsSearchTerm(searchString);
         }
 
+        if (selectedOption is not null) {
+            selectedOption.IsSelected = false;
+        }
+
+        selectedOption = null;
+        
         listNode.ContentNode.RecalculateLayout();
         listNode.ContentHeight = listNode.ContentNode.Height;
     }
