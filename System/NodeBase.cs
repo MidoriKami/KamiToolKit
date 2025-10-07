@@ -139,7 +139,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     }
 
     private void NativeDestroyAtkResNode(AtkResNode* thisPtr, bool free) {
-        Experimental.Instance.StaticAtkResNodeDestroyFunction?.Invoke(thisPtr, free);
+        AtkResNode.StaticVirtualTablePointer->Destroy(thisPtr, free);
         DisposeManagedResources();
 
         // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
