@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
 using KamiToolKit.System;
 using Newtonsoft.Json;
@@ -23,8 +24,9 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         NumberWidth = 10;
         CommaWidth = 8;
         SpaceWidth = 6;
-        TextAlignment = 5;
+        TextAlignment = AlignmentType.Right;
         CounterWidth = 32;
+        Font = CounterFont.MoneyFont;
     }
 
     public string TexturePath {
@@ -68,9 +70,9 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         set => Node->SpaceWidth = (byte)value;
     }
 
-    [JsonProperty] public ushort TextAlignment {
-        get => Node->TextAlign;
-        set => Node->TextAlign = value;
+    [JsonProperty] public AlignmentType TextAlignment {
+        get => (AlignmentType) Node->TextAlign;
+        set => Node->TextAlign = (ushort) value;
     }
 
     [JsonProperty] public float CounterWidth {
@@ -86,6 +88,29 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
     public string String {
         get => Node->NodeText.ToString();
         set => Node->SetText($"{int.Parse(value):n0}");
+    }
+
+    public CounterFont Font {
+        get;
+        set {
+            field = value;
+
+            var fontPath = string.Empty;
+            var partSize = Vector2.Zero;
+
+            switch (value) {
+                case CounterFont.MoneyFont:
+                    fontPath = "ui/uld/Money_Number.tex";
+                    partSize = new Vector2(22.0f, 22.0f);
+                    break;
+            }
+
+            if (fontPath != string.Empty && partSize != Vector2.Zero) {
+                PartsList[0]->Width = (ushort)partSize.X;
+                PartsList[0]->Height = (ushort)partSize.Y;
+                PartsList[0]->LoadTexture(fontPath);
+            }
+        }
     }
 
     protected override void Dispose(bool disposing) {
