@@ -8,8 +8,8 @@ namespace KamiToolKit;
 /// <summary>
 ///     Simplified controller for using AddonNamePlate for basic overlays.
 /// </summary>
-public sealed unsafe class NameplateAddonController : AddonController<AddonNamePlate> {
-    public NameplateAddonController() : base("NamePlate") {
+public sealed unsafe class OverlayAddonController : AddonController<AddonNamePlate> {
+    public OverlayAddonController() : base("NamePlate") {
         OnPostEnable += RefreshAddon;
         OnPostDisable += RefreshAddon;
         base.OnUpdate += UpdateNamePlate;

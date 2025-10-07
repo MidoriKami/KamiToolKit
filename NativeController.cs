@@ -51,7 +51,6 @@ public unsafe class NativeController : IDisposable {
             NativeAddon.DisposeAddons();
 
             Experimental.Instance.DisposeHooks();
-            OverlayNodeController.Dispose();
         });
 
     public void AttachNode(NodeBase customNode, NodeBase targetNode, NodePosition? position = null)
