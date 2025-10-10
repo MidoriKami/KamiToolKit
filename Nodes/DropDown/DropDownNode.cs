@@ -8,7 +8,7 @@ using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
 
-public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNode<TU>, new() {
+public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T : ListNode<TU>, new() {
 
     public readonly NineGridNode BackgroundNode;
     public readonly ImageNode CollapseArrowNode;
@@ -116,46 +116,62 @@ public abstract class DropDownNode<T, TU> : SimpleComponentNode where T : ListNo
     public Action? OnCollapsed { get; set; }
 
     public bool IsEnabled { get; set; } = true;
-    
-    public unsafe void Toggle() {
-        if (!IsEnabled) return;
 
-        IsCollapsed = !IsCollapsed;
-        Timeline?.PlayAnimation(IsCollapsed ? 4 : 11);
-        OptionListNode.Toggle(!IsCollapsed);
+    public void Collapse() {
+        if (!IsEnabled) return;
+        if (IsCollapsed) return;
+
+        IsCollapsed = true;
+        Timeline?.PlayAnimation(4);
+        OptionListNode.Toggle(false);
+
+        OptionListNode.ReattachNode(this);
+
+        // Need to reset position after reattaching, so screen position is recalculated correctly
+        OptionListNode.Position = Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
+
+        OnCollapsed?.Invoke();
+    }
+
+    public void Uncollapse() {
+        if (!IsEnabled) return;
+        if (!IsCollapsed) return;
+
+        IsCollapsed = false;
+        Timeline?.PlayAnimation(11);
+        OptionListNode.Toggle(true);
         
         var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
         if (parentAddon is not null) {
+            OptionListNode.Position = (ScreenPosition - new Vector2(parentAddon->X, parentAddon->Y)) / parentAddon->Scale + Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
+            MoveListOnScreen();
 
-            if (!IsCollapsed) {
-                OptionListNode.Position = ((ScreenPosition - new Vector2(parentAddon->X, parentAddon->Y)) / parentAddon->Scale) + Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
-                MoveListOnScreen();
+            DropDownFocusCollisionNode.Position = -OptionListNode.Position;
+            DropDownFocusCollisionNode.Size = new Vector2(parentAddon->RootNode->Width, parentAddon->RootNode->Height);
 
-                DropDownFocusCollisionNode.Position = -OptionListNode.Position;
-                DropDownFocusCollisionNode.Size = new Vector2(parentAddon->RootNode->Width, parentAddon->RootNode->Height);
+            OptionListNode.ReattachNode(parentAddon->RootNode);
+        }
 
-                OptionListNode.ReattachNode(parentAddon->RootNode);
-            }
-            else {
-                OptionListNode.ReattachNode(this);
-                // Need to reset position after reattaching, so screen position is recalculated correctly
-                OptionListNode.Position = Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
-            }
+        OnUncollapsed?.Invoke();
+    }
+
+    public void Toggle() {
+        if (!IsEnabled) return;
+
+        if (IsCollapsed) {
+            Uncollapse();
+        }
+        else {
+            Collapse();
         }
 
         OnCollapseToggled?.Invoke(IsCollapsed);
-        if (IsCollapsed) {
-            OnCollapsed?.Invoke();
-        }
-        else {
-            OnUncollapsed?.Invoke();
-        }
     }
 
     public void RecalculateScrollParams()
         => OptionListNode.RecalculateScrollParams();
     
-    private unsafe void MoveListOnScreen() {
+    private void MoveListOnScreen() {
         var screenSize = AtkStage.Instance()->ScreenSize;
         var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
         if (parentAddon == null) {
