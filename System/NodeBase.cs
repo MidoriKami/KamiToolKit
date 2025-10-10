@@ -45,7 +45,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         // Automatically dispose any fields/properties that are managed nodes.
         VisitChildren(node => {
-            // ClearFocus(); // This feels too redundant? Doesn't that call this function anyways?
             node?.Dispose();
         });
 
