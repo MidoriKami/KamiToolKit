@@ -26,6 +26,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     public void Dispose() {
         // If the node was invalidated before dispose, we want to skip trying to free it.
         if (!IsNodeValid()) {
+            Log.Verbose($"Native has disposed node {GetType()}");
             isDisposed = true;
             GC.SuppressFinalize(this);
             CreatedNodes.Remove(this);
@@ -34,8 +35,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         if (!isDisposed) {
             Log.Verbose($"Disposing node {GetType()}");
-
-            DisposeManagedResources();
 
             ClearFocus();
 
@@ -98,9 +97,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         }
     }
 
-    ~NodeBase() {
-        Dispose(false);
-    }
+    ~NodeBase() => Dispose(false);
 
     protected abstract void Dispose(bool disposing);
 
@@ -140,16 +137,11 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     private void NativeDestroyAtkResNode(AtkResNode* thisPtr, bool free) {
         AtkResNode.StaticVirtualTablePointer->Destroy(thisPtr, free);
-        DisposeManagedResources();
+        Dispose();
 
         // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
         NativeMemoryHelper.Free(virtualTable, 0x8 * 4);
     }
-
-    /// <summary>
-    /// Use this dispose method to free any non-native resources, KTK will automatically free any native resources on dispose.
-    /// </summary>
-    protected virtual void DisposeManagedResources() { }
 }
 
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {

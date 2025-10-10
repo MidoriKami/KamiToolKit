@@ -14,7 +14,7 @@ namespace KamiToolKit.Nodes;
 public unsafe class TreeListCategoryNode : ResNode {
 
     public readonly NineGridNode BackgroundNode;
-    public readonly ResNode ChildContainer;
+    public readonly SimpleComponentNode ChildContainer;
     public readonly ImageNode CollapseArrowNode;
     public readonly CollisionNode CollisionNode;
     public readonly TextNode LabelNode;
@@ -76,8 +76,9 @@ public unsafe class TreeListCategoryNode : ResNode {
         };
         LabelNode.AttachNode(this);
 
-        ChildContainer = new ResNode {
-            Position = new Vector2(0.0f, 24.0f + VerticalPadding), IsVisible = true,
+        ChildContainer = new SimpleComponentNode {
+            Position = new Vector2(0.0f, 24.0f + VerticalPadding), 
+            IsVisible = true,
         };
         ChildContainer.AttachNode(this);
 

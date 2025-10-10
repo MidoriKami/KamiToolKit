@@ -5,12 +5,12 @@ namespace KamiToolKit.Nodes;
 
 public class TreeListNode : ResNode {
 
-    private readonly ResNode childContainer;
+    private readonly SimpleComponentNode childContainer;
 
     private List<TreeListCategoryNode> children = [];
 
     public TreeListNode() {
-        childContainer = new ResNode {
+        childContainer = new SimpleComponentNode {
             IsVisible = true,
         };
 

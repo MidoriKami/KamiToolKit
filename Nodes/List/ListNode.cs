@@ -17,7 +17,7 @@ public abstract class ListNode : ComponentNode<AtkComponentBase, AtkUldComponent
 public abstract unsafe class ListNode<T> : ListNode {
 
     public readonly NineGridNode BackgroundNode;
-    public readonly ResNode ContainerNode;
+    public readonly SimpleComponentNode ContainerNode;
     public readonly ScrollBarNode ScrollBarNode;
     public List<ListButtonNode> Nodes = [];
 
@@ -36,7 +36,7 @@ public abstract unsafe class ListNode<T> : ListNode {
         };
         BackgroundNode.AttachNode(this);
 
-        ContainerNode = new ResNode {
+        ContainerNode = new SimpleComponentNode {
             NodeFlags = NodeFlags.Clip, 
             IsVisible = true,
         };

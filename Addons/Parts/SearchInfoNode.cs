@@ -107,8 +107,8 @@ internal unsafe class SearchInfoNode<T> : SimpleComponentNode {
         CollisionNode.DrawFlags |= DrawFlags.ClickableCursor;
     }
 
-    protected override void DisposeManagedResources() {
-        base.DisposeManagedResources();
+    protected override void Dispose(bool disposing) {
+        base.Dispose(disposing);
 
         eventListener?.Dispose();
         eventListener = null;

@@ -42,8 +42,8 @@ public class ImGuiImageNode : SimpleImageNode {
         });
     }
 
-    protected override void DisposeManagedResources() {
-        base.DisposeManagedResources();
+    protected override void Dispose(bool disposing) {
+        base.Dispose(disposing);
 
         LoadedTexture?.Dispose();
     }
