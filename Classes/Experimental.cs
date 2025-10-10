@@ -15,10 +15,18 @@ public unsafe class Experimental {
     // WARNING: May result in undefined state or accidental network requests
     // Use at your own risk.
     [Conditional("DEBUG")]
-    public static void ForceOpenAddon(AgentId agentId)
-        => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-            AgentModule.Instance()->GetAgentByInternalId(agentId)->Show();
-        });
+    public static void ForceOpenAddon(AgentId agentId, int delayTicks = 0) {
+        if (delayTicks is not 0) {
+            DalamudInterface.Instance.Framework.RunOnTick(() => {
+                AgentModule.Instance()->GetAgentByInternalId(agentId)->Show();
+            }, delayTicks: delayTicks);
+        }
+        else {
+            DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+                AgentModule.Instance()->GetAgentByInternalId(agentId)->Show();
+            });
+        }
+    }
 
     // WARNING: May result in undefined state or accidental network requests
     // Use at your own risk.
