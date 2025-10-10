@@ -16,48 +16,50 @@ public abstract unsafe partial class NodeBase : IDisposable {
     internal static uint CurrentOffset;
 
     private bool isDisposed;
+    private bool isManagedDispose;
 
     internal abstract AtkResNode* InternalResNode { get; }
 
     private AtkResNode.Delegates.Destroy destructorFunction = null!;
-    
     private AtkResNode.AtkResNodeVirtualTable* virtualTable;
 
     public void Dispose() {
+        if (isDisposed) return;
+        isDisposed = true;
+
         // If the node was invalidated before dispose, we want to skip trying to free it.
         if (!IsNodeValid()) {
-            Log.Verbose($"Native has disposed node {GetType()}");
-            isDisposed = true;
-            GC.SuppressFinalize(this);
-            CreatedNodes.Remove(this);
+            if (!isManagedDispose) {
+                Log.Verbose($"Native has disposed node {GetType()}");
+
+                GC.SuppressFinalize(this);
+                CreatedNodes.Remove(this);
+            }
             return;
         }
 
-        if (!isDisposed) {
-            Log.Verbose($"Disposing node {GetType()}");
+        Log.Verbose($"Disposing node {GetType()}");
+        isManagedDispose = true;
 
-            ClearFocus();
+        ClearFocus();
 
-            // Automatically dispose any fields/properties that are managed nodes.
-            VisitChildren(node => {
-                ClearFocus();
-                node?.Dispose();
-            });
+        // Automatically dispose any fields/properties that are managed nodes.
+        VisitChildren(node => {
+            // ClearFocus(); // This feels too redundant? Doesn't that call this function anyways?
+            node?.Dispose();
+        });
 
-            TryForceDetach(false);
+        TryForceDetach(false);
 
-            Timeline?.Dispose();
-            InternalResNode->Timeline = null;
+        Timeline?.Dispose();
+        InternalResNode->Timeline = null;
 
-            DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
+        DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
 
-            Dispose(true);
-            GC.SuppressFinalize(this);
+        Dispose(true);
 
-            CreatedNodes.Remove(this);
-        }
-
-        isDisposed = true;
+        GC.SuppressFinalize(this);
+        CreatedNodes.Remove(this);
     }
 
     /// <summary>
@@ -65,10 +67,10 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// </summary>
     private void ClearFocus() {
         if (InternalResNode is null) return;
-        
+
         var inputManager = AtkStage.Instance()->AtkInputManager;
         if (inputManager is null) return;
-        
+
         foreach (ref var focusEntry in inputManager->FocusList) {
             if (focusEntry.AtkEventListener is null) continue;
 
@@ -77,8 +79,16 @@ public abstract unsafe partial class NodeBase : IDisposable {
                 Log.Debug($"Custom Node was focused during dispose, Addon: {((AtkUnitBase*)focusEntry.AtkEventListener)->NameString}, unfocusing node.");
                 focusEntry.AtkEventTarget = null;
                 focusEntry.Unk10 = 0;
-                Marshal.WriteInt64((nint)inputManager, 0x1880, 0);
+                inputManager->FocusedNode = null;
                 AtkStage.Instance()->AtkCollisionManager->IntersectingCollisionNode = null;
+
+                var addon = (AtkUnitBase*) focusEntry.AtkEventListener;
+                foreach (ref var node in addon->AdditionalFocusableNodes) {
+                    if (node.Value == InternalResNode) {
+                        Log.Debug("Custom Node was an AdditionalFocusableNode, clearing.");
+                        node = null;
+                    }
+                }
             }
         }
     }
@@ -127,7 +137,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         virtualTable = (AtkResNode.AtkResNodeVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 4);
         NativeMemory.Copy(InternalResNode->VirtualTable, virtualTable, 0x8 * 4);
         InternalResNode->VirtualTable = virtualTable;
-        
+
         // Pin managed function to virtual table entry
         destructorFunction = NativeDestroyAtkResNode;
 
@@ -157,7 +167,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
         InternalResNode->Type = nodeType;
         InternalResNode->NodeId = NodeIdBase + CurrentOffset++;
 
-        if (Node is null) {
+        if (InternalResNode is null) {
             throw new Exception($"Unable to allocate memory for {typeof(T)}");
         }
 
