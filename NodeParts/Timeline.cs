@@ -87,13 +87,18 @@ public unsafe class Timeline : IDisposable {
         => PlayAnimation(AtkTimelineJumpBehavior.Start, labelId, force);
 
     public void PlayAnimation(AtkTimelineJumpBehavior behavior, int labelId, bool force = false) {
+        if (InternalTimeline is null) return;
+        
         if (InternalTimeline->ActiveLabelId != labelId || force) {
             InternalTimeline->PlayAnimation(behavior, (ushort)labelId);
         }
     }
 
-    public void StopAnimation()
-        => InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, (ushort)0);
+    public void StopAnimation() {
+        if (InternalTimeline is null) return;
+        
+        InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, (ushort)0);
+    }
 
     public void UpdateKeyFrame(
         int frameId, KeyFrameGroupType groupType, Vector2? position = null, byte? alpha = null, Vector3? addColor = null, Vector3? multiplyColor = null,
