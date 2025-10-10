@@ -24,6 +24,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
     private AtkResNode.AtkResNodeVirtualTable* virtualTable;
 
     public void Dispose() {
+        ThreadSafety.AssertMainThread("This function must be invoked from the main thread.");
+
         if (isDisposed) return;
         isDisposed = true;
 
