@@ -29,6 +29,16 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         Font = CounterFont.MoneyFont;
     }
 
+    protected override void Dispose(bool disposing, bool isManagedDispose) {
+        if (disposing) {
+            if (isManagedDispose) {
+                PartsList.Dispose();
+            }
+
+            base.Dispose(disposing, isManagedDispose);
+        }
+    }
+
     public string TexturePath {
         get => PartsList[0]->GetLoadedPath();
         set => PartsList[0]->LoadTexture(value);
@@ -110,14 +120,6 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
                 PartsList[0]->Height = (ushort)partSize.Y;
                 PartsList[0]->LoadTexture(fontPath);
             }
-        }
-    }
-
-    protected override void Dispose(bool disposing) {
-        if (disposing) {
-            PartsList.Dispose();
-
-            base.Dispose(disposing);
         }
     }
 }

@@ -15,10 +15,13 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         Node->PartsList = PartsList.InternalPartsList;
     }
 
-    protected override void Dispose(bool disposing) {
+    protected override void Dispose(bool disposing, bool isManagedDispose) {
         if (disposing) {
-            PartsList.Dispose();
-            base.Dispose(disposing);
+            if (isManagedDispose) {
+                PartsList.Dispose();
+            }
+
+            base.Dispose(disposing, isManagedDispose);
         }
     }
 

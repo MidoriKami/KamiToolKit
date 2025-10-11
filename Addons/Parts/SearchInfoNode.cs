@@ -107,11 +107,13 @@ internal unsafe class SearchInfoNode<T> : SimpleComponentNode {
         CollisionNode.DrawFlags |= DrawFlags.ClickableCursor;
     }
 
-    protected override void Dispose(bool disposing) {
-        base.Dispose(disposing);
+    protected override void Dispose(bool disposing, bool isManagedDispose) {
+        if (disposing) {
+            base.Dispose(disposing, isManagedDispose);
 
-        eventListener?.Dispose();
-        eventListener = null;
+            eventListener?.Dispose();
+            eventListener = null;
+        }
     }
 
     private void HandleEvents(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {

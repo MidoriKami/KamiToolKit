@@ -33,6 +33,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
         if (!IsNodeValid()) {
             if (!isManagedDispose) {
                 Log.Verbose($"Native has disposed node {GetType()}");
+                
+                Dispose(true, false);
 
                 GC.SuppressFinalize(this);
                 CreatedNodes.Remove(this);
@@ -57,7 +59,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
 
-        Dispose(true);
+        Dispose(true, true);
 
         GC.SuppressFinalize(this);
         CreatedNodes.Remove(this);
@@ -108,9 +110,9 @@ public abstract unsafe partial class NodeBase : IDisposable {
         }
     }
 
-    ~NodeBase() => Dispose(false);
+    ~NodeBase() => Dispose(false, true);
 
-    protected abstract void Dispose(bool disposing);
+    protected abstract void Dispose(bool disposing, bool isManagedDispose);
 
     private bool IsNodeValid() {
         if (InternalResNode is null) return false;
@@ -179,9 +181,12 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
     internal sealed override AtkResNode* InternalResNode => (AtkResNode*)Node;
 
-    protected override void Dispose(bool disposing) {
+    protected override void Dispose(bool disposing, bool isManagedDispose) {
         if (disposing) {
-            InternalResNode->Destroy(true);
+            if (isManagedDispose) {
+                InternalResNode->Destroy(true);
+            }
+
             Node = null;
         }
     }

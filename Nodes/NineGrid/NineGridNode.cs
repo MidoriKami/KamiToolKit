@@ -15,6 +15,16 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
         Node->PartsList = PartsList.InternalPartsList;
     }
 
+    protected override void Dispose(bool disposing, bool isManagedDispose) {
+        if (disposing) {
+            if (isManagedDispose) {
+                PartsList.Dispose();
+            }
+            
+            base.Dispose(disposing, isManagedDispose);
+        }
+    }
+
     public uint PartId {
         get => Node->PartId;
         set => Node->PartId = value;
@@ -58,14 +68,6 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
     public byte PartsRenderType {
         get => Node->PartsTypeRenderType;
         set => Node->PartsTypeRenderType = value;
-    }
-
-    protected override void Dispose(bool disposing) {
-        if (disposing) {
-            PartsList.Dispose();
-
-            base.Dispose(disposing);
-        }
     }
 
     public AtkUldPart* AddPart(Part part)
