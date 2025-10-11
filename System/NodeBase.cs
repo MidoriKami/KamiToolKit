@@ -112,6 +112,18 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     ~NodeBase() => Dispose(false, true);
 
+    /// <summary>
+    /// Dispose associated resources. If a resource modifies native state directly guard it with <see cref="isManagedDispose"/>
+    /// </summary>
+    /// <param name="disposing">
+    /// Indicates if this specific call should dispose resources or not. This protects against double dispose,
+    /// or incorrectly manipulating native state too many times.
+    /// </param>
+    /// <param name="isManagedDispose">
+    /// Indicates if the dispose call should try to completely clean up all resources,
+    /// or if it should only clean up managed resources. When false, be sure to only dispose
+    /// resources that exist in managed spaces, as the game has already cleaned up everything else.
+    /// </param>
     protected abstract void Dispose(bool disposing, bool isManagedDispose);
 
     private bool IsNodeValid() {
