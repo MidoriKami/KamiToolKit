@@ -14,6 +14,7 @@ public class ModifyListAddon<T> : NativeAddon {
     private ScrollingAreaNode<VerticalListNode>? listNode;
 
     private TextButtonNode? addButton;
+    private TextButtonNode? editButton;
     private TextButtonNode? removeButton;
 
     private SearchInfoNode<T>? selectedOption;
@@ -21,6 +22,7 @@ public class ModifyListAddon<T> : NativeAddon {
     
     public required Action AddNewEntry { get; init; }
     public required Action<T> RemoveEntry { get; init; }
+    public Action<T>? EditEntry { get; init; }
 
     public delegate OptionInfo<T> GetOptionInfoDelegate(T option);
     public required GetOptionInfoDelegate GetOptionInfo { get; init; }
@@ -59,6 +61,18 @@ public class ModifyListAddon<T> : NativeAddon {
             OnClick = OnAddClicked,
         };
         AttachNode(addButton);
+
+        if (EditEntry is not null) {
+            editButton = new TextButtonNode {
+                Size = new Vector2(buttonWidth, 24.0f),
+                Position = new Vector2(ContentStartPosition.X + buttonWidth + buttonPadding, ContentStartPosition.Y + ContentSize.Y - 24.0f - 8.0f),
+                IsVisible = true,
+                IsEnabled = false,
+                String = "Edit",
+                OnClick = OnEditClicked,
+            };
+            AttachNode(editButton);
+        }
 
         removeButton = new TextButtonNode {
             Size = new Vector2(buttonWidth, 24.0f),
@@ -113,6 +127,12 @@ public class ModifyListAddon<T> : NativeAddon {
         }
     }
 
+    private void OnEditClicked() {
+        if (selectedOption is null) return;
+        
+        EditEntry?.Invoke(selectedOption.OptionInfo.Option);
+    }
+
     private void OnRemoveClicked() {
         if (selectedOption is null) return;
         if (listNode is null) return;
@@ -153,5 +173,9 @@ public class ModifyListAddon<T> : NativeAddon {
 
         // Enable Confirm Button
         removeButton.IsEnabled = true;
+
+        if (editButton is not null) {
+            editButton.IsEnabled = true;
+        }
     }
 }
