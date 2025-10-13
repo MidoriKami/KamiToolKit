@@ -40,11 +40,11 @@ public abstract unsafe partial class NativeAddon {
 
         var currentAddonCount = RaptureAtkUnitManager.Instance()->AllLoadedUnitsList.Count;
         if (currentAddonCount >= 200) {
-            Log.Warning("WARNING: Current Addon Count is approaching hard limits. Please ensure custom Addons are not being used as overlays.");
+            Log.Warning($"WARNING: Current Addon Count is approaching hard limits ({currentAddonCount}/250). Please ensure custom Addons are not being used as overlays.");
         }
 
         if (currentAddonCount >= 225) {
-            Log.Error("ERROR: Current Addon Count is too high. Aborting allocation.");
+            Log.Error($"ERROR: Current Addon Count is too high. Aborting allocation ({currentAddonCount}/250).");
             return;
         }
 
