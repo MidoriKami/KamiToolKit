@@ -64,14 +64,8 @@ public abstract unsafe class ListNode<T> : ListNode {
                     ClearFocusable(parentAddon);
                 }
             }
-            
-            base.Dispose(disposing, isManagedDispose);
 
-            if (!isManagedDispose) {
-                foreach (var node in Nodes) {
-                    node.Dispose();
-                }
-            }
+            base.Dispose(disposing, isManagedDispose);
         }
     }
 
