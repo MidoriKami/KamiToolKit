@@ -17,7 +17,7 @@ public abstract class ListNode : ComponentNode<AtkComponentBase, AtkUldComponent
 public abstract unsafe class ListNode<T> : ListNode {
 
     public readonly NineGridNode BackgroundNode;
-    public readonly SimpleComponentNode ContainerNode;
+    public readonly ResNode ContainerNode;
     public readonly ScrollBarNode ScrollBarNode;
     public List<ListButtonNode> Nodes = [];
 
@@ -36,8 +36,8 @@ public abstract unsafe class ListNode<T> : ListNode {
         };
         BackgroundNode.AttachNode(this);
 
-        ContainerNode = new SimpleComponentNode {
-            NodeFlags = NodeFlags.Clip, 
+        ContainerNode = new ResNode {
+            NodeFlags = NodeFlags.Clip,
             IsVisible = true,
         };
         ContainerNode.AttachNode(this);
@@ -64,8 +64,14 @@ public abstract unsafe class ListNode<T> : ListNode {
                     ClearFocusable(parentAddon);
                 }
             }
-
+            
             base.Dispose(disposing, isManagedDispose);
+
+            if (!isManagedDispose) {
+                foreach (var node in Nodes) {
+                    node.Dispose();
+                }
+            }
         }
     }
 
