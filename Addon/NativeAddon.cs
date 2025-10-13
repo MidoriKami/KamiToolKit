@@ -81,7 +81,9 @@ public abstract unsafe partial class NativeAddon {
         widgetInfo->NodeCount = 0;
         widgetInfo->NodeList = null;
         widgetInfo->WidgetAlignment = new AtkWidgetAlignment {
-            AlignmentType = AlignmentType.Center, X = 50.0f, Y = 50.0f,
+            AlignmentType = AlignmentType.Center, 
+            X = 50.0f, 
+            Y = 50.0f,
         };
 
         InternalAddon->UldManager.Objects = (AtkUldObjectInfo*)widgetInfo;
