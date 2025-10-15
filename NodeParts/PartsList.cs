@@ -33,7 +33,7 @@ public unsafe class PartsList : IDisposable {
                     part.UldAsset->AtkTexture.TextureType = 0;
                     part.UldAsset->AtkTexture.Destroy(true);
                 }
-                
+
                 NativeMemoryHelper.UiFree(part.UldAsset);
                 part.UldAsset = null;
             }
