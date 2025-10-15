@@ -90,7 +90,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
         set => SortOrderDropDown.MaxListOptions = value;
     }
 
-    public List<string> FilterOptions {
+    public List<string> SortingOptions {
         get => SortOrderDropDown.Options ?? [];
         set {
             SortOrderDropDown.Options = value;
@@ -100,7 +100,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
             
             InternalResNode->SetHeight((ushort)(value.Count > 0 ? 69 : 38));
 
-            if (FilterOptions.Count > 0) {
+            if (SortingOptions.Count > 0) {
                 sortOption = value.First();
             }
         }
