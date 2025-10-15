@@ -69,16 +69,16 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
     public override int ChildCount => ComponentBase->UldManager.NodeListCount;
 
-    protected override void Dispose(bool disposing, bool isManagedDispose) {
+    protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
-            if (isManagedDispose) {
+            if (!isNativeDestructor) {
                 NativeMemoryHelper.UiFree(Data);
                 Data = null;
 
                 ComponentBase->Dtor(1);
             }
 
-            base.Dispose(disposing, isManagedDispose);
+            base.Dispose(disposing, isNativeDestructor);
         }
     }
 

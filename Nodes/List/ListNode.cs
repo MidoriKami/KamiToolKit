@@ -56,16 +56,16 @@ public abstract unsafe class ListNode<T> : ListNode {
         ContainerNode.AddEvent(AddonEventType.MouseWheel, OnMouseWheel);
     }
     
-    protected override void Dispose(bool disposing, bool isManagedDispose) {
+    protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
-            if (isFocusSet && isManagedDispose) {
+            if (isFocusSet && !isNativeDestructor) {
                 var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
                 if (parentAddon is not null) {
                     ClearFocusable(parentAddon);
                 }
             }
 
-            base.Dispose(disposing, isManagedDispose);
+            base.Dispose(disposing, isNativeDestructor);
         }
     }
 

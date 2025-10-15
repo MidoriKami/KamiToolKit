@@ -34,7 +34,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             if (!isManagedDispose) {
                 Log.Verbose($"Native has disposed node {GetType()}");
                 
-                Dispose(true, false);
+                Dispose(true, true);
 
                 GC.SuppressFinalize(this);
                 CreatedNodes.Remove(this);
@@ -59,7 +59,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
 
-        Dispose(true, true);
+        Dispose(true, false);
 
         GC.SuppressFinalize(this);
         CreatedNodes.Remove(this);
@@ -110,21 +110,21 @@ public abstract unsafe partial class NodeBase : IDisposable {
         }
     }
 
-    ~NodeBase() => Dispose(false, true);
+    ~NodeBase() => Dispose(false, false);
 
     /// <summary>
-    /// Dispose associated resources. If a resource modifies native state directly guard it with <see cref="isManagedDispose"/>
+    /// Dispose associated resources. If a resource modifies native state directly guard it with isNativeDestructor
     /// </summary>
     /// <param name="disposing">
     /// Indicates if this specific call should dispose resources or not. This protects against double dispose,
     /// or incorrectly manipulating native state too many times.
     /// </param>
-    /// <param name="isManagedDispose">
+    /// <param name="isNativeDestructor">
     /// Indicates if the dispose call should try to completely clean up all resources,
     /// or if it should only clean up managed resources. When false, be sure to only dispose
     /// resources that exist in managed spaces, as the game has already cleaned up everything else.
     /// </param>
-    protected abstract void Dispose(bool disposing, bool isManagedDispose);
+    protected abstract void Dispose(bool disposing, bool isNativeDestructor);
 
     private bool IsNodeValid() {
         if (InternalResNode is null) return false;
@@ -193,9 +193,9 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
     internal sealed override AtkResNode* InternalResNode => (AtkResNode*)Node;
 
-    protected override void Dispose(bool disposing, bool isManagedDispose) {
+    protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
-            if (isManagedDispose) {
+            if (!isNativeDestructor) {
                 InternalResNode->Destroy(true);
             }
 

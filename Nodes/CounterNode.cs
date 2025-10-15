@@ -29,13 +29,13 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         Font = CounterFont.MoneyFont;
     }
 
-    protected override void Dispose(bool disposing, bool isManagedDispose) {
+    protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
-            if (isManagedDispose) {
+            if (!isNativeDestructor) {
                 PartsList.Dispose();
             }
 
-            base.Dispose(disposing, isManagedDispose);
+            base.Dispose(disposing, isNativeDestructor);
         }
     }
 

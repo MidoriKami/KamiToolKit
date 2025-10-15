@@ -153,11 +153,12 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         });
     }
 
-    protected override void Dispose(bool disposing, bool isManagedDispose) {
+    protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
-            NativeMemoryHelper.Free(virtualTable, 0x8 * 10);
+            base.Dispose(disposing, isNativeDestructor);
 
-            base.Dispose(disposing, isManagedDispose);
+            NativeMemoryHelper.Free(virtualTable, 0x8 * 10);
+            virtualTable = null;
         }
     }
 

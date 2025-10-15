@@ -15,13 +15,13 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
         Node->PartsList = PartsList.InternalPartsList;
     }
 
-    protected override void Dispose(bool disposing, bool isManagedDispose) {
+    protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
-            if (isManagedDispose) {
+            if (!isNativeDestructor) {
                 PartsList.Dispose();
             }
-            
-            base.Dispose(disposing, isManagedDispose);
+
+            base.Dispose(disposing, isNativeDestructor);
         }
     }
 
