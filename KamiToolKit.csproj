@@ -8,4 +8,8 @@
     <ItemGroup>
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11"/>
     </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="Assets\**\*.png" CopyToOutputDirectory="Always"/>
+    </ItemGroup>
 </Project>
