@@ -4,18 +4,14 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
-using KamiToolKit.Addons.Interfaces;
 using KamiToolKit.Addons.Parts;
 using KamiToolKit.Nodes;
 using KamiToolKit.Widgets;
 
 namespace KamiToolKit.Addons;
 
-/// <summary>
-/// A generic window for selecting a single entry among a list of options.
-/// </summary>
-public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
-
+public abstract class BaseSearchAddon<T> : NativeAddon {
+    
     private SearchWidget? searchWidget;
     private ScrollingAreaNode<VerticalListNode>? listNode;
 
@@ -69,7 +65,12 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
         AttachNode(confirmButton);
         
         foreach (var option in SearchOptions) {
-            listNode.ContentNode.AddNode(BuildOptionNode(option), true);
+            var newOptionNode = BuildOptionNode(option);
+
+            newOptionNode.Size = new Vector2(listNode.ContentNode.Width, 48.0f);
+            newOptionNode.OnClicked = OnOptionClicked;
+
+            listNode.ContentNode.AddNode(newOptionNode, true);
         }
 
         listNode.ContentNode.RecalculateLayout();
@@ -86,21 +87,15 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
     }
 
     private void OnConfirmClicked() {
-        if (selectedOption is { Option: { } option }) {
-            SelectionResult.Invoke(option);
+        if (selectedOption != null) {
+            SelectionResult.Invoke(selectedOption.Option);
         }
         
         selectedOption = null;
         Close();
     }
 
-    private SearchInfoNode<T> BuildOptionNode(T option) => new() {
-        Width = listNode!.ContentNode.Width,
-        Height = 48.0f,
-        Option = option,
-        IsVisible = true,
-        OnClicked = OnOptionClicked,
-    };
+    protected abstract BaseSearchInfoNode<T> BuildOptionNode(T option);
 
     private void OnOptionClicked(BaseSearchInfoNode<T> clickedOption) {
         if (confirmButton is null) return;
@@ -120,7 +115,7 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
     }
 
     private void OnSortOrderUpdated(string sortingString, bool reversed) => listNode?.ContentNode.ReorderNodes((x, y) => {
-        if (x is not SearchInfoNode<T> left || y is not SearchInfoNode<T> right) return 0;
+        if (x is not BaseSearchInfoNode<T> left || y is not BaseSearchInfoNode<T> right) return 0;
 
         var compareResult = left.Compare(right, sortingString, reversed);
         return reversed ? -compareResult : compareResult;
@@ -129,7 +124,7 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
     private void OnSearchUpdated(string searchString) {
         if (listNode is null) return;
 
-        foreach (var node in listNode.ContentNode.GetNodes<SearchInfoNode<T>>()) {
+        foreach (var node in listNode.ContentNode.GetNodes<BaseSearchInfoNode<T>>()) {
             node.IsVisible = node.IsMatch(searchString);
         }
 
