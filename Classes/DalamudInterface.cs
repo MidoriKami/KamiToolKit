@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
@@ -20,6 +22,15 @@ internal class DalamudInterface {
     [PluginService] public IGameGui GameGui { get; set; } = null!;
     [PluginService] public IGameInteropProvider GameInteropProvider { get; set; } = null!;
     [PluginService] public IGameConfig GameConfig { get; set; } = null!;
+    
+    public string GetAssetDirectoryPath()
+        => Path.Combine(PluginInterface.AssemblyLocation.DirectoryName ?? throw new Exception("Directory from Dalamud is Invalid Somehow"), "Assets");
+    
+    public string GetAssetPath(string assetName)
+        => Path.Combine(GetAssetDirectoryPath(), assetName);
+
+    public IDalamudTextureWrap? LoadAsset(string assetName)
+        => TextureProvider.GetFromFile(GetAssetPath(assetName)).GetWrapOrDefault();
 }
 
 internal static class Log {
