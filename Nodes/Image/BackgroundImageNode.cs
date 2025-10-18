@@ -8,6 +8,10 @@ namespace KamiToolKit.Nodes;
 /// </summary>
 [JsonObject(MemberSerialization.OptIn)]
 public unsafe class BackgroundImageNode : SimpleImageNode {
+    public BackgroundImageNode() {
+        FitTexture = true;
+    }
+
     [JsonProperty] public new Vector4 Color {
         get => new(AddColor.X, AddColor.Y, AddColor.Z, InternalResNode->Color.A / 255.0f);
         set {
