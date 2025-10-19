@@ -1,4 +1,5 @@
 using System.Numerics;
+using Dalamud.Interface;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
@@ -18,5 +19,10 @@ public unsafe class BackgroundImageNode : SimpleImageNode {
             InternalResNode->Color = new Vector4(0.0f, 0.0f, 0.0f, value.W).ToByteColor();
             AddColor = value.AsVector3Color();
         }
+    }
+
+    public new ColorHelpers.HsvaColor HsvaColor {
+        get => ColorHelpers.RgbaToHsv(Color);
+        set => Color = ColorHelpers.HsvToRgb(value);
     }
 }
