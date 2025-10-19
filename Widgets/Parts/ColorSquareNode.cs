@@ -3,7 +3,6 @@ using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using Log = Serilog.Log;
 
 namespace KamiToolKit.Widgets.Parts;
 
@@ -14,8 +13,6 @@ public class ColorSquareNode : SimpleComponentNode {
     public readonly ImGuiImageNode ColorDotNode;
 
     public ColorSquareNode() {
-        Log.Debug($"Path: {@"..\\Assets\\second.png\"}");
-        
         WhiteGradientNode = new ImGuiImageNode {
             IsVisible = true,
             TexturePath = DalamudInterface.Instance.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
