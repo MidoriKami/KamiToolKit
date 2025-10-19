@@ -1,9 +1,6 @@
-﻿using System.Drawing;
-using System.Globalization;
-using System.Numerics;
+﻿using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Addon.Events.EventDataTypes;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -19,11 +16,7 @@ public unsafe class ColorPickerWidget : SimpleComponentNode {
     public readonly ImGuiImageNode AlphaBarNode;
     public readonly ImGuiImageNode AlphaBarSelectorNode;
 
-    public readonly BackgroundImageNode SelectedColorPreviewNode;
-    public readonly ImGuiImageNode AlphaLayerPreviewNode;
-    public readonly BackgroundImageNode SelectedColorPreviewBorderNode;
-
-    public readonly TextInputNode ColorInputNode;
+    public readonly ColorPreviewWithInput ColorPreviewWithInput;
 
     private ViewportEventListener alphaEventListener;
     private bool isAlphaDragging;
@@ -55,8 +48,6 @@ public unsafe class ColorPickerWidget : SimpleComponentNode {
             EnableEventFlags = true,
         };
         AlphaBarNode.AttachNode(this);
-        
-        // We'll have to delegate further events to the ViewportListener
         AlphaBarNode.AddEvent(AddonEventType.MouseDown, OnAlphaBarMouseDown);
 
         AlphaBarSelectorNode = new ImGuiImageNode {
@@ -66,34 +57,18 @@ public unsafe class ColorPickerWidget : SimpleComponentNode {
             EnableEventFlags = true,
         };
         AlphaBarSelectorNode.AttachNode(this);
-
         AlphaBarSelectorNode.AddEvent(AddonEventType.MouseDown, OnAlphaBarMouseDown);
 
-        SelectedColorPreviewBorderNode = new BackgroundImageNode {
+        ColorPreviewWithInput = new ColorPreviewWithInput {
             IsVisible = true,
-            Color = KnownColor.White.Vector(),
+            OnHsvaColorChanged = newColor => {
+                SetHue(newColor.H);
+                SetSaturation(newColor.S);
+                SetValue(newColor.V);
+                SetAlpha(newColor.A);
+            },
         };
-        SelectedColorPreviewBorderNode.AttachNode(this);
-
-        AlphaLayerPreviewNode = new ImGuiImageNode {
-            TexturePath = DalamudInterface.Instance.GetAssetPath("alpha_background.png"),
-            IsVisible = true,
-            WrapMode = WrapMode.Tile,
-        };
-        AlphaLayerPreviewNode.AttachNode(this);
-
-        SelectedColorPreviewNode = new BackgroundImageNode {
-            IsVisible = true,
-            Color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f),
-        };
-        SelectedColorPreviewNode.AttachNode(this);
-
-        ColorInputNode = new TextInputNode {
-            IsVisible = true,
-            AutoSelectAll = true,
-            OnInputComplete = OnTextInputComplete,
-        };
-        ColorInputNode.AttachNode(this);
+        ColorPreviewWithInput.AttachNode(this);
 
         CurrentColor = ColorHelpers.RgbaToHsv(new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
         SetHue(CurrentColor.H);
@@ -126,32 +101,8 @@ public unsafe class ColorPickerWidget : SimpleComponentNode {
         AlphaBarSelectorNode.Size = new Vector2(AlphaBarNode.Width + 4.0f, 10.0f);
         AlphaBarSelectorNode.Position = new Vector2(AlphaBarNode.X - 2.0f, AlphaBarNode.Y);
 
-        SelectedColorPreviewBorderNode.Size = new Vector2(34.0f, 34.0f);
-        SelectedColorPreviewBorderNode.Position = new Vector2(Width / 2.0f - 16.0f - 50.0f - 1.0f, ColorPickerNode.Y + ColorPickerNode.Height - 1.0f);
-
-        AlphaLayerPreviewNode.Size = new Vector2(32.0f, 32.0f);
-        AlphaLayerPreviewNode.Position = new Vector2(Width / 2.0f - 16.0f - 50.0f, ColorPickerNode.Y + ColorPickerNode.Height);
-
-        SelectedColorPreviewNode.Size = new Vector2(32.0f, 32.0f);
-        SelectedColorPreviewNode.Position = new Vector2(Width / 2.0f - 16.0f - 50.0f, ColorPickerNode.Y + ColorPickerNode.Height);
-        
-        ColorInputNode.Size = new Vector2(100.0f, 32.0f);
-        ColorInputNode.Position = new Vector2(SelectedColorPreviewNode.X + SelectedColorPreviewNode.Width + 10.0f, ColorPickerNode.Y + ColorPickerNode.Height);
-    }
-    
-    private void OnTextInputComplete(SeString obj) {
-        if (!obj.ToString().StartsWith('#')) return;
-
-        var hexString = obj.ToString().TrimStart('#');
-
-        var r = byte.Parse(hexString[0..2], NumberStyles.HexNumber);
-        var g = byte.Parse(hexString[2..4], NumberStyles.HexNumber);
-        var b = byte.Parse(hexString[4..6], NumberStyles.HexNumber);
-        var a = byte.Parse(hexString[6..8], NumberStyles.HexNumber);
-
-        var newColor = new Vector4(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
-
-        SetRgb(newColor);
+        ColorPreviewWithInput.Size = new Vector2(150.0f, 32.0f);
+        ColorPreviewWithInput.Position = new Vector2(Width / 2.0f - 75.0f, ColorPickerNode.Y + ColorPickerNode.Height - 1.0f);
     }
     
     private void OnAlphaBarMouseDown(AddonEventData obj) {
@@ -186,9 +137,7 @@ public unsafe class ColorPickerWidget : SimpleComponentNode {
 
         AlphaBarSelectorNode.Y = AlphaBarNode.Y + AlphaBarNode.Height - AlphaBarNode.Height * CurrentColor.A - 5.0f;
 
-        SelectedColorPreviewNode.HsvaColor = CurrentColor;
-        
-        UpdateColorText();
+        ColorPreviewWithInput.HsvaColor = CurrentColor;
     }
 
     public void SetHue(float hue) {
@@ -198,48 +147,26 @@ public unsafe class ColorPickerWidget : SimpleComponentNode {
         ColorPickerNode.SelectorColor = CurrentColor;
         ColorPickerNode.SquareColor = CurrentColor with { S = 1.0f, V = 1.0f };
 
-        SelectedColorPreviewNode.HsvaColor = CurrentColor;
+        ColorPreviewWithInput.HsvaColor = CurrentColor;
 
         AlphaBarNode.HsvaMultiplyColor = CurrentColor with { A = 1.0f };
-        
-        UpdateColorText();
     }
 
     public void SetSaturation(float saturation) {
         CurrentColor = CurrentColor with { S = saturation };
         
-        SelectedColorPreviewNode.HsvaColor = CurrentColor;
+        ColorPreviewWithInput.HsvaColor = CurrentColor;
         ColorPickerNode.SelectorColor = CurrentColor;
         
         AlphaBarNode.HsvaMultiplyColor = CurrentColor with { A = 1.0f };
-        
-        UpdateColorText();
     }
 
     public void SetValue(float value) {
         CurrentColor = CurrentColor with { V = value };
 
-        SelectedColorPreviewNode.HsvaColor = CurrentColor;
+        ColorPreviewWithInput.HsvaColor = CurrentColor;
         ColorPickerNode.SelectorColor = CurrentColor;
 
         AlphaBarNode.HsvaMultiplyColor = CurrentColor with { A = 1.0f };
-        
-        UpdateColorText();
-    }
-
-    private void UpdateColorText(Vector4? color = null) {
-        var rgbColor = color ?? ColorHelpers.HsvToRgb(CurrentColor);
-        ColorInputNode.String = $"#{(int)(rgbColor.X * 255):X2}{(int)(rgbColor.Y * 255):X2}{(int)(rgbColor.Z * 255):X2}{(int)(rgbColor.W * 255):X2}";
-    }
-
-    private void SetRgb(Vector4 value) {
-        var converted = ColorHelpers.RgbaToHsv(value);
-
-        SetHue(converted.H);
-        SetSaturation(converted.S);
-        SetValue(converted.V);
-        SetAlpha(converted.A);
-
-        UpdateColorText(value);
     }
 }
