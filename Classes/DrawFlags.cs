@@ -17,4 +17,5 @@ public enum DrawFlags : uint {
     RenderOnTop = 0x200000,
     TextInputCursor = 0x400000,
     UseEllipticalCollision = 0x800000,
+    UseTransformedCollision = 0x1000000,
 }
