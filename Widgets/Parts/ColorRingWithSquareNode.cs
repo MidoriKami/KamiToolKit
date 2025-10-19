@@ -125,35 +125,15 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
 
     private void UpdateRingColor(ref AddonEventData mouseData) {
         var angle = GetRingClickAngle(ref mouseData.GetMouseData());
-        // ColorSquareNode.RotationDegrees = angle + 45.0f;
-        // ColorRingSelectorNode.RotationDegrees = angle;
 
         if (angle < 0) {
             angle += 360.0f;
         }
 
-        // var newColor = new ColorHelpers.HsvaColor(angle / 360.0f, 1.0f, 1.0f, 1.0f);
-        //
-        // ColorSquareNode.HsvaColor = newColor;
-        // ColorRingSelectorNode.HsvaMultiplyColor = newColor;
-
         OnHueChanged?.Invoke(angle / 360.0f);
     }
 
-    // public void SetSaturationValue(ColorHelpers.HsvaColor color) {
-    //     ColorRingSelectorNode.HsvaMultiplyColor = color;
-    // }
-    //
-    // public void SetHue(ColorHelpers.HsvaColor color) {
-    //     ColorSquareNode.HsvaColor = color;
-    //     ColorRingSelectorNode.HsvaMultiplyColor = color;
-    //
-    //     ColorSquareNode.RotationDegrees = color.H * 360.0f + 45.0f;
-    //     ColorRingSelectorNode.RotationDegrees = color.H * 360.0f;
-    // }
-
     private void UpdateSquareColor(Vector2 clickPosition) {
-
         // Note: ColorSquareNode.ScreenPosition changes as the node rotates
         // However, Position does not change
         var center = ScreenPosition + ColorSquareNode.Position + ColorSquareNode.Origin; 
@@ -163,12 +143,9 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
 
         var xClamped = Math.Clamp(rotatedPoint.X, -ColorSquareNode.Width / 2, ColorSquareNode.Width / 2);
         var yClamped = Math.Clamp(rotatedPoint.Y, -ColorSquareNode.Height / 2, ColorSquareNode.Height / 2);
-        
+
         ColorSquareNode.ColorDotPosition = new Vector2(xClamped, yClamped) + ColorSquareNode.Origin;
-        
-        // Apply color change
-        // var currentColor = ColorSquareNode.Color;
-        
+
         var saturation = ColorSquareNode.ColorDotPosition.X / ColorSquareNode.Width;
         var lightness = 1 - ColorSquareNode.ColorDotPosition.Y / ColorSquareNode.Height;
 
