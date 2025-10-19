@@ -21,6 +21,60 @@ public partial class NodeBase {
 
     private List<PropertyInfo> taggedFields = [];
 
+    private static readonly Dictionary<string, string> PropertyDisplayNameMap = new() {
+        { "Position", "位置" },
+        { "Size", "尺寸" },
+        { "Scale", "缩放" },
+        { "Rotation", "旋转" },
+        { "RotationDegrees", "旋转角度" },
+        { "Origin", "原点" },
+        { "IsVisible", "是否可见" },
+        { "Color", "颜色" },
+        { "AddColor", "附加颜色" },
+        { "MultiplyColor", "乘色" },
+        { "NodeFlags", "节点标志" },
+        { "DrawFlags", "绘制标志" },
+        { "ClipCount", "裁剪数量" },
+        { "Priority", "优先级" },
+        { "TextColor", "文字颜色" },
+        { "TextOutlineColor", "文字描边颜色" },
+        { "BackgroundColor", "背景颜色" },
+        { "AlignmentType", "对齐方式" },
+        { "FontType", "字体" },
+        { "TextFlags", "文本标志" },
+        { "FontSize", "字体大小" },
+        { "LineSpacing", "行距" },
+        { "CharSpacing", "字距" },
+        { "String", "文本内容" },
+        { "TooltipString", "提示文本" },
+        { "TextId", "文本 ID" },
+        { "Tooltip", "提示文本" },
+        { "Icon", "图标" },
+        { "IconId", "图标 ID" },
+        { "TexturePath", "材质路径" },
+        { "TextureCoordinates", "材质坐标" },
+        { "TextureSize", "材质尺寸" },
+        { "LeftOffset", "左侧偏移" },
+        { "RightOffset", "右侧偏移" },
+        { "TopOffset", "顶部偏移" },
+        { "BottomOffset", "底部偏移" },
+        { "Padding", "内边距" },
+        { "Margin", "外边距" },
+        { "Spacing", "间距" },
+        { "LineHeight", "行高" },
+        { "LineWidth", "线宽" },
+        { "LineThickness", "线条粗细" },
+        { "LineColor", "线条颜色" },
+        { "HighlightColor", "高亮颜色" },
+        { "FillColor", "填充颜色" },
+        { "OutlineColor", "描边颜色" },
+        { "GaugeColor", "计量条颜色" },
+        { "GaugeEdgeColor", "计量条边缘颜色" },
+    };
+
+    private static string GetPropertyDisplayName(PropertyInfo info)
+        => PropertyDisplayNameMap.TryGetValue(info.Name, out var name) ? name : info.Name;
+
     /// <summary>
     ///     Setting these properties will prevent Load operations from setting those properties.
     /// </summary>
@@ -117,7 +171,7 @@ public partial class NodeBase {
 
     private void DrawConfigForType(PropertyInfo info) {
         ImGui.TableNextColumn();
-        ImGui.Text(info.Name);
+        ImGui.Text(GetPropertyDisplayName(info));
 
         ImGui.TableNextColumn();
         ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);

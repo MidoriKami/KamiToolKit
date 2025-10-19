@@ -35,21 +35,21 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         listNode.AttachNode(this);
 
         addButton = new TextButtonNode {
-            String = "Add",
+            String = "新增",
             OnClick = OnAddClicked,
         };
         addButton.AttachNode(this);
 
         editButton = new TextButtonNode {
             IsEnabled = false,
-            String = "Edit",
+            String = "编辑",
             OnClick = OnEditClicked,
         };
         editButton.AttachNode(this);
         
         removeButton = new TextButtonNode {
             IsEnabled = false,
-            String = "Remove",
+            String = "删除",
             OnClick = OnRemoveClicked,
         };
         removeButton.AttachNode(this);
