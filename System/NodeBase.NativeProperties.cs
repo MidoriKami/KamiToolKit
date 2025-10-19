@@ -1,7 +1,12 @@
 ﻿using System.Numerics;
+using Dalamud.Interface;
+using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using Newtonsoft.Json;
+using Vector2 = System.Numerics.Vector2;
+using Vector3 = System.Numerics.Vector3;
+using Vector4 = System.Numerics.Vector4;
 
 namespace KamiToolKit.System;
 
@@ -86,7 +91,7 @@ public abstract unsafe partial class NodeBase {
 
     public virtual float RotationDegrees {
         get => InternalResNode->GetRotationDegrees();
-        set => InternalResNode->SetRotationDegrees(value);
+        set => InternalResNode->SetRotationDegrees(value - (int)(value / 360.0f) * 360.0f);
     }
 
     public virtual float OriginX {
@@ -119,6 +124,11 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->Color = value.ToByteColor();
     }
 
+    public virtual ColorHelpers.HsvaColor HsvaColor {
+        get => ColorHelpers.RgbaToHsv(Color);
+        set => Color = ColorHelpers.HsvToRgb(value);
+    }
+
     public virtual float Alpha {
         get => InternalResNode->Color.A;
         set => InternalResNode->SetAlpha((byte)(value * 255.0f));
@@ -133,13 +143,23 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
+    public virtual ColorHelpers.HsvaColor HsvaAddColor {
+        get => ColorHelpers.RgbaToHsv(AddColor.AsVector4());
+        set => AddColor = ColorHelpers.HsvToRgb(value).AsVector3();
+    }
+
     [JsonProperty] public virtual Vector3 MultiplyColor {
-        get => new Vector3(InternalResNode->MultiplyRed, InternalResNode->MultiplyGreen, InternalResNode->MultiplyBlue) / 255.0f;
+        get => new Vector3(InternalResNode->MultiplyRed, InternalResNode->MultiplyGreen, InternalResNode->MultiplyBlue) / 100.0f;
         set {
-            InternalResNode->MultiplyRed = (byte)(value.X * 255);
-            InternalResNode->MultiplyGreen = (byte)(value.Y * 255);
-            InternalResNode->MultiplyBlue = (byte)(value.Z * 255);
+            InternalResNode->MultiplyRed = (byte)(value.X * 100.0f);
+            InternalResNode->MultiplyGreen = (byte)(value.Y * 100.0f);
+            InternalResNode->MultiplyBlue = (byte)(value.Z * 100.0f);
         }
+    }
+
+    public virtual ColorHelpers.HsvaColor HsvaMultiplyColor {
+        get => ColorHelpers.RgbaToHsv(MultiplyColor.AsVector4());
+        set => MultiplyColor = ColorHelpers.HsvToRgb(value).AsVector3();
     }
 
     public uint NodeId {
@@ -194,9 +214,14 @@ public abstract unsafe partial class NodeBase {
     public void MarkDirty()
         => VisitChildren(InternalResNode, pointer => pointer.Value->DrawFlags |= 1);
 
-    public bool CheckCollision(short x, short y)
+    public bool CheckCollision(short x, short y, bool inclusive = true)
         => InternalResNode->CheckCollisionAtCoords(x, y, true);
 
-    public bool CheckCollision(AtkEventData* eventData)
-        => CheckCollision(eventData->MouseData.PosX, eventData->MouseData.PosY);
+    public bool CheckCollision(AtkEventData* eventData, bool inclusive = true)
+        => CheckCollision(eventData->MouseData.PosX, eventData->MouseData.PosY, inclusive);
+
+    public Matrix2x2 Transform {
+        get => InternalResNode->Transform;
+        set => InternalResNode->Transform = value;
+    }
 }
