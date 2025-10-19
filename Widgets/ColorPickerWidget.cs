@@ -140,8 +140,6 @@ public unsafe class ColorPickerWidget : SimpleComponentNode {
     }
     
     private void OnTextInputComplete(SeString obj) {
-        Log.Debug("TextInputComplete");
-        
         if (!obj.ToString().StartsWith('#')) return;
 
         var hexString = obj.ToString().TrimStart('#');
@@ -184,7 +182,6 @@ public unsafe class ColorPickerWidget : SimpleComponentNode {
     }
 
     public void SetAlpha(float alpha) {
-        Log.Debug($"SetAlpha: {alpha}");
         CurrentColor = CurrentColor with { A = alpha };
 
         AlphaBarSelectorNode.Y = AlphaBarNode.Y + AlphaBarNode.Height - AlphaBarNode.Height * CurrentColor.A - 5.0f;
@@ -195,8 +192,6 @@ public unsafe class ColorPickerWidget : SimpleComponentNode {
     }
 
     public void SetHue(float hue) {
-        Log.Debug($"SetHue: {hue}");
-
         CurrentColor = CurrentColor with { H = hue };
 
         ColorPickerNode.RotationDegrees = hue * 360.0f;
@@ -211,8 +206,6 @@ public unsafe class ColorPickerWidget : SimpleComponentNode {
     }
 
     public void SetSaturation(float saturation) {
-        Log.Debug($"SetSaturation: {saturation}");
-        
         CurrentColor = CurrentColor with { S = saturation };
         
         SelectedColorPreviewNode.HsvaColor = CurrentColor;
