@@ -29,10 +29,10 @@ public static unsafe class AtkUnitBaseExtensions {
         var type = typeof(T);
         var attribute = type.GetCustomAttributes().OfType<AddonAttribute>().FirstOrDefault();
 
-        if (attribute is null) throw new Exception("Unable to find AddonAttribute to resolve addon name.");
+        if (attribute is null) throw new Exception("无法找到 AddonAttribute，无法解析 Addon 名称。");
         var addonName = attribute.AddonIdentifiers.FirstOrDefault();
 
-        if (addonName is null) throw new Exception("Addon attribute names are empty.");
+        if (addonName is null) throw new Exception("AddonAttribute 中未提供名称。");
         return addonName;
     }
 

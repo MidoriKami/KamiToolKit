@@ -36,5 +36,5 @@ public class LuminaListNode<T> : ListNode<T> where T : struct, IExcelRow<T> {
     }
 
     protected override string GetLabelForOption(T option)
-        => LabelFunction?.Invoke(option) ?? "ERROR: Label Function Not Found";
+        => LabelFunction?.Invoke(option) ?? "错误：未提供标签生成函数";
 }

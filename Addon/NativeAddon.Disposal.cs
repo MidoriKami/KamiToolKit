@@ -12,7 +12,7 @@ public abstract partial class NativeAddon : IDisposable {
 
     public virtual void Dispose() {
         if (!isDisposed) {
-            Log.Debug($"Disposing addon {GetType()}");
+            Log.Debug($"正在释放 Addon {GetType()}");
 
             Close();
 
@@ -32,8 +32,8 @@ public abstract partial class NativeAddon : IDisposable {
 
     internal static void DisposeAddons() {
         foreach (var addon in CreatedAddons.ToArray()) {
-            Log.Warning($"Addon {addon.GetType()} was not disposed properly please ensure you call dispose at an appropriate time.");
-            Log.Debug($"Automatically disposing addon {addon.GetType()} as a safety measure.");
+            Log.Warning($"Addon {addon.GetType()} 未被正确释放，请确认在合适的时机调用 Dispose。");
+            Log.Debug($"出于安全考虑，正在自动释放 Addon {addon.GetType()}。");
 
             addon.Dispose();
         }

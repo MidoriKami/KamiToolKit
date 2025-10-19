@@ -22,12 +22,12 @@ public unsafe class NativeListController : IDisposable {
     
     public event Action? OnClose {
         add => OnInnerClose += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
     
     public event Action? OnOpen {
         add => OnInnerOpen += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
 
     public NativeListController(string addonName) {

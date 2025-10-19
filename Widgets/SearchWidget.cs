@@ -24,7 +24,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
     public SearchWidget() {
         InputNode = new TextInputNode {
             IsVisible = true,
-            PlaceholderString = "Search . . .",
+            PlaceholderString = "搜索……",
             SeString = searchText,
             OnInputReceived = SearchTextChanged,
         };
@@ -42,7 +42,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
         ReverseButtonNode = new CircleButtonNode {            
             Icon = ButtonIcon.Sort,
             OnClick = OnReverseButtonClicked,
-            Tooltip = "Reverse Sort Direction",
+            Tooltip = "切换排序方向",
             IsVisible = false,
         };
         ReverseButtonNode.AttachNode(this);

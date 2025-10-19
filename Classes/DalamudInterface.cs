@@ -53,6 +53,6 @@ internal static class Log {
     }
 
     internal static void Exception(Exception exception) {
-        DalamudInterface.Instance.Log.Error(exception, "Exception doing something, check trace for details.");
+        DalamudInterface.Instance.Log.Error(exception, "执行操作时发生异常，请查看堆栈追踪获取更多信息。");
     }
 }

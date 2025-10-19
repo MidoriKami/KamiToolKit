@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -53,7 +53,7 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
             Size = new Vector2(buttonWidth, 24.0f),
             Position = new Vector2(ContentStartPosition.X, ContentStartPosition.Y + ContentSize.Y - 24.0f - 8.0f),
             IsVisible = true,
-            String = "Cancel",
+            String = "取消",
             OnClick = OnCancelClicked,
         };
         AttachNode(cancelButton);
@@ -63,7 +63,7 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
             Position = new Vector2(ContentStartPosition.X + buttonWidth * 2 + buttonPadding * 2, ContentStartPosition.Y + ContentSize.Y - 24.0f - 8.0f),
             IsVisible = true,
             IsEnabled = false,
-            String = "Confirm",
+            String = "确定",
             OnClick = OnConfirmClicked,
         };
         AttachNode(confirmButton);

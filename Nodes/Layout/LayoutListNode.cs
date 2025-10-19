@@ -114,7 +114,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
         
         var nodesToRemove = nodesOfType.Where(node => !dataList.Any(dataEntry => Equals(dataEntry, getDataFromNode(node)))).ToList();
         
-        Log.Excessive($"Removing: {nodesToRemove.Count} Nodes");
+        Log.Excessive($"正在移除节点：{nodesToRemove.Count} 个");
         foreach (var node in nodesToRemove) {
             RemoveNode(node, true);
             anythingChanged = true;
@@ -123,7 +123,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
         var dataToAdd = dataList.Where(data => !nodesOfType.Any(node => Equals(data, getDataFromNode(node)))).ToList();
         var selectedData = dataToAdd.Select(data => createNodeMethod(data)).ToList();
         
-        Log.Excessive($"Adding: {dataToAdd.Count} Nodes");
+        Log.Excessive($"正在新增节点：{dataToAdd.Count} 个");
         foreach (var newNode in selectedData) {
             AddNode(newNode, true);
             anythingChanged = true;

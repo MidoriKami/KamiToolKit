@@ -96,40 +96,40 @@ public unsafe class AddonController<T>(string addonName) : IDisposable where T :
     
     public virtual event AddonControllerEvent? OnAttach {
         add => OnInnerAttach += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
 
     public virtual event AddonControllerEvent? OnDetach {
         add => OnInnerDetach += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
     
     public virtual event AddonControllerEvent? OnRefresh {
         add => OnInnerRefresh += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
     public virtual event AddonControllerEvent? OnUpdate {
         add => OnInnerUpdate += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
 
     public virtual event AddonControllerEvent? OnPreEnable {
         add => OnInnerPreEnable += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
     
     public virtual event AddonControllerEvent? OnPostEnable {
         add => OnInnerPostEnable += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
 
     public virtual event AddonControllerEvent? OnPreDisable {
         add => OnInnerPreDisable += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
 
     public virtual event AddonControllerEvent? OnPostDisable {
         add => OnInnerPostDisable += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
 }

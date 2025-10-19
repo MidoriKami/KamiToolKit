@@ -15,7 +15,7 @@ public abstract unsafe partial class NativeAddon {
     }
     
     private static bool OnFireCallback(AtkUnitBase* thisPtr, uint valueCount, AtkValue* values, bool close) {
-        Log.Excessive($"[{thisPtr->NameString}] OnFireCallback");
+        Log.Excessive($"[{thisPtr->NameString}] 触发 OnFireCallback 回调");
         
         foreach (var addon in CreatedAddons) {
             if (addon.InternalAddon == thisPtr && close && addon is { WindowOptions.RespectCloseAll: true }) {

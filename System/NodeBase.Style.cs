@@ -33,7 +33,7 @@ public partial class NodeBase {
 
     public void Save(string filePath) {
         try {
-            Log.Debug($"[NodeBase] Saving {GetShortPath(filePath)}");
+            Log.Debug($"[NodeBase] 正在保存 {GetShortPath(filePath)}");
             var fileText = JsonConvert.SerializeObject(this, Formatting.Indented);
             FilesystemUtil.WriteAllTextSafe(filePath, fileText);
         }
@@ -44,7 +44,7 @@ public partial class NodeBase {
 
     public void Load(string filePath) {
         try {
-            Log.Debug($"[NodeBase] Loading {GetShortPath(filePath)}");
+            Log.Debug($"[NodeBase] 正在加载 {GetShortPath(filePath)}");
             var fileData = File.ReadAllText(filePath);
             if (OnLoadOmittedProperties.Count != 0) {
                 var jObject = JObject.Parse(fileData);
@@ -60,7 +60,7 @@ public partial class NodeBase {
             }
         }
         catch (FileNotFoundException) {
-            Log.Debug("[NodeBase] File not found, creating a new one.");
+            Log.Debug("[NodeBase] 未找到文件，正在创建新文件。");
             Save(filePath);
         }
         catch (Exception e) {
@@ -111,7 +111,7 @@ public partial class NodeBase {
         if (!TagListGenerated) {
             GenerateTypeList(GetType());
             TagListGenerated = true;
-            Log.Debug($"Attribute Tree Generated in {stopWatch.Elapsed}");
+            Log.Debug($"属性树生成耗时 {stopWatch.Elapsed}");
         }
     }
 
@@ -187,7 +187,7 @@ public partial class NodeBase {
         }
         else {
             using (ImRaii.PushColor(ImGuiCol.Text, KnownColor.Orange.Vector())) {
-                ImGui.Text($"Undefined Property Type: {info.PropertyType} {info.Name}");
+                ImGui.Text($"未定义的属性类型：{info.PropertyType} {info.Name}");
             }
         }
     }

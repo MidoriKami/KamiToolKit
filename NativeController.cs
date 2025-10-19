@@ -74,7 +74,7 @@ public unsafe class NativeController : IDisposable {
     }
 
     private void AttachToNodeBase(NodeBase customNode, NodeBase targetNode, NodePosition? position) {
-        Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}] to another Custom Node [{targetNode.GetType()}]");
+        Log.Verbose($"[NativeController] 正在将 [{customNode.GetType()}] 附加到自定义节点 [{targetNode.GetType()}]");
         var addon = GetAddonForNode(targetNode.InternalResNode);
 
         switch (targetNode) {
@@ -93,7 +93,7 @@ public unsafe class NativeController : IDisposable {
     }
 
     private void AttachToAtkResNode(NodeBase customNode, AtkResNode* targetNode, NodePosition? position) {
-        Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a native AtkResNode");
+        Log.Verbose($"[NativeController] 正在将 [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] 附加到原生 AtkResNode");
         var addon = GetAddonForNode(targetNode);
 
         customNode.RegisterAutoDetach(addon);
@@ -102,7 +102,7 @@ public unsafe class NativeController : IDisposable {
     }
 
     private static void AttachToNativeAddon(NodeBase customNode, NativeAddon targetAddon, NodePosition? position) {
-        Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a Custom Addon [{targetAddon.GetType()}]");
+        Log.Verbose($"[NativeController] 正在将 [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] 附加到自定义 Addon [{targetAddon.GetType()}]");
 
         customNode.AttachNode(targetAddon, position ?? NodePosition.AsLastChild);
         customNode.EnableEvents(targetAddon.InternalAddon);
@@ -110,28 +110,28 @@ public unsafe class NativeController : IDisposable {
 
     private void AttachToAtkComponentNode(NodeBase customNode, AtkComponentNode* targetNode, NodePosition position) {
         if (targetNode->GetNodeType() is not NodeType.Component) {
-            Log.Error("TargetNode type was expected to be Component but was not. Aborting attach.");
+            Log.Error("目标节点类型应为 Component，但实际并非如此，终止附加。");
             return;
         }
 
-        Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a native AtkComponentNode");
+        Log.Verbose($"[NativeController] 正在将 [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] 附加到原生 AtkComponentNode");
 
         var addon = GetAddonForNode((AtkResNode*)targetNode);
         if (addon is not null) {
-            Log.Verbose($"[NativeController] Tried to get Addon from native AtkComponentNode, found: {addon->NameString}");
+            Log.Verbose($"[NativeController] 已尝试从原生 AtkComponentNode 获取 Addon，结果：{addon->NameString}");
 
             customNode.RegisterAutoDetach(addon);
             customNode.AttachNode(targetNode, position);
             customNode.EnableEvents(addon);
         }
         else {
-            Log.Error($"[NativeController] Attempted to attach [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a native AtkComponentNode, but could not find parent addon. Aborting.");
+            Log.Error($"[NativeController] 尝试将 [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] 附加到原生 AtkComponentNode，但未找到父级 Addon，已终止操作。");
         }
     }
 
     private static void DetachNodeTask(NodeBase? customNode, Action? disposeAction) {
         if (customNode is not null) {
-            Log.Verbose($"[NativeController] Detaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] from all sources.");
+            Log.Verbose($"[NativeController] 正在从所有来源分离 [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}]。");
         }
 
         customNode?.DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
@@ -143,7 +143,7 @@ public unsafe class NativeController : IDisposable {
 
     private void DisposeNodeTask(NodeBase? customNode) {
         if (customNode is not null) {
-            Log.Verbose($"[NativeController] Disposing [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] from all sources.");
+            Log.Verbose($"[NativeController] 正在从所有来源释放 [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}]。");
         }
 
         customNode?.DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
@@ -164,7 +164,7 @@ public unsafe class NativeController : IDisposable {
         var nodeBaseTypes = types.Where(type => typeof(NodeBase).IsAssignableFrom(type));
 
         foreach (var type in nodeBaseTypes) {
-            Log.Verbose($"Generating TypeMap for: {type}");
+            Log.Verbose($"正在生成类型映射：{type}");
             
             var members = GetMembers(type);
             if (members.Count is not 0) {
@@ -177,7 +177,7 @@ public unsafe class NativeController : IDisposable {
             }
         }
         
-        stopwatch.LogTime("KTK TYPEMAP");
+        stopwatch.LogTime("KTK 类型映射");
     }
 
     private static void GenerateCallingAssemblyTypeMap(Assembly callingAssembly) {
@@ -187,7 +187,7 @@ public unsafe class NativeController : IDisposable {
         var nodeBaseTypes = types.Where(type => typeof(NodeBase).IsAssignableFrom(type));
 
         foreach (var type in nodeBaseTypes) {
-            Log.Verbose($"Generating TypeMap for: {type}");
+            Log.Verbose($"正在生成类型映射：{type}");
             
             var members = GetMembers(type);
             if (members.Count is not 0) {
@@ -200,7 +200,7 @@ public unsafe class NativeController : IDisposable {
             }
         }
         
-        stopwatch.LogTime("CALLER ASSEMBLY");
+        stopwatch.LogTime("调用程序集类型映射");
     }
     
     private static List<MemberInfo> GetMembers(Type type) {
@@ -250,7 +250,7 @@ public unsafe class NativeController : IDisposable {
         if (!type.IsGenericType) return;
         if (!ParsedRuntimeTypes.Add(type)) return;
 
-        Log.Debug($"Generating Runtime Type Mapping for: {type}");
+        Log.Debug($"正在生成运行时类型映射：{type}");
         var stopwatch = Stopwatch.StartNew();
 
         if (!ChildMembers.ContainsKey(type)) {
@@ -267,6 +267,6 @@ public unsafe class NativeController : IDisposable {
             }
         }
         
-        stopwatch.LogTime("RUNTIMETYPE");
+        stopwatch.LogTime("运行时类型映射");
     }
 }

@@ -46,7 +46,7 @@ public class MultiAddonController : IDisposable {
                 addonController.OnAttach += value;
             }
         }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
 
     public event AddonController.AddonControllerEvent? OnDetach {
@@ -55,7 +55,7 @@ public class MultiAddonController : IDisposable {
                 addonController.OnDetach += value;
             }
         }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
     
     public event AddonController.AddonControllerEvent? OnRefresh {
@@ -64,7 +64,7 @@ public class MultiAddonController : IDisposable {
                 addonController.OnRefresh += value;
             }
         }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
     public event AddonController.AddonControllerEvent? OnUpdate {
         add {
@@ -72,7 +72,7 @@ public class MultiAddonController : IDisposable {
                 addonController.OnUpdate += value;
             }
         }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
 
     public event AddonController.AddonControllerEvent? OnPreEnable {
@@ -81,7 +81,7 @@ public class MultiAddonController : IDisposable {
                 addonController.OnPreEnable += value;
             }
         }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
     
     public event AddonController.AddonControllerEvent? OnPostEnable {
@@ -90,7 +90,7 @@ public class MultiAddonController : IDisposable {
                 addonController.OnPostEnable += value;
             }
         }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
 
     public event AddonController.AddonControllerEvent? OnPreDisable {
@@ -99,7 +99,7 @@ public class MultiAddonController : IDisposable {
                 addonController.OnPreDisable += value;
             }
         }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
 
     public event AddonController.AddonControllerEvent? OnPostDisable {
@@ -108,7 +108,7 @@ public class MultiAddonController : IDisposable {
                 addonController.OnPostDisable += value;
             }
         }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+        remove => throw new Exception("请勿移除此事件，Addon 在释放时会自动处理状态。");
     }
 
     public void RegisterOnAttach(string addonName, AddonController.AddonControllerEvent callback) {

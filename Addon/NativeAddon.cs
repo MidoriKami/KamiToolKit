@@ -19,7 +19,7 @@ public abstract unsafe partial class NativeAddon {
     public WindowNode WindowNode {
         get;
         set {
-            if (value is null) throw new Exception("Cannot set a window node to null");
+            if (value is null) throw new Exception("窗口节点不能为空。");
 
             if (InternalAddon->WindowNode is not null) {
                 InternalAddon->WindowNode = null;
@@ -34,21 +34,21 @@ public abstract unsafe partial class NativeAddon {
 
     private void AllocateAddon() {
         if (InternalAddon is not null) {
-            Log.Warning("Tried to allocate addon that was already allocated.");
+            Log.Warning("尝试为已分配的 Addon 再次分配内存，操作已取消。");
             return;
         }
 
         var currentAddonCount = RaptureAtkUnitManager.Instance()->AllLoadedUnitsList.Count;
         if (currentAddonCount >= 200) {
-            Log.Warning($"WARNING: Current Addon Count is approaching hard limits ({currentAddonCount}/250). Please ensure custom Addons are not being used as overlays.");
+            Log.Warning($"警告：当前 Addon 数量接近上限 ({currentAddonCount}/250)，请确认自定义 Addon 未被当作覆盖层重复使用。");
         }
 
         if (currentAddonCount >= 225) {
-            Log.Error($"ERROR: Current Addon Count is too high. Aborting allocation ({currentAddonCount}/250).");
+            Log.Error($"错误：当前 Addon 数量过多，已停止分配 ({currentAddonCount}/250)。");
             return;
         }
 
-        Log.Verbose($"[{InternalName}] Beginning Native Addon Allocation");
+        Log.Verbose($"[{InternalName}] 开始分配原生 Addon");
 
         InitializeExtras();
 
@@ -70,11 +70,11 @@ public abstract unsafe partial class NativeAddon {
 
         InternalAddon->OpenSoundEffectId = (short)OpenWindowSoundEffectId;
 
-        Log.Verbose($"[{InternalName}] Allocation Complete");
+        Log.Verbose($"[{InternalName}] 完成分配");
     }
 
     private void InitializeAddon() {
-        Log.Verbose($"[{InternalName}] Initializing Addon");
+        Log.Verbose($"[{InternalName}] 正在初始化 Addon");
 
         var widgetInfo = NativeMemoryHelper.UiAlloc<AtkUldWidgetInfo>(1, 16);
         widgetInfo->Id = 1;
@@ -109,7 +109,7 @@ public abstract unsafe partial class NativeAddon {
         // Now that we have constructed this instance, track it for auto-dispose
         CreatedAddons.Add(this);
 
-        Log.Verbose($"[{InternalName}] Initialization Complete");
+        Log.Verbose($"[{InternalName}] 初始化完成");
     }
 
     /// <summary>
@@ -117,7 +117,7 @@ public abstract unsafe partial class NativeAddon {
     /// </summary>
     public void Open()
         => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-            Log.Verbose($"[{InternalName}] Open Called");
+            Log.Verbose($"[{InternalName}] 收到打开请求");
 
             if (InternalAddon is null) {
                 AllocateAddon();
@@ -129,13 +129,13 @@ public abstract unsafe partial class NativeAddon {
                 }
             }
             else {
-                Log.Verbose($"[{InternalName}] Already open, skipping call.");
+                Log.Verbose($"[{InternalName}] 已处于打开状态，本次请求忽略。");
             }
         });
 
     public void Close()
         => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-            Log.Verbose($"[{InternalName}] Close");
+            Log.Verbose($"[{InternalName}] 正在关闭");
 
             if (InternalAddon is null) return;
             InternalAddon->Close(false);

@@ -13,7 +13,7 @@ public abstract partial class NodeBase {
     private static int indent;
     
     private void VisitChildren(Action<NodeBase?> visitAction, [CallerMemberName] string? callerName = null, bool enableLogging = false) {
-        ThreadSafety.AssertMainThread("This function must be invoked from the main thread.");
+        ThreadSafety.AssertMainThread("此函数必须在主线程调用。");
 
         try {
             var callingType = GetType();

@@ -242,13 +242,13 @@ public class ListBoxNode : LayoutListNode {
     public override void DrawConfig() {
         base.DrawConfig();
 
-        using (var backgroundNode = ImRaii.TreeNode("Background")) {
+        using (var backgroundNode = ImRaii.TreeNode("背景")) {
             if (backgroundNode) {
                 Background.DrawConfig();
             }
         }
 
-        using (var borderNode = ImRaii.TreeNode("Border")) {
+        using (var borderNode = ImRaii.TreeNode("边框")) {
             if (borderNode) {
                 Border.DrawConfig();
             }

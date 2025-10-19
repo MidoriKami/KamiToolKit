@@ -95,19 +95,19 @@ public unsafe class CastBarProgressBarNode : SimpleComponentNode {
     public override void DrawConfig() {
         base.DrawConfig();
 
-        using (var background = ImRaii.TreeNode("Background")) {
+        using (var background = ImRaii.TreeNode("背景")) {
             if (background) {
                 BackgroundImageNode.DrawConfig();
             }
         }
 
-        using (var progress = ImRaii.TreeNode("Progress")) {
+        using (var progress = ImRaii.TreeNode("进度")) {
             if (progress) {
                 ProgressNode.DrawConfig();
             }
         }
 
-        using (var border = ImRaii.TreeNode("Border")) {
+        using (var border = ImRaii.TreeNode("边框")) {
             if (border) {
                 BorderImageNode.DrawConfig();
             }

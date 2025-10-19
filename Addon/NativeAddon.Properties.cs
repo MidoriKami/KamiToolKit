@@ -82,7 +82,7 @@ public abstract unsafe partial class NativeAddon {
             addonConfig ??= new AddonConfig();
         }
         catch (Exception e) {
-            DalamudInterface.Instance.Log.Error(e, "Exception while deserializing AddonConfig, creating new config.");
+            DalamudInterface.Instance.Log.Error(e, "反序列化 AddonConfig 时发生异常，已创建新的配置文件。");
             addonConfig = new AddonConfig();
         }
         
@@ -103,9 +103,9 @@ public abstract unsafe partial class NativeAddon {
         FilesystemUtil.WriteAllTextSafe(file.FullName, data);
     }
 
-    public required string InternalName { get; init; } = "NameNotSet";
+    public required string InternalName { get; init; } = "未设置名称";
 
-    public required SeString Title { get; set; } = "TitleNotSet";
+    public required SeString Title { get; set; } = "未设置标题";
 
     public SeString Subtitle { get; set; } = string.Empty;
 

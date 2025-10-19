@@ -19,7 +19,7 @@ public abstract unsafe partial class NativeAddon {
     private bool isSetup;
 
     private void Initialize(AtkUnitBase* thisPtr) {
-        Log.Verbose($"[{InternalName}] Initialize");
+        Log.Verbose($"[{InternalName}] 初始化回调");
 
         AtkUnitBase.StaticVirtualTablePointer->Initialize(thisPtr);
 
@@ -29,7 +29,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void Setup(AtkUnitBase* addon, uint valueCount, AtkValue* values) {
-        Log.Verbose($"[{InternalName}] Setup");
+        Log.Verbose($"[{InternalName}] 进入 Setup 阶段");
 
         SetInitialState();
 
@@ -40,7 +40,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void Show(AtkUnitBase* addon, bool silenceOpenSoundEffect, uint unsetShowHideFlags) {
-        Log.Verbose($"[{InternalName}] Show");
+        Log.Verbose($"[{InternalName}] 执行显示");
 
         OnShow(addon);
 
@@ -48,7 +48,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void Update(AtkUnitBase* addon, float delta) {
-        Log.Excessive($"[{InternalName}] Update");
+        Log.Excessive($"[{InternalName}] 执行 Update");
 
         OnUpdate(addon);
 
@@ -56,7 +56,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void Draw(AtkUnitBase* addon) {
-        Log.Excessive($"[{InternalName}] Draw");
+        Log.Excessive($"[{InternalName}] 执行 Draw");
 
         OnDraw(addon);
 
@@ -64,7 +64,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void Hide(AtkUnitBase* addon, bool unkBool, bool callHideCallback, uint setShowHideFlags) {
-        Log.Verbose($"[{InternalName}] Hide");
+        Log.Verbose($"[{InternalName}] 执行 Hide");
 
         OnHide(addon);
         SaveAddonConfig();
@@ -74,13 +74,13 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void Hide2(AtkUnitBase* addon) {
-        Log.Verbose($"[{InternalName}] Hide2");
+        Log.Verbose($"[{InternalName}] 执行 Hide2");
 
         AtkUnitBase.StaticVirtualTablePointer->Hide2(addon);
     }
 
     private void Finalizer(AtkUnitBase* addon) {
-        Log.Verbose($"[{InternalName}] Finalize");
+        Log.Verbose($"[{InternalName}] 执行 Finalize");
 
         OnFinalize(addon);
 
@@ -93,7 +93,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private AtkEventListener* Destructor(AtkUnitBase* addon, byte flags) {
-        Log.Verbose($"[{InternalName}] Destructor");
+        Log.Verbose($"[{InternalName}] 执行析构");
 
         var result = AtkUnitBase.StaticVirtualTablePointer->Dtor(addon, flags);
 
@@ -111,7 +111,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void RequestedUpdate(AtkUnitBase* thisPtr, NumberArrayData** numberArrayData, StringArrayData** stringArrayData) {
-        Log.Verbose($"[{InternalName}] RequestedUpdate");
+        Log.Verbose($"[{InternalName}] 触发 RequestedUpdate");
 
         // Prevent calls to OnRequestedUpdate before Setup is completed. The game will try to call this after Show but before Setup
         if (isSetup) {
@@ -122,7 +122,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private bool Refresh(AtkUnitBase* thisPtr, uint valueCount, AtkValue* values) {
-        Log.Verbose($"[{InternalName}] Refresh");
+        Log.Verbose($"[{InternalName}] 执行 Refresh");
         
         OnRefresh(thisPtr, new Span<AtkValue>(values, (int)valueCount));
         

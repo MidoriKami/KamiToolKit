@@ -150,7 +150,7 @@ public abstract unsafe class ListNode<T> : ListNode {
                 Size = new Vector2(Width - 25.0f, NodeHeight),
                 Position = new Vector2(8.0f, NodeHeight * index + 9.0f),
                 IsVisible = true,
-                Label = $"Button {index}",
+                Label = $"按钮 {index}",
                 OnClick = () => OnOptionClick(index),
             };
 

@@ -104,11 +104,11 @@ public static unsafe class AtkUldManagerExtensions {
     }
 
     public static void PrintObjectList(ref this AtkUldManager uldManager) {
-        Log.Debug("Beginning NodeList");
+        Log.Debug("开始打印节点列表");
 
         foreach (var index in Enumerable.Range(0, uldManager.Objects->NodeCount)) {
             var nodePointer = uldManager.Objects->NodeList[index];
-            Log.Debug($"[{index}]: {(nint)nodePointer:X}");
+            Log.Debug($"[{index}] 节点地址：{(nint)nodePointer:X}");
         }
     }
 

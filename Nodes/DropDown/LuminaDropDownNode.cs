@@ -42,6 +42,6 @@ public class LuminaDropDownNode<T> : DropDownNode<LuminaListNode<T>, T> where T 
     }
 
     protected override void UpdateLabel(T option) {
-        LabelNode.String = LabelFunction?.Invoke(option) ?? "ERROR: Label Function Not Set";
+        LabelNode.String = LabelFunction?.Invoke(option) ?? "错误：未提供标签生成函数";
     }
 }

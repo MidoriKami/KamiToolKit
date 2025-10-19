@@ -13,6 +13,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
     internal const uint NodeIdBase = 100_000_000;
     protected static readonly List<NodeBase> CreatedNodes = [];
 
+    private const int FocusedNodeOffset = 0x1880;
+
     internal static uint CurrentOffset;
 
     private bool isDisposed;
@@ -22,9 +24,10 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     private AtkResNode.Delegates.Destroy destructorFunction = null!;
     private AtkResNode.AtkResNodeVirtualTable* virtualTable;
+    private delegate* unmanaged<AtkResNode*, bool, void> originalDestroyFunction;
 
     public void Dispose() {
-        ThreadSafety.AssertMainThread("This function must be invoked from the main thread.");
+        ThreadSafety.AssertMainThread("此函数必须在主线程调用。");
 
         if (isDisposed) return;
         isDisposed = true;
@@ -32,7 +35,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         // If the node was invalidated before dispose, we want to skip trying to free it.
         if (!IsNodeValid()) {
             if (!isManagedDispose) {
-                Log.Verbose($"Native has disposed node {GetType()}");
+                Log.Verbose($"原生环境已释放节点 {GetType()}");
                 
                 Dispose(true, true);
 
@@ -42,7 +45,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             return;
         }
 
-        Log.Verbose($"Disposing node {GetType()}");
+        Log.Verbose($"正在释放节点 {GetType()}");
         isManagedDispose = true;
 
         ClearFocus();
@@ -79,16 +82,17 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
             // If this focus entry has our custom node focused, unfocus the node.
             if (focusEntry.AtkEventTarget == InternalResNode) {
-                Log.Debug($"Custom Node was focused during dispose, Addon: {((AtkUnitBase*)focusEntry.AtkEventListener)->NameString}, unfocusing node.");
+                Log.Debug($"释放过程中自定义节点仍获得焦点，所属 Addon：{((AtkUnitBase*)focusEntry.AtkEventListener)->NameString}，正在取消焦点。");
                 focusEntry.AtkEventTarget = null;
                 focusEntry.Unk10 = 0;
-                inputManager->FocusedNode = null;
+                var focusedNodePtr = (AtkResNode**)((byte*)inputManager + FocusedNodeOffset);
+                *focusedNodePtr = null;
                 AtkStage.Instance()->AtkCollisionManager->IntersectingCollisionNode = null;
 
                 var addon = (AtkUnitBase*) focusEntry.AtkEventListener;
                 foreach (ref var node in addon->AdditionalFocusableNodes) {
                     if (node.Value == InternalResNode) {
-                        Log.Debug("Custom Node was an AdditionalFocusableNode, clearing.");
+                        Log.Debug("自定义节点存在于 AdditionalFocusableNodes 中，已清除。");
                         node = null;
                     }
                 }
@@ -103,7 +107,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     internal static void DisposeNodes() {
         foreach (var node in CreatedNodes.ToArray()) {
             if (!node.IsAttached) continue;
-            Log.Debug($"AutoDisposing node {node.GetType()}");
+            Log.Debug($"自动释放节点 {node.GetType()}");
 
             node.TryForceDetach(true);
             node.Dispose();
@@ -153,6 +157,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
         NativeMemory.Copy(InternalResNode->VirtualTable, virtualTable, 0x8 * 4);
         InternalResNode->VirtualTable = virtualTable;
 
+        originalDestroyFunction = virtualTable->Destroy;
+
         // Pin managed function to virtual table entry
         destructorFunction = NativeDestroyAtkResNode;
 
@@ -161,20 +167,24 @@ public abstract unsafe partial class NodeBase : IDisposable {
     }
 
     private void NativeDestroyAtkResNode(AtkResNode* thisPtr, bool free) {
-        AtkResNode.StaticVirtualTablePointer->Destroy(thisPtr, free);
+        if (originalDestroyFunction != null) {
+            originalDestroyFunction(thisPtr, free);
+        }
         Dispose();
 
         // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
         NativeMemoryHelper.Free(virtualTable, 0x8 * 4);
+        virtualTable = null;
+        originalDestroyFunction = null;
     }
 }
 
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
 
     protected NodeBase(NodeType nodeType) {
-        ThreadSafety.AssertMainThread("Attempted to allocate a node while not on main thread. This is not supported.");
+        ThreadSafety.AssertMainThread("检测到在非主线程上尝试分配节点，该操作不受支持。");
         
-        Log.Verbose($"Creating new node {GetType()}");
+        Log.Verbose($"正在创建新节点 {GetType()}");
         Node = NativeMemoryHelper.Create<T>();
 
         BuildVirtualTable();
@@ -183,7 +193,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
         InternalResNode->NodeId = NodeIdBase + CurrentOffset++;
 
         if (InternalResNode is null) {
-            throw new Exception($"Unable to allocate memory for {typeof(T)}");
+            throw new Exception($"无法为 {typeof(T)} 分配内存");
         }
 
         CreatedNodes.Add(this);

@@ -7,14 +7,14 @@ namespace KamiToolKit.Classes;
 public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEvent eventHandler) : CustomEventListener(eventHandler) {
     public void AddEvent(AtkEventType eventType, AtkResNode* node) {
         DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-            Log.Verbose($"Registering ViewportEvent: {eventType}");
+            Log.Verbose($"正在注册 Viewport 事件：{eventType}");
             AtkStage.Instance()->ViewportEventManager.RegisterEvent(eventType, 0, node, (AtkEventTarget*)node, EventListener, false);
         });
     }
 
     public void RemoveEvent(AtkEventType eventType) {
         DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-            Log.Verbose($"Unregistering ViewportEvent: {eventType}");
+            Log.Verbose($"正在注销 Viewport 事件：{eventType}");
             AtkStage.Instance()->ViewportEventManager.UnregisterEvent(eventType, 0, EventListener, false);
         });
     }
