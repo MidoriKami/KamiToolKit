@@ -44,7 +44,7 @@ public class ColorPreviewNode : SimpleComponentNode {
         SelectedColorPreviewNode.Size = new Vector2(Height - 6.0f, Width - 6.0f);
         SelectedColorPreviewNode.Position = new Vector2(3.0f, 3.0f);
     }
-    
+
     public override Vector4 Color {
         get => SelectedColorPreviewNode.Color;
         set => SelectedColorPreviewNode.Color = value;
