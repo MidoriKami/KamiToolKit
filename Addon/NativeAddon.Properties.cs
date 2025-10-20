@@ -103,6 +103,14 @@ public abstract unsafe partial class NativeAddon {
         FilesystemUtil.WriteAllTextSafe(file.FullName, data);
     }
 
+    public void ChangeWindowSize(Vector2 windowSize) {
+        if (InternalAddon is null) return;
+
+        Size = windowSize;
+        InternalAddon->SetSize((ushort)Size.X, (ushort)Size.Y);
+        WindowNode.Size = Size;
+    }
+
     public required string InternalName { get; init; } = "NameNotSet";
 
     public required SeString Title { get; set; } = "TitleNotSet";
