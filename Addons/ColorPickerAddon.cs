@@ -5,7 +5,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
 using KamiToolKit.Nodes;
 using KamiToolKit.Widgets;
-using KamiToolKit.Widgets.Parts;
 
 namespace KamiToolKit.Addons;
 
@@ -17,8 +16,7 @@ public class ColorPickerAddon : NativeAddon {
     
     private TextButtonNode? confirmButton;
     
-    private TextButtonNode? defaultButton;
-    private ColorPreviewNode? defaultColorPreview;
+    private ColorOptionTextButtonNode? defaultColorPreview;
 
     private TextButtonNode? cancelButton;
 
@@ -51,22 +49,15 @@ public class ColorPickerAddon : NativeAddon {
         AttachNode(confirmButton);
 
         if (DefaultHsvaColor is { } defaultColor) {
-            defaultButton = new TextButtonNode {
-                Position = ContentStartPosition + new Vector2(ContentSize.X / 2.0f - 50.0f, ContentSize.Y - 24.0f),
-                Size = new Vector2(100.0f, 24.0f),
+            defaultColorPreview = new ColorOptionTextButtonNode {
                 IsVisible = true,
+                Size = new Vector2(100.0f, 24.0f),
+                Position = ContentStartPosition + new Vector2(ContentSize.X / 2.0f - 50.0f, ContentSize.Y - 24.0f),
                 String = "Default",
                 OnClick = OnDefaultClicked,
+                DefaultHsvaColor = defaultColor,
             };
-            AttachNode(defaultButton);
-
-            defaultColorPreview = new ColorPreviewNode {
-                IsVisible = true,
-                Size = new Vector2(17.0f, 17.0f),
-                Position = new Vector2(-6.0f, -1.0f),
-                HsvaColor = defaultColor,
-            };
-            AttachNode(defaultColorPreview, defaultButton.LabelNode);
+            AttachNode(defaultColorPreview);
         }
 
         cancelButton = new TextButtonNode {
