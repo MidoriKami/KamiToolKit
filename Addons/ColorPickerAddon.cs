@@ -31,6 +31,8 @@ public class ColorPickerAddon : NativeAddon {
             IsVisible = true,
         };
         AttachNode(colorPicker);
+        
+        colorPicker.SetColor(InitialColor);
 
         horizontalLine = new HorizontalLineNode {
             Position = ContentStartPosition + new Vector2(2.0f, ContentSize.Y - 40.0f),
@@ -103,9 +105,9 @@ public class ColorPickerAddon : NativeAddon {
         Close();
     }
 
-    public Action<Vector4>? OnColorConfirmed { get; init; }
-    public Action<ColorHelpers.HsvaColor>? OnHsvaColorConfirmed { get; init; }
-    public Action? OnColorCancelled { get; init; }
+    public Action<Vector4>? OnColorConfirmed { get; set; }
+    public Action<ColorHelpers.HsvaColor>? OnHsvaColorConfirmed { get; set; }
+    public Action? OnColorCancelled { get; set; }
 
     public ColorHelpers.HsvaColor? DefaultHsvaColor { get; set; }
 
@@ -116,4 +118,11 @@ public class ColorPickerAddon : NativeAddon {
             DefaultHsvaColor = value is null ? null : ColorHelpers.RgbaToHsv(value.Value);
         }
     }
+
+    public Vector4 InitialColor {
+        get => ColorHelpers.HsvToRgb(InitialHsvaColor);
+        set => InitialHsvaColor = ColorHelpers.RgbaToHsv(value);
+    }
+
+    public ColorHelpers.HsvaColor InitialHsvaColor { get; set; } = ColorHelpers.RgbaToHsv(new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 }
