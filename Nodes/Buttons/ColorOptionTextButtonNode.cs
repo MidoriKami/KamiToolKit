@@ -26,9 +26,7 @@ public unsafe class ColorOptionTextButtonNode : ButtonBase {
         };
         BackgroundNode.AttachNode(this);
 
-        ColorNode = new ColorPreviewNode {
-            
-        };
+        ColorNode = new ColorPreviewNode();
         ColorNode.AttachNode(this);
         
         LabelNode = new TextNode {
