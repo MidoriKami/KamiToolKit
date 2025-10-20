@@ -141,7 +141,7 @@ public abstract unsafe partial class NativeAddon {
         }
     } = new();
 
-    public required Vector2 Size { get; set; }
+    public Vector2 Size { get; set; } = new(400.0f, 400.0f);
 
     public Vector2 ContentStartPosition => WindowNode.ContentStartPosition + ContentPadding;
 
