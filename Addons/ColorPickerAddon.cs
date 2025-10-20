@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
 using KamiToolKit.Nodes;
 using KamiToolKit.Widgets;
+using KamiToolKit.Widgets.Parts;
 
 namespace KamiToolKit.Addons;
 
@@ -15,7 +16,13 @@ public class ColorPickerAddon : NativeAddon {
     private HorizontalLineNode? horizontalLine;
     
     private TextButtonNode? confirmButton;
+    
+    private TextButtonNode? defaultButton;
+    private ColorPreviewNode? defaultColorPreview;
+
     private TextButtonNode? cancelButton;
+
+    private bool isCancelClicked;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon) {
         ChangeWindowSize(new Vector2(400.0f, 425.0f));
@@ -43,6 +50,25 @@ public class ColorPickerAddon : NativeAddon {
         };
         AttachNode(confirmButton);
 
+        if (DefaultHsvaColor is { } defaultColor) {
+            defaultButton = new TextButtonNode {
+                Position = ContentStartPosition + new Vector2(ContentSize.X / 2.0f - 50.0f, ContentSize.Y - 24.0f),
+                Size = new Vector2(100.0f, 24.0f),
+                IsVisible = true,
+                String = "Default",
+                OnClick = OnDefaultClicked,
+            };
+            AttachNode(defaultButton);
+
+            defaultColorPreview = new ColorPreviewNode {
+                IsVisible = true,
+                Size = new Vector2(17.0f, 17.0f),
+                Position = new Vector2(-6.0f, -1.0f),
+                HsvaColor = defaultColor,
+            };
+            AttachNode(defaultColorPreview, defaultButton.LabelNode);
+        }
+
         cancelButton = new TextButtonNode {
             Position = ContentStartPosition + new Vector2(ContentSize.X - 100.0f, ContentSize.Y - 24.0f),
             Size = new Vector2(100.0f, 24.0f),
@@ -53,6 +79,12 @@ public class ColorPickerAddon : NativeAddon {
         AttachNode(cancelButton);
     }
 
+    protected override unsafe void OnHide(AtkUnitBase* addon) {
+        if (!isCancelClicked) {
+            OnColorCancelled?.Invoke();
+        }
+    }
+
     private void OnConfirmClicked() {
         if (colorPicker is null) return;
 
@@ -60,10 +92,22 @@ public class ColorPickerAddon : NativeAddon {
         OnHsvaColorConfirmed?.Invoke(colorPicker.CurrentColor);
         Close();
     }
+    
+    private void OnDefaultClicked() {
+        if (colorPicker is null) return;
+
+        if (DefaultHsvaColor is { } defaultColor) {
+            colorPicker.SetHue(defaultColor.H);
+            colorPicker.SetSaturation(defaultColor.S);
+            colorPicker.SetValue(defaultColor.V);
+            colorPicker.SetAlpha(defaultColor.A);
+        }
+    }
 
     private void OnCancelClicked() {
         if (colorPicker is null) return;
-        
+
+        isCancelClicked = true;
         OnColorCancelled?.Invoke();
         Close();
     }
@@ -71,4 +115,14 @@ public class ColorPickerAddon : NativeAddon {
     public Action<Vector4>? OnColorConfirmed { get; init; }
     public Action<ColorHelpers.HsvaColor>? OnHsvaColorConfirmed { get; init; }
     public Action? OnColorCancelled { get; init; }
+
+    public ColorHelpers.HsvaColor? DefaultHsvaColor { get; set; }
+
+    public Vector4? DefaultColor {
+        get;
+        set {
+            field = value;
+            DefaultHsvaColor = value is null ? null : ColorHelpers.RgbaToHsv(value.Value);
+        }
+    }
 }
