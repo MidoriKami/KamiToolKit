@@ -194,9 +194,11 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
 
     public ColorHelpers.HsvaColor SquareColor {
         get => ColorSquareNode.HsvaMultiplyColor;
-        set {
-            ColorSquareNode.HsvaMultiplyColor = value with { S = 1.0f, V = 1.0f };
-            ColorSquareNode.ColorDotPosition = new Vector2(ColorSquareNode.Width * value.S, ColorSquareNode.Height - ColorSquareNode.Height * value.V);
-        }
+        set => ColorSquareNode.HsvaMultiplyColor = value with { S = 1.0f, V = 1.0f };
+    }
+
+    public ColorHelpers.HsvaColor SquareSaturationValue {
+        get => ColorSquareNode.HsvaMultiplyColor;
+        set => ColorSquareNode.ColorDotPosition = new Vector2(ColorSquareNode.Width * value.S, ColorSquareNode.Height - ColorSquareNode.Height * value.V);
     }
 }
