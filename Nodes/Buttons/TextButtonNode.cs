@@ -23,7 +23,9 @@ public unsafe class TextButtonNode : ButtonBase {
         BackgroundNode.AttachNode(this);
 
         LabelNode = new TextNode {
-            AlignmentType = AlignmentType.Center, Position = new Vector2(16.0f, 3.0f), NodeId = 3,
+            AlignmentType = AlignmentType.Center, 
+            Position = new Vector2(16.0f, 3.0f), 
+            NodeId = 3,
         };
 
         LabelNode.AttachNode(this);
