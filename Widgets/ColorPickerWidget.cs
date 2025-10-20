@@ -71,7 +71,7 @@ public class ColorPickerWidget : SimpleComponentNode {
 
         ColorPickerNode.RotationDegrees = hue * 360.0f;
         ColorPickerNode.SelectorColor = CurrentColor;
-        ColorPickerNode.SquareColor = CurrentColor with { S = 1.0f, V = 1.0f };
+        ColorPickerNode.SquareColor = CurrentColor;
 
         ColorPreviewWithInput.HsvaColor = CurrentColor;
 
@@ -83,6 +83,7 @@ public class ColorPickerWidget : SimpleComponentNode {
         
         ColorPreviewWithInput.HsvaColor = CurrentColor;
         ColorPickerNode.SelectorColor = CurrentColor;
+        ColorPickerNode.SquareColor = CurrentColor;
         
         AlphaBarNode.HsvaColor = CurrentColor;
     }
@@ -92,6 +93,7 @@ public class ColorPickerWidget : SimpleComponentNode {
 
         ColorPreviewWithInput.HsvaColor = CurrentColor;
         ColorPickerNode.SelectorColor = CurrentColor;
+        ColorPickerNode.SquareColor = CurrentColor;
 
         AlphaBarNode.HsvaColor = CurrentColor;
     }
