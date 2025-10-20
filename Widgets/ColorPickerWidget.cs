@@ -101,4 +101,20 @@ public class ColorPickerWidget : SimpleComponentNode {
 
         AlphaBarNode.HsvaColor = CurrentColor;
     }
+
+    public void SetColor(Vector4 color) {
+        var converted = ColorHelpers.RgbaToHsv(color);
+
+        SetHue(converted.H);
+        SetSaturation(converted.S);
+        SetValue(converted.V);
+        SetAlpha(converted.A);
+    }
+
+    public void SetColor(ColorHelpers.HsvaColor color) {
+        SetHue(color.H);
+        SetSaturation(color.S);
+        SetValue(color.V);
+        SetAlpha(color.A);
+    }
 }
