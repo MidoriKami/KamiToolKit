@@ -109,11 +109,17 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
 
     public override Vector4 Color {
         get => AlphaBarGradientNode.Color;
-        set => AlphaBarGradientNode.Color = value;
+        set {
+            AlphaBarGradientNode.MultiplyColor = value.AsVector3();
+            AlphaBarSelectorNode.Y = Height - Height * value.W - 5.0f;
+        }
     }
 
     public override ColorHelpers.HsvaColor HsvaColor {
         get => AlphaBarGradientNode.HsvaMultiplyColor;
-        set => AlphaBarGradientNode.HsvaMultiplyColor = value;
+        set {
+            AlphaBarGradientNode.HsvaMultiplyColor = value with { A = 1.0f };
+            AlphaBarSelectorNode.Y = Height - Height * value.A - 5.0f;
+        }
     }
 }

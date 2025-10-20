@@ -63,6 +63,7 @@ public class ColorPickerWidget : SimpleComponentNode {
         CurrentColor = CurrentColor with { A = alpha };
 
         ColorPreviewWithInput.HsvaColor = CurrentColor;
+        AlphaBarNode.HsvaColor = CurrentColor;
     }
 
     public void SetHue(float hue) {
@@ -74,7 +75,7 @@ public class ColorPickerWidget : SimpleComponentNode {
 
         ColorPreviewWithInput.HsvaColor = CurrentColor;
 
-        AlphaBarNode.HsvaColor = CurrentColor with { A = 1.0f };
+        AlphaBarNode.HsvaColor = CurrentColor;
     }
 
     public void SetSaturation(float saturation) {
@@ -83,7 +84,7 @@ public class ColorPickerWidget : SimpleComponentNode {
         ColorPreviewWithInput.HsvaColor = CurrentColor;
         ColorPickerNode.SelectorColor = CurrentColor;
         
-        AlphaBarNode.HsvaColor = CurrentColor with { A = 1.0f };
+        AlphaBarNode.HsvaColor = CurrentColor;
     }
 
     public void SetValue(float value) {
@@ -92,6 +93,6 @@ public class ColorPickerWidget : SimpleComponentNode {
         ColorPreviewWithInput.HsvaColor = CurrentColor;
         ColorPickerNode.SelectorColor = CurrentColor;
 
-        AlphaBarNode.HsvaColor = CurrentColor with { A = 1.0f };
+        AlphaBarNode.HsvaColor = CurrentColor;
     }
 }
