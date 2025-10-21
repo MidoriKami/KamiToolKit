@@ -24,7 +24,6 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         
         ColorSquareNode = new ColorSquareNode {
             IsVisible = true,
-            Color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f),
             DrawFlags = DrawFlags.UseTransformedCollision,
         };
         ColorSquareNode.AttachNode(this);
@@ -139,7 +138,7 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         var center = ScreenPosition + ColorSquareNode.Position + ColorSquareNode.Origin; 
 
         var relativePosition = clickPosition - center;
-        var rotatedPoint = RotatePoint(relativePosition, Vector2.Zero, -ColorSquareNode.RotationDegrees);
+        var rotatedPoint = RotatePoint(relativePosition, Vector2.Zero, -ColorSquareNode.RotationDegrees) / ColorSquareNode.Scale;
 
         var xClamped = Math.Clamp(rotatedPoint.X, -ColorSquareNode.Width / 2, ColorSquareNode.Width / 2);
         var yClamped = Math.Clamp(rotatedPoint.Y, -ColorSquareNode.Height / 2, ColorSquareNode.Height / 2);
