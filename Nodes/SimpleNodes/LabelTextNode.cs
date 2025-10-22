@@ -6,8 +6,8 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.Nodes;
 
 // Simple helper class for making basic text lable, node will auto-resize to fit label
-public sealed class SimpleLabelNode : TextNode {
-    public SimpleLabelNode() {
+public sealed class LabelTextNode : TextNode {
+    public LabelTextNode() {
         Height = 16.0f;
         TextFlags = TextFlags.AutoAdjustNodeSize | TextFlags.Emboss;
         TextColor = ColorHelper.GetColor(2);
