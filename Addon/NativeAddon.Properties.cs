@@ -111,6 +111,9 @@ public abstract unsafe partial class NativeAddon {
         WindowNode.Size = Size;
     }
 
+    public void ChangeWindowSize(float width, float height)
+        => ChangeWindowSize(new Vector2(width, height));
+
     public required string InternalName { get; init; } = "NameNotSet";
 
     public required SeString Title { get; set; } = "TitleNotSet";
