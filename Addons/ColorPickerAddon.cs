@@ -23,7 +23,7 @@ public class ColorPickerAddon : NativeAddon {
     private bool isCancelClicked;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon) {
-        ChangeWindowSize(new Vector2(400.0f, 425.0f));
+        SetWindowSize(new Vector2(400.0f, 425.0f));
         
         colorPicker = new ColorPickerWidget {
             Position = ContentStartPosition,
