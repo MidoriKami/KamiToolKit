@@ -55,6 +55,11 @@ public class GridNode : SimpleComponentNode {
         RecalculateLayout();
     }
 
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
+        RecalculateLayout();
+    }
+
     public void RecalculateLayout() {
         var gridWidth = Width / NumColumns;
         var gridHeight = Height / NumRows;
