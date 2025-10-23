@@ -13,6 +13,11 @@ public class GridNode : SimpleComponentNode {
         set => gridNodes[column + row * NumColumns + row] = value;
     }
 
+    public SimpleComponentNode this[int index] {
+        get => gridNodes[index];
+        set => gridNodes[index] = value;
+    }
+
     /// <summary>
     ///     Warning: Changing this value will detach any existing layout nodes.
     ///     You will have to re-attach your nodes after-wards.
