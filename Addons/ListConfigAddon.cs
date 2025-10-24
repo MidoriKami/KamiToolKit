@@ -55,7 +55,6 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
         configNode = new TU {
             Position = ContentStartPosition + new Vector2(250.0f + 16.0f, 0.0f),
             Size = ContentSize - new Vector2(250.0f + 16.0f, 0.0f),
-            IsVisible = true,
             OnConfigChanged = option => {
                 OnConfigChanged?.Invoke(option);
                 selectionListNode.UpdateList();
@@ -80,7 +79,10 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
     /// </summary>
     public List<string>? SortOptions { get; init; }
 
-    public required List<T> Options { get; init; } = [];
+    /// <summary>
+    /// Note: Setting new values will not be shown until the window is reopened.
+    /// </summary>
+    public required List<T> Options { get; set; } = [];
 
     public required Action<T>? OnConfigChanged { get; init; }
     public Action<T>? OnItemAdded { get; init; }
