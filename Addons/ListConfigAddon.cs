@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
 using KamiToolKit.Addons.Interfaces;
 using KamiToolKit.Addons.Parts;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Addons;
@@ -14,6 +15,7 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
     private ModifyListNode<T>? selectionListNode;
     private VerticalLineNode? separatorLine;
     private TU? configNode;
+    private TextNode? nothingSelectedTextNode;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon) {
         selectionListNode = new ModifyListNode<T> {
@@ -36,6 +38,20 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
         };
         AttachNode(separatorLine);
 
+        nothingSelectedTextNode = new TextNode {
+            Position = ContentStartPosition + new Vector2(250.0f + 16.0f, 0.0f),
+            Size = ContentSize - new Vector2(250.0f + 16.0f, 0.0f),
+            IsVisible = true,
+            AlignmentType = AlignmentType.Center,
+            TextFlags = TextFlags.WordWrap | TextFlags.MultiLine,
+            FontSize = 14,
+            LineSpacing = 22,
+            FontType = FontType.Axis,
+            String = "Please select an option on the left",
+            TextColor = ColorHelper.GetColor(1),
+        };
+        AttachNode(nothingSelectedTextNode);
+
         configNode = new TU {
             Position = ContentStartPosition + new Vector2(250.0f + 16.0f, 0.0f),
             Size = ContentSize - new Vector2(250.0f + 16.0f, 0.0f),
@@ -50,6 +66,11 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
 
     private void OnOptionChanged(T? newOption) {
         if (configNode is null) return;
+
+        configNode.IsVisible = newOption is not null;
+        if (nothingSelectedTextNode is not null) {
+            nothingSelectedTextNode.IsVisible = newOption is null;
+        }
 
         configNode.ConfigurationOption = newOption;
     }
