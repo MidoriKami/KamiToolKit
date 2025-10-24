@@ -94,6 +94,10 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
     }
 
     private void OnSearchUpdated(string searchString) {
+        if (selectedOptionNode is not null) {
+            selectedOptionNode.IsSelected = false;
+        }
+
         selectedOptionNode = null;
         OnOptionChanged?.Invoke(null);
         
