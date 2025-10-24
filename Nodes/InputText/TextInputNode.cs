@@ -202,6 +202,11 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
+    public bool IsError {
+        get => FocusNode.MultiplyColor == new Vector3(1.0f, 0.6f, 0.6f);
+        set => FocusNode.MultiplyColor = value ? new Vector3(1.0f, 0.6f, 0.6f) : Vector3.One;
+    }
+
     public bool AutoSelectAll { get; set; }
 
     private void SetupVirtualTable() {
