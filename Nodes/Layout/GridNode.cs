@@ -4,13 +4,15 @@ using System.Numerics;
 
 namespace KamiToolKit.Nodes;
 
+public record GridSize(int Columns, int Rows);
+
 public class GridNode : SimpleComponentNode {
 
     private List<SimpleComponentNode> gridNodes = [];
 
-    public SimpleComponentNode this[int row, int column] {
-        get => gridNodes[column + row * NumColumns + row];
-        set => gridNodes[column + row * NumColumns + row] = value;
+    public SimpleComponentNode this[int x, int y] {
+        get => gridNodes[x + y * GridSize.Columns];
+        set => gridNodes[x + y * GridSize.Columns] = value;
     }
 
     public SimpleComponentNode this[int index] {
@@ -19,36 +21,23 @@ public class GridNode : SimpleComponentNode {
     }
 
     /// <summary>
-    ///     Warning: Changing this value will detach any existing layout nodes.
-    ///     You will have to re-attach your nodes after-wards.
+    ///     Warning: Changing this value will dispose any existing layout nodes.
     /// </summary>
-    public int NumRows {
+    public required GridSize GridSize {
         get;
         set {
             field = value;
             ReallocateArray();
         }
-    }
-
-    /// <summary>
-    ///     Warning: Changing this value will detach any existing layout nodes.
-    ///     You will have to re-attach your nodes after-wards.
-    /// </summary>
-    public int NumColumns {
-        get;
-        set {
-            field = value;
-            ReallocateArray();
-        }
-    }
+    } = new(0, 0);
 
     private void ReallocateArray() {
         foreach (var node in gridNodes) {
             node.Dispose();
         }
+        gridNodes.Clear();
 
-        gridNodes = [];
-        foreach (var _ in Enumerable.Range(0, NumRows * NumColumns)) {
+        foreach (var _ in Enumerable.Range(0, GridSize.Rows * GridSize.Columns)) {
             gridNodes.Add(new SimpleComponentNode());
         }
 
@@ -61,18 +50,16 @@ public class GridNode : SimpleComponentNode {
     }
 
     public void RecalculateLayout() {
-        var gridWidth = Width / NumColumns;
-        var gridHeight = Height / NumRows;
+        var gridWidth = Width / GridSize.Columns;
+        var gridHeight = Height / GridSize.Rows;
 
-        foreach (var yIndex in Enumerable.Range(0, NumRows)) {
-            foreach (var xIndex in Enumerable.Range(0, NumColumns)) {
-                var actualIndex = yIndex * NumColumns + xIndex;
+        foreach (var row in Enumerable.Range(0, GridSize.Rows)) {
+            foreach (var column in Enumerable.Range(0, GridSize.Columns)) {
+                this[column, row].Size = new Vector2(gridWidth, gridHeight);
+                this[column, row].Position = new Vector2(column * gridWidth, row * gridHeight);
+                this[column, row].IsVisible = true;
 
-                gridNodes[actualIndex].Size = new Vector2(gridWidth, gridHeight);
-                gridNodes[actualIndex].Position = new Vector2(xIndex * gridWidth, yIndex * gridHeight);
-                gridNodes[actualIndex].IsVisible = true;
-
-                gridNodes[actualIndex].AttachNode(this);
+                this[column, row].AttachNode(this);
             }
         }
     }
