@@ -35,6 +35,9 @@ public static unsafe class AtkUldPartExtensions {
     public static void LoadIcon(ref this AtkUldPart part, uint iconId)
         => part.UldAsset->AtkTexture.LoadIconTexture(iconId, GetIconSubFolder(iconId));
 
+    public static bool IsTextureReady(ref this AtkUldPart part)
+        => part.UldAsset is not null && part.UldAsset->AtkTexture.IsTextureReady();
+
     public static Vector2 GetActualTextureSize(this AtkUldPart part) {
         if (part.UldAsset is null) return Vector2.Zero;
         if (!part.UldAsset->AtkTexture.IsTextureReady()) return Vector2.Zero;

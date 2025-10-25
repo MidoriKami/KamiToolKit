@@ -22,6 +22,8 @@ public unsafe class IconImageNode : SimpleImageNode {
             }
         }
     }
+    
+    public bool IsTextureReady => PartsList[0]->IsTextureReady();
 
     public uint? LoadedIconId
         => Node->GetIconId();
