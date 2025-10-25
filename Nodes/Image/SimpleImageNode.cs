@@ -54,6 +54,8 @@ public unsafe class SimpleImageNode : ImageNode {
         set => PartsList[0]->LoadTexture(value);
     }
 
+    public Vector2 ActualTextureSize => PartsList[0]->GetActualTextureSize();
+
     public void LoadTexture(string path)
         => PartsList[0]->LoadTexture(path);
     

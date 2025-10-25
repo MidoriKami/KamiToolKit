@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Dalamud.Interface.Textures.TextureWraps;
@@ -33,6 +34,17 @@ public static unsafe class AtkUldPartExtensions {
 
     public static void LoadIcon(ref this AtkUldPart part, uint iconId)
         => part.UldAsset->AtkTexture.LoadIconTexture(iconId, GetIconSubFolder(iconId));
+
+    public static Vector2 GetActualTextureSize(this AtkUldPart part) {
+        if (part.UldAsset is null) return Vector2.Zero;
+        if (!part.UldAsset->AtkTexture.IsTextureReady()) return Vector2.Zero;
+        if (part.UldAsset->AtkTexture.TextureType is 0) return Vector2.Zero;
+        if (part.UldAsset->AtkTexture.KernelTexture is null) return Vector2.Zero;
+
+        var width = part.UldAsset->AtkTexture.GetTextureWidth();
+        var height = part.UldAsset->AtkTexture.GetTextureHeight();
+        return new Vector2(width, height);
+    }
 
     public static void LoadTexture(ref this AtkUldPart part, Texture* texture) {
         if (part.UldAsset is null) return;
