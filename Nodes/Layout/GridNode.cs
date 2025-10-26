@@ -41,6 +41,13 @@ public class GridNode : SimpleComponentNode {
             gridNodes.Add(new SimpleComponentNode());
         }
 
+        foreach (var row in Enumerable.Range(0, GridSize.Rows)) {
+            foreach (var column in Enumerable.Range(0, GridSize.Columns)) {
+                this[column, row].AttachNode(this);
+                this[column, row].IsVisible = true;
+            }
+        }
+
         RecalculateLayout();
     }
 
@@ -57,9 +64,6 @@ public class GridNode : SimpleComponentNode {
             foreach (var column in Enumerable.Range(0, GridSize.Columns)) {
                 this[column, row].Size = new Vector2(gridWidth, gridHeight);
                 this[column, row].Position = new Vector2(column * gridWidth, row * gridHeight);
-                this[column, row].IsVisible = true;
-
-                this[column, row].AttachNode(this);
             }
         }
     }
