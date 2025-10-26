@@ -87,7 +87,7 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
 
     private void OnConfirmClicked() {
         if (selectedOption is { Option: { } option }) {
-            SelectionResult.Invoke(option);
+            SelectionResult?.Invoke(option);
         }
         
         selectedOption = null;
@@ -147,5 +147,5 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
     
     public required List<T> SearchOptions { get; init; }
 
-    public required Action<T> SelectionResult { get; init; }
+    public Action<T>? SelectionResult { get; set; }
 }
