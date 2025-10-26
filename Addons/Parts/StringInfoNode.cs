@@ -15,6 +15,6 @@ public abstract class StringInfoNode : IInfoNodeData {
 
     public abstract string? GetTexturePath();
 
-    public int Compare(IInfoNodeData other, string sortingMode)
+    public virtual int Compare(IInfoNodeData other, string sortingMode)
         => string.CompareOrdinal(Label, (other as StringInfoNode)?.Label);
 }
