@@ -88,7 +88,7 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
 
     private void OnConfirmClicked() {
         if (selectedOption != null) {
-            SelectionResult.Invoke(selectedOption.Option);
+            SelectionResult?.Invoke(selectedOption.Option);
         }
         
         selectedOption = null;
@@ -139,8 +139,7 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
     }
 
     public required List<string> SortingOptions { get; init; }
-    
     public required List<T> SearchOptions { get; init; }
 
-    public required Action<T> SelectionResult { get; init; }
+    public Action<T>? SelectionResult { get; set; }
 }
