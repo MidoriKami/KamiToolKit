@@ -43,6 +43,12 @@ public static unsafe class AtkUnitBaseExtensions {
         addon.GetSize(width, height, false);
         return new Vector2(*width, *height);
     }
+
+    public static Vector2 RootSize(ref this AtkUnitBase addon) {
+        if (addon.RootNode is null) return Vector2.Zero;
+        
+        return new Vector2(addon.RootNode->Width, addon.RootNode->Height);
+    }
     
     public static Vector2 Position(ref this AtkUnitBase addon)
         => new(addon.X, addon.Y);
