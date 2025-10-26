@@ -10,7 +10,7 @@ using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Addons;
 
-public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new() where T : class, IInfoNodeData, new() {
+public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new() where T : class, IInfoNodeData {
 
     private ModifyListNode<T>? selectionListNode;
     private VerticalLineNode? separatorLine;
@@ -26,7 +26,7 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
             
             SelectionOptions = Options,
             OnOptionChanged = OnOptionChanged,
-            AddNewEntry = OnItemAdded,
+            AddNewEntry = OnAddClicked,
             RemoveEntry = OnItemRemoved,
         };
         AttachNode(selectionListNode);
@@ -85,6 +85,6 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
     public required List<T> Options { get; set; } = [];
 
     public required Action<T>? OnConfigChanged { get; init; }
-    public Action<T>? OnItemAdded { get; init; }
+    public Action<ModifyListNode<T>>? OnAddClicked { get; init; }
     public Action<T>? OnItemRemoved { get; init; }
 }
