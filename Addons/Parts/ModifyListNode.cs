@@ -8,7 +8,7 @@ using KamiToolKit.Widgets;
 
 namespace KamiToolKit.Addons.Parts;
 
-public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeData, new() {
+public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeData {
     private SearchWidget searchWidget;
     private ScrollingAreaNode<VerticalListNode> listNode;
 
@@ -109,12 +109,17 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         listNode.ContentHeight = listNode.ContentNode.Height;
     }
 
-    private void OnAddClicked() {
-        var newOption = new T();
-        SelectionOptions.Add(newOption);
-        AddNewEntry?.Invoke(newOption);
-        
+    private void OnAddClicked()
+        => AddNewEntry?.Invoke(this);
+
+    public void AddOption(T option) {
+        SelectionOptions.Add(option);
         UpdateList();
+
+        var newOptionNode = listNode.ContentNode.GetNodes<SearchInfoNode<T>>().FirstOrDefault(node => node.Option == option);
+        if (newOptionNode is not null) {
+            OnOptionClicked(newOptionNode);
+        }
     }
 
     private void OnEditClicked() {
@@ -175,9 +180,9 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         }
     }
 
-    public Action<T>? AddNewEntry { 
+    public Action<ModifyListNode<T>>? AddNewEntry { 
         get;
-        init {
+        set {
             field = value;
             OnSizeChanged();
         }
@@ -185,7 +190,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
 
     public Action<T>? RemoveEntry { 
         get;
-        init {
+        set {
             field = value;
             OnSizeChanged();
         }
@@ -193,7 +198,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
 
     public Action<T>? EditEntry { 
         get;
-        init {
+        set {
             field = value;
             OnSizeChanged();
         }
