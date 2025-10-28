@@ -24,7 +24,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     private AtkResNode.AtkResNodeVirtualTable* virtualTable;
 
     public void Dispose() {
-        ThreadSafety.AssertMainThread("This function must be invoked from the main thread.");
+        if (MainThreadSafety.TryAssertMainThread()) return;
 
         if (isDisposed) return;
         isDisposed = true;
@@ -172,7 +172,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
 
     protected NodeBase(NodeType nodeType) {
-        ThreadSafety.AssertMainThread("Attempted to allocate a node while not on main thread. This is not supported.");
+        if (MainThreadSafety.TryAssertMainThread()) return;
         
         Log.Verbose($"Creating new node {GetType()}");
         Node = NativeMemoryHelper.Create<T>();

@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Dalamud.Plugin;
+using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
@@ -45,37 +47,20 @@ public unsafe class NativeController : IDisposable {
         DalamudInterface.Instance.Log.MinimumLogLevel = LogEventLevel.Verbose;
     }
 
-    public void Dispose()
-        => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-            NodeBase.DisposeNodes();
-            NativeAddon.DisposeAddons();
+    public void Dispose() {
+        if (MainThreadSafety.TryAssertMainThread()) return;
 
-            Experimental.Instance.DisposeHooks();
-        });
+        NodeBase.DisposeNodes();
+        NativeAddon.DisposeAddons();
 
-    public void AttachNode(NodeBase customNode, NodeBase targetNode, NodePosition? position = null)
-        => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => AttachToNodeBase(customNode, targetNode, position));
-
-    public void AttachNode(NodeBase customNode, AtkResNode* targetNode, NodePosition? position = null)
-        => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => AttachToAtkResNode(customNode, targetNode, position));
-
-    public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings)
-        => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => AttachToAtkComponentNode(customNode, targetNode, position));
-
-    public void AttachNode(NodeBase customNode, NativeAddon targetAddon, NodePosition? position = null)
-        => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => AttachToNativeAddon(customNode, targetAddon, position));
-
-    public void DetachNode(NodeBase? customNode, Action? disposeAction = null)
-        => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => DetachNodeTask(customNode, disposeAction));
-
-    public void DisposeNode<T>(ref T? customNode) where T : NodeBase {
-        var node = Interlocked.Exchange(ref customNode, null);
-        DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => DisposeNodeTask(node));
+        Experimental.Instance.DisposeHooks();
     }
 
-    private void AttachToNodeBase(NodeBase customNode, NodeBase targetNode, NodePosition? position) {
+    public void AttachNode(NodeBase customNode, NodeBase targetNode, NodePosition? position = null) {
+        if (MainThreadSafety.TryAssertMainThread()) return;
+        
         Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}] to another Custom Node [{targetNode.GetType()}]");
-        var addon = GetAddonForNode(targetNode.InternalResNode);
+        var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(targetNode);
 
         switch (targetNode) {
 
@@ -92,23 +77,20 @@ public unsafe class NativeController : IDisposable {
         }
     }
 
-    private void AttachToAtkResNode(NodeBase customNode, AtkResNode* targetNode, NodePosition? position) {
+    public void AttachNode(NodeBase customNode, AtkResNode* targetNode, NodePosition? position = null) {
+        if (MainThreadSafety.TryAssertMainThread()) return;
+
         Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a native AtkResNode");
-        var addon = GetAddonForNode(targetNode);
+        var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(targetNode);
 
         customNode.RegisterAutoDetach(addon);
         customNode.AttachNode(targetNode, position ?? NodePosition.AsLastChild);
         customNode.EnableEvents(addon);
     }
 
-    private static void AttachToNativeAddon(NodeBase customNode, NativeAddon targetAddon, NodePosition? position) {
-        Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a Custom Addon [{targetAddon.GetType()}]");
-
-        customNode.AttachNode(targetAddon, position ?? NodePosition.AsLastChild);
-        customNode.EnableEvents(targetAddon.InternalAddon);
-    }
-
-    private void AttachToAtkComponentNode(NodeBase customNode, AtkComponentNode* targetNode, NodePosition position) {
+    public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings) {
+        if (MainThreadSafety.TryAssertMainThread()) return;
+        
         if (targetNode->GetNodeType() is not NodeType.Component) {
             Log.Error("TargetNode type was expected to be Component but was not. Aborting attach.");
             return;
@@ -116,7 +98,7 @@ public unsafe class NativeController : IDisposable {
 
         Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a native AtkComponentNode");
 
-        var addon = GetAddonForNode((AtkResNode*)targetNode);
+        var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode((AtkResNode*)targetNode);
         if (addon is not null) {
             Log.Verbose($"[NativeController] Tried to get Addon from native AtkComponentNode, found: {addon->NameString}");
 
@@ -129,7 +111,23 @@ public unsafe class NativeController : IDisposable {
         }
     }
 
-    private static void DetachNodeTask(NodeBase? customNode, Action? disposeAction) {
+    public void AttachNode(NodeBase customNode, NativeAddon targetAddon, NodePosition? position = null) {
+        if (MainThreadSafety.TryAssertMainThread()) return;
+
+        Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a Custom Addon [{targetAddon.GetType()}]");
+
+        customNode.AttachNode(targetAddon, position ?? NodePosition.AsLastChild);
+        customNode.EnableEvents(targetAddon.InternalAddon);
+    }
+
+    public void DetachNode(NodeBase? customNode) {
+        if (Framework.Instance()->IsUnloading()) return;
+
+        if (!ThreadSafety.IsMainThread) {
+            Log.Warning("NativeController.DetachNode, must be called from the main thread.");
+            return;
+        }
+        
         if (customNode is not null) {
             Log.Verbose($"[NativeController] Detaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] from all sources.");
         }
@@ -138,26 +136,25 @@ public unsafe class NativeController : IDisposable {
         customNode?.UnregisterAutoDetach();
         customNode?.DisableEvents();
         customNode?.DetachNode();
-        disposeAction?.Invoke();
     }
 
-    private void DisposeNodeTask(NodeBase? customNode) {
+    public static void DisposeNode<T>(ref T? customNode) where T : NodeBase {
+        if (MainThreadSafety.TryAssertMainThread()) return;
+
+        var node = Interlocked.Exchange(ref customNode, null);
+        
         if (customNode is not null) {
             Log.Verbose($"[NativeController] Disposing [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] from all sources.");
         }
 
-        customNode?.DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
-        customNode?.UnregisterAutoDetach();
-        customNode?.DisableEvents();
-        customNode?.DetachNode();
-        customNode?.Dispose();
+        node?.DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
+        node?.UnregisterAutoDetach();
+        node?.DisableEvents();
+        node?.DetachNode();
+        node?.Dispose();
     }
 
-    private AtkUnitBase* GetAddonForNode(AtkResNode* node)
-        => RaptureAtkUnitManager.Instance()->GetAddonByNode(node);
-
-
-    private void GenerateKamiToolKitTypeMaps() {
+    private static void GenerateKamiToolKitTypeMaps() {
         var stopwatch = Stopwatch.StartNew();
         
         var types = Assembly.GetExecutingAssembly().GetTypes();
