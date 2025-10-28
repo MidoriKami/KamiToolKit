@@ -28,7 +28,7 @@ public class Vector2EditWidget : SimpleComponentNode {
             TextColor = ColorHelper.GetColor(8),
             TextOutlineColor = ColorHelper.GetColor(7),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
-            String = "Width",
+            String = XLabel ?? "Width",
             IsVisible = true,
         };
         WidthTextNode.AttachNode(GridNode[0, 0]);
@@ -41,7 +41,7 @@ public class Vector2EditWidget : SimpleComponentNode {
             TextColor = ColorHelper.GetColor(8),
             TextOutlineColor = ColorHelper.GetColor(7),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
-            String = "Height",
+            String = YLabel ?? "Height",
             IsVisible = true,
         };
         HeightTextNode.AttachNode(GridNode[1, 0]);
@@ -79,9 +79,7 @@ public class Vector2EditWidget : SimpleComponentNode {
     }
     
     private void OnYValueUpdated(int newValue) {
-        Value = Value with {
-            Y = newValue
-        };
+        Value = Value with { Y = newValue };
         OnValueChanged?.Invoke(Value);
     }
 
@@ -96,4 +94,6 @@ public class Vector2EditWidget : SimpleComponentNode {
     
     public Action<Vector2>? OnValueChanged { get; set; }
 
+    public string? XLabel { get; set; }
+    public string? YLabel { get; set; }
 }
