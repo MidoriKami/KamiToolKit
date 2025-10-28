@@ -138,7 +138,7 @@ public unsafe class NativeController : IDisposable {
         customNode?.DetachNode();
     }
 
-    public static void DisposeNode<T>(ref T? customNode) where T : NodeBase {
+    public void DisposeNode<T>(ref T? customNode) where T : NodeBase {
         if (MainThreadSafety.TryAssertMainThread()) return;
 
         var node = Interlocked.Exchange(ref customNode, null);
