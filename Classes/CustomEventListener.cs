@@ -30,4 +30,6 @@ public unsafe class CustomEventListener : IDisposable {
     }
 
     [UnmanagedCallersOnly] private static void NullSub() { }
+
+    public static implicit operator AtkEventListener*(CustomEventListener listener) => listener.EventListener;
 }
