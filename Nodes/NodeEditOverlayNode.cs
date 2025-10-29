@@ -15,50 +15,22 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
     private ResizeNineGridNode topEditNode;
 
     public NodeEditOverlayNode() {
-        rightEditNode = new ResizeNineGridNode {
-            Position = new Vector2(16.0f, 16.0f), 
-            Size = new Vector2(0.0f, 8.0f), 
-            RotationDegrees = 90.0f,
-            IsVisible = true,
-        };
+        rightEditNode = new ResizeNineGridNode();
         rightEditNode.AttachNode(this);
 
-        bottomEditNode = new ResizeNineGridNode {
-            Position = new Vector2(14.0f, 0.0f), 
-            Size = new Vector2(0.0f, 8.0f), 
-            IsVisible = true,
-        };
+        bottomEditNode = new ResizeNineGridNode();
         bottomEditNode.AttachNode(this);
 
-        leftEditNode = new ResizeNineGridNode {
-            Position = new Vector2(20.0f, 16.0f), 
-            Size = new Vector2(0.0f, 8.0f), 
-            RotationDegrees = 90.0f,
-            IsVisible = true,
-        };
+        leftEditNode = new ResizeNineGridNode();
         leftEditNode.AttachNode(this);
 
-        topEditNode = new ResizeNineGridNode {
-            Position = new Vector2(12.0f, 12.0f), 
-            Size = new Vector2(0.0f, 8.0f), 
-            IsVisible = true,
-        };
+        topEditNode = new ResizeNineGridNode();
         topEditNode.AttachNode(this);
 
-        rightCornerEditNode = new ResizeButtonNode(ResizeDirection.BottomRight) {
-            Size = new Vector2(28.0f, 28.0f), 
-            Origin = new Vector2(14.0f, 14.0f), 
-            IsVisible = true, 
-            EnableEventFlags = true,
-        };
+        rightCornerEditNode = new ResizeButtonNode(ResizeDirection.BottomRight);
         rightCornerEditNode.AttachNode(this);
 
-        leftCornerEditNode = new ResizeButtonNode(ResizeDirection.BottomLeft) {
-            Position = new Vector2(16.0f, 0.0f), 
-            Size = new Vector2(28.0f, 28.0f), 
-            Origin = new Vector2(14.0f, 14.0f), 
-            IsVisible = true,
-        };
+        leftCornerEditNode = new ResizeButtonNode(ResizeDirection.BottomLeft);
         leftCornerEditNode.AttachNode(this);
     }
 
@@ -75,20 +47,34 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
         }
     }
 
-    // todo: better math, actually use rotations correctly
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        rightEditNode.X = Width - 11.0f;
-        bottomEditNode.Width = Width - 28.0f;
-        topEditNode.Width = Width - 25.0f;
+        const float lineThickness = 8.0f;
 
-        rightEditNode.Width = Height - 30.0f;
-        bottomEditNode.Y = Height - 22.0f;
-        leftEditNode.Width = Height - 30.0f;
-        leftCornerEditNode.Y = Height - 44.0f;
+        leftEditNode.Size = new Vector2(Height - 32.0f, lineThickness);
+        leftEditNode.Position = new Vector2(16.0f + leftEditNode.Height / 2.0f, 16.0f);
+        leftEditNode.RotationDegrees = 90.0f;
 
-        rightCornerEditNode.Position = Size - new Vector2(44.0f, 44.0f);
+        rightEditNode.Size = new Vector2(Height - 32.0f, lineThickness);
+        rightEditNode.Position = new Vector2(Width - 16.0f + rightEditNode.Height / 2.0f, 16.0f);
+        rightEditNode.RotationDegrees = 90.0f;
+
+        topEditNode.Size = new Vector2(Width - 32.0f, lineThickness);
+        topEditNode.Position = new Vector2(16.0f, 16.0f - lineThickness / 2.0f);
+
+        bottomEditNode.Size = new Vector2(Width - 32.0f, lineThickness);
+        bottomEditNode.Position = new Vector2(16.0f, Height - 16.0f - lineThickness / 2.0f);
+
+        leftCornerEditNode.Size = new Vector2(16.0f, 16.0f);
+        leftCornerEditNode.Origin = leftCornerEditNode.Size / 2.0f;
+        leftCornerEditNode.RotationDegrees = 180.0f;
+        leftCornerEditNode.Position = new Vector2(16.0f, Height - 16.0f - leftCornerEditNode.Height) + new Vector2(lineThickness, -lineThickness) / 3.0f;
+
+        rightCornerEditNode.Size = new Vector2(16.0f, 16.0f);
+        rightCornerEditNode.Origin = rightCornerEditNode.Size / 2.0f;
+        rightCornerEditNode.RotationDegrees = 90.0f;
+        rightCornerEditNode.Position = new Vector2(Width - 16.0f - rightCornerEditNode.Height, Height - 16.0f - leftCornerEditNode.Height) - new Vector2(lineThickness, lineThickness) / 3.0f;
     }
 
     public Vector2 GetSizeDelta(Vector2 mouseDelta) {

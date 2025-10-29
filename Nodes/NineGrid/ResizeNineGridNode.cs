@@ -10,8 +10,8 @@ public class ResizeNineGridNode : SimpleComponentNode {
     public ResizeNineGridNode() {
         BorderNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/WindowA_line.tex",
-            TextureCoordinates = new Vector2(0.0f, 0.0f),
-            TextureSize = new Vector2(32.0f, 4.0f),
+            TextureCoordinates = new Vector2(2.0f, 1.0f),
+            TextureSize = new Vector2(28.0f, 3.0f),
             LeftOffset = 12,
             RightOffset = 12,
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,

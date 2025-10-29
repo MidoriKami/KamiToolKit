@@ -1,8 +1,6 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
 
@@ -17,19 +15,13 @@ internal class ResizeButtonNode : SimpleComponentNode {
     public ResizeButtonNode(ResizeDirection direction) {
         resizeDirection = direction;
 
-        var rotation = direction switch {
-            ResizeDirection.BottomRight => 1.0f * MathF.PI / 2.0f,
-            ResizeDirection.BottomLeft => 2.0f * MathF.PI / 2.0f,
-            _ => 0.0f,
-        };
-
         UnselectedImageNode = new SimpleImageNode {
             NodeId = 3,
             TexturePath = "ui/uld/ChatLog.tex",
-            TextureCoordinates = new Vector2(28.0f, 28.0f),
-            TextureSize = new Vector2(28.0f, 28.0f),
-            Size = new Vector2(28.0f, 28.0f),
-            Origin = new Vector2(14.0f, 14.0f),
+            TextureCoordinates = new Vector2(32.0f, 34.0f),
+            TextureSize = new Vector2(16.0f, 16.0f),
+            Size = new Vector2(16.0f, 16.0f),
+            Origin = new Vector2(8.0f, 8.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
         };
@@ -38,37 +30,14 @@ internal class ResizeButtonNode : SimpleComponentNode {
         SelectedImageNode = new SimpleImageNode {
             NodeId = 2,
             TexturePath = "ui/uld/ChatLog.tex",
-            TextureCoordinates = new Vector2(0.0f, 28.0f),
-            TextureSize = new Vector2(28.0f, 28.0f),
-            Size = new Vector2(28.0f, 28.0f),
-            Origin = new Vector2(14.0f, 14.0f),
+            TextureCoordinates = new Vector2(6.0f, 34.0f),
+            TextureSize = new Vector2(16.0f, 16.0f),
+            Size = new Vector2(16.0f, 16.0f),
+            Origin = new Vector2(8.0f, 8.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
         };
         SelectedImageNode.AttachNode(this);
-
-        AddTimeline(new TimelineBuilder()
-            .BeginFrameSet(1, 30)
-            .AddLabel(1, 1, AtkTimelineJumpBehavior.Start, 0)
-            .AddLabel(30, 0, AtkTimelineJumpBehavior.PlayOnce, 0)
-            .EndFrameSet()
-            .Build());
-
-        UnselectedImageNode.AddTimeline(new TimelineBuilder()
-            .BeginFrameSet(1, 30)
-            .AddFrame(1, rotation: rotation)
-            .EndFrameSet()
-            .Build()
-        );
-
-        SelectedImageNode.AddTimeline(new TimelineBuilder()
-            .BeginFrameSet(1, 30)
-            .AddFrame(1, rotation: rotation)
-            .EndFrameSet()
-            .Build()
-        );
-
-        Timeline?.PlayAnimation(1);
     }
 
     public bool IsHovered {
