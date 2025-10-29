@@ -68,8 +68,8 @@ public abstract unsafe partial class NodeBase {
 
         if (editEventListener is null) {
             editEventListener = new ViewportEventListener(OnEditEvent);
-            editEventListener.AddEvent(AtkEventType.MouseMove, overlayNode.InternalResNode);
-            editEventListener.AddEvent(AtkEventType.MouseDown, overlayNode.InternalResNode);
+            editEventListener.AddEvent(AtkEventType.MouseMove, overlayNode);
+            editEventListener.AddEvent(AtkEventType.MouseDown, overlayNode);
         }
     }
 
@@ -133,7 +133,7 @@ public abstract unsafe partial class NodeBase {
 
             // Begin Resize Event
             case AtkEventType.MouseDown when !isResizing && overlayNode.AnyHovered() && currentEditMode.HasFlag(NodeEditMode.Resize): {
-                editEventListener.AddEvent(AtkEventType.MouseUp, overlayNode.InternalResNode);
+                editEventListener.AddEvent(AtkEventType.MouseUp, overlayNode);
 
                 isResizing = true;
                 clickStartPosition = mousePosition;
@@ -154,7 +154,7 @@ public abstract unsafe partial class NodeBase {
 
             // Begin Move Event
             case AtkEventType.MouseDown when !overlayNode.AnyHovered() && overlayNode.CheckCollision(atkEventData) && !isMoving && currentEditMode.HasFlag(NodeEditMode.Move): {
-                editEventListener.AddEvent(AtkEventType.MouseUp, overlayNode.InternalResNode);
+                editEventListener.AddEvent(AtkEventType.MouseUp, overlayNode);
 
                 isMoving = true;
                 clickStartPosition = mousePosition;

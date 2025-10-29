@@ -47,8 +47,11 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         get;
         set {
             field = value;
-            Component->ContentNode = value is null ? null : value.InternalResNode;
-            UpdateScrollParams();
+
+            if (value is not null) {
+                Component->ContentNode = value;
+                UpdateScrollParams();
+            }
         }
     }
 

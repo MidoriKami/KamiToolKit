@@ -27,7 +27,7 @@ public abstract unsafe partial class NodeBase {
             return;
         }
 
-        NodeLinker.AttachNode(InternalResNode, target.InternalResNode, position);
+        NodeLinker.AttachNode(InternalResNode, target, position);
         EnableChildEvents(target);
         UpdateNative();
     }

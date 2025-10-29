@@ -6,7 +6,7 @@ public unsafe class ScrollBarBackgroundButtonNode : ComponentNode<AtkComponentBu
     public ScrollBarBackgroundButtonNode() {
         SetInternalComponentType(ComponentType.Button);
 
-        Component->ButtonBGNode = CollisionNode.InternalResNode;
+        Component->ButtonBGNode = CollisionNode;
 
         Data->Nodes[0] = 0;
         Data->Nodes[1] = CollisionNode.NodeId;

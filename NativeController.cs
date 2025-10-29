@@ -118,7 +118,7 @@ public unsafe class NativeController : IDisposable {
         Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a Custom Addon [{targetAddon.GetType()}]");
 
         customNode.AttachNode(targetAddon, position ?? NodePosition.AsLastChild);
-        customNode.EnableEvents(targetAddon.InternalAddon);
+        customNode.EnableEvents(targetAddon);
     }
 
     public void DetachNode(NodeBase? customNode) {

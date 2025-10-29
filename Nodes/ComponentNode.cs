@@ -41,12 +41,12 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         uldManager.ObjectCount = 1;
 
         objects->NodeList = (AtkResNode**)NativeMemoryHelper.Malloc(8);
-        objects->NodeList[0] = CollisionNode.InternalResNode;
+        objects->NodeList[0] = CollisionNode;
         objects->NodeCount = 1;
         objects->Id = 1001;
 
         uldManager.InitializeResourceRendererManager();
-        uldManager.RootNode = CollisionNode.InternalResNode;
+        uldManager.RootNode = CollisionNode;
 
         uldManager.UpdateDrawNodeList();
         uldManager.ResourceFlags = AtkUldManagerResourceFlag.Initialized | AtkUldManagerResourceFlag.ArraysAllocated;
@@ -56,6 +56,8 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     public override AtkComponentBase* ComponentBase => (AtkComponentBase*)Component;
     public override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*)Data;
     public override AtkComponentNode* InternalComponentNode => (AtkComponentNode*)InternalResNode;
+
+    public static implicit operator AtkEventListener*(ComponentNode<T, TU> node) => &node.ComponentBase->AtkEventListener;
 
     internal T* Component {
         get => (T*)Node->Component;

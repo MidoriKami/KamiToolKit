@@ -22,7 +22,7 @@ public unsafe class SliderBackgroundButtonNode : ComponentNode<AtkComponentButto
         };
         BackgroundTexture.AttachNode(this);
 
-        Component->ButtonBGNode = BackgroundTexture.InternalResNode;
+        Component->ButtonBGNode = BackgroundTexture;
 
         Data->Nodes[0] = 0;
         Data->Nodes[1] = BackgroundTexture.NodeId;

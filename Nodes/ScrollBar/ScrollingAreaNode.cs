@@ -44,24 +44,24 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
             AtkEventType.MouseWheel,
             5,
             null,
-            (AtkEventTarget*)ScrollingCollisionNode.InternalResNode,
-            (AtkEventListener*)ScrollBarNode.Component,
+            ScrollingCollisionNode,
+            ScrollBarNode,
             false);
         
         ScrollingCollisionNode.InternalResNode->AtkEventManager.RegisterEvent(
             AtkEventType.MouseWheel,
             5,
             null,
-            (AtkEventTarget*)ScrollingCollisionNode.InternalResNode,
-            (AtkEventListener*)ScrollBarNode.Component,
+            ScrollingCollisionNode,
+            ScrollBarNode,
             false);
 
         ContentAreaNode.InternalResNode->AtkEventManager.RegisterEvent(
             AtkEventType.MouseWheel,
             5,
             null,
-            (AtkEventTarget*)ScrollingCollisionNode.InternalResNode,
-            (AtkEventListener*)ScrollBarNode.Component,
+            ScrollingCollisionNode,
+            ScrollBarNode,
             false);
     }
 

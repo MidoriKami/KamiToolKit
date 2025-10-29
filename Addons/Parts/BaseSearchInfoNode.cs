@@ -91,24 +91,24 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
             AtkEventType.MouseOver,
             0,
             null,
-            (AtkEventTarget*)CollisionNode.InternalResNode,
-            eventListener.EventListener,
+            CollisionNode,
+            eventListener,
             false);
 
         CollisionNode.InternalResNode->AtkEventManager.RegisterEvent(
             AtkEventType.MouseOut,
             0,
             null,
-            (AtkEventTarget*)CollisionNode.InternalResNode,
-            eventListener.EventListener,
+            CollisionNode,
+            eventListener,
             false);
         
         CollisionNode.InternalResNode->AtkEventManager.RegisterEvent(
             AtkEventType.MouseClick,
             0,
             null,
-            (AtkEventTarget*)CollisionNode.InternalResNode,
-            eventListener.EventListener,
+            CollisionNode,
+            eventListener,
             false);
 
         CollisionNode.DrawFlags |= DrawFlags.ClickableCursor;

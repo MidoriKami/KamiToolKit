@@ -90,8 +90,8 @@ public abstract unsafe partial class NativeAddon {
         InternalAddon->UldManager.ObjectCount = 1;
         InternalAddon->UldManager.ResourceFlags |= AtkUldManagerResourceFlag.ArraysAllocated;
 
-        InternalAddon->RootNode = RootNode.InternalResNode;
-        InternalAddon->UldManager.AddNodeToObjectList(RootNode.InternalResNode);
+        InternalAddon->RootNode = RootNode;
+        InternalAddon->UldManager.AddNodeToObjectList(RootNode);
 
         LoadTimeline();
 

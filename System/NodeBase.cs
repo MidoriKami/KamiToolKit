@@ -144,6 +144,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     }
 
     public static implicit operator AtkResNode*(NodeBase node) => node.InternalResNode;
+    public static implicit operator AtkEventTarget*(NodeBase node) => &node.InternalResNode->AtkEventTarget;
 
     protected void BuildVirtualTable() {
         // Overwrite virtual table with a custom copy,
