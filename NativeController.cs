@@ -121,12 +121,7 @@ public unsafe class NativeController : IDisposable {
     }
 
     public void DetachNode(NodeBase? customNode) {
-        if (Framework.Instance()->IsUnloading()) return;
-
-        if (!ThreadSafety.IsMainThread) {
-            Log.Warning("NativeController.DetachNode, must be called from the main thread.");
-            return;
-        }
+        if (MainThreadSafety.TryAssertMainThread()) return;
         
         if (customNode is not null) {
             Log.Verbose($"[NativeController] Detaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] from all sources.");
