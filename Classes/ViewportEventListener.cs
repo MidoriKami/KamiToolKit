@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using FFXIVClientStructs.FFXIV.Component.GUI;
-using FFXIVClientStructs.Interop;
+﻿using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Classes;
 
@@ -8,7 +6,7 @@ public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEven
     public void AddEvent(AtkEventType eventType, AtkResNode* node) {
         DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
             Log.Verbose($"Registering ViewportEvent: {eventType}");
-            AtkStage.Instance()->ViewportEventManager.RegisterEvent(eventType, 0, node, (AtkEventTarget*)node, EventListener, false);
+            AtkStage.Instance()->ViewportEventManager.RegisterEvent(eventType, 0, node, &node->AtkEventTarget, EventListener, false);
         });
     }
 
@@ -19,20 +17,10 @@ public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEven
         });
     }
 
-    // Todo: maybe use Unregister All event type to do this better?
     public override void Dispose() {
-        var eventList = new List<Pointer<AtkEvent>>();
+        Log.Verbose("Disposing ViewportEventListener");
 
-        var currentEvent = AtkStage.Instance()->ViewportEventManager.Event;
-        while (currentEvent is not null) {
-            eventList.Add(currentEvent);
-            currentEvent = currentEvent->NextEvent;
-        }
-
-        foreach (var atkEvent in eventList) {
-            RemoveEvent(atkEvent.Value->State.EventType);
-        }
-
+        RemoveEvent(AtkEventType.UnregisterAll);
         base.Dispose();
     }
 }
