@@ -22,6 +22,11 @@ public abstract unsafe partial class NodeBase {
 
     [OverloadResolutionPriority(1)] 
     internal void AttachNode(NodeBase target, NodePosition position = NodePosition.AsLastChild) {
+        if (target is ComponentNode targetComponent) {
+            AttachNode(targetComponent);
+            return;
+        }
+
         NodeLinker.AttachNode(InternalResNode, target.InternalResNode, position);
         EnableChildEvents(target);
         UpdateNative();
