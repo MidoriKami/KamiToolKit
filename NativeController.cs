@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Dalamud.Plugin;
-using Dalamud.Utility;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
@@ -56,6 +55,7 @@ public unsafe class NativeController : IDisposable {
         Experimental.Instance.DisposeHooks();
     }
 
+    [OverloadResolutionPriority(2)]  
     public void AttachNode(NodeBase customNode, NodeBase targetNode, NodePosition? position = null) {
         if (MainThreadSafety.TryAssertMainThread()) return;
         
@@ -77,6 +77,7 @@ public unsafe class NativeController : IDisposable {
         }
     }
 
+    [OverloadResolutionPriority(1)]  
     public void AttachNode(NodeBase customNode, AtkResNode* targetNode, NodePosition? position = null) {
         if (MainThreadSafety.TryAssertMainThread()) return;
 

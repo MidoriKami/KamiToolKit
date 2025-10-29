@@ -192,6 +192,8 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
     internal sealed override AtkResNode* InternalResNode => (AtkResNode*)Node;
 
+    public static implicit operator T*(NodeBase<T> node) => (T*) node.InternalResNode;
+
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             if (!isNativeDestructor) {

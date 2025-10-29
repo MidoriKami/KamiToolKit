@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
@@ -19,17 +20,14 @@ public abstract unsafe partial class NodeBase {
         UpdateNative();
     }
 
+    [OverloadResolutionPriority(1)] 
     internal void AttachNode(NodeBase target, NodePosition position = NodePosition.AsLastChild) {
-        if (target is ComponentNode node) {
-            AttachNode(node);
-            return;
-        }
-
         NodeLinker.AttachNode(InternalResNode, target.InternalResNode, position);
         EnableChildEvents(target);
         UpdateNative();
     }
 
+    [OverloadResolutionPriority(2)] 
     internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
         NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
         EnableChildEvents(target);
