@@ -8,39 +8,39 @@ namespace KamiToolKit.Nodes;
 
 internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
 
-    private HorizontalResizeNineGridNode bottomEditNode;
+    private ResizeNineGridNode bottomEditNode;
     private ResizeButtonNode leftCornerEditNode;
-    private VerticalResizeNineGridNode leftEditNode;
+    private ResizeNineGridNode leftEditNode;
     private ResizeButtonNode rightCornerEditNode;
-    private VerticalResizeNineGridNode rightEditNode;
-    private HorizontalResizeNineGridNode topEditNode;
+    private ResizeNineGridNode rightEditNode;
+    private ResizeNineGridNode topEditNode;
 
     public NodeEditOverlayNode() {
-        rightEditNode = new VerticalResizeNineGridNode {
-            Position = new Vector2(0.0f, 16.0f), 
-            Size = new Vector2(8.0f, 0.0f), 
-            Rotation = 1 * MathF.PI / 2.0f, 
+        rightEditNode = new ResizeNineGridNode {
+            Position = new Vector2(16.0f, 16.0f), 
+            Size = new Vector2(0.0f, 8.0f), 
+            RotationDegrees = 90.0f,
             IsVisible = true,
         };
         rightEditNode.AttachNode(this);
 
-        bottomEditNode = new HorizontalResizeNineGridNode {
+        bottomEditNode = new ResizeNineGridNode {
             Position = new Vector2(14.0f, 0.0f), 
             Size = new Vector2(0.0f, 8.0f), 
             IsVisible = true,
         };
         bottomEditNode.AttachNode(this);
 
-        leftEditNode = new VerticalResizeNineGridNode {
-            Position = new Vector2(18.0f, 16.0f), 
-            Size = new Vector2(8.0f, 0.0f), 
-            Rotation = 1 * MathF.PI / 2.0f, 
+        leftEditNode = new ResizeNineGridNode {
+            Position = new Vector2(20.0f, 16.0f), 
+            Size = new Vector2(0.0f, 8.0f), 
+            RotationDegrees = 90.0f,
             IsVisible = true,
         };
         leftEditNode.AttachNode(this);
 
-        topEditNode = new HorizontalResizeNineGridNode {
-            Position = new Vector2(14.0f, 12.0f), 
+        topEditNode = new ResizeNineGridNode {
+            Position = new Vector2(12.0f, 12.0f), 
             Size = new Vector2(0.0f, 8.0f), 
             IsVisible = true,
         };
@@ -76,16 +76,17 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
         }
     }
 
+    // todo: better math, actually use rotations correctly
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        rightEditNode.X = Width - 16.0f;
+        rightEditNode.X = Width - 11.0f;
         bottomEditNode.Width = Width - 28.0f;
-        topEditNode.Width = Width - 28.0f;
+        topEditNode.Width = Width - 25.0f;
 
-        rightEditNode.Height = Height - 32.0f;
+        rightEditNode.Width = Height - 30.0f;
         bottomEditNode.Y = Height - 22.0f;
-        leftEditNode.Height = Height - 32.0f;
+        leftEditNode.Width = Height - 30.0f;
         leftCornerEditNode.Y = Height - 44.0f;
 
         rightCornerEditNode.Position = Size - new Vector2(44.0f, 44.0f);
