@@ -11,7 +11,7 @@ using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
 
-public abstract class ListNode : ComponentNode<AtkComponentBase, AtkUldComponentDataBase>;
+public abstract class ListNode : SimpleComponentNode;
 
 /// Note, automatically inserts buttons to fill the set height, please ensure option count is greater than button count.
 public abstract unsafe class ListNode<T> : ListNode {
