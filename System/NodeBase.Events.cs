@@ -179,10 +179,10 @@ public abstract unsafe partial class NodeBase {
     public void ClearEventFlags()
         => RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
 
-    protected void SetCursor(AddonCursorType cursor)
+    protected static void SetCursor(AddonCursorType cursor)
         => DalamudInterface.Instance.AddonEventManager.SetCursor(cursor);
 
-    protected void ResetCursor()
+    protected static void ResetCursor()
         => DalamudInterface.Instance.AddonEventManager.ResetCursor();
 
     public void ShowTooltip() {
