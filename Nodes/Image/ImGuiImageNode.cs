@@ -26,8 +26,15 @@ public class ImGuiImageNode : SimpleImageNode {
         }
     }
 
-    public unsafe void LoadTexture(IDalamudTextureWrap texture)
-        => PartsList[0]->LoadTexture(texture);
+    /// <summary>
+    /// Takes ownership of passed in IDalamudTextureWrap, disposes texture when node is disposed.
+    /// </summary>
+    public unsafe void LoadTexture(IDalamudTextureWrap texture) {
+        PartsList[0]->LoadTexture(texture);
+
+        LoadedTexture?.Dispose();
+        LoadedTexture = texture;
+    }
 
     public void LoadTextureFromFile(string fileSystemPath) {
         DalamudInterface.Instance.Framework.RunOnTick(async () => {
@@ -42,6 +49,7 @@ public class ImGuiImageNode : SimpleImageNode {
         });
     }
 
+    // Note, disposes loaded IDalamudTextureWrap if either native or managed code frees this node.
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             base.Dispose(disposing, isNativeDestructor);
