@@ -2,6 +2,8 @@
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Addon.Events.EventDataTypes;
+using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Enums;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -165,6 +167,30 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         if (!IsDragDropEndRegistered) {
             AddEvent(AddonEventType.DragDropEnd, DragDropEndHandler);
             IsDragDropEndRegistered = true;
+        }
+    }
+
+    public override SeString? Tooltip {
+        get;
+        set {
+            if (value is not null && !value.TextValue.IsNullOrEmpty()) {
+                field = value;
+
+                if (!TooltipRegistered) {
+                    AddEvent(AddonEventType.DragDropRollOver, ShowTooltip);
+                    AddEvent(AddonEventType.DragDropRollOut, HideTooltip);
+
+                    TooltipRegistered = true;
+                }
+            }
+            else if (value is null) {
+                if (TooltipRegistered) {
+                    RemoveEvent(AddonEventType.DragDropRollOver, ShowTooltip);
+                    RemoveEvent(AddonEventType.DragDropRollOut, HideTooltip);
+
+                    TooltipRegistered = false;
+                }
+            }
         }
     }
 

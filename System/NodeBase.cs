@@ -133,16 +133,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
         return true;
     }
 
-    private bool IsDragDropComponent() {
-        if (!IsNodeValid()) return false;
-        if (NodeType != NodeType.Component) return false;
-        var componentNode = (AtkComponentNode*)InternalResNode;
-        if (componentNode->Component is null) return false;
-        if (componentNode->Component->GetComponentType() is not ComponentType.DragDrop) return false;
-
-        return true;
-    }
-
     public static implicit operator AtkResNode*(NodeBase node) => node.InternalResNode;
     public static implicit operator AtkEventTarget*(NodeBase node) => &node.InternalResNode->AtkEventTarget;
 

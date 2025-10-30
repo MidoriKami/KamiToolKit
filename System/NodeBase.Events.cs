@@ -26,28 +26,16 @@ public abstract unsafe partial class NodeBase {
                 field = value;
 
                 if (!TooltipRegistered) {
-                    if (IsDragDropComponent()) {
-                        AddEvent(AddonEventType.DragDropRollOver, ShowTooltip);
-                        AddEvent(AddonEventType.DragDropRollOut, HideTooltip);
-                    }
-                    else {
-                        AddEvent(AddonEventType.MouseOver, ShowTooltip);
-                        AddEvent(AddonEventType.MouseOut, HideTooltip);
-                    }
+                    AddEvent(AddonEventType.MouseOver, ShowTooltip);
+                    AddEvent(AddonEventType.MouseOut, HideTooltip);
 
                     TooltipRegistered = true;
                 }
             }
             else if (value is null) {
                 if (TooltipRegistered) {
-                    if (IsDragDropComponent()) {
-                        RemoveEvent(AddonEventType.DragDropRollOver, ShowTooltip);
-                        RemoveEvent(AddonEventType.DragDropRollOut, HideTooltip);
-                    }
-                    else {
-                        RemoveEvent(AddonEventType.MouseOver, ShowTooltip);
-                        RemoveEvent(AddonEventType.MouseOut, HideTooltip);
-                    }
+                    RemoveEvent(AddonEventType.MouseOver, ShowTooltip);
+                    RemoveEvent(AddonEventType.MouseOut, HideTooltip);
 
                     TooltipRegistered = false;
                 }
@@ -63,7 +51,7 @@ public abstract unsafe partial class NodeBase {
     private AtkUnitBase* EventAddonPointer { get; set; }
 
     private bool EventsActive { get; set; }
-    private bool TooltipRegistered { get; set; }
+    protected bool TooltipRegistered { get; set; }
 
     public bool EnableEventFlags {
         get => EventFlagsSet;
@@ -211,9 +199,9 @@ public abstract unsafe partial class NodeBase {
         AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
     }
 
-    private void ShowTooltip(AddonEventData data)
+    protected void ShowTooltip(AddonEventData data)
         => ShowTooltip();
 
-    private void HideTooltip(AddonEventData data)
+    protected void HideTooltip(AddonEventData data)
         => HideTooltip();
 }
