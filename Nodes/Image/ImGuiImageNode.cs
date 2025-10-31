@@ -30,9 +30,12 @@ public class ImGuiImageNode : SimpleImageNode {
     /// Takes ownership of passed in IDalamudTextureWrap, disposes texture when node is disposed.
     /// </summary>
     public unsafe void LoadTexture(IDalamudTextureWrap texture) {
+        var previouslyLoadedTexture = LoadedTexture;
+
         PartsList[0]->LoadTexture(texture);
 
-        LoadedTexture?.Dispose();
+        // Delay unloading texture until new texture is loaded.
+        previouslyLoadedTexture?.Dispose();
         LoadedTexture = texture;
     }
 
@@ -40,10 +43,11 @@ public class ImGuiImageNode : SimpleImageNode {
         DalamudInterface.Instance.Framework.RunOnTick(async () => {
             Alpha = 0.0f;
 
-            LoadedTexture = await DalamudInterface.Instance.TextureProvider.GetFromFile(fileSystemPath).RentAsync();
+            var newTexture = await DalamudInterface.Instance.TextureProvider.GetFromFile(fileSystemPath).RentAsync();
 
-            LoadTexture(LoadedTexture);
-            TextureSize = LoadedTexture.Size;
+            LoadTexture(newTexture);
+            TextureSize = newTexture.Size;
+
             Alpha = 1.0f;
             MarkDirty();
         });
