@@ -19,23 +19,25 @@ internal class ResizeButtonNode : SimpleComponentNode {
             NodeId = 3,
             TexturePath = "ui/uld/ChatLog.tex",
             TextureCoordinates = new Vector2(32.0f, 34.0f),
-            TextureSize = new Vector2(16.0f, 16.0f),
+            TextureSize = new Vector2(18.0f, 18.0f),
             Size = new Vector2(16.0f, 16.0f),
             Origin = new Vector2(8.0f, 8.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
+            ImageNodeFlags = direction is ResizeDirection.BottomRight ? ImageNodeFlags.FlipV : (ImageNodeFlags)0x3,
         };
         UnselectedImageNode.AttachNode(this);
 
         SelectedImageNode = new SimpleImageNode {
             NodeId = 2,
             TexturePath = "ui/uld/ChatLog.tex",
-            TextureCoordinates = new Vector2(6.0f, 34.0f),
-            TextureSize = new Vector2(16.0f, 16.0f),
+            TextureCoordinates = new Vector2(4.0f, 34.0f),
+            TextureSize = new Vector2(18.0f, 18.0f),
             Size = new Vector2(16.0f, 16.0f),
             Origin = new Vector2(8.0f, 8.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
+            ImageNodeFlags = direction is ResizeDirection.BottomRight ? ImageNodeFlags.FlipV : (ImageNodeFlags)0x3,
         };
         SelectedImageNode.AttachNode(this);
     }

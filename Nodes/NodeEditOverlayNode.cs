@@ -66,15 +66,11 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
         bottomEditNode.Size = new Vector2(Width - 32.0f, lineThickness);
         bottomEditNode.Position = new Vector2(16.0f, Height - 16.0f - lineThickness / 2.0f);
 
-        leftCornerEditNode.Size = new Vector2(16.0f, 16.0f);
-        leftCornerEditNode.Origin = leftCornerEditNode.Size / 2.0f;
-        leftCornerEditNode.RotationDegrees = 180.0f;
-        leftCornerEditNode.Position = new Vector2(16.0f, Height - 16.0f - leftCornerEditNode.Height) + new Vector2(lineThickness, -lineThickness) / 3.0f;
+        leftCornerEditNode.Size = new Vector2(24.0f, 24.0f);
+        leftCornerEditNode.Position = new Vector2(16.0f - lineThickness / 4.0f, Height - 16.0f - leftCornerEditNode.Height);
 
-        rightCornerEditNode.Size = new Vector2(16.0f, 16.0f);
-        rightCornerEditNode.Origin = rightCornerEditNode.Size / 2.0f;
-        rightCornerEditNode.RotationDegrees = 90.0f;
-        rightCornerEditNode.Position = new Vector2(Width - 16.0f - rightCornerEditNode.Height, Height - 16.0f - leftCornerEditNode.Height) - new Vector2(lineThickness, lineThickness) / 3.0f;
+        rightCornerEditNode.Size = new Vector2(24.0f, 24.0f);
+        rightCornerEditNode.Position = new Vector2(Width - 16.0f - rightCornerEditNode.Width + lineThickness / 4.0f, Height - 16.0f - rightCornerEditNode.Height);
     }
 
     public Vector2 GetSizeDelta(Vector2 mouseDelta) {
