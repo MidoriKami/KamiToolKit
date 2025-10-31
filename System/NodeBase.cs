@@ -44,6 +44,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
         Log.Verbose($"Disposing node {GetType()}");
         isManagedDispose = true;
 
+        DisposeEvents();
+
         ClearFocus();
 
         // Automatically dispose any fields/properties that are managed nodes.

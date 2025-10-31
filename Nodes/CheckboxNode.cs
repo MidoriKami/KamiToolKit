@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -65,7 +63,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 
         LoadTimelines();
 
-        AddEvent(AddonEventType.ButtonClick, ClickHandler);
+        AddEvent(AtkEventType.ButtonClick, ClickHandler);
 
         InitializeComponentEvents();
         Component->Left = 20;
@@ -105,7 +103,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
         set => Component->SetChecked(value);
     }
 
-    private void ClickHandler(AddonEventData data) {
+    private void ClickHandler() {
         OnClick?.Invoke(Component->IsChecked);
     }
 

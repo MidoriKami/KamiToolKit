@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -11,7 +9,7 @@ using KamiToolKit.Classes.TimelineBuilding;
 
 namespace KamiToolKit.Nodes;
 
-public class RadioButtonGroupNode : SimpleComponentNode {
+public unsafe class RadioButtonGroupNode : SimpleComponentNode {
 
     private List<RadioButtonNode> radioButtons = [];
 
@@ -41,7 +39,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
             Height = 16.0f, IsVisible = true, SeString = label, Callback = callback,
         };
 
-        newRadioButton.AddEvent(AddonEventType.ButtonClick, data => ClickHandler(data, newRadioButton));
+        newRadioButton.AddEvent(AtkEventType.ButtonClick, () => ClickHandler(newRadioButton));
 
         radioButtons.Add(newRadioButton);
         newRadioButton.AttachNode(this);
@@ -84,7 +82,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
         Height = yPosition;
     }
 
-    private void ClickHandler(AddonEventData eventData, RadioButtonNode selectedButton) {
+    private void ClickHandler(RadioButtonNode selectedButton) {
         foreach (var radioButton in radioButtons) {
             radioButton.IsChecked = false;
             radioButton.IsSelected = false;
@@ -104,7 +102,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
         );
     }
 
-    private unsafe class RadioButtonNode : ComponentNode<AtkComponentRadioButton, AtkUldComponentDataRadioButton> {
+    private class RadioButtonNode : ComponentNode<AtkComponentRadioButton, AtkUldComponentDataRadioButton> {
         public readonly TextNode LabelNode;
         public readonly ImageNode SelectedImageNode;
 
@@ -154,7 +152,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
             Data->Nodes[2] = 0;
             Data->Nodes[3] = 0;
 
-            AddEvent(AddonEventType.ButtonClick, ClickHandler);
+            AddEvent(AtkEventType.ButtonClick, ClickHandler);
 
             InitializeComponentEvents();
         }
@@ -187,7 +185,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
             }
         }
 
-        private void ClickHandler(AddonEventData obj) {
+        private void ClickHandler(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
             Callback?.Invoke();
         }
 

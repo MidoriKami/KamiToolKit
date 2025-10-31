@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
 
@@ -90,7 +88,7 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
 
         InitializeComponentEvents();
 
-        AddEvent(AddonEventType.ValueUpdate, ValueUpdateHandler);
+        AddEvent(AtkEventType.ValueUpdate, ValueUpdateHandler);
     }
 
     public int Value {
@@ -126,7 +124,7 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
         SubtractButton.X = Width - 28.0f;
     }
 
-    private void ValueUpdateHandler(AddonEventData data) {
+    private void ValueUpdateHandler() {
         OnValueUpdate?.Invoke(Value);
     }
 

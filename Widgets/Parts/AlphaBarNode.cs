@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -31,19 +29,19 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
             TexturePath = DalamudInterface.Instance.GetAssetPath("VerticalGradient_WhiteToAlpha.png"),
             IsVisible = true,
             FitTexture = true,
-            EnableEventFlags = true,
+            SetEventFlags = true,
         };
         AlphaBarGradientNode.AttachNode(this);
-        AlphaBarGradientNode.AddEvent(AddonEventType.MouseDown, OnAlphaBarMouseDown);
+        AlphaBarGradientNode.AddEvent(AtkEventType.MouseDown, OnAlphaBarMouseDown);
 
         AlphaBarSelectorNode = new ImGuiImageNode {
             TexturePath = DalamudInterface.Instance.GetAssetPath("alpha_selector.png"),
             IsVisible = true,
             FitTexture = true,
-            EnableEventFlags = true,
+            SetEventFlags = true,
         };
         AlphaBarSelectorNode.AttachNode(this);
-        AlphaBarSelectorNode.AddEvent(AddonEventType.MouseDown, OnAlphaBarMouseDown);
+        AlphaBarSelectorNode.AddEvent(AtkEventType.MouseDown, OnAlphaBarMouseDown);
     }
     
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
@@ -64,7 +62,7 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
         AlphaBarSelectorNode.Position = new Vector2(-2.0f, 0.0f);
     }
 
-    private void OnAlphaBarMouseDown(AddonEventData obj) {
+    private void OnAlphaBarMouseDown() {
         if (!isAlphaDragging) {
             alphaEventListener.AddEvent(AtkEventType.MouseMove, AlphaBarGradientNode);
             alphaEventListener.AddEvent(AtkEventType.MouseUp, AlphaBarGradientNode);

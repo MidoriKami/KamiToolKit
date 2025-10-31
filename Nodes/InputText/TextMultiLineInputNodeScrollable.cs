@@ -1,7 +1,5 @@
 using System;
 using System.Linq;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -31,8 +29,8 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
 
         Flags |= TextInputFlags.MultiLine;
 
-        CollisionNode.AddEvent(AddonEventType.InputReceived, InputComplete);
-        CollisionNode.AddEvent(AddonEventType.MouseWheel, OnMouseScrolled);
+        CollisionNode.AddEvent(AtkEventType.InputReceived, InputComplete);
+        CollisionNode.AddEvent(AtkEventType.MouseWheel, OnMouseScrolled);
 
         Component->InputSanitizationFlags = AllowedEntities.UppercaseLetters | AllowedEntities.LowercaseLetters | AllowedEntities.Numbers | 
                                             AllowedEntities.SpecialCharacters | AllowedEntities.CharacterList | AllowedEntities.OtherCharacters |
@@ -89,26 +87,24 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
         }
     }
     
-    private void OnMouseScrolled(AddonEventData eventData) {
-        var mouse = eventData.GetMouseData();
-
+    private void OnMouseScrolled(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
         var lines = fullText.TextValue.Split(['\r', '\n'], StringSplitOptions.None);
         var lineHeight = CurrentTextNode.LineSpacing;
         var maxVisibleLines = (int)(Height / lineHeight);
 
         var oldStartLineIndex = startLineIndex;
 
-        if (mouse.WheelDirection > 0)
+        if (atkEventData->IsScrollUp())
             startLineIndex = Math.Max(0, startLineIndex - 1);
 
-        else if (mouse.WheelDirection < 0)
+        else if (atkEventData->IsScrollDown())
             startLineIndex = Math.Min(Math.Max(0, lines.Length - maxVisibleLines), startLineIndex + 1);
 
         if (oldStartLineIndex != startLineIndex) {
             UpdateCurrentTextDisplay();
         }
 
-        eventData.SetHandled();
+        atkEvent->SetEventIsHandled();
     }
 
     private void ApplyDisplayChangesToFullText(string newDisplayedText) {
@@ -177,7 +173,7 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
         UpdateLineCountDisplay();
     }
 
-    private void InputComplete(AddonEventData data) {
+    private void InputComplete() {
         if (UIInputData.Instance()->IsKeyPressed(SeVirtualKey.RETURN)) {
             var textInputComponent = InternalComponentNode->GetAsAtkComponentTextInput();
             var cursorPos = textInputComponent->CursorPos;

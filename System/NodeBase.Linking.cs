@@ -28,14 +28,12 @@ public abstract unsafe partial class NodeBase {
         }
 
         NodeLinker.AttachNode(InternalResNode, target, position);
-        EnableChildEvents(target);
         UpdateNative();
     }
 
     [OverloadResolutionPriority(2)] 
     internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
         NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
-        EnableChildEvents(target);
         UpdateNative();
     }
 
@@ -60,18 +58,16 @@ public abstract unsafe partial class NodeBase {
     }
 
     internal void ReattachNode(AtkResNode* newTarget) {
-        DetachNode(false);
+        DetachNode();
         AttachNode(newTarget);
     }
 
     internal void ReattachNode(NodeBase target) {
-        DetachNode(false);
+        DetachNode();
         AttachNode(target);
     }
 
-    internal void DetachNode(bool disableEvents = true) {
-        if (disableEvents) DisableEvents();
-
+    internal void DetachNode() {
         NodeLinker.DetachNode(InternalResNode);
 
         if (ParentUldManager is not null) {
@@ -112,12 +108,6 @@ public abstract unsafe partial class NodeBase {
         if (ParentAddon is not null) {
             ParentAddon->UldManager.UpdateDrawNodeList();
             ParentAddon->UpdateCollisionNodeList(false);
-        }
-    }
-
-    private void EnableChildEvents(NodeBase targetParent) {
-        if (targetParent.EventsActive) {
-            EnableEvents(targetParent.EventAddonPointer);
         }
     }
 

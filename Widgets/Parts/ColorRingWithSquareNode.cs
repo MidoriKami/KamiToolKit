@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -43,12 +41,12 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
             MultiplyColor = new Vector3(1.0f, 0.0f, 0.0f),
         };
         ColorRingSelectorNode.AttachNode(this);
-        
-        AddEvent(AddonEventType.MouseDown, OnMouseDown);
-        AddEvent(AddonEventType.MouseUp, OnMouseUp);
-        AddEvent(AddonEventType.MouseMove, OnMouseMove);
-        AddEvent(AddonEventType.MouseOut, OnMouseOut);
-        EnableEventFlags = true;
+
+        AddEvent(AtkEventType.MouseDown, OnMouseDown);
+        AddEvent(AtkEventType.MouseUp, OnMouseUp);
+        AddEvent(AtkEventType.MouseMove, OnMouseMove);
+        AddEvent(AtkEventType.MouseOut, OnMouseOut);
+        SetEventFlags = true;
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
@@ -71,8 +69,8 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         ColorRingSelectorNode.Origin = Size / 2.0f;
     }
 
-    private bool IsRingClicked(ref AtkEventData.AtkMouseData mouseData) {
-        var clickPosition = new Vector2(mouseData.PosX, mouseData.PosY);
+    private bool IsRingClicked(AtkEventData* data) {
+        var clickPosition = data->GetMousePosition();
         var center = ColorRingNode.ScreenPosition + ColorRingNode.Size / 2.0f;
         var distance = Vector2.Distance(clickPosition, center);
         var scaledDistance = distance / (Width / 256.0f);
@@ -80,8 +78,8 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         return scaledDistance is >= 82.0f and <= 99.0f;
     }
 
-    private float GetRingClickAngle(ref AtkEventData.AtkMouseData mouseData) {
-        var clickPosition = new Vector2(mouseData.PosX, mouseData.PosY);
+    private float GetRingClickAngle(AtkEventData* data) {
+        var clickPosition = data->GetMousePosition();
         var center = ColorRingNode.ScreenPosition + ColorRingNode.Size / 2.0f;
         var relativePosition = clickPosition - center;
         var calculatedAngle = MathF.Atan2(relativePosition.Y, relativePosition.X) * 180.0f / MathF.PI;
@@ -89,9 +87,9 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         return calculatedAngle;
     }
     
-    private void OnMouseDown(AddonEventData obj) {
-        if (ColorSquareNode.CheckCollision((AtkEventData*)obj.AtkEventDataPointer)) {
-            UpdateSquareColor(obj.GetMousePosition());
+    private void OnMouseDown(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        if (ColorSquareNode.CheckCollision(atkEventData)) {
+            UpdateSquareColor(atkEventData->GetMousePosition());
 
             if (!isSquareDrag) {
                 isSquareDrag = true;
@@ -100,30 +98,30 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
             }
         }
 
-        if (IsRingClicked(ref obj.GetMouseData())) {
+        if (IsRingClicked(atkEventData)) {
             isRingDrag = true;
-            UpdateRingColor(ref obj);
+            UpdateRingColor(atkEventData);
         }
     }
 
-    private void OnMouseMove(AddonEventData obj) {
+    private void OnMouseMove(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
         if (isRingDrag && !isSquareDrag) {
-            UpdateRingColor(ref obj);
+            UpdateRingColor(atkEventData);
         }
     }
 
-    private void OnMouseUp(AddonEventData obj) {
+    private void OnMouseUp() {
         isRingDrag = false;
         isSquareDrag = false;
     }
 
-    private void OnMouseOut(AddonEventData obj) {
+    private void OnMouseOut() {
         isRingDrag = false;
         isSquareDrag = false;
     }
 
-    private void UpdateRingColor(ref AddonEventData mouseData) {
-        var angle = GetRingClickAngle(ref mouseData.GetMouseData());
+    private void UpdateRingColor(AtkEventData* data) {
+        var angle = GetRingClickAngle(data);
 
         if (angle < 0) {
             angle += 360.0f;

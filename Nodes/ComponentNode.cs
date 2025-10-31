@@ -15,6 +15,10 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
     public readonly CollisionNode CollisionNode;
 
+    public override AtkComponentBase* ComponentBase => (AtkComponentBase*)Component;
+    public override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*)Data;
+    public override AtkComponentNode* InternalComponentNode => (AtkComponentNode*)InternalResNode;
+
     protected ComponentNode() : base((NodeType)1001) {
         Component = NativeMemoryHelper.Create<T>();
         var componentBase = (AtkComponentBase*)Component;
@@ -53,24 +57,6 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         uldManager.LoadedState = AtkLoadState.Loaded;
     }
 
-    public override AtkComponentBase* ComponentBase => (AtkComponentBase*)Component;
-    public override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*)Data;
-    public override AtkComponentNode* InternalComponentNode => (AtkComponentNode*)InternalResNode;
-
-    public static implicit operator AtkEventListener*(ComponentNode<T, TU> node) => &node.ComponentBase->AtkEventListener;
-
-    internal T* Component {
-        get => (T*)Node->Component;
-        set => Node->Component = (AtkComponentBase*)value;
-    }
-
-    internal TU* Data {
-        get => (TU*)Node->Component->UldManager.ComponentData;
-        set => Node->Component->UldManager.ComponentData = (AtkUldComponentDataBase*)value;
-    }
-
-    public override int ChildCount => ComponentBase->UldManager.NodeListCount;
-
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             if (!isNativeDestructor) {
@@ -83,6 +69,8 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
             base.Dispose(disposing, isNativeDestructor);
         }
     }
+
+    public static implicit operator AtkEventListener*(ComponentNode<T, TU> node) => &node.ComponentBase->AtkEventListener;
 
     protected void SetInternalComponentType(ComponentType type) {
         var componentInfo = (AtkUldComponentInfo*)ComponentBase->UldManager.Objects;
@@ -103,5 +91,17 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         CollisionNode.Size = Size;
         ComponentBase->UldManager.RootNodeHeight = (ushort)Height;
         ComponentBase->UldManager.RootNodeWidth = (ushort)Width;
+    }
+
+    public override int ChildCount => ComponentBase->UldManager.NodeListCount;
+
+    internal T* Component {
+        get => (T*)Node->Component;
+        set => Node->Component = (AtkComponentBase*)value;
+    }
+
+    internal TU* Data {
+        get => (TU*)Node->Component->UldManager.ComponentData;
+        set => Node->Component->UldManager.ComponentData = (AtkUldComponentDataBase*)value;
     }
 }

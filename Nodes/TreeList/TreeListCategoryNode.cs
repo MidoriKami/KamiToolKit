@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -84,10 +83,11 @@ public unsafe class TreeListCategoryNode : ResNode {
 
         BuildTimelines();
 
-        CollisionNode.SetEventFlags();
-        CollisionNode.AddEvent(AddonEventType.MouseOver, _ => Timeline?.PlayAnimation(IsCollapsed ? 2 : 9));
-        CollisionNode.AddEvent(AddonEventType.MouseOut, _ => Timeline?.PlayAnimation(IsCollapsed ? 1 : 8));
-        CollisionNode.AddEvent(AddonEventType.MouseClick, _ => {
+        CollisionNode.SetEventFlags = true;
+        CollisionNode.DrawFlags |= DrawFlags.ClickableCursor;
+        CollisionNode.AddEvent(AtkEventType.MouseOver, () => Timeline?.PlayAnimation(IsCollapsed ? 2 : 9));
+        CollisionNode.AddEvent(AtkEventType.MouseOut, () => Timeline?.PlayAnimation(IsCollapsed ? 1 : 8));
+        CollisionNode.AddEvent(AtkEventType.MouseClick, () => {
             IsCollapsed = !IsCollapsed;
             UpdateCollapsed();
             OnToggle?.Invoke(!IsCollapsed);

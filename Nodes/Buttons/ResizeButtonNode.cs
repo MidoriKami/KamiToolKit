@@ -40,6 +40,16 @@ internal class ResizeButtonNode : SimpleComponentNode {
         SelectedImageNode.AttachNode(this);
     }
 
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
+
+        UnselectedImageNode.Size = Size - new Vector2(4.0f, 4.0f);
+        UnselectedImageNode.Position = new Vector2(2.0f, 2.0f);
+
+        SelectedImageNode.Size = Size - new Vector2(4.0f, 4.0f);
+        SelectedImageNode.Position = new Vector2(2.0f, 2.0f);
+    }
+
     public bool IsHovered {
         get;
         set {

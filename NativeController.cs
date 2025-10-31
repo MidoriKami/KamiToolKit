@@ -60,19 +60,16 @@ public unsafe class NativeController : IDisposable {
         if (MainThreadSafety.TryAssertMainThread()) return;
         
         Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}] to another Custom Node [{targetNode.GetType()}]");
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(targetNode);
 
         switch (targetNode) {
 
             // Don't attach directly to ComponentNode, attach to its managed RootNode
             case ComponentNode componentNode:
                 customNode.AttachNode(componentNode, position ?? NodePosition.AfterAllSiblings);
-                customNode.EnableEvents(addon);
                 return;
 
             default:
                 customNode.AttachNode(targetNode, position ?? NodePosition.AsLastChild);
-                customNode.EnableEvents(addon);
                 return;
         }
     }
@@ -86,7 +83,6 @@ public unsafe class NativeController : IDisposable {
 
         customNode.RegisterAutoDetach(addon);
         customNode.AttachNode(targetNode, position ?? NodePosition.AsLastChild);
-        customNode.EnableEvents(addon);
     }
 
     public void AttachNode(NodeBase customNode, AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings) {
@@ -105,7 +101,6 @@ public unsafe class NativeController : IDisposable {
 
             customNode.RegisterAutoDetach(addon);
             customNode.AttachNode(targetNode, position);
-            customNode.EnableEvents(addon);
         }
         else {
             Log.Error($"[NativeController] Attempted to attach [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a native AtkComponentNode, but could not find parent addon. Aborting.");
@@ -118,7 +113,6 @@ public unsafe class NativeController : IDisposable {
         Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a Custom Addon [{targetAddon.GetType()}]");
 
         customNode.AttachNode(targetAddon, position ?? NodePosition.AsLastChild);
-        customNode.EnableEvents(targetAddon);
     }
 
     public void DetachNode(NodeBase? customNode) {
@@ -130,7 +124,6 @@ public unsafe class NativeController : IDisposable {
 
         customNode?.DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
         customNode?.UnregisterAutoDetach();
-        customNode?.DisableEvents();
         customNode?.DetachNode();
     }
 
@@ -145,7 +138,6 @@ public unsafe class NativeController : IDisposable {
 
         node?.DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
         node?.UnregisterAutoDetach();
-        node?.DisableEvents();
         node?.DetachNode();
         node?.Dispose();
     }

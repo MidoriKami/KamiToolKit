@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -52,8 +50,8 @@ public abstract unsafe class ListNode<T> : ListNode {
 
         BuildTimelines();
 
-        ContainerNode.SetEventFlags();
-        ContainerNode.AddEvent(AddonEventType.MouseWheel, OnMouseWheel);
+        ContainerNode.SetEventFlags = true;
+        ContainerNode.AddEvent(AtkEventType.MouseWheel, OnMouseWheel);
     }
     
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
@@ -121,12 +119,12 @@ public abstract unsafe class ListNode<T> : ListNode {
         UpdateNodes();
     }
 
-    private void OnMouseWheel(AddonEventData data) {
-        CurrentStartIndex -= data.GetMouseData().WheelDirection;
+    private void OnMouseWheel(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        CurrentStartIndex -= atkEventData->MouseData.WheelDirection;
         UpdateNodes();
         ScrollBarNode.ScrollPosition = (int)(CurrentStartIndex * NodeHeight + 9.0f);
 
-        data.SetHandled();
+        atkEvent->SetEventIsHandled();
     }
 
     private void RebuildNodeList() {

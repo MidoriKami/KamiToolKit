@@ -15,7 +15,7 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
         ScrollingCollisionNode = new CollisionNode {
             NodeId = 2,
             IsVisible = true, 
-            EventFlagsSet = true,
+            SetEventFlags = true,
         };
         ScrollingCollisionNode.AttachNode(this);
 

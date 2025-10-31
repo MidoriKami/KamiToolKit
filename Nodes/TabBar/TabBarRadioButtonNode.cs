@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
@@ -58,7 +56,7 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
         Data->Nodes[2] = 0;
         Data->Nodes[3] = 0;
 
-        AddEvent(AddonEventType.ButtonClick, ClickHandler);
+        AddEvent(AtkEventType.ButtonClick, ClickHandler);
 
         InitializeComponentEvents();
     }
@@ -95,7 +93,7 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
         set => Component->SetChecked(value);
     }
 
-    private void ClickHandler(AddonEventData obj) {
+    private void ClickHandler() {
         OnClick?.Invoke();
     }
 

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.System;
 
@@ -38,7 +36,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         Component->MouseDownScreenPos = 0;
         Component->MouseWheelSpeed = 24;
 
-        AddEvent(AddonEventType.ValueUpdate, UpdateHandler);
+        AddEvent(AtkEventType.ValueUpdate, UpdateHandler);
     }
 
     public Action<int>? OnValueChanged { get; set; }
@@ -76,7 +74,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
     
     public bool HideWhenDisabled { get; set; }
 
-    private void UpdateHandler(AddonEventData obj) {
+    private void UpdateHandler() {
         OnValueChanged?.Invoke(Component->PendingScrollPosition);
     }
 

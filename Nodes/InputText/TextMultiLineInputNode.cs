@@ -1,6 +1,4 @@
 using System;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.String;
@@ -20,7 +18,7 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
 
         Flags |= TextInputFlags.MultiLine;
 
-        CollisionNode.AddEvent(AddonEventType.InputReceived, InputComplete);
+        CollisionNode.AddEvent(AtkEventType.InputReceived, InputComplete);
 
         Component->InputSanitizationFlags = AllowedEntities.UppercaseLetters | AllowedEntities.LowercaseLetters | AllowedEntities.Numbers | 
                                             AllowedEntities.SpecialCharacters | AllowedEntities.CharacterList | AllowedEntities.OtherCharacters |
@@ -84,7 +82,7 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
         }
     }
 
-    private void InputComplete(AddonEventData data) {
+    private void InputComplete() {
         if (UIInputData.Instance()->IsKeyPressed(SeVirtualKey.RETURN)) {
             var textInputComponent = InternalComponentNode->GetAsAtkComponentTextInput();
             var cursorPos = textInputComponent->CursorPos;

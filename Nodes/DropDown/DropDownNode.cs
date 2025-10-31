@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -68,21 +67,22 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         DropDownFocusCollisionNode = new CollisionNode {
             NodeId = 6,
             IsVisible = true, 
-            EventFlagsSet = true,
+            SetEventFlags = true,
         };
         DropDownFocusCollisionNode.AttachNode(OptionListNode.CollisionNode, NodePosition.AfterTarget);
 
-        DropDownFocusCollisionNode.AddEvent(AddonEventType.MouseDown, _ => Toggle());
-        DropDownFocusCollisionNode.AddEvent(AddonEventType.MouseWheel, _ => Toggle());
+        DropDownFocusCollisionNode.AddEvent(AtkEventType.MouseDown, Toggle);
+        DropDownFocusCollisionNode.AddEvent(AtkEventType.MouseWheel, Toggle);
 
         BuildTimelines();
 
         Timeline?.PlayAnimation(4);
 
-        CollisionNode.SetEventFlags();
-        CollisionNode.AddEvent(AddonEventType.MouseOver, _ => Timeline?.PlayAnimation(IsCollapsed ? 2 : 9));
-        CollisionNode.AddEvent(AddonEventType.MouseOut, _ => Timeline?.PlayAnimation(IsCollapsed ? 4 : 11));
-        CollisionNode.AddEvent(AddonEventType.MouseClick, _ => Toggle());
+        CollisionNode.SetEventFlags = true;
+        CollisionNode.DrawFlags |= DrawFlags.ClickableCursor;
+        CollisionNode.AddEvent(AtkEventType.MouseOver, () => Timeline?.PlayAnimation(IsCollapsed ? 2 : 9));
+        CollisionNode.AddEvent(AtkEventType.MouseOut, () => Timeline?.PlayAnimation(IsCollapsed ? 4 : 11));
+        CollisionNode.AddEvent(AtkEventType.MouseClick, Toggle);
     }
 
     public bool IsCollapsed { get; set; } = true;

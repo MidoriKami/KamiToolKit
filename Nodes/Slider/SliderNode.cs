@@ -1,8 +1,6 @@
 using System;
 using System.Globalization;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
 
@@ -86,7 +84,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         Component->OffsetR = 28;
         Component->OffsetL = 4;
 
-        AddEvent(AddonEventType.SliderValueUpdate, ValueChangedHandler);
+        AddEvent(AtkEventType.SliderValueUpdate, ValueChangedHandler);
     }
 
     public Action<int>? OnValueChanged { get; set; }
@@ -143,7 +141,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         Component->SliderSize = (short)Width;
     }
 
-    private void ValueChangedHandler(AddonEventData obj) {
+    private void ValueChangedHandler() {
         OnValueChanged?.Invoke(Value);
         UpdateFormattedText();
     }

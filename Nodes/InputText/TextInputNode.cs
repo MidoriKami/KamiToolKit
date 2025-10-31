@@ -2,8 +2,6 @@
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
 using Dalamud.Utility;
@@ -137,14 +135,14 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
         InitializeComponentEvents();
 
-        CollisionNode.AddEvent(AddonEventType.InputReceived, InputComplete);
+        CollisionNode.AddEvent(AtkEventType.InputReceived, InputComplete);
 
-        CollisionNode.AddEvent(AddonEventType.FocusStart, _ => {
+        CollisionNode.AddEvent(AtkEventType.FocusStart, () => {
             PlaceholderTextNode.IsVisible = false;
             OnFocused?.Invoke();
         });
         
-        CollisionNode.AddEvent(AddonEventType.FocusStop, _ => {
+        CollisionNode.AddEvent(AtkEventType.FocusStop, () => {
             OnUnfocused?.Invoke();
             if (!PlaceholderString.IsNullOrEmpty() && String.IsNullOrEmpty()) {
                 PlaceholderTextNode.IsVisible = true;
@@ -248,7 +246,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    private void InputComplete(AddonEventData data)
+    private void InputComplete()
         => OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
 
     protected override void OnSizeChanged() {

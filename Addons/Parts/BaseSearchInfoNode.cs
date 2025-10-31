@@ -86,32 +86,11 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
             IsVisible = true,
         };
         IdTextNode.AttachNode(this);
-        
-        CollisionNode.InternalResNode->AtkEventManager.RegisterEvent(
-            AtkEventType.MouseOver,
-            0,
-            null,
-            CollisionNode,
-            eventListener,
-            false);
-
-        CollisionNode.InternalResNode->AtkEventManager.RegisterEvent(
-            AtkEventType.MouseOut,
-            0,
-            null,
-            CollisionNode,
-            eventListener,
-            false);
-        
-        CollisionNode.InternalResNode->AtkEventManager.RegisterEvent(
-            AtkEventType.MouseClick,
-            0,
-            null,
-            CollisionNode,
-            eventListener,
-            false);
 
         CollisionNode.DrawFlags |= DrawFlags.ClickableCursor;
+        CollisionNode.AddEvent(AtkEventType.MouseOver, HandleEvents);
+        CollisionNode.AddEvent(AtkEventType.MouseOut, HandleEvents);
+        CollisionNode.AddEvent(AtkEventType.MouseClick, HandleEvents);
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {

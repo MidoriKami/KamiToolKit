@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
 using KamiToolKit.System;
@@ -12,7 +10,7 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
     protected ButtonBase() {
         SetInternalComponentType(ComponentType.Button);
-        AddEvent(AddonEventType.ButtonClick, ClickHandler);
+        AddEvent(AtkEventType.ButtonClick, ClickHandler);
     }
 
     public Action? OnClick { get; set; }
@@ -27,7 +25,7 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
         set => Component->SetChecked(value);
     }
 
-    private void ClickHandler(AddonEventData data) {
+    private void ClickHandler() {
         OnClick?.Invoke();
     }
 

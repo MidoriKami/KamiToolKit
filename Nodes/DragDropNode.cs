@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Enums;
@@ -52,12 +50,12 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 
         InitializeComponentEvents();
 
-        AddEvent(AddonEventType.DragDropBegin, DragDropBeginHandler);
-        AddEvent(AddonEventType.DragDropInsert, DragDropInsertHandler);
-        AddEvent(AddonEventType.DragDropDiscard, DragDropDiscardHandler);
-        AddEvent(AddonEventType.DragDropCancel, DragDropCancelHandler);
-        AddEvent(AddonEventType.DragDropRollOver, DragDropRollOverHandler);
-        AddEvent(AddonEventType.DragDropRollOut, DragDropRollOutHandler);
+        AddEvent(AtkEventType.DragDropBegin, DragDropBeginHandler);
+        AddEvent(AtkEventType.DragDropInsert, DragDropInsertHandler);
+        AddEvent(AtkEventType.DragDropDiscard, DragDropDiscardHandler);
+        AddEvent(AtkEventType.DragDropClick, DragDropClickHandler);
+        AddEvent(AtkEventType.DragDropRollOver, DragDropRollOverHandler);
+        AddEvent(AtkEventType.DragDropRollOut, DragDropRollOutHandler);
     }
 
     private bool IsDragDropEndRegistered { get; set; }
@@ -65,37 +63,37 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
     /// <summary>
     ///     Event that is triggered when a DragDrop is beginning
     /// </summary>
-    public Action<DragDropNode, AddonEventData>? OnBegin { get; set; }
+    public Action<DragDropNode>? OnBegin { get; set; }
 
     /// <summary>
     ///     Event that is triggered when a DragDrop has finished
     /// </summary>
-    public Action<DragDropNode, AddonEventData>? OnEnd { get; set; }
+    public Action<DragDropNode>? OnEnd { get; set; }
 
     /// <summary>
     ///     Event that is triggered when a compatible DragDrop is dropped onto this node
     /// </summary>
-    public Action<DragDropNode, AddonEventData, DragDropPayload>? OnPayloadAccepted { get; set; }
+    public Action<DragDropNode, DragDropPayload>? OnPayloadAccepted { get; set; }
 
     /// <summary>
     ///     Event that is triggered when the item in this drag drop is being dropped onto the world
     /// </summary>
-    public Action<DragDropNode, AddonEventData>? OnDiscard { get; set; }
+    public Action<DragDropNode>? OnDiscard { get; set; }
 
     /// <summary>
     ///     Event that is triggered when the item is clicked
     /// </summary>
-    public Action<DragDropNode, AddonEventData>? OnClicked { get; set; }
+    public Action<DragDropNode>? OnClicked { get; set; }
 
     /// <summary>
     ///     Event that is triggered when the item is being moused over
     /// </summary>
-    public Action<DragDropNode, AddonEventData>? OnRollOver { get; set; }
+    public Action<DragDropNode>? OnRollOver { get; set; }
 
     /// <summary>
     ///     Event that is triggered when the item is no longer being moused over
     /// </summary>
-    public Action<DragDropNode, AddonEventData>? OnRollOut { get; set; }
+    public Action<DragDropNode>? OnRollOut { get; set; }
 
     [JsonProperty] public DragDropPayload Payload { get; set; }
 
@@ -159,13 +157,13 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         }
     }
 
-    private void DragDropBeginHandler(AddonEventData data) {
-        data.SetHandled();
-        Payload.ToDragDropInterface(data.GetDragDropData().DragDropInterface);
-        OnBegin?.Invoke(this, data);
+    private void DragDropBeginHandler(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        atkEvent->SetEventIsHandled();
+        Payload.ToDragDropInterface(atkEventData->DragDropData.DragDropInterface);
+        OnBegin?.Invoke(this);
 
         if (!IsDragDropEndRegistered) {
-            AddEvent(AddonEventType.DragDropEnd, DragDropEndHandler);
+            AddEvent(AtkEventType.DragDropEnd, DragDropEndHandler);
             IsDragDropEndRegistered = true;
         }
     }
@@ -177,16 +175,16 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
                 field = value;
 
                 if (!TooltipRegistered) {
-                    AddEvent(AddonEventType.DragDropRollOver, ShowTooltip);
-                    AddEvent(AddonEventType.DragDropRollOut, HideTooltip);
+                    AddEvent(AtkEventType.DragDropRollOver, ShowTooltip);
+                    AddEvent(AtkEventType.DragDropRollOut, HideTooltip);
 
                     TooltipRegistered = true;
                 }
             }
             else if (value is null) {
                 if (TooltipRegistered) {
-                    RemoveEvent(AddonEventType.DragDropRollOver, ShowTooltip);
-                    RemoveEvent(AddonEventType.DragDropRollOut, HideTooltip);
+                    RemoveEvent(AtkEventType.DragDropRollOver, ShowTooltip);
+                    RemoveEvent(AtkEventType.DragDropRollOut, HideTooltip);
 
                     TooltipRegistered = false;
                 }
@@ -194,57 +192,54 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         }
     }
 
-    private void DragDropInsertHandler(AddonEventData data) {
-        data.SetHandled();
+    private void DragDropInsertHandler(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        atkEvent->SetEventIsHandled();
 
-        var atkEvent = (AtkEvent*)data.AtkEventPointer;
         atkEvent->State.StateFlags |= AtkEventStateFlags.HasReturnFlags;
         atkEvent->State.ReturnFlags = 1;
 
-        var payload = DragDropPayload.FromDragDropInterface(data.GetDragDropData().DragDropInterface);
+        var payload = DragDropPayload.FromDragDropInterface(atkEventData->DragDropData.DragDropInterface);
 
         Payload.Clear();
         IconId = 0;
 
-        OnPayloadAccepted?.Invoke(this, data, payload);
+        OnPayloadAccepted?.Invoke(this, payload);
     }
 
-    private void DragDropDiscardHandler(AddonEventData data) {
-        data.SetHandled();
+    private void DragDropDiscardHandler(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        atkEvent->SetEventIsHandled();
 
-        var atkEvent = (AtkEvent*)data.AtkEventPointer;
         atkEvent->State.StateFlags |= AtkEventStateFlags.HasReturnFlags;
         atkEvent->State.ReturnFlags = 1;
 
-        OnDiscard?.Invoke(this, data);
+        OnDiscard?.Invoke(this);
     }
 
-    private void DragDropEndHandler(AddonEventData data) {
-        data.SetHandled();
-        data.GetDragDropData().DragDropInterface->GetPayloadContainer()->Clear();
-        OnEnd?.Invoke(this, data);
+    private void DragDropEndHandler(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        atkEvent->SetEventIsHandled();
+        atkEventData->DragDropData.DragDropInterface->GetPayloadContainer()->Clear();
+        OnEnd?.Invoke(this);
 
         if (IsDragDropEndRegistered) {
-            RemoveEvent(AddonEventType.DragDropEnd, DragDropEndHandler);
+            RemoveEvent(AtkEventType.DragDropEnd, DragDropEndHandler);
             IsDragDropEndRegistered = false;
         }
     }
 
-    private void DragDropCancelHandler(AddonEventData data) {
-        data.SetHandled();
+    private void DragDropClickHandler(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        atkEvent->SetEventIsHandled();
 
-        var atkEvent = (AtkEvent*)data.AtkEventPointer;
         atkEvent->State.StateFlags |= AtkEventStateFlags.HasReturnFlags;
         atkEvent->State.ReturnFlags = 1;
 
-        OnClicked?.Invoke(this, data);
+        OnClicked?.Invoke(this);
     }
 
-    private void DragDropRollOverHandler(AddonEventData data)
-        => OnRollOver?.Invoke(this, data);
+    private void DragDropRollOverHandler()
+        => OnRollOver?.Invoke(this);
 
-    private void DragDropRollOutHandler(AddonEventData data)
-        => OnRollOut?.Invoke(this, data);
+    private void DragDropRollOutHandler()
+        => OnRollOut?.Invoke(this);
 
     /// Clear the payload data and set iconId to zero
     public void Clear() {
