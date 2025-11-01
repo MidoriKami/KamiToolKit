@@ -1,19 +1,18 @@
-﻿using System.Drawing;
-using Dalamud.Interface;
-using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
-// Simple helper class for making basic text lable, node will auto-resize to fit label
-public sealed class LabelTextNode : TextNode {
-    public LabelTextNode() {
+// Simple helper class for making basic text label, node will auto-resize to fit label
+public sealed class CategoryTextNode : TextNode {
+    public CategoryTextNode() {
         Height = 16.0f;
         TextFlags = TextFlags.AutoAdjustNodeSize | TextFlags.Emboss;
         TextColor = ColorHelper.GetColor(2);
-        TextOutlineColor = KnownColor.Black.Vector();
+        TextOutlineColor = ColorHelper.GetColor(7);
         FontType = FontType.Axis;
         FontSize = 14;
+        LineSpacing = 24;
         AlignmentType = AlignmentType.Left;
     }
 
