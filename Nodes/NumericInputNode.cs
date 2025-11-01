@@ -71,7 +71,10 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
         FocusBorderNode.AttachNode(this);
 
         CursorNode = new CursorNode {
-            NodeId = 2, Size = new Vector2(4.0f, 24.0f), IsVisible = true, OriginY = 4.0f,
+            NodeId = 2, 
+            Size = new Vector2(4.0f, 24.0f), 
+            IsVisible = true,
+            OriginY = 4.0f,
         };
 
         CursorNode.AttachNode(this);

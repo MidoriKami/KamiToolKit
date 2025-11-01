@@ -9,11 +9,11 @@ public class OrderedVerticalListNode<T, TU> : VerticalListNode where T : NodeBas
 
     public Func<T, TU>? OrderSelector { get; set; }
 
-    public override void RecalculateLayout() {
+    protected override void InternalRecalculateLayout() {
         var typedList = NodeList.OfType<T>();
 
         if (OrderSelector is null) {
-            base.RecalculateLayout();
+            RecalculateLayout();
             return;
         }
 

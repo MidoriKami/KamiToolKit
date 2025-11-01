@@ -17,7 +17,7 @@ public class HorizontalFlexNode : LayoutListNode {
         }
     }
 
-    public override void RecalculateLayout() {
+    protected override void InternalRecalculateLayout() {
         var step = Width / NodeList.Count;
 
         if (NodeList.Count != 0 && AlignmentFlags.HasFlag(FlexFlags.FitContentHeight)) {

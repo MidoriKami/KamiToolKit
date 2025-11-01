@@ -88,6 +88,11 @@ public class TabbedVerticalListNode : SimpleComponentNode {
 
             if (FitWidth) {
                 node.Width = Width - node.X - ItemVerticalSpacing;
+                
+                // Also update layout of any contained nodes
+                if (node is LayoutListNode layoutNode) {
+                    layoutNode.RecalculateLayout();
+                }
             }
             
             startY += node.Height + ItemVerticalSpacing;

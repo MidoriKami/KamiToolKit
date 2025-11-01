@@ -23,7 +23,7 @@ public class HorizontalListNode : LayoutListNode {
         }
     }
 
-    public override void RecalculateLayout() {
+    protected override void InternalRecalculateLayout() {
         var startX = Alignment switch {
             HorizontalListAnchor.Left => 0.0f + FirstItemSpacing,
             HorizontalListAnchor.Right => Width - FirstItemSpacing,

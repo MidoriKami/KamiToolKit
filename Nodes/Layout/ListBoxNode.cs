@@ -106,7 +106,7 @@ public class ListBoxNode : LayoutListNode {
         }
     }
 
-    public override void RecalculateLayout() {
+    protected override void InternalRecalculateLayout() {
         switch (LayoutOrientation) {
             case LayoutOrientation.Vertical:
                 CalculateVerticalLayout();

@@ -38,7 +38,17 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     [JsonProperty] public float FirstItemSpacing { get; set; }
 
-    public abstract void RecalculateLayout();
+    public void RecalculateLayout() {
+        InternalRecalculateLayout();
+
+        foreach (var node in NodeList) {
+            if (node is LayoutListNode subNode) {
+                subNode.RecalculateLayout();
+            }
+        }
+    }
+    
+    protected abstract void InternalRecalculateLayout();
 
     protected virtual void AdjustNode(NodeBase node) { }
 
