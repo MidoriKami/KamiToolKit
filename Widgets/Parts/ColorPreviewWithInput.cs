@@ -31,12 +31,12 @@ public class ColorPreviewWithInput : SimpleComponentNode {
         ColorPreviewNode.Size = new Vector2(Height, Height);
         ColorPreviewNode.Position = Vector2.Zero;
 
-        ColorInputNode.Size = new Vector2(Width - Height - 8.0f, Height - 4.0f);
-        ColorInputNode.Position = new Vector2(Height + 8.0f, 2.0f);
+        ColorInputNode.Size = new Vector2(Width - Height - 8.0f, Height - 2.0f);
+        ColorInputNode.Position = new Vector2(Height + 8.0f, 1.0f);
     }
 
-    public Action<ColorHelpers.HsvaColor>? OnHsvaColorChanged { get; init; }
-    public Action<Vector4>? OnColorChanged { get; init; }
+    public Action<ColorHelpers.HsvaColor>? OnHsvaColorChanged { get; set; }
+    public Action<Vector4>? OnColorChanged { get; set; }
     
     public string String {
         get => ColorInputNode.String;
