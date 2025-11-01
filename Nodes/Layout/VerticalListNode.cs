@@ -18,7 +18,9 @@ public class VerticalListNode : LayoutListNode {
     // Resizes this node to fit all elements
     public bool FitContents { get; set; }
 
-    public override void RecalculateLayout() {
+    public bool FitWidth { get; set; }
+
+    protected override void InternalRecalculateLayout() {
         var startY = Alignment switch {
             VerticalListAnchor.Top => 0.0f + FirstItemSpacing,
             VerticalListAnchor.Bottom => Height,
@@ -33,6 +35,11 @@ public class VerticalListNode : LayoutListNode {
             }
 
             node.Y = startY;
+
+            if (FitWidth) {
+                node.Width = Width;
+            }
+
             AdjustNode(node);
 
             if (Alignment is VerticalListAnchor.Top) {
