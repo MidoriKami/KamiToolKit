@@ -45,6 +45,7 @@ public abstract unsafe class ListNode<T> : ListNode {
             Size = new Vector2(8.0f, 0.0f), 
             IsVisible = true, 
             OnValueChanged = OnScrollUpdate,
+            HideWhenDisabled = true,
         };
         ScrollBarNode.AttachNode(this);
 
@@ -162,7 +163,7 @@ public abstract unsafe class ListNode<T> : ListNode {
 
     public void RecalculateScrollParams() {
         if (Options is not null) {
-            ScrollBarNode.UpdateScrollParams((int)ScrollBarNode.Height, (int)(Options.Count * NodeHeight + 24.0f));
+            ScrollBarNode.UpdateScrollParams((int)ScrollBarNode.Height, (int)(Options.Count * NodeHeight));
         }
     }
 
