@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -20,11 +21,16 @@ public unsafe class TreeListCategoryNode : ResNode {
 
     private List<NodeBase> children = [];
 
+    public IReadOnlyCollection<TreeListHeaderNode> HeaderNodes => children.OfType<TreeListHeaderNode>().ToList();
+    public IReadOnlyCollection<NodeBase> Children => children.AsReadOnly();
+    public IEnumerable<T> GetNodes<T>() where T : NodeBase => children.OfType<T>();
+
     public Action<bool>? OnToggle;
 
     public TreeListCategoryNode() {
         CollisionNode = new CollisionNode {
-            Height = 28.0f, IsVisible = true,
+            Height = 28.0f, 
+            IsVisible = true,
         };
         CollisionNode.AttachNode(this);
 

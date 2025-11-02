@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace KamiToolKit.Nodes;
 
@@ -8,6 +9,8 @@ public class TreeListNode : ResNode {
     private readonly SimpleComponentNode childContainer;
 
     private List<TreeListCategoryNode> children = [];
+
+    public ReadOnlyCollection<TreeListCategoryNode> CategoryNodes => children.AsReadOnly();
 
     public TreeListNode() {
         childContainer = new SimpleComponentNode {
