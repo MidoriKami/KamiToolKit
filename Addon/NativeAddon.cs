@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -132,6 +133,9 @@ public abstract unsafe partial class NativeAddon {
                 Log.Verbose($"[{InternalName}] Already open, skipping call.");
             }
         });
+
+    [Conditional("DEBUG")]
+    public void DebugOpen() => Open();
 
     public void Close()
         => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
