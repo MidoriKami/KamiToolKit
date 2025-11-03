@@ -145,7 +145,7 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
 
     public required List<string> SortingOptions { get; init; }
     
-    public required List<T> SearchOptions { get; init; }
+    public required List<T> SearchOptions { get; set; }
 
     public Action<T>? SelectionResult { get; set; }
 }
