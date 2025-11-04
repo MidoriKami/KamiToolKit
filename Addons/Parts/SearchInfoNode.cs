@@ -2,7 +2,7 @@
 
 namespace KamiToolKit.Addons.Parts;
 
-internal class SearchInfoNode<T> : BaseSearchInfoNode<T> where T : IInfoNodeData {
+public class SearchInfoNode<T> : BaseSearchInfoNode<T> where T : IInfoNodeData {
     protected override void SetOptionParams(T? value) {
         LabelTextNode.String = value?.GetLabel() ?? string.Empty;
         SubLabelTextNode.String = value?.GetSubLabel() ?? string.Empty;
