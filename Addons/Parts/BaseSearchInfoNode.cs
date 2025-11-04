@@ -66,16 +66,21 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
         LabelTextNode = new TextNode {
             TextFlags = TextFlags.Ellipsis,
             FontSize = 14,
+            LineSpacing = 14,
             AlignmentType = AlignmentType.BottomLeft,
             IsVisible = true,
+            TextColor = ColorHelper.GetColor(8),
+            TextOutlineColor = ColorHelper.GetColor(7),
         };
         LabelTextNode.AttachNode(this);
 
         SubLabelTextNode = new TextNode {
             TextFlags = TextFlags.Ellipsis,
             FontSize = 12,
+            LineSpacing = 12,
             AlignmentType = AlignmentType.TopLeft,
-            TextColor = KnownColor.Gray.Vector(),
+            TextColor = ColorHelper.GetColor(3),
+            TextOutlineColor = ColorHelper.GetColor(7),
         };
         SubLabelTextNode.AttachNode(this);
 
