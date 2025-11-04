@@ -59,7 +59,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
 
     private void DropDownChanged(string newOption) {
         sortOption = newOption;
-        OnSortOrderChanged(newOption, reverseSort);
+        OnSortOrderChanged(sortOption, reverseSort);
     }
 
     public required SearchUpdated OnSearchUpdated { get; set; }

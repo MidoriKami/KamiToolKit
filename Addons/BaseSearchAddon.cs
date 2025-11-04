@@ -117,8 +117,7 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
     private void OnSortOrderUpdated(string sortingString, bool reversed) => listNode?.ContentNode.ReorderNodes((x, y) => {
         if (x is not BaseSearchInfoNode<T> left || y is not BaseSearchInfoNode<T> right) return 0;
 
-        var compareResult = left.Compare(right, sortingString, reversed);
-        return reversed ? -compareResult : compareResult;
+        return left.Compare(right, sortingString, reversed);
     });
 
     private void OnSearchUpdated(string searchString) {
