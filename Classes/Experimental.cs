@@ -15,12 +15,15 @@ public unsafe class Experimental {
 
     public void DisposeHooks() { }
 
-    public delegate void ProcessCursorFlags(RaptureAtkUnitManager* unitManager);
+    public delegate void ProcessCursorFlagsDelegate(RaptureAtkUnitManager* unitManager);
 
     // Unused at the moment, might consider using unused flag bits to handle grabby hand
     // sub_1400E1880
-    [Signature("E8 ?? ?? ?? ?? 0F 28 CE 48 8B CB E8 ?? ?? ?? ?? 0F 28 CE 48 8D 8B ?? ?? ?? ??")]
-    public Hook<ProcessCursorFlags>? ProcessCursorFlagsHook = null;
+    [Signature("E8 ?? ?? ?? ?? 0F 28 CE 48 8B CB E8 ?? ?? ?? ?? 0F 28 CE 48 8D 8B ?? ?? ?? ??", DetourName = nameof(ProcessCursorFlags))]
+    public Hook<ProcessCursorFlagsDelegate>? ProcessCursorFlagsHook = null;
+
+    private void ProcessCursorFlags(RaptureAtkUnitManager* unitManager)
+        => ProcessCursorFlagsHook?.Original(unitManager);
 
     // WARNING: May result in undefined state or accidental network requests
     // Use at your own risk.
