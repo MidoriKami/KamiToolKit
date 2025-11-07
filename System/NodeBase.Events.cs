@@ -173,6 +173,10 @@ public abstract unsafe partial class NodeBase {
             case AtkEventType.MouseClick:
                 AddFlags(NodeFlags.HasCollision);
                 break;
+            
+            // Intentionally return to skip adding EmitsEvents for ButtonClick events
+            case AtkEventType.ButtonClick:
+                return;
         }
 
         AddFlags(NodeFlags.EmitsEvents);

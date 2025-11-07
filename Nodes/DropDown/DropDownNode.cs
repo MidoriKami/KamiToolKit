@@ -60,7 +60,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
             NodeId = 5,
             Position = new Vector2(4.0f, 21.0f), 
             Size = new Vector2(242.0f, 243.0f), 
-            NodeFlags = NodeFlags.EmitsEvents,
         };
         OptionListNode.AttachNode(this);
 
