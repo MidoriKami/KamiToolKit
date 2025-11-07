@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
@@ -57,9 +56,8 @@ public abstract unsafe class ListNode<T> : ListNode {
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             if (isFocusSet && !isNativeDestructor) {
-                var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
-                if (parentAddon is not null) {
-                    ClearFocusable(parentAddon);
+                if (ParentAddon is not null) {
+                    ClearFocusable(ParentAddon);
                 }
             }
 
@@ -207,9 +205,8 @@ public abstract unsafe class ListNode<T> : ListNode {
         IsVisible = true;
         DrawFlags = DrawFlags.RenderOnTop;
 
-        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
-        if (parentAddon is not null) {
-            SetFocusable(parentAddon);
+        if (ParentAddon is not null) {
+            SetFocusable(ParentAddon);
         }
     }
 
@@ -217,9 +214,8 @@ public abstract unsafe class ListNode<T> : ListNode {
         IsVisible = false;
         DrawFlags = DrawFlags.None;
 
-        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
-        if (parentAddon is not null) {
-            ClearFocusable(parentAddon);
+        if (ParentAddon is not null) {
+            ClearFocusable(ParentAddon);
         }
     }
 

@@ -185,16 +185,14 @@ public abstract unsafe partial class NodeBase {
         => DalamudInterface.Instance.AddonEventManager.ResetCursor();
 
     public void ShowTooltip() {
-        if (Tooltip is not null && TooltipRegistered) {
-            var addon = GetAddonForNode(InternalResNode);
-            AtkStage.Instance()->TooltipManager.ShowTooltip(addon->Id, InternalResNode, Tooltip.Encode());
+        if (Tooltip is not null && TooltipRegistered && ParentAddon is not null) {
+            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, InternalResNode, Tooltip.Encode());
         }
     }
 
     public void HideTooltip() {
-        var addon = GetAddonForNode(InternalResNode);
-        if (addon is null) return;
+        if (ParentAddon is null) return;
 
-        AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
+        AtkStage.Instance()->TooltipManager.HideTooltip(ParentAddon->Id);
     }
 }

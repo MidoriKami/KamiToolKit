@@ -11,8 +11,6 @@ namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
 
-    private bool HasAddon { get; set; }
-    private AtkUnitBase* ParentAddon { get; set; }
     private AtkUldManager* ParentUldManager { get; set; }
 
     internal void AttachNode(AtkResNode* target, NodePosition position = NodePosition.AsLastChild) {
@@ -81,7 +79,6 @@ public abstract unsafe partial class NodeBase {
         if (ParentAddon is not null) {
             ParentAddon->UldManager.UpdateDrawNodeList();
             ParentAddon->UpdateCollisionNodeList(false);
-            ParentAddon = null;
         }
     }
 
@@ -99,10 +96,6 @@ public abstract unsafe partial class NodeBase {
                 ParentUldManager->AddNodeToObjectList(pointer);
             });
             ParentUldManager->UpdateDrawNodeList();
-        }
-
-        if (ParentAddon is null) {
-            ParentAddon = GetAddonForNode(InternalResNode);
         }
 
         if (ParentAddon is not null) {
