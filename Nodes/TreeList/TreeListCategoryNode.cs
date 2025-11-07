@@ -89,7 +89,6 @@ public unsafe class TreeListCategoryNode : ResNode {
 
         BuildTimelines();
 
-        CollisionNode.SetEventFlags = true;
         CollisionNode.DrawFlags |= DrawFlags.ClickableCursor;
         CollisionNode.AddEvent(AtkEventType.MouseOver, () => Timeline?.PlayAnimation(IsCollapsed ? 2 : 9));
         CollisionNode.AddEvent(AtkEventType.MouseOut, () => Timeline?.PlayAnimation(IsCollapsed ? 1 : 8));

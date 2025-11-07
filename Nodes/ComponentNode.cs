@@ -30,7 +30,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         CollisionNode = new CollisionNode {
             NodeId = 1,
             LinkedComponent = componentBase,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents | NodeFlags.Fill,
         };
 
         CollisionNode.InternalResNode->ParentNode = InternalResNode;

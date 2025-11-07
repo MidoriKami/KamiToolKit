@@ -51,7 +51,6 @@ public abstract unsafe class ListNode<T> : ListNode {
 
         BuildTimelines();
 
-        ContainerNode.SetEventFlags = true;
         ContainerNode.AddEvent(AtkEventType.MouseWheel, OnMouseWheel);
     }
     

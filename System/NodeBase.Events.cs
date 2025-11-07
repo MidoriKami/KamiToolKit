@@ -50,28 +50,28 @@ public abstract unsafe partial class NodeBase {
 
     protected bool TooltipRegistered { get; set; }
 
-    public bool IsSetEventFlags => NodeFlags.HasFlag(NodeFlags.EmitsEvents) &&
-                                   NodeFlags.HasFlag(NodeFlags.HasCollision);
-
-    public bool SetEventFlags {
-        set {
-            if (value) {
-                AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision);
-            }
-            else {
-                RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision);
-            }
-        }
-    }
-
     public void AddEvent(AtkEventType eventType, Action callback) {
         nodeEventListener ??= new CustomEventListener(HandleEvents);
 
         switch (eventType) {
+            case AtkEventType.InputReceived:
+            case AtkEventType.ButtonClick:
+                AddFlags(NodeFlags.EmitsEvents);
+                break;
+            
             case AtkEventType.MouseOver:
             case AtkEventType.MouseOut:
-            case AtkEventType.MouseClick:
                 AddFlags(NodeFlags.RespondToMouse);
+                break;
+            
+            case AtkEventType.MouseDown:
+            case AtkEventType.MouseUp:
+            case AtkEventType.MouseMove:
+                AddFlags(NodeFlags.EmitsEvents, NodeFlags.HasCollision, NodeFlags.RespondToMouse);
+                break;
+                
+            case AtkEventType.MouseClick:
+                AddFlags(NodeFlags.EmitsEvents, NodeFlags.HasCollision);
                 break;
         }
 

@@ -67,7 +67,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         DropDownFocusCollisionNode = new CollisionNode {
             NodeId = 6,
             IsVisible = true, 
-            SetEventFlags = true,
         };
         DropDownFocusCollisionNode.AttachNode(OptionListNode.CollisionNode, NodePosition.AfterTarget);
 
@@ -78,7 +77,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
         Timeline?.PlayAnimation(4);
 
-        CollisionNode.SetEventFlags = true;
         CollisionNode.DrawFlags |= DrawFlags.ClickableCursor;
         CollisionNode.AddEvent(AtkEventType.MouseOver, () => Timeline?.PlayAnimation(IsCollapsed ? 2 : 9));
         CollisionNode.AddEvent(AtkEventType.MouseOut, () => Timeline?.PlayAnimation(IsCollapsed ? 4 : 11));

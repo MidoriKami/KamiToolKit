@@ -3,6 +3,5 @@
 public class SimpleOverlayNode : SimpleComponentNode {
     public SimpleOverlayNode() {
         CollisionNode.IsVisible = false;
-        CollisionNode.SetEventFlags = false;
     }
 }

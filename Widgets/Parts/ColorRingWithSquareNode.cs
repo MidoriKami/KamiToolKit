@@ -46,7 +46,6 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         AddEvent(AtkEventType.MouseUp, OnMouseUp);
         AddEvent(AtkEventType.MouseMove, OnMouseMove);
         AddEvent(AtkEventType.MouseOut, OnMouseOut);
-        SetEventFlags = true;
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {

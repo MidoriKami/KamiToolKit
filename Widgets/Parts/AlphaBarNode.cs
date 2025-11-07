@@ -29,7 +29,6 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
             TexturePath = DalamudInterface.Instance.GetAssetPath("VerticalGradient_WhiteToAlpha.png"),
             IsVisible = true,
             FitTexture = true,
-            SetEventFlags = true,
         };
         AlphaBarGradientNode.AttachNode(this);
         AlphaBarGradientNode.AddEvent(AtkEventType.MouseDown, OnAlphaBarMouseDown);
@@ -38,7 +37,6 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
             TexturePath = DalamudInterface.Instance.GetAssetPath("alpha_selector.png"),
             IsVisible = true,
             FitTexture = true,
-            SetEventFlags = true,
         };
         AlphaBarSelectorNode.AttachNode(this);
         AlphaBarSelectorNode.AddEvent(AtkEventType.MouseDown, OnAlphaBarMouseDown);
