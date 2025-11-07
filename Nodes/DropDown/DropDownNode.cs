@@ -139,15 +139,14 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         Timeline?.PlayAnimation(11);
         OptionListNode.Toggle(true);
         
-        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
-        if (parentAddon is not null) {
-            OptionListNode.Position = (ScreenPosition - new Vector2(parentAddon->X, parentAddon->Y)) / parentAddon->Scale + Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
+        if (ParentAddon is not null) {
+            OptionListNode.Position = (ScreenPosition - ParentAddon->Position()) / ParentAddon->Scale + Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
             MoveListOnScreen();
 
             DropDownFocusCollisionNode.Position = -OptionListNode.Position;
-            DropDownFocusCollisionNode.Size = new Vector2(parentAddon->RootNode->Width, parentAddon->RootNode->Height);
+            DropDownFocusCollisionNode.Size = ParentAddon->RootSize();
 
-            OptionListNode.ReattachNode(parentAddon->RootNode);
+            OptionListNode.ReattachNode(ParentAddon->RootNode);
         }
 
         OnUncollapsed?.Invoke();
