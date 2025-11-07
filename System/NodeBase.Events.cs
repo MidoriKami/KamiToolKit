@@ -31,7 +31,7 @@ public abstract unsafe partial class NodeBase {
                     AddEvent(AtkEventType.MouseOut, HideTooltip);
                     OnVisibilityToggled += ToggleCollisionFlag;
 
-                    if (this is not ComponentNode) {
+                    if (this is not ComponentNode && IsVisible) {
                         AddFlags(NodeFlags.HasCollision);
                     }
 
