@@ -5,6 +5,7 @@ using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.System;
@@ -28,6 +29,11 @@ public abstract unsafe partial class NodeBase {
                 if (!TooltipRegistered) {
                     AddEvent(AtkEventType.MouseOver, ShowTooltip);
                     AddEvent(AtkEventType.MouseOut, HideTooltip);
+                    OnVisibilityToggled += ToggleCollisionFlag;
+
+                    if (this is not ComponentNode) {
+                        AddFlags(NodeFlags.HasCollision);
+                    }
 
                     TooltipRegistered = true;
                 }
@@ -36,6 +42,7 @@ public abstract unsafe partial class NodeBase {
                 if (TooltipRegistered) {
                     RemoveEvent(AtkEventType.MouseOver, ShowTooltip);
                     RemoveEvent(AtkEventType.MouseOut, HideTooltip);
+                    OnVisibilityToggled -= ToggleCollisionFlag;
 
                     TooltipRegistered = false;
                 }
@@ -54,11 +61,6 @@ public abstract unsafe partial class NodeBase {
         nodeEventListener ??= new CustomEventListener(HandleEvents);
 
         switch (eventType) {
-            case AtkEventType.InputReceived:
-            case AtkEventType.ButtonClick:
-                AddFlags(NodeFlags.EmitsEvents);
-                break;
-            
             case AtkEventType.MouseOver:
             case AtkEventType.MouseOut:
                 AddFlags(NodeFlags.RespondToMouse);
@@ -67,13 +69,15 @@ public abstract unsafe partial class NodeBase {
             case AtkEventType.MouseDown:
             case AtkEventType.MouseUp:
             case AtkEventType.MouseMove:
-                AddFlags(NodeFlags.EmitsEvents, NodeFlags.HasCollision, NodeFlags.RespondToMouse);
+                AddFlags(NodeFlags.HasCollision, NodeFlags.RespondToMouse);
                 break;
                 
             case AtkEventType.MouseClick:
-                AddFlags(NodeFlags.EmitsEvents, NodeFlags.HasCollision);
+                AddFlags(NodeFlags.HasCollision);
                 break;
         }
+
+        AddFlags(NodeFlags.EmitsEvents);
 
         if (eventHandlers.TryAdd(eventType, new EventHandlerInfo { OnActionDelegate = callback })) {
             Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)InternalResNode:X}]");
@@ -152,6 +156,17 @@ public abstract unsafe partial class NodeBase {
         if (eventHandlers.TryGetValue(eventType, out var handler)) {
             handler.OnActionDelegate?.Invoke();
             handler.OnReceiveEventDelegate?.Invoke(thisPtr, eventType, eventParam, atkEvent, atkEventData);
+        }
+    }
+
+    private void ToggleCollisionFlag(bool isVisible) {
+        if (this is ComponentNode) return;
+
+        if (isVisible) {
+            AddFlags(NodeFlags.HasCollision);
+        }
+        else {
+            RemoveFlags(NodeFlags.HasCollision);
         }
     }
 
