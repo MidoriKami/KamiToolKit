@@ -4,6 +4,7 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using Newtonsoft.Json;
+using Bounds = KamiToolKit.Classes.Bounds;
 using Vector2 = System.Numerics.Vector2;
 using Vector3 = System.Numerics.Vector3;
 using Vector4 = System.Numerics.Vector4;
@@ -68,6 +69,10 @@ public abstract unsafe partial class NodeBase {
             Height = value.Y;
         }
     }
+
+    public Bounds Bounds => new() { TopLeft = Position, BottomRight = Position + Size };
+
+    public Vector2 Center => Position + Size / 2f;
 
     public virtual float ScaleX {
         get => InternalResNode->GetScaleX();
