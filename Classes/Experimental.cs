@@ -13,7 +13,9 @@ public unsafe class Experimental {
 
     public void EnableHooks() { }
 
-    public void DisposeHooks() { }
+    public void DisposeHooks() {
+        ProcessCursorFlagsHook?.Dispose();
+    }
 
     public delegate void ProcessCursorFlagsDelegate(RaptureAtkUnitManager* unitManager);
 
