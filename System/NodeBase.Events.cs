@@ -60,24 +60,7 @@ public abstract unsafe partial class NodeBase {
     public void AddEvent(AtkEventType eventType, Action callback) {
         nodeEventListener ??= new CustomEventListener(HandleEvents);
 
-        switch (eventType) {
-            case AtkEventType.MouseOver:
-            case AtkEventType.MouseOut:
-                AddFlags(NodeFlags.RespondToMouse);
-                break;
-            
-            case AtkEventType.MouseDown:
-            case AtkEventType.MouseUp:
-            case AtkEventType.MouseMove:
-                AddFlags(NodeFlags.HasCollision, NodeFlags.RespondToMouse);
-                break;
-                
-            case AtkEventType.MouseClick:
-                AddFlags(NodeFlags.HasCollision);
-                break;
-        }
-
-        AddFlags(NodeFlags.EmitsEvents);
+        SetNodeEventFlags(eventType);
 
         if (eventHandlers.TryAdd(eventType, new EventHandlerInfo { OnActionDelegate = callback })) {
             Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)InternalResNode:X}]");
@@ -87,9 +70,11 @@ public abstract unsafe partial class NodeBase {
             eventHandlers[eventType].OnActionDelegate += callback;
         }
     }
-    
+
     public void AddEvent(AtkEventType eventType, AtkEventListener.Delegates.ReceiveEvent callback) {
         nodeEventListener ??= new CustomEventListener(HandleEvents);
+
+        SetNodeEventFlags(eventType);
 
         if (eventHandlers.TryAdd(eventType, new EventHandlerInfo { OnReceiveEventDelegate = callback })) {
             Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)InternalResNode:X}]");
@@ -168,6 +153,28 @@ public abstract unsafe partial class NodeBase {
         else {
             RemoveFlags(NodeFlags.HasCollision);
         }
+    }
+    
+    private void SetNodeEventFlags(AtkEventType eventType) {
+
+        switch (eventType) {
+            case AtkEventType.MouseOver:
+            case AtkEventType.MouseOut:
+                AddFlags(NodeFlags.RespondToMouse);
+                break;
+            
+            case AtkEventType.MouseDown:
+            case AtkEventType.MouseUp:
+            case AtkEventType.MouseMove:
+                AddFlags(NodeFlags.HasCollision, NodeFlags.RespondToMouse);
+                break;
+                
+            case AtkEventType.MouseClick:
+                AddFlags(NodeFlags.HasCollision);
+                break;
+        }
+
+        AddFlags(NodeFlags.EmitsEvents);
     }
 
     protected static void SetCursor(AddonCursorType cursor)
