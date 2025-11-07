@@ -50,23 +50,30 @@ public abstract unsafe partial class NodeBase {
 
     protected bool TooltipRegistered { get; set; }
 
-    public bool IsSetEventFlags => NodeFlags.HasFlag(NodeFlags.EmitsEvents) && 
-                                   NodeFlags.HasFlag(NodeFlags.HasCollision) && 
-                                   NodeFlags.HasFlag(NodeFlags.RespondToMouse);
+    public bool IsSetEventFlags => NodeFlags.HasFlag(NodeFlags.EmitsEvents) &&
+                                   NodeFlags.HasFlag(NodeFlags.HasCollision);
 
     public bool SetEventFlags {
         set {
             if (value) {
-                AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
+                AddFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision);
             }
             else {
-                RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision | NodeFlags.RespondToMouse);
+                RemoveFlags(NodeFlags.EmitsEvents | NodeFlags.HasCollision);
             }
         }
     }
 
     public void AddEvent(AtkEventType eventType, Action callback) {
         nodeEventListener ??= new CustomEventListener(HandleEvents);
+
+        switch (eventType) {
+            case AtkEventType.MouseOver:
+            case AtkEventType.MouseOut:
+            case AtkEventType.MouseClick:
+                AddFlags(NodeFlags.RespondToMouse);
+                break;
+        }
 
         if (eventHandlers.TryAdd(eventType, new EventHandlerInfo { OnActionDelegate = callback })) {
             Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)InternalResNode:X}]");
