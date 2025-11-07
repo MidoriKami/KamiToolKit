@@ -166,6 +166,7 @@ public abstract unsafe partial class NodeBase {
             case AtkEventType.MouseDown:
             case AtkEventType.MouseUp:
             case AtkEventType.MouseMove:
+            case AtkEventType.MouseWheel:
                 AddFlags(NodeFlags.HasCollision, NodeFlags.RespondToMouse);
                 break;
                 
