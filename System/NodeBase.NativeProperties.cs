@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -116,8 +117,13 @@ public abstract unsafe partial class NodeBase {
 
     [JsonProperty] public virtual bool IsVisible {
         get => InternalResNode->IsVisible();
-        set => InternalResNode->ToggleVisibility(value);
+        set {
+            InternalResNode->ToggleVisibility(value);
+            OnVisibilityToggled?.Invoke(value);
+        }
     }
+
+    private Action<bool>? OnVisibilityToggled { get; set; }
 
     public NodeFlags NodeFlags {
         get => InternalResNode->NodeFlags;
