@@ -39,12 +39,12 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         }
     }
 
-    public string TexturePath {
+    protected string TexturePath {
         get => PartsList[0]->GetLoadedPath();
         set => PartsList[0]->LoadTexture(value);
     }
 
-    public Vector2 TextureCoordinates {
+    protected Vector2 TextureCoordinates {
         get => new(PartsList[0]->U, PartsList[0]->V);
         set {
             PartsList[0]->U = (ushort) value.X;
@@ -52,17 +52,12 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         }
     }
 
-    public Vector2 TextureSize {
+    protected Vector2 TextureSize {
         get => new(PartsList[0]->Width, PartsList[0]->Height);
         set {
             PartsList[0]->Width = (ushort) value.X;
             PartsList[0]->Height = (ushort) value.X;
         }
-    }
-
-    public uint PartId {
-        get => Node->PartId;
-        set => Node->PartId = value;
     }
 
     [JsonProperty] public uint NumberWidth {
@@ -112,6 +107,11 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
                 case CounterFont.MoneyFont:
                     fontPath = "ui/uld/Money_Number.tex";
                     partSize = new Vector2(22.0f, 22.0f);
+                    break;
+
+                case CounterFont.ChocoboRace:
+                    fontPath = "ui/uld/RaceChocoboNum.tex";
+                    partSize = new Vector2(30.0f, 60.0f);
                     break;
             }
 
