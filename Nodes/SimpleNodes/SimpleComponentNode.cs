@@ -8,4 +8,12 @@ public class SimpleComponentNode : ComponentNode<AtkComponentBase, AtkUldCompone
         get => CollisionNode.Tooltip;
         set => CollisionNode.Tooltip = value;
     }
+
+    public bool DisableCollisionNode {
+        get;
+        set {
+            field = value;
+            CollisionNode.NodeFlags = 0;
+        }
+    }
 }

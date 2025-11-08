@@ -1,7 +1,6 @@
 ﻿namespace KamiToolKit.Nodes;
 
 public class SimpleOverlayNode : SimpleComponentNode {
-    public SimpleOverlayNode() {
-        CollisionNode.IsVisible = false;
-    }
+    public SimpleOverlayNode()
+        => DisableCollisionNode = true;
 }
