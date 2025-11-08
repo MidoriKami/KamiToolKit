@@ -28,10 +28,10 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
     public Action? OnUnfocused;
 
-    private delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, TextSelectionInfo*, void> originalFunction;
-    private TextInputVirtualFuncDelegate? pinnedFunction;
+    private delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, AtkTextInput.TextSelectionInfo*, void> originalFunction;
+    private AtkTextInput.AtkTextInputEventInterface.Delegates.UpdateTextSelection? pinnedFunction;
 
-    private AtkTextInputEventInterfaceVirtualTable* virtualTable;
+    private AtkTextInput.AtkTextInputEventInterface.AtkTextInputEventInterfaceVirtualTable* virtualTable;
 
     public TextInputNode() {
         SetInternalComponentType(ComponentType.TextInput);
@@ -210,20 +210,20 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     private void SetupVirtualTable() {
 
         // Note: This virtual table only has 5 entries, but we will make it have 10 in-case square enix adds another entry
-        var eventInterface = (AtkTextInputEventInterface*)&Component->AtkTextInputEventInterface;
+        var eventInterface = &Component->AtkTextInputEventInterface;
 
-        virtualTable = (AtkTextInputEventInterfaceVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 10);
+        virtualTable = (AtkTextInput.AtkTextInputEventInterface.AtkTextInputEventInterfaceVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 10);
         NativeMemory.Copy(eventInterface->VirtualTable, virtualTable, 0x8 * 10);
 
         eventInterface->VirtualTable = virtualTable;
 
         pinnedFunction = OnCursorChanged;
 
-        originalFunction = virtualTable->UpdateCursor;
-        virtualTable->UpdateCursor = (delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, TextSelectionInfo*, void>)Marshal.GetFunctionPointerForDelegate(pinnedFunction);
+        originalFunction = virtualTable->UpdateTextSelection;
+        virtualTable->UpdateTextSelection = (delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, AtkTextInput.TextSelectionInfo*, void>)Marshal.GetFunctionPointerForDelegate(pinnedFunction);
     }
     
-    private void OnCursorChanged(AtkTextInput.AtkTextInputEventInterface* listener, TextSelectionInfo* numEvents) {
+    private void OnCursorChanged(AtkTextInput.AtkTextInputEventInterface* listener, AtkTextInput.TextSelectionInfo* numEvents) {
         var applySelectAll = !FocusNode.IsVisible && AutoSelectAll;
 
         if (applySelectAll) {
