@@ -14,8 +14,6 @@ namespace KamiToolKit.Nodes;
 
 public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldComponentDataTextInput> {
 
-    public delegate void TextInputVirtualFuncDelegate(AtkTextInput.AtkTextInputEventInterface* listener, TextSelectionInfo* numEvents);
-
     public readonly NineGridNode BackgroundNode;
     public readonly TextNode CurrentTextNode;
     public readonly CursorNode CursorNode;
