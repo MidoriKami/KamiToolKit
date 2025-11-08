@@ -162,16 +162,13 @@ public abstract unsafe partial class NodeBase {
             case AtkEventType.MouseOut:
                 AddFlags(NodeFlags.RespondToMouse);
                 break;
-            
+
             case AtkEventType.MouseDown:
             case AtkEventType.MouseUp:
             case AtkEventType.MouseMove:
             case AtkEventType.MouseWheel:
-                AddFlags(NodeFlags.HasCollision, NodeFlags.RespondToMouse);
-                break;
-                
             case AtkEventType.MouseClick:
-                AddFlags(NodeFlags.HasCollision);
+                AddFlags(NodeFlags.HasCollision, NodeFlags.RespondToMouse);
                 break;
             
             // Intentionally return to skip adding EmitsEvents for ButtonClick events
