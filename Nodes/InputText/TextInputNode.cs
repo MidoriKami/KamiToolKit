@@ -205,6 +205,12 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
     public bool AutoSelectAll { get; set; }
 
+    /// <summary>
+    /// If true (which is default), when pressing enter with nothing in the input,
+    /// the textbox will be unfocused
+    /// </summary>
+    public bool UnfocusOnEmptyCompletion { get; set; } = true;
+
     private void SetupVirtualTable() {
 
         // Note: This virtual table only has 5 entries, but we will make it have 10 in-case square enix adds another entry
@@ -246,8 +252,17 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    private void InputComplete()
-        => OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
+    private void InputComplete(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        if (atkEventData->InputData.State is not AtkEventData.AtkInputData.InputState.Down) return;
+
+        OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
+
+        var shouldClearFocus = !UnfocusOnEmptyCompletion && Component->UnkText1.Length > 0 || UnfocusOnEmptyCompletion;
+
+        if (ParentAddon is not null && shouldClearFocus) {
+            AtkStage.Instance()->AtkInputManager->SetFocus(null, ParentAddon, 0);
+        }
+    }
 
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
@@ -299,23 +314,5 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             .AddLabel(15, 0, AtkTimelineJumpBehavior.LoopForever, 101)
             .EndFrameSet()
             .Build());
-    }
-
-    [StructLayout(LayoutKind.Explicit, Size = 0x8)]
-    public struct AtkTextInputEventInterface {
-        [FieldOffset(0)] public AtkTextInputEventInterfaceVirtualTable* VirtualTable;
-    }
-
-    [StructLayout(LayoutKind.Explicit, Size = 0x8 * 5)]
-    public struct AtkTextInputEventInterfaceVirtualTable {
-        [FieldOffset(8)] public delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, TextSelectionInfo*, void> UpdateCursor;
-    }
-
-    [StructLayout(LayoutKind.Explicit, Size = 0x8)]
-    public struct TextSelectionInfo {
-        [FieldOffset(0x0)] public bool CharacterAdded;
-        [FieldOffset(0x2)] public ushort SelectionStart;
-        [FieldOffset(0x4)] public ushort SelectionEnd;
-        [FieldOffset(0x6)] public ushort StringLength;
     }
 }

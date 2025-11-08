@@ -46,7 +46,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         DisposeEvents();
 
-        ClearFocus();
+        AtkStage.Instance()->ClearNodeFocus(InternalResNode);
 
         // Automatically dispose any fields/properties that are managed nodes.
         VisitChildren(node => {
@@ -64,37 +64,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         GC.SuppressFinalize(this);
         CreatedNodes.Remove(this);
-    }
-
-    /// <summary>
-    ///     If our node is focused via AtkInputManager, change the focus to be the windows root node instead.
-    /// </summary>
-    private void ClearFocus() {
-        if (InternalResNode is null) return;
-
-        var inputManager = AtkStage.Instance()->AtkInputManager;
-        if (inputManager is null) return;
-
-        foreach (ref var focusEntry in inputManager->FocusList) {
-            if (focusEntry.AtkEventListener is null) continue;
-
-            // If this focus entry has our custom node focused, unfocus the node.
-            if (focusEntry.AtkEventTarget == InternalResNode) {
-                Log.Debug($"Custom Node was focused during dispose, Addon: {((AtkUnitBase*)focusEntry.AtkEventListener)->NameString}, unfocusing node.");
-                focusEntry.AtkEventTarget = null;
-                focusEntry.Unk10 = 0;
-                inputManager->FocusedNode = null;
-                AtkStage.Instance()->AtkCollisionManager->IntersectingCollisionNode = null;
-
-                var addon = (AtkUnitBase*) focusEntry.AtkEventListener;
-                foreach (ref var node in addon->AdditionalFocusableNodes) {
-                    if (node.Value == InternalResNode) {
-                        Log.Debug("Custom Node was an AdditionalFocusableNode, clearing.");
-                        node = null;
-                    }
-                }
-            }
-        }
     }
 
     /// <summary>
