@@ -232,8 +232,10 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         originalFunction(listener, numEvents);
 
         if (applySelectAll) {
-            Marshal.WriteInt16((nint)AtkStage.Instance()->AtkInputManager->TextInput, 222, 0);
-            Marshal.WriteInt16((nint)AtkStage.Instance()->AtkInputManager->TextInput, 224, (short)numEvents->StringLength);
+            ref var textInput = ref AtkStage.Instance()->AtkInputManager->TextInput;
+
+            textInput->SelectionStart = 0;
+            textInput->SelectionEnd = (short)numEvents->StringLength;
         }
 
         try {
