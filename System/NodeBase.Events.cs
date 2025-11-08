@@ -156,27 +156,28 @@ public abstract unsafe partial class NodeBase {
     }
     
     private void SetNodeEventFlags(AtkEventType eventType) {
-
         switch (eventType) {
+            // Hover events need to propagate down to trigger various timelines
             case AtkEventType.MouseOver:
             case AtkEventType.MouseOut:
-                AddFlags(NodeFlags.RespondToMouse);
+                AddFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse);
                 break;
 
+            // Any kind of direct interaction should be a blocking event
+            // set HasCollision to prevent events from propagating
             case AtkEventType.MouseDown:
             case AtkEventType.MouseUp:
             case AtkEventType.MouseMove:
             case AtkEventType.MouseWheel:
             case AtkEventType.MouseClick:
-                AddFlags(NodeFlags.HasCollision, NodeFlags.RespondToMouse);
+                AddFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision);
                 break;
             
-            // Intentionally return to skip adding EmitsEvents for ButtonClick events
+            // ButtonClick is mostly used as an event that native calls back to, when interacting with buttons
+            // We do not want to re-emit, or block events in this case
             case AtkEventType.ButtonClick:
-                return;
+                break;
         }
-
-        AddFlags(NodeFlags.EmitsEvents);
     }
 
     protected static void SetCursor(AddonCursorType cursor)
