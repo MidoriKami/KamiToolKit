@@ -9,6 +9,11 @@
         <Use_DalamudPackager>false</Use_DalamudPackager>
     </PropertyGroup>
 
+    <!-- Assets -->
+    <ItemGroup>
+        <Content Include="Assets\**\*.png" CopyToOutputDirectory="Always"/>
+    </ItemGroup>
+
     <!-- NuGet dependencies -->
     <ItemGroup>
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12"/>
