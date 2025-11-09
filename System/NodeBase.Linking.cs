@@ -60,11 +60,6 @@ public abstract unsafe partial class NodeBase {
         AttachNode(newTarget);
     }
 
-    internal void ReattachNode(NodeBase target) {
-        DetachNode();
-        AttachNode(target);
-    }
-
     internal void DetachNode() {
         NodeLinker.DetachNode(InternalResNode);
 
