@@ -1,12 +1,17 @@
-<Project Sdk="Dalamud.NET.Sdk/13.1.0">
+﻿<Project Sdk="Dalamud.NET.Sdk/13.1.0">
+    <!-- Project settings -->
     <PropertyGroup>
-        <Use_DalamudPackager>false</Use_DalamudPackager>
         <LangVersion>preview</LangVersion>
-        <DebugType>portable</DebugType>
     </PropertyGroup>
 
+    <!-- Dalamud.NET.Sdk settings -->
+    <PropertyGroup>
+        <Use_DalamudPackager>false</Use_DalamudPackager>
+    </PropertyGroup>
+
+    <!-- NuGet dependencies -->
     <ItemGroup>
-        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11"/>
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12"/>
     </ItemGroup>
 
     <ItemGroup>
