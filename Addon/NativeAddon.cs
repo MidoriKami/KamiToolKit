@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -47,6 +48,10 @@ public abstract unsafe partial class NativeAddon {
         if (currentAddonCount >= 225) {
             Log.Error($"ERROR: Current Addon Count is too high. Aborting allocation ({currentAddonCount}/250).");
             return;
+        }
+
+        if (InternalName.Length is 0) {
+            throw new NullReferenceException("InternalName is empty, this is not allowed.");
         }
 
         Log.Verbose($"[{InternalName}] Beginning Native Addon Allocation");
