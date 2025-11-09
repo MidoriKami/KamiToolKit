@@ -188,6 +188,6 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
             textInputComponent->SelectionEnd = cursorPos + 1;
         }
 
-        OnInputComplete?.Invoke(Component->UnkText1.AsSpan());
+        OnInputComplete?.Invoke(Component->EvaluatedString.AsSpan());
     }
 }

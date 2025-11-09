@@ -1,4 +1,4 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Extensions;
 
@@ -16,7 +16,7 @@ public static unsafe class AtkStageExtensions {
                 
                 // Clear the entry
                 focusEntry.AtkEventTarget = null;
-                focusEntry.Unk10 = 0;
+                focusEntry.FocusParam = 0;
                 
                 // Clear the input managers focused node
                 atkStage.AtkInputManager->FocusedNode = null;

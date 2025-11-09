@@ -97,6 +97,6 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
             textInputComponent->SelectionEnd = cursorPos + 1;
         }
 
-        OnInputComplete?.Invoke(Component->UnkText1.AsSpan());
+        OnInputComplete?.Invoke(Component->EvaluatedString.AsSpan());
     }
 }
