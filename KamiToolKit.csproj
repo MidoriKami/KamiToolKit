@@ -2,6 +2,7 @@
     <!-- Project settings -->
     <PropertyGroup>
         <LangVersion>preview</LangVersion>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
     </PropertyGroup>
 
     <!-- Dalamud.NET.Sdk settings -->
