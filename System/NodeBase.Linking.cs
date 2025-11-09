@@ -62,6 +62,7 @@ public abstract unsafe partial class NodeBase {
 
     internal void DetachNode() {
         NodeLinker.DetachNode(InternalResNode);
+        InternalResNode->ParentNode = null;
 
         if (ParentUldManager is not null) {
             VisitChildren(InternalResNode, pointer => {
