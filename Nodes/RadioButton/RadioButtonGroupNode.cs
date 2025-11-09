@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -17,15 +17,15 @@ public unsafe class RadioButtonGroupNode : SimpleComponentNode {
         BuildTimelines();
     }
 
-    public SeString? SelectedOption {
+    public ReadOnlySeString? SelectedOption {
         get => radioButtons.FirstOrDefault(button => button.IsSelected)?.SeString;
         set {
             if (value == null)
                 return;
 
             foreach (var radioButton in radioButtons) {
-                radioButton.IsChecked = radioButton.SeString.TextValue == value.TextValue;
-                radioButton.IsSelected = radioButton.SeString.TextValue == value.TextValue;
+                radioButton.IsChecked = radioButton.SeString == value;
+                radioButton.IsSelected = radioButton.SeString == value;
             }
 
             RecalculateLayout();
@@ -34,7 +34,7 @@ public unsafe class RadioButtonGroupNode : SimpleComponentNode {
 
     public float VerticalPadding { get; set; } = 2.0f;
 
-    public void AddButton(SeString label, Action callback) {
+    public void AddButton(ReadOnlySeString label, Action callback) {
         var newRadioButton = new RadioButtonNode {
             Height = 16.0f, IsVisible = true, SeString = label, Callback = callback,
         };
@@ -52,7 +52,7 @@ public unsafe class RadioButtonGroupNode : SimpleComponentNode {
         RecalculateLayout();
     }
 
-    public void RemoveButton(SeString label) {
+    public void RemoveButton(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.SeString == label);
         if (button is null) return;
 
@@ -159,7 +159,7 @@ public unsafe class RadioButtonGroupNode : SimpleComponentNode {
 
         public Action? Callback { get; set; }
 
-        public SeString SeString {
+        public ReadOnlySeString SeString {
             get => LabelNode.SeString;
             set {
                 LabelNode.SeString = value;

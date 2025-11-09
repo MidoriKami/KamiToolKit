@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
-using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -35,7 +35,7 @@ public unsafe class TextButtonNode : ButtonBase {
         InitializeComponentEvents();
     }
 
-    public SeString SeString {
+    public ReadOnlySeString SeString {
         get => LabelNode.SeString;
         set => LabelNode.SeString = value;
     }

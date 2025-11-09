@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
-using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -33,7 +33,7 @@ public class TreeListHeaderNode : ResNode {
         LabelNode.AttachNode(this);
     }
 
-    public SeString SeString {
+    public ReadOnlySeString SeString {
         get => LabelNode.SeString;
         set => LabelNode.SeString = value;
     }

@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -7,7 +6,6 @@ using KamiToolKit.Classes;
 using KamiToolKit.System;
 using Lumina.Text.ReadOnly;
 using Newtonsoft.Json;
-using SeStringBuilder = Lumina.Text.SeStringBuilder;
 
 namespace KamiToolKit.Nodes;
 
@@ -81,14 +79,12 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         set => Node->TextId = value;
     }
 
-    public SeString SeString {
-        get => Node->GetText().AsDalamudSeString();
-        set => Node->SetText(value.EncodeWithNullTerminator());
-    }
-
-    public ReadOnlySeString ReadOnlySeString {
+    public ReadOnlySeString SeString {
         get => Node->GetText().AsReadOnlySeString();
-        set => Node->SetText(new SeStringBuilder().Append(value).GetViewAsSpan());
+        set {
+            using var builder = new RentedSeStringBuilder();
+            Node->SetText(builder.Builder.Append(value).GetViewAsSpan());
+        }
     }
 
     [JsonProperty] public string String {
@@ -99,8 +95,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     public void SetNumber(int number, bool showCommas = false, bool showPlusSign = false, int digits = 0, bool zeroPad = false)
         => Node->SetNumber(number, showCommas, showPlusSign, (byte)digits, zeroPad);
 
-    public Vector2 GetTextDrawSize(SeString text) {
-        using var stringContainer = new Utf8String(text.TextValue);
+    public Vector2 GetTextDrawSize(ReadOnlySeString text) {
+        using var stringContainer = new Utf8String(text);
 
         ushort sizeX;
         ushort sizeY;

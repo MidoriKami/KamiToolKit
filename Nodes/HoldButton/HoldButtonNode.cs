@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -69,7 +69,7 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 
     public Action? OnClick { get; set; }
 
-    public SeString SeString {
+    public ReadOnlySeString SeString {
         get => TextNode.SeString;
         set => TextNode.SeString = value;
     }

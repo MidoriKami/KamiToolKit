@@ -1,9 +1,9 @@
 ﻿using System.Numerics;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
 using KamiToolKit.Widgets.Parts;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -44,7 +44,7 @@ public unsafe class ColorOptionTextButtonNode : ButtonBase {
         InitializeComponentEvents();
     }
 
-    public SeString SeString {
+    public ReadOnlySeString SeString {
         get => LabelNode.SeString;
         set => LabelNode.SeString = value;
     }

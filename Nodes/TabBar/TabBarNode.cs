@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes.TabBar;
 
@@ -15,7 +15,7 @@ public class TabBarNode : SimpleComponentNode {
         BuildTimelines();
     }
 
-    public void AddTab(SeString label, Action callback) {
+    public void AddTab(ReadOnlySeString label, Action callback) {
         var newButton = new TabBarRadioButtonNode {
             Height = Height, IsVisible = true, SeString = label, OnClick = callback,
         };
@@ -42,7 +42,7 @@ public class TabBarNode : SimpleComponentNode {
         button.IsSelected = true;
     }
 
-    public void RemoveTab(SeString label) {
+    public void RemoveTab(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.SeString == label);
         if (button is null) return;
 
