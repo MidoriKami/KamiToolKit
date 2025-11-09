@@ -14,7 +14,13 @@
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Content Include="Assets\**\*.png" CopyToOutputDirectory="Always"/>
+    <!-- FFXIVClientStructs -->
+    <PropertyGroup Condition="Exists('..\FFXIVClientStructs')">
+        <Use_Dalamud_FFXIVClientStructs>false</Use_Dalamud_FFXIVClientStructs>
+    </PropertyGroup>
+
+    <ItemGroup Condition="Exists('..\FFXIVClientStructs')">
+        <ProjectReference Include="..\FFXIVClientStructs\FFXIVClientStructs\FFXIVClientStructs.csproj" Private="True" />
+        <ProjectReference Include="..\FFXIVClientStructs\InteropGenerator.Runtime\InteropGenerator.Runtime.csproj" Private="True" />
     </ItemGroup>
 </Project>
