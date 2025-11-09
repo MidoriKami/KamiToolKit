@@ -140,7 +140,11 @@ internal static unsafe class NodeLinker {
 
             node->ParentNode = attachTargetNode;
             node->NextSiblingNode = currentNode;
-            currentNode->PrevSiblingNode = node;
+
+            if (currentNode is not null) {
+                currentNode->PrevSiblingNode = node;
+            }
+
             if (attachTargetNode->GetNodeType() is not NodeType.Component) {
                 attachTargetNode->ChildCount++;
             }
