@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dalamud.Game.Addon.Events;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
+using Lumina.Text.ReadOnly;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.System;
@@ -20,10 +20,10 @@ public abstract unsafe partial class NodeBase {
     private CustomEventListener? nodeEventListener;
     private Dictionary<AtkEventType, EventHandlerInfo> eventHandlers = [];
 
-    public virtual SeString? Tooltip {
+    public virtual ReadOnlySeString? Tooltip {
         get;
         set {
-            if (value is not null && !value.TextValue.IsNullOrEmpty()) {
+            if (value is not null && !value.ToString().IsNullOrEmpty()) {
                 field = value;
 
                 if (!TooltipRegistered) {
@@ -188,7 +188,7 @@ public abstract unsafe partial class NodeBase {
 
     public void ShowTooltip() {
         if (Tooltip is not null && TooltipRegistered && ParentAddon is not null) {
-            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, InternalResNode, Tooltip.Encode());
+            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, InternalResNode, Tooltip.ToString());
         }
     }
 

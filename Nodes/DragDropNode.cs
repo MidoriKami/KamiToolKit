@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Enums;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -8,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
+using Lumina.Text.ReadOnly;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
@@ -168,10 +168,10 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         }
     }
 
-    public override SeString? Tooltip {
+    public override ReadOnlySeString? Tooltip {
         get;
         set {
-            if (value is not null && !value.TextValue.IsNullOrEmpty()) {
+            if (value is not null && !value.ToString().IsNullOrEmpty()) {
                 field = value;
 
                 if (!TooltipRegistered) {

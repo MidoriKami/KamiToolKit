@@ -1,10 +1,10 @@
 using System;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -40,7 +40,7 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
         set => Component->ComponentTextData.MaxByte = value;
     }
 
-    public override SeString SeString {
+    public override ReadOnlySeString SeString {
         get => base.SeString;
         set {
             base.SeString = value;
@@ -58,7 +58,7 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
         }
     }
 
-    public override Action<SeString>? OnInputReceived {
+    public override Action<ReadOnlySeString>? OnInputReceived {
         get => base.OnInputReceived;
         set {
             base.OnInputReceived = _ => UpdateHeightForContent();
@@ -97,6 +97,6 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
             textInputComponent->SelectionEnd = cursorPos + 1;
         }
 
-        OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
+        OnInputComplete?.Invoke(Component->UnkText1.AsSpan());
     }
 }

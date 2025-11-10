@@ -17,7 +17,10 @@ public class TabBarNode : SimpleComponentNode {
 
     public void AddTab(ReadOnlySeString label, Action callback) {
         var newButton = new TabBarRadioButtonNode {
-            Height = Height, IsVisible = true, SeString = label, OnClick = callback,
+            Height = Height, 
+            IsVisible = true, 
+            SeString = label, 
+            OnClick = callback,
         };
 
         newButton.AddEvent(AtkEventType.ButtonClick, () => ClickHandler(newButton));

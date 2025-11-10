@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game.Text.SeStringHandling;
 using KamiToolKit.Nodes;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Widgets;
 
@@ -64,7 +64,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
 
     public required SearchUpdated OnSearchUpdated { get; set; }
 
-    private void SearchTextChanged(SeString newSearchString) {
+    private void SearchTextChanged(ReadOnlySeString newSearchString) {
         searchText = newSearchString.ToString();
         OnSearchUpdated(searchText);
     }

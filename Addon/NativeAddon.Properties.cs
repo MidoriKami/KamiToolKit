@@ -2,10 +2,10 @@
 using System.IO;
 using System.Numerics;
 using System.Text.Json;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Addon;
 
@@ -116,9 +116,9 @@ public abstract unsafe partial class NativeAddon {
 
     public required string InternalName { get; init; } = "NameNotSet";
 
-    public required SeString Title { get; set; } = "TitleNotSet";
+    public required ReadOnlySeString Title { get; set; } = "TitleNotSet";
 
-    public SeString Subtitle { get; set; } = string.Empty;
+    public ReadOnlySeString Subtitle { get; set; } = string.Empty;
 
     public required NativeController NativeController { get; init; }
 

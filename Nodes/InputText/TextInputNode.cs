@@ -2,13 +2,13 @@
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -158,9 +158,9 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    public virtual Action<SeString>? OnInputReceived { get; set; }
+    public virtual Action<ReadOnlySeString>? OnInputReceived { get; set; }
 
-    public virtual Action<SeString>? OnInputComplete { get; set; }
+    public virtual Action<ReadOnlySeString>? OnInputComplete { get; set; }
 
     public int MaxCharacters {
         get => (int)Component->ComponentTextData.MaxChar;
@@ -180,9 +180,9 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    public virtual SeString SeString {
-        get => SeString.Parse(Component->UnkText1);
-        set => Component->SetText(value.ToString());
+    public virtual ReadOnlySeString SeString {
+        get => Component->UnkText1.AsSpan();
+        set => Component->SetText(value);
     }
 
     public virtual string String {
@@ -245,7 +245,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
 
         try {
-            OnInputReceived?.Invoke(SeString.Parse(Component->UnkText1));
+            OnInputReceived?.Invoke(Component->UnkText1.AsSpan());
         }
         catch (Exception e) {
             Log.Exception(e);
@@ -255,7 +255,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     private void InputComplete(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
         if (atkEventData->InputData.State is not AtkEventData.AtkInputData.InputState.Down) return;
 
-        OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
+        OnInputComplete?.Invoke(Component->UnkText1.AsSpan());
 
         var shouldClearFocus = !UnfocusOnEmptyCompletion && Component->UnkText1.Length > 0 || UnfocusOnEmptyCompletion;
 

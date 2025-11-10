@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Numerics;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
 using KamiToolKit.Nodes;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Widgets.Parts;
 
@@ -59,7 +59,7 @@ public class ColorPreviewWithInput : SimpleComponentNode {
         }
     }
 
-    private void OnTextInputComplete(SeString obj) {
+    private void OnTextInputComplete(ReadOnlySeString obj) {
         if (!obj.ToString().StartsWith('#')) return;
 
         var hexString = obj.ToString().TrimStart('#');

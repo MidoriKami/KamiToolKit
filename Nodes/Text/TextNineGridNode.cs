@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
-using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -45,9 +45,9 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
         InitializeComponentEvents();
     }
 
-    public SeString SeString {
+    public ReadOnlySeString SeString {
         get => TextNode.String;
-        set => Component->SetText(value.ToString());
+        set => Component->SetText(value);
     }
 
     public string String {

@@ -36,7 +36,10 @@ public unsafe class RadioButtonGroupNode : SimpleComponentNode {
 
     public void AddButton(ReadOnlySeString label, Action callback) {
         var newRadioButton = new RadioButtonNode {
-            Height = 16.0f, IsVisible = true, SeString = label, Callback = callback,
+            Height = 16.0f, 
+            IsVisible = true, 
+            SeString = label, 
+            Callback = callback,
         };
 
         newRadioButton.AddEvent(AtkEventType.ButtonClick, () => ClickHandler(newRadioButton));

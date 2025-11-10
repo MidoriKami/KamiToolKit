@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
-using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -18,8 +18,8 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
 
     private bool isProgrammaticTextSet;
     
-    private SeString fullText = string.Empty;
-    private SeString lastDisplayedText = string.Empty;
+    private ReadOnlySeString fullText = string.Empty;
+    private ReadOnlySeString lastDisplayedText = string.Empty;
 
     public TextMultiLineInputNodeScrollable() {
         TextLimitsNode.AlignmentType = AlignmentType.BottomRight;
@@ -53,7 +53,7 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
     }
 
     public override string String {
-        get => fullText.TextValue;
+        get => fullText.ToString();
         set {
             isProgrammaticTextSet = true;
             fullText = value;
@@ -62,7 +62,7 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
         }
     }
 
-    public override SeString SeString {
+    public override ReadOnlySeString SeString {
         get => fullText;
         set {
             isProgrammaticTextSet = true;
@@ -72,7 +72,7 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
         }
     }
     
-    public override Action<SeString>? OnInputReceived {
+    public override Action<ReadOnlySeString>? OnInputReceived {
         get => base.OnInputReceived;
         set {
             base.OnInputReceived = currentComponentText => {
@@ -88,7 +88,7 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
     }
     
     private void OnMouseScrolled(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        var lines = fullText.TextValue.Split(['\r', '\n'], StringSplitOptions.None);
+        var lines = fullText.ToString().Split(['\r', '\n'], StringSplitOptions.None);
         var lineHeight = CurrentTextNode.LineSpacing;
         var maxVisibleLines = (int)(Height / lineHeight);
 
@@ -108,8 +108,8 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
     }
 
     private void ApplyDisplayChangesToFullText(string newDisplayedText) {
-        var lines = fullText.TextValue.Split(['\r', '\n'], StringSplitOptions.None).ToList();
-        var oldDisplayLines = lastDisplayedText.TextValue.Split(['\r', '\n'], StringSplitOptions.None);
+        var lines = fullText.ToString().Split(['\r', '\n'], StringSplitOptions.None).ToList();
+        var oldDisplayLines = lastDisplayedText.ToString().Split(['\r', '\n'], StringSplitOptions.None);
         var newDisplayLines = newDisplayedText.Split(['\r', '\n'], StringSplitOptions.None);
 
         if (startLineIndex < lines.Count) {
@@ -137,7 +137,7 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
     }
 
     private void UpdateLineCountDisplay() {
-        var lines = fullText.TextValue.Split(['\r', '\n'], StringSplitOptions.None);
+        var lines = fullText.ToString().Split(['\r', '\n'], StringSplitOptions.None);
         var lineHeight = CurrentTextNode.LineSpacing;
         var totalLines = lines.Length;
         var maxVisibleLines = (int)(Height / lineHeight);
@@ -153,7 +153,7 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
     }
 
     private void UpdateCurrentTextDisplay() {
-        var lines = fullText.TextValue.Split(['\r', '\n'], StringSplitOptions.None);
+        var lines = fullText.ToString().Split(['\r', '\n'], StringSplitOptions.None);
         var lineHeight = CurrentTextNode.LineSpacing;
         var maxVisibleLines = (int)(Height / lineHeight);
 
@@ -163,7 +163,7 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
 
         var displayText = startLineIndex > 0 && startLineIndex < lines.Length
             ? string.Join("\r", lines.Skip(startLineIndex).Take(maxVisibleLines))
-            : fullText.TextValue;
+            : fullText.ToString();
 
         lastDisplayedText = displayText;
         var capturedProgrammaticFlag = isProgrammaticTextSet;
@@ -188,6 +188,6 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
             textInputComponent->SelectionEnd = cursorPos + 1;
         }
 
-        OnInputComplete?.Invoke(SeString.Parse(Component->UnkText1));
+        OnInputComplete?.Invoke(Component->UnkText1.AsSpan());
     }
 }
