@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Numerics;
 using System.Text.Json;
@@ -118,7 +118,7 @@ public abstract unsafe partial class NativeAddon {
 
     public required ReadOnlySeString Title { get; set; } = "TitleNotSet";
 
-    public ReadOnlySeString Subtitle { get; set; } = string.Empty;
+    public ReadOnlySeString Subtitle { get; set; }
 
     public required NativeController NativeController { get; init; }
 

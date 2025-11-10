@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Utility;
@@ -23,7 +23,7 @@ public abstract unsafe partial class NodeBase {
     public virtual ReadOnlySeString? Tooltip {
         get;
         set {
-            if (value is not null && !value.ToString().IsNullOrEmpty()) {
+            if (value.HasValue && !value.Value.IsEmpty) {
                 field = value;
 
                 if (!TooltipRegistered) {
@@ -188,7 +188,8 @@ public abstract unsafe partial class NodeBase {
 
     public void ShowTooltip() {
         if (Tooltip is not null && TooltipRegistered && ParentAddon is not null) {
-            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, InternalResNode, Tooltip.ToString());
+            using var rssb = new RentedSeStringBuilder();
+            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, InternalResNode, rssb.Builder.Append(Tooltip).GetViewAsSpan());
         }
     }
 

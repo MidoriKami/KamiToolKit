@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Numerics;
 using Dalamud.Interface;
@@ -60,9 +60,10 @@ public class ColorPreviewWithInput : SimpleComponentNode {
     }
 
     private void OnTextInputComplete(ReadOnlySeString obj) {
-        if (!obj.ToString().StartsWith('#')) return;
+        var str = obj.ToString();
+        if (!str.StartsWith('#')) return;
 
-        var hexString = obj.ToString().TrimStart('#');
+        var hexString = str.TrimStart('#');
 
         var r = byte.Parse(hexString[0..2], NumberStyles.HexNumber);
         var g = byte.Parse(hexString[2..4], NumberStyles.HexNumber);
