@@ -106,6 +106,12 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         return new Vector2(sizeX, sizeY);
     }
 
-    public Vector2 GetTextDrawSize()
-        => GetTextDrawSize(SeString);
+    public Vector2 GetTextDrawSize() {
+        ushort sizeX;
+        ushort sizeY;
+
+        Node->GetTextDrawSize(&sizeX, &sizeY);
+
+        return new Vector2(sizeX, sizeY);
+    }
 }
