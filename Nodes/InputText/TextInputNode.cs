@@ -6,6 +6,7 @@ using Dalamud.Interface;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using InteropGenerator.Runtime;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 using Lumina.Text.ReadOnly;
@@ -249,7 +250,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
     private void SetupCallback() {
         pinnedFunction2 = OnCallback;
-        Component->Callback = (delegate* unmanaged<AtkUnitBase*, InputCallbackType, byte*, byte*, int, InputCallbackResult>)Marshal.GetFunctionPointerForDelegate(pinnedFunction2);
+        Component->Callback = (delegate* unmanaged<AtkUnitBase*, InputCallbackType, CStringPointer, CStringPointer, int, InputCallbackResult>)Marshal.GetFunctionPointerForDelegate(pinnedFunction2);
     }
 
     private void OnCursorChanged(AtkTextInput.AtkTextInputEventInterface* listener, AtkTextInput.TextSelectionInfo* numEvents) {
@@ -277,7 +278,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    private InputCallbackResult OnCallback(AtkUnitBase* addon, InputCallbackType type, byte* rawString, byte* evaluatedString, int eventKind) {
+    private InputCallbackResult OnCallback(AtkUnitBase* addon, InputCallbackType type, CStringPointer rawString, CStringPointer evaluatedString, int eventKind) {
         switch (type) {
             case InputCallbackType.Enter:
                 OnInputComplete?.Invoke(Component->EvaluatedString.AsSpan());
