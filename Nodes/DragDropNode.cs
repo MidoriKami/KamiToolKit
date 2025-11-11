@@ -1,6 +1,5 @@
 using System;
 using System.Numerics;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Enums;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -171,23 +170,21 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
     public override ReadOnlySeString? Tooltip {
         get;
         set {
-            if (value.HasValue && !value.Value.IsEmpty) {
-                field = value;
-
-                if (!TooltipRegistered) {
+            field = value;
+            switch (value) {
+                case { IsEmpty: false } when !TooltipRegistered:
                     AddEvent(AtkEventType.DragDropRollOver, ShowTooltip);
                     AddEvent(AtkEventType.DragDropRollOut, HideTooltip);
 
                     TooltipRegistered = true;
-                }
-            }
-            else if (value is null) {
-                if (TooltipRegistered) {
+                    break;
+
+                case null when TooltipRegistered:
                     RemoveEvent(AtkEventType.DragDropRollOver, ShowTooltip);
                     RemoveEvent(AtkEventType.DragDropRollOut, HideTooltip);
 
                     TooltipRegistered = false;
-                }
+                    break;
             }
         }
     }
