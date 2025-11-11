@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using Dalamud.Interface;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using InteropGenerator.Runtime;
 using KamiToolKit.Classes;
@@ -23,15 +24,10 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     public readonly TextNode TextLimitsNode;
     public readonly TextNode PlaceholderTextNode;
 
+    private AtkComponentInputBase.CallbackDelegate? pinnedCallbackFunction;
+
     public Action? OnFocused;
-
     public Action? OnUnfocused;
-
-    private delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, AtkTextInput.TextSelectionInfo*, void> originalFunction;
-    private AtkTextInput.AtkTextInputEventInterface.Delegates.UpdateTextSelection? pinnedFunction;
-    private AtkComponentInputBase.CallbackDelegate? pinnedFunction2;
-
-    private AtkTextInput.AtkTextInputEventInterface.AtkTextInputEventInterfaceVirtualTable* virtualTable;
 
     public TextInputNode() {
         SetInternalComponentType(ComponentType.TextInput);
@@ -130,18 +126,49 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
                 TextInputFlags.EnableDictionary | TextInputFlags.AllowNumberInput | TextInputFlags.AllowSymbolInput;
 
         EnableCompletion = false;
-        Component->EnableTabCallback = true; // doesn't seem to hurt
+        Component->EnableTabCallback = true;
 
         LoadTimelines();
 
-        SetupVirtualTable();
-        SetupCallback();
+        pinnedCallbackFunction = OnCallback;
+        Component->Callback = (delegate* unmanaged<AtkUnitBase*, InputCallbackType, CStringPointer, CStringPointer, int, InputCallbackResult>) Marshal.GetFunctionPointerForDelegate(pinnedCallbackFunction);
 
         InitializeComponentEvents();
 
         CollisionNode.AddEvent(AtkEventType.FocusStart, () => {
             PlaceholderTextNode.IsVisible = false;
             OnFocused?.Invoke();
+            
+            Log.Debug("Focus Started");
+
+            if (AutoSelectAll && Component->EvaluatedString.Length > 0) {
+                DalamudInterface.Instance.Framework.RunOnTick(() => {
+                    // Approach #1: Invoke the same function that is called when you press Control + A
+
+                    var modifiers = stackalloc byte[3];
+                    modifiers[0] = 1; // Control
+                    modifiers[1] = 0; // Shift
+                    modifiers[2] = 0; // Alt
+                    
+                    Experimental.Instance.ProcessKeyShortcutFunction?.Invoke(AtkStage.Instance()->AtkInputManager->TextInput, SeVirtualKey.A, modifiers);  
+                    
+                    // Approach #2: Invoke the SetTextSelection function, this will crash as-is, needs additional data to be set to work correctly.
+
+                    // var selectionInfo = stackalloc AtkTextInput.TextSelectionInfo[1];
+                    // selectionInfo->SelectionStart = 0;
+                    // selectionInfo->SelectionEnd = (ushort) Component->EvaluatedString.Length;
+                    // selectionInfo->StringLength = (ushort) Component->EvaluatedString.Length;
+                    //
+                    // Component->UpdateTextSelection(selectionInfo);
+                    
+                    // Approach #3: Set the selects directly, I don't think this will work, as the selection seems to need to be set in multiple systems to work.
+                    
+                    // ref var textInput = ref AtkStage.Instance()->AtkInputManager->TextInput;
+                    //
+                    // textInput->SelectionStart = 0;
+                    // textInput->SelectionEnd = (short)Component->EvaluatedString.Length;
+                }, delayTicks: 1);
+            }
         });
         
         CollisionNode.AddEvent(AtkEventType.FocusStop, () => {
@@ -153,20 +180,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         });
     }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing) {
-            base.Dispose(disposing, isNativeDestructor);
-
-            NativeMemoryHelper.Free(virtualTable, 0x8 * 10);
-            virtualTable = null;
-        }
-    }
-
     public bool IsFocused => AtkStage.Instance()->AtkInputManager->FocusedNode == CollisionNode.Node;
-
-    public virtual Action<ReadOnlySeString>? OnInputReceived { get; set; }
-
-    public virtual Action<ReadOnlySeString>? OnInputComplete { get; set; }
 
     public int MaxCharacters {
         get => (int)Component->ComponentTextData.MaxChar;
@@ -219,64 +233,19 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         set => FocusNode.MultiplyColor = value ? new Vector3(1.0f, 0.6f, 0.6f) : Vector3.One;
     }
 
-    public bool AutoSelectAll { get; set; }
-
-    /// <summary>
-    /// If true (which is default), when pressing enter with nothing in the input,
-    /// the textbox will be unfocused
-    /// </summary>
-    public bool UnfocusOnEmptyCompletion { get; set; } = true;
+    public bool AutoSelectAll { get; set; } = true;
 
     public void ClearFocus() {
-        if (IsFocused)
+        if (IsFocused) {
             AtkStage.Instance()->AtkInputManager->SetFocus(null, ParentAddon, 0);
-    }
-
-    private void SetupVirtualTable() {
-
-        // Note: This virtual table only has 5 entries, but we will make it have 10 in-case square enix adds another entry
-        var eventInterface = &Component->AtkTextInputEventInterface;
-
-        virtualTable = (AtkTextInput.AtkTextInputEventInterface.AtkTextInputEventInterfaceVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 10);
-        NativeMemory.Copy(eventInterface->VirtualTable, virtualTable, 0x8 * 10);
-
-        eventInterface->VirtualTable = virtualTable;
-
-        pinnedFunction = OnCursorChanged;
-
-        originalFunction = virtualTable->UpdateTextSelection;
-        virtualTable->UpdateTextSelection = (delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, AtkTextInput.TextSelectionInfo*, void>)Marshal.GetFunctionPointerForDelegate(pinnedFunction);
-    }
-
-    private void SetupCallback() {
-        pinnedFunction2 = OnCallback;
-        Component->Callback = (delegate* unmanaged<AtkUnitBase*, InputCallbackType, CStringPointer, CStringPointer, int, InputCallbackResult>)Marshal.GetFunctionPointerForDelegate(pinnedFunction2);
-    }
-
-    private void OnCursorChanged(AtkTextInput.AtkTextInputEventInterface* listener, AtkTextInput.TextSelectionInfo* numEvents) {
-        var applySelectAll = !FocusNode.IsVisible && AutoSelectAll;
-
-        if (applySelectAll) {
-            numEvents->SelectionStart = 0;
-            numEvents->SelectionEnd = numEvents->StringLength;
-        }
-
-        originalFunction(listener, numEvents);
-
-        if (applySelectAll) {
-            ref var textInput = ref AtkStage.Instance()->AtkInputManager->TextInput;
-
-            textInput->SelectionStart = 0;
-            textInput->SelectionEnd = (short)numEvents->StringLength;
-        }
-
-        try {
-            OnInputReceived?.Invoke(Component->EvaluatedString.AsSpan());
-        }
-        catch (Exception e) {
-            Log.Exception(e);
         }
     }
+
+    public virtual Action<ReadOnlySeString>? OnInputReceived { get; set; }
+    public virtual Action<ReadOnlySeString>? OnInputComplete { get; set; }
+    public Action? OnFocusLost { get; set; }
+    public Action? OnEscapeEntered { get; set; }
+    public Action? OnTabEntered { get; set; }
 
     private InputCallbackResult OnCallback(AtkUnitBase* addon, InputCallbackType type, CStringPointer rawString, CStringPointer evaluatedString, int eventKind) {
         switch (type) {
@@ -285,11 +254,20 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
                 ClearFocus();
                 break;
 
-            // TODO: forward the other events too
-            case InputCallbackType.Escape:
-            case InputCallbackType.FocusLost:
             case InputCallbackType.TextChanged:
+                OnInputReceived?.Invoke(Component->EvaluatedString.AsSpan());
+                break;
+
+            case InputCallbackType.Escape:
+                OnEscapeEntered?.Invoke();
+                break;
+
+            case InputCallbackType.FocusLost:
+                OnFocusLost?.Invoke();
+                break;
+
             case InputCallbackType.Tab:
+                OnTabEntered?.Invoke();
                 break;
         }
 

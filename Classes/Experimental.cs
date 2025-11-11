@@ -3,6 +3,7 @@ using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Classes;
 
@@ -16,6 +17,15 @@ public unsafe class Experimental {
     public void DisposeHooks() {
         ProcessCursorFlagsHook?.Dispose();
     }
+
+    // KeyModifiers:
+    // [0] = Control
+    // [1] = Shift
+    // [2] = Alt
+    public delegate bool ProcessKeyShortcutDelegate(AtkTextInput* textInput, SeVirtualKey a2, byte* keyModifiers);
+
+    [Signature("E8 ?? ?? ?? ?? 84 C0 0F 85 ?? ?? ?? ?? C6 44 24 ?? ??")]
+    public ProcessKeyShortcutDelegate? ProcessKeyShortcutFunction = null;
 
     public delegate void ProcessCursorFlagsDelegate(RaptureAtkUnitManager* unitManager);
 
