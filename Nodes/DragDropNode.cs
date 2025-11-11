@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Enums;
@@ -171,7 +171,7 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
     public override ReadOnlySeString? Tooltip {
         get;
         set {
-            if (value is not null && !value.ToString().IsNullOrEmpty()) {
+            if (value.HasValue && !value.Value.IsEmpty) {
                 field = value;
 
                 if (!TooltipRegistered) {

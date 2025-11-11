@@ -18,8 +18,8 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
 
     private bool isProgrammaticTextSet;
     
-    private ReadOnlySeString fullText = string.Empty;
-    private ReadOnlySeString lastDisplayedText = string.Empty;
+    private ReadOnlySeString fullText;
+    private ReadOnlySeString lastDisplayedText;
 
     public TextMultiLineInputNodeScrollable() {
         TextLimitsNode.AlignmentType = AlignmentType.BottomRight;
@@ -188,6 +188,6 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
             textInputComponent->SelectionEnd = cursorPos + 1;
         }
 
-        OnInputComplete?.Invoke(Component->UnkText1.AsSpan());
+        OnInputComplete?.Invoke(Component->EvaluatedString.AsSpan());
     }
 }

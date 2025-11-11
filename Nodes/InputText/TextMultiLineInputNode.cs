@@ -44,7 +44,7 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
         get => base.SeString;
         set {
             base.SeString = value;
-            PlaceholderTextNode.IsVisible = PlaceholderString is not null && value.ToString().IsNullOrEmpty();
+            PlaceholderTextNode.IsVisible = PlaceholderString is not null && value.IsEmpty;
             UpdateHeightForContent();
         }
     }
@@ -97,6 +97,6 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
             textInputComponent->SelectionEnd = cursorPos + 1;
         }
 
-        OnInputComplete?.Invoke(Component->UnkText1.AsSpan());
+        OnInputComplete?.Invoke(Component->EvaluatedString.AsSpan());
     }
 }

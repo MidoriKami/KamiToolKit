@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -98,8 +98,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     public Vector2 GetTextDrawSize(ReadOnlySeString text) {
         using var stringContainer = new Utf8String(text);
 
-        ushort sizeX;
-        ushort sizeY;
+        ushort sizeX = 0;
+        ushort sizeY = 0;
 
         Node->GetTextDrawSize(&sizeX, &sizeY, stringContainer.StringPtr);
 
@@ -107,8 +107,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     }
 
     public Vector2 GetTextDrawSize() {
-        ushort sizeX;
-        ushort sizeY;
+        ushort sizeX = 0;
+        ushort sizeY = 0;
 
         Node->GetTextDrawSize(&sizeX, &sizeY);
 

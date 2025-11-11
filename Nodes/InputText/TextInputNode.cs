@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -6,6 +6,7 @@ using Dalamud.Interface;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using InteropGenerator.Runtime;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.TimelineBuilding;
 using Lumina.Text.ReadOnly;
@@ -28,6 +29,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
     private delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, AtkTextInput.TextSelectionInfo*, void> originalFunction;
     private AtkTextInput.AtkTextInputEventInterface.Delegates.UpdateTextSelection? pinnedFunction;
+    private AtkComponentInputBase.CallbackDelegate? pinnedFunction2;
 
     private AtkTextInput.AtkTextInputEventInterface.AtkTextInputEventInterfaceVirtualTable* virtualTable;
 
@@ -127,13 +129,15 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         Flags = TextInputFlags.EnableIme | TextInputFlags.AllowUpperCase | TextInputFlags.AllowLowerCase | 
                 TextInputFlags.EnableDictionary | TextInputFlags.AllowNumberInput | TextInputFlags.AllowSymbolInput;
 
+        EnableCompletion = false;
+        Component->EnableTabCallback = true; // doesn't seem to hurt
+
         LoadTimelines();
 
         SetupVirtualTable();
+        SetupCallback();
 
         InitializeComponentEvents();
-
-        CollisionNode.AddEvent(AtkEventType.InputReceived, InputComplete);
 
         CollisionNode.AddEvent(AtkEventType.FocusStart, () => {
             PlaceholderTextNode.IsVisible = false;
@@ -158,6 +162,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
+    public bool IsFocused => AtkStage.Instance()->AtkInputManager->FocusedNode == CollisionNode.Node;
+
     public virtual Action<ReadOnlySeString>? OnInputReceived { get; set; }
 
     public virtual Action<ReadOnlySeString>? OnInputComplete { get; set; }
@@ -180,13 +186,23 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
+    public bool EnableCompletion {
+        get => Component->EnableCompletion;
+        set => Component->EnableCompletion = value;
+    }
+
+    public bool EnableFocusSounds {
+        get => Component->EnableFocusSounds;
+        set => Component->EnableFocusSounds = value;
+    }
+
     public virtual ReadOnlySeString SeString {
-        get => Component->UnkText1.AsSpan();
+        get => Component->EvaluatedString.AsSpan();
         set => Component->SetText(value);
     }
 
     public virtual string String {
-        get => Component->UnkText1.ToString();
+        get => SeString.ToString();
         set => Component->SetText(value);
     }
 
@@ -211,6 +227,11 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     /// </summary>
     public bool UnfocusOnEmptyCompletion { get; set; } = true;
 
+    public void ClearFocus() {
+        if (IsFocused)
+            AtkStage.Instance()->AtkInputManager->SetFocus(null, ParentAddon, 0);
+    }
+
     private void SetupVirtualTable() {
 
         // Note: This virtual table only has 5 entries, but we will make it have 10 in-case square enix adds another entry
@@ -226,7 +247,12 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         originalFunction = virtualTable->UpdateTextSelection;
         virtualTable->UpdateTextSelection = (delegate* unmanaged<AtkTextInput.AtkTextInputEventInterface*, AtkTextInput.TextSelectionInfo*, void>)Marshal.GetFunctionPointerForDelegate(pinnedFunction);
     }
-    
+
+    private void SetupCallback() {
+        pinnedFunction2 = OnCallback;
+        Component->Callback = (delegate* unmanaged<AtkUnitBase*, InputCallbackType, CStringPointer, CStringPointer, int, InputCallbackResult>)Marshal.GetFunctionPointerForDelegate(pinnedFunction2);
+    }
+
     private void OnCursorChanged(AtkTextInput.AtkTextInputEventInterface* listener, AtkTextInput.TextSelectionInfo* numEvents) {
         var applySelectAll = !FocusNode.IsVisible && AutoSelectAll;
 
@@ -245,23 +271,29 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
 
         try {
-            OnInputReceived?.Invoke(Component->UnkText1.AsSpan());
+            OnInputReceived?.Invoke(Component->EvaluatedString.AsSpan());
         }
         catch (Exception e) {
             Log.Exception(e);
         }
     }
 
-    private void InputComplete(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        if (atkEventData->InputData.State is not AtkEventData.AtkInputData.InputState.Down) return;
+    private InputCallbackResult OnCallback(AtkUnitBase* addon, InputCallbackType type, CStringPointer rawString, CStringPointer evaluatedString, int eventKind) {
+        switch (type) {
+            case InputCallbackType.Enter:
+                OnInputComplete?.Invoke(Component->EvaluatedString.AsSpan());
+                ClearFocus();
+                break;
 
-        OnInputComplete?.Invoke(Component->UnkText1.AsSpan());
-
-        var shouldClearFocus = !UnfocusOnEmptyCompletion && Component->UnkText1.Length > 0 || UnfocusOnEmptyCompletion;
-
-        if (ParentAddon is not null && shouldClearFocus) {
-            AtkStage.Instance()->AtkInputManager->SetFocus(null, ParentAddon, 0);
+            // TODO: forward the other events too
+            case InputCallbackType.Escape:
+            case InputCallbackType.FocusLost:
+            case InputCallbackType.TextChanged:
+            case InputCallbackType.Tab:
+                break;
         }
+
+        return InputCallbackResult.None;
     }
 
     protected override void OnSizeChanged() {
