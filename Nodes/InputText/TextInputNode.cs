@@ -138,8 +138,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         CollisionNode.AddEvent(AtkEventType.FocusStart, () => {
             PlaceholderTextNode.IsVisible = false;
             OnFocused?.Invoke();
-            
-            Log.Debug("Focus Started");
 
             if (AutoSelectAll && Component->EvaluatedString.Length > 0) {
                 DalamudInterface.Instance.Framework.RunOnTick(() => {
