@@ -143,12 +143,11 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
                 DalamudInterface.Instance.Framework.RunOnTick(() => {
                     // Approach #1: Invoke the same function that is called when you press Control + A
 
-                    var modifiers = stackalloc byte[3];
-                    modifiers[0] = 1; // Control
-                    modifiers[1] = 0; // Shift
-                    modifiers[2] = 0; // Alt
-                    
-                    Experimental.Instance.ProcessKeyShortcutFunction?.Invoke(AtkStage.Instance()->AtkInputManager->TextInput, SeVirtualKey.A, modifiers);  
+                    var keyModifiers = new Experimental.KeyModifiers {
+                        IsControlDown = true,
+                    };
+
+                    Experimental.Instance.ProcessKeyShortcutFunction?.Invoke(AtkStage.Instance()->AtkInputManager->TextInput, SeVirtualKey.A, &keyModifiers);  
                     
                     // Approach #2: Invoke the SetTextSelection function, this will crash as-is, needs additional data to be set to work correctly.
 
