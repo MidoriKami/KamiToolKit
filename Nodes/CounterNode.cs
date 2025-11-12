@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Globalization;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
@@ -87,12 +88,12 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
 
     public int Number {
         get => int.Parse(Node->NodeText.ToString());
-        set => Node->SetNumber(value);
+        set => String = value.ToString();
     }
 
     public string String {
         get => Node->NodeText.ToString();
-        set => Node->SetText($"{int.Parse(value):n0}");
+        set => Node->SetText($"{int.Parse(value, CultureInfo.InvariantCulture):n0}");
     }
 
     public CounterFont Font {
