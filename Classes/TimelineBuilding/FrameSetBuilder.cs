@@ -111,7 +111,10 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 
     public FrameSetBuilder AddLabelPair(int frameStart, int frameStop, int labelId) {
         labelKeyFrames.Add(new TimelineLabelSetKeyFrame {
-            FrameIndex = frameStart, GroupType = AtkTimelineKeyGroupType.Label, JumpBehavior = AtkTimelineJumpBehavior.Start, LabelId = labelId,
+            FrameIndex = frameStart,
+            GroupType = AtkTimelineKeyGroupType.Label, 
+            JumpBehavior = AtkTimelineJumpBehavior.Start, 
+            LabelId = labelId,
         });
 
         labelKeyFrames.Add(new TimelineLabelSetKeyFrame {
