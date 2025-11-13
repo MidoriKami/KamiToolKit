@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
@@ -93,7 +94,10 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
 
     public ReadOnlySeString String {
         get => Node->NodeText.ToString();
-        set => Node->SetText(value);
+        set {
+            using var builder = new RentedSeStringBuilder();
+            Node->SetText(builder.Builder.Append(value).GetViewAsSpan());
+        }
     }
 
     public CounterFont Font {
