@@ -88,12 +88,12 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
 
     public int Number {
         get => int.Parse(Node->NodeText.ToString());
-        set => String = value.ToString();
+        set => String = DalamudInterface.Instance.SeStringEvaluator.EvaluateFromAddon(18, [ value ]).ToString();
     }
 
     public string String {
         get => Node->NodeText.ToString();
-        set => Node->SetText($"{int.Parse(value, CultureInfo.InvariantCulture):n0}");
+        set => Node->SetText(value);
     }
 
     public CounterFont Font {
