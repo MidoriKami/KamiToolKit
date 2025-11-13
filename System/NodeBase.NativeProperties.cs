@@ -116,7 +116,7 @@ public abstract unsafe partial class NodeBase {
         set => InternalResNode->SetOrigin(value.X, value.Y);
     }
 
-    [JsonProperty] public virtual bool IsVisible {
+    [JsonProperty] public bool IsVisible {
         get => InternalResNode->IsVisible();
         set {
             InternalResNode->ToggleVisibility(value);
