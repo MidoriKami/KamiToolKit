@@ -35,6 +35,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         if (disposing) {
             if (!isNativeDestructor) {
                 PartsList.Dispose();
+                Node->PartsList = null;
             }
 
             base.Dispose(disposing, isNativeDestructor);
