@@ -140,6 +140,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
         InternalResNode->Type = nodeType;
         InternalResNode->NodeId = NodeIdBase + CurrentOffset++;
+        IsVisible = true;
 
         if (InternalResNode is null) {
             throw new Exception($"Unable to allocate memory for {typeof(T)}");
