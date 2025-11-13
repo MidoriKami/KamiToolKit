@@ -64,7 +64,7 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
         IconNode.AttachNode(this);
 
         LabelTextNode = new TextNode {
-            TextFlags = TextFlags.Ellipsis,
+            TextFlags = TextFlags.Ellipsis | TextFlags.Emboss,
             FontSize = 14,
             LineSpacing = 14,
             AlignmentType = AlignmentType.BottomLeft,
@@ -75,7 +75,7 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
         LabelTextNode.AttachNode(this);
 
         SubLabelTextNode = new TextNode {
-            TextFlags = TextFlags.Ellipsis,
+            TextFlags = TextFlags.Ellipsis | TextFlags.Emboss,
             FontSize = 12,
             LineSpacing = 12,
             AlignmentType = AlignmentType.TopLeft,
@@ -85,6 +85,7 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
         SubLabelTextNode.AttachNode(this);
 
         IdTextNode = new TextNode {
+            TextFlags = TextFlags.Emboss,
             FontSize = 10,
             AlignmentType = AlignmentType.BottomRight,
             TextColor = KnownColor.Gray.Vector(),
