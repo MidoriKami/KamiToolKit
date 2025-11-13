@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,7 +12,7 @@ public abstract partial class NodeBase {
 
     private static int indent;
     
-    private void VisitChildren(Action<NodeBase?> visitAction, [CallerMemberName] string? callerName = null, bool enableLogging = false) {
+    private void VisitChildren(Action<NodeBase> visitAction, [CallerMemberName] string? callerName = null, bool enableLogging = false) {
         ThreadSafety.AssertMainThread("This function must be invoked from the main thread.");
 
         try {
@@ -25,7 +25,7 @@ public abstract partial class NodeBase {
 
             if (NativeController.ChildMembers.TryGetValue(callingType, out var members)) {
                 foreach (var memberInfo in members) {
-                    if (GetNode(memberInfo, this) is { } node) {
+                    if (GetNode(memberInfo, this) is { } node && node != this) {
                         visitAction(node);
                         node.VisitChildren(visitAction);
                     }
@@ -34,7 +34,7 @@ public abstract partial class NodeBase {
 
             if (NativeController.EnumerableMembers.TryGetValue(callingType, out var enumerableMembers)) {
                 foreach (var node in enumerableMembers.SelectMany(member => GetEnumerable(member, this) ?? [])) {
-                    if (node is not null) {
+                    if (node is not null && node != this) {
                         visitAction(node);
                         node.VisitChildren(visitAction);
                     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
@@ -49,9 +49,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         AtkStage.Instance()->ClearNodeFocus(InternalResNode);
 
         // Automatically dispose any fields/properties that are managed nodes.
-        VisitChildren(node => {
-            node?.Dispose();
-        });
+        VisitChildren(node => node.Dispose());
 
         TryForceDetach(false);
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,8 +23,8 @@ namespace KamiToolKit;
 /// </summary>
 public unsafe class NativeController : IDisposable {
 
-    internal static readonly ConcurrentDictionary<Type, List<MemberInfo>> ChildMembers = [];
-    internal static readonly ConcurrentDictionary<Type, List<MemberInfo>> EnumerableMembers = [];
+    internal static readonly ConcurrentDictionary<Type, MemberInfo[]> ChildMembers = [];
+    internal static readonly ConcurrentDictionary<Type, MemberInfo[]> EnumerableMembers = [];
     
     public NativeController(IDalamudPluginInterface pluginInterface) {
         pluginInterface.Inject(this);
@@ -152,12 +152,12 @@ public unsafe class NativeController : IDisposable {
             Log.Verbose($"Generating TypeMap for: {type}");
             
             var members = GetMembers(type);
-            if (members.Count is not 0) {
+            if (members.Length is not 0) {
                 ChildMembers.TryAdd(type, members);
             }
 
             var enumerableMembers = GetEnumerables(type);
-            if (enumerableMembers.Count is not 0) {
+            if (enumerableMembers.Length is not 0) {
                 EnumerableMembers.TryAdd(type, enumerableMembers);
             }
         }
@@ -175,12 +175,12 @@ public unsafe class NativeController : IDisposable {
             Log.Verbose($"Generating TypeMap for: {type}");
             
             var members = GetMembers(type);
-            if (members.Count is not 0) {
+            if (members.Length is not 0) {
                 ChildMembers.TryAdd(type, members);
             }
 
             var enumerableMembers = GetEnumerables(type);
-            if (enumerableMembers.Count is not 0) {
+            if (enumerableMembers.Length is not 0) {
                 EnumerableMembers.TryAdd(type, enumerableMembers);
             }
         }
@@ -188,22 +188,22 @@ public unsafe class NativeController : IDisposable {
         stopwatch.LogTime("CALLER ASSEMBLY");
     }
     
-    private static List<MemberInfo> GetMembers(Type type) {
+    private static MemberInfo[] GetMembers(Type type) {
         var members = type.GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
         var targetMembers = members.Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property);
         var assignableMembers = targetMembers.Where(member => typeof(NodeBase).IsAssignableFrom(GetMemberType(member)));
         var indexableMembers = assignableMembers.Where(IsMemberSingleIndexable);
-        var finalList = indexableMembers.ToList();
+        var finalList = indexableMembers.ToArray();
         
         return finalList;
     }
 
-    private static List<MemberInfo> GetEnumerables(Type type) {
+    private static MemberInfo[] GetEnumerables(Type type) {
         var members = type.GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
         var targetMembers = members.Where(member => member.MemberType is MemberTypes.Field or MemberTypes.Property);
         var enumerableMembers = targetMembers.Where(IsEnumerableOrArray);
         var indexableMembers = enumerableMembers.Where(IsMemberSingleIndexable);
-        var finalList = indexableMembers.ToList();
+        var finalList = indexableMembers.ToArray();
         
         return finalList;
     }
@@ -240,14 +240,14 @@ public unsafe class NativeController : IDisposable {
 
         if (!ChildMembers.ContainsKey(type)) {
             var members = GetMembers(type);
-            if (members.Count is not 0) {
+            if (members.Length is not 0) {
                 ChildMembers.TryAdd(type, members);
             }
         }
 
         if (!EnumerableMembers.ContainsKey(type)) {
             var enumerableMembers = GetEnumerables(type);
-            if (enumerableMembers.Count is not 0) {
+            if (enumerableMembers.Length is not 0) {
                 EnumerableMembers.TryAdd(type, enumerableMembers);
             }
         }
