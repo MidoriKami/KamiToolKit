@@ -3,6 +3,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
 using KamiToolKit.System;
+using Lumina.Text.ReadOnly;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
@@ -87,10 +88,10 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
 
     public int Number {
         get => int.Parse(Node->NodeText.ToString());
-        set => String = DalamudInterface.Instance.SeStringEvaluator.EvaluateFromAddon(18, [ value ]).ToString();
+        set => String = DalamudInterface.Instance.SeStringEvaluator.EvaluateFromAddon(18, [ value ]);
     }
 
-    public string String {
+    public ReadOnlySeString String {
         get => Node->NodeText.ToString();
         set => Node->SetText(value);
     }
