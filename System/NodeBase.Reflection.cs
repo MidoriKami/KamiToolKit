@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,7 +12,7 @@ public abstract partial class NodeBase {
 
     private static int indent;
     
-    private void VisitChildren(Action<NodeBase?> visitAction, [CallerMemberName] string? callerName = null, bool enableLogging = false) {
+    private void VisitChildren(Action<NodeBase> visitAction, [CallerMemberName] string? callerName = null, bool enableLogging = false) {
         ThreadSafety.AssertMainThread("This function must be invoked from the main thread.");
 
         try {
