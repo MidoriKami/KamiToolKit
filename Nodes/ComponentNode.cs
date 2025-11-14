@@ -9,8 +9,6 @@ public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComp
     public abstract AtkComponentBase* ComponentBase { get; }
     public abstract AtkUldComponentDataBase* DataBase { get; }
     public abstract AtkComponentNode* InternalComponentNode { get; }
-
-    internal uint NodeIdOffset = 1;
 }
 
 public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable where TU : unmanaged {

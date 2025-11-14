@@ -32,7 +32,11 @@ public abstract unsafe partial class NodeBase {
     [OverloadResolutionPriority(2)] 
     internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
         NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
-        NodeId = (uint)target.ChildCount + target.NodeIdOffset + 1;
+
+        if (NodeId > NodeIdBase) {
+            NodeId = GetMaxNodeId(target) + 1;
+        }
+
         UpdateNative();
     }
 
@@ -150,4 +154,15 @@ public abstract unsafe partial class NodeBase {
 
     private AtkUnitBase* GetAddonForNode(AtkResNode* node)
         => RaptureAtkUnitManager.Instance()->GetAddonByNode(node);
+
+    private uint GetMaxNodeId(ComponentNode node) {
+        uint max = 1;
+        foreach (var child in node.ComponentBase->UldManager.Nodes) {
+            if (child.Value is null) continue;
+
+            max = Math.Max(child.Value->NodeId, max);
+        }
+
+        return max;
+    }
 }
