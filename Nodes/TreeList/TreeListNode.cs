@@ -32,6 +32,7 @@ public class TreeListNode : SimpleComponentNode {
 
         children.Add(node);
 
+        node.NodeId = (uint)children.Count + 1;
         node.Width = childContainer.Width;
         node.Y = childContainer.Height;
         node.AttachNode(childContainer);
@@ -48,6 +49,7 @@ public class TreeListNode : SimpleComponentNode {
 
             child.Y = childContainer.Height;
             childContainer.Height += child.Height + CategoryVerticalSpacing;
+            child.UpdateChildrenNodeId();
         }
 
         OnLayoutUpdate?.Invoke(childContainer.Height);

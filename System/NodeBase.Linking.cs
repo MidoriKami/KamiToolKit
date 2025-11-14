@@ -27,10 +27,6 @@ public abstract unsafe partial class NodeBase {
 
         NodeLinker.AttachNode(InternalResNode, target, position);
 
-        if (NodeId > NodeIdBase) {
-            NodeId = GetMaxNodeId(target) + 1;
-        }
-
         UpdateNative();
     }
 
@@ -173,27 +169,6 @@ public abstract unsafe partial class NodeBase {
             if (child.Value is null) continue;
 
             max = Math.Max(child.Value->NodeId, max);
-        }
-
-        return max;
-    }
-
-    private uint GetMaxNodeId(NodeBase node) {
-        var parentUldManager = GetUldManagerForNode(node);
-        if (parentUldManager is not null) {
-            return GetMaxNodeId(parentUldManager);
-        }
-
-        uint max = 1;
-
-        var currentNode = node.InternalResNode;
-        while (currentNode is not null) {
-
-            if (node.NodeId < NodeIdBase) {
-                max = Math.Max(currentNode->NodeId, max);
-            }
-            
-            currentNode = currentNode->PrevSiblingNode;
         }
 
         return max;

@@ -12,7 +12,6 @@ public unsafe class SliderBackgroundButtonNode : ComponentNode<AtkComponentButto
         SetInternalComponentType(ComponentType.Button);
 
         BackgroundTexture = new SimpleNineGridNode {
-            NodeId = 2,
             TexturePath = "ui/uld/SliderGaugeHorizontalA.tex",
             TextureCoordinates = new Vector2(16.0f, 0.0f),
             TextureSize = new Vector2(40.0f, 8.0f),

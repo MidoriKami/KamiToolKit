@@ -17,13 +17,10 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
     public SliderNode() {
         SetInternalComponentType(ComponentType.Slider);
 
-        SliderBackgroundButtonNode = new SliderBackgroundButtonNode {
-            NodeId = 5, 
-        };
+        SliderBackgroundButtonNode = new SliderBackgroundButtonNode();
         SliderBackgroundButtonNode.AttachNode(this);
 
         ProgressTextureNode = new SimpleNineGridNode {
-            NodeId = 4,
             TexturePath = "ui/uld/SliderGaugeHorizontalA.tex",
             TextureCoordinates = new Vector2(16.0f, 8.0f),
             TextureSize = new Vector2(40.0f, 7.0f),
@@ -35,13 +32,11 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         ProgressTextureNode.AttachNode(this);
 
         SliderForegroundButtonNode = new SliderForegroundButtonNode {
-            NodeId = 3, 
             Size = new Vector2(16.0f, 16.0f), 
         };
         SliderForegroundButtonNode.AttachNode(this);
 
         ValueNode = new TextNode {
-            NodeId = 2,
             Size = new Vector2(24.0f, 16.0f),
             FontType = FontType.Axis,
             FontSize = 12,
@@ -51,7 +46,6 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         ValueNode.AttachNode(this);
 
         FloatValueNode = new TextNode {
-            NodeId = 6,
             Size = new Vector2(24.0f, 16.0f),
             IsVisible = false,
             FontType = FontType.Axis,

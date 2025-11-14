@@ -16,34 +16,29 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
         SetInternalComponentType(ComponentType.RadioButton);
 
         UnselectedNineGridNode = new SimpleNineGridNode {
-            NodeId = 4,
             Position = new Vector2(-2.0f, -1.0f),
             TexturePath = "ui/uld/TabButtonA.tex",
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             TextureSize = new Vector2(88.0f, 26.0f),
             LeftOffset = 16,
             RightOffset = 16,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         UnselectedNineGridNode.AttachNode(this);
 
         SelectedNineGridNode = new SimpleNineGridNode {
-            NodeId = 3,
             Position = new Vector2(-2.0f, -1.0f),
             TexturePath = "ui/uld/TabButtonA.tex",
             TextureCoordinates = new Vector2(0.0f, 26.0f),
             TextureSize = new Vector2(88.0f, 26.0f),
             LeftOffset = 16,
             RightOffset = 16,
-            NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            IsVisible = false,
         };
         SelectedNineGridNode.AttachNode(this);
 
         LabelNode = new TextNode {
-            NodeId = 2,
             Position = new Vector2(13.0f, 2.0f),
             AlignmentType = AlignmentType.Center,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         LabelNode.AttachNode(this);
 
