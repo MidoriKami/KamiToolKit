@@ -23,7 +23,7 @@ internal class ResizeButtonNode : SimpleComponentNode {
             Origin = new Vector2(8.0f, 8.0f),
             NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
-            ImageNodeFlags = direction is ResizeDirection.BottomRight ? ImageNodeFlags.FlipV : (ImageNodeFlags)0x3,
+            ImageNodeFlags = direction is ResizeDirection.BottomRight ? ImageNodeFlags.FlipV : ImageNodeFlags.FlipH | ImageNodeFlags.FlipV,
         };
         UnselectedImageNode.AttachNode(this);
 
@@ -35,7 +35,7 @@ internal class ResizeButtonNode : SimpleComponentNode {
             Origin = new Vector2(8.0f, 8.0f),
             NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
-            ImageNodeFlags = direction is ResizeDirection.BottomRight ? ImageNodeFlags.FlipV : (ImageNodeFlags)0x3,
+            ImageNodeFlags = direction is ResizeDirection.BottomRight ? ImageNodeFlags.FlipV : ImageNodeFlags.FlipH | ImageNodeFlags.FlipV,
         };
         SelectedImageNode.AttachNode(this);
     }
