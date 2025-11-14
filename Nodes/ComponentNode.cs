@@ -63,12 +63,13 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
                 NativeMemoryHelper.UiFree(Data);
                 Data = null;
 
+                ComponentBase->Deinitialize();
                 ComponentBase->Dtor(1);
                 Node->Component = null;
             }
-
-            base.Dispose(disposing, isNativeDestructor);
         }
+
+        base.Dispose(disposing, isNativeDestructor);
     }
 
     public static implicit operator AtkEventListener*(ComponentNode<T, TU> node) => &node.ComponentBase->AtkEventListener;
