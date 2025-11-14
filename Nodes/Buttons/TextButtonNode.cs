@@ -15,14 +15,12 @@ public unsafe class TextButtonNode : ButtonBase {
             TextureSize = new Vector2(100.0f, 28.0f),
             LeftOffset = 16.0f,
             RightOffset = 16.0f,
-            NodeId = 2,
         };
         BackgroundNode.AttachNode(this);
 
         LabelNode = new TextNode {
             AlignmentType = AlignmentType.Center, 
             Position = new Vector2(16.0f, 3.0f), 
-            NodeId = 3,
         };
         LabelNode.AttachNode(this);
 
