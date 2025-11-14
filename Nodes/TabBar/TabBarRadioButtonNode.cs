@@ -35,7 +35,7 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
             TextureSize = new Vector2(88.0f, 26.0f),
             LeftOffset = 16,
             RightOffset = 16,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         SelectedNineGridNode.AttachNode(this);
 

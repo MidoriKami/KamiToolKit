@@ -130,7 +130,7 @@ public unsafe class RadioButtonGroupNode : SimpleComponentNode {
                 TextureCoordinates = new Vector2(16.0f, 0.0f),
                 TextureSize = new Vector2(16.0f, 16.0f),
                 Size = new Vector2(16.0f, 16.0f),
-                NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+                NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
                 WrapMode = WrapMode.Tile,
             };
             SelectedImageNode.AttachNode(this);
