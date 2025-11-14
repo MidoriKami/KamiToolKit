@@ -16,7 +16,6 @@ internal class ResizeButtonNode : SimpleComponentNode {
         resizeDirection = direction;
 
         UnselectedImageNode = new SimpleImageNode {
-            NodeId = 3,
             TexturePath = "ui/uld/ChatLog.tex",
             TextureCoordinates = new Vector2(32.0f, 34.0f),
             TextureSize = new Vector2(18.0f, 18.0f),
@@ -29,7 +28,6 @@ internal class ResizeButtonNode : SimpleComponentNode {
         UnselectedImageNode.AttachNode(this);
 
         SelectedImageNode = new SimpleImageNode {
-            NodeId = 2,
             TexturePath = "ui/uld/ChatLog.tex",
             TextureCoordinates = new Vector2(4.0f, 34.0f),
             TextureSize = new Vector2(18.0f, 18.0f),

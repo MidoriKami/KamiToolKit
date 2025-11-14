@@ -14,15 +14,11 @@ public unsafe class ColorOptionTextButtonNode : ButtonBase {
     public readonly ColorPreviewNode ColorNode;
 
     public ColorOptionTextButtonNode() {
-        Data->Nodes[0] = 3;
-        Data->Nodes[1] = 2;
-
         BackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/ButtonA.tex",
             TextureSize = new Vector2(100.0f, 28.0f),
             LeftOffset = 16.0f,
             RightOffset = 16.0f,
-            NodeId = 2,
         };
         BackgroundNode.AttachNode(this);
 
@@ -34,12 +30,14 @@ public unsafe class ColorOptionTextButtonNode : ButtonBase {
         LabelNode = new TextNode {
             AlignmentType = AlignmentType.Center, 
             Position = new Vector2(16.0f, 3.0f), 
-            NodeId = 3,
         };
 
         LabelNode.AttachNode(this);
 
         LoadTimelines();
+
+        Data->Nodes[0] = LabelNode.NodeId;
+        Data->Nodes[1] = BackgroundNode.NodeId;
 
         InitializeComponentEvents();
     }
