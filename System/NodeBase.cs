@@ -158,6 +158,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             if (!isNativeDestructor) {
+                DetachNode();
                 InternalResNode->Destroy(true);
             }
 
