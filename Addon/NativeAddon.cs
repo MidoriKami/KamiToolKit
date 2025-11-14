@@ -68,7 +68,9 @@ public abstract unsafe partial class NativeAddon {
             NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
         };
 
-        WindowNode = new WindowNode();
+        WindowNode = new WindowNode {
+            NodeId = 2,
+        };
 
         InternalAddon->NameString = GetInternalNameSafe();
 
