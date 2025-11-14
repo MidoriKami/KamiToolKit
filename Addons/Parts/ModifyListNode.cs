@@ -173,6 +173,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         }
 
         foreach (var node in listNode.ContentNode.GetNodes<BaseSearchInfoNode<T>>()) {
+            node.Size = new Vector2(listNode.ContentNode.Width, 48.0f);
             node.Refresh();
         }
     }
