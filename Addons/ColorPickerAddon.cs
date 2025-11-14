@@ -49,7 +49,6 @@ public class ColorPickerAddon : NativeAddon {
 
         if (DefaultHsvaColor is { } defaultColor) {
             defaultColorPreview = new ColorOptionTextButtonNode {
-                
                 Size = new Vector2(100.0f, 24.0f),
                 Position = ContentStartPosition + new Vector2(ContentSize.X / 2.0f - 50.0f, ContentSize.Y - 24.0f),
                 String = "Default",

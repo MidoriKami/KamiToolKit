@@ -94,7 +94,6 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
         Width = listNode!.ContentNode.Width,
         Height = 48.0f,
         Option = option,
-        
         OnClicked = OnOptionClicked,
     };
 

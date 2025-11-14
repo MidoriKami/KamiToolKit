@@ -163,7 +163,6 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
             Size = new Vector2(listNode.ContentNode.Width, 48.0f),
             OnClicked = OnOptionClicked,
             Option = data,
-            
         });
 
         listNode.ContentNode.RecalculateLayout();
