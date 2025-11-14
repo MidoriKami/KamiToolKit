@@ -178,6 +178,24 @@ public abstract unsafe partial class NodeBase {
         return max;
     }
 
-    private uint GetMaxNodeId(NodeBase node)
-        => GetMaxNodeId(GetUldManagerForNode(node));
+    private uint GetMaxNodeId(NodeBase node) {
+        var parentUldManager = GetUldManagerForNode(node);
+        if (parentUldManager is not null) {
+            return GetMaxNodeId(parentUldManager);
+        }
+
+        uint max = 1;
+
+        var currentNode = node.InternalResNode;
+        while (currentNode is not null) {
+
+            if (node.NodeId < NodeIdBase) {
+                max = Math.Max(currentNode->NodeId, max);
+            }
+            
+            currentNode = currentNode->PrevSiblingNode;
+        }
+
+        return max;
+    }
 }
