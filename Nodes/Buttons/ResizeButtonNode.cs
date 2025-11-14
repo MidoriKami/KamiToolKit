@@ -33,7 +33,7 @@ internal class ResizeButtonNode : SimpleComponentNode {
             TextureSize = new Vector2(18.0f, 18.0f),
             Size = new Vector2(16.0f, 16.0f),
             Origin = new Vector2(8.0f, 8.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
             ImageNodeFlags = direction is ResizeDirection.BottomRight ? ImageNodeFlags.FlipV : (ImageNodeFlags)0x3,
         };
