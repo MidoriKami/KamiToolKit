@@ -26,6 +26,11 @@ public abstract unsafe partial class NodeBase {
         }
 
         NodeLinker.AttachNode(InternalResNode, target, position);
+
+        if (NodeId > NodeIdBase) {
+            NodeId = GetMaxNodeId(target) + 1;
+        }
+
         UpdateNative();
     }
 
@@ -34,7 +39,7 @@ public abstract unsafe partial class NodeBase {
         NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
 
         if (NodeId > NodeIdBase) {
-            NodeId = GetMaxNodeId(target) + 1;
+            NodeId = GetMaxNodeId(&target.ComponentBase->UldManager) + 1;
         }
 
         UpdateNative();
@@ -57,6 +62,11 @@ public abstract unsafe partial class NodeBase {
 
     internal void AttachNode(NativeAddon addon, NodePosition position = NodePosition.AsLastChild) {
         NodeLinker.AttachNode(InternalResNode, addon.InternalAddon->RootNode, position);
+        
+        if (NodeId > NodeIdBase) {
+            NodeId = GetMaxNodeId(&addon.InternalAddon->UldManager) + 1;
+        }
+        
         UpdateNative();
     }
 
@@ -155,9 +165,11 @@ public abstract unsafe partial class NodeBase {
     private AtkUnitBase* GetAddonForNode(AtkResNode* node)
         => RaptureAtkUnitManager.Instance()->GetAddonByNode(node);
 
-    private uint GetMaxNodeId(ComponentNode node) {
+    private uint GetMaxNodeId(AtkUldManager* uldManager) {
+        if (uldManager is null) return 0;
+        
         uint max = 1;
-        foreach (var child in node.ComponentBase->UldManager.Nodes) {
+        foreach (var child in uldManager->Nodes) {
             if (child.Value is null) continue;
 
             max = Math.Max(child.Value->NodeId, max);
@@ -165,4 +177,7 @@ public abstract unsafe partial class NodeBase {
 
         return max;
     }
+
+    private uint GetMaxNodeId(NodeBase node)
+        => GetMaxNodeId(GetUldManagerForNode(node));
 }
