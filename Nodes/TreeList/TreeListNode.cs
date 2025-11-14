@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace KamiToolKit.Nodes;
 
-public class TreeListNode : ResNode {
+public class TreeListNode : SimpleComponentNode {
 
     private readonly SimpleComponentNode childContainer;
 
