@@ -34,6 +34,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         };
 
         CollisionNode.InternalResNode->ParentNode = InternalResNode;
+        CollisionNode.ParentUldManager = &((AtkComponentBase*)Component)->UldManager;
 
         componentBase->OwnerNode = Node;
         componentBase->ComponentFlags = 1;
@@ -67,9 +68,9 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
                 ComponentBase->Dtor(1);
                 Node->Component = null;
             }
-        }
 
-        base.Dispose(disposing, isNativeDestructor);
+            base.Dispose(disposing, isNativeDestructor);
+        }
     }
 
     public static implicit operator AtkEventListener*(ComponentNode<T, TU> node) => &node.ComponentBase->AtkEventListener;

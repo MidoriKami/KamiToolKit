@@ -11,7 +11,7 @@ namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
 
-    private AtkUldManager* ParentUldManager { get; set; }
+    internal AtkUldManager* ParentUldManager { get; set; }
 
     internal void AttachNode(AtkResNode* target, NodePosition position = NodePosition.AsLastChild) {
         NodeLinker.AttachNode(InternalResNode, target, position);
