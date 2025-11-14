@@ -1,4 +1,4 @@
-﻿using FFXIVClientStructs.FFXIV.Client.System.Memory;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
@@ -64,6 +64,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
                 Data = null;
 
                 ComponentBase->Dtor(1);
+                Node->Component = null;
             }
 
             base.Dispose(disposing, isNativeDestructor);
