@@ -31,7 +31,6 @@ public unsafe class PartsList : IDisposable {
                     part.UldAsset->AtkTexture.ReleaseTexture();
                     part.UldAsset->AtkTexture.KernelTexture = null;
                     part.UldAsset->AtkTexture.TextureType = 0;
-                    part.UldAsset->AtkTexture.Destroy(true);
                 }
 
                 NativeMemoryHelper.UiFree(part.UldAsset);

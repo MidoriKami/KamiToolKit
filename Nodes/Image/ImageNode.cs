@@ -1,4 +1,4 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
 using KamiToolKit.System;
@@ -19,6 +19,7 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
         if (disposing) {
             if (!isNativeDestructor) {
                 PartsList.Dispose();
+                Node->PartsList = null;
             }
 
             base.Dispose(disposing, isNativeDestructor);

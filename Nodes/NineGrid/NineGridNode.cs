@@ -19,6 +19,7 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
         if (disposing) {
             if (!isNativeDestructor) {
                 PartsList.Dispose();
+                Node->PartsList = null;
             }
 
             base.Dispose(disposing, isNativeDestructor);
