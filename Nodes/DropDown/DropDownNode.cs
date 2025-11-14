@@ -17,7 +17,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
     protected DropDownNode() {
         BackgroundNode = new SimpleNineGridNode {
-            NodeId = 2,
             TexturePath = "ui/uld/DropDownA.tex",
             TextureSize = new Vector2(44.0f, 23.0f),
             TextureCoordinates = new Vector2(0.0f, 0.0f),
@@ -29,7 +28,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         BackgroundNode.AttachNode(this);
 
         CollapseArrowNode = new SimpleImageNode {
-            NodeId = 3,
             TexturePath = "ui/uld/DropDownA.tex",
             TextureCoordinates = new Vector2(44.0f, 0.0f),
             TextureSize = new Vector2(12.0f, 12.0f),
@@ -40,7 +38,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         CollapseArrowNode.AttachNode(this);
 
         LabelNode = new TextNode {
-            NodeId = 4,
             Position = new Vector2(20.0f, 0.0f),
             Size = new Vector2(218.0f, 21.0f),
             FontType = FontType.Axis,
@@ -54,16 +51,14 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         LabelNode.AttachNode(this);
 
         OptionListNode = new T {
-            NodeId = 5,
+            NodeId = NodeIdBase,
             Position = new Vector2(4.0f, 21.0f), 
             Size = new Vector2(242.0f, 243.0f), 
             IsVisible = false,
         };
         OptionListNode.AttachNode(this);
 
-        DropDownFocusCollisionNode = new CollisionNode {
-            NodeId = 6,
-        };
+        DropDownFocusCollisionNode = new CollisionNode();
         DropDownFocusCollisionNode.AttachNode(OptionListNode.CollisionNode, NodePosition.AfterTarget);
 
         DropDownFocusCollisionNode.AddEvent(AtkEventType.MouseDown, Toggle);
