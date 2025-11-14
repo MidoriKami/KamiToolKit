@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.TimelineBuilding;
 using Lumina.Text.ReadOnly;
@@ -15,11 +16,13 @@ public class TabBarNode : SimpleComponentNode {
         BuildTimelines();
     }
 
-    public void AddTab(ReadOnlySeString label, Action callback) {
+    public void AddTab(ReadOnlySeString label, Action callback, bool isEnabled = true) {
         var newButton = new TabBarRadioButtonNode {
             Height = Height, 
             SeString = label, 
             OnClick = callback,
+            IsEnabled = isEnabled,
+            MultiplyColor = isEnabled ? Vector3.One : new Vector3(0.6f, 0.6f, 0.6f),
         };
 
         newButton.AddEvent(AtkEventType.ButtonClick, () => ClickHandler(newButton));
@@ -44,6 +47,36 @@ public class TabBarNode : SimpleComponentNode {
         button.IsSelected = true;
     }
 
+    public void DisableTab(ReadOnlySeString label) {
+        var button = radioButtons.FirstOrDefault(button => button.SeString == label);
+        if (button is null) return;
+
+        button.IsEnabled = false;
+        button.MultiplyColor = new Vector3(0.6f, 0.6f, 0.6f);
+    }
+
+    public void EnableTab(ReadOnlySeString label) {
+        var button = radioButtons.FirstOrDefault(button => button.SeString == label);
+        if (button is null) return;
+
+        button.IsEnabled = true;
+        button.MultiplyColor = Vector3.One;
+    }
+
+    public void ToggleTab(ReadOnlySeString label) {
+        var button = radioButtons.FirstOrDefault(button => button.SeString == label);
+        if (button is null) return;
+
+        button.IsEnabled = !button.IsEnabled;
+
+        if (button.IsEnabled) {
+            button.MultiplyColor = Vector3.One;
+        }
+        else {
+            button.MultiplyColor = new Vector3(0.6f, 0.6f, 0.6f);
+        }
+    }
+    
     public void RemoveTab(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.SeString == label);
         if (button is null) return;
