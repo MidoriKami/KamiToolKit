@@ -11,11 +11,12 @@ using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class TreeListCategoryNode : SimpleComponentNode {
+public unsafe class TreeListCategoryNode : ResNode {
 
     public readonly NineGridNode BackgroundNode;
     public readonly SimpleComponentNode ChildContainer;
     public readonly ImageNode CollapseArrowNode;
+    public readonly CollisionNode CollisionNode;
     public readonly TextNode LabelNode;
 
     private List<NodeBase> children = [];
@@ -27,6 +28,11 @@ public unsafe class TreeListCategoryNode : SimpleComponentNode {
     public Action<bool>? OnToggle;
 
     public TreeListCategoryNode() {
+        CollisionNode = new CollisionNode {
+            Height = 28.0f, 
+        };
+        CollisionNode.AttachNode(this);
+
         BackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/ListItemB.tex",
             TextureSize = new Vector2(48.0f, 28.0f),
@@ -165,7 +171,6 @@ public unsafe class TreeListCategoryNode : SimpleComponentNode {
         LabelNode.Width = Width - 23.0f;
         ChildContainer.Width = Width;
         CollisionNode.Width = Width;
-        CollisionNode.Height = 28.0f;
 
         foreach (var node in children) {
             node.Width = Width;
