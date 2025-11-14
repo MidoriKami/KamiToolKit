@@ -12,7 +12,6 @@ public unsafe class EnemyCastProgressBarNode : SimpleComponentNode {
     
     public EnemyCastProgressBarNode() {
         BackgroundImageNode = new SimpleNineGridNode {
-            NodeId = 2,
             TexturePath = "ui/uld/PartyList_GaugeCast.tex",
             TextureSize = new Vector2(204.0f, 20.0f),
             TextureCoordinates = new Vector2(0.0f, 12.0f),
@@ -22,7 +21,6 @@ public unsafe class EnemyCastProgressBarNode : SimpleComponentNode {
         BackgroundImageNode.AttachNode(this);
 
         ProgressNode = new SimpleNineGridNode {
-            NodeId = 3,
             TexturePath = "ui/uld/PartyList_GaugeCast.tex",
             TextureSize = new Vector2(188.0f, 7.0f),
             TextureCoordinates = new Vector2(8.0f, 3.0f),

@@ -15,7 +15,6 @@ public unsafe class CastBarProgressBarNode : SimpleComponentNode {
 
     public CastBarProgressBarNode() {
         BackgroundImageNode = new SimpleNineGridNode {
-            NodeId = 2,
             TexturePath = "ui/uld/Parameter_Gauge.tex",
             TextureSize = new Vector2(160.0f, 20.0f),
             TextureCoordinates = new Vector2(0.0f, 100.0f),
@@ -25,7 +24,6 @@ public unsafe class CastBarProgressBarNode : SimpleComponentNode {
         BackgroundImageNode.AttachNode(this);
 
         ProgressNode = new SimpleNineGridNode {
-            NodeId = 3,
             TexturePath = "ui/uld/Parameter_Gauge.tex",
             TextureSize = new Vector2(160.0f, 20.0f),
             TextureCoordinates = new Vector2(0.0f, 40.0f),
@@ -37,7 +35,6 @@ public unsafe class CastBarProgressBarNode : SimpleComponentNode {
         ProgressNode.AttachNode(this);
         
         BorderImageNode = new SimpleNineGridNode {
-            NodeId = 4,
             TexturePath = "ui/uld/Parameter_Gauge.tex",
             TextureSize = new Vector2(160.0f, 20.0f),
             TextureCoordinates = new Vector2(0.0f, 0.0f),

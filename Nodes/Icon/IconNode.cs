@@ -19,7 +19,6 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
             NodeId = 20,
             Size = new Vector2(40.0f, 40.0f),
             Position = new Vector2(2.0f, 3.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
             ImageNodeFlags = ImageNodeFlags.AutoFit,
         };
@@ -29,7 +28,6 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
             NodeId = 6, 
             Size = new Vector2(60, 60), 
             Position = new Vector2(-2.0f, 0.0f), 
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         IconExtras.AttachNode(this);
 
@@ -37,7 +35,6 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
             NodeId = 4, 
             Size = new Vector2(18.0f, 18.0f), 
             Position = new Vector2(27.0f, 11.0f), 
-            NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         IconIndicator1.AttachNode(this);
 
@@ -45,7 +42,6 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
             NodeId = 2, 
             Size = new Vector2(18.0f, 18.0f), 
             Position = new Vector2(27.0f, -2.0f), 
-            NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         IconIndicator2.AttachNode(this);
 

@@ -9,7 +9,6 @@ public class ProgressBarNode : SimpleComponentNode {
 
     public ProgressBarNode() {
         BackgroundNode = new SimpleNineGridNode {
-            NodeId = 2,
             TexturePath = "ui/uld/ToDoList.tex",
             TextureCoordinates = new Vector2(108.0f, 8.0f),
             TextureSize = new Vector2(44.0f, 12.0f),
@@ -19,7 +18,6 @@ public class ProgressBarNode : SimpleComponentNode {
         BackgroundNode.AttachNode(this);
 
         ForegroundNode = new SimpleNineGridNode {
-            NodeId = 3,
             TexturePath = "ui/uld/ToDoList.tex",
             TextureCoordinates = new Vector2(112.0f, 0.0f),
             TextureSize = new Vector2(40.0f, 8.0f),

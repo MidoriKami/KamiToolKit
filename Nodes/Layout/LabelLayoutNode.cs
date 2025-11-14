@@ -12,7 +12,6 @@ public class LabelLayoutNode : LayoutListNode {
         
         var labelNode = Nodes[0];
         
-        
         var labelNodeWidth = labelNode.Width;
         labelNode.Position = new Vector2(0.0f, 0.0f);
 
