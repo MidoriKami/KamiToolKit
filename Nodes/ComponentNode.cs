@@ -9,6 +9,8 @@ public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComp
     public abstract AtkComponentBase* ComponentBase { get; }
     public abstract AtkUldComponentDataBase* DataBase { get; }
     public abstract AtkComponentNode* InternalComponentNode { get; }
+
+    internal uint NodeIdOffset = 1;
 }
 
 public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable where TU : unmanaged {
@@ -19,7 +21,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     public override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*)Data;
     public override AtkComponentNode* InternalComponentNode => (AtkComponentNode*)InternalResNode;
 
-    protected ComponentNode() : base((NodeType)1001) {
+    protected ComponentNode() : base(NodeType.Component) {
         Component = NativeMemoryHelper.Create<T>();
         var componentBase = (AtkComponentBase*)Component;
 

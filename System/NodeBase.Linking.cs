@@ -32,6 +32,7 @@ public abstract unsafe partial class NodeBase {
     [OverloadResolutionPriority(2)] 
     internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
         NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
+        NodeId = (uint)target.ChildCount + target.NodeIdOffset + 1;
         UpdateNative();
     }
 
