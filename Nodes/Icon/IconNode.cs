@@ -29,7 +29,7 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
             NodeId = 6, 
             Size = new Vector2(60, 60), 
             Position = new Vector2(-2.0f, 0.0f), 
-            NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         IconExtras.AttachNode(this);
 
