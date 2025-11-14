@@ -14,7 +14,6 @@ public class CursorNode : ResNode {
             Size = new Vector2(4.0f, 24.0f),
             TextureCoordinates = new Vector2(68.0f, 0.0f),
             TextureSize = new Vector2(4.0f, 24.0f),
-            IsVisible = true,
             WrapMode = WrapMode.Tile,
         };
         CursorImageNode.AttachNode(this);

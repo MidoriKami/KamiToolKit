@@ -29,20 +29,17 @@ public abstract unsafe class ListNode<T> : ListNode {
             BottomOffset = 12,
             LeftOffset = 10,
             RightOffset = 10,
-            IsVisible = true,
         };
         BackgroundNode.AttachNode(this);
 
         ContainerNode = new ResNode {
-            NodeFlags = NodeFlags.Clip,
-            IsVisible = true,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Clip,
         };
         ContainerNode.AttachNode(this);
 
         ScrollBarNode = new ScrollBarNode {
             Position = new Vector2(0.0f, 9.0f), 
             Size = new Vector2(8.0f, 0.0f), 
-            IsVisible = true, 
             OnValueChanged = OnScrollUpdate,
             HideWhenDisabled = true,
         };
@@ -145,7 +142,7 @@ public abstract unsafe class ListNode<T> : ListNode {
                 NodeId = (uint)index,
                 Size = new Vector2(Width - 25.0f, NodeHeight),
                 Position = new Vector2(8.0f, NodeHeight * index + 9.0f),
-                IsVisible = true,
+                
                 Label = $"Button {index}",
                 OnClick = () => OnOptionClick(index),
             };

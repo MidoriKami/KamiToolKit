@@ -99,7 +99,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     public void AddDummy(float size = 0.0f) {
         var dummyNode = new ResNode {
-            Size = new Vector2(size, size), IsVisible = true,
+            Size = new Vector2(size, size),
         };
 
         AddNode(dummyNode);

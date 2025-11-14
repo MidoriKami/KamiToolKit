@@ -25,7 +25,7 @@ public unsafe class IconExtras : ResNode {
             NodeId = 19,
             Size = new Vector2(40.0f, 40.0f),
             Position = new Vector2(4.0f, 4.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
             ImageNodeFlags = ImageNodeFlags.AutoFit,
         };
@@ -34,7 +34,7 @@ public unsafe class IconExtras : ResNode {
         CooldownNode = new CooldownNode {
             NodeId = 16, 
             Size = new Vector2(48.0f, 48.0f), 
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         CooldownNode.AttachNode(this);
 
@@ -42,14 +42,14 @@ public unsafe class IconExtras : ResNode {
             NodeId = 14, 
             Size = new Vector2(44.0f, 48.0f),
             Position = new Vector2(2.0f, 0.0f), 
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         AlternateCooldownNode.AttachNode(this);
 
         AntsNode = new AntsNode {
             NodeId = 12, 
             Size = new Vector2(48.0f, 48.0f), 
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         AntsNode.AttachNode(this);
 
@@ -57,7 +57,7 @@ public unsafe class IconExtras : ResNode {
             NodeId = 11,
             Size = new Vector2(72.0f, 72.0f),
             Position = new Vector2(-12.0f, -12.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             PartId = 16,
             WrapMode = WrapMode.Tile,
         };
@@ -70,7 +70,7 @@ public unsafe class IconExtras : ResNode {
             NodeId = 10,
             Size = new Vector2(20.0f, 20.0f),
             Position = new Vector2(28.0f, 28.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
         };
 
@@ -90,7 +90,7 @@ public unsafe class IconExtras : ResNode {
             NodeId = 9,
             Size = new Vector2(40.0f, 12.0f),
             Position = new Vector2(4.0f, 34.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             Color = ColorHelper.GetColor(50),
             TextOutlineColor = ColorHelper.GetColor(51),
             AlignmentType = AlignmentType.Right,
@@ -102,7 +102,7 @@ public unsafe class IconExtras : ResNode {
             NodeId = 8,
             Size = new Vector2(48.0f, 12.0f),
             Position = new Vector2(3.0f, 37.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             Color = ColorHelper.GetColor(50),
             TextOutlineColor = ColorHelper.GetColor(51),
             AlignmentType = AlignmentType.Left,
@@ -114,7 +114,7 @@ public unsafe class IconExtras : ResNode {
             Size = new Vector2(64, 64),
             Position = new Vector2(-8.0f, -8.0f),
             Origin = new Vector2(32.0f, 32.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
             PartId = 17,
         };

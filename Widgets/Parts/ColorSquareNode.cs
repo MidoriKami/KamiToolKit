@@ -14,14 +14,12 @@ public class ColorSquareNode : SimpleComponentNode {
 
     public ColorSquareNode() {
         WhiteGradientNode = new ImGuiImageNode {
-            IsVisible = true,
             TexturePath = DalamudInterface.Instance.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
             FitTexture = true,
         };
         WhiteGradientNode.AttachNode(this);
         
         ColorGradientNode = new ImGuiImageNode {
-            IsVisible = true,
             TexturePath = DalamudInterface.Instance.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
             FitTexture = true,
             ImageNodeFlags = ImageNodeFlags.FlipH,
@@ -29,7 +27,6 @@ public class ColorSquareNode : SimpleComponentNode {
         ColorGradientNode.AttachNode(this);
 
         BlackGradientNode = new ImGuiImageNode {
-            IsVisible = true,
             TexturePath = DalamudInterface.Instance.GetAssetPath("VerticalGradient_AlphaToBlack.png"),
             FitTexture = true,
         };
@@ -37,7 +34,6 @@ public class ColorSquareNode : SimpleComponentNode {
         
         ColorDotNode = new ImGuiImageNode {
             TexturePath = DalamudInterface.Instance.GetAssetPath("color_select_dot.png"),
-            IsVisible = true,
             FitTexture = true,
         };
         ColorDotNode.AttachNode(this);

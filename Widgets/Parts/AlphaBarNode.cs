@@ -20,14 +20,12 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
 
         AlphaBarBackgroundNode = new ImGuiImageNode {
             TexturePath = DalamudInterface.Instance.GetAssetPath("alpha_background.png"),
-            IsVisible = true,
             WrapMode = WrapMode.Tile,
         };
         AlphaBarBackgroundNode.AttachNode(this);
 
         AlphaBarGradientNode = new ImGuiImageNode {
             TexturePath = DalamudInterface.Instance.GetAssetPath("VerticalGradient_WhiteToAlpha.png"),
-            IsVisible = true,
             FitTexture = true,
         };
         AlphaBarGradientNode.AttachNode(this);
@@ -35,7 +33,6 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
 
         AlphaBarSelectorNode = new ImGuiImageNode {
             TexturePath = DalamudInterface.Instance.GetAssetPath("alpha_selector.png"),
-            IsVisible = true,
             FitTexture = true,
         };
         AlphaBarSelectorNode.AttachNode(this);

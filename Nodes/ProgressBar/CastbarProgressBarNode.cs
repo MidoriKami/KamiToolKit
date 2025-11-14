@@ -21,7 +21,6 @@ public unsafe class CastBarProgressBarNode : SimpleComponentNode {
             TextureCoordinates = new Vector2(0.0f, 100.0f),
             LeftOffset = 20,
             RightOffset = 20,
-            IsVisible = true,
         };
         BackgroundImageNode.AttachNode(this);
 
@@ -34,7 +33,6 @@ public unsafe class CastBarProgressBarNode : SimpleComponentNode {
             AddColor = KnownColor.Yellow.Vector().AsVector3Color() / 255.0f,
             LeftOffset = 10,
             RightOffset = 10,
-            IsVisible = true,
         };
         ProgressNode.AttachNode(this);
         
@@ -45,7 +43,6 @@ public unsafe class CastBarProgressBarNode : SimpleComponentNode {
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             LeftOffset = 20,
             RightOffset = 20,
-            IsVisible = true,
         };
         BorderImageNode.AttachNode(this);
     }

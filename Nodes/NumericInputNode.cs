@@ -25,7 +25,6 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
             TextureSize = new Vector2(24.0f, 24.0f),
             Height = 24.0f,
             Offsets = new Vector4(10.0f),
-            IsVisible = true,
         };
         BackgroundNode.AttachNode(this);
 
@@ -35,7 +34,6 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
             TextureCoordinates = new Vector2(28.0f, 0.0f),
             TextureSize = new Vector2(28.0f, 28.0f),
             Size = new Vector2(28.0f, 28.0f),
-            IsVisible = true,
         };
         AddButton.AttachNode(this);
 
@@ -45,7 +43,6 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             TextureSize = new Vector2(28.0f, 28.0f),
             Size = new Vector2(28.0f, 28.0f),
-            IsVisible = true,
         };
         SubtractButton.AttachNode(this);
 
@@ -55,7 +52,6 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
             FontType = FontType.Axis,
             FontSize = 12,
             AlignmentType = AlignmentType.Top,
-            IsVisible = true,
             String = "999",
         };
         ValueTextNode.AttachNode(this);
@@ -67,13 +63,13 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
             TextureSize = new Vector2(24.0f, 24.0f),
             Position = new Vector2(-3.0f, -2.0f),
             Offsets = new Vector4(10.0f),
+            IsVisible = false,
         };
         FocusBorderNode.AttachNode(this);
 
         CursorNode = new CursorNode {
             NodeId = 2, 
             Size = new Vector2(4.0f, 24.0f), 
-            IsVisible = true,
             OriginY = 4.0f,
         };
 

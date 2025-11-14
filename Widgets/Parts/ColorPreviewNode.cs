@@ -13,20 +13,17 @@ public class ColorPreviewNode : SimpleComponentNode {
 
     public ColorPreviewNode() {
         SelectedColorPreviewBorderNode = new BackgroundImageNode {
-            IsVisible = true,
             Color = KnownColor.White.Vector(),
         };
         SelectedColorPreviewBorderNode.AttachNode(this);
 
         AlphaLayerPreviewNode = new ImGuiImageNode {
             TexturePath = DalamudInterface.Instance.GetAssetPath("alpha_background.png"),
-            IsVisible = true,
             WrapMode = WrapMode.Tile,
         };
         AlphaLayerPreviewNode.AttachNode(this);
 
         SelectedColorPreviewNode = new BackgroundImageNode {
-            IsVisible = true,
             Color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f),
         };
         SelectedColorPreviewNode.AttachNode(this);

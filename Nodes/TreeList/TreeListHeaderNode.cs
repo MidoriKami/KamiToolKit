@@ -16,7 +16,6 @@ public class TreeListHeaderNode : ResNode {
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             TextureSize = new Vector2(424.0f, 24.0f),
             Size = new Vector2(24.0f, 24.0f),
-            IsVisible = true,
             LeftOffset = 25.0f,
             RightOffset = 20.0f,
         };
@@ -25,7 +24,6 @@ public class TreeListHeaderNode : ResNode {
         LabelNode = new TextNode {
             Position = new Vector2(22.0f, 1.0f),
             TextColor = ColorHelper.GetColor(7),
-            IsVisible = true,
             AlignmentType = AlignmentType.Left,
             FontSize = 12,
             FontType = FontType.Axis,

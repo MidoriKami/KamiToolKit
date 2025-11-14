@@ -23,7 +23,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             Size = new Vector2(250.0f, 24.0f),
             Height = 23.0f,
-            IsVisible = true,
             LeftOffset = 16.0f,
             RightOffset = 16.0f,
         };
@@ -36,7 +35,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
             TextureSize = new Vector2(12.0f, 12.0f),
             Position = new Vector2(6.0f, 17.0f),
             Size = new Vector2(12.0f, 12.0f),
-            IsVisible = true,
             WrapMode = WrapMode.Stretch,
         };
         CollapseArrowNode.AttachNode(this);
@@ -50,7 +48,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
             AlignmentType = AlignmentType.Left,
             TextColor = ColorHelper.GetColor(1),
             TextOutlineColor = ColorHelper.GetColor(2),
-            IsVisible = true,
             String = "Demo",
             TextFlags = TextFlags.AutoAdjustNodeSize | TextFlags.Emboss,
         };
@@ -60,12 +57,12 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
             NodeId = 5,
             Position = new Vector2(4.0f, 21.0f), 
             Size = new Vector2(242.0f, 243.0f), 
+            IsVisible = false,
         };
         OptionListNode.AttachNode(this);
 
         DropDownFocusCollisionNode = new CollisionNode {
             NodeId = 6,
-            IsVisible = true, 
         };
         DropDownFocusCollisionNode.AttachNode(OptionListNode.CollisionNode, NodePosition.AfterTarget);
 

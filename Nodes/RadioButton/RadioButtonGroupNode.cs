@@ -37,7 +37,6 @@ public unsafe class RadioButtonGroupNode : SimpleComponentNode {
     public void AddButton(ReadOnlySeString label, Action callback) {
         var newRadioButton = new RadioButtonNode {
             Height = 16.0f, 
-            IsVisible = true, 
             SeString = label, 
             Callback = callback,
         };
@@ -120,7 +119,7 @@ public unsafe class RadioButtonGroupNode : SimpleComponentNode {
                 TextureCoordinates = new Vector2(0.0f, 0.0f),
                 TextureSize = new Vector2(16.0f, 16.0f),
                 Size = new Vector2(16.0f, 16.0f),
-                NodeFlags = NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+                NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
                 WrapMode = WrapMode.Tile,
             };
             UnselectedImageNode.AttachNode(this);
@@ -131,7 +130,7 @@ public unsafe class RadioButtonGroupNode : SimpleComponentNode {
                 TextureCoordinates = new Vector2(16.0f, 0.0f),
                 TextureSize = new Vector2(16.0f, 16.0f),
                 Size = new Vector2(16.0f, 16.0f),
-                NodeFlags = NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+                NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
                 WrapMode = WrapMode.Tile,
             };
             SelectedImageNode.AttachNode(this);
@@ -144,7 +143,7 @@ public unsafe class RadioButtonGroupNode : SimpleComponentNode {
                 TextColor = ColorHelper.GetColor(8),
                 TextOutlineColor = ColorHelper.GetColor(7),
                 AlignmentType = AlignmentType.Left,
-                NodeFlags = NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+                NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             };
             LabelNode.AttachNode(this);
 

@@ -12,13 +12,10 @@ public class ColorPreviewWithInput : SimpleComponentNode {
     public readonly TextInputNode ColorInputNode;
 
     public ColorPreviewWithInput() {
-        ColorPreviewNode = new ColorPreviewNode {
-            IsVisible = true,
-        };
+        ColorPreviewNode = new ColorPreviewNode();
         ColorPreviewNode.AttachNode(this);
         
         ColorInputNode = new TextInputNode {
-            IsVisible = true,
             AutoSelectAll = true,
             OnInputComplete = OnTextInputComplete,
         };

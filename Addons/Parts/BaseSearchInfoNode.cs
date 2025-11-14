@@ -57,7 +57,6 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
         SelectedNineGridNode.AttachNode(this);
 
         IconNode = new IconImageNode {
-            IsVisible = true,
             FitTexture = true,
             IconId = 60072,
         };
@@ -68,7 +67,6 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
             FontSize = 14,
             LineSpacing = 14,
             AlignmentType = AlignmentType.BottomLeft,
-            IsVisible = true,
             TextColor = ColorHelper.GetColor(8),
             TextOutlineColor = ColorHelper.GetColor(7),
         };
@@ -89,7 +87,6 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
             FontSize = 10,
             AlignmentType = AlignmentType.BottomRight,
             TextColor = KnownColor.Gray.Vector(),
-            IsVisible = true,
         };
         IdTextNode.AttachNode(this);
 

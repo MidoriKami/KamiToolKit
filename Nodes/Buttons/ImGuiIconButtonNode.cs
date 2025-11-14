@@ -18,13 +18,11 @@ public class ImGuiIconButtonNode : ButtonBase {
             LeftOffset = 8.0f,
             RightOffset = 8.0f,
             BottomOffset = 8.0f,
-            IsVisible = true,
         };
         BackgroundNode.AttachNode(this);
 
         ImageNode = new ImGuiImageNode {
             NodeId = 3,
-            IsVisible = true, 
             FitTexture = true,
         };
         ImageNode.AttachNode(this);

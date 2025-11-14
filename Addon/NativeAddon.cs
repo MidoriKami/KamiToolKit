@@ -65,8 +65,7 @@ public abstract unsafe partial class NativeAddon {
 
         RootNode = new ResNode {
             NodeId = 1, 
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | 
-                        NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
         };
 
         WindowNode = new WindowNode();

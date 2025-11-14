@@ -28,7 +28,6 @@ public class ColorPickerAddon : NativeAddon {
         colorPicker = new ColorPickerWidget {
             Position = ContentStartPosition,
             Size = ContentSize,
-            IsVisible = true,
         };
         AttachNode(colorPicker);
         
@@ -37,7 +36,6 @@ public class ColorPickerAddon : NativeAddon {
         horizontalLine = new HorizontalLineNode {
             Position = ContentStartPosition + new Vector2(2.0f, ContentSize.Y - 40.0f),
             Size = new Vector2(ContentSize.X - 4.0f, 2.0f),
-            IsVisible = true,
         };
         AttachNode(horizontalLine);
 
@@ -45,14 +43,13 @@ public class ColorPickerAddon : NativeAddon {
             Position = ContentStartPosition + new Vector2(0.0f, ContentSize.Y - 24.0f),
             Size = new Vector2(100.0f, 24.0f),
             String = "Confirm",
-            IsVisible = true,
             OnClick = OnConfirmClicked,
         };
         AttachNode(confirmButton);
 
         if (DefaultHsvaColor is { } defaultColor) {
             defaultColorPreview = new ColorOptionTextButtonNode {
-                IsVisible = true,
+                
                 Size = new Vector2(100.0f, 24.0f),
                 Position = ContentStartPosition + new Vector2(ContentSize.X / 2.0f - 50.0f, ContentSize.Y - 24.0f),
                 String = "Default",
@@ -66,7 +63,6 @@ public class ColorPickerAddon : NativeAddon {
             Position = ContentStartPosition + new Vector2(ContentSize.X - 100.0f, ContentSize.Y - 24.0f),
             Size = new Vector2(100.0f, 24.0f),
             String = "Cancel",
-            IsVisible = true,
             OnClick = OnCancelClicked,
         };
         AttachNode(cancelButton);

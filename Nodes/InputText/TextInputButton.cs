@@ -17,8 +17,7 @@ public unsafe class TextInputButtonNode : ButtonBase {
             Size = new Vector2(160.0f, 24.0f),
             LeftOffset = 16.0f,
             RightOffset = 1.0f,
-            NodeFlags = NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
-            IsVisible = true,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
             TexturePath = "ui/uld/ListItemA.tex",
             TextureCoordinates = new Vector2(0.0f, 22.0f),
             TextureSize = new Vector2(63.0f, 22.0f),
@@ -29,13 +28,12 @@ public unsafe class TextInputButtonNode : ButtonBase {
             NodeId = 2,
             Position = new Vector2(12.0f, 2.0f),
             Size = new Vector2(140.0f, 18.0f),
-            NodeFlags = NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             AlignmentType = AlignmentType.Left,
             TextFlags = TextFlags.AutoAdjustNodeSize,
             TextColor = KnownColor.White.Vector(),
             TextOutlineColor = KnownColor.White.Vector(),
             BackgroundColor = KnownColor.Black.Vector(),
-            IsVisible = true,
         };
         LabelNode.AttachNode(this);
 

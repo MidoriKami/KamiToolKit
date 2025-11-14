@@ -17,10 +17,7 @@ public class GifImageNode : ResNode {
     public ImageNode ImageNode;
 
     public GifImageNode() {
-        ImageNode = new ImageNode {
-            IsVisible = true,
-        };
-
+        ImageNode = new ImageNode();
         ImageNode.AttachNode(this);
     }
 

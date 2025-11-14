@@ -23,7 +23,6 @@ public unsafe class SearchWidget : SimpleComponentNode {
 
     public SearchWidget() {
         InputNode = new TextInputNode {
-            IsVisible = true,
             PlaceholderString = "Search . . .",
             SeString = searchText,
             OnInputReceived = SearchTextChanged,

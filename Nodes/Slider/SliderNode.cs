@@ -19,7 +19,6 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 
         SliderBackgroundButtonNode = new SliderBackgroundButtonNode {
             NodeId = 5, 
-            IsVisible = true,
         };
         SliderBackgroundButtonNode.AttachNode(this);
 
@@ -32,21 +31,18 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
             Y = 4.0f,
             LeftOffset = 8,
             RightOffset = 8,
-            IsVisible = true,
         };
         ProgressTextureNode.AttachNode(this);
 
         SliderForegroundButtonNode = new SliderForegroundButtonNode {
             NodeId = 3, 
             Size = new Vector2(16.0f, 16.0f), 
-            IsVisible = true,
         };
         SliderForegroundButtonNode.AttachNode(this);
 
         ValueNode = new TextNode {
             NodeId = 2,
             Size = new Vector2(24.0f, 16.0f),
-            IsVisible = true,
             FontType = FontType.Axis,
             FontSize = 12,
             AlignmentType = AlignmentType.TopLeft,

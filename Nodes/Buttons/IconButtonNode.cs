@@ -20,13 +20,11 @@ public class IconButtonNode : ButtonBase {
             LeftOffset = 8.0f,
             RightOffset = 8.0f,
             BottomOffset = 8.0f,
-            IsVisible = true,
         };
         BackgroundNode.AttachNode(this);
 
         ImageNode = new IconImageNode {
             NodeId = 3,
-            IsVisible = true, 
             TextureSize = new Vector2(32.0f, 32.0f), 
             FitTexture = true,
         };

@@ -22,8 +22,6 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
             Position = ContentStartPosition,
             Size = new Vector2(250.0f, ContentSize.Y),
             SortOptions = SortOptions,
-            IsVisible = true,
-            
             SelectionOptions = Options,
             OnOptionChanged = OnOptionChanged,
             AddNewEntry = OnAddClicked,
@@ -34,14 +32,12 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
         separatorLine = new VerticalLineNode {
             Position = ContentStartPosition + new Vector2(250.0f + 8.0f, 0.0f),
             Size = new Vector2(4.0f, ContentSize.Y),
-            IsVisible = true,
         };
         AttachNode(separatorLine);
 
         nothingSelectedTextNode = new TextNode {
             Position = ContentStartPosition + new Vector2(250.0f + 16.0f, 0.0f),
             Size = ContentSize - new Vector2(250.0f + 16.0f, 0.0f),
-            IsVisible = true,
             AlignmentType = AlignmentType.Center,
             TextFlags = TextFlags.WordWrap | TextFlags.MultiLine,
             FontSize = 14,
@@ -59,6 +55,7 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
                 OnConfigChanged?.Invoke(option);
                 selectionListNode.UpdateList();
             },
+            IsVisible = false,
         };
         AttachNode(configNode);
     }

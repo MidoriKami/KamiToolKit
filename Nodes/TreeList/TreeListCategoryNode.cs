@@ -30,7 +30,6 @@ public unsafe class TreeListCategoryNode : ResNode {
     public TreeListCategoryNode() {
         CollisionNode = new CollisionNode {
             Height = 28.0f, 
-            IsVisible = true,
         };
         CollisionNode.AttachNode(this);
 
@@ -39,7 +38,6 @@ public unsafe class TreeListCategoryNode : ResNode {
             TextureSize = new Vector2(48.0f, 28.0f),
             TextureCoordinates = new Vector2(0.0f, 24.0f),
             Height = 28.0f,
-            IsVisible = true,
             TopOffset = 10.0f,
             LeftOffset = 12.0f,
             RightOffset = 12.0f,
@@ -50,7 +48,6 @@ public unsafe class TreeListCategoryNode : ResNode {
         CollapseArrowNode = new ImageNode {
             Position = new Vector2(0.0f, 1.0f),
             Size = new Vector2(24.0f, 24.0f),
-            IsVisible = true,
             PartId = 1,
         };
 
@@ -77,13 +74,11 @@ public unsafe class TreeListCategoryNode : ResNode {
             AlignmentType = AlignmentType.Left,
             TextColor = ColorHelper.GetColor(50),
             TextOutlineColor = ColorHelper.GetColor(7),
-            IsVisible = true,
         };
         LabelNode.AttachNode(this);
 
         ChildContainer = new SimpleComponentNode {
             Position = new Vector2(0.0f, 24.0f + VerticalPadding), 
-            IsVisible = true,
         };
         ChildContainer.AttachNode(this);
 
@@ -151,7 +146,7 @@ public unsafe class TreeListCategoryNode : ResNode {
         var newHeaderNode = new TreeListHeaderNode {
             Size = new Vector2(Width, 24.0f), 
             SeString = label, 
-            IsVisible = true,
+            
         };
 
         AddNode(newHeaderNode);

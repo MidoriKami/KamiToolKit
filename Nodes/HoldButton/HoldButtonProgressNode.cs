@@ -17,7 +17,7 @@ public class HoldButtonProgressNode : ResNode {
             TextureSize = new Vector2(100.0f, 36.0f),
             Size = new Vector2(0.0f, 36.0f),
             WrapMode = WrapMode.Tile,
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         ImageNode.AttachNode(this);
 

@@ -13,7 +13,6 @@ public class ProgressBarNode : SimpleComponentNode {
             TexturePath = "ui/uld/ToDoList.tex",
             TextureCoordinates = new Vector2(108.0f, 8.0f),
             TextureSize = new Vector2(44.0f, 12.0f),
-            IsVisible = true,
             LeftOffset = 6,
             RightOffset = 6,
         };
@@ -24,7 +23,6 @@ public class ProgressBarNode : SimpleComponentNode {
             TexturePath = "ui/uld/ToDoList.tex",
             TextureCoordinates = new Vector2(112.0f, 0.0f),
             TextureSize = new Vector2(40.0f, 8.0f),
-            IsVisible = true,
             LeftOffset = 4,
             RightOffset = 4,
         };

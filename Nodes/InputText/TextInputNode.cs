@@ -37,7 +37,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             TexturePath = "ui/uld/TextInputA.tex",
             TextureCoordinates = new Vector2(24.0f, 0.0f),
             TextureSize = new Vector2(24.0f, 24.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorBottom | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             Offsets = new Vector4(10.0f),
             Size = new Vector2(152.0f, 28.0f),
         };
@@ -48,10 +47,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             TexturePath = "ui/uld/TextInputA.tex",
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             TextureSize = new Vector2(24.0f, 24.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorBottom | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             Offsets = new Vector4(10.0f),
             Size = new Vector2(152.0f, 28.0f),
-            IsVisible = true,
         };
         FocusNode.AttachNode(this);
 
@@ -62,7 +59,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             FontType = FontType.MiedingerMed,
             FontSize = 14,
             AlignmentType = (AlignmentType)21,
-            NodeFlags = NodeFlags.AnchorBottom | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         TextLimitsNode.AttachNode(this);
 
@@ -71,7 +67,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             Position = new Vector2(10.0f, 6.0f),
             Size = new Vector2(132.0f, 18.0f),
             AlignmentType = AlignmentType.TopLeft,
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorBottom | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TextFlags = TextFlags.AutoAdjustNodeSize,
             TextColor = ColorHelper.GetColor(1),
         };
@@ -81,7 +76,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             NodeId = 4, 
             Position = new Vector2(0.0f, 22.0f), 
             Size = new Vector2(186.0f, 208.0f), 
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         SelectionListNode.AttachNode(this);
 
@@ -90,13 +84,11 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             Position = new Vector2(10.0f, 2.0f),
             Size = new Vector2(4.0f, 24.0f),
             OriginY = 4.0f,
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         CursorNode.AttachNode(this);
 
         PlaceholderTextNode = new TextNode {
             Position = new Vector2(10.0f, 6.0f),
-            IsVisible = true,
             TextColor = ColorHelper.GetColor(3),
         };
         PlaceholderTextNode.AttachNode(this);

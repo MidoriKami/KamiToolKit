@@ -13,7 +13,7 @@ public class IconIndicator : ResNode {
         IconNode = new ImageNode {
             NodeId = innerNodeId,
             Size = new Vector2(18, 18),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Stretch,
             PartId = (uint)(innerNodeId == 5 ? 25 : 30),
         };

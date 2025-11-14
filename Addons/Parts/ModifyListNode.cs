@@ -22,13 +22,11 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         searchWidget = new SearchWidget {
             OnSortOrderChanged = OnSortOrderChanged,
             OnSearchUpdated = OnSearchUpdated,
-            IsVisible = true,
         };
         searchWidget.AttachNode(this);
 
         listNode = new ScrollingAreaNode<VerticalListNode> {
             ContentHeight = 100.0f,
-            IsVisible = true,
             AutoHideScrollBar = true,
         };
         listNode.ContentNode.FitContents = true;
@@ -165,7 +163,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
             Size = new Vector2(listNode.ContentNode.Width, 48.0f),
             OnClicked = OnOptionClicked,
             Option = data,
-            IsVisible = true,
+            
         });
 
         listNode.ContentNode.RecalculateLayout();

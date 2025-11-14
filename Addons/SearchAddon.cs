@@ -31,14 +31,12 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
             SortingOptions = SortingOptions,
             OnSortOrderChanged = OnSortOrderUpdated,
             OnSearchUpdated = OnSearchUpdated,
-            IsVisible = true,
         };
         AttachNode(searchWidget);
 
         listNode = new ScrollingAreaNode<VerticalListNode> {
             Position = new Vector2(ContentStartPosition.X, searchWidget.Y + searchWidget.Height + 8.0f),
             Size = new Vector2(ContentSize.X, ContentSize.Y - searchWidget.Height - 16.0f - 24.0f - 8.0f),
-            IsVisible = true,
             AutoHideScrollBar = true,
             ContentHeight = 10.0f,
         };
@@ -52,7 +50,6 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
         cancelButton = new TextButtonNode {
             Size = new Vector2(buttonWidth, 24.0f),
             Position = new Vector2(ContentStartPosition.X, ContentStartPosition.Y + ContentSize.Y - 24.0f - 8.0f),
-            IsVisible = true,
             String = "Cancel",
             OnClick = OnCancelClicked,
         };
@@ -61,7 +58,6 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
         confirmButton = new TextButtonNode {
             Size = new Vector2(buttonWidth, 24.0f),
             Position = new Vector2(ContentStartPosition.X + buttonWidth * 2 + buttonPadding * 2, ContentStartPosition.Y + ContentSize.Y - 24.0f - 8.0f),
-            IsVisible = true,
             IsEnabled = false,
             String = "Confirm",
             OnClick = OnConfirmClicked,
@@ -98,7 +94,7 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
         Width = listNode!.ContentNode.Width,
         Height = 48.0f,
         Option = option,
-        IsVisible = true,
+        
         OnClicked = OnOptionClicked,
     };
 

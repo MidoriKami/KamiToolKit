@@ -17,7 +17,6 @@ public class ListBoxNode : LayoutListNode {
     public ListBoxNode() {
         Background = new BackgroundImageNode {
             NodeId = 2, 
-            IsVisible = true,
         };
         Background.AttachNode(this);
 

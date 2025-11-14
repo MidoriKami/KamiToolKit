@@ -9,7 +9,6 @@ public class TextureButtonNode : ButtonBase {
 
     public TextureButtonNode() {
         ImageNode = new ImGuiImageNode {
-            IsVisible = true, 
             NodeId = 3, 
             WrapMode = WrapMode.Stretch, 
         };

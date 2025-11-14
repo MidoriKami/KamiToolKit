@@ -21,14 +21,12 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         eventListener = new ViewportEventListener(SquareEventHandler);
         
         ColorSquareNode = new ColorSquareNode {
-            IsVisible = true,
             DrawFlags = DrawFlags.UseTransformedCollision,
         };
         ColorSquareNode.AttachNode(this);
 
         ColorRingNode = new ImGuiImageNode {
             TexturePath = DalamudInterface.Instance.GetAssetPath("color_ring.png"),
-            IsVisible = true,
             FitTexture = true,
             ImageNodeFlags = ImageNodeFlags.FlipV,
         };
@@ -36,7 +34,6 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
 
         ColorRingSelectorNode = new ImGuiImageNode {
             TexturePath = DalamudInterface.Instance.GetAssetPath("color_ring_selector.png"),
-            IsVisible = true,
             FitTexture = true,
             MultiplyColor = new Vector3(1.0f, 0.0f, 0.0f),
         };

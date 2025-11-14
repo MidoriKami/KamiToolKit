@@ -23,8 +23,7 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
             TextureSize = new Vector2(88.0f, 26.0f),
             LeftOffset = 16,
             RightOffset = 16,
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            IsVisible = true,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         UnselectedNineGridNode.AttachNode(this);
 
@@ -36,7 +35,7 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
             TextureSize = new Vector2(88.0f, 26.0f),
             LeftOffset = 16,
             RightOffset = 16,
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         SelectedNineGridNode.AttachNode(this);
 
@@ -44,8 +43,7 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
             NodeId = 2,
             Position = new Vector2(13.0f, 2.0f),
             AlignmentType = AlignmentType.Center,
-            NodeFlags = NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            IsVisible = true,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         LabelNode.AttachNode(this);
 

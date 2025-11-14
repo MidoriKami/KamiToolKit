@@ -12,7 +12,6 @@ public class LuminaSearchAddon<T> : BaseSearchAddon<T> where T : struct, IExcelR
     public Func<T, string>? GetTexturePathFunc { get; init; }
 
     protected override BaseSearchInfoNode<T> BuildOptionNode(T option) => new LuminaSearchInfoNode<T> {
-        IsVisible = true,
         GetLabelFunc = GetLabelFunc,
         GetSubLabelFunc = GetSubLabelFunc,
         GetIconIdFunc = GetIconIdFunc,

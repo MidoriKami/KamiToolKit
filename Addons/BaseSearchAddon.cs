@@ -27,14 +27,12 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
             SortingOptions = SortingOptions,
             OnSortOrderChanged = OnSortOrderUpdated,
             OnSearchUpdated = OnSearchUpdated,
-            IsVisible = true,
         };
         AttachNode(searchWidget);
 
         listNode = new ScrollingAreaNode<VerticalListNode> {
             Position = new Vector2(ContentStartPosition.X, searchWidget.Y + searchWidget.Height + 8.0f),
             Size = new Vector2(ContentSize.X, ContentSize.Y - searchWidget.Height - 16.0f - 24.0f - 8.0f),
-            IsVisible = true,
             AutoHideScrollBar = true,
             ContentHeight = 10.0f,
         };
@@ -48,7 +46,6 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
         cancelButton = new TextButtonNode {
             Size = new Vector2(buttonWidth, 24.0f),
             Position = new Vector2(ContentStartPosition.X, ContentStartPosition.Y + ContentSize.Y - 24.0f - 8.0f),
-            IsVisible = true,
             String = "Cancel",
             OnClick = OnCancelClicked,
         };
@@ -57,7 +54,6 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
         confirmButton = new TextButtonNode {
             Size = new Vector2(buttonWidth, 24.0f),
             Position = new Vector2(ContentStartPosition.X + buttonWidth * 2 + buttonPadding * 2, ContentStartPosition.Y + ContentSize.Y - 24.0f - 8.0f),
-            IsVisible = true,
             IsEnabled = false,
             String = "Confirm",
             OnClick = OnConfirmClicked,

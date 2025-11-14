@@ -15,7 +15,7 @@ public class AlternateCooldownNode : ResNode {
             Size = new Vector2(44.0f, 46.0f),
             Position = new Vector2(0.0f, 2.0f),
             Origin = new Vector2(22.0f, 23.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
             PartId = 80,
         };

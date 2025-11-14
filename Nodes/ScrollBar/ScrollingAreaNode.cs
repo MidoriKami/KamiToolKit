@@ -14,20 +14,17 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
     public ScrollingAreaNode() {
         ScrollingCollisionNode = new CollisionNode {
             NodeId = 2,
-            IsVisible = true, 
         };
         ScrollingCollisionNode.AttachNode(this);
 
         ContentAreaClipNode = new SimpleComponentNode {
             NodeId = 3,
-            NodeFlags = NodeFlags.Clip | NodeFlags.EmitsEvents, 
-            IsVisible = true,
+            NodeFlags = NodeFlags.Clip | NodeFlags.EmitsEvents | NodeFlags.Visible, 
         };
         ContentAreaClipNode.AttachNode(this);
 
         ContentAreaNode = new T {
             NodeId = 4,
-            IsVisible = true,
         };
         ContentAreaNode.AttachNode(ContentAreaClipNode);
 
@@ -35,7 +32,6 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
             NodeId = 5,
             ContentNode = ContentAreaNode, 
             ContentCollisionNode = ScrollingCollisionNode, 
-            IsVisible = true,
         };
         ScrollBarNode.AttachNode(this);
 

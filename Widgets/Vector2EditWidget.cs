@@ -16,7 +16,6 @@ public class Vector2EditWidget : SimpleComponentNode {
     public Vector2EditWidget() {
         GridNode = new GridNode {
             GridSize = new GridSize(2, 2),
-            IsVisible = true,
         };
         GridNode.AttachNode(this);
 
@@ -29,7 +28,6 @@ public class Vector2EditWidget : SimpleComponentNode {
             TextOutlineColor = ColorHelper.GetColor(7),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             String = XLabel ?? "Width",
-            IsVisible = true,
         };
         WidthTextNode.AttachNode(GridNode[0, 0]);
 
@@ -42,20 +40,17 @@ public class Vector2EditWidget : SimpleComponentNode {
             TextOutlineColor = ColorHelper.GetColor(7),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             String = YLabel ?? "Height",
-            IsVisible = true,
         };
         HeightTextNode.AttachNode(GridNode[1, 0]);
         
         WidthInputNode = new NumericInputNode {
             Position = new Vector2(2.0f, 2.0f),
-            IsVisible = true,
             OnValueUpdate = OnXValueUpdated,
         };
         WidthInputNode.AttachNode(GridNode[0, 1]);
         
         HeightInputNode = new NumericInputNode {
             Position = new Vector2(2.0f, 2.0f),
-            IsVisible = true,
             OnValueUpdate = OnYValueUpdated,
         };
         HeightInputNode.AttachNode(GridNode[1, 1]);

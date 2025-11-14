@@ -14,7 +14,7 @@ public class ResizeNineGridNode : SimpleComponentNode {
             TextureSize = new Vector2(28.0f, 3.0f),
             LeftOffset = 12,
             RightOffset = 12,
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         BorderNode.AttachNode(this);
     }

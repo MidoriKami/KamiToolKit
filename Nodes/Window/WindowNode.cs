@@ -30,7 +30,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             NodeId = 12,
             Height = 28.0f,
             Position = new Vector2(8.0f, 8.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.EmitsEvents,
         };
         HeaderCollisionNode.AttachNode(this);
 
@@ -38,7 +38,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             NodeId = 11,
             Position = Vector2.Zero,
             Offsets = new Vector4(64.0f, 32.0f, 32.0f, 32.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
             PartsRenderType = 19,
         };
         BackgroundNode.AttachNode(this);
@@ -47,7 +47,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             NodeId = 10,
             Position = Vector2.Zero,
             Offsets = new Vector4(64.0f, 32.0f, 32.0f, 32.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
             PartsRenderType = 7,
         };
         BorderNode.AttachNode(this);
@@ -55,7 +55,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
         BackgroundImageNode = new SimpleImageNode {
             NodeId = 9,
             WrapMode = WrapMode.Stretch,
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorBottom | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TexturePath = "ui/uld/WindowA_Gradation.tex",
             TextureCoordinates = new Vector2(6.0f, 2.0f),
             TextureSize = new Vector2(24.0f, 24.0f),
@@ -65,7 +65,6 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
         HeaderContainerNode = new ResNode {
             NodeId = 2, 
             Size = new Vector2(477.0f, 38.0f), 
-            IsVisible = true,
         };
         HeaderContainerNode.AttachNode(this);
 
@@ -75,7 +74,6 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             TextureCoordinates = Vector2.Zero,
             TextureSize = new Vector2(32.0f, 4.0f),
             Size = new Vector2(650.0f, 4.0f),
-            IsVisible = true,
             LeftOffset = 12.0f,
             RightOffset = 12.0f,
             Position = new Vector2(10.0f, 33.0f),
@@ -86,7 +84,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             NodeId = 7,
             Size = new Vector2(28.0f, 28.0f),
             Position = new Vector2(449.0f, 6.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TexturePath = "ui/uld/WindowA_Button.tex",
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             TextureSize = new Vector2(28.0f, 28.0f),
@@ -97,11 +95,10 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             NodeId = 6,
             Size = new Vector2(16.0f, 16.0f),
             Position = new Vector2(435.0f, 8.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TexturePath = "ui/uld/WindowA_Button.tex",
             TextureCoordinates = new Vector2(44.0f, 0.0f),
             TextureSize = new Vector2(16.0f, 16.0f),
-            IsVisible = true,
         };
         ConfigurationButtonNode.AttachNode(HeaderContainerNode);
 
@@ -109,11 +106,10 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             NodeId = 5,
             Size = new Vector2(16.0f, 16.0f),
             Position = new Vector2(421.0f, 8.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorRight | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TexturePath = "ui/uld/WindowA_Button.tex",
             TextureCoordinates = new Vector2(28.0f, 0.0f),
             TextureSize = new Vector2(16.0f, 16.0f),
-            IsVisible = true,
         };
         InformationButtonNode.AttachNode(HeaderContainerNode);
 
@@ -123,7 +119,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             AlignmentType = AlignmentType.Left,
             FontSize = 12,
             FontType = FontType.Axis,
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TextColor = ColorHelper.GetColor(8),
             TextOutlineColor = ColorHelper.GetColor(7),
             BackgroundColor = Vector4.Zero,
@@ -138,7 +134,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
             AlignmentType = AlignmentType.Left,
             FontSize = 23,
             FontType = FontType.TrumpGothic,
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TextColor = ColorHelper.GetColor(2),
             TextOutlineColor = ColorHelper.GetColor(7),
             BackgroundColor = Vector4.Zero,
@@ -160,7 +156,7 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
         Data->Nodes[6] = HeaderContainerNode.NodeId;
         Data->Nodes[7] = 0;
 
-        NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents;
+        NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents;
 
         LoadTimelines();
 

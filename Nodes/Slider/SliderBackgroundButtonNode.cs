@@ -18,7 +18,6 @@ public unsafe class SliderBackgroundButtonNode : ComponentNode<AtkComponentButto
             TextureSize = new Vector2(40.0f, 8.0f),
             LeftOffset = 8,
             RightOffset = 8,
-            IsVisible = true,
         };
         BackgroundTexture.AttachNode(this);
 

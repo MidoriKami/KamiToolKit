@@ -13,7 +13,7 @@ public class AntsNode : ResNode {
         AntsImageNode = new ImageNode {
             NodeId = 13,
             Size = new Vector2(48, 48),
-            NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
             PartId = 13,
         };

@@ -23,7 +23,7 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
             LeftOffset = 15,
             RightOffset = 15,
             PartsRenderType = 148,
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
         };
         BackgroundNineGrid.AttachNode(this);
 
@@ -35,7 +35,7 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
             AlignmentType = AlignmentType.Right,
             FontType = FontType.TrumpGothic,
             TextFlags = TextFlags.Edge,
-            NodeFlags = NodeFlags.AnchorLeft | NodeFlags.AnchorRight | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         TextNode.AttachNode(this);
 

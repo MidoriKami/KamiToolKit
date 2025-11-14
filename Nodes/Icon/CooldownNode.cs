@@ -14,7 +14,7 @@ public class CooldownNode : ResNode {
         GlossyImageFrame = new ImageNode {
             NodeId = 18,
             Size = new Vector2(48.0f, 48.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
         };
 
@@ -26,7 +26,7 @@ public class CooldownNode : ResNode {
             NodeId = 17,
             Size = new Vector2(44.0f, 46.0f),
             Position = new Vector2(2.0f, 2.0f),
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Tile,
             PartId = 80,
         };

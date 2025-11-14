@@ -59,7 +59,6 @@ public abstract unsafe partial class NodeBase {
             overlayNode = new NodeEditOverlayNode {
                 Position = new Vector2(-16.0f, -16.0f), 
                 Size = Size + new Vector2(32.0f, 32.0f), 
-                IsVisible = true,
             };
             overlayNode.AttachNode(this);
         }

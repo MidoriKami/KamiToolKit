@@ -38,7 +38,6 @@ public unsafe class ListButtonNode : ButtonBase {
             FontType = FontType.Axis,
             FontSize = 14,
             AlignmentType = AlignmentType.Left,
-            IsVisible = true,
             String = "Label Not Set",
         };
         LabelNode.AttachNode(this);

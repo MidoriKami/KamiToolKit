@@ -13,10 +13,7 @@ public class TreeListNode : ResNode {
     public ReadOnlyCollection<TreeListCategoryNode> CategoryNodes => children.AsReadOnly();
 
     public TreeListNode() {
-        childContainer = new SimpleComponentNode {
-            IsVisible = true,
-        };
-
+        childContainer = new SimpleComponentNode();
         childContainer.AttachNode(this);
     }
 

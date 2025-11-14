@@ -13,7 +13,6 @@ public class CircleButtonNode : ButtonBase {
             TexturePath = "ui/uld/CircleButtons.tex",
             TextureSize = new Vector2(24.0f, 24.0f),
             TextureCoordinates = new Vector2(0.0f, 112.0f),
-            IsVisible = true,
             WrapMode = WrapMode.Stretch,
         };
         ImageNode.AttachNode(this);

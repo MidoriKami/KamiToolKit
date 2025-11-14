@@ -18,7 +18,6 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
             TextureSize = new Vector2(8.0f, 16.0f),
             TopOffset = 4,
             BottomOffset = 4,
-            IsVisible = true,
         };
         ButtonTexture.AttachNode(this);
 

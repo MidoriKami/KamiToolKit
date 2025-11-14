@@ -14,7 +14,6 @@ public class ColorPickerWidget : SimpleComponentNode {
     
     public ColorPickerWidget() {
         ColorPickerNode = new ColorRingWithSquareNode {
-            IsVisible = true,
             OnHueChanged = SetHue,
             OnSaturationChanged = SetSaturation,
             OnValueChanged = SetValue,
@@ -22,13 +21,11 @@ public class ColorPickerWidget : SimpleComponentNode {
         ColorPickerNode.AttachNode(this);
 
         AlphaBarNode = new AlphaBarNode {
-            IsVisible = true,
             OnAlphaChanged = SetAlpha,
         };
         AlphaBarNode.AttachNode(this);
         
         ColorPreviewWithInput = new ColorPreviewWithInput {
-            IsVisible = true,
             OnHsvaColorChanged = newColor => {
                 SetHue(newColor.H);
                 SetSaturation(newColor.S);
