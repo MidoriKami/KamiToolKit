@@ -154,6 +154,7 @@ public unsafe class TreeListCategoryNode : ResNode {
     public void AddNode(NodeBase node) {
         node.Y = ChildContainer.Height;
         node.Width = ChildContainer.Width;
+        node.NodeId = (uint)children.Count + 2;
 
         ChildContainer.Height += node.Height + VerticalPadding;
         Height = ChildContainer.Height + BackgroundNode.Height;
@@ -175,6 +176,14 @@ public unsafe class TreeListCategoryNode : ResNode {
         foreach (var node in children) {
             node.Width = Width;
         }
+    }
+
+    public void UpdateChildrenNodeId() {
+        CollisionNode.NodeId = NodeId * 10000 + 1;
+        BackgroundNode.NodeId = NodeId * 10000 + 2;
+        CollapseArrowNode.NodeId = NodeId * 10000 + 3;
+        LabelNode.NodeId = NodeId * 10000 + 4;
+        ChildContainer.NodeId = NodeId * 10000 + 5;
     }
 
     private void BuildTimelines() {

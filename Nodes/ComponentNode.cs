@@ -1,4 +1,4 @@
-﻿using FFXIVClientStructs.FFXIV.Client.System.Memory;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
@@ -34,6 +34,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         };
 
         CollisionNode.InternalResNode->ParentNode = InternalResNode;
+        CollisionNode.ParentUldManager = &((AtkComponentBase*)Component)->UldManager;
 
         componentBase->OwnerNode = Node;
         componentBase->ComponentFlags = 1;
@@ -63,7 +64,9 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
                 NativeMemoryHelper.UiFree(Data);
                 Data = null;
 
+                ComponentBase->Deinitialize();
                 ComponentBase->Dtor(1);
+                Node->Component = null;
             }
 
             base.Dispose(disposing, isNativeDestructor);

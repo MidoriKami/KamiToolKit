@@ -14,7 +14,6 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
         SetInternalComponentType(ComponentType.TextNineGrid);
 
         BackgroundNineGrid = new SimpleNineGridNode {
-            NodeId = 3,
             TexturePath = "ui/uld/ToolTipS.tex",
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             TextureSize = new Vector2(32.0f, 24.0f),
@@ -22,20 +21,16 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
             BottomOffset = 10,
             LeftOffset = 15,
             RightOffset = 15,
-            PartsRenderType = 148,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
         };
         BackgroundNineGrid.AttachNode(this);
 
         TextNode = new TextNode {
-            NodeId = 2,
             TextOutlineColor = ColorHelper.GetColor(55),
             Position = new Vector2(4.0f, 1.0f),
             FontSize = 23,
             AlignmentType = AlignmentType.Right,
             FontType = FontType.TrumpGothic,
             TextFlags = TextFlags.Edge,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         TextNode.AttachNode(this);
 

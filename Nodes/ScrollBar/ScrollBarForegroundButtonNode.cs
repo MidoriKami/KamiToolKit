@@ -12,7 +12,6 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
         SetInternalComponentType(ComponentType.Button);
 
         ButtonTexture = new SimpleNineGridNode {
-            NodeId = 2,
             TexturePath = "ui/uld/ScrollBarA.tex",
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             TextureSize = new Vector2(8.0f, 16.0f),

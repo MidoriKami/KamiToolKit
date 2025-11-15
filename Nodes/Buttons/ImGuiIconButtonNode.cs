@@ -10,7 +10,6 @@ public class ImGuiIconButtonNode : ButtonBase {
 
     public ImGuiIconButtonNode() {
         BackgroundNode = new SimpleNineGridNode {
-            NodeId = 2,
             TexturePath = "ui/uld/BgParts.tex",
             TextureSize = new Vector2(32.0f, 32.0f),
             TextureCoordinates = new Vector2(33.0f, 65.0f),
@@ -22,7 +21,6 @@ public class ImGuiIconButtonNode : ButtonBase {
         BackgroundNode.AttachNode(this);
 
         ImageNode = new ImGuiImageNode {
-            NodeId = 3,
             FitTexture = true,
         };
         ImageNode.AttachNode(this);

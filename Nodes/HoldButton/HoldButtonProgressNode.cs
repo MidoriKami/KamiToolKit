@@ -11,13 +11,12 @@ public class HoldButtonProgressNode : ResNode {
 
     public HoldButtonProgressNode() {
         ImageNode = new SimpleImageNode {
-            NodeId = 5,
+            NodeId = 4,
             TexturePath = "ui/uld/LongPressButtonA.tex",
             TextureCoordinates = new Vector2(0.0f, 36.0f),
             TextureSize = new Vector2(100.0f, 36.0f),
             Size = new Vector2(0.0f, 36.0f),
             WrapMode = WrapMode.Tile,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         ImageNode.AttachNode(this);
 

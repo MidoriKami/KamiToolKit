@@ -11,7 +11,7 @@ namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
 
-    private AtkUldManager* ParentUldManager { get; set; }
+    internal AtkUldManager* ParentUldManager { get; set; }
 
     internal void AttachNode(AtkResNode* target, NodePosition position = NodePosition.AsLastChild) {
         NodeLinker.AttachNode(InternalResNode, target, position);
@@ -26,10 +26,6 @@ public abstract unsafe partial class NodeBase {
         }
 
         NodeLinker.AttachNode(InternalResNode, target, position);
-
-        if (NodeId > NodeIdBase) {
-            NodeId = GetMaxNodeId(target) + 1;
-        }
 
         UpdateNative();
     }
@@ -177,7 +173,4 @@ public abstract unsafe partial class NodeBase {
 
         return max;
     }
-
-    private uint GetMaxNodeId(NodeBase node)
-        => GetMaxNodeId(GetUldManagerForNode(node));
 }

@@ -11,7 +11,6 @@ public class TextInputSelectionListNode : ResNode {
     public readonly TextNode LabelNode;
 
     public TextInputSelectionListNode() {
-
         BackgroundNode = new SimpleNineGridNode {
             NodeId = 15,
             Size = new Vector2(186.0f, 208.0f),

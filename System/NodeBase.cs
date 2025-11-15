@@ -19,6 +19,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     internal abstract AtkResNode* InternalResNode { get; }
 
+    private delegate* unmanaged<AtkResNode*, bool, void> originalDestructorFunction;
     private AtkResNode.Delegates.Destroy destructorFunction = null!;
     private AtkResNode.AtkResNodeVirtualTable* virtualTable;
 
@@ -112,16 +113,21 @@ public abstract unsafe partial class NodeBase : IDisposable {
         NativeMemory.Copy(InternalResNode->VirtualTable, virtualTable, 0x8 * 4);
         InternalResNode->VirtualTable = virtualTable;
 
-        // Pin managed function to virtual table entry
-        destructorFunction = NativeDestroyAtkResNode;
+        // Back up original destructor pointer
+        originalDestructorFunction = virtualTable->Destroy;
 
-        // Replace native destructor with 
+        // Pin managed function to virtual table entry
+        destructorFunction = DestructorDetour;
+
+        // Replace native destructor with
         virtualTable->Destroy = (delegate* unmanaged<AtkResNode*, bool, void>) Marshal.GetFunctionPointerForDelegate(destructorFunction);
     }
 
-    private void NativeDestroyAtkResNode(AtkResNode* thisPtr, bool free) {
-        AtkResNode.StaticVirtualTablePointer->Destroy(thisPtr, free);
-        Dispose();
+    private void DestructorDetour(AtkResNode* thisPtr, bool free) {
+        Dispose(true, true);
+        isDisposed = true;
+
+        originalDestructorFunction(thisPtr, free);
 
         // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
         NativeMemoryHelper.Free(virtualTable, 0x8 * 4);

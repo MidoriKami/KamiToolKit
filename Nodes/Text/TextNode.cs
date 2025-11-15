@@ -46,32 +46,50 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
 
     [JsonProperty] public AlignmentType AlignmentType {
         get => Node->AlignmentType;
-        set => Node->SetAlignment(value);
+        set {
+            Node->SetAlignment(value);
+            UpdateText();
+        }
     }
 
     [JsonProperty] public FontType FontType {
         get => Node->FontType;
-        set => Node->SetFont(value);
+        set {
+            Node->SetFont(value);
+            UpdateText();
+        }
     }
 
     [JsonProperty] public TextFlags TextFlags {
         get => Node->TextFlags;
-        set => Node->TextFlags = value;
+        set {
+            Node->TextFlags = value;
+            UpdateText();
+        }
     }
 
     [JsonProperty] public uint FontSize {
         get => Node->FontSize;
-        set => Node->FontSize = (byte)value;
+        set {
+            Node->FontSize = (byte)value;
+            UpdateText();
+        }
     }
 
     [JsonProperty] public uint LineSpacing {
         get => Node->LineSpacing;
-        set => Node->LineSpacing = (byte)value;
+        set {
+            Node->LineSpacing = (byte)value;
+            UpdateText();
+        }
     }
 
     [JsonProperty] public uint CharSpacing {
         get => Node->CharSpacing;
-        set => Node->CharSpacing = (byte)value;
+        set {
+            Node->CharSpacing = (byte)value;
+            UpdateText();
+        }
     }
 
     public uint TextId {
@@ -90,6 +108,14 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     [JsonProperty] public string String {
         get => Node->GetText().ToString();
         set => SeString = value;
+    }
+
+    public override Vector2 Size {
+        get => base.Size;
+        set {
+            base.Size = value;
+            UpdateText();
+        }
     }
 
     public void SetNumber(int number, bool showCommas = false, bool showPlusSign = false, int digits = 0, bool zeroPad = false)
@@ -113,5 +139,10 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         Node->GetTextDrawSize(&sizeX, &sizeY);
 
         return new Vector2(sizeX, sizeY);
+    }
+
+    private void UpdateText() {
+        using var builder = new RentedSeStringBuilder();
+        Node->SetText(builder.Builder.Append(Node->GetText().AsReadOnlySeString()).GetViewAsSpan());
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace KamiToolKit.Nodes;
 
-public class TreeListNode : ResNode {
+public class TreeListNode : SimpleComponentNode {
 
     private readonly SimpleComponentNode childContainer;
 
@@ -32,6 +32,7 @@ public class TreeListNode : ResNode {
 
         children.Add(node);
 
+        node.NodeId = (uint)children.Count + 1;
         node.Width = childContainer.Width;
         node.Y = childContainer.Height;
         node.AttachNode(childContainer);
@@ -48,6 +49,7 @@ public class TreeListNode : ResNode {
 
             child.Y = childContainer.Height;
             childContainer.Height += child.Height + CategoryVerticalSpacing;
+            child.UpdateChildrenNodeId();
         }
 
         OnLayoutUpdate?.Invoke(childContainer.Height);

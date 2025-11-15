@@ -17,34 +17,28 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
         SetInternalComponentType(ComponentType.CheckBox);
 
         BoxBackground = new SimpleImageNode {
-            NodeId = 4,
             TexturePath = "ui/uld/CheckBoxA.tex",
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             TextureSize = new Vector2(16.0f, 16.0f),
             Size = new Vector2(16.0f, 16.0f),
             Position = new Vector2(0.0f, 2.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Stretch,
         };
         BoxBackground.AttachNode(this);
 
         BoxForeground = new SimpleImageNode {
-            NodeId = 3,
             TexturePath = "ui/uld/CheckBoxA.tex",
             TextureCoordinates = new Vector2(16.0f, 0.0f),
             TextureSize = new Vector2(16.0f, 16.0f),
             Size = new Vector2(16.0f, 16.0f),
             Position = new Vector2(0.0f, 2.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Stretch,
         };
         BoxForeground.AttachNode(this);
 
         Label = new TextNode {
-            NodeId = 2,
             Size = new Vector2(0.0f, 20.0f),
             Position = new Vector2(20.0f, 0.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             FontType = FontType.Axis,
             AlignmentType = AlignmentType.Left,
             FontSize = 14,

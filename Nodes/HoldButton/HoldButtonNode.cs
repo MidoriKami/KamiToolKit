@@ -17,39 +17,33 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
         SetInternalComponentType(ComponentType.HoldButton);
 
         BackgroundNode = new SimpleNineGridNode {
-            NodeId = 6,
             TexturePath = "ui/uld/LongPressButtonA.tex",
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             TextureSize = new Vector2(100.0f, 36.0f),
             Size = new Vector2(100.0f, 36.0f),
             LeftOffset = 16,
             RightOffset = 16,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         BackgroundNode.AttachNode(this);
 
-        ProgressNode = new HoldButtonProgressNode {
-            NodeId = 4, Size = new Vector2(100.0f, 36.0f), NodeFlags = NodeFlags.Enabled | NodeFlags.Visible | NodeFlags.EmitsEvents,
+        ProgressNode = new HoldButtonProgressNode { 
+            Size = new Vector2(100.0f, 36.0f), 
         };
         ProgressNode.AttachNode(this);
 
         FrameNode = new SimpleNineGridNode {
-            NodeId = 3,
             TexturePath = "ui/uld/LongPressButtonA.tex",
             TextureCoordinates = new Vector2(0.0f, 72.0f),
             TextureSize = new Vector2(100.0f, 36.0f),
             Size = new Vector2(100.0f, 36.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         FrameNode.AttachNode(this);
 
         TextNode = new TextNode {
-            NodeId = 2,
             Position = new Vector2(16.0f, 8.0f),
             Size = new Vector2(68.0f, 20.0f),
             AlignmentType = AlignmentType.Center,
             String = "OK",
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         TextNode.AttachNode(this);
 

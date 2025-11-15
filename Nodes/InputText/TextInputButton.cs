@@ -13,7 +13,6 @@ public unsafe class TextInputButtonNode : ButtonBase {
 
     public TextInputButtonNode() {
         BackgroundNode = new SimpleNineGridNode {
-            NodeId = 3,
             Size = new Vector2(160.0f, 24.0f),
             LeftOffset = 16.0f,
             RightOffset = 1.0f,
@@ -25,7 +24,6 @@ public unsafe class TextInputButtonNode : ButtonBase {
         BackgroundNode.AttachNode(this);
 
         LabelNode = new TextNode {
-            NodeId = 2,
             Position = new Vector2(12.0f, 2.0f),
             Size = new Vector2(140.0f, 18.0f),
             NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
