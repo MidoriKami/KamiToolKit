@@ -104,6 +104,8 @@ public abstract unsafe partial class NativeAddon {
         InternalAddon->UldManager.UpdateDrawNodeList();
         InternalAddon->UldManager.LoadedState = AtkLoadState.Loaded;
 
+        InternalAddon->UldManager.AddNodeToObjectList(WindowNode);
+
         // UldManager finished loading the uld
         InternalAddon->Flags198 |= 2 << 0x1C;
 
