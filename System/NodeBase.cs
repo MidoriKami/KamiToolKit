@@ -15,7 +15,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
     internal static uint CurrentOffset;
 
     private bool isDisposed;
-    private bool isManagedDispose;
 
     internal abstract AtkResNode* InternalResNode { get; }
 
@@ -29,21 +28,12 @@ public abstract unsafe partial class NodeBase : IDisposable {
         if (isDisposed) return;
         isDisposed = true;
 
-        // If the node was invalidated before dispose, we want to skip trying to free it.
         if (!IsNodeValid()) {
-            if (!isManagedDispose) {
-                Log.Verbose($"Native has disposed node {GetType()}");
-                
-                Dispose(true, true);
-
-                GC.SuppressFinalize(this);
-                CreatedNodes.Remove(this);
-            }
+            Log.Warning("WARNING: Node is not valid, attempted to dispose. Aborted.");
             return;
         }
 
         Log.Verbose($"Disposing node {GetType()}");
-        isManagedDispose = true;
 
         DisposeEvents();
 
@@ -124,13 +114,22 @@ public abstract unsafe partial class NodeBase : IDisposable {
     }
 
     private void DestructorDetour(AtkResNode* thisPtr, bool free) {
-        Dispose(true, true);
-        isDisposed = true;
+        if (!isDisposed) {
+            Dispose(true, true);
+        }
 
         originalDestructorFunction(thisPtr, free);
 
+        if (!isDisposed) {
+            Log.Verbose($"Native has disposed node {GetType()}");
+            GC.SuppressFinalize(this);
+            CreatedNodes.Remove(this);
+        }
+        
         // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
         NativeMemoryHelper.Free(virtualTable, 0x8 * 4);
+        
+        isDisposed = true;
     }
 }
 
