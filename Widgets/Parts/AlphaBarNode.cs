@@ -18,10 +18,7 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
     public AlphaBarNode() {
         alphaEventListener = new ViewportEventListener(AlphaSliderEvent);
 
-        AlphaBarBackgroundNode = new ImGuiImageNode {
-            TexturePath = DalamudInterface.Instance.GetAssetPath("alpha_background.png"),
-            WrapMode = WrapMode.Tile,
-        };
+        AlphaBarBackgroundNode = new AlphaImageNode();
         AlphaBarBackgroundNode.AttachNode(this);
 
         AlphaBarGradientNode = new ImGuiImageNode {
