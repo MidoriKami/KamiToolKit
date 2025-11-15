@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -72,7 +72,7 @@ public abstract unsafe partial class NativeAddon {
             NodeId = 2,
         };
 
-        InternalAddon->NameString = GetInternalNameSafe();
+        InternalAddon->NameString = InternalName;
 
         InternalAddon->OpenSoundEffectId = (short)OpenWindowSoundEffectId;
 
@@ -175,16 +175,5 @@ public abstract unsafe partial class NativeAddon {
             .AddLabel(80, 109, AtkTimelineJumpBehavior.PlayOnce, 0)
             .EndFrameSet()
             .Build());
-    }
-
-    private string GetInternalNameSafe() {
-        var noSpaces = InternalName.Replace(" ", string.Empty);
-
-        if (noSpaces.Length > 31) {
-            noSpaces = noSpaces[..31];
-        }
-
-        noSpaces += char.MinValue;
-        return noSpaces;
     }
 }
