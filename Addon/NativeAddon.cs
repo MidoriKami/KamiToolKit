@@ -53,7 +53,7 @@ public abstract unsafe partial class NativeAddon {
             throw new NullReferenceException("InternalName is empty, this is not allowed.");
         }
 
-        Log.Verbose($"[{InternalName}] Beginning Native Addon Allocation");
+        Log.Verbose($"[{InternalName}] Allocating NativeAddon");
 
         InitializeExtras();
 
@@ -76,13 +76,9 @@ public abstract unsafe partial class NativeAddon {
         InternalAddon->NameString = InternalName;
 
         InternalAddon->OpenSoundEffectId = (short)OpenWindowSoundEffectId;
-
-        Log.Verbose($"[{InternalName}] Allocation Complete");
     }
 
     private void InitializeAddon() {
-        Log.Verbose($"[{InternalName}] Initializing Addon");
-
         var widgetInfo = NativeMemoryHelper.UiAlloc<AtkUldWidgetInfo>(1, 16);
         widgetInfo->Id = 1;
         widgetInfo->NodeCount = 0;
@@ -117,8 +113,6 @@ public abstract unsafe partial class NativeAddon {
 
         // Now that we have constructed this instance, track it for auto-dispose
         CreatedAddons.Add(this);
-
-        Log.Verbose($"[{InternalName}] Initialization Complete");
     }
 
     /// <summary>
