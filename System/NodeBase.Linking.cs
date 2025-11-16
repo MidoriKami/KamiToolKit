@@ -91,6 +91,8 @@ public abstract unsafe partial class NodeBase {
     }
 
     internal void DetachNode() {
+        if (ResNode is null) return;
+
         NodeLinker.DetachNode(ResNode);
         ResNode->ParentNode = null;
 
