@@ -42,16 +42,12 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         Log.Verbose($"Disposing node {GetType()}");
 
-        DisposeEvents();
-
         AtkStage.Instance()->ClearNodeFocus(ResNode);
 
         DetachNode();
 
         Timeline?.Dispose();
         ResNode->Timeline = null;
-
-        DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
 
         Dispose(true, false);
 
@@ -94,7 +90,12 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// or if it should only clean up managed resources. When false, be sure to only dispose
     /// resources that exist in managed spaces, as the game has already cleaned up everything else.
     /// </param>
-    protected abstract void Dispose(bool disposing, bool isNativeDestructor);
+    protected virtual void Dispose(bool disposing, bool isNativeDestructor) {
+        
+        // Dispose of managed resources that must be disposed regardless of how dispose is invoked
+        DisposeEvents();
+        DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
+    }
 
     private bool IsNodeValid() {
         if (ResNode is null) return false;
@@ -173,6 +174,8 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
+            base.Dispose(disposing, isNativeDestructor);
+
             if (!isNativeDestructor) {
                 InvokeOriginalDestructor(ResNode, true);
             }
