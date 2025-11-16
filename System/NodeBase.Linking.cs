@@ -186,9 +186,8 @@ public abstract unsafe partial class NodeBase {
         }
 
         // We failed to find a parent component, try to get a parent addon instead
-        var parentAddon = GetAddonForNode(node);
-        if (parentAddon is not null) {
-            return &parentAddon->UldManager;
+        if (ParentAddon is not null) {
+            return &ParentAddon->UldManager;
         }
 
         return null;
