@@ -123,17 +123,12 @@ public abstract unsafe partial class NodeBase : IDisposable {
     }
 
     private void DestructorDetour(AtkResNode* thisPtr, bool free) {
-        if (!isDisposed) {
-            Dispose(true, true);
-        }
-
+        Dispose(true, true);
         InvokeOriginalDestructor(thisPtr, free);
 
-        if (!isDisposed) {
-            Log.Verbose($"Native has disposed node {GetType()}");
-            GC.SuppressFinalize(this);
-            CreatedNodes.Remove(this);
-        }
+        Log.Verbose($"Native has disposed node {GetType()}");
+        GC.SuppressFinalize(this);
+        CreatedNodes.Remove(this);
 
         isDisposed = true;
     }
@@ -177,7 +172,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             if (!isNativeDestructor) {
-                ResNode->Destroy(true);
+                InvokeOriginalDestructor(ResNode, true);
             }
 
             Node = null;
