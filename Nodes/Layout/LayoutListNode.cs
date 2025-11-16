@@ -18,8 +18,6 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     public IReadOnlyList<NodeBase> Nodes => NodeList;
 
-    protected virtual uint ListBaseId => 1;
-
     public int MaxNodes { get; set; }
 
     [JsonProperty] public bool ClipListContents {
@@ -64,7 +62,6 @@ public abstract class LayoutListNode : SimpleComponentNode {
         NodeList.Add(node);
 
         node.AttachNode(this);
-        node.NodeId = (uint)NodeList.Count + ListBaseId;
 
         if (MaxNodes >= 1 && NodeList.Count >= MaxNodes) {
             var firstNode = NodeList.First();
