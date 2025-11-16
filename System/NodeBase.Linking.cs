@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -11,7 +12,11 @@ namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
 
+    internal readonly List<NodeBase> ChildNodes = [];
+    private NodeBase? parentNode;
+
     internal AtkUldManager* ParentUldManager { get; set; }
+    internal AtkUnitBase* ParentAddon { get; private set; }
 
     internal void AttachNode(AtkResNode* target, NodePosition position = NodePosition.AsLastChild) {
         NodeLinker.AttachNode(ResNode, target, position);
@@ -26,6 +31,8 @@ public abstract unsafe partial class NodeBase {
         }
 
         NodeLinker.AttachNode(ResNode, target, position);
+        parentNode = target;
+        parentNode.ChildNodes.Add(this);
 
         UpdateNative();
     }
@@ -33,6 +40,8 @@ public abstract unsafe partial class NodeBase {
     [OverloadResolutionPriority(2)] 
     internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
         NodeLinker.AttachNode(ResNode, target.ComponentBase->UldManager.RootNode, position);
+        parentNode = target;
+        parentNode.ChildNodes.Add(this);
 
         if (NodeId > NodeIdBase) {
             NodeId = GetMaxNodeId(&target.ComponentBase->UldManager) + 1;
@@ -58,6 +67,8 @@ public abstract unsafe partial class NodeBase {
 
     internal void AttachNode(NativeAddon addon, NodePosition position = NodePosition.AsLastChild) {
         NodeLinker.AttachNode(ResNode, addon.InternalAddon->RootNode, position);
+        parentNode = addon.RootNode;
+        parentNode.ChildNodes.Add(this);
         
         if (NodeId > NodeIdBase) {
             NodeId = GetMaxNodeId(&addon.InternalAddon->UldManager) + 1;
@@ -72,8 +83,6 @@ public abstract unsafe partial class NodeBase {
     }
 
     internal void DetachNode() {
-        var parentAddon = ParentAddon;
-
         NodeLinker.DetachNode(ResNode);
         ResNode->ParentNode = null;
 
@@ -81,13 +90,21 @@ public abstract unsafe partial class NodeBase {
             VisitChildren(ResNode, pointer => {
                 ParentUldManager->RemoveNodeFromObjectList(pointer);
             });
+
             ParentUldManager->UpdateDrawNodeList();
             ParentUldManager = null;
         }
 
-        if (parentAddon is not null && parentAddon->UldManager.ResourceFlags.HasFlag(AtkUldManagerResourceFlag.Initialized)) {
-            parentAddon->UldManager.UpdateDrawNodeList();
-            parentAddon->UpdateCollisionNodeList(false);
+        if (ParentAddon is not null && ParentAddon->UldManager.ResourceFlags.HasFlag(AtkUldManagerResourceFlag.Initialized)) {
+            ParentAddon->UldManager.UpdateDrawNodeList();
+            ParentAddon->UpdateCollisionNodeList(false);
+        }
+
+        ParentAddon = null;
+
+        if (parentNode is not null) {
+            parentNode.ChildNodes.Remove(this);
+            parentNode = null;
         }
     }
 
@@ -95,6 +112,13 @@ public abstract unsafe partial class NodeBase {
         if (ResNode is null) return;
 
         MarkDirty();
+
+        if (parentNode is not null) {
+            var targetParentAddon = GetAddonForNode(parentNode);
+            if (targetParentAddon is not null) {
+                ParentAddon = targetParentAddon;
+            }
+        }
 
         if (ParentUldManager is null) {
             ParentUldManager = GetUldManagerForNode(ResNode);
@@ -104,6 +128,7 @@ public abstract unsafe partial class NodeBase {
             VisitChildren(ResNode, pointer => {
                 ParentUldManager->AddNodeToObjectList(pointer);
             });
+
             ParentUldManager->UpdateDrawNodeList();
         }
 

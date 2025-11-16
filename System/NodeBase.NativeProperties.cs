@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Interface;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -236,6 +235,4 @@ public abstract unsafe partial class NodeBase {
         get => ResNode->Transform;
         set => ResNode->Transform = value;
     }
-
-    internal AtkUnitBase* ParentAddon => RaptureAtkUnitManager.Instance()->GetAddonByNode(this);
 }

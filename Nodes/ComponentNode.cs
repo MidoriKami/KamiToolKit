@@ -36,6 +36,8 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         CollisionNode.ResNode->ParentNode = ResNode;
         CollisionNode.ParentUldManager = &((AtkComponentBase*)Component)->UldManager;
 
+        ChildNodes.Add(CollisionNode);
+
         componentBase->OwnerNode = Node;
         componentBase->ComponentFlags = 1;
 
