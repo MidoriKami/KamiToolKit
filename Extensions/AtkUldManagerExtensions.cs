@@ -61,6 +61,8 @@ public static unsafe class AtkUldManagerExtensions {
     }
 
     public static void AddNodeToObjectList(ref this AtkUldManager uldManager, AtkResNode* newNode) {
+        if (newNode is null) return;
+
         // If the node is already in the object list, skip.
         if (uldManager.IsNodeInObjectList(newNode)) return;
 
@@ -83,6 +85,8 @@ public static unsafe class AtkUldManagerExtensions {
     }
 
     public static void RemoveNodeFromObjectList(ref this AtkUldManager uldManager, AtkResNode* node) {
+        if (node is null) return;
+
         // If the node isn't in the object list, skip.
         if (!uldManager.IsNodeInObjectList(node)) return;
 
