@@ -118,18 +118,23 @@ public abstract unsafe partial class NodeBase : IDisposable {
             Dispose(true, true);
         }
 
-        originalDestructorFunction(thisPtr, free);
+        InvokeOriginalDestructor(thisPtr, free);
 
         if (!isDisposed) {
             Log.Verbose($"Native has disposed node {GetType()}");
             GC.SuppressFinalize(this);
             CreatedNodes.Remove(this);
         }
-        
-        // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
-        NativeMemoryHelper.Free(virtualTable, 0x8 * 4);
-        
+
         isDisposed = true;
+    }
+
+    protected void InvokeOriginalDestructor(AtkResNode* thisPtr, bool free) {
+        if (virtualTable is null) return; // Shouldn't be possible, but just in case.
+        
+        originalDestructorFunction(thisPtr, free);
+        NativeMemoryHelper.Free(virtualTable, 0x8 * 4);
+        virtualTable = null;
     }
 }
 
