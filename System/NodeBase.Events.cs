@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Dalamud.Game.Addon.Events;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -23,10 +22,9 @@ public abstract unsafe partial class NodeBase {
     public virtual ReadOnlySeString? Tooltip {
         get;
         set {
-            if (value.HasValue && !value.Value.IsEmpty) {
-                field = value;
-
-                if (!TooltipRegistered) {
+            field = value;
+            switch (value) {
+                case { IsEmpty: false } when !TooltipRegistered: 
                     AddEvent(AtkEventType.MouseOver, ShowTooltip);
                     AddEvent(AtkEventType.MouseOut, HideTooltip);
                     OnVisibilityToggled += ToggleCollisionFlag;
@@ -36,15 +34,15 @@ public abstract unsafe partial class NodeBase {
                     }
 
                     TooltipRegistered = true;
-                }
-            }
-            else if (value is null) {
-                if (TooltipRegistered) {
+                    break;
+
+                case null when TooltipRegistered: {
                     RemoveEvent(AtkEventType.MouseOver, ShowTooltip);
                     RemoveEvent(AtkEventType.MouseOut, HideTooltip);
                     OnVisibilityToggled -= ToggleCollisionFlag;
 
                     TooltipRegistered = false;
+                    break;
                 }
             }
         }
@@ -179,12 +177,6 @@ public abstract unsafe partial class NodeBase {
                 break;
         }
     }
-
-    protected static void SetCursor(AddonCursorType cursor)
-        => DalamudInterface.Instance.AddonEventManager.SetCursor(cursor);
-
-    protected static void ResetCursor()
-        => DalamudInterface.Instance.AddonEventManager.ResetCursor();
 
     public void ShowTooltip() {
         if (Tooltip is not null && TooltipRegistered && ParentAddon is not null) {

@@ -130,4 +130,7 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
         if (rightCornerEditNode.IsHovered) SetCursor(AddonCursorType.ResizeNWSR);
         if (leftCornerEditNode.IsHovered) SetCursor(AddonCursorType.ResizeNESW);
     }
+    
+    private static void SetCursor(AddonCursorType cursor)
+        => DalamudInterface.Instance.AddonEventManager.SetCursor(cursor);
 }

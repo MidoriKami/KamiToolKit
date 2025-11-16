@@ -194,4 +194,10 @@ public abstract unsafe partial class NodeBase {
             isCursorSet = true;
         }
     }
+
+    private static void SetCursor(AddonCursorType cursor)
+        => DalamudInterface.Instance.AddonEventManager.SetCursor(cursor);
+
+    private static void ResetCursor()
+        => DalamudInterface.Instance.AddonEventManager.ResetCursor();
 }
