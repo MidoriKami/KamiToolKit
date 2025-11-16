@@ -20,6 +20,7 @@ public abstract unsafe partial class NodeBase {
 
     internal void AttachNode(AtkResNode* target, NodePosition position = NodePosition.AsLastChild) {
         NodeLinker.AttachNode(ResNode, target, position);
+        UpdateParentAddonFromTarget(target);
         UpdateNative();
     }
 
@@ -34,6 +35,7 @@ public abstract unsafe partial class NodeBase {
         parentNode = target;
         parentNode.ChildNodes.Add(this);
 
+        UpdateParentAddonFromTarget(target);
         UpdateNative();
     }
 
@@ -47,6 +49,7 @@ public abstract unsafe partial class NodeBase {
             NodeId = GetMaxNodeId(&target.ComponentBase->UldManager) + 1;
         }
 
+        UpdateParentAddonFromTarget(target);
         UpdateNative();
     }
 
@@ -62,6 +65,7 @@ public abstract unsafe partial class NodeBase {
         };
 
         NodeLinker.AttachNode(ResNode, (AtkResNode*)attachTarget, position);
+        UpdateParentAddonFromTarget(&targetNode->AtkResNode);
         UpdateNative();
     }
 
@@ -69,6 +73,7 @@ public abstract unsafe partial class NodeBase {
         NodeLinker.AttachNode(ResNode, addon.InternalAddon->RootNode, position);
         parentNode = addon.RootNode;
         parentNode.ChildNodes.Add(this);
+        ParentAddon = addon;
         
         if (NodeId > NodeIdBase) {
             NodeId = GetMaxNodeId(&addon.InternalAddon->UldManager) + 1;
@@ -113,13 +118,6 @@ public abstract unsafe partial class NodeBase {
 
         MarkDirty();
 
-        if (parentNode is not null) {
-            var targetParentAddon = GetAddonForNode(parentNode);
-            if (targetParentAddon is not null) {
-                ParentAddon = targetParentAddon;
-            }
-        }
-
         if (ParentUldManager is null) {
             ParentUldManager = GetUldManagerForNode(ResNode);
         }
@@ -135,6 +133,13 @@ public abstract unsafe partial class NodeBase {
         if (ParentAddon is not null) {
             ParentAddon->UldManager.UpdateDrawNodeList();
             ParentAddon->UpdateCollisionNodeList(false);
+        }
+    }
+
+    private void UpdateParentAddonFromTarget(AtkResNode* node) {
+        var targetParentAddon = GetAddonForNode(node);
+        if (targetParentAddon is not null) {
+            ParentAddon = targetParentAddon;
         }
     }
 
