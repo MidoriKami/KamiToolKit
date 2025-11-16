@@ -14,7 +14,7 @@ public abstract unsafe partial class NodeBase {
     internal AtkUldManager* ParentUldManager { get; set; }
 
     internal void AttachNode(AtkResNode* target, NodePosition position = NodePosition.AsLastChild) {
-        NodeLinker.AttachNode(InternalResNode, target, position);
+        NodeLinker.AttachNode(ResNode, target, position);
         UpdateNative();
     }
 
@@ -25,14 +25,14 @@ public abstract unsafe partial class NodeBase {
             return;
         }
 
-        NodeLinker.AttachNode(InternalResNode, target, position);
+        NodeLinker.AttachNode(ResNode, target, position);
 
         UpdateNative();
     }
 
     [OverloadResolutionPriority(2)] 
     internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
-        NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
+        NodeLinker.AttachNode(ResNode, target.ComponentBase->UldManager.RootNode, position);
 
         if (NodeId > NodeIdBase) {
             NodeId = GetMaxNodeId(&target.ComponentBase->UldManager) + 1;
@@ -52,12 +52,12 @@ public abstract unsafe partial class NodeBase {
             _ => throw new ArgumentOutOfRangeException(nameof(position), position, null),
         };
 
-        NodeLinker.AttachNode(InternalResNode, (AtkResNode*)attachTarget, position);
+        NodeLinker.AttachNode(ResNode, (AtkResNode*)attachTarget, position);
         UpdateNative();
     }
 
     internal void AttachNode(NativeAddon addon, NodePosition position = NodePosition.AsLastChild) {
-        NodeLinker.AttachNode(InternalResNode, addon.InternalAddon->RootNode, position);
+        NodeLinker.AttachNode(ResNode, addon.InternalAddon->RootNode, position);
         
         if (NodeId > NodeIdBase) {
             NodeId = GetMaxNodeId(&addon.InternalAddon->UldManager) + 1;
@@ -74,11 +74,11 @@ public abstract unsafe partial class NodeBase {
     internal void DetachNode() {
         var parentAddon = ParentAddon;
 
-        NodeLinker.DetachNode(InternalResNode);
-        InternalResNode->ParentNode = null;
+        NodeLinker.DetachNode(ResNode);
+        ResNode->ParentNode = null;
 
         if (ParentUldManager is not null) {
-            VisitChildren(InternalResNode, pointer => {
+            VisitChildren(ResNode, pointer => {
                 ParentUldManager->RemoveNodeFromObjectList(pointer);
             });
             ParentUldManager->UpdateDrawNodeList();
@@ -92,16 +92,16 @@ public abstract unsafe partial class NodeBase {
     }
 
     private void UpdateNative() {
-        if (InternalResNode is null) return;
+        if (ResNode is null) return;
 
         MarkDirty();
 
         if (ParentUldManager is null) {
-            ParentUldManager = GetUldManagerForNode(InternalResNode);
+            ParentUldManager = GetUldManagerForNode(ResNode);
         }
 
         if (ParentUldManager is not null) {
-            VisitChildren(InternalResNode, pointer => {
+            VisitChildren(ResNode, pointer => {
                 ParentUldManager->AddNodeToObjectList(pointer);
             });
             ParentUldManager->UpdateDrawNodeList();

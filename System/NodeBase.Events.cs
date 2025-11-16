@@ -63,8 +63,8 @@ public abstract unsafe partial class NodeBase {
         SetNodeEventFlags(eventType);
 
         if (eventHandlers.TryAdd(eventType, new EventHandlerInfo { OnActionDelegate = callback })) {
-            Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)InternalResNode:X}]");
-            InternalResNode->AtkEventManager.RegisterEvent(eventType, 0, this, this, nodeEventListener, false);
+            Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)ResNode:X}]");
+            ResNode->AtkEventManager.RegisterEvent(eventType, 0, this, this, nodeEventListener, false);
         }
         else {
             eventHandlers[eventType].OnActionDelegate += callback;
@@ -77,8 +77,8 @@ public abstract unsafe partial class NodeBase {
         SetNodeEventFlags(eventType);
 
         if (eventHandlers.TryAdd(eventType, new EventHandlerInfo { OnReceiveEventDelegate = callback })) {
-            Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)InternalResNode:X}]");
-            InternalResNode->AtkEventManager.RegisterEvent(eventType, 0, this, this, nodeEventListener, false);
+            Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)ResNode:X}]");
+            ResNode->AtkEventManager.RegisterEvent(eventType, 0, this, this, nodeEventListener, false);
         }
         else {
             eventHandlers[eventType].OnReceiveEventDelegate += callback;
@@ -89,8 +89,8 @@ public abstract unsafe partial class NodeBase {
         if (nodeEventListener is null) return;
 
         if (eventHandlers.Remove(eventType)) {
-            Log.Verbose($"[{eventType}] Unregistered from {GetType()} [{(nint)InternalResNode:X}]");
-            InternalResNode->AtkEventManager.UnregisterEvent(eventType, 0, nodeEventListener, false);
+            Log.Verbose($"[{eventType}] Unregistered from {GetType()} [{(nint)ResNode:X}]");
+            ResNode->AtkEventManager.UnregisterEvent(eventType, 0, nodeEventListener, false);
         }
 
         // If we have removed the last event, free the event listener
@@ -126,7 +126,7 @@ public abstract unsafe partial class NodeBase {
 
     private void DisposeEvents() {
         if (nodeEventListener is not null) {
-            InternalResNode->AtkEventManager.UnregisterEvent(AtkEventType.UnregisterAll, 0, nodeEventListener, false);
+            ResNode->AtkEventManager.UnregisterEvent(AtkEventType.UnregisterAll, 0, nodeEventListener, false);
         }
 
         eventHandlers.Clear();
@@ -189,7 +189,7 @@ public abstract unsafe partial class NodeBase {
     public void ShowTooltip() {
         if (Tooltip is not null && TooltipRegistered && ParentAddon is not null) {
             using var rssb = new RentedSeStringBuilder();
-            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, InternalResNode, rssb.Builder.Append(Tooltip).GetViewAsSpan());
+            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, ResNode, rssb.Builder.Append(Tooltip).GetViewAsSpan());
         }
     }
 

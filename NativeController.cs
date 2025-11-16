@@ -78,7 +78,7 @@ public unsafe class NativeController : IDisposable {
     public void AttachNode(NodeBase customNode, AtkResNode* targetNode, NodePosition? position = null) {
         if (MainThreadSafety.TryAssertMainThread()) return;
 
-        Log.Verbose($"Attaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a native AtkResNode");
+        Log.Verbose($"Attaching [{customNode.GetType()}:{(nint)customNode.ResNode:X}] to a native AtkResNode");
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(targetNode);
 
         customNode.RegisterAutoDetach(addon);
@@ -93,7 +93,7 @@ public unsafe class NativeController : IDisposable {
             return;
         }
 
-        Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a native AtkComponentNode");
+        Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint)customNode.ResNode:X}] to a native AtkComponentNode");
 
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode((AtkResNode*)targetNode);
         if (addon is not null) {
@@ -103,14 +103,14 @@ public unsafe class NativeController : IDisposable {
             customNode.AttachNode(targetNode, position);
         }
         else {
-            Log.Error($"Attempted to attach [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a native AtkComponentNode, but could not find parent addon. Aborting.");
+            Log.Error($"Attempted to attach [{customNode.GetType()}:{(nint)customNode.ResNode:X}] to a native AtkComponentNode, but could not find parent addon. Aborting.");
         }
     }
 
     public void AttachNode(NodeBase customNode, NativeAddon targetAddon, NodePosition? position = null) {
         if (MainThreadSafety.TryAssertMainThread()) return;
 
-        Log.Verbose($"Attaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] to a Custom Addon [{targetAddon.GetType()}]");
+        Log.Verbose($"Attaching [{customNode.GetType()}:{(nint)customNode.ResNode:X}] to a Custom Addon [{targetAddon.GetType()}]");
 
         customNode.AttachNode(targetAddon, position ?? NodePosition.AsLastChild);
     }
@@ -119,7 +119,7 @@ public unsafe class NativeController : IDisposable {
         if (MainThreadSafety.TryAssertMainThread()) return;
         
         if (customNode is not null) {
-            Log.Verbose($"Detaching [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] from all sources.");
+            Log.Verbose($"Detaching [{customNode.GetType()}:{(nint)customNode.ResNode:X}] from all sources.");
         }
 
         customNode?.DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
@@ -133,7 +133,7 @@ public unsafe class NativeController : IDisposable {
         var node = Interlocked.Exchange(ref customNode, null);
         
         if (customNode is not null) {
-            Log.Verbose($"Disposing [{customNode.GetType()}:{(nint)customNode.InternalResNode:X}] from all sources.");
+            Log.Verbose($"Disposing [{customNode.GetType()}:{(nint)customNode.ResNode:X}] from all sources.");
         }
 
         node?.DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);

@@ -16,7 +16,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     private bool isDisposed;
 
-    internal abstract AtkResNode* InternalResNode { get; }
+    internal abstract AtkResNode* ResNode { get; }
 
     private delegate* unmanaged<AtkResNode*, bool, void> originalDestructorFunction;
     private AtkResNode.Delegates.Destroy destructorFunction = null!;
@@ -37,7 +37,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         DisposeEvents();
 
-        AtkStage.Instance()->ClearNodeFocus(InternalResNode);
+        AtkStage.Instance()->ClearNodeFocus(ResNode);
 
         // Automatically dispose any fields/properties that are managed nodes.
         VisitChildren(node => node.Dispose());
@@ -45,7 +45,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         TryForceDetach(false);
 
         Timeline?.Dispose();
-        InternalResNode->Timeline = null;
+        ResNode->Timeline = null;
 
         DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
 
@@ -86,22 +86,22 @@ public abstract unsafe partial class NodeBase : IDisposable {
     protected abstract void Dispose(bool disposing, bool isNativeDestructor);
 
     private bool IsNodeValid() {
-        if (InternalResNode is null) return false;
-        if (InternalResNode->VirtualTable is null) return false;
-        if (InternalResNode->VirtualTable == AtkEventTarget.StaticVirtualTablePointer) return false;
+        if (ResNode is null) return false;
+        if (ResNode->VirtualTable is null) return false;
+        if (ResNode->VirtualTable == AtkEventTarget.StaticVirtualTablePointer) return false;
 
         return true;
     }
 
-    public static implicit operator AtkResNode*(NodeBase node) => node.InternalResNode;
-    public static implicit operator AtkEventTarget*(NodeBase node) => &node.InternalResNode->AtkEventTarget;
+    public static implicit operator AtkResNode*(NodeBase node) => node.ResNode;
+    public static implicit operator AtkEventTarget*(NodeBase node) => &node.ResNode->AtkEventTarget;
 
     protected void BuildVirtualTable() {
         // Overwrite virtual table with a custom copy,
         // Note: Currently there are only 2 vfuncs, but there's no harm in copying more for if they ever add more vfuncs to the game.
         virtualTable = (AtkResNode.AtkResNodeVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 4);
-        NativeMemory.Copy(InternalResNode->VirtualTable, virtualTable, 0x8 * 4);
-        InternalResNode->VirtualTable = virtualTable;
+        NativeMemory.Copy(ResNode->VirtualTable, virtualTable, 0x8 * 4);
+        ResNode->VirtualTable = virtualTable;
 
         // Back up original destructor pointer
         originalDestructorFunction = virtualTable->Destroy;
@@ -143,11 +143,11 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
         BuildVirtualTable();
 
-        InternalResNode->Type = nodeType;
-        InternalResNode->NodeId = NodeIdBase + CurrentOffset++;
+        ResNode->Type = nodeType;
+        ResNode->NodeId = NodeIdBase + CurrentOffset++;
         IsVisible = true;
 
-        if (InternalResNode is null) {
+        if (ResNode is null) {
             throw new Exception($"Unable to allocate memory for {typeof(T)}");
         }
 
@@ -156,15 +156,15 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
     public T* Node { get; private set; }
 
-    internal sealed override AtkResNode* InternalResNode => (AtkResNode*)Node;
+    internal sealed override AtkResNode* ResNode => (AtkResNode*)Node;
 
-    public static implicit operator T*(NodeBase<T> node) => (T*) node.InternalResNode;
+    public static implicit operator T*(NodeBase<T> node) => (T*) node.ResNode;
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             if (!isNativeDestructor) {
                 DetachNode();
-                InternalResNode->Destroy(true);
+                ResNode->Destroy(true);
             }
 
             Node = null;

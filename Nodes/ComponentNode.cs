@@ -17,7 +17,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
     public override AtkComponentBase* ComponentBase => (AtkComponentBase*)Component;
     public override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*)Data;
-    public override AtkComponentNode* InternalComponentNode => (AtkComponentNode*)InternalResNode;
+    public override AtkComponentNode* InternalComponentNode => (AtkComponentNode*)ResNode;
 
     protected ComponentNode() : base(NodeType.Component) {
         Component = NativeMemoryHelper.Create<T>();
@@ -33,7 +33,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
             NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents | NodeFlags.Fill,
         };
 
-        CollisionNode.InternalResNode->ParentNode = InternalResNode;
+        CollisionNode.ResNode->ParentNode = ResNode;
         CollisionNode.ParentUldManager = &((AtkComponentBase*)Component)->UldManager;
 
         componentBase->OwnerNode = Node;

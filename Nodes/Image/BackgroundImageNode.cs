@@ -14,9 +14,9 @@ public unsafe class BackgroundImageNode : SimpleImageNode {
     }
 
     [JsonProperty] public new Vector4 Color {
-        get => new(AddColor.X, AddColor.Y, AddColor.Z, InternalResNode->Color.A / 255.0f);
+        get => new(AddColor.X, AddColor.Y, AddColor.Z, ResNode->Color.A / 255.0f);
         set {
-            InternalResNode->Color = new Vector4(0.0f, 0.0f, 0.0f, value.W).ToByteColor();
+            ResNode->Color = new Vector4(0.0f, 0.0f, 0.0f, value.W).ToByteColor();
             AddColor = value.AsVector3Color();
         }
     }

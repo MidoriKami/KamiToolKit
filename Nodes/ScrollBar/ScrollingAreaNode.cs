@@ -29,7 +29,7 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
         };
         ScrollBarNode.AttachNode(this);
 
-        ContentAreaClipNode.InternalResNode->AtkEventManager.RegisterEvent(
+        ContentAreaClipNode.ResNode->AtkEventManager.RegisterEvent(
             AtkEventType.MouseWheel,
             5,
             null,
@@ -37,7 +37,7 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
             ScrollBarNode,
             false);
         
-        ScrollingCollisionNode.InternalResNode->AtkEventManager.RegisterEvent(
+        ScrollingCollisionNode.ResNode->AtkEventManager.RegisterEvent(
             AtkEventType.MouseWheel,
             5,
             null,
@@ -45,7 +45,7 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
             ScrollBarNode,
             false);
 
-        ContentAreaNode.InternalResNode->AtkEventManager.RegisterEvent(
+        ContentAreaNode.ResNode->AtkEventManager.RegisterEvent(
             AtkEventType.MouseWheel,
             5,
             null,
