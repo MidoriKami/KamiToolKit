@@ -35,14 +35,16 @@ public abstract unsafe partial class NodeBase : IDisposable {
             return;
         }
 
+        foreach (var child in ChildNodes.ToList()) {
+            child.Dispose();
+        }
+        ChildNodes.Clear();
+
         Log.Verbose($"Disposing node {GetType()}");
 
         DisposeEvents();
 
         AtkStage.Instance()->ClearNodeFocus(ResNode);
-
-        // Automatically dispose any fields/properties that are managed nodes.
-        VisitChildren(node => node.Dispose());
 
         DetachNode();
 

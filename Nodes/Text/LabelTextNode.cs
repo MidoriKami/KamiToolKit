@@ -5,7 +5,7 @@ namespace KamiToolKit.Nodes;
 
 public sealed class LabelTextNode : TextNode {
     public LabelTextNode() {
-        TextFlags = TextFlags.AutoAdjustNodeSize | TextFlags.Edge;
+        TextFlags = TextFlags.Edge;
         TextColor = ColorHelper.GetColor(8); 
         TextOutlineColor = ColorHelper.GetColor(7);
         FontType = FontType.Axis;
