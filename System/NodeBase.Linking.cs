@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -75,6 +76,8 @@ public abstract unsafe partial class NodeBase {
         parentNode.ChildNodes.Add(this);
         ParentAddon = addon;
         
+        VisitManagedChildren(this, node => node.ParentAddon = addon);
+
         if (NodeId > NodeIdBase) {
             NodeId = GetMaxNodeId(&addon.InternalAddon->UldManager) + 1;
         }
@@ -137,9 +140,29 @@ public abstract unsafe partial class NodeBase {
     }
 
     private void UpdateParentAddonFromTarget(AtkResNode* node) {
-        var targetParentAddon = GetAddonForNode(node);
-        if (targetParentAddon is not null) {
-            ParentAddon = targetParentAddon;
+        if (parentNode is not null && parentNode.ParentAddon is not null) {
+            ParentAddon = parentNode.ParentAddon;
+
+            foreach (var child in ChildNodes.SelectMany(childNode => childNode.ChildNodes)) {
+                child.ParentAddon = ParentAddon;
+            }
+        }
+        else if (ParentAddon is null) {
+            var targetParentAddon = GetAddonForNode(node);
+            if (targetParentAddon is not null) {
+                ParentAddon = targetParentAddon;
+            }
+        }
+
+        if (ParentAddon is not null) {
+            VisitManagedChildren(this, child => child.ParentAddon = ParentAddon);
+        }
+    }
+
+    private void VisitManagedChildren(NodeBase node, Action<NodeBase> visitAction) {
+        foreach (var child in node.ChildNodes) {
+            visitAction(child);
+            VisitManagedChildren(child, visitAction);
         }
     }
 
