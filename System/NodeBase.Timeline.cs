@@ -1,4 +1,5 @@
-﻿using KamiToolKit.NodeParts;
+﻿using KamiToolKit.Classes.TimelineBuilding;
+using KamiToolKit.NodeParts;
 
 namespace KamiToolKit.System;
 
@@ -13,4 +14,7 @@ public abstract unsafe partial class NodeBase {
         ResNode->Timeline = timeline.InternalTimeline;
         timeline.OwnerNode = ResNode;
     }
+
+    public void AddTimeline(TimelineBuilder builder)
+        => AddTimeline(builder.Build());
 }
