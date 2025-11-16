@@ -61,6 +61,7 @@ public abstract unsafe partial class NodeBase {
                 Size = Size + new Vector2(32.0f, 32.0f), 
             };
             overlayNode.AttachNode(this);
+            ChildNodes.Add(overlayNode);
         }
 
         overlayNode.ShowParts = currentEditMode.HasFlag(NodeEditMode.Resize);
@@ -86,11 +87,11 @@ public abstract unsafe partial class NodeBase {
         }
 
         if (overlayNode is not null) {
+            ChildNodes.Remove(overlayNode);
             overlayNode.DetachNode();
             overlayNode.Dispose();
             overlayNode = null;
         }
-
     }
 
     private void OnEditEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
