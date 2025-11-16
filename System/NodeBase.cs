@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -17,6 +18,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     private bool isDisposed;
 
     internal abstract AtkResNode* ResNode { get; }
+    internal bool IsAddonRootNode;
 
     private delegate* unmanaged<AtkResNode*, bool, void> originalDestructorFunction;
     private AtkResNode.Delegates.Destroy destructorFunction = null!;
@@ -42,7 +44,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         // Automatically dispose any fields/properties that are managed nodes.
         VisitChildren(node => node.Dispose());
 
-        TryForceDetach(false);
+        DetachNode();
 
         Timeline?.Dispose();
         ResNode->Timeline = null;
@@ -60,11 +62,18 @@ public abstract unsafe partial class NodeBase : IDisposable {
     ///     Ensure you have detached nodes safely from native ui before disposing.
     /// </summary>
     internal static void DisposeNodes() {
-        foreach (var node in CreatedNodes.ToArray()) {
-            if (!node.IsAttached) continue;
-            Log.Debug($"AutoDisposing node {node.GetType()}");
+        var leakedNodeCount = CreatedNodes.Count(node => !node.IsAddonRootNode && node.ResNode is not null && node.ResNode->ParentNode is null);
 
-            node.TryForceDetach(true);
+        if (leakedNodeCount is not 0) {
+            Log.Warning($"There were {leakedNodeCount} node(s) that were not disposed safely.");
+        }
+
+        foreach (var node in CreatedNodes.ToArray()) {
+            if (node.ResNode is null) continue;
+            if (node.ResNode->ParentNode is not null) continue;
+            if (node.IsAddonRootNode) continue;
+
+            Log.Warning($"Forcing disposal of: {node.GetType()}");
             node.Dispose();
         }
     }
@@ -168,7 +177,6 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             if (!isNativeDestructor) {
-                DetachNode();
                 ResNode->Destroy(true);
             }
 

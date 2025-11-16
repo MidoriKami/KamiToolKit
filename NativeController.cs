@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Dalamud.Plugin;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
 using KamiToolKit.Classes;
@@ -79,9 +78,6 @@ public unsafe class NativeController : IDisposable {
         if (MainThreadSafety.TryAssertMainThread()) return;
 
         Log.Verbose($"Attaching [{customNode.GetType()}:{(nint)customNode.ResNode:X}] to a native AtkResNode");
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(targetNode);
-
-        customNode.RegisterAutoDetach(addon);
         customNode.AttachNode(targetNode, position ?? NodePosition.AsLastChild);
     }
 
@@ -94,17 +90,7 @@ public unsafe class NativeController : IDisposable {
         }
 
         Log.Verbose($"[NativeController] Attaching [{customNode.GetType()}:{(nint)customNode.ResNode:X}] to a native AtkComponentNode");
-
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode((AtkResNode*)targetNode);
-        if (addon is not null) {
-            Log.Verbose($"Tried to get Addon from native AtkComponentNode, found: {addon->NameString}");
-
-            customNode.RegisterAutoDetach(addon);
-            customNode.AttachNode(targetNode, position);
-        }
-        else {
-            Log.Error($"Attempted to attach [{customNode.GetType()}:{(nint)customNode.ResNode:X}] to a native AtkComponentNode, but could not find parent addon. Aborting.");
-        }
+        customNode.AttachNode(targetNode, position);
     }
 
     public void AttachNode(NodeBase customNode, NativeAddon targetAddon, NodePosition? position = null) {
@@ -123,7 +109,6 @@ public unsafe class NativeController : IDisposable {
         }
 
         customNode?.DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
-        customNode?.UnregisterAutoDetach();
         customNode?.DetachNode();
     }
 
@@ -137,7 +122,6 @@ public unsafe class NativeController : IDisposable {
         }
 
         node?.DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
-        node?.UnregisterAutoDetach();
         node?.DetachNode();
         node?.Dispose();
     }
