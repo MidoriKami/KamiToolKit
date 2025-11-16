@@ -50,7 +50,7 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        const float lineThickness = 8.0f;
+        const float lineThickness = 4.0f;
 
         leftEditNode.Size = new Vector2(Height - 32.0f, lineThickness);
         leftEditNode.Position = new Vector2(16.0f + leftEditNode.Height / 2.0f, 16.0f);
