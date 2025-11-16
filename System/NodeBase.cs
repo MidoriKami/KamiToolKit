@@ -97,14 +97,14 @@ public abstract unsafe partial class NodeBase : IDisposable {
     public static implicit operator AtkEventTarget*(NodeBase node) => &node.ResNode->AtkEventTarget;
 
     protected void BuildVirtualTable() {
+        // Back up original destructor pointer
+        originalDestructorFunction = ResNode->VirtualTable->Destroy;
+        
         // Overwrite virtual table with a custom copy,
         // Note: Currently there are only 2 vfuncs, but there's no harm in copying more for if they ever add more vfuncs to the game.
         virtualTable = (AtkResNode.AtkResNodeVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 4);
         NativeMemory.Copy(ResNode->VirtualTable, virtualTable, 0x8 * 4);
         ResNode->VirtualTable = virtualTable;
-
-        // Back up original destructor pointer
-        originalDestructorFunction = virtualTable->Destroy;
 
         // Pin managed function to virtual table entry
         destructorFunction = DestructorDetour;
