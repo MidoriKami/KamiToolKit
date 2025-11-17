@@ -112,6 +112,9 @@ public abstract unsafe partial class NodeBase {
 
         ParentAddon = null;
 
+        // Also remove references to the parent addon for all children
+        VisitManagedChildren(this, node => node.ParentAddon = null);
+
         if (parentNode is not null) {
             parentNode.ChildNodes.Remove(this);
             parentNode = null;
