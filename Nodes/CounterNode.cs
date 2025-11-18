@@ -1,9 +1,10 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeParts;
 using KamiToolKit.System;
+using Lumina.Text.Payloads;
 using Lumina.Text.ReadOnly;
 using Newtonsoft.Json;
 
@@ -90,7 +91,25 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
 
     public int Number {
         get => int.Parse(Node->NodeText.ToString());
-        set => String = DalamudInterface.Instance.SeStringEvaluator.EvaluateFromAddon(18, [ value ]);
+        set {
+            var evaluatedString = DalamudInterface.Instance.SeStringEvaluator.EvaluateFromAddon(18, [value]);
+            using var rentedBuilder = new RentedSeStringBuilder();
+
+            foreach (var payload in evaluatedString) {
+                switch (payload.Type) {
+                    case ReadOnlySePayloadType.Macro when payload.MacroCode is MacroCode.NonBreakingSpace:
+                        // Fix for French thousands separators.
+                        // The game calls FormatAddonText2 that does this.
+                        rentedBuilder.Builder.Append(' ');
+                        break;
+                    default:
+                        rentedBuilder.Builder.Append(payload);
+                        break;
+                }
+            }
+
+            Node->SetText(rentedBuilder.Builder.GetViewAsSpan());
+        }
     }
 
     public ReadOnlySeString String {
