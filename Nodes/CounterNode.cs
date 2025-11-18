@@ -96,10 +96,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
 
     public ReadOnlySeString String {
         get => Node->NodeText.AsSpan();
-        set {
-            using var builder = new RentedSeStringBuilder();
-            Node->SetText(builder.Builder.Append(value).GetViewAsSpan());
-        }
+        set => Node->SetText(ParseString(value));
     }
 
     public CounterFont Font {
@@ -128,6 +125,11 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
                 PartsList[0]->LoadTexture(fontPath);
             }
         }
+    }
+
+    private static ReadOnlySeString ParseString(ReadOnlySeString value) {
+        using var builder = new RentedSeStringBuilder();
+        return builder.Builder.Append(value).GetViewAsSpan();
     }
 
     private static ReadOnlySeString ParseNumber(int value) {
