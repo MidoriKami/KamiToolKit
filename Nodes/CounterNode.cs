@@ -91,25 +91,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
 
     public int Number {
         get => int.Parse(Node->NodeText.ToString());
-        set {
-            var evaluatedString = DalamudInterface.Instance.SeStringEvaluator.EvaluateFromAddon(18, [value]);
-            using var rentedBuilder = new RentedSeStringBuilder();
-
-            foreach (var payload in evaluatedString) {
-                switch (payload.Type) {
-                    case ReadOnlySePayloadType.Macro when payload.MacroCode is MacroCode.NonBreakingSpace:
-                        // Fix for French thousands separators.
-                        // The game calls FormatAddonText2 that does this.
-                        rentedBuilder.Builder.Append(' ');
-                        break;
-                    default:
-                        rentedBuilder.Builder.Append(payload);
-                        break;
-                }
-            }
-
-            Node->SetText(rentedBuilder.Builder.GetViewAsSpan());
-        }
+        set => Node->SetText(ParseNumber(value));
     }
 
     public ReadOnlySeString String {
@@ -146,5 +128,29 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
                 PartsList[0]->LoadTexture(fontPath);
             }
         }
+    }
+
+    private static ReadOnlySeString ParseNumber(int value) {
+        using var rentedBuilder = new RentedSeStringBuilder();
+
+        // <kilo(lnum1,\,)>
+        var evaluatedString = DalamudInterface.Instance.SeStringEvaluator.EvaluateFromAddon(18, [ value ]);
+
+        foreach (var payload in evaluatedString) {
+            switch (payload.Type) {
+
+                // Fix for French thousands separators.
+                // The game calls FormatAddonText2 that does this.
+                case ReadOnlySePayloadType.Macro when payload.MacroCode is MacroCode.NonBreakingSpace:
+                    rentedBuilder.Builder.Append(' ');
+                    break;
+
+                default:
+                    rentedBuilder.Builder.Append(payload);
+                    break;
+            }
+        }
+
+        return rentedBuilder.Builder.GetViewAsSpan();
     }
 }
