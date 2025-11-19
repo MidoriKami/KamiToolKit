@@ -127,7 +127,7 @@ public abstract unsafe partial class NativeAddon {
 
                 if (InternalAddon is not null) {
                     AtkStage.Instance()->RaptureAtkUnitManager->InitializeAddon(InternalAddon, InternalName);
-                    InternalAddon->Open((uint)DepthLayer);
+                    InternalAddon->Open((uint)DepthLayer - 1);
                     disposeHandle = GCHandle.Alloc(this);
                 }
             }
