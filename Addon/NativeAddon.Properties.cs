@@ -130,25 +130,9 @@ public abstract unsafe partial class NativeAddon {
 
     public int OpenWindowSoundEffectId { get; set; } = 23;
 
-    public TitleMenuOptions TitleMenuOptions {
-        get;
-        set {
-            field = value;
-            if (InternalAddon is not null) {
-                UpdateFlags();
-            }
-        }
-    } = new();
+    public TitleMenuOptions TitleMenuOptions { get; init; } = new();
 
-    public WindowOptions WindowOptions {
-        get;
-        set {
-            field = value;
-            if (InternalAddon is not null) {
-                UpdateFlags();
-            }
-        }
-    } = new();
+    public WindowOptions WindowOptions { get; init; } = new();
 
     public Vector2 Size { get; set; } = new(400.0f, 400.0f);
 
