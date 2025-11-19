@@ -69,9 +69,7 @@ public abstract unsafe partial class NativeAddon {
             IsAddonRootNode = true,
         };
 
-        WindowNode = new WindowNode {
-            NodeId = 2,
-        };
+        WindowNode = new WindowNode { NodeId = 2 };
 
         InternalAddon->NameString = InternalName;
 
@@ -118,34 +116,32 @@ public abstract unsafe partial class NativeAddon {
     /// <summary>
     ///     Initializes and Opens this instance of Addon
     /// </summary>
-    public void Open()
-        => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-            Log.Verbose($"[{InternalName}] Open Called");
+    public void Open() => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+        Log.Verbose($"[{InternalName}] Open Called");
 
-            if (InternalAddon is null) {
-                AllocateAddon();
+        if (InternalAddon is null) {
+            AllocateAddon();
 
-                if (InternalAddon is not null) {
-                    AtkStage.Instance()->RaptureAtkUnitManager->InitializeAddon(InternalAddon, InternalName);
-                    InternalAddon->Open((uint)DepthLayer - 1);
-                    disposeHandle = GCHandle.Alloc(this);
-                }
+            if (InternalAddon is not null) {
+                AtkStage.Instance()->RaptureAtkUnitManager->InitializeAddon(InternalAddon, InternalName);
+                InternalAddon->Open((uint)DepthLayer - 1);
+                disposeHandle = GCHandle.Alloc(this);
             }
-            else {
-                Log.Verbose($"[{InternalName}] Already open, skipping call.");
-            }
-        });
+        }
+        else {
+            Log.Verbose($"[{InternalName}] Already open, skipping call.");
+        }
+    });
 
     [Conditional("DEBUG")]
     public void DebugOpen() => Open();
 
-    public void Close()
-        => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-            Log.Verbose($"[{InternalName}] Close");
+    public void Close() => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+        Log.Verbose($"[{InternalName}] Close");
 
-            if (InternalAddon is null) return;
-            InternalAddon->Close(false);
-        });
+        if (InternalAddon is null) return;
+        InternalAddon->Close(false);
+    });
 
     public void Toggle() {
         if (IsOpen) {
