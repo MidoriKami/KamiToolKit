@@ -32,7 +32,7 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
             OnSortOrderChanged = OnSortOrderUpdated,
             OnSearchUpdated = OnSearchUpdated,
         };
-        AttachNode(searchWidget);
+        searchWidget.AttachNode(this);
 
         listNode = new ScrollingAreaNode<VerticalListNode> {
             Position = new Vector2(ContentStartPosition.X, searchWidget.Y + searchWidget.Height + 8.0f),
@@ -41,7 +41,7 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
             ContentHeight = 10.0f,
         };
         listNode.ContentNode.FitContents = true;
-        AttachNode(listNode);
+        listNode.AttachNode(this);
 
         const float buttonPadding = 20.0f;
         var contentWidth = ContentSize.X - buttonPadding * 2;
@@ -53,7 +53,7 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
             String = "Cancel",
             OnClick = OnCancelClicked,
         };
-        AttachNode(cancelButton);
+        cancelButton.AttachNode(this);
         
         confirmButton = new TextButtonNode {
             Size = new Vector2(buttonWidth, 24.0f),
@@ -62,7 +62,7 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
             String = "Confirm",
             OnClick = OnConfirmClicked,
         };
-        AttachNode(confirmButton);
+        confirmButton.AttachNode(this);
         
         foreach (var option in SearchOptions) {
             listNode.ContentNode.AddNode(BuildOptionNode(option), true);

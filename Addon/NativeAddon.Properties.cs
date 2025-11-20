@@ -27,8 +27,6 @@ public abstract unsafe partial class NativeAddon {
 
     public ReadOnlySeString Subtitle { get; set; }
 
-    public required NativeController NativeController { get; init; }
-
     public int OpenWindowSoundEffectId { get; set; } = 23;
 
     public Vector2 Size { get; set; } = new(400.0f, 400.0f);

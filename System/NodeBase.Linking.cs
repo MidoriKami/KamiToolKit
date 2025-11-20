@@ -19,14 +19,18 @@ public abstract unsafe partial class NodeBase {
     internal AtkUldManager* ParentUldManager { get; set; }
     internal AtkUnitBase* ParentAddon { get; private set; }
 
-    internal void AttachNode(AtkResNode* target, NodePosition position = NodePosition.AsLastChild) {
+    public void AttachNode(AtkResNode* target, NodePosition position = NodePosition.AsLastChild) {
+        if (MainThreadSafety.TryAssertMainThread()) return;
+
         NodeLinker.AttachNode(ResNode, target, position);
         UpdateParentAddonFromTarget(target);
         UpdateNative();
     }
 
     [OverloadResolutionPriority(1)] 
-    internal void AttachNode(NodeBase target, NodePosition position = NodePosition.AsLastChild) {
+    public void AttachNode(NodeBase target, NodePosition position = NodePosition.AsLastChild) {
+        if (MainThreadSafety.TryAssertMainThread()) return;
+
         if (target is ComponentNode targetComponent) {
             AttachNode(targetComponent);
             return;
@@ -41,7 +45,9 @@ public abstract unsafe partial class NodeBase {
     }
 
     [OverloadResolutionPriority(2)] 
-    internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
+    public void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
+        if (MainThreadSafety.TryAssertMainThread()) return;
+
         NodeLinker.AttachNode(ResNode, target.ComponentBase->UldManager.RootNode, position);
         parentNode = target;
         parentNode.ChildNodes.Add(this);
@@ -54,7 +60,9 @@ public abstract unsafe partial class NodeBase {
         UpdateNative();
     }
 
-    internal void AttachNode(AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings) {
+    public void AttachNode(AtkComponentNode* targetNode, NodePosition position = NodePosition.AfterAllSiblings) {
+        if (MainThreadSafety.TryAssertMainThread()) return;
+
         void* attachTarget = position switch {
             NodePosition.AfterTarget => targetNode,
             NodePosition.BeforeTarget => targetNode,
@@ -69,8 +77,13 @@ public abstract unsafe partial class NodeBase {
         UpdateParentAddonFromTarget(&targetNode->AtkResNode);
         UpdateNative();
     }
+    
+    public void AttachNode(AtkUnitBase* addon, NodePosition  position = NodePosition.AsLastChild)
+        => AttachNode(addon->UldManager.RootNode, position);
 
-    internal void AttachNode(NativeAddon addon, NodePosition position = NodePosition.AsLastChild) {
+    public void AttachNode(NativeAddon addon, NodePosition position = NodePosition.AsLastChild) {
+        if (MainThreadSafety.TryAssertMainThread()) return;
+        
         NodeLinker.AttachNode(ResNode, addon.InternalAddon->RootNode, position);
         parentNode = addon.RootNode;
         parentNode.ChildNodes.Add(this);
@@ -90,7 +103,8 @@ public abstract unsafe partial class NodeBase {
         AttachNode(newTarget);
     }
 
-    internal void DetachNode() {
+    public void DetachNode() {
+        if (MainThreadSafety.TryAssertMainThread()) return;
         if (ResNode is null) return;
 
         NodeLinker.DetachNode(ResNode);

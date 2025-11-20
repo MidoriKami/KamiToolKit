@@ -29,7 +29,7 @@ public class ColorPickerAddon : NativeAddon {
             Position = ContentStartPosition,
             Size = ContentSize,
         };
-        AttachNode(colorPicker);
+        colorPicker.AttachNode(this);
         
         colorPicker.SetColor(InitialColor);
 
@@ -37,7 +37,7 @@ public class ColorPickerAddon : NativeAddon {
             Position = ContentStartPosition + new Vector2(2.0f, ContentSize.Y - 40.0f),
             Size = new Vector2(ContentSize.X - 4.0f, 2.0f),
         };
-        AttachNode(horizontalLine);
+        horizontalLine.AttachNode(this);
 
         confirmButton = new TextButtonNode {
             Position = ContentStartPosition + new Vector2(0.0f, ContentSize.Y - 24.0f),
@@ -45,7 +45,7 @@ public class ColorPickerAddon : NativeAddon {
             String = "Confirm",
             OnClick = OnConfirmClicked,
         };
-        AttachNode(confirmButton);
+        confirmButton.AttachNode(this);
 
         if (DefaultHsvaColor is { } defaultColor) {
             defaultColorPreview = new ColorOptionTextButtonNode {
@@ -55,7 +55,7 @@ public class ColorPickerAddon : NativeAddon {
                 OnClick = OnDefaultClicked,
                 DefaultHsvaColor = defaultColor,
             };
-            AttachNode(defaultColorPreview);
+            defaultColorPreview.AttachNode(this);
         }
 
         cancelButton = new TextButtonNode {
@@ -64,7 +64,7 @@ public class ColorPickerAddon : NativeAddon {
             String = "Cancel",
             OnClick = OnCancelClicked,
         };
-        AttachNode(cancelButton);
+        cancelButton.AttachNode(this);
     }
 
     protected override unsafe void OnHide(AtkUnitBase* addon) {

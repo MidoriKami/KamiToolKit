@@ -27,13 +27,13 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
             AddNewEntry = OnAddClicked,
             RemoveEntry = OnItemRemoved,
         };
-        AttachNode(selectionListNode);
+        selectionListNode.AttachNode(this);
 
         separatorLine = new VerticalLineNode {
             Position = ContentStartPosition + new Vector2(250.0f + 8.0f, 0.0f),
             Size = new Vector2(4.0f, ContentSize.Y),
         };
-        AttachNode(separatorLine);
+        separatorLine.AttachNode(this);
 
         nothingSelectedTextNode = new TextNode {
             Position = ContentStartPosition + new Vector2(250.0f + 16.0f, 0.0f),
@@ -46,7 +46,7 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
             String = "Please select an option on the left",
             TextColor = ColorHelper.GetColor(1),
         };
-        AttachNode(nothingSelectedTextNode);
+        nothingSelectedTextNode.AttachNode(this);
 
         configNode = new TU {
             Position = ContentStartPosition + new Vector2(250.0f + 16.0f, 0.0f),
@@ -57,7 +57,7 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
             },
             IsVisible = false,
         };
-        AttachNode(configNode);
+        configNode.AttachNode(this);
     }
 
     private void OnOptionChanged(T? newOption) {
