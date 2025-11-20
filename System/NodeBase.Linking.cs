@@ -79,7 +79,7 @@ public abstract unsafe partial class NodeBase {
     }
     
     public void AttachNode(AtkUnitBase* addon, NodePosition  position = NodePosition.AsLastChild)
-        => AttachNode(addon->UldManager.RootNode, position);
+        => AttachNode(addon->RootNode, position);
 
     public void AttachNode(NativeAddon addon, NodePosition position = NodePosition.AsLastChild) {
         if (MainThreadSafety.TryAssertMainThread()) return;
