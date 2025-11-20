@@ -1,7 +1,7 @@
 ﻿using Dalamud.Plugin;
 using KamiToolKit.Addon;
 using KamiToolKit.Classes;
-using KamiToolKit.System;
+using KamiToolKit.NodeBaseClasses;
 using Serilog.Events;
 
 namespace KamiToolKit;

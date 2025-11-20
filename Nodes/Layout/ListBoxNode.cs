@@ -3,7 +3,7 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using KamiToolKit.Classes;
-using KamiToolKit.System;
+using KamiToolKit.NodeBaseClasses;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;

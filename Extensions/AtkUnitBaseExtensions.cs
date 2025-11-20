@@ -4,7 +4,7 @@ using System.Numerics;
 using System.Reflection;
 using FFXIVClientStructs.Attributes;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.System;
+using KamiToolKit.NodeBaseClasses;
 
 namespace KamiToolKit.Extensions;
 

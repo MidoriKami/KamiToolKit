@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Classes.TimelineBuilding;
 using KamiToolKit.Nodes;
+using KamiToolKit.Timelines;
 
 namespace KamiToolKit.Addon;
 

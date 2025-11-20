@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using KamiToolKit.Classes;
-using KamiToolKit.System;
+using KamiToolKit.NodeBaseClasses;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
