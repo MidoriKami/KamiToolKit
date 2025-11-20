@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Addon;
 using KamiToolKit.Nodes;
-using KamiToolKit.Nodes.SimpleComponentParts;
 using KamiToolKit.Premade.Nodes;
 using KamiToolKit.Premade.Widgets;
 

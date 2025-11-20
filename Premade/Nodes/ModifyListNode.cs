@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.Nodes;
-using KamiToolKit.Nodes.SimpleComponentParts;
 using KamiToolKit.Premade.Widgets;
 
 namespace KamiToolKit.Premade.Nodes;

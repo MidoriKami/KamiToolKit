@@ -2,7 +2,6 @@
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Addon;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Widgets;
 
