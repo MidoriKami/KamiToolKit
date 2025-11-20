@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KamiToolKit;
+namespace KamiToolKit.Controllers;
 
 /// <summary>
 /// For use with controlling multiple addons at once, for example the various kinds of Target Cast Bars

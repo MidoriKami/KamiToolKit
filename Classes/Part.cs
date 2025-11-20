@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace KamiToolKit.NodeParts;
+namespace KamiToolKit.Classes;
 
 public class Part {
 

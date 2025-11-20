@@ -5,7 +5,6 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.NodeBaseClasses;
-using KamiToolKit.NodeParts;
 using KamiToolKit.Nodes.SimpleComponentParts;
 using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;

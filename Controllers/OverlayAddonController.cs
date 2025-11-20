@@ -3,7 +3,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Arrays;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
-namespace KamiToolKit;
+namespace KamiToolKit.Controllers;
 
 /// <summary>
 ///     Simplified controller for using AddonNamePlate for basic overlays.

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 
-namespace KamiToolKit.NodeParts;
+namespace KamiToolKit.Classes;
 
 /// <summary>
 ///     Wrapper around a AtkUldPartsList, manages adding multiple parts more easily.

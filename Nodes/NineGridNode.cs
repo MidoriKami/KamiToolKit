@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.NodeBaseClasses;
-using KamiToolKit.NodeParts;
+using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
