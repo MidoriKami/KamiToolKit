@@ -57,8 +57,6 @@ public abstract unsafe partial class NativeAddon {
         };
 
         WindowNode = new WindowNode { NodeId = 2 };
-        WindowNode.AttachNode(this, NodePosition.AsFirstChild);
-        InternalAddon->WindowNode = WindowNode;
 
         InternalAddon->NameString = InternalName;
 
@@ -88,6 +86,8 @@ public abstract unsafe partial class NativeAddon {
         InternalAddon->UldManager.UpdateDrawNodeList();
         InternalAddon->UldManager.LoadedState = AtkLoadState.Loaded;
 
+        WindowNode.AttachNode(this, NodePosition.AsFirstChild);
+        InternalAddon->WindowNode = WindowNode;
         InternalAddon->UldManager.AddNodeToObjectList(WindowNode);
 
         // UldManager finished loading the uld
