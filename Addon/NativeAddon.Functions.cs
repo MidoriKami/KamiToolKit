@@ -85,7 +85,7 @@ public abstract unsafe partial class NativeAddon {
         OnFinalize(addon);
 
         if (RememberClosePosition) {
-            Position = new Vector2(InternalAddon->X, InternalAddon->Y);
+            LastClosePosition = new Vector2(InternalAddon->X, InternalAddon->Y);
         }
 
         AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);

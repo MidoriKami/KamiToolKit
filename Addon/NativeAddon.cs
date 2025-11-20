@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -111,6 +112,36 @@ public abstract unsafe partial class NativeAddon {
 
         // Now that we have constructed this instance, track it for auto-dispose
         CreatedAddons.Add(this);
+    }
+
+    private void SetInitialState() {
+        WindowNode.SetTitle(Title.ToString(), Subtitle.ToString());
+
+        InternalAddon->OpenSoundEffectId = (short)OpenWindowSoundEffectId;
+
+        var addonConfig = LoadAddonConfig();
+        if (addonConfig.Position != Vector2.Zero) {
+            InternalAddon->SetPosition((short)addonConfig.Position.X, (short)addonConfig.Position.Y);
+        }
+        else {
+            var screenSize = new Vector2(AtkStage.Instance()->ScreenSize.Width, AtkStage.Instance()->ScreenSize.Height);
+            var defaultPosition = screenSize / 2.0f - Size / 2.0f;
+            InternalAddon->SetPosition((short)defaultPosition.X, (short)defaultPosition.Y);
+        }
+
+        if (addonConfig.Scale is not 1.0f) {
+            var newScale = Math.Clamp(addonConfig.Scale, 0.25f, 6.0f);
+            
+            InternalAddon->SetScale(newScale, true);
+        }
+
+        InternalAddon->SetSize((ushort)Size.X, (ushort)Size.Y);
+        WindowNode.Size = Size;
+
+        UpdateFlags();
+        if (LastClosePosition != Vector2.Zero && RememberClosePosition) {
+            InternalAddon->SetPosition((short)LastClosePosition.X, (short)LastClosePosition.Y);
+        }
     }
 
     /// <summary>
