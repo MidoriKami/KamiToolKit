@@ -18,21 +18,7 @@ public abstract unsafe partial class NativeAddon {
 
     public ResNode RootNode = null!;
 
-    public WindowNode WindowNode {
-        get;
-        set {
-            if (value is null) throw new Exception("Cannot set a window node to null");
-
-            if (InternalAddon->WindowNode is not null) {
-                InternalAddon->WindowNode = null;
-                field.DetachNode();
-            }
-
-            field = value;
-            value.AttachNode(RootNode, NodePosition.AsFirstChild);
-            InternalAddon->WindowNode = value.InternalComponentNode;
-        }
-    } = null!;
+    protected WindowNode WindowNode { get; private set; } = null!;
 
     private void AllocateAddon() {
         if (InternalAddon is not null) {
@@ -71,6 +57,8 @@ public abstract unsafe partial class NativeAddon {
         };
 
         WindowNode = new WindowNode { NodeId = 2 };
+        WindowNode.AttachNode(this, NodePosition.AsFirstChild);
+        InternalAddon->WindowNode = WindowNode;
 
         InternalAddon->NameString = InternalName;
 
