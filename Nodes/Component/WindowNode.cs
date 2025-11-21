@@ -5,7 +5,7 @@ using KamiToolKit.Classes.Timelines;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldComponentDataWindow> {
+public unsafe class WindowNode : WindowNodeBase {
 
     public readonly ImageNode BackgroundImageNode;
     public readonly WindowBackgroundNode BackgroundNode;
@@ -20,8 +20,6 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
     public readonly TextNode TitleNode;
 
     public WindowNode() {
-        SetInternalComponentType(ComponentType.Window);
-
         CollisionNode.NodeId = 13;
         Component->ShowFlags = 1;
 
@@ -210,14 +208,11 @@ public unsafe class WindowNode : ComponentNode<AtkComponentWindow, AtkUldCompone
         set => BorderNode.IsVisible = value;
     }
 
-    public float HeaderHeight => HeaderContainerNode.Height;
+    public override float HeaderHeight => HeaderContainerNode.Height;
 
-    public Vector2 ContentSize => new(BackgroundImageNode.Width, BackgroundImageNode.Height - HeaderHeight);
+    public override Vector2 ContentSize => new(BackgroundImageNode.Width, BackgroundImageNode.Height - HeaderHeight);
 
-    public Vector2 ContentStartPosition => new(BackgroundImageNode.X, BackgroundImageNode.Y + HeaderHeight);
-
-    public void SetTitle(string title, string? subtitle = null)
-        => Component->SetTitle(title, subtitle ?? string.Empty);
+    public override Vector2 ContentStartPosition => new(BackgroundImageNode.X, BackgroundImageNode.Y + HeaderHeight);
 
     protected override void OnSizeChanged() {
         base.OnSizeChanged();

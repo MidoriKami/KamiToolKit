@@ -18,7 +18,7 @@ public abstract unsafe partial class NativeAddon {
 
     public ResNode RootNode = null!;
 
-    protected WindowNode WindowNode { get; private set; } = null!;
+    protected WindowNodeBase WindowNode { get; set; } = null!;
 
     private void AllocateAddon() {
         if (InternalAddon is not null) {
@@ -56,7 +56,7 @@ public abstract unsafe partial class NativeAddon {
             IsAddonRootNode = true,
         };
 
-        WindowNode = new WindowNode { NodeId = 2 };
+        WindowNode = CreateWindowNode?.Invoke() ?? new WindowNode { NodeId = 2 };
 
         InternalAddon->NameString = InternalName;
 
@@ -131,6 +131,8 @@ public abstract unsafe partial class NativeAddon {
             InternalAddon->SetPosition((short)LastClosePosition.X, (short)LastClosePosition.Y);
         }
     }
+
+    public Func<WindowNodeBase>? CreateWindowNode { get; init; }
 
     /// <summary>
     ///     Initializes and Opens this instance of Addon
