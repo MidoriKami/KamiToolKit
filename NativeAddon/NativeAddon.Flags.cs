@@ -5,6 +5,10 @@ namespace KamiToolKit;
 public unsafe partial class NativeAddon {
 
     private void UpdateFlags() {
+
+        // Disable Native AddonConfig
+        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A2, 0x40, true);
+        
         FlagHelper.UpdateFlag(ref InternalAddon->Flags1A1, 0x4, DisableClose);
 
         FlagHelper.UpdateFlag(ref InternalAddon->Flags1A2, 0x8, DisableCloseTransition);
@@ -14,6 +18,24 @@ public unsafe partial class NativeAddon {
         FlagHelper.UpdateFlag(ref InternalAddon->Flags1A3, 0x1, EnableContextMenu);
         
         FlagHelper.UpdateFlag(ref InternalAddon->Flags1C8, 0x800, DisableScaleContextOption);
+
+        if (IsOverlayAddon) {
+            SetOverlayFlags();
+        }
+    }
+
+    private void SetOverlayFlags() {
+
+        // Disable ability to focus window
+        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A0, 0x80, true);
+            
+        // Don't load into FocusedAddons list
+        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A1, 0x40, true);
+
+        // Enable ClickThrough
+        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A3, 0x40, true);
+
+        WindowNode.IsVisible = false;
     }
 
     public bool DisableClose { get; init; }

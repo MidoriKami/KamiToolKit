@@ -48,4 +48,6 @@ public abstract unsafe partial class NativeAddon {
     internal Vector2 LastClosePosition = Vector2.Zero;
 
     public static implicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
+    
+    public bool IsOverlayAddon { get; init; }
 }

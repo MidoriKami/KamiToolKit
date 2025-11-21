@@ -48,8 +48,6 @@ public abstract unsafe partial class NativeAddon {
 
         RegisterVirtualTable();
 
-        InternalAddon->Flags1A2 |= 0b0100_0000; // don't save/load AddonConfig
-
         RootNode = new ResNode {
             NodeId = 1, 
             NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
@@ -61,6 +59,8 @@ public abstract unsafe partial class NativeAddon {
         InternalAddon->NameString = InternalName;
 
         InternalAddon->OpenSoundEffectId = (short)OpenWindowSoundEffectId;
+
+        UpdateFlags();
     }
 
     private void InitializeAddon() {
@@ -126,7 +126,6 @@ public abstract unsafe partial class NativeAddon {
         InternalAddon->SetSize((ushort)Size.X, (ushort)Size.Y);
         WindowNode.Size = Size;
 
-        UpdateFlags();
         if (LastClosePosition != Vector2.Zero && RememberClosePosition) {
             InternalAddon->SetPosition((short)LastClosePosition.X, (short)LastClosePosition.Y);
         }
