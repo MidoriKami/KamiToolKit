@@ -11,6 +11,14 @@ public abstract partial class NativeAddon : IDisposable {
     private bool isDisposed;
 
     public virtual void Dispose() {
+        if (IsOverlayAddon) {
+            // Intentionally leak OverlayAddons,
+            // until Dalamud can implement OverlayAddons globally.
+            CreatedAddons.Remove(this);
+            GC.SuppressFinalize(this);
+            return;
+        }
+        
         if (!isDisposed) {
             Log.Debug($"Disposing addon {GetType()}");
 
