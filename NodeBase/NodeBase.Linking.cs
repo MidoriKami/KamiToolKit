@@ -108,6 +108,8 @@ public abstract unsafe partial class NodeBase {
 
         NodeLinker.DetachNode(ResNode);
         ResNode->ParentNode = null;
+        ResNode->NextSiblingNode = null;
+        ResNode->PrevSiblingNode = null;
 
         if (ParentUldManager is not null) {
             VisitChildren(ResNode, pointer => {
