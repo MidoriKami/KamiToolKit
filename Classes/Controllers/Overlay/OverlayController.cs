@@ -147,8 +147,9 @@ public unsafe class OverlayController : IDisposable {
         DalamudInterface.Instance.AddonLifecycle.UnregisterListener(OnOverlayAddonFinalize, OnOverlayAddonSetup, OnOverlayAddonUpdate);
 
         foreach (var node in overlayNodes.SelectMany(nodeList => nodeList.Value)) {
-            node.DetachNode();
+            node.Dispose();
         }
+
         overlayNodes.Clear();
         overlayAddons.Clear();
     }
