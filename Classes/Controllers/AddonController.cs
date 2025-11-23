@@ -23,7 +23,7 @@ public unsafe class AddonController<T>(string addonName) : AddonEventController<
         DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
             if (IsEnabled) return;
 
-            OnInnerPreEnable?.Invoke((T*)AddonPointer);
+            onInnerPreEnable?.Invoke((T*)AddonPointer);
 
             DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonEvent);
             DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, AddonName, OnAddonEvent);
@@ -37,7 +37,7 @@ public unsafe class AddonController<T>(string addonName) : AddonEventController<
 
             IsEnabled = true;
 
-            OnInnerPostEnable?.Invoke((T*)AddonPointer);
+            onInnerPostEnable?.Invoke((T*)AddonPointer);
         });
     }
 
@@ -67,7 +67,7 @@ public unsafe class AddonController<T>(string addonName) : AddonEventController<
         DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
             if (!IsEnabled) return;
 
-            OnInnerPreDisable?.Invoke((T*)AddonPointer);
+            onInnerPreDisable?.Invoke((T*)AddonPointer);
 
             DalamudInterface.Instance.AddonLifecycle.UnregisterListener(OnAddonEvent);
 
@@ -77,7 +77,32 @@ public unsafe class AddonController<T>(string addonName) : AddonEventController<
 
             IsEnabled = false;
 
-            OnInnerPostDisable?.Invoke((T*)AddonPointer);
+            onInnerPostDisable?.Invoke((T*)AddonPointer);
         });
     }
+    
+    public event AddonControllerEvent? OnPreEnable {
+        add => onInnerPreEnable += value;
+        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+    }
+
+    public event AddonControllerEvent? OnPostEnable {
+        add => onInnerPostEnable += value;
+        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+    }
+
+    public event AddonControllerEvent? OnPreDisable {
+        add => onInnerPreDisable += value;
+        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+    }
+
+    public event AddonControllerEvent? OnPostDisable {
+        add => onInnerPostDisable += value;
+        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
+    }
+
+    private AddonControllerEvent? onInnerPreEnable;
+    private AddonControllerEvent? onInnerPostEnable;
+    private AddonControllerEvent? onInnerPreDisable;
+    private AddonControllerEvent? onInnerPostDisable;
 }

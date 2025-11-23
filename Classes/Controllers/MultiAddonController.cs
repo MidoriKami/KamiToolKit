@@ -25,10 +25,6 @@ public unsafe class MultiAddonController : AddonEventController<AtkUnitBase>, ID
 
             newController.OnAttach += ControllerOnAttach;
             newController.OnDetach += ControllerOnDetach;
-            newController.OnPostDisable += ControllerOnPostDisable;
-            newController.OnPostEnable += ControllerOnPostEnable;
-            newController.OnPreDisable += ControllerOnPreDisable;
-            newController.OnPreEnable += ControllerOnPreEnable;
             newController.OnRefresh += ControllerOnRefresh;
             newController.OnUpdate += ControllerOnUpdate;
         }
@@ -39,18 +35,6 @@ public unsafe class MultiAddonController : AddonEventController<AtkUnitBase>, ID
 
     private void ControllerOnDetach(AtkUnitBase* addon)
         => OnInnerDetach?.Invoke(addon);
-
-    private void ControllerOnPostDisable(AtkUnitBase* addon)
-        => OnInnerPostDisable?.Invoke(addon);
-
-    private void ControllerOnPostEnable(AtkUnitBase* addon)
-        => OnInnerPostEnable?.Invoke(addon);
-
-    private void ControllerOnPreDisable(AtkUnitBase* addon)
-        => OnInnerPreDisable?.Invoke(addon);
-
-    private void ControllerOnPreEnable(AtkUnitBase* addon)
-        => OnInnerPreEnable?.Invoke(addon);
 
     private void ControllerOnRefresh(AtkUnitBase* addon)
         => OnInnerRefresh?.Invoke(addon);
@@ -63,8 +47,9 @@ public unsafe class MultiAddonController : AddonEventController<AtkUnitBase>, ID
         addonControllers.Clear();
     }
 
-    public void Enable()
-        => addonControllers.ForEach(controller => controller.Enable());
+    public void Enable() {
+        addonControllers.ForEach(controller => controller.Enable());
+    }
 
     public void Disable()
         => addonControllers.ForEach(controller => controller.Disable());
