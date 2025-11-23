@@ -7,10 +7,18 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
+using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Classes.Controllers.Overlay;
+namespace KamiToolKit.Classes.Controllers;
 
 internal class OverlayAddon : NativeAddon;
+
+public abstract class OverlayNode : SimpleOverlayNode {
+
+    public abstract OverlayLayer OverlayLayer { get; }
+
+    public virtual void Update() { }
+}
 
 public unsafe class OverlayController : IDisposable {
 
