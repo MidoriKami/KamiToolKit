@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Classes.Controllers;
 
 /// <summary>
-/// For use with controlling multiple addons at once, for example the various kinds of Target Cast Bars
+/// For use with addons that have multiple persistent variants, but where only one is used at a time.
+/// For example, Inventories or CastBars.
+/// Using this with other addons will duplicate their associated events incorrectly.
 /// </summary>
-public class MultiAddonController : IDisposable {
+public unsafe class MultiAddonController : AddonEventController<AtkUnitBase>, IDisposable {
     
     private readonly List<AddonController> addonControllers = [];
 
@@ -16,154 +19,53 @@ public class MultiAddonController : IDisposable {
             // Don't allow duplicate addon controllers
             if (addonControllers.Any(controller => controller.AddonName == addonName)) continue;
 
-            addonControllers.Add(new AddonController(addonName));
+            var newController = new AddonController(addonName);
+
+            addonControllers.Add(newController);
+
+            newController.OnAttach += ControllerOnAttach;
+            newController.OnDetach += ControllerOnDetach;
+            newController.OnPostDisable += ControllerOnPostDisable;
+            newController.OnPostEnable += ControllerOnPostEnable;
+            newController.OnPreDisable += ControllerOnPreDisable;
+            newController.OnPreEnable += ControllerOnPreEnable;
+            newController.OnRefresh += ControllerOnRefresh;
+            newController.OnUpdate += ControllerOnUpdate;
         }
     }
+
+    private void ControllerOnAttach(AtkUnitBase* addon) 
+        => OnInnerAttach?.Invoke(addon);
+
+    private void ControllerOnDetach(AtkUnitBase* addon)
+        => OnInnerDetach?.Invoke(addon);
+
+    private void ControllerOnPostDisable(AtkUnitBase* addon)
+        => OnInnerPostDisable?.Invoke(addon);
+
+    private void ControllerOnPostEnable(AtkUnitBase* addon)
+        => OnInnerPostEnable?.Invoke(addon);
+
+    private void ControllerOnPreDisable(AtkUnitBase* addon)
+        => OnInnerPreDisable?.Invoke(addon);
+
+    private void ControllerOnPreEnable(AtkUnitBase* addon)
+        => OnInnerPreEnable?.Invoke(addon);
+
+    private void ControllerOnRefresh(AtkUnitBase* addon)
+        => OnInnerRefresh?.Invoke(addon);
+
+    private void ControllerOnUpdate(AtkUnitBase* addon)
+        => OnInnerUpdate?.Invoke(addon);
 
     public void Dispose() {
-        foreach (var addonController in addonControllers) {
-            addonController.Dispose();
-        }
-
+        addonControllers.ForEach(controller => controller.Dispose());
         addonControllers.Clear();
     }
-    
-    public void Enable() {
-        foreach (var addonController in addonControllers) {
-            addonController.Enable();
-        }
-    }
 
-    public void Disable() {
-        foreach (var addonController in addonControllers) {
-            addonController.Disable();
-        }
-    }
-    
-    public event AddonController.AddonControllerEvent? OnAttach {
-        add {
-            foreach (var addonController in addonControllers) {
-                addonController.OnAttach += value;
-            }
-        }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
+    public void Enable()
+        => addonControllers.ForEach(controller => controller.Enable());
 
-    public event AddonController.AddonControllerEvent? OnDetach {
-        add {
-            foreach (var addonController in addonControllers) {
-                addonController.OnDetach += value;
-            }
-        }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-    
-    public event AddonController.AddonControllerEvent? OnRefresh {
-        add {
-            foreach (var addonController in addonControllers) {
-                addonController.OnRefresh += value;
-            }
-        }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-    public event AddonController.AddonControllerEvent? OnUpdate {
-        add {
-            foreach (var addonController in addonControllers) {
-                addonController.OnUpdate += value;
-            }
-        }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-
-    public event AddonController.AddonControllerEvent? OnPreEnable {
-        add {
-            foreach (var addonController in addonControllers) {
-                addonController.OnPreEnable += value;
-            }
-        }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-    
-    public event AddonController.AddonControllerEvent? OnPostEnable {
-        add {
-            foreach (var addonController in addonControllers) {
-                addonController.OnPostEnable += value;
-            }
-        }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-
-    public event AddonController.AddonControllerEvent? OnPreDisable {
-        add {
-            foreach (var addonController in addonControllers) {
-                addonController.OnPreDisable += value;
-            }
-        }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-
-    public event AddonController.AddonControllerEvent? OnPostDisable {
-        add {
-            foreach (var addonController in addonControllers) {
-                addonController.OnPostDisable += value;
-            }
-        }
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-
-    public void RegisterOnAttach(string addonName, AddonController.AddonControllerEvent callback) {
-        var targetController = addonControllers.FirstOrDefault(controller => controller.AddonName == addonName);
-        if (targetController == null) return;
-
-        targetController.OnAttach += callback;
-    }
-
-    public void RegisterOnDetach(string addonName, AddonController.AddonControllerEvent callback) {
-        var targetController = addonControllers.FirstOrDefault(controller => controller.AddonName == addonName);
-        if (targetController == null) return;
-        
-        targetController.OnDetach += callback;
-    }
-
-    public void RegisterOnRefresh(string addonName, AddonController.AddonControllerEvent callback) {
-        var targetController = addonControllers.FirstOrDefault(controller => controller.AddonName == addonName);
-        if (targetController == null) return;
-
-        targetController.OnRefresh += callback;
-    }
-
-    public void RegisterOnUpdate(string addonName, AddonController.AddonControllerEvent callback) {
-        var targetController = addonControllers.FirstOrDefault(controller => controller.AddonName == addonName);
-        if (targetController == null) return;
-
-        targetController.OnUpdate += callback;
-    }
-
-    public void RegisterOnPreEnable(string addonName, AddonController.AddonControllerEvent callback) {
-        var targetController = addonControllers.FirstOrDefault(controller => controller.AddonName == addonName);
-        if (targetController == null) return;
-
-        targetController.OnPreEnable += callback;
-    }
-
-    public void RegisterOnPostEnable(string addonName, AddonController.AddonControllerEvent callback) {
-        var targetController = addonControllers.FirstOrDefault(controller => controller.AddonName == addonName);
-        if (targetController == null) return;
-
-        targetController.OnPostEnable += callback;
-    }
-
-    public void RegisterOnPreDisable(string addonName, AddonController.AddonControllerEvent callback) {
-        var targetController = addonControllers.FirstOrDefault(controller => controller.AddonName == addonName);
-        if (targetController == null) return;
-
-        targetController.OnPreDisable += callback;
-    }
-
-    public void RegisterOnPostDisable(string addonName, AddonController.AddonControllerEvent callback) {
-        var targetController = addonControllers.FirstOrDefault(controller => controller.AddonName == addonName);
-        if (targetController == null) return;
-
-        targetController.OnPostDisable += callback;
-    }
+    public void Disable()
+        => addonControllers.ForEach(controller => controller.Disable());
 }

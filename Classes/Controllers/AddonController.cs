@@ -10,9 +10,7 @@ public class AddonController(string addonName) : AddonController<AtkUnitBase>(ad
 /// <summary>
 ///     This class provides functionality to add-and manage custom elements for any Addon
 /// </summary>
-public unsafe class AddonController<T>(string addonName) : IDisposable where T : unmanaged {
-
-    public delegate void AddonControllerEvent(T* addon);
+public unsafe class AddonController<T>(string addonName) : AddonEventController<T>, IDisposable where T : unmanaged {
 
     internal readonly string AddonName = addonName;
 
@@ -81,54 +79,5 @@ public unsafe class AddonController<T>(string addonName) : IDisposable where T :
 
             OnInnerPostDisable?.Invoke((T*)AddonPointer);
         });
-    }
-
-    private event AddonControllerEvent? OnInnerAttach;
-    private event AddonControllerEvent? OnInnerDetach;
-    private event AddonControllerEvent? OnInnerRefresh;
-    private event AddonControllerEvent? OnInnerUpdate;
-
-    private event AddonControllerEvent? OnInnerPreEnable;
-    private event AddonControllerEvent? OnInnerPostEnable;
-    private event AddonControllerEvent? OnInnerPreDisable;
-    private event AddonControllerEvent? OnInnerPostDisable;
-    
-    public virtual event AddonControllerEvent? OnAttach {
-        add => OnInnerAttach += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-
-    public virtual event AddonControllerEvent? OnDetach {
-        add => OnInnerDetach += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-    
-    public virtual event AddonControllerEvent? OnRefresh {
-        add => OnInnerRefresh += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-    public virtual event AddonControllerEvent? OnUpdate {
-        add => OnInnerUpdate += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-
-    public virtual event AddonControllerEvent? OnPreEnable {
-        add => OnInnerPreEnable += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-    
-    public virtual event AddonControllerEvent? OnPostEnable {
-        add => OnInnerPostEnable += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-
-    public virtual event AddonControllerEvent? OnPreDisable {
-        add => OnInnerPreDisable += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-
-    public virtual event AddonControllerEvent? OnPostDisable {
-        add => OnInnerPostDisable += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
     }
 }
