@@ -43,8 +43,10 @@ public unsafe class MultiAddonController : AddonEventController<AtkUnitBase>, ID
         => OnInnerUpdate?.Invoke(addon);
 
     public void Dispose() {
-        addonControllers.ForEach(controller => controller.Dispose());
-        addonControllers.Clear();
+        DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+            addonControllers.ForEach(controller => controller.Dispose());
+            addonControllers.Clear();
+        });
     }
 
     public void Enable() {
