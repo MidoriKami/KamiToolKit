@@ -156,12 +156,17 @@ public abstract unsafe partial class NativeAddon {
     [Conditional("DEBUG")]
     public void DebugOpen() => Open();
 
-    public void Close() => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-        Log.Verbose($"[{InternalName}] Close");
-
+    public void Close() {
         if (InternalAddon is null) return;
-        InternalAddon->Close(false);
-    });
+
+        DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+            Log.Verbose($"[{InternalName}] Close");
+
+            if (InternalAddon is not null) {
+                InternalAddon->Close(false);
+            }
+        });
+    }
 
     public void Toggle() {
         if (IsOpen) {
