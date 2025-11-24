@@ -112,6 +112,11 @@ public unsafe class OverlayController : IDisposable {
         }
     });
 
+    public void CreateNode(Func<OverlayNode> creationFunction) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {         
+        var newNode = creationFunction();
+        AddNode(newNode);
+    });
+
     public void RemoveNode(OverlayNode node) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
         if (overlayNodes.TryGetValue(node.OverlayLayer, out var list)) {
             if (overlaysActive && list.Remove(node)) {
