@@ -18,7 +18,7 @@ public abstract unsafe partial class NativeAddon {
         Log.Excessive($"[{thisPtr->NameString}] OnFireCallback");
         
         foreach (var addon in CreatedAddons) {
-            if (addon == thisPtr && close && addon is { RespectCloseAll: true }) {
+            if (addon == thisPtr && close && addon is { RespectCloseAll: true, IsOverlayAddon: false }) {
                 addon.Close();
                 return true;
             }
