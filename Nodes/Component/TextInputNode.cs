@@ -133,29 +133,11 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
             if (AutoSelectAll && Component->EvaluatedString.Length > 0) {
                 DalamudInterface.Instance.Framework.RunOnTick(() => {
-                    // Approach #1: Invoke the same function that is called when you press Control + A
-
-                    var keyModifiers = new Experimental.KeyModifiers {
+                    var keyModifiers = new AtkTextInput.KeyModifiers {
                         IsControlDown = true,
                     };
 
-                    Experimental.Instance.ProcessKeyShortcutFunction?.Invoke(AtkStage.Instance()->AtkInputManager->TextInput, SeVirtualKey.A, &keyModifiers);  
-                    
-                    // Approach #2: Invoke the SetTextSelection function, this will crash as-is, needs additional data to be set to work correctly.
-
-                    // var selectionInfo = stackalloc AtkTextInput.TextSelectionInfo[1];
-                    // selectionInfo->SelectionStart = 0;
-                    // selectionInfo->SelectionEnd = (ushort) Component->EvaluatedString.Length;
-                    // selectionInfo->StringLength = (ushort) Component->EvaluatedString.Length;
-                    //
-                    // Component->UpdateTextSelection(selectionInfo);
-                    
-                    // Approach #3: Set the selects directly, I don't think this will work, as the selection seems to need to be set in multiple systems to work.
-                    
-                    // ref var textInput = ref AtkStage.Instance()->AtkInputManager->TextInput;
-                    //
-                    // textInput->SelectionStart = 0;
-                    // textInput->SelectionEnd = (short)Component->EvaluatedString.Length;
+                    AtkStage.Instance()->AtkInputManager->TextInput->ProcessKeyShortcut(SeVirtualKey.A, &keyModifiers);
                 }, delayTicks: 1);
             }
         });
