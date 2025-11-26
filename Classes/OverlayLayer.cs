@@ -3,9 +3,24 @@
 namespace KamiToolKit.Classes;
 
 public enum OverlayLayer {
+    /// <summary>
+    /// Layer that is the back most, this is below nameplates, but above the world itself.
+    /// </summary>
     Background,
+    
+    /// <summary>
+    /// Above nameplate layer
+    /// </summary>
     BehindUserInterface,
+    
+    /// <summary>
+    /// Above most windows but below certain popup windows like battle text
+    /// </summary>
     AboveUserInterface,
+    
+    /// <summary>
+    /// Above everything, use with caution
+    /// </summary>
     Foreground,
 }
 
