@@ -40,12 +40,13 @@ public static class OverlayLayerExtensions {
         OverlayLayer.Foreground => 13,
         _ => 1,
     };
-
-    public static OverlayLayer GetOverlayLayer(this uint layer) => layer switch {
-        1 - 1 => OverlayLayer.Background,
-        3 - 1 => OverlayLayer.BehindUserInterface,
-        7 - 1 => OverlayLayer.AboveUserInterface,
-        13 - 1 => OverlayLayer.Foreground,
+    
+    // Note: The game does not have a layer zero, but offsets the desired layer by one.
+    public static OverlayLayer GetOverlayLayer(this uint layer) => (layer - 1) switch {
+        1 => OverlayLayer.Background,
+        3 => OverlayLayer.BehindUserInterface,
+        7 => OverlayLayer.AboveUserInterface,
+        13 => OverlayLayer.Foreground,
         _ => throw new Exception("Unknown depth layer: " + layer),
     };
 }
