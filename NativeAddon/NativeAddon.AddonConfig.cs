@@ -32,22 +32,27 @@ public unsafe partial class NativeAddon {
         catch (Exception e) {
             DalamudInterface.Instance.Log.Error(e, "Exception while deserializing AddonConfig, creating new config.");
             addonConfig = new AddonConfig();
+            SaveAddonConfig(addonConfig);
         }
         
         return addonConfig;
     }
 
-    private void SaveAddonConfig() {
+    private void SaveAddonConfig(AddonConfig addonConfig) {
         var directory = DalamudInterface.Instance.PluginInterface.ConfigDirectory;
         var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
 
+        var data = JsonSerializer.Serialize(addonConfig, serializerOptions);
+        
+        FilesystemUtil.WriteAllTextSafe(file.FullName, data);
+    }
+    
+    private void SaveAddonConfig() {
         var configData = new AddonConfig {
             Position = new Vector2(InternalAddon->X, InternalAddon->Y),
             Scale = InternalAddon->Scale / AtkUnitBase.GetGlobalUIScale(),
         };
         
-        var data = JsonSerializer.Serialize(configData, serializerOptions);
-        
-        FilesystemUtil.WriteAllTextSafe(file.FullName, data);
+        SaveAddonConfig(configData);
     }
 }
