@@ -42,7 +42,7 @@ public static class OverlayLayerExtensions {
     };
     
     // Note: The game does not have a layer zero, but offsets the desired layer by one.
-    public static OverlayLayer GetOverlayLayer(this uint layer) => (layer - 1) switch {
+    public static OverlayLayer GetOverlayLayer(this uint layer) => (layer + 1) switch {
         1 => OverlayLayer.Background,
         3 => OverlayLayer.BehindUserInterface,
         7 => OverlayLayer.AboveUserInterface,
