@@ -54,7 +54,8 @@ public abstract unsafe partial class NativeAddon {
             IsAddonRootNode = true,
         };
 
-        WindowNode = CreateWindowNode?.Invoke() ?? new WindowNode { NodeId = 2 };
+        WindowNode = CreateWindowNode?.Invoke() ?? new WindowNode();
+        WindowNode.NodeId = 2;
 
         InternalAddon->NameString = InternalName;
 
