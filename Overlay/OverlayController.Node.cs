@@ -14,6 +14,7 @@ public abstract unsafe class OverlayNode : SimpleOverlayNode {
     public virtual bool HideWithNativeUi => true;
 
     private bool preAutoHideState;
+    private bool? lastNamePlateVisible;
 
     public virtual void Update() {
         UpdateAutoHide();
@@ -21,12 +22,22 @@ public abstract unsafe class OverlayNode : SimpleOverlayNode {
 
     private void UpdateAutoHide() {
         if (HideWithNativeUi) {
-            if (IsNameplateVisible()) {
-                IsVisible = preAutoHideState;
-            }
-            else {
-                preAutoHideState = IsVisible;
-                IsVisible = false;
+            var isNamePlateVisible = IsNameplateVisible();
+
+            if (lastNamePlateVisible is null || lastNamePlateVisible != isNamePlateVisible) {
+                if (lastNamePlateVisible is null) {
+                    preAutoHideState = IsVisible;
+                }
+                
+                if (isNamePlateVisible) {
+                    IsVisible = preAutoHideState;
+                }
+                else {
+                    preAutoHideState = IsVisible;
+                    IsVisible = false;
+                }
+                
+                lastNamePlateVisible = isNamePlateVisible;
             }
         }
     }
