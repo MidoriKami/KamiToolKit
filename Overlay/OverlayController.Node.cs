@@ -1,9 +1,10 @@
-﻿using KamiToolKit.Classes;
+﻿using FFXIVClientStructs.FFXIV.Client.UI;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Overlay;
 
-public abstract class OverlayNode : SimpleOverlayNode {
+public abstract unsafe class OverlayNode : SimpleOverlayNode {
 
     public abstract OverlayLayer OverlayLayer { get; }
 
@@ -12,7 +13,28 @@ public abstract class OverlayNode : SimpleOverlayNode {
     /// </summary>
     public virtual bool HideWithNativeUi => true;
 
-    internal bool PreAutoHideState;
+    private bool preAutoHideState;
 
-    public virtual void Update() { }
+    public virtual void Update() {
+        UpdateAutoHide();
+    }
+
+    private void UpdateAutoHide() {
+        if (HideWithNativeUi) {
+            if (IsNameplateVisible()) {
+                IsVisible = preAutoHideState;
+            }
+            else {
+                preAutoHideState = IsVisible;
+                IsVisible = false;
+            }
+        }
+    }
+
+    private static bool IsNameplateVisible() {
+        var nameplateAddon = RaptureAtkUnitManager.Instance()->GetAddonByName("NamePlate");
+        if (nameplateAddon is null) return false;
+
+        return nameplateAddon->IsVisible;
+    }
 }

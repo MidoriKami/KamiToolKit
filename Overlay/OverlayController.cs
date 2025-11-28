@@ -20,7 +20,6 @@ public unsafe partial class OverlayController : IDisposable {
     
     public OverlayController() {
         DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "NamePlate", (_,_) => AddOverlays());
-        DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, "NamePlate", OnNamePlateUpdate);
         DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "NamePlate",  (_,_) => RemoveOverlays());
         
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByName("NamePlate");
