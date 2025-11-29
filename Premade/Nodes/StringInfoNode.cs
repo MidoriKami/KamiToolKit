@@ -1,7 +1,7 @@
 ﻿namespace KamiToolKit.Premade.Nodes;
 
 public abstract class StringInfoNode : IInfoNodeData {
-    public string Label { get; set; } = string.Empty;
+    public virtual string Label { get; init; } = string.Empty;
 
     public string GetLabel() => Label;
 
