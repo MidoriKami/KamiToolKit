@@ -47,6 +47,13 @@ public class TabBarNode : SimpleComponentNode {
         button.IsSelected = true;
     }
 
+    public void SelectTab(ReadOnlySeString label) {
+        var button = radioButtons.FirstOrDefault(button => button.SeString == label);
+        if (button is null) return;
+        
+        ClickHandler(button);
+    }
+    
     public void DisableTab(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.SeString == label);
         if (button is null) return;
