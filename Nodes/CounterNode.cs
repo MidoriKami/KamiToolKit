@@ -96,8 +96,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
     public ReadOnlySeString String {
         get => Node->NodeText.AsSpan();
         set {
-            using var builder = new RentedSeStringBuilder();
-            Node->SetText(builder.Builder.Append(value).GetViewAsSpan());
+            Node->SetText(value.ToDalamudString().EncodeWithNullTerminator());
         }
     }
 

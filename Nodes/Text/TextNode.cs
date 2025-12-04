@@ -100,8 +100,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     public ReadOnlySeString SeString {
         get => Node->GetText().AsReadOnlySeString();
         set {
-            using var builder = new RentedSeStringBuilder();
-            Node->SetText(builder.Builder.Append(value).GetViewAsSpan());
+            Node->SetText(value.ToDalamudString().EncodeWithNullTerminator());
         }
     }
 
@@ -142,7 +141,6 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     }
 
     private void UpdateText() {
-        using var builder = new RentedSeStringBuilder();
-        Node->SetText(builder.Builder.Append(Node->GetText().AsReadOnlySeString()).GetViewAsSpan());
+        Node->SetText(Node->GetText().AsReadOnlySeString().ToDalamudString().EncodeWithNullTerminator());
     }
 }

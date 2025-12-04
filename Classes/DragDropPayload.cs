@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Text;
 using Lumina.Text.ReadOnly;
 using Newtonsoft.Json;
@@ -54,8 +55,7 @@ public unsafe class DragDropPayload {
                 payloadContainer->Text.Clear();
             }
             else {
-                var stringBuilder = new SeStringBuilder().Append(Text);
-                payloadContainer->Text.SetString(stringBuilder.GetViewAsSpan());
+                payloadContainer->Text.SetString(Text.ToDalamudString().EncodeWithNullTerminator());
             }
         }
     }
