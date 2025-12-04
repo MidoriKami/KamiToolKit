@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -180,8 +180,7 @@ public abstract unsafe partial class NodeBase {
 
     public void ShowTooltip() {
         if (Tooltip is not null && TooltipRegistered && ParentAddon is not null) {
-            using var stringBuilder = new RentedSeStringBuilder();
-            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, ResNode, stringBuilder.Builder.Append(Tooltip).GetViewAsSpan());
+            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, ResNode, new ReadOnlySeString(Tooltip.GetValueOrDefault().AsSpan()));
         }
     }
 
