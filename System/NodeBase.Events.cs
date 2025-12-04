@@ -188,8 +188,7 @@ public abstract unsafe partial class NodeBase {
 
     public void ShowTooltip() {
         if (Tooltip is not null && TooltipRegistered && ParentAddon is not null) {
-            using var rssb = new RentedSeStringBuilder();
-            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, InternalResNode, rssb.Builder.Append(Tooltip).GetViewAsSpan());
+            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, InternalResNode, Tooltip.Value.ToDalamudString().EncodeWithNullTerminator());
         }
     }
 
