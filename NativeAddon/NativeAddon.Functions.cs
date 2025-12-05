@@ -15,7 +15,6 @@ public abstract unsafe partial class NativeAddon {
     protected virtual void OnFinalize(AtkUnitBase* addon) { }
     protected virtual void OnRequestedUpdate(AtkUnitBase* addon, NumberArrayData** numberArrayData, StringArrayData** stringArrayData) { }
     protected virtual void OnRefresh(AtkUnitBase* addon, Span<AtkValue> atkValues) { }
-    protected virtual void OnScreenSizeChanged(AtkUnitBase* addon, int width, int height) { }
 
     private bool isSetup;
 
