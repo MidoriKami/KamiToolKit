@@ -35,6 +35,9 @@ public abstract unsafe partial class NativeAddon {
         if (!IsOverlayAddon) {
             SetInitialState();
         }
+        else {
+            addon->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
+        }
 
         AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);
 
@@ -136,7 +139,9 @@ public abstract unsafe partial class NativeAddon {
         Log.Verbose($"[{InternalName}] ScreenSizeChange");
 
         AtkUnitBase.StaticVirtualTablePointer->OnScreenSizeChange(thisPtr, width, height);
-        
-        OnScreenSizeChanged(thisPtr, width, height);
+
+        if (IsOverlayAddon || IgnoreGlobalScale) {
+            thisPtr->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
+        }
     }
 }

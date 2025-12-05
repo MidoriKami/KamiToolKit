@@ -60,4 +60,6 @@ public unsafe partial class NativeAddon {
     public bool DisableScaleContextOption { get; init; }
 
     public bool RespectCloseAll { get; set; } = true;
+
+    public bool IgnoreGlobalScale { get; set; } = false;
 }
