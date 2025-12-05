@@ -17,6 +17,7 @@ public abstract unsafe partial class NativeAddon {
     private AtkUnitBase.Delegates.Update updateFunction = null!;
     private AtkUnitBase.Delegates.OnRequestedUpdate onRequestedUpdateFunction = null!;
     private AtkUnitBase.Delegates.OnRefresh onRefreshFunction = null!;
+    private AtkUnitBase.Delegates.OnScreenSizeChange onScreenSizeChanged = null!;
 
     private AtkUnitBase.AtkUnitBaseVirtualTable* virtualTable;
 
@@ -39,6 +40,7 @@ public abstract unsafe partial class NativeAddon {
         destructorFunction = Destructor;
         onRequestedUpdateFunction = RequestedUpdate;
         onRefreshFunction = Refresh;
+        onScreenSizeChanged = ScreenSizeChange;
 
         virtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(initializeFunction);
         virtualTable->OnSetup = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, void>)Marshal.GetFunctionPointerForDelegate(onSetupFunction);
@@ -51,5 +53,6 @@ public abstract unsafe partial class NativeAddon {
         virtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>)Marshal.GetFunctionPointerForDelegate(destructorFunction);
         virtualTable->OnRequestedUpdate = (delegate* unmanaged<AtkUnitBase*, NumberArrayData**, StringArrayData**, void>)Marshal.GetFunctionPointerForDelegate(onRequestedUpdateFunction);
         virtualTable->OnRefresh = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, bool>)Marshal.GetFunctionPointerForDelegate(onRefreshFunction);
+        virtualTable->OnScreenSizeChange = (delegate* unmanaged<AtkUnitBase*, int, int, void>)Marshal.GetFunctionPointerForDelegate(onScreenSizeChanged);
     }
 }

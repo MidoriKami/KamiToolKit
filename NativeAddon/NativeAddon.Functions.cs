@@ -15,6 +15,7 @@ public abstract unsafe partial class NativeAddon {
     protected virtual void OnFinalize(AtkUnitBase* addon) { }
     protected virtual void OnRequestedUpdate(AtkUnitBase* addon, NumberArrayData** numberArrayData, StringArrayData** stringArrayData) { }
     protected virtual void OnRefresh(AtkUnitBase* addon, Span<AtkValue> atkValues) { }
+    protected virtual void OnScreenSizeChanged(AtkUnitBase* addon, int width, int height) { }
 
     private bool isSetup;
 
@@ -31,7 +32,9 @@ public abstract unsafe partial class NativeAddon {
     private void Setup(AtkUnitBase* addon, uint valueCount, AtkValue* values) {
         Log.Verbose($"[{InternalName}] Setup");
 
-        SetInitialState();
+        if (!IsOverlayAddon) {
+            SetInitialState();
+        }
 
         AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);
 
@@ -127,5 +130,13 @@ public abstract unsafe partial class NativeAddon {
         OnRefresh(thisPtr, new Span<AtkValue>(values, (int)valueCount));
         
         return AtkUnitBase.StaticVirtualTablePointer->OnRefresh(InternalAddon, valueCount, values);
+    }
+
+    private void ScreenSizeChange(AtkUnitBase* thisPtr, int width, int height) {
+        Log.Verbose($"[{InternalName}] ScreenSizeChange");
+
+        AtkUnitBase.StaticVirtualTablePointer->OnScreenSizeChange(thisPtr, width, height);
+        
+        OnScreenSizeChanged(thisPtr, width, height);
     }
 }

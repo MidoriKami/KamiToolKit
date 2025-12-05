@@ -8,6 +8,8 @@ internal class OverlayAddon : NativeAddon {
     // You should not attempt to do this for your ui elements.
     // There is a fixed hard limit on the number of addons that can be loaded at once, we have to share and not be wasteful.
     protected override unsafe void OnSetup(AtkUnitBase* addon) {
+        InternalAddon->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
+
         addon->WindowNode = null;
         addon->WindowHeaderCollisionNode = null;
         addon->WindowCollisionNode = null;
@@ -17,5 +19,9 @@ internal class OverlayAddon : NativeAddon {
         InternalAddon->UldManager.UpdateDrawNodeList();
 
         WindowNode.Dispose();
+    }
+
+    protected override unsafe void OnScreenSizeChanged(AtkUnitBase* addon, int width, int height) {
+        InternalAddon->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
     }
 }
