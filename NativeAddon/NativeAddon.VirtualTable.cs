@@ -6,6 +6,8 @@ namespace KamiToolKit;
 
 public abstract unsafe partial class NativeAddon {
 
+    private const int VirtualTableEntryCount = 200;
+
     private AtkUnitBase.Delegates.Dtor destructorFunction = null!;
     private AtkUnitBase.Delegates.Draw drawFunction = null!;
     private AtkUnitBase.Delegates.Finalizer finalizerFunction = null!;
@@ -25,8 +27,8 @@ public abstract unsafe partial class NativeAddon {
 
         // Overwrite virtual table with a custom copy,
         // Note: currently there are 73 vfuncs, but there's no harm in copying more for when they add new vfuncs to the game
-        virtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 100);
-        NativeMemory.Copy(InternalAddon->VirtualTable, virtualTable, 0x8 * 100);
+        virtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*)NativeMemoryHelper.Malloc(0x8 * VirtualTableEntryCount);
+        NativeMemory.Copy(InternalAddon->VirtualTable, virtualTable, 0x8 * VirtualTableEntryCount);
         InternalAddon->VirtualTable = virtualTable;
 
         initializeFunction = Initialize;

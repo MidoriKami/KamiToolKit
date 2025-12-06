@@ -109,7 +109,7 @@ public abstract unsafe partial class NativeAddon {
             CreatedAddons.Remove(this);
 
             // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
-            NativeMemoryHelper.Free(virtualTable, 0x8 * 100);
+            NativeMemoryHelper.Free(virtualTable, 0x8 * VirtualTableEntryCount);
         }
 
         return result;
