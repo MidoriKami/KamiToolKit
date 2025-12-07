@@ -49,12 +49,12 @@ public unsafe class NativeListController : IDisposable {
 
     private void OnAddonSetup(AddonEvent type, AddonArgs args) {
         var addon = (AtkUnitBase*)args.Addon.Address;
-        var populateMethod = GetPopulatorNode(addon)->Populator.Populate;
+        var populateMethod = GetPopulatorNode(addon)->Populator;
         
-        onListPopulate = DalamudInterface.Instance.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateDelegate>(populateMethod, OnPopulateDetour);
+        onListPopulate = DalamudInterface.Instance.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateDelegate>(populateMethod.Populate, OnPopulateDetour);
         onListPopulate?.Enable();
         
-        onRendererDelegate = DalamudInterface.Instance.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateWithRendererDelegate>(populateMethod, OnRendererPopulateDetour);
+        onRendererDelegate = DalamudInterface.Instance.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateWithRendererDelegate>(populateMethod.PopulateWithRenderer, OnRendererPopulateDetour);
         onRendererDelegate?.Enable();
         
         OnInnerOpen?.Invoke();
