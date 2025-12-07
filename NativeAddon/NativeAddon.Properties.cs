@@ -12,7 +12,10 @@ public abstract unsafe partial class NativeAddon {
 
         Size = windowSize;
         InternalAddon->SetSize((ushort)Size.X, (ushort)Size.Y);
-        WindowNode.Size = Size;
+
+        if (WindowNode is not null) {
+            WindowNode.Size = Size;
+        }
     }
 
     protected void SetWindowSize(float width, float height)
@@ -48,6 +51,6 @@ public abstract unsafe partial class NativeAddon {
     internal Vector2 LastClosePosition = Vector2.Zero;
 
     public static implicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
-    
-    public bool IsOverlayAddon { get; init; }
+
+    internal bool IsOverlayAddon { get; init; }
 }

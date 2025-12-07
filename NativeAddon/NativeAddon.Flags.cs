@@ -43,8 +43,6 @@ public unsafe partial class NativeAddon {
         
         // Enable ClickThrough
         FlagHelper.UpdateFlag(ref InternalAddon->Flags1A3, 0x40, true);
-
-        WindowNode.IsVisible = false;
     }
 
     public bool DisableClose { get; init; }

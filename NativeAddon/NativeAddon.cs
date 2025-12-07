@@ -18,7 +18,7 @@ public abstract unsafe partial class NativeAddon {
 
     public ResNode RootNode = null!;
 
-    protected WindowNodeBase WindowNode { get; set; } = null!;
+    protected WindowNodeBase? WindowNode { get; private set; }
 
     private void AllocateAddon() {
         if (InternalAddon is not null) {
@@ -54,8 +54,10 @@ public abstract unsafe partial class NativeAddon {
             IsAddonRootNode = true,
         };
 
-        WindowNode = CreateWindowNode?.Invoke() ?? new WindowNode();
-        WindowNode.NodeId = 2;
+        if (!IsOverlayAddon) {
+            WindowNode = CreateWindowNode?.Invoke() ?? new WindowNode();
+            WindowNode.NodeId = 2;
+        }
 
         InternalAddon->NameString = InternalName;
 
@@ -87,7 +89,7 @@ public abstract unsafe partial class NativeAddon {
         InternalAddon->UldManager.UpdateDrawNodeList();
         InternalAddon->UldManager.LoadedState = AtkLoadState.Loaded;
 
-        if (!IsOverlayAddon) {
+        if (!IsOverlayAddon && WindowNode is not null) {
             WindowNode.AttachNode(this, NodePosition.AsFirstChild);
             InternalAddon->WindowNode = WindowNode;
             InternalAddon->UldManager.AddNodeToObjectList(WindowNode);
@@ -106,7 +108,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void SetInitialState() {
-        WindowNode.SetTitle(Title.ToString(), Subtitle.ToString());
+        WindowNode?.SetTitle(Title.ToString(), Subtitle.ToString());
 
         InternalAddon->OpenSoundEffectId = (short)OpenWindowSoundEffectId;
 
@@ -126,8 +128,7 @@ public abstract unsafe partial class NativeAddon {
             InternalAddon->SetScale(newScale, true);
         }
 
-        InternalAddon->SetSize((ushort)Size.X, (ushort)Size.Y);
-        WindowNode.Size = Size;
+        SetWindowSize(Size);
 
         if (LastClosePosition != Vector2.Zero && RememberClosePosition) {
             InternalAddon->SetPosition((short)LastClosePosition.X, (short)LastClosePosition.Y);
