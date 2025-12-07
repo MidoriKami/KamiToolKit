@@ -4,10 +4,16 @@ using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using ListItemInfo = FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentListItemPopulator.ListItemInfo;
-using PopulateDelegate = FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentListItemPopulator.PopulateDelegate;
 
 namespace KamiToolKit.Classes.Controllers;
+
+/// <summary>
+/// Only one or the other field will be valid, be sure to check for null.
+/// </summary>
+public unsafe class ListItemData {
+    public AtkComponentListItemPopulator.ListItemInfo* ItemInfo { get; set; }
+    public AtkComponentListItemRenderer* ItemRenderer { get; set; }
+}
 
 public unsafe class NativeListController : IDisposable {
 
@@ -16,7 +22,9 @@ public unsafe class NativeListController : IDisposable {
     public required ResetElementHandler ResetElement { get; init; }
     public required GetPopulatorNodeHandler GetPopulatorNode { get; init; }
 
-    private Hook<PopulateDelegate>? onListPopulate;
+    private Hook<AtkComponentListItemPopulator.PopulateDelegate>? onListPopulate;
+    private Hook<AtkComponentListItemPopulator.PopulateWithRendererDelegate>? onRendererDelegate;
+
     public readonly List<uint> ModifiedIndexes = [];
     
     public event Action? OnClose {
@@ -43,8 +51,11 @@ public unsafe class NativeListController : IDisposable {
         var addon = (AtkUnitBase*)args.Addon.Address;
         var populateMethod = GetPopulatorNode(addon)->Populator.Populate;
         
-        onListPopulate = DalamudInterface.Instance.GameInteropProvider.HookFromAddress<PopulateDelegate>(populateMethod, OnPopulateDetour);
+        onListPopulate = DalamudInterface.Instance.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateDelegate>(populateMethod, OnPopulateDetour);
         onListPopulate?.Enable();
+        
+        onRendererDelegate = DalamudInterface.Instance.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateWithRendererDelegate>(populateMethod, OnRendererPopulateDetour);
+        onRendererDelegate?.Enable();
         
         OnInnerOpen?.Invoke();
     }
@@ -56,22 +67,53 @@ public unsafe class NativeListController : IDisposable {
         OnInnerClose?.Invoke();
     }
 
-    private void OnPopulateDetour(AtkUnitBase* unitBase, ListItemInfo* listItemInfo, AtkResNode** nodeList) {
+    private void OnPopulateDetour(AtkUnitBase* unitBase, AtkComponentListItemPopulator.ListItemInfo* itemInfo, AtkResNode** nodeList) {
         try {
-            var shouldModifyElement = ShouldModifyElement(unitBase, listItemInfo, nodeList);
+            var listItemData = new ListItemData {
+                ItemInfo = itemInfo,
+            };
+            
+            var shouldModifyElement = ShouldModifyElement(unitBase, listItemData, nodeList);
 
             if (!shouldModifyElement) {
-                if (ModifiedIndexes.Contains(listItemInfo->ListItem->Renderer->OwnerNode->NodeId)) {
-                    ResetElement.Invoke(unitBase, listItemInfo, nodeList);
-                    ModifiedIndexes.Remove(listItemInfo->ListItem->Renderer->OwnerNode->NodeId);
+                if (ModifiedIndexes.Contains(itemInfo->ListItem->Renderer->OwnerNode->NodeId)) {
+                    ResetElement.Invoke(unitBase, listItemData, nodeList);
+                    ModifiedIndexes.Remove(itemInfo->ListItem->Renderer->OwnerNode->NodeId);
                 }
             }
             
-            onListPopulate!.Original(unitBase, listItemInfo, nodeList);
+            onListPopulate!.Original(unitBase, itemInfo, nodeList);
 
             if (shouldModifyElement) {
-                UpdateElement.Invoke(unitBase, listItemInfo, nodeList);
-                ModifiedIndexes.Add(listItemInfo->ListItem->Renderer->OwnerNode->NodeId);
+                UpdateElement.Invoke(unitBase, listItemData, nodeList);
+                ModifiedIndexes.Add(itemInfo->ListItem->Renderer->OwnerNode->NodeId);
+            }
+        }
+        catch (Exception e) {
+            Log.Exception(e);
+        }
+    }
+    
+    private void OnRendererPopulateDetour(AtkUnitBase* unitBase, int listItemIndex, AtkResNode** nodeList, AtkComponentListItemRenderer* listItemRenderer) {
+        try {
+            var listItemData = new ListItemData {
+                ItemRenderer = listItemRenderer,
+            };
+            
+            var shouldModifyElement = ShouldModifyElement(unitBase, listItemData, nodeList);
+
+            if (!shouldModifyElement) {
+                if (ModifiedIndexes.Contains(listItemRenderer->OwnerNode->NodeId)) {
+                    ResetElement.Invoke(unitBase, listItemData, nodeList);
+                    ModifiedIndexes.Remove(listItemRenderer->OwnerNode->NodeId);
+                }
+            }
+            
+            onRendererDelegate!.Original(unitBase, listItemIndex, nodeList, listItemRenderer);
+
+            if (shouldModifyElement) {
+                UpdateElement.Invoke(unitBase, listItemData, nodeList);
+                ModifiedIndexes.Add(listItemRenderer->OwnerNode->NodeId);
             }
         }
         catch (Exception e) {
@@ -79,10 +121,10 @@ public unsafe class NativeListController : IDisposable {
         }
     }
 
-    public delegate bool ShouldModifyElementHandler(AtkUnitBase* unitBase, ListItemInfo* listItemInfo, AtkResNode** nodeList);
+    public delegate bool ShouldModifyElementHandler(AtkUnitBase* unitBase, ListItemData listItemInfo, AtkResNode** nodeList);
     public delegate AtkComponentListItemRenderer* GetPopulatorNodeHandler(AtkUnitBase* addon);
-    public delegate void UpdateElementHandler(AtkUnitBase* unitBase, ListItemInfo* listItemInfo, AtkResNode** nodeList);
-    public delegate void ResetElementHandler(AtkUnitBase* unitBase, ListItemInfo* listItemInfo, AtkResNode** nodeList);
+    public delegate void UpdateElementHandler(AtkUnitBase* unitBase, ListItemData listItemInfo, AtkResNode** nodeList);
+    public delegate void ResetElementHandler(AtkUnitBase* unitBase, ListItemData listItemInfo, AtkResNode** nodeList);
 
     private Action? OnInnerClose { get; set; }
     private Action? OnInnerOpen { get; set; }
