@@ -66,6 +66,8 @@ public unsafe class NativeListController : IDisposable {
 
     private void OnAddonFinalize(AddonEvent type, AddonArgs args) {
         onListPopulate?.Dispose();
+        onRendererDelegate?.Dispose();
+
         ModifiedIndexes.Clear();
         
         OnInnerClose?.Invoke();
