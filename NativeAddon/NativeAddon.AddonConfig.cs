@@ -19,7 +19,10 @@ public unsafe partial class NativeAddon {
         var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
         if (!file.Exists) {
             file.Create().Close();
-            return new AddonConfig();
+
+            var newConfig = new AddonConfig();
+            SaveAddonConfig(newConfig);
+            return newConfig;
         }
 
         AddonConfig? addonConfig;
