@@ -16,7 +16,7 @@ public unsafe class ListItemData {
     public AtkComponentListItemRenderer* ItemRenderer { get; set; }
 }
 
-public unsafe class NativeListController : IDisposable {
+public unsafe class NativeListController(string addonName) : IDisposable {
 
     public required ShouldModifyElementHandler ShouldModifyElement { get; init; }
     public required UpdateElementHandler UpdateElement { get; init; }
@@ -38,7 +38,7 @@ public unsafe class NativeListController : IDisposable {
         remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
     }
 
-    public NativeListController(string addonName) {
+    public void Enable() {
         DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, addonName, OnAddonSetup);
         DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnAddonFinalize);
 
@@ -48,6 +48,8 @@ public unsafe class NativeListController : IDisposable {
             LoadPopulators(addon);
         }
     }
+
+    public void Disable() => Dispose();
 
     public void Dispose() {
         DalamudInterface.Instance.AddonLifecycle.UnregisterListener(OnAddonSetup, OnAddonFinalize);
