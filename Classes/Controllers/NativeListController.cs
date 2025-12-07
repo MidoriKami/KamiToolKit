@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Classes.Controllers;
@@ -23,7 +24,7 @@ public unsafe class NativeListController : IDisposable {
     public required GetPopulatorNodeHandler GetPopulatorNode { get; init; }
 
     private Hook<AtkComponentListItemPopulator.PopulateDelegate>? onListPopulate;
-    private Hook<AtkComponentListItemPopulator.PopulateWithRendererDelegate>? onRendererDelegate;
+    private Hook<AtkComponentListItemPopulator.PopulateWithRendererDelegate>? onRendererPopulate;
 
     public readonly List<uint> ModifiedIndexes = [];
     
@@ -40,15 +41,40 @@ public unsafe class NativeListController : IDisposable {
     public NativeListController(string addonName) {
         DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, addonName, OnAddonSetup);
         DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnAddonFinalize);
+
+        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
+        if (addon is not null) {
+            Log.Warning("Caution: ListController was loaded after list was initialized, data may be stale.");
+            LoadPopulators(addon);
+        }
     }
 
     public void Dispose() {
         DalamudInterface.Instance.AddonLifecycle.UnregisterListener(OnAddonSetup, OnAddonFinalize);
+
         onListPopulate?.Dispose();
+        onListPopulate = null;
+        
+        onRendererPopulate?.Dispose();
+        onRendererPopulate = null;
     }
 
-    private void OnAddonSetup(AddonEvent type, AddonArgs args) {
-        var addon = (AtkUnitBase*)args.Addon.Address;
+    private void OnAddonSetup(AddonEvent type, AddonArgs args)
+        => LoadPopulators((AtkUnitBase*)args.Addon.Address);
+
+    private void OnAddonFinalize(AddonEvent type, AddonArgs args) {
+        onListPopulate?.Dispose();
+        onListPopulate = null;
+        
+        onRendererPopulate?.Dispose();
+        onRendererPopulate = null;
+        
+        ModifiedIndexes.Clear();
+        
+        OnInnerClose?.Invoke();
+    }
+    
+    private void LoadPopulators(AtkUnitBase* addon) {
         var populateMethod = GetPopulatorNode(addon)->Populator;
 
         if (populateMethod.Populate is not null) {
@@ -57,20 +83,11 @@ public unsafe class NativeListController : IDisposable {
         }
 
         if (populateMethod.PopulateWithRenderer is not null) {
-            onRendererDelegate = DalamudInterface.Instance.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateWithRendererDelegate>(populateMethod.PopulateWithRenderer, OnRendererPopulateDetour);
-            onRendererDelegate?.Enable();
+            onRendererPopulate = DalamudInterface.Instance.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateWithRendererDelegate>(populateMethod.PopulateWithRenderer, OnRendererPopulateDetour);
+            onRendererPopulate?.Enable();
         }
 
         OnInnerOpen?.Invoke();
-    }
-
-    private void OnAddonFinalize(AddonEvent type, AddonArgs args) {
-        onListPopulate?.Dispose();
-        onRendererDelegate?.Dispose();
-
-        ModifiedIndexes.Clear();
-        
-        OnInnerClose?.Invoke();
     }
 
     private void OnPopulateDetour(AtkUnitBase* unitBase, AtkComponentListItemPopulator.ListItemInfo* itemInfo, AtkResNode** nodeList) {
@@ -115,7 +132,7 @@ public unsafe class NativeListController : IDisposable {
                 }
             }
             
-            onRendererDelegate!.Original(unitBase, listItemIndex, nodeList, listItemRenderer);
+            onRendererPopulate!.Original(unitBase, listItemIndex, nodeList, listItemRenderer);
 
             if (shouldModifyElement) {
                 UpdateElement.Invoke(unitBase, listItemData, nodeList);
