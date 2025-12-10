@@ -6,40 +6,35 @@ using static FFXIVClientStructs.FFXIV.Component.GUI.AtkModuleInterface;
 
 namespace KamiToolKit.Classes.ContextMenu;
 
-internal sealed unsafe class ContextMenuAtkEventInterface : IDisposable {
+internal unsafe class ContextMenuEventInterface : IDisposable {
     private readonly CustomAtkEventInterface listener;
-    private readonly Dictionary<ulong, ContextMenuItem> idToItem;
-    private readonly Dictionary<ContextMenuItem, ulong> itemToId;
-    private readonly List<ContextMenuItem> items;
+    private readonly Dictionary<uint, ContextMenuItem> idToItem = new();
 
-    public IReadOnlyList<ContextMenuItem> Items => items;
+    public IReadOnlyList<ContextMenuItem> Items => idToItem.Select(kv => kv.Value).ToList();
 
-    public ContextMenuAtkEventInterface(IEnumerable<ContextMenuItem> items) {
-        this.items = items.ToList();
+    public ContextMenuEventInterface(IEnumerable<ContextMenuItem> items) {
+        var nextSortOrder = 0U;
+        foreach (var (index, item) in items.Index()) {
+            if (item.SortOrder == null) {
+                item.SortOrder = nextSortOrder;
+                nextSortOrder += 1;
+            }
 
-        idToItem = new Dictionary<ulong, ContextMenuItem>();
-
-        var currentId = 1UL;
-        foreach(var item in items) {
-            idToItem[currentId] = item;
-            currentId += 1;
+            item.Id = index;
+            idToItem[(uint)index] = item;
         }
 
-        itemToId = idToItem.ToDictionary(i => i.Value, i => i.Key);
-
-        listener = new CustomAtkEventInterface(
-            (AtkEventInterface* thisPtr, AtkValue* returnValue, AtkValue* values, uint valueCount, ulong eventKind) => {
-                if (idToItem.TryGetValue(eventKind, out var item)) {
-                    item.OnClick?.Invoke();
-                }
-                return returnValue;
-            }
-        );
+        listener = new CustomAtkEventInterface(ReceiveEvent);
     }
 
-    public ulong GetId(ContextMenuItem item) => itemToId[item];
+    private AtkValue* ReceiveEvent(AtkEventInterface* thisPtr, AtkValue* returnValue, AtkValue* values, uint valueCount, ulong eventKind) {
+        if (idToItem.TryGetValue((uint)eventKind, out var item)) {
+            item.OnClick?.Invoke();
+        }
+        return returnValue;
+    }
 
-    public static implicit operator AtkEventInterface*(ContextMenuAtkEventInterface e) => e.listener;
+    public static implicit operator AtkEventInterface*(ContextMenuEventInterface e) => e.listener;
 
     public void Dispose() => listener.Dispose();
 }

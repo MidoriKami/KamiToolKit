@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
 namespace KamiToolKit.Classes.ContextMenu;
@@ -6,37 +7,18 @@ namespace KamiToolKit.Classes.ContextMenu;
 /// <summary>
 /// Helps create custom Context Menus
 /// </summary>
-/// <example>
-/// <code>
-/// ContextMenuHelper.Popup(
-///     new ContextMenuItem {
-///         Name = "Item 1",
-///         OnClick = () => { /* Item 1 on click code */ }
-///     },
-///     new ContextMenuItem {
-///         Name = "Item 2",
-///         OnClick = () => { /* Item 2 on click code */ }
-///     },
-///     new ContextMenuItem {
-///         Name = "Item 3",
-///         OnClick = () => { /* Item 3 on click code */ }
-///     }
-/// );
-/// </code>
-/// </example>
 public static class ContextMenuHelper {
-    private static ContextMenuAtkEventInterface? _activeListener;
+    private static ContextMenuEventInterface? activeListener;
 
-    public unsafe static void Popup(params IEnumerable<ContextMenuItem> items) {
-        _activeListener?.Dispose();
-        _activeListener = new ContextMenuAtkEventInterface(items);
+    public unsafe static void Open(params IEnumerable<ContextMenuItem> items) {
+        activeListener?.Dispose();
+        activeListener = new ContextMenuEventInterface(items);
 
         var ctx = AgentContext.Instance();
         ctx->ClearMenu();
 
-        foreach (var item in _activeListener.Items) {
-            var id = _activeListener.GetId(item);
-            ctx->AddMenuItem(item.Name, _activeListener, (long)id, disabled: !item.IsEnabled, submenu: false);
+        foreach (var item in activeListener.Items.OrderBy(item => item.SortOrder)) {
+            ctx->AddMenuItem(item.Name, activeListener, (long)item.Id, disabled: !item.IsEnabled, submenu: false);
         }
 
         ctx->OpenContextMenu(false, false);
