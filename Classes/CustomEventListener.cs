@@ -6,30 +6,30 @@ namespace KamiToolKit.Classes;
 
 public unsafe class CustomEventListener : IDisposable {
 
-    public readonly AtkEventListener* EventListener;
+    private readonly AtkEventListener* eventListener;
 
     private AtkEventListener.Delegates.ReceiveEvent? receiveEventDelegate;
 
     public CustomEventListener(AtkEventListener.Delegates.ReceiveEvent eventHandler) {
         receiveEventDelegate = eventHandler;
 
-        EventListener = NativeMemoryHelper.UiAlloc<AtkEventListener>();
-        EventListener->VirtualTable = (AtkEventListener.AtkEventListenerVirtualTable*)NativeMemoryHelper.Malloc((ulong)sizeof(void*) * 3);
-        EventListener->VirtualTable->Dtor = (delegate* unmanaged<AtkEventListener*, byte, AtkEventListener*>)(delegate* unmanaged<void>)&NullSub;
-        EventListener->VirtualTable->ReceiveGlobalEvent = (delegate* unmanaged<AtkEventListener*, AtkEventType, int, AtkEvent*, AtkEventData*, void>)(delegate* unmanaged<void>)&NullSub;
-        EventListener->VirtualTable->ReceiveEvent = (delegate* unmanaged<AtkEventListener*, AtkEventType, int, AtkEvent*, AtkEventData*, void>)Marshal.GetFunctionPointerForDelegate(receiveEventDelegate);
+        eventListener = NativeMemoryHelper.UiAlloc<AtkEventListener>();
+        eventListener->VirtualTable = (AtkEventListener.AtkEventListenerVirtualTable*)NativeMemoryHelper.Malloc((ulong)sizeof(void*) * 3);
+        eventListener->VirtualTable->Dtor = (delegate* unmanaged<AtkEventListener*, byte, AtkEventListener*>)(delegate* unmanaged<void>)&NullSub;
+        eventListener->VirtualTable->ReceiveGlobalEvent = (delegate* unmanaged<AtkEventListener*, AtkEventType, int, AtkEvent*, AtkEventData*, void>)(delegate* unmanaged<void>)&NullSub;
+        eventListener->VirtualTable->ReceiveEvent = (delegate* unmanaged<AtkEventListener*, AtkEventType, int, AtkEvent*, AtkEventData*, void>)Marshal.GetFunctionPointerForDelegate(receiveEventDelegate);
     }
 
     public virtual void Dispose() {
-        if (EventListener is null) return;
+        if (eventListener is null) return;
 
-        NativeMemoryHelper.Free(EventListener->VirtualTable, (ulong)sizeof(void*) * 3);
-        NativeMemoryHelper.UiFree(EventListener);
+        NativeMemoryHelper.Free(eventListener->VirtualTable, (ulong)sizeof(void*) * 3);
+        NativeMemoryHelper.UiFree(eventListener);
 
         receiveEventDelegate = null;
     }
 
     [UnmanagedCallersOnly] private static void NullSub() { }
 
-    public static implicit operator AtkEventListener*(CustomEventListener listener) => listener.EventListener;
+    public static implicit operator AtkEventListener*(CustomEventListener listener) => listener.eventListener;
 }

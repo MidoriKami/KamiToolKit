@@ -6,14 +6,14 @@ public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEven
     public void AddEvent(AtkEventType eventType, AtkResNode* node) {
         DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
             Log.Verbose($"Registering ViewportEvent: {eventType}");
-            AtkStage.Instance()->ViewportEventManager.RegisterEvent(eventType, 0, node, &node->AtkEventTarget, EventListener, false);
+            AtkStage.Instance()->ViewportEventManager.RegisterEvent(eventType, 0, node, &node->AtkEventTarget, this, false);
         });
     }
 
     public void RemoveEvent(AtkEventType eventType) {
         DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
             Log.Verbose($"Unregistering ViewportEvent: {eventType}");
-            AtkStage.Instance()->ViewportEventManager.UnregisterEvent(eventType, 0, EventListener, false);
+            AtkStage.Instance()->ViewportEventManager.UnregisterEvent(eventType, 0, this, false);
         });
     }
 
