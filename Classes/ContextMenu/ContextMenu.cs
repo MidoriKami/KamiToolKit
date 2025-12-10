@@ -10,8 +10,9 @@ namespace KamiToolKit.Classes.ContextMenu;
 public unsafe class ContextMenu : IDisposable {
     private readonly CustomEventInterface contextMenuEventInterface;
 
+    private Dictionary<int, ContextMenuItem>? generatedEntries;
     private List<ContextMenuItem> Items { get; set; } = [];
-    private IOrderedEnumerable<ContextMenuItem> OrderedItems => Items.OrderBy(item => item.SortOrder);
+    private IOrderedEnumerable<ContextMenuItem> OrderedItems => Items.OrderBy(item => item.DisplayPriority);
 
     public ContextMenu() {
         contextMenuEventInterface = new CustomEventInterface(ContextMenuEventHandler);
@@ -22,8 +23,16 @@ public unsafe class ContextMenu : IDisposable {
     }
 
     private AtkValue* ContextMenuEventHandler(AtkModuleInterface.AtkEventInterface* thisPtr, AtkValue* returnValue, AtkValue* values, uint valueCount, ulong eventKind) {
-        var menuItem = Items.FirstOrDefault(item => item.SortOrder == (int)eventKind);
-        menuItem?.OnClick.Invoke();
+        if (generatedEntries is null) return returnValue;
+
+        var indexClicked = values[1].Int;
+
+        if (generatedEntries?.TryGetValue(indexClicked, out var item) ?? false) {
+            item.OnClick();
+        }
+
+        generatedEntries?.Clear();
+        generatedEntries = null;
 
         return returnValue;
     }
@@ -54,15 +63,26 @@ public unsafe class ContextMenu : IDisposable {
         }
     }
 
+    public void Clear() => Items.Clear();
+
     public void Open() {
         var agentContextMenu = AgentContext.Instance();
         
         agentContextMenu->ClearMenu();
 
+        var indexer = 0;
+        generatedEntries = [];
         foreach (var item in OrderedItems) {
-            agentContextMenu->AddMenuItem(item.Name, contextMenuEventInterface, item.SortOrder, !item.IsEnabled);
+            generatedEntries.Add(indexer++, item);
+            agentContextMenu->AddMenuItem(item.Name, contextMenuEventInterface, indexer, !item.IsEnabled);
         }
-        
+
         agentContextMenu->OpenContextMenu();
+    }
+
+    public void Close() {
+        var agentContextMenu = AgentContext.Instance();
+        
+        agentContextMenu->ClearMenu();
     }
 }

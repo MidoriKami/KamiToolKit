@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class IconToggleNode : SimpleComponentNode {
+public class IconToggleNode : SimpleComponentNode {
     private readonly IconImageNode iconNode;
     private readonly ClippingMaskNode clipNode;
     private readonly SimpleImageNode highlightNode; // For selected
