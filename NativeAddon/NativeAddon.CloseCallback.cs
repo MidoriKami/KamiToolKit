@@ -1,4 +1,5 @@
-﻿using Dalamud.Hooking;
+﻿using System.Linq;
+using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -8,7 +9,7 @@ public abstract unsafe partial class NativeAddon {
 
     private static Hook<AtkUnitBase.Delegates.FireCallback>? fireCallbackHook;
     
-    private static void InitializeExtras() {
+    private static void InitializeCloseCallback() {
         fireCallbackHook ??= DalamudInterface.Instance.GameInteropProvider
             .HookFromAddress<AtkUnitBase.Delegates.FireCallback>(AtkUnitBase.Addresses.FireCallback.Value, OnFireCallback);
         fireCallbackHook.Enable();
@@ -27,8 +28,8 @@ public abstract unsafe partial class NativeAddon {
         return fireCallbackHook!.Original(thisPtr, valueCount, values, close);
     }
 
-    private static void DisposeExtras() {
-        if (CreatedAddons.Count is 0) {
+    private static void DisposeCloseCallback() {
+        if (CreatedAddons.Count is 0 || CreatedAddons.All(addon => addon.IsOverlayAddon)) {
             fireCallbackHook?.Dispose();
             fireCallbackHook = null;
         }

@@ -33,7 +33,7 @@ public abstract partial class NativeAddon : IDisposable {
         }
 
         isDisposed = true;
-        DisposeExtras();
+        DisposeCloseCallback();
     }
 
     ~NativeAddon() => Dispose();
@@ -49,6 +49,6 @@ public abstract partial class NativeAddon : IDisposable {
         }
 
         CreatedAddons.Clear();
-        DisposeExtras();
+        DisposeCloseCallback();
     }
 }

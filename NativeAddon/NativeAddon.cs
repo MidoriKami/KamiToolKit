@@ -42,7 +42,9 @@ public abstract unsafe partial class NativeAddon {
 
         Log.Verbose($"[{InternalName}] Allocating NativeAddon");
 
-        InitializeExtras();
+        if (!IsOverlayAddon) {
+            InitializeCloseCallback();
+        }
 
         InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
 
