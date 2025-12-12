@@ -3,7 +3,6 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using KamiToolKit.Classes;
-using KamiToolKit.System;
 
 namespace KamiToolKit.Extensions;
 

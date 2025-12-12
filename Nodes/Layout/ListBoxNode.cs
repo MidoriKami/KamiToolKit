@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using KamiToolKit.Classes;
-using KamiToolKit.System;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
@@ -16,19 +16,15 @@ public class ListBoxNode : LayoutListNode {
 
     public ListBoxNode() {
         Background = new BackgroundImageNode {
-            NodeId = 2, 
+            IsVisible = false,
         };
         Background.AttachNode(this);
 
         Border = new BorderNineGridNode {
-            NodeId = 3, 
-            Position = new Vector2(-15.0f, -15.0f), 
             IsVisible = false,
         };
         Border.AttachNode(this);
     }
-
-    protected override uint ListBaseId => 3;
 
     [JsonProperty] public LayoutAnchor LayoutAnchor {
         get;
@@ -43,6 +39,7 @@ public class ListBoxNode : LayoutListNode {
         set {
             field = value;
             RecalculateLayout();
+            Size = GetMinimumSize();
         }
     }
 
@@ -69,165 +66,131 @@ public class ListBoxNode : LayoutListNode {
         set => Border.IsVisible = value;
     }
 
-    [JsonProperty] public Spacing ItemMargin {
-        get;
-        set {
-            field = value;
-            RecalculateLayout();
-        }
-    } = new(0.0f);
-
     public override float Height {
-        get;
-        set {
-            field = FitContents ? GetMinimumSize().Y : value;
-
-            base.Height = field;
-
-            Background.Height = field;
-            Border.Height = field + 30.0f;
-
-            RecalculateLayout();
-        }
+        get => base.Height;
+        set => base.Height = FitContents ? GetMinimumSize().Y : value;
     }
 
     public override float Width {
-        get;
-        set {
-            field = FitContents ? GetMinimumSize().X : value;
+        get => base.Width;
+        set => base.Width = FitContents ? GetMinimumSize().X : value;
+    }
 
-            base.Width = field;
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
 
-            Background.Width = field;
-            Border.Width = field + 30.0f;
+        Background.Size = Size;
 
-            RecalculateLayout();
-        }
+        Border.Size = Size + new Vector2(30.0f, 30.0f);
+        Border.Position = -new Vector2(15.0f, 15.0f);
+        
+        RecalculateLayout();
     }
 
     protected override void InternalRecalculateLayout() {
-        switch (LayoutOrientation) {
-            case LayoutOrientation.Vertical:
-                CalculateVerticalLayout();
-                break;
+        var runningPosition = LayoutOrientation switch {
+            LayoutOrientation.Vertical when LayoutAnchor is LayoutAnchor.TopLeft or LayoutAnchor.TopRight 
+                => GetLayoutStartPosition() + new Vector2(0.0f, FirstItemSpacing),
 
-            case LayoutOrientation.Horizontal:
-                CalculateHorizontalLayout();
-                break;
+            LayoutOrientation.Vertical when LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.BottomRight 
+                => GetLayoutStartPosition() - new Vector2(0.0f, FirstItemSpacing),
+
+            LayoutOrientation.Horizontal when LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.TopLeft 
+                =>  GetLayoutStartPosition() + new Vector2(FirstItemSpacing, 0.0f),
+
+            LayoutOrientation.Horizontal when LayoutAnchor is LayoutAnchor.BottomRight or LayoutAnchor.TopRight
+                => GetLayoutStartPosition() - new Vector2(FirstItemSpacing, 0.0f),
+
+            _ => Vector2.Zero,
+        };
+
+        foreach (var node in NodeList.Where(node => node.IsVisible)) {
+            if (LayoutOrientation is LayoutOrientation.Vertical) {
+                switch (LayoutAnchor) {
+                    case LayoutAnchor.TopLeft: 
+                        node.Position = runningPosition;
+                        runningPosition.Y += node.Height * node.Scale.Y + ItemSpacing;
+                        break;
+            
+                    case LayoutAnchor.TopRight: 
+                        node.Position = runningPosition - new Vector2(node.Width * node.Scale.X, 0.0f);
+                        runningPosition.Y += node.Height * node.Scale.Y + ItemSpacing;
+                        break;
+            
+                    case LayoutAnchor.BottomLeft:
+                        node.Position = runningPosition - new Vector2(0.0f, node.Height * node.Scale.Y);
+                        runningPosition.Y -= node.Height * node.Scale.Y + ItemSpacing;
+                        break;
+            
+                    case LayoutAnchor.BottomRight:
+                        node.Position = runningPosition - new Vector2(node.Width * node.Scale.X, node.Height * node.Scale.Y);
+                        runningPosition.Y -= node.Height * node.Scale.Y + ItemSpacing;
+                        break;
+                }
+            }
+            else if (LayoutOrientation is LayoutOrientation.Horizontal) {
+                switch (LayoutAnchor) {
+                    case LayoutAnchor.TopLeft:
+                        node.Position = runningPosition;
+                        runningPosition.X += node.Width * node.Scale.X + ItemSpacing;
+                        break;
+            
+                    case LayoutAnchor.TopRight:
+                        node.Position = runningPosition - new Vector2(node.Width * node.Scale.X, 0.0f);
+                        runningPosition.X -= node.Width * node.Scale.X + ItemSpacing;
+                        break;
+                
+                    case LayoutAnchor.BottomLeft:
+                        node.Position = runningPosition - new Vector2(0.0f, node.Height * node.Scale.Y);
+                        runningPosition.X += node.Width * node.Scale.X + ItemSpacing;
+                        break;
+                
+                    case LayoutAnchor.BottomRight:
+                        node.Position = runningPosition - new Vector2(node.Width * node.Scale.X, node.Height * node.Scale.Y);
+                        runningPosition.X -= node.Width * node.Scale.X + ItemSpacing;
+                        break;
+                }
+            }
         }
+    }
+
+    public override void AddNode(NodeBase node, bool suppressRecalculateLayout = false) {
+        base.AddNode(node, suppressRecalculateLayout);
+        Size = GetMinimumSize();
+    }
+
+    public override void RemoveNode(NodeBase node, bool suppressRecalculateLayout = false) {
+        base.RemoveNode(node, suppressRecalculateLayout);
+        Size = GetMinimumSize();
     }
 
     /// <summary>
     ///     Get the current minimum size that would contain all the nodes including their margins.
     /// </summary>
     public Vector2 GetMinimumSize() {
-        var size = Vector2.Zero;
+        var size = LayoutOrientation switch {
+            LayoutOrientation.Vertical => new Vector2(0.0f, FirstItemSpacing),
+            LayoutOrientation.Horizontal => new Vector2(FirstItemSpacing, 0.0f),
+            _ => Vector2.Zero,
+        };
 
-        foreach (var node in NodeList) {
-            if (!node.IsVisible) continue;
-
+        foreach (var node in NodeList.Where(node => node.IsVisible)) {
             switch (LayoutOrientation) {
                 // Horizontal we take max height, and add widths
                 case LayoutOrientation.Horizontal:
-                    size.Y = MathF.Max(size.Y, node.LayoutSize.Y + ItemMargin.Top + ItemMargin.Bottom);
-                    size.X += node.LayoutSize.X + ItemMargin.Right + ItemMargin.Left;
+                    size.Y = MathF.Max(size.Y, node.Height);
+                    size.X += node.Width + ItemSpacing;
                     break;
 
                 // Vertical we take max width, and add heights
                 case LayoutOrientation.Vertical:
-                    size.X = MathF.Max(size.X, node.LayoutSize.X + ItemMargin.Left + ItemMargin.Right);
-                    size.Y += node.LayoutSize.Y + ItemMargin.Top + ItemMargin.Bottom;
+                    size.X = MathF.Max(size.X, node.Width);
+                    size.Y += node.Height + ItemSpacing;
                     break;
             }
         }
 
         return size;
-    }
-
-    private void CalculateVerticalLayout() {
-        var runningPosition = GetLayoutStartPosition();
-
-        if (LayoutAnchor is LayoutAnchor.TopLeft or LayoutAnchor.TopRight) {
-            runningPosition += new Vector2(0.0f, FirstItemSpacing);
-        }
-        else if (LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.BottomRight) {
-            runningPosition -= new Vector2(0.0f, FirstItemSpacing);
-        }
-
-        foreach (var node in NodeList) {
-            if (!node.IsVisible) continue;
-
-            var netMargin = node.Margin + ItemMargin + new Spacing(ItemSpacing / 2.0f, 0.0f, 0.0f, ItemSpacing / 2.0f);
-
-            switch (LayoutAnchor) {
-                case LayoutAnchor.TopLeft: {
-                    node.Position = runningPosition + new Vector2(netMargin.Left, netMargin.Top);
-                    runningPosition.Y += node.Height * node.Scale.Y + netMargin.Bottom + netMargin.Top;
-                    break;
-                }
-
-                case LayoutAnchor.TopRight: {
-                    node.Position = runningPosition - new Vector2(netMargin.Right, 0.0f) + new Vector2(0.0f, netMargin.Top) - new Vector2(node.Width * node.Scale.X, 0.0f);
-                    runningPosition.Y += node.Height * node.Scale.Y + netMargin.Bottom + netMargin.Top;
-                    break;
-                }
-
-                case LayoutAnchor.BottomLeft: {
-                    node.Position = runningPosition + new Vector2(netMargin.Left, 0.0f) - new Vector2(0.0f, netMargin.Bottom) - new Vector2(0.0f, node.Height * node.Scale.Y);
-                    runningPosition.Y -= node.Height * node.Scale.Y + netMargin.Top + netMargin.Bottom;
-                    break;
-                }
-
-                case LayoutAnchor.BottomRight: {
-                    node.Position = runningPosition - new Vector2(netMargin.Right, 0.0f) - new Vector2(0.0f, netMargin.Bottom) - new Vector2(node.Width * node.Scale.X, node.Height * node.Scale.Y);
-                    runningPosition.Y -= node.Height * node.Scale.Y + netMargin.Top + netMargin.Bottom;
-                    break;
-                }
-            }
-        }
-    }
-
-    private void CalculateHorizontalLayout() {
-        var runningPosition = GetLayoutStartPosition();
-
-        if (LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.TopLeft) {
-            runningPosition += new Vector2(FirstItemSpacing, 0.0f);
-        }
-        else if (LayoutAnchor is LayoutAnchor.BottomRight or LayoutAnchor.TopRight) {
-            runningPosition -= new Vector2(FirstItemSpacing, 0.0f);
-        }
-
-        foreach (var node in NodeList) {
-            if (!node.IsVisible) continue;
-
-            var netMargin = node.Margin + ItemMargin + new Spacing(0.0f, ItemSpacing / 2.0f, ItemSpacing / 2.0f, 0.0f);
-
-            switch (LayoutAnchor) {
-                case LayoutAnchor.TopLeft: {
-                    node.Position = runningPosition + new Vector2(netMargin.Left, netMargin.Top);
-                    runningPosition.X += node.Width * node.Scale.X + netMargin.Right + netMargin.Left;
-                    break;
-                }
-
-                case LayoutAnchor.TopRight: {
-                    node.Position = runningPosition - new Vector2(netMargin.Right, 0.0f) + new Vector2(0.0f, netMargin.Top) - new Vector2(node.Width * node.Scale.X, 0.0f);
-                    runningPosition.X -= node.Width * node.Scale.X + netMargin.Left + netMargin.Right;
-                    break;
-                }
-
-                case LayoutAnchor.BottomLeft: {
-                    node.Position = runningPosition + new Vector2(netMargin.Left, 0.0f) - new Vector2(0.0f, netMargin.Bottom) - new Vector2(0.0f, node.Height * node.Scale.Y);
-                    runningPosition.X += node.Width * node.Scale.X + netMargin.Left + netMargin.Right;
-                    break;
-                }
-
-                case LayoutAnchor.BottomRight: {
-                    node.Position = runningPosition - new Vector2(netMargin.Right, 0.0f) - new Vector2(0.0f, netMargin.Bottom) - new Vector2(node.Width * node.Scale.X, node.Height * node.Scale.Y);
-                    runningPosition.X -= node.Width * node.Scale.X + netMargin.Left + netMargin.Right;
-                    break;
-                }
-            }
-        }
     }
 
     private Vector2 GetLayoutStartPosition() => LayoutAnchor switch {

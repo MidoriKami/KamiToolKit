@@ -4,7 +4,6 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.System;
 using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
@@ -17,8 +16,6 @@ public abstract class LayoutListNode : SimpleComponentNode {
     public IEnumerable<T> GetNodes<T>() where T : NodeBase => NodeList.OfType<T>();
 
     public IReadOnlyList<NodeBase> Nodes => NodeList;
-
-    protected virtual uint ListBaseId => 1;
 
     public int MaxNodes { get; set; }
 
@@ -64,7 +61,6 @@ public abstract class LayoutListNode : SimpleComponentNode {
         NodeList.Add(node);
 
         node.AttachNode(this);
-        node.NodeId = (uint)NodeList.Count + ListBaseId;
 
         if (MaxNodes >= 1 && NodeList.Count >= MaxNodes) {
             var firstNode = NodeList.First();

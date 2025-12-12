@@ -1,6 +1,4 @@
-﻿using KamiToolKit.System;
-
-namespace KamiToolKit.Nodes;
+﻿namespace KamiToolKit.Nodes;
 
 public class AlignedHorizontalListNode : HorizontalListNode {
     protected override void AdjustNode(NodeBase node) {
