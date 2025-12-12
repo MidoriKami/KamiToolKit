@@ -50,25 +50,25 @@ public unsafe class CastBarProgressBarNode : SimpleComponentNode {
     }
 
     public Vector4 BackgroundColor {
-        get => new(BackgroundImageNode.AddColor.X, BackgroundImageNode.AddColor.Y, BackgroundImageNode.AddColor.Z, BackgroundImageNode.InternalResNode->Color.A / 255.0f);
+        get => new(BackgroundImageNode.AddColor.X, BackgroundImageNode.AddColor.Y, BackgroundImageNode.AddColor.Z, BackgroundImageNode.ResNode->Color.A / 255.0f);
         set {
-            BackgroundImageNode.InternalResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
+            BackgroundImageNode.ResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
             BackgroundImageNode.AddColor = value.AsVector3Color();
         }
     }
 
     public Vector4 BorderColor {
-        get => new(BorderImageNode.AddColor.X, BorderImageNode.AddColor.Y, BorderImageNode.AddColor.Z, BorderImageNode.InternalResNode->Color.A / 255.0f);
+        get => new(BorderImageNode.AddColor.X, BorderImageNode.AddColor.Y, BorderImageNode.AddColor.Z, BorderImageNode.ResNode->Color.A / 255.0f);
         set {
-            BorderImageNode.InternalResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
+            BorderImageNode.ResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
             BorderImageNode.AddColor = value.AsVector3Color();
         }
     }
 
     public Vector4 BarColor {
-        get => new(ProgressNode.AddColor.X, ProgressNode.AddColor.Y, ProgressNode.AddColor.Z, ProgressNode.InternalResNode->Color.A / 255.0f);
+        get => new(ProgressNode.AddColor.X, ProgressNode.AddColor.Y, ProgressNode.AddColor.Z, ProgressNode.ResNode->Color.A / 255.0f);
         set {
-            ProgressNode.InternalResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
+            ProgressNode.ResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
             ProgressNode.AddColor = value.AsVector3Color();
         }
     }

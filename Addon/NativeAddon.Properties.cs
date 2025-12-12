@@ -114,7 +114,13 @@ public abstract unsafe partial class NativeAddon {
     public void SetWindowSize(float width, float height)
         => SetWindowSize(new Vector2(width, height));
 
-    public required string InternalName { get; init; } = "NameNotSet";
+    public required string InternalName {
+        get => field;
+        init {
+            var noSpaces = value.Replace(" ", "");
+            field = noSpaces.Length > 31 ? noSpaces[..31] : noSpaces;
+        }
+    } = "NameNotSet";
 
     public required ReadOnlySeString Title { get; set; } = "TitleNotSet";
 

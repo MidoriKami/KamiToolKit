@@ -6,12 +6,12 @@ public sealed unsafe class VerticalLineNode : HorizontalLineNode {
     }
 
     public override float Height {
-        get => InternalResNode->GetWidth();
-        set => InternalResNode->SetWidth((ushort) value);
+        get => ResNode->GetWidth();
+        set => ResNode->SetWidth((ushort) value);
     }
 
     public override float Width { 
-        get => InternalResNode->GetHeight();
-        set => InternalResNode->SetHeight((ushort) value);
+        get => ResNode->GetHeight();
+        set => ResNode->SetHeight((ushort) value);
     }
 }

@@ -230,7 +230,7 @@ public abstract unsafe class ListNode<T> : ListNode {
     public void SetFocusable(AtkUnitBase* addon) {
         foreach (ref var focusableNode in addon->AdditionalFocusableNodes) {
             if (focusableNode.Value is null) {
-                focusableNode = InternalResNode;
+                focusableNode = ResNode;
                 isFocusSet = true;
             }
         }
@@ -238,7 +238,7 @@ public abstract unsafe class ListNode<T> : ListNode {
 
     public void ClearFocusable(AtkUnitBase* addon) {
         foreach (ref var focusableNode in addon->AdditionalFocusableNodes) {
-            if (focusableNode.Value == InternalResNode) {
+            if (focusableNode.Value == ResNode) {
                 focusableNode = null;
                 isFocusSet = false;
             }

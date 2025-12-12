@@ -46,7 +46,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
         };
         ReverseButtonNode.AttachNode(this);
 
-        InternalResNode->SetHeight(38);
+        ResNode->SetHeight(38);
     }
 
     public required SortUpdated OnSortOrderChanged { get; set; }
@@ -97,7 +97,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
             SortOrderDropDown.IsVisible = value.Count > 0;
             ReverseButtonNode.IsVisible = value.Count > 0;
             
-            InternalResNode->SetHeight((ushort)(value.Count > 0 ? 69 : 38));
+            ResNode->SetHeight((ushort)(value.Count > 0 ? 69 : 38));
 
             if (SortingOptions.Count > 0) {
                 sortOption = value.First();

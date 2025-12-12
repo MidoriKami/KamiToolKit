@@ -161,7 +161,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
     
     private void MoveListOnScreen() {
         var screenSize = AtkStage.Instance()->ScreenSize;
-        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
+        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(ResNode);
         if (parentAddon == null) {
             return;
         }

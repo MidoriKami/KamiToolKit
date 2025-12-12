@@ -10,7 +10,7 @@ public abstract unsafe partial class NodeBase {
         Timeline?.Dispose();
 
         Timeline = timeline;
-        InternalResNode->Timeline = timeline.InternalTimeline;
-        timeline.OwnerNode = InternalResNode;
+        ResNode->Timeline = timeline.InternalTimeline;
+        timeline.OwnerNode = ResNode;
     }
 }

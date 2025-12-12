@@ -1,6 +1,5 @@
 using System.Numerics;
 using Dalamud.Utility;
-using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.System;
@@ -98,15 +97,15 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     }
 
     public ReadOnlySeString SeString {
-        get => Node->GetText().AsReadOnlySeString();
+        get => new(Node->GetText().AsSpan());
         set {
             Node->SetText(value.ToDalamudString().EncodeWithNullTerminator());
         }
     }
 
     [JsonProperty] public string String {
-        get => Node->GetText().ToString();
-        set => SeString = value;
+        get => new ReadOnlySeStringSpan(Node->GetText().AsSpan()).ToString();
+        set => Node->SetText(value);
     }
 
     public override Vector2 Size {
@@ -121,12 +120,13 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         => Node->SetNumber(number, showCommas, showPlusSign, (byte)digits, zeroPad);
 
     public Vector2 GetTextDrawSize(ReadOnlySeString text) {
-        using var stringContainer = new Utf8String(text);
+        using var builder = new RentedSeStringBuilder();
 
         ushort sizeX = 0;
         ushort sizeY = 0;
 
-        Node->GetTextDrawSize(&sizeX, &sizeY, stringContainer.StringPtr);
+        fixed (byte* ptr = builder.Builder.Append(text).GetViewAsSpan())
+            Node->GetTextDrawSize(&sizeX, &sizeY, ptr);
 
         return new Vector2(sizeX, sizeY);
     }
@@ -141,6 +141,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     }
 
     private void UpdateText() {
-        Node->SetText(Node->GetText().AsReadOnlySeString().ToDalamudString().EncodeWithNullTerminator());
+        using var builder = new RentedSeStringBuilder();
+        Node->SetText(builder.Builder.Append(SeString).GetViewAsSpan());
     }
 }

@@ -248,7 +248,7 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
     public void ShowTooltip(AtkTooltipManager.AtkTooltipType type, ActionKind actionKind) {
         if (AtkStage.Instance()->DragDropManager.IsDragging) return;
 
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(InternalResNode);
+        var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(ResNode);
         if (addon is null) return;
 
         var tooltipArgs = new AtkTooltipManager.AtkTooltipArgs();
@@ -259,7 +259,7 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         AtkStage.Instance()->TooltipManager.ShowTooltip(
             AtkTooltipManager.AtkTooltipType.Action,
             addon->Id,
-            InternalResNode,
+            ResNode,
             &tooltipArgs);
     }
 

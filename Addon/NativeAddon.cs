@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -53,7 +53,7 @@ public abstract unsafe partial class NativeAddon {
             throw new NullReferenceException("InternalName is empty, this is not allowed.");
         }
 
-        Log.Verbose($"[{InternalName}] Beginning Native Addon Allocation");
+        Log.Verbose($"[{InternalName}] Allocating NativeAddon");
 
         InitializeExtras();
 
@@ -66,22 +66,19 @@ public abstract unsafe partial class NativeAddon {
         RootNode = new ResNode {
             NodeId = 1, 
             NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
+            IsAddonRootNode = true,
         };
 
         WindowNode = new WindowNode {
             NodeId = 2,
         };
 
-        InternalAddon->NameString = GetInternalNameSafe();
+        InternalAddon->NameString = InternalName;
 
         InternalAddon->OpenSoundEffectId = (short)OpenWindowSoundEffectId;
-
-        Log.Verbose($"[{InternalName}] Allocation Complete");
     }
 
     private void InitializeAddon() {
-        Log.Verbose($"[{InternalName}] Initializing Addon");
-
         var widgetInfo = NativeMemoryHelper.UiAlloc<AtkUldWidgetInfo>(1, 16);
         widgetInfo->Id = 1;
         widgetInfo->NodeCount = 0;
@@ -104,6 +101,8 @@ public abstract unsafe partial class NativeAddon {
         InternalAddon->UldManager.UpdateDrawNodeList();
         InternalAddon->UldManager.LoadedState = AtkLoadState.Loaded;
 
+        InternalAddon->UldManager.AddNodeToObjectList(WindowNode);
+
         // UldManager finished loading the uld
         InternalAddon->Flags198 |= 2 << 0x1C;
 
@@ -114,8 +113,6 @@ public abstract unsafe partial class NativeAddon {
 
         // Now that we have constructed this instance, track it for auto-dispose
         CreatedAddons.Add(this);
-
-        Log.Verbose($"[{InternalName}] Initialization Complete");
     }
 
     /// <summary>
@@ -173,16 +170,5 @@ public abstract unsafe partial class NativeAddon {
             .AddLabel(80, 109, AtkTimelineJumpBehavior.PlayOnce, 0)
             .EndFrameSet()
             .Build());
-    }
-
-    private string GetInternalNameSafe() {
-        var noSpaces = InternalName.Replace(" ", string.Empty);
-
-        if (noSpaces.Length > 31) {
-            noSpaces = noSpaces[..31];
-        }
-
-        noSpaces += char.MinValue;
-        return noSpaces;
     }
 }

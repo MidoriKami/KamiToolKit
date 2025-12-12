@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -15,9 +16,9 @@ public abstract unsafe partial class NodeBase : IDisposable {
     internal static uint CurrentOffset;
 
     private bool isDisposed;
-    private bool isManagedDispose;
 
-    internal abstract AtkResNode* InternalResNode { get; }
+    internal abstract AtkResNode* ResNode { get; }
+    internal bool IsAddonRootNode;
 
     private delegate* unmanaged<AtkResNode*, bool, void> originalDestructorFunction;
     private AtkResNode.Delegates.Destroy destructorFunction = null!;
@@ -29,33 +30,26 @@ public abstract unsafe partial class NodeBase : IDisposable {
         if (isDisposed) return;
         isDisposed = true;
 
-        // If the node was invalidated before dispose, we want to skip trying to free it.
         if (!IsNodeValid()) {
-            if (!isManagedDispose) {
-                Log.Verbose($"Native has disposed node {GetType()}");
-                
-                Dispose(true, true);
-
-                GC.SuppressFinalize(this);
-                CreatedNodes.Remove(this);
-            }
+            Log.Warning("WARNING: Node is not valid, attempted to dispose. Aborted.");
             return;
         }
 
+        foreach (var child in ChildNodes.ToList()) {
+            child.Dispose();
+        }
+        ChildNodes.Clear();
+
         Log.Verbose($"Disposing node {GetType()}");
-        isManagedDispose = true;
 
         DisposeEvents();
 
-        AtkStage.Instance()->ClearNodeFocus(InternalResNode);
+        AtkStage.Instance()->ClearNodeFocus(ResNode);
 
-        // Automatically dispose any fields/properties that are managed nodes.
-        VisitChildren(node => node.Dispose());
-
-        TryForceDetach(false);
+        DetachNode();
 
         Timeline?.Dispose();
-        InternalResNode->Timeline = null;
+        ResNode->Timeline = null;
 
         DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
 
@@ -70,11 +64,18 @@ public abstract unsafe partial class NodeBase : IDisposable {
     ///     Ensure you have detached nodes safely from native ui before disposing.
     /// </summary>
     internal static void DisposeNodes() {
-        foreach (var node in CreatedNodes.ToArray()) {
-            if (!node.IsAttached) continue;
-            Log.Debug($"AutoDisposing node {node.GetType()}");
+        var leakedNodeCount = CreatedNodes.Count(node => !node.IsAddonRootNode && node.ResNode is not null && node.ResNode->ParentNode is null);
 
-            node.TryForceDetach(true);
+        if (leakedNodeCount is not 0) {
+            Log.Warning($"There were {leakedNodeCount} node(s) that were not disposed safely.");
+        }
+
+        foreach (var node in CreatedNodes.ToArray()) {
+            if (node.ResNode is null) continue;
+            if (node.ResNode->ParentNode is not null) continue;
+            if (node.IsAddonRootNode) continue;
+
+            Log.Warning($"Forcing disposal of: {node.GetType()}");
             node.Dispose();
         }
     }
@@ -96,25 +97,25 @@ public abstract unsafe partial class NodeBase : IDisposable {
     protected abstract void Dispose(bool disposing, bool isNativeDestructor);
 
     private bool IsNodeValid() {
-        if (InternalResNode is null) return false;
-        if (InternalResNode->VirtualTable is null) return false;
-        if (InternalResNode->VirtualTable == AtkEventTarget.StaticVirtualTablePointer) return false;
+        if (ResNode is null) return false;
+        if (ResNode->VirtualTable is null) return false;
+        if (ResNode->VirtualTable == AtkEventTarget.StaticVirtualTablePointer) return false;
 
         return true;
     }
 
-    public static implicit operator AtkResNode*(NodeBase node) => node.InternalResNode;
-    public static implicit operator AtkEventTarget*(NodeBase node) => &node.InternalResNode->AtkEventTarget;
+    public static implicit operator AtkResNode*(NodeBase node) => node.ResNode;
+    public static implicit operator AtkEventTarget*(NodeBase node) => &node.ResNode->AtkEventTarget;
 
     protected void BuildVirtualTable() {
+        // Back up original destructor pointer
+        originalDestructorFunction = ResNode->VirtualTable->Destroy;
+        
         // Overwrite virtual table with a custom copy,
         // Note: Currently there are only 2 vfuncs, but there's no harm in copying more for if they ever add more vfuncs to the game.
         virtualTable = (AtkResNode.AtkResNodeVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 4);
-        NativeMemory.Copy(InternalResNode->VirtualTable, virtualTable, 0x8 * 4);
-        InternalResNode->VirtualTable = virtualTable;
-
-        // Back up original destructor pointer
-        originalDestructorFunction = virtualTable->Destroy;
+        NativeMemory.Copy(ResNode->VirtualTable, virtualTable, 0x8 * 4);
+        ResNode->VirtualTable = virtualTable;
 
         // Pin managed function to virtual table entry
         destructorFunction = DestructorDetour;
@@ -125,12 +126,21 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     private void DestructorDetour(AtkResNode* thisPtr, bool free) {
         Dispose(true, true);
+        InvokeOriginalDestructor(thisPtr, free);
+
+        Log.Verbose($"Native has disposed node {GetType()}");
+        GC.SuppressFinalize(this);
+        CreatedNodes.Remove(this);
+
         isDisposed = true;
+    }
 
+    protected void InvokeOriginalDestructor(AtkResNode* thisPtr, bool free) {
+        if (virtualTable is null) return; // Shouldn't be possible, but just in case.
+        
         originalDestructorFunction(thisPtr, free);
-
-        // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
         NativeMemoryHelper.Free(virtualTable, 0x8 * 4);
+        virtualTable = null;
     }
 }
 
@@ -144,11 +154,11 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
         BuildVirtualTable();
 
-        InternalResNode->Type = nodeType;
-        InternalResNode->NodeId = NodeIdBase + CurrentOffset++;
+        ResNode->Type = nodeType;
+        ResNode->NodeId = NodeIdBase + CurrentOffset++;
         IsVisible = true;
 
-        if (InternalResNode is null) {
+        if (ResNode is null) {
             throw new Exception($"Unable to allocate memory for {typeof(T)}");
         }
 
@@ -157,15 +167,14 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
     public T* Node { get; private set; }
 
-    internal sealed override AtkResNode* InternalResNode => (AtkResNode*)Node;
+    internal sealed override AtkResNode* ResNode => (AtkResNode*)Node;
 
-    public static implicit operator T*(NodeBase<T> node) => (T*) node.InternalResNode;
+    public static implicit operator T*(NodeBase<T> node) => (T*) node.ResNode;
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             if (!isNativeDestructor) {
-                DetachNode();
-                InternalResNode->Destroy(true);
+                InvokeOriginalDestructor(ResNode, true);
             }
 
             Node = null;

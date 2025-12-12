@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -11,10 +13,15 @@ namespace KamiToolKit.System;
 
 public abstract unsafe partial class NodeBase {
 
+    internal readonly List<NodeBase> ChildNodes = [];
+    private NodeBase? parentNode;
+
     internal AtkUldManager* ParentUldManager { get; set; }
+    internal AtkUnitBase* ParentAddon { get; private set; }
 
     internal void AttachNode(AtkResNode* target, NodePosition position = NodePosition.AsLastChild) {
-        NodeLinker.AttachNode(InternalResNode, target, position);
+        NodeLinker.AttachNode(ResNode, target, position);
+        UpdateParentAddonFromTarget(target);
         UpdateNative();
     }
 
@@ -25,19 +32,25 @@ public abstract unsafe partial class NodeBase {
             return;
         }
 
-        NodeLinker.AttachNode(InternalResNode, target, position);
+        NodeLinker.AttachNode(ResNode, target, position);
+        parentNode = target;
+        parentNode.ChildNodes.Add(this);
 
+        UpdateParentAddonFromTarget(target);
         UpdateNative();
     }
 
     [OverloadResolutionPriority(2)] 
     internal void AttachNode(ComponentNode target, NodePosition position = NodePosition.AfterAllSiblings) {
-        NodeLinker.AttachNode(InternalResNode, target.ComponentBase->UldManager.RootNode, position);
+        NodeLinker.AttachNode(ResNode, target.ComponentBase->UldManager.RootNode, position);
+        parentNode = target;
+        parentNode.ChildNodes.Add(this);
 
         if (NodeId > NodeIdBase) {
             NodeId = GetMaxNodeId(&target.ComponentBase->UldManager) + 1;
         }
 
+        UpdateParentAddonFromTarget(target);
         UpdateNative();
     }
 
@@ -52,13 +65,19 @@ public abstract unsafe partial class NodeBase {
             _ => throw new ArgumentOutOfRangeException(nameof(position), position, null),
         };
 
-        NodeLinker.AttachNode(InternalResNode, (AtkResNode*)attachTarget, position);
+        NodeLinker.AttachNode(ResNode, (AtkResNode*)attachTarget, position);
+        UpdateParentAddonFromTarget(&targetNode->AtkResNode);
         UpdateNative();
     }
 
     internal void AttachNode(NativeAddon addon, NodePosition position = NodePosition.AsLastChild) {
-        NodeLinker.AttachNode(InternalResNode, addon.InternalAddon->RootNode, position);
+        NodeLinker.AttachNode(ResNode, addon.InternalAddon->RootNode, position);
+        parentNode = addon.RootNode;
+        parentNode.ChildNodes.Add(this);
+        ParentAddon = addon;
         
+        VisitManagedChildren(this, node => node.ParentAddon = addon);
+
         if (NodeId > NodeIdBase) {
             NodeId = GetMaxNodeId(&addon.InternalAddon->UldManager) + 1;
         }
@@ -72,44 +91,78 @@ public abstract unsafe partial class NodeBase {
     }
 
     internal void DetachNode() {
-        var parentAddon = ParentAddon;
-
-        NodeLinker.DetachNode(InternalResNode);
-        InternalResNode->ParentNode = null;
+        NodeLinker.DetachNode(ResNode);
+        ResNode->ParentNode = null;
 
         if (ParentUldManager is not null) {
-            VisitChildren(InternalResNode, pointer => {
+            VisitChildren(ResNode, pointer => {
                 ParentUldManager->RemoveNodeFromObjectList(pointer);
             });
+
             ParentUldManager->UpdateDrawNodeList();
             ParentUldManager = null;
         }
 
-        if (parentAddon is not null && parentAddon->UldManager.ResourceFlags.HasFlag(AtkUldManagerResourceFlag.Initialized)) {
-            parentAddon->UldManager.UpdateDrawNodeList();
-            parentAddon->UpdateCollisionNodeList(false);
+        if (ParentAddon is not null && ParentAddon->UldManager.ResourceFlags.HasFlag(AtkUldManagerResourceFlag.Initialized)) {
+            ParentAddon->UldManager.UpdateDrawNodeList();
+            ParentAddon->UpdateCollisionNodeList(false);
+        }
+
+        ParentAddon = null;
+
+        if (parentNode is not null) {
+            parentNode.ChildNodes.Remove(this);
+            parentNode = null;
         }
     }
 
     private void UpdateNative() {
-        if (InternalResNode is null) return;
+        if (ResNode is null) return;
 
         MarkDirty();
 
         if (ParentUldManager is null) {
-            ParentUldManager = GetUldManagerForNode(InternalResNode);
+            ParentUldManager = GetUldManagerForNode(ResNode);
         }
 
         if (ParentUldManager is not null) {
-            VisitChildren(InternalResNode, pointer => {
+            VisitChildren(ResNode, pointer => {
                 ParentUldManager->AddNodeToObjectList(pointer);
             });
+
             ParentUldManager->UpdateDrawNodeList();
         }
 
         if (ParentAddon is not null) {
             ParentAddon->UldManager.UpdateDrawNodeList();
             ParentAddon->UpdateCollisionNodeList(false);
+        }
+    }
+
+    private void UpdateParentAddonFromTarget(AtkResNode* node) {
+        if (parentNode is not null && parentNode.ParentAddon is not null) {
+            ParentAddon = parentNode.ParentAddon;
+
+            foreach (var child in ChildNodes.SelectMany(childNode => childNode.ChildNodes)) {
+                child.ParentAddon = ParentAddon;
+            }
+        }
+        else if (ParentAddon is null) {
+            var targetParentAddon = GetAddonForNode(node);
+            if (targetParentAddon is not null) {
+                ParentAddon = targetParentAddon;
+            }
+        }
+
+        if (ParentAddon is not null) {
+            VisitManagedChildren(this, child => child.ParentAddon = ParentAddon);
+        }
+    }
+
+    private void VisitManagedChildren(NodeBase node, Action<NodeBase> visitAction) {
+        foreach (var child in node.ChildNodes) {
+            visitAction(child);
+            VisitManagedChildren(child, visitAction);
         }
     }
 
@@ -133,9 +186,8 @@ public abstract unsafe partial class NodeBase {
         }
 
         // We failed to find a parent component, try to get a parent addon instead
-        var parentAddon = GetAddonForNode(node);
-        if (parentAddon is not null) {
-            return &parentAddon->UldManager;
+        if (ParentAddon is not null) {
+            return &ParentAddon->UldManager;
         }
 
         return null;

@@ -1,6 +1,5 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using Dalamud.Game.Addon.Events;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -23,10 +22,9 @@ public abstract unsafe partial class NodeBase {
     public virtual ReadOnlySeString? Tooltip {
         get;
         set {
-            if (value.HasValue && !value.Value.IsEmpty) {
-                field = value;
-
-                if (!TooltipRegistered) {
+            field = value;
+            switch (value) {
+                case { IsEmpty: false } when !TooltipRegistered: 
                     AddEvent(AtkEventType.MouseOver, ShowTooltip);
                     AddEvent(AtkEventType.MouseOut, HideTooltip);
                     OnVisibilityToggled += ToggleCollisionFlag;
@@ -36,15 +34,15 @@ public abstract unsafe partial class NodeBase {
                     }
 
                     TooltipRegistered = true;
-                }
-            }
-            else if (value is null) {
-                if (TooltipRegistered) {
+                    break;
+
+                case null when TooltipRegistered: {
                     RemoveEvent(AtkEventType.MouseOver, ShowTooltip);
                     RemoveEvent(AtkEventType.MouseOut, HideTooltip);
                     OnVisibilityToggled -= ToggleCollisionFlag;
 
                     TooltipRegistered = false;
+                    break;
                 }
             }
         }
@@ -63,8 +61,8 @@ public abstract unsafe partial class NodeBase {
         SetNodeEventFlags(eventType);
 
         if (eventHandlers.TryAdd(eventType, new EventHandlerInfo { OnActionDelegate = callback })) {
-            Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)InternalResNode:X}]");
-            InternalResNode->AtkEventManager.RegisterEvent(eventType, 0, this, this, nodeEventListener, false);
+            Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)ResNode:X}]");
+            ResNode->AtkEventManager.RegisterEvent(eventType, 0, this, this, nodeEventListener, false);
         }
         else {
             eventHandlers[eventType].OnActionDelegate += callback;
@@ -77,8 +75,8 @@ public abstract unsafe partial class NodeBase {
         SetNodeEventFlags(eventType);
 
         if (eventHandlers.TryAdd(eventType, new EventHandlerInfo { OnReceiveEventDelegate = callback })) {
-            Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)InternalResNode:X}]");
-            InternalResNode->AtkEventManager.RegisterEvent(eventType, 0, this, this, nodeEventListener, false);
+            Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)ResNode:X}]");
+            ResNode->AtkEventManager.RegisterEvent(eventType, 0, this, this, nodeEventListener, false);
         }
         else {
             eventHandlers[eventType].OnReceiveEventDelegate += callback;
@@ -89,8 +87,8 @@ public abstract unsafe partial class NodeBase {
         if (nodeEventListener is null) return;
 
         if (eventHandlers.Remove(eventType)) {
-            Log.Verbose($"[{eventType}] Unregistered from {GetType()} [{(nint)InternalResNode:X}]");
-            InternalResNode->AtkEventManager.UnregisterEvent(eventType, 0, nodeEventListener, false);
+            Log.Verbose($"[{eventType}] Unregistered from {GetType()} [{(nint)ResNode:X}]");
+            ResNode->AtkEventManager.UnregisterEvent(eventType, 0, nodeEventListener, false);
         }
 
         // If we have removed the last event, free the event listener
@@ -126,7 +124,7 @@ public abstract unsafe partial class NodeBase {
 
     private void DisposeEvents() {
         if (nodeEventListener is not null) {
-            InternalResNode->AtkEventManager.UnregisterEvent(AtkEventType.UnregisterAll, 0, nodeEventListener, false);
+            ResNode->AtkEventManager.UnregisterEvent(AtkEventType.UnregisterAll, 0, nodeEventListener, false);
         }
 
         eventHandlers.Clear();
@@ -180,15 +178,9 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
-    protected static void SetCursor(AddonCursorType cursor)
-        => DalamudInterface.Instance.AddonEventManager.SetCursor(cursor);
-
-    protected static void ResetCursor()
-        => DalamudInterface.Instance.AddonEventManager.ResetCursor();
-
     public void ShowTooltip() {
         if (Tooltip is not null && TooltipRegistered && ParentAddon is not null) {
-            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, InternalResNode, Tooltip.Value.ToDalamudString().EncodeWithNullTerminator());
+            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, ResNode, new ReadOnlySeString(Tooltip.GetValueOrDefault().AsSpan()));
         }
     }
 
