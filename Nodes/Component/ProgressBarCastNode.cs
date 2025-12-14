@@ -72,7 +72,17 @@ public unsafe class ProgressBarCastNode : SimpleComponentNode {
             ProgressNode.AddColor = value.AsVector3Color();
         }
     }
-    
+
+    public override Vector3 MultiplyColor {
+        get => base.MultiplyColor;
+        set {
+            base.MultiplyColor = value;
+            BackgroundImageNode.MultiplyColor = value;
+            ProgressNode.MultiplyColor = value;
+            BorderImageNode.MultiplyColor = value;
+        }
+    }
+
     public bool BorderVisible {
         get => BorderImageNode.IsVisible;
         set => BorderImageNode.IsVisible = value;
