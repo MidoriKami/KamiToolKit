@@ -1,9 +1,16 @@
 ﻿using System;
+using FFXIVClientStructs.FFXIV.Client.UI;
 
 namespace KamiToolKit.Classes.Controllers;
 
 public abstract unsafe class AddonEventController<T> where T : unmanaged {
 
+    protected AddonEventController() {
+        if (typeof(T) == typeof(AddonNamePlate)) {
+            throw new NotSupportedException("Attaching to NamePlate is not supported. Use OverlayController.");
+        }
+    }
+    
     public delegate void AddonControllerEvent(T* addon);
     
     public event AddonControllerEvent? OnAttach {
