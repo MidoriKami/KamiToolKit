@@ -38,6 +38,10 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
         Data->Nodes[1] = 0;
 
         InitializeComponentEvents();
+
+        // Disable ParentNode else SetText
+        // causes this node to resize itself incorrectly.
+        Component->ParentNode = null;
     }
 
     public ReadOnlySeString SeString {
