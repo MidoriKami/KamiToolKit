@@ -4,11 +4,9 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-[JsonObject(MemberSerialization.OptIn)]
 public abstract class LayoutListNode : SimpleComponentNode {
 
     protected readonly List<NodeBase> NodeList = [];
@@ -19,7 +17,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     public int MaxNodes { get; set; }
 
-    [JsonProperty] public bool ClipListContents {
+    public bool ClipListContents {
         get => NodeFlags.HasFlag(NodeFlags.Clip);
         set {
             if (value) {
@@ -31,9 +29,9 @@ public abstract class LayoutListNode : SimpleComponentNode {
         }
     }
 
-    [JsonProperty] public float ItemSpacing { get; set; }
+    public float ItemSpacing { get; set; }
 
-    [JsonProperty] public float FirstItemSpacing { get; set; }
+    public float FirstItemSpacing { get; set; }
 
     public void RecalculateLayout() {
         InternalRecalculateLayout();

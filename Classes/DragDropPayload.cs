@@ -1,21 +1,20 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Text;
 using Lumina.Text.ReadOnly;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Classes;
 
 public unsafe class DragDropPayload {
 
-    [JsonProperty] public DragDropType Type { get; set; } = DragDropType.Nothing;
+    public DragDropType Type { get; set; } = DragDropType.Nothing;
 
-    [JsonProperty] public short ReferenceIndex { get; set; }
+    public short ReferenceIndex { get; set; }
 
     /// <remarks> Index (like AtkDragDropInterface.ReferenceIndex), InventoryType, etc. </remarks>
-    [JsonProperty] public int Int1 { get; set; }
+    public int Int1 { get; set; }
 
     /// <remarks> ActionId, ItemId, EmoteId, InventorySlotIndex, ListIndex, MacroIndex etc. </remarks>
-    [JsonProperty] public int Int2 { get; set; } = -1;
+    public int Int2 { get; set; } = -1;
 
     // unknown usage
     // public ulong Unk8 { get; set; }

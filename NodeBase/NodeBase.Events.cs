@@ -5,7 +5,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using Lumina.Text.ReadOnly;
-using Newtonsoft.Json;
 
 namespace KamiToolKit;
 
@@ -17,7 +16,7 @@ internal class EventHandlerInfo {
 public abstract unsafe partial class NodeBase {
 
     private CustomEventListener? nodeEventListener;
-    private Dictionary<AtkEventType, EventHandlerInfo> eventHandlers = [];
+    private readonly Dictionary<AtkEventType, EventHandlerInfo> eventHandlers = [];
 
     public virtual ReadOnlySeString? Tooltip {
         get;
@@ -48,7 +47,7 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
-    [JsonProperty] public string TooltipString {
+    public string TooltipString {
         get => Tooltip?.ToString() ?? string.Empty;
         set => Tooltip = value;
     }

@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Interface.Utility.Raii;
 using KamiToolKit.Classes;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
 /// Node that manages the layout of other nodes
-[JsonObject(MemberSerialization.OptIn)]
 public class ListBoxNode : LayoutListNode {
 
-    [JsonProperty] public readonly BackgroundImageNode Background;
-    [JsonProperty] public readonly BorderNineGridNode Border;
+    public readonly BackgroundImageNode Background;
+    public readonly BorderNineGridNode Border;
 
     public ListBoxNode() {
         Background = new BackgroundImageNode {
@@ -26,7 +23,7 @@ public class ListBoxNode : LayoutListNode {
         Border.AttachNode(this);
     }
 
-    [JsonProperty] public LayoutAnchor LayoutAnchor {
+    public LayoutAnchor LayoutAnchor {
         get;
         set {
             field = value;
@@ -34,7 +31,7 @@ public class ListBoxNode : LayoutListNode {
         }
     }
 
-    [JsonProperty] public bool FitContents {
+    public bool FitContents {
         get;
         set {
             field = value;
@@ -43,7 +40,7 @@ public class ListBoxNode : LayoutListNode {
         }
     }
 
-    [JsonProperty] public LayoutOrientation LayoutOrientation {
+    public LayoutOrientation LayoutOrientation {
         get;
         set {
             field = value;
@@ -51,17 +48,17 @@ public class ListBoxNode : LayoutListNode {
         }
     }
 
-    [JsonProperty] public Vector4 BackgroundColor {
+    public Vector4 BackgroundColor {
         get => Background.Color;
         set => Background.Color = value;
     }
 
-    [JsonProperty] public bool ShowBackground {
+    public bool ShowBackground {
         get => Background.IsVisible;
         set => Background.IsVisible = value;
     }
 
-    [JsonProperty] public bool ShowBorder {
+    public bool ShowBorder {
         get => Border.IsVisible;
         set => Border.IsVisible = value;
     }
@@ -200,20 +197,4 @@ public class ListBoxNode : LayoutListNode {
         LayoutAnchor.BottomRight => new Vector2(Width, Height),
         _ => throw new ArgumentOutOfRangeException(),
     };
-
-    public override void DrawConfig() {
-        base.DrawConfig();
-
-        using (var backgroundNode = ImRaii.TreeNode("Background")) {
-            if (backgroundNode) {
-                Background.DrawConfig();
-            }
-        }
-
-        using (var borderNode = ImRaii.TreeNode("Border")) {
-            if (borderNode) {
-                Border.DrawConfig();
-            }
-        }
-    }
 }
