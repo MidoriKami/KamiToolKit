@@ -151,13 +151,13 @@ public class ListBoxNode : LayoutListNode {
         }
     }
 
-    public override void AddNode(NodeBase node, bool suppressRecalculateLayout = false) {
-        base.AddNode(node, suppressRecalculateLayout);
+    public override void AddNode(NodeBase? node) {
+        base.AddNode(node);
         Size = GetMinimumSize();
     }
 
-    public override void RemoveNode(NodeBase node, bool suppressRecalculateLayout = false) {
-        base.RemoveNode(node, suppressRecalculateLayout);
+    public override void RemoveNode(NodeBase node) {
+        base.RemoveNode(node);
         Size = GetMinimumSize();
     }
 

@@ -10,6 +10,7 @@ namespace KamiToolKit.Nodes;
 public abstract class LayoutListNode : SimpleComponentNode {
 
     protected readonly List<NodeBase> NodeList = [];
+    private bool suppressRecalculateLayout;
 
     public IEnumerable<T> GetNodes<T>() where T : NodeBase => NodeList.OfType<T>();
 
@@ -34,6 +35,8 @@ public abstract class LayoutListNode : SimpleComponentNode {
     public float FirstItemSpacing { get; set; }
 
     public void RecalculateLayout() {
+        if (suppressRecalculateLayout) return;
+
         InternalRecalculateLayout();
 
         foreach (var node in NodeList) {
@@ -47,15 +50,25 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     protected virtual void AdjustNode(NodeBase node) { }
 
-    public void AddNode(params NodeBase[] items) {
+    public void AddNode(IEnumerable<NodeBase> nodes) {
+        AddNode(nodes.ToArray());
+    }
+    
+    public void AddNode(params NodeBase?[] items) {
+        suppressRecalculateLayout = true;
+        
         foreach (var node in items) {
-            AddNode(node, true);
+            AddNode(node);
         }
+        
+        suppressRecalculateLayout = false;
         
         RecalculateLayout();
     }
 
-    public virtual void AddNode(NodeBase node, bool suppressRecalculateLayout = false) {
+    public virtual void AddNode(NodeBase? node) {
+        if (node is null) return;
+
         NodeList.Add(node);
 
         node.AttachNode(this);
@@ -66,29 +79,29 @@ public abstract class LayoutListNode : SimpleComponentNode {
             RemoveNode(firstNode);
         }
 
-        if (!suppressRecalculateLayout) {
-            RecalculateLayout();
-        }
+        RecalculateLayout();
     }
 
     public void RemoveNode(params NodeBase[] items) {
+        suppressRecalculateLayout = true;
+        
         foreach (var node in items) {
-            RemoveNode(node, true);
+            RemoveNode(node);
         }
+        
+        suppressRecalculateLayout = false;
         
         RecalculateLayout();
     }
 
-    public virtual void RemoveNode(NodeBase node, bool suppressRecalculateLayout = false) {
+    public virtual void RemoveNode(NodeBase node) {
         if (!NodeList.Contains(node)) return;
 
         node.DetachNode();
         NodeList.Remove(node);
         node.Dispose();
 
-        if (!suppressRecalculateLayout) {
-            RecalculateLayout();
-        }
+        RecalculateLayout();
     }
 
     public void AddDummy(float size = 0.0f) {
@@ -100,10 +113,14 @@ public abstract class LayoutListNode : SimpleComponentNode {
     }
 
     public virtual void Clear() {
+        suppressRecalculateLayout = true;
+        
         foreach (var node in NodeList.ToList()) {
             RemoveNode(node);
         }
 
+        suppressRecalculateLayout = false;
+        
         NodeList.Clear();
         RecalculateLayout();
     }
@@ -113,14 +130,17 @@ public abstract class LayoutListNode : SimpleComponentNode {
     public delegate T GetDataFromNode<out T, in TU>(TU node) where TU : NodeBase;
     
     public bool SyncWithListData<T, TU>(IEnumerable<T> dataList, GetDataFromNode<T?,TU> getDataFromNode, CreateNewNode<T, TU> createNodeMethod) where TU : NodeBase {
+        suppressRecalculateLayout = true;
+        
         var nodesOfType = GetNodes<TU>().ToList();
         var anythingChanged = false;
         
         var nodesToRemove = nodesOfType.Where(node => !dataList.Any(dataEntry => Equals(dataEntry, getDataFromNode(node)))).ToList();
         
         Log.Excessive($"Removing: {nodesToRemove.Count} Nodes");
+        
         foreach (var node in nodesToRemove) {
-            RemoveNode(node, true);
+            RemoveNode(node);
             anythingChanged = true;
         }
         
@@ -129,9 +149,11 @@ public abstract class LayoutListNode : SimpleComponentNode {
         
         Log.Excessive($"Adding: {dataToAdd.Count} Nodes");
         foreach (var newNode in selectedData) {
-            AddNode(newNode, true);
+            AddNode(newNode);
             anythingChanged = true;
         }
+
+        suppressRecalculateLayout = false;
         
         RecalculateLayout();
         

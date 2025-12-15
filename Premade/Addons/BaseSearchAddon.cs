@@ -58,15 +58,15 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
             OnClick = OnConfirmClicked,
         };
         confirmButton.AttachNode(this);
-        
-        foreach (var option in SearchOptions) {
-            var newOptionNode = BuildOptionNode(option);
 
+        List<BaseSearchInfoNode<T>> newOptions = [];
+        foreach (var newOptionNode in SearchOptions.Select(BuildOptionNode)) {
             newOptionNode.Size = new Vector2(listNode.ContentNode.Width, 48.0f);
             newOptionNode.OnClicked = OnOptionClicked;
-
-            listNode.ContentNode.AddNode(newOptionNode, true);
+            newOptions.Add(newOptionNode);
         }
+        
+        listNode.ContentNode.AddNode(newOptions);
 
         listNode.ContentNode.RecalculateLayout();
         listNode.ContentHeight = listNode.ContentNode.Height;
