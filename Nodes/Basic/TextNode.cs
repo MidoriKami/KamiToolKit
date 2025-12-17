@@ -96,8 +96,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     public ReadOnlySeString SeString {
         get => new(Node->GetText().AsSpan());
         set {
-            using var builder = new RentedSeStringBuilder();
-            Node->SetText(builder.Builder.Append(value).GetViewAsSpan());
+            Node->SetText(value.ToDalamudString().EncodeWithNullTerminator());
         }
     }
 
