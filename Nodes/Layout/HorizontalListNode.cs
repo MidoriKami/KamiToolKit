@@ -1,13 +1,11 @@
 ﻿using System.Linq;
 using KamiToolKit.Classes;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-[JsonObject(MemberSerialization.OptIn)]
 public class HorizontalListNode : LayoutListNode {
 
-    [JsonProperty] public HorizontalListAnchor Alignment {
+    public HorizontalListAnchor Alignment {
         get;
         set {
             field = value;

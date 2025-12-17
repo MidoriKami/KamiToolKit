@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Numerics;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -48,8 +47,6 @@ public unsafe partial class OverlayController {
     private static OverlayAddon CreateOverlayAddon(OverlayLayer layer) => new() {
         Title = layer.GetDescription(),
         InternalName = layer.GetDescription(),
-        Size = AtkStage.Instance()->ScreenSize,
-        LastClosePosition = Vector2.Zero,
         DepthLayer = layer.GetOverlayLayer(),
         IsOverlayAddon = true,
     };

@@ -154,6 +154,10 @@ public abstract unsafe partial class NodeBase {
         }
 
         if (ParentAddon is not null) {
+            if (ParentAddon->NameString is "NamePlate") {
+                Log.Warning("Warning, attaching to AddonNamePlate is not supported. Use OverlayController instead.");
+            }
+            
             ParentAddon->UldManager.UpdateDrawNodeList();
             ParentAddon->UpdateCollisionNodeList(false);
         }

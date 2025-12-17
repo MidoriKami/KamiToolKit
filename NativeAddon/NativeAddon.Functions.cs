@@ -35,7 +35,11 @@ public abstract unsafe partial class NativeAddon {
             SetInitialState();
         }
         else {
+            ref var screenSize = ref AtkStage.Instance()->ScreenSize; 
+
             addon->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
+            addon->SetSize((ushort)screenSize.Width, (ushort)screenSize.Height);
+            addon->SetPosition(0, 0);
         }
 
         AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);

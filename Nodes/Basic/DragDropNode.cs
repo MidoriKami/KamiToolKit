@@ -7,7 +7,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.Timelines;
 using Lumina.Text.ReadOnly;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
@@ -94,9 +93,9 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
     /// </summary>
     public Action<DragDropNode>? OnRollOut { get; set; }
 
-    [JsonProperty] public DragDropPayload Payload { get; set; }
+    public DragDropPayload Payload { get; set; }
 
-    [JsonProperty] public uint IconId {
+    public uint IconId {
         get => IconNode.IconId;
         set {
             IconNode.IconId = value;
@@ -104,7 +103,7 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         }
     }
 
-    [JsonProperty] public bool IsIconDisabled {
+    public bool IsIconDisabled {
         get => IconNode.IsIconDisabled;
         set => IconNode.IsIconDisabled = value;
     }
@@ -114,17 +113,17 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         set => Component->SetQuantity(value);
     }
 
-    [JsonProperty] public string QuantityString {
+    public string QuantityString {
         get => Component->GetQuantityText().ToString();
         set => Component->SetQuantityText(value);
     }
 
-    [JsonProperty] public DragDropType AcceptedType {
+    public DragDropType AcceptedType {
         get => Component->AcceptedType;
         set => Component->AcceptedType = value;
     }
 
-    [JsonProperty] public AtkDragDropInterface.SoundEffectSuppression SoundEffectSuppression {
+    public AtkDragDropInterface.SoundEffectSuppression SoundEffectSuppression {
         get => Component->AtkDragDropInterface.DragDropSoundEffectSuppression;
         set => Component->AtkDragDropInterface.DragDropSoundEffectSuppression = value;
     }

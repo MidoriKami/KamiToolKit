@@ -1,10 +1,8 @@
 ﻿using System.Numerics;
 using KamiToolKit.Classes;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-[JsonObject(MemberSerialization.OptIn)]
 public unsafe class SimpleNineGridNode : NineGridNode {
     public SimpleNineGridNode() {
         PartsList.Add(new Part());

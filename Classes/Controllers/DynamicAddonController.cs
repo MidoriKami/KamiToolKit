@@ -23,6 +23,11 @@ public unsafe class DynamicAddonController : AddonEventController<AtkUnitBase>, 
     }
 
     public void AddAddon(string name) {
+        if (name is "NamePlate") {
+            Log.Error("Attaching to NamePlate is not supported. Use OverlayController instead.");
+            return;
+        }
+        
         trackedAddons.Add(name);
 
         if (isEnabled) {
