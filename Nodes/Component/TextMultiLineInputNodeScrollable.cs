@@ -95,10 +95,10 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
 
         var oldStartLineIndex = startLineIndex;
 
-        if (atkEventData->IsScrollUp())
+        if (atkEventData->IsScrollUp)
             startLineIndex = Math.Max(0, startLineIndex - 1);
 
-        else if (atkEventData->IsScrollDown())
+        else if (atkEventData->IsScrollDown)
             startLineIndex = Math.Min(Math.Max(0, lines.Length - maxVisibleLines), startLineIndex + 1);
 
         if (oldStartLineIndex != startLineIndex) {

@@ -45,7 +45,7 @@ public unsafe class SimpleNineGridNode : NineGridNode {
     }
 
     public string TexturePath {
-        get => PartsList[0]->GetLoadedPath();
+        get => PartsList[0]->LoadedPath;
         set => PartsList[0]->LoadTexture(value);
     }
 }

@@ -40,7 +40,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
     }
 
     protected string TexturePath {
-        get => PartsList[0]->GetLoadedPath();
+        get => PartsList[0]->LoadedPath;
         set => PartsList[0]->LoadTexture(value);
     }
 

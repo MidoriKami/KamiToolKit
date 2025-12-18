@@ -9,21 +9,6 @@ namespace KamiToolKit.Extensions;
 
 public static unsafe class AtkUnitBaseExtensions {
 
-    /// <summary>
-    ///     Gets a pointer to the specified node id
-    ///     Automatically adds base id, so instead of specifying "100,000,021", you only need to provide "21"
-    /// </summary>
-    /// <remarks>
-    ///     This will only search for nodes that are directly attached to the addon,
-    ///     if your desired node is attached to another component you'll need to use AtkUldManager.GetCustomNodeById on the
-    ///     parent component
-    /// </remarks>
-    /// <param name="addon">Addon's whose node list will be searched.</param>
-    /// <param name="nodeId">Node ID to search for</param>
-    /// <returns>Pointer to desired node, or null</returns>
-    public static AtkResNode* GetCustomNodeById(ref this AtkUnitBase addon, uint nodeId)
-        => nodeId >= NodeBase.NodeIdBase ? addon.GetNodeById(nodeId) : addon.GetNodeById(nodeId + NodeBase.NodeIdBase);
-
     public static string GetAddonTypeName<T>() where T : unmanaged {
         var type = typeof(T);
         var attribute = type.GetCustomAttributes().OfType<AddonAttribute>().FirstOrDefault();
@@ -35,20 +20,23 @@ public static unsafe class AtkUnitBaseExtensions {
         return addonName;
     }
 
-    public static Vector2 Size(ref this AtkUnitBase addon) {
-        var width = stackalloc short[1];
-        var height = stackalloc short[1];
+    extension(ref AtkUnitBase addon) {
+        public Vector2 Size => addon.GetSize();
+        public Vector2 RootSize => addon.GetRootSize();
+        public Vector2 Position => new(addon.X, addon.Y);
 
-        addon.GetSize(width, height, false);
-        return new Vector2(*width, *height);
-    }
+        private Vector2 GetSize() {
+            var width = stackalloc short[1];
+            var height = stackalloc short[1];
 
-    public static Vector2 RootSize(ref this AtkUnitBase addon) {
-        if (addon.RootNode is null) return Vector2.Zero;
+            addon.GetSize(width, height, false);
+            return new Vector2(*width, *height);
+        }
+
+        private Vector2 GetRootSize() {
+            if (addon.RootNode is null) return Vector2.Zero;
         
-        return new Vector2(addon.RootNode->Width, addon.RootNode->Height);
+            return new Vector2(addon.RootNode->Width, addon.RootNode->Height);
+        }
     }
-    
-    public static Vector2 Position(ref this AtkUnitBase addon)
-        => new(addon.X, addon.Y);
 }
