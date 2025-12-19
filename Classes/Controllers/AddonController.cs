@@ -10,12 +10,23 @@ public class AddonController(string addonName) : AddonController<AtkUnitBase>(ad
 /// <summary>
 ///     This class provides functionality to add-and manage custom elements for any Addon
 /// </summary>
-public unsafe class AddonController<T>(string addonName) : AddonEventController<T>, IDisposable where T : unmanaged {
+public unsafe class AddonController<T> : AddonEventController<T>, IDisposable where T : unmanaged {
 
-    internal readonly string AddonName = addonName;
+    internal readonly string AddonName;
 
     private AtkUnitBase* AddonPointer => (AtkUnitBase*)DalamudInterface.Instance.GameGui.GetAddonByName(AddonName).Address;
     private bool IsEnabled { get; set; }
+
+    /// <summary>
+    ///     This class provides functionality to add-and manage custom elements for any Addon
+    /// </summary>
+    public AddonController(string addonName) {
+        if (addonName is "NamePlate") {
+            throw new Exception("Attaching to NamePlate is not supported. Use OverlayController instead.");
+        }
+        
+        AddonName = addonName;
+    }
 
     public virtual void Dispose() => Disable();
 

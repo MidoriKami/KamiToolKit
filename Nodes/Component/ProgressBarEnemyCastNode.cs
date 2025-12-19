@@ -1,14 +1,11 @@
 ﻿using System.Numerics;
-using Dalamud.Interface.Utility.Raii;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-[JsonObject(MemberSerialization.OptIn)]
 public unsafe class ProgressBarEnemyCastNode : SimpleComponentNode {
     
-    [JsonProperty] public readonly NineGridNode BackgroundImageNode;
-    [JsonProperty] public readonly NineGridNode ProgressNode;
+    public readonly NineGridNode BackgroundImageNode;
+    public readonly NineGridNode ProgressNode;
     
     public ProgressBarEnemyCastNode() {
         BackgroundImageNode = new SimpleNineGridNode {
@@ -56,21 +53,5 @@ public unsafe class ProgressBarEnemyCastNode : SimpleComponentNode {
 
         BackgroundImageNode.Size = Size;
         ProgressNode.Size = Size;
-    }
-    
-    public override void DrawConfig() {
-        base.DrawConfig();
-
-        using (var background = ImRaii.TreeNode("Background")) {
-            if (background) {
-                BackgroundImageNode.DrawConfig();
-            }
-        }
-
-        using (var progress = ImRaii.TreeNode("Progress")) {
-            if (progress) {
-                ProgressNode.DrawConfig();
-            }
-        }
     }
 }

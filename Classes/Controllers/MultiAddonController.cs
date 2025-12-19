@@ -16,6 +16,11 @@ public unsafe class MultiAddonController : AddonEventController<AtkUnitBase>, ID
 
     public MultiAddonController(params string[] addonNames) {
         foreach (var addonName in addonNames) {
+            if (addonName is "NamePlate") {
+                Log.Error("Attaching to NamePlate is not supported. Use OverlayController instead.");
+                continue;
+            }
+
             // Don't allow duplicate addon controllers
             if (addonControllers.Any(controller => controller.AddonName == addonName)) continue;
 

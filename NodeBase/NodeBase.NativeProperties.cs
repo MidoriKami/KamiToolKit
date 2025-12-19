@@ -4,7 +4,6 @@ using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using Newtonsoft.Json;
 using Bounds = KamiToolKit.Classes.Bounds;
 using Vector2 = System.Numerics.Vector2;
 using Vector3 = System.Numerics.Vector3;
@@ -12,7 +11,6 @@ using Vector4 = System.Numerics.Vector4;
 
 namespace KamiToolKit;
 
-[JsonObject(MemberSerialization.OptIn)]
 public abstract unsafe partial class NodeBase {
     public virtual float X {
         get => ResNode->GetXFloat();
@@ -24,7 +22,7 @@ public abstract unsafe partial class NodeBase {
         set => ResNode->SetYFloat(value);
     }
 
-    [JsonProperty] public virtual Vector2 Position {
+    public virtual Vector2 Position {
         get => new(X, Y);
         set => ResNode->SetPositionFloat(value.X, value.Y);
     }
@@ -63,7 +61,7 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
-    [JsonProperty] public virtual Vector2 Size {
+    public virtual Vector2 Size {
         get => new(Width, Height);
         set {
             Width = value.X;
@@ -85,7 +83,7 @@ public abstract unsafe partial class NodeBase {
         set => ResNode->SetScaleY(value);
     }
 
-    [JsonProperty] public virtual Vector2 Scale {
+    public virtual Vector2 Scale {
         get => new(ScaleX, ScaleY);
         set => ResNode->SetScale(value.X, value.Y);
     }
@@ -115,7 +113,7 @@ public abstract unsafe partial class NodeBase {
         set => ResNode->SetOrigin(value.X, value.Y);
     }
 
-    [JsonProperty] public bool IsVisible {
+    public bool IsVisible {
         get => ResNode->IsVisible();
         set {
             ResNode->ToggleVisibility(value);
@@ -130,7 +128,7 @@ public abstract unsafe partial class NodeBase {
         set => ResNode->NodeFlags = value;
     }
 
-    [JsonProperty] public virtual Vector4 Color {
+    public virtual Vector4 Color {
         get => ResNode->Color.ToVector4();
         set => ResNode->Color = value.ToByteColor();
     }
@@ -145,7 +143,7 @@ public abstract unsafe partial class NodeBase {
         set => ResNode->SetAlpha((byte)(value * 255.0f));
     }
 
-    [JsonProperty] public virtual Vector3 AddColor {
+    public virtual Vector3 AddColor {
         get => new Vector3(ResNode->AddRed, ResNode->AddGreen, ResNode->AddBlue) / 255.0f;
         set {
             ResNode->AddRed = (short)(value.X * 255);
@@ -159,7 +157,7 @@ public abstract unsafe partial class NodeBase {
         set => AddColor = ColorHelpers.HsvToRgb(value).AsVector3();
     }
 
-    [JsonProperty] public virtual Vector3 MultiplyColor {
+    public virtual Vector3 MultiplyColor {
         get => new Vector3(ResNode->MultiplyRed, ResNode->MultiplyGreen, ResNode->MultiplyBlue) / 100.0f;
         set {
             ResNode->MultiplyRed = (byte)(value.X * 100.0f);

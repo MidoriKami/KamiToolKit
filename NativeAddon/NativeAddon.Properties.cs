@@ -6,13 +6,20 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit;
 
 public abstract unsafe partial class NativeAddon {
+    public void SetWindowPosition(Vector2 windowPosition) {
+        if (InternalAddon is null) return;
+        InternalAddon->SetPosition((short)windowPosition.X, (short)windowPosition.Y);
+    }
 
     public void SetWindowSize(Vector2 windowSize) {
         if (InternalAddon is null) return;
 
         Size = windowSize;
         InternalAddon->SetSize((ushort)Size.X, (ushort)Size.Y);
-        WindowNode.Size = Size;
+
+        if (WindowNode is not null) {
+            WindowNode.Size = Size;
+        }
     }
 
     protected void SetWindowSize(float width, float height)
@@ -31,9 +38,9 @@ public abstract unsafe partial class NativeAddon {
 
     public Vector2 Size { get; set; } = new(400.0f, 400.0f);
 
-    public Vector2 ContentStartPosition => WindowNode.ContentStartPosition + ContentPadding;
+    public Vector2 ContentStartPosition => (WindowNode?.ContentStartPosition ?? Vector2.Zero) + ContentPadding;
 
-    public Vector2 ContentSize => WindowNode.ContentSize - ContentPadding * 2.0f - new Vector2(0.0f, 4.0f);
+    public Vector2 ContentSize => (WindowNode?.ContentSize ?? Vector2.Zero) - ContentPadding * 2.0f - new Vector2(0.0f, 4.0f);
 
     public Vector2 ContentPadding => new(8.0f, 0.0f);
 
@@ -48,6 +55,6 @@ public abstract unsafe partial class NativeAddon {
     internal Vector2 LastClosePosition = Vector2.Zero;
 
     public static implicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
-    
-    public bool IsOverlayAddon { get; init; }
+
+    internal bool IsOverlayAddon { get; init; }
 }

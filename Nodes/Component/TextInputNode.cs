@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using Dalamud.Interface;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
-using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using InteropGenerator.Runtime;
 using KamiToolKit.Classes;
@@ -15,7 +15,6 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Nodes;
 
 public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldComponentDataTextInput> {
-
     public readonly NineGridNode BackgroundNode;
     public readonly TextNode CurrentTextNode;
     public readonly CursorNode CursorNode;
@@ -25,9 +24,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     public readonly TextNode PlaceholderTextNode;
 
     private AtkComponentInputBase.CallbackDelegate? pinnedCallbackFunction;
-
-    public Action? OnFocused;
-    public Action? OnUnfocused;
 
     public TextInputNode() {
         SetInternalComponentType(ComponentType.TextInput);
@@ -151,6 +147,14 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         });
     }
 
+    protected override void Dispose(bool disposing, bool isNativeDestructor) {
+        if (disposing) {
+            pinnedCallbackFunction = null;
+            
+            base.Dispose(disposing, isNativeDestructor);
+        }
+    }
+
     public bool IsFocused => AtkStage.Instance()->AtkInputManager->FocusedNode == CollisionNode.Node;
 
     public int MaxCharacters {
@@ -217,6 +221,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     public Action? OnFocusLost { get; set; }
     public Action? OnEscapeEntered { get; set; }
     public Action? OnTabEntered { get; set; }
+    public Action? OnFocused { get; set; }
+    public Action? OnUnfocused { get; set; }
 
     private InputCallbackResult OnCallback(AtkUnitBase* addon, InputCallbackType type, CStringPointer rawString, CStringPointer evaluatedString, int eventKind) {
         switch (type) {

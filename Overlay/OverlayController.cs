@@ -9,8 +9,6 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.Overlay;
 
-internal class OverlayAddon : NativeAddon;
-
 public unsafe partial class OverlayController : IDisposable {
 
     private readonly Dictionary<OverlayLayer, List<OverlayNode>> overlayNodes = [];

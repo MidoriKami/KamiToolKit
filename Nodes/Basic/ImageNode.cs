@@ -35,8 +35,8 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
     }
 
     public ImageNodeFlags ImageNodeFlags {
-        get => (ImageNodeFlags)Node->Flags;
-        set => Node->Flags = (byte) value;
+        get => Node->Flags;
+        set => Node->Flags = value;
     }
     
     /// <summary>

@@ -66,7 +66,7 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     }
 
     private bool IsRingClicked(AtkEventData* data) {
-        var clickPosition = data->GetMousePosition();
+        var clickPosition = data->MousePosition;
         var center = ColorRingNode.ScreenPosition + ColorRingNode.Size / 2.0f;
         var distance = Vector2.Distance(clickPosition, center);
         var scaledDistance = distance / (Width / 256.0f);
@@ -75,7 +75,7 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     }
 
     private float GetRingClickAngle(AtkEventData* data) {
-        var clickPosition = data->GetMousePosition();
+        var clickPosition = data->MousePosition;
         var center = ColorRingNode.ScreenPosition + ColorRingNode.Size / 2.0f;
         var relativePosition = clickPosition - center;
         var calculatedAngle = MathF.Atan2(relativePosition.Y, relativePosition.X) * 180.0f / MathF.PI;
@@ -85,7 +85,7 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     
     private void OnMouseDown(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
         if (ColorSquareNode.CheckCollision(atkEventData)) {
-            UpdateSquareColor(atkEventData->GetMousePosition());
+            UpdateSquareColor(atkEventData->MousePosition);
 
             if (!isSquareDrag) {
                 isSquareDrag = true;

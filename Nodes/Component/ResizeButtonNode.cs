@@ -7,13 +7,10 @@ namespace KamiToolKit.Nodes;
 // Not intended for public use, this is specialized for KamiToolKit.NodeBase.Resize
 internal class ResizeButtonNode : SimpleComponentNode {
 
-    private readonly ResizeDirection resizeDirection;
-
     public readonly ImageNode SelectedImageNode;
     public readonly ImageNode UnselectedImageNode;
 
     public ResizeButtonNode(ResizeDirection direction) {
-        resizeDirection = direction;
 
         UnselectedImageNode = new SimpleImageNode {
             TexturePath = "ui/uld/ChatLog.tex",

@@ -131,11 +131,11 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         OptionListNode.Toggle(true);
         
         if (ParentAddon is not null) {
-            OptionListNode.Position = (ScreenPosition - ParentAddon->Position()) / ParentAddon->Scale + Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
+            OptionListNode.Position = (ScreenPosition - ParentAddon->Position) / ParentAddon->Scale + Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
             MoveListOnScreen();
 
             DropDownFocusCollisionNode.Position = -OptionListNode.Position;
-            DropDownFocusCollisionNode.Size = ParentAddon->RootSize();
+            DropDownFocusCollisionNode.Size = ParentAddon->RootSize;
 
             OptionListNode.ReattachNode(ParentAddon->RootNode);
         }

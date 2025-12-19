@@ -61,10 +61,11 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
             OnClick = OnConfirmClicked,
         };
         confirmButton.AttachNode(this);
-        
-        foreach (var option in SearchOptions) {
-            listNode.ContentNode.AddNode(BuildOptionNode(option), true);
-        }
+
+        List<SearchInfoNode<T>> newOptions = [];
+        newOptions.AddRange(SearchOptions.Select(BuildOptionNode));
+
+        listNode.ContentNode.AddNode(newOptions);
 
         listNode.ContentNode.RecalculateLayout();
         listNode.ContentHeight = listNode.ContentNode.Height;

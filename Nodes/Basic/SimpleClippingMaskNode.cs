@@ -1,15 +1,10 @@
-﻿using System.Numerics;
+using System.Numerics;
 using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
-/// <summary>
-///     A simple image node that automatically creates a single <see cref="Part" />, and exposes helpers to modify that
-///     part.
-/// </summary>
-/// <remarks>This node is not intended to be used with multiple <see cref="Part" />'s.</remarks>
-public unsafe class SimpleImageNode : ImageNode {
-    public SimpleImageNode() {
+public unsafe class SimpleClippingMaskNode : ClippingMaskNode {
+    public SimpleClippingMaskNode() {
         PartsList.Add(new Part());
     }
 
@@ -58,7 +53,7 @@ public unsafe class SimpleImageNode : ImageNode {
 
     public void LoadTexture(string path)
         => PartsList[0]->LoadTexture(path);
-    
+
     public void LoadIcon(uint iconId)
         => PartsList[0]->LoadIcon(iconId);
 }

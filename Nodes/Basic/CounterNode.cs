@@ -4,14 +4,12 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using Lumina.Text.Payloads;
 using Lumina.Text.ReadOnly;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
 ///     A counter node for displaying numbers
 /// </summary>
-[JsonObject(MemberSerialization.OptIn)]
 public unsafe class CounterNode : NodeBase<AtkCounterNode> {
 
     public readonly PartsList PartsList;
@@ -42,7 +40,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
     }
 
     protected string TexturePath {
-        get => PartsList[0]->GetLoadedPath();
+        get => PartsList[0]->LoadedPath;
         set => PartsList[0]->LoadTexture(value);
     }
 
@@ -62,27 +60,27 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         }
     }
 
-    [JsonProperty] public uint NumberWidth {
+    public uint NumberWidth {
         get => Node->NumberWidth;
         set => Node->NumberWidth = (byte)value;
     }
 
-    [JsonProperty] public uint CommaWidth {
+    public uint CommaWidth {
         get => Node->CommaWidth;
         set => Node->CommaWidth = (byte)value;
     }
 
-    [JsonProperty] public uint SpaceWidth {
+    public uint SpaceWidth {
         get => Node->SpaceWidth;
         set => Node->SpaceWidth = (byte)value;
     }
 
-    [JsonProperty] public AlignmentType TextAlignment {
+    public AlignmentType TextAlignment {
         get => (AlignmentType) Node->TextAlign;
         set => Node->TextAlign = (ushort) value;
     }
 
-    [JsonProperty] public float CounterWidth {
+    public float CounterWidth {
         get => Node->CounterWidth;
         set => Node->CounterWidth = value;
     }

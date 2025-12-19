@@ -1,10 +1,8 @@
 ﻿using System.Numerics;
 using KamiToolKit.Classes;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-[JsonObject(MemberSerialization.OptIn)]
 public unsafe class SimpleNineGridNode : NineGridNode {
     public SimpleNineGridNode() {
         PartsList.Add(new Part());
@@ -47,7 +45,7 @@ public unsafe class SimpleNineGridNode : NineGridNode {
     }
 
     public string TexturePath {
-        get => PartsList[0]->GetLoadedPath();
+        get => PartsList[0]->LoadedPath;
         set => PartsList[0]->LoadTexture(value);
     }
 }

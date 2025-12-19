@@ -31,7 +31,16 @@ public abstract unsafe partial class NativeAddon {
     private void Setup(AtkUnitBase* addon, uint valueCount, AtkValue* values) {
         Log.Verbose($"[{InternalName}] Setup");
 
-        SetInitialState();
+        if (!IsOverlayAddon) {
+            SetInitialState();
+        }
+        else {
+            ref var screenSize = ref AtkStage.Instance()->ScreenSize; 
+
+            addon->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
+            addon->SetSize((ushort)screenSize.Width, (ushort)screenSize.Height);
+            addon->SetPosition(0, 0);
+        }
 
         AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);
 
@@ -104,7 +113,7 @@ public abstract unsafe partial class NativeAddon {
             CreatedAddons.Remove(this);
 
             // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
-            NativeMemoryHelper.Free(virtualTable, 0x8 * 100);
+            NativeMemoryHelper.Free(virtualTable, 0x8 * VirtualTableEntryCount);
         }
 
         return result;
@@ -127,5 +136,15 @@ public abstract unsafe partial class NativeAddon {
         OnRefresh(thisPtr, new Span<AtkValue>(values, (int)valueCount));
         
         return AtkUnitBase.StaticVirtualTablePointer->OnRefresh(InternalAddon, valueCount, values);
+    }
+
+    private void ScreenSizeChange(AtkUnitBase* thisPtr, int width, int height) {
+        Log.Verbose($"[{InternalName}] ScreenSizeChange");
+
+        AtkUnitBase.StaticVirtualTablePointer->OnScreenSizeChange(thisPtr, width, height);
+
+        if (IsOverlayAddon || IgnoreGlobalScale) {
+            thisPtr->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
+        }
     }
 }

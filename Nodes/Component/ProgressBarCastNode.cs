@@ -1,17 +1,14 @@
 ﻿using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
-using Dalamud.Interface.Utility.Raii;
-using Newtonsoft.Json;
 
 namespace KamiToolKit.Nodes;
 
-[JsonObject(MemberSerialization.OptIn)]
 public unsafe class ProgressBarCastNode : SimpleComponentNode {
 
-    [JsonProperty] public readonly NineGridNode BackgroundImageNode;
-    [JsonProperty] public readonly NineGridNode ProgressNode;
-    [JsonProperty] public readonly NineGridNode BorderImageNode;
+    public readonly NineGridNode BackgroundImageNode;
+    public readonly NineGridNode ProgressNode;
+    public readonly NineGridNode BorderImageNode;
 
     public ProgressBarCastNode() {
         BackgroundImageNode = new SimpleNineGridNode {
@@ -72,7 +69,17 @@ public unsafe class ProgressBarCastNode : SimpleComponentNode {
             ProgressNode.AddColor = value.AsVector3Color();
         }
     }
-    
+
+    public override Vector3 MultiplyColor {
+        get => base.MultiplyColor;
+        set {
+            base.MultiplyColor = value;
+            BackgroundImageNode.MultiplyColor = value;
+            ProgressNode.MultiplyColor = value;
+            BorderImageNode.MultiplyColor = value;
+        }
+    }
+
     public bool BorderVisible {
         get => BorderImageNode.IsVisible;
         set => BorderImageNode.IsVisible = value;
@@ -84,27 +91,5 @@ public unsafe class ProgressBarCastNode : SimpleComponentNode {
         BackgroundImageNode.Size = Size;
         ProgressNode.Size = Size;
         BorderImageNode.Size = Size;
-    }
-
-    public override void DrawConfig() {
-        base.DrawConfig();
-
-        using (var background = ImRaii.TreeNode("Background")) {
-            if (background) {
-                BackgroundImageNode.DrawConfig();
-            }
-        }
-
-        using (var progress = ImRaii.TreeNode("Progress")) {
-            if (progress) {
-                ProgressNode.DrawConfig();
-            }
-        }
-
-        using (var border = ImRaii.TreeNode("Border")) {
-            if (border) {
-                BorderImageNode.DrawConfig();
-            }
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using System;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
@@ -10,9 +11,11 @@ public class SimpleComponentNode : ComponentNode<AtkComponentBase, AtkUldCompone
     }
 
     public bool DisableCollisionNode {
-        get;
         set {
-            field = value;
+            if (!value) {
+                throw new Exception("Clearing DisableCollisionNode is not supported.");
+            }
+
             CollisionNode.NodeFlags = 0;
         }
     }

@@ -6,6 +6,8 @@ namespace KamiToolKit;
 
 public abstract unsafe partial class NativeAddon {
 
+    private const int VirtualTableEntryCount = 200;
+
     private AtkUnitBase.Delegates.Dtor destructorFunction = null!;
     private AtkUnitBase.Delegates.Draw drawFunction = null!;
     private AtkUnitBase.Delegates.Finalizer finalizerFunction = null!;
@@ -17,6 +19,7 @@ public abstract unsafe partial class NativeAddon {
     private AtkUnitBase.Delegates.Update updateFunction = null!;
     private AtkUnitBase.Delegates.OnRequestedUpdate onRequestedUpdateFunction = null!;
     private AtkUnitBase.Delegates.OnRefresh onRefreshFunction = null!;
+    private AtkUnitBase.Delegates.OnScreenSizeChange onScreenSizeChangedFunction = null!;
 
     private AtkUnitBase.AtkUnitBaseVirtualTable* virtualTable;
 
@@ -24,8 +27,8 @@ public abstract unsafe partial class NativeAddon {
 
         // Overwrite virtual table with a custom copy,
         // Note: currently there are 73 vfuncs, but there's no harm in copying more for when they add new vfuncs to the game
-        virtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 100);
-        NativeMemory.Copy(InternalAddon->VirtualTable, virtualTable, 0x8 * 100);
+        virtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*)NativeMemoryHelper.Malloc(0x8 * VirtualTableEntryCount);
+        NativeMemory.Copy(InternalAddon->VirtualTable, virtualTable, 0x8 * VirtualTableEntryCount);
         InternalAddon->VirtualTable = virtualTable;
 
         initializeFunction = Initialize;
@@ -39,6 +42,7 @@ public abstract unsafe partial class NativeAddon {
         destructorFunction = Destructor;
         onRequestedUpdateFunction = RequestedUpdate;
         onRefreshFunction = Refresh;
+        onScreenSizeChangedFunction = ScreenSizeChange;
 
         virtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(initializeFunction);
         virtualTable->OnSetup = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, void>)Marshal.GetFunctionPointerForDelegate(onSetupFunction);
@@ -51,5 +55,6 @@ public abstract unsafe partial class NativeAddon {
         virtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>)Marshal.GetFunctionPointerForDelegate(destructorFunction);
         virtualTable->OnRequestedUpdate = (delegate* unmanaged<AtkUnitBase*, NumberArrayData**, StringArrayData**, void>)Marshal.GetFunctionPointerForDelegate(onRequestedUpdateFunction);
         virtualTable->OnRefresh = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, bool>)Marshal.GetFunctionPointerForDelegate(onRefreshFunction);
+        virtualTable->OnScreenSizeChange = (delegate* unmanaged<AtkUnitBase*, int, int, void>)Marshal.GetFunctionPointerForDelegate(onScreenSizeChangedFunction);
     }
 }
