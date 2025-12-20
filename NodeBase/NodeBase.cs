@@ -153,15 +153,15 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
         Log.Verbose($"Creating new node {GetType()}");
         Node = NativeMemoryHelper.Create<T>();
 
+        if (ResNode is null) {
+            throw new Exception($"Unable to allocate memory for {typeof(T)}");
+        }
+
         BuildVirtualTable();
 
         ResNode->Type = nodeType;
         ResNode->NodeId = NodeIdBase + CurrentOffset++;
         IsVisible = true;
-
-        if (ResNode is null) {
-            throw new Exception($"Unable to allocate memory for {typeof(T)}");
-        }
 
         CreatedNodes.Add(this);
     }
