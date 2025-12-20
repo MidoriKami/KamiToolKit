@@ -113,11 +113,16 @@ public abstract unsafe partial class NodeBase {
         set => ResNode->SetOrigin(value.X, value.Y);
     }
 
+    private bool? lastIsVisible;
+    
     public bool IsVisible {
         get => ResNode->IsVisible();
         set {
             ResNode->ToggleVisibility(value);
-            OnVisibilityToggled?.Invoke(value);
+            if (lastIsVisible is null || lastIsVisible != value) {
+                OnVisibilityToggled?.Invoke(value);
+                lastIsVisible = value;
+            }
         }
     }
 
