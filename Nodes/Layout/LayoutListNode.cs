@@ -171,6 +171,121 @@ public abstract class LayoutListNode : SimpleComponentNode {
         return anythingChanged;
     }
 
+    public bool SyncWithListDataByKey<T, TU, TKey>(
+        IReadOnlyList<T> dataList,
+        Func<T, TKey> getKeyFromData,
+        Func<TU, TKey> getKeyFromNode,
+        Action<TU, T> updateNode,
+        CreateNewNode<T, TU> createNodeMethod,
+        IEqualityComparer<TKey>? keyComparer = null)
+        where TU : NodeBase {
+        suppressRecalculateLayout = true;
+
+        bool anythingChanged = false;
+        keyComparer ??= EqualityComparer<TKey>.Default;
+
+        var existing = new List<TU>(capacity: NodeList.Count);
+        for (int i = 0; i < NodeList.Count; i++) {
+            if (NodeList[i] is TU tu)
+                existing.Add(tu);
+        }
+
+        var byKey = new Dictionary<TKey, TU>(existing.Count, keyComparer);
+        List<TU>? duplicates = null;
+
+        for (int i = 0; i < existing.Count; i++) {
+            TU node = existing[i];
+            TKey key = getKeyFromNode(node);
+
+            if (!byKey.TryAdd(key, node))
+                (duplicates ??= new List<TU>(4)).Add(node);
+        }
+
+        var desired = new List<TU>(dataList.Count);
+
+        for (int i = 0; i < dataList.Count; i++) {
+            T data = dataList[i];
+            TKey key = getKeyFromData(data);
+
+            if (byKey.TryGetValue(key, out TU? existingNode)) {
+                updateNode(existingNode, data);
+                desired.Add(existingNode);
+                byKey.Remove(key);
+            }
+            else {
+                TU newNode = createNodeMethod(data);
+                AddNode(newNode);
+                updateNode(newNode, data);
+
+                desired.Add(newNode);
+                anythingChanged = true;
+            }
+        }
+
+        if (byKey.Count != 0) {
+            foreach (var kv in byKey) {
+                RemoveNode(kv.Value);
+                anythingChanged = true;
+            }
+        }
+
+        if (duplicates is not null) {
+            for (int i = 0; i < duplicates.Count; i++) {
+                RemoveNode(duplicates[i]);
+                anythingChanged = true;
+            }
+        }
+
+        int desiredCount = desired.Count;
+        int j = 0;
+        bool mismatch = false;
+
+        for (int i = 0; i < NodeList.Count; i++) {
+            if (NodeList[i] is TU) {
+                if (j >= desiredCount) {
+                    mismatch = true;
+                    break;
+                }
+
+                NodeBase desiredNode = desired[j++];
+                if (!ReferenceEquals(NodeList[i], desiredNode)) {
+                    NodeList[i] = desiredNode;
+                    anythingChanged = true;
+                }
+            }
+        }
+
+        if (!mismatch && j != desiredCount)
+            mismatch = true;
+
+        if (mismatch) {
+            int firstTuIndex = -1;
+
+            for (int i = 0; i < NodeList.Count; i++) {
+                if (NodeList[i] is TU) {
+                    firstTuIndex = i;
+                    break;
+                }
+            }
+
+            if (firstTuIndex < 0)
+                firstTuIndex = NodeList.Count;
+
+            for (int i = NodeList.Count - 1; i >= 0; i--) {
+                if (NodeList[i] is TU)
+                    NodeList.RemoveAt(i);
+            }
+
+            NodeList.InsertRange(firstTuIndex, desired);
+            anythingChanged = true;
+        }
+
+        suppressRecalculateLayout = false;
+        RecalculateLayout();
+
+        return anythingChanged;
+    }
+
     public void ReorderNodes(Comparison<NodeBase> comparison) {
         NodeList.Sort(comparison);
         RecalculateLayout();
