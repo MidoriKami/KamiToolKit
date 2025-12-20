@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
@@ -129,23 +128,16 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     public delegate T GetDataFromNode<out T, in TU>(TU node) where TU : NodeBase;
     
-    public bool SyncWithListData<T, TU>(IEnumerable<T> dataList, GetDataFromNode<T?, TU> getDataFromNode, CreateNewNode<T, TU> createNodeMethod)where TU : NodeBase
-    {
+    public bool SyncWithListData<T, TU>(IEnumerable<T> dataList, GetDataFromNode<T?, TU> getDataFromNode, CreateNewNode<T, TU> createNodeMethod) where TU : NodeBase {
         suppressRecalculateLayout = true;
     
-        bool anythingChanged = false;
-    
+        var anythingChanged = false;
         var nodesOfType = GetNodes<TU>().ToList();
-    
-        var dataSet = new HashSet<T>(EqualityComparer<T>.Default);
-        foreach (var data in dataList)
-            dataSet.Add(data);
-    
+        var dataSet = dataList.ToHashSet(EqualityComparer<T>.Default);
         var represented = new HashSet<T>(EqualityComparer<T>.Default);
     
-        for (int i = 0; i < nodesOfType.Count; i++) {
-            TU node = nodesOfType[i];
-            T? nodeData = getDataFromNode(node);
+        foreach (var node in nodesOfType) {
+            var nodeData = getDataFromNode(node);
     
             if (nodeData is null || !dataSet.Contains(nodeData)) {
                 RemoveNode(node);
@@ -160,7 +152,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
             if (represented.Contains(data))
                 continue;
     
-            TU newNode = createNodeMethod(data);
+            var newNode = createNodeMethod(data);
             AddNode(newNode);
             anythingChanged = true;
         }
@@ -172,30 +164,29 @@ public abstract class LayoutListNode : SimpleComponentNode {
     }
 
     public bool SyncWithListDataByKey<T, TU, TKey>(
-        IReadOnlyList<T> dataList,
-        Func<T, TKey> getKeyFromData,
-        Func<TU, TKey> getKeyFromNode,
-        Action<TU, T> updateNode,
-        CreateNewNode<T, TU> createNodeMethod,
-        IEqualityComparer<TKey>? keyComparer = null)
-        where TU : NodeBase {
+        IReadOnlyList<T> dataList, 
+        Func<T, TKey> getKeyFromData, 
+        Func<TU, TKey> getKeyFromNode, 
+        Action<TU, T> updateNode, 
+        CreateNewNode<T, TU> createNodeMethod, 
+        IEqualityComparer<TKey>? keyComparer = null) where TU : NodeBase where TKey : notnull {
+
         suppressRecalculateLayout = true;
 
-        bool anythingChanged = false;
+        var anythingChanged = false;
         keyComparer ??= EqualityComparer<TKey>.Default;
 
         var existing = new List<TU>(capacity: NodeList.Count);
-        for (int i = 0; i < NodeList.Count; i++) {
-            if (NodeList[i] is TU tu)
+        foreach (var t in NodeList) {
+            if (t is TU tu)
                 existing.Add(tu);
         }
 
         var byKey = new Dictionary<TKey, TU>(existing.Count, keyComparer);
         List<TU>? duplicates = null;
 
-        for (int i = 0; i < existing.Count; i++) {
-            TU node = existing[i];
-            TKey key = getKeyFromNode(node);
+        foreach (var node in existing) {
+            var key = getKeyFromNode(node);
 
             if (!byKey.TryAdd(key, node))
                 (duplicates ??= new List<TU>(4)).Add(node);
@@ -203,17 +194,16 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
         var desired = new List<TU>(dataList.Count);
 
-        for (int i = 0; i < dataList.Count; i++) {
-            T data = dataList[i];
-            TKey key = getKeyFromData(data);
+        foreach (var data in dataList) {
+            var key = getKeyFromData(data);
 
-            if (byKey.TryGetValue(key, out TU? existingNode)) {
+            if (byKey.TryGetValue(key, out var existingNode)) {
                 updateNode(existingNode, data);
                 desired.Add(existingNode);
                 byKey.Remove(key);
             }
             else {
-                TU newNode = createNodeMethod(data);
+                var newNode = createNodeMethod(data);
                 AddNode(newNode);
                 updateNode(newNode, data);
 
@@ -230,17 +220,17 @@ public abstract class LayoutListNode : SimpleComponentNode {
         }
 
         if (duplicates is not null) {
-            for (int i = 0; i < duplicates.Count; i++) {
+            for (var i = 0; i < duplicates.Count; i++) {
                 RemoveNode(duplicates[i]);
                 anythingChanged = true;
             }
         }
 
-        int desiredCount = desired.Count;
-        int j = 0;
-        bool mismatch = false;
+        var desiredCount = desired.Count;
+        var j = 0;
+        var mismatch = false;
 
-        for (int i = 0; i < NodeList.Count; i++) {
+        for (var i = 0; i < NodeList.Count; i++) {
             if (NodeList[i] is TU) {
                 if (j >= desiredCount) {
                     mismatch = true;
@@ -259,9 +249,9 @@ public abstract class LayoutListNode : SimpleComponentNode {
             mismatch = true;
 
         if (mismatch) {
-            int firstTuIndex = -1;
+            var firstTuIndex = -1;
 
-            for (int i = 0; i < NodeList.Count; i++) {
+            for (var i = 0; i < NodeList.Count; i++) {
                 if (NodeList[i] is TU) {
                     firstTuIndex = i;
                     break;
@@ -271,7 +261,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
             if (firstTuIndex < 0)
                 firstTuIndex = NodeList.Count;
 
-            for (int i = NodeList.Count - 1; i >= 0; i--) {
+            for (var i = NodeList.Count - 1; i >= 0; i--) {
                 if (NodeList[i] is TU)
                     NodeList.RemoveAt(i);
             }
