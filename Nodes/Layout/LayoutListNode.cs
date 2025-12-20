@@ -129,34 +129,45 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     public delegate T GetDataFromNode<out T, in TU>(TU node) where TU : NodeBase;
     
-    public bool SyncWithListData<T, TU>(IEnumerable<T> dataList, GetDataFromNode<T?,TU> getDataFromNode, CreateNewNode<T, TU> createNodeMethod) where TU : NodeBase {
+    public bool SyncWithListData<T, TU>(IEnumerable<T> dataList, GetDataFromNode<T?, TU> getDataFromNode, CreateNewNode<T, TU> createNodeMethod)where TU : NodeBase
+    {
         suppressRecalculateLayout = true;
-        
+    
+        bool anythingChanged = false;
+    
         var nodesOfType = GetNodes<TU>().ToList();
-        var anythingChanged = false;
-        
-        var nodesToRemove = nodesOfType.Where(node => !dataList.Any(dataEntry => Equals(dataEntry, getDataFromNode(node)))).ToList();
-        
-        Log.Excessive($"Removing: {nodesToRemove.Count} Nodes");
-        
-        foreach (var node in nodesToRemove) {
-            RemoveNode(node);
-            anythingChanged = true;
+    
+        var dataSet = new HashSet<T>(EqualityComparer<T>.Default);
+        foreach (var data in dataList)
+            dataSet.Add(data);
+    
+        var represented = new HashSet<T>(EqualityComparer<T>.Default);
+    
+        for (int i = 0; i < nodesOfType.Count; i++) {
+            TU node = nodesOfType[i];
+            T? nodeData = getDataFromNode(node);
+    
+            if (nodeData is null || !dataSet.Contains(nodeData)) {
+                RemoveNode(node);
+                anythingChanged = true;
+                continue;
+            }
+    
+            represented.Add(nodeData);
         }
-        
-        var dataToAdd = dataList.Where(data => !nodesOfType.Any(node => Equals(data, getDataFromNode(node)))).ToList();
-        var selectedData = dataToAdd.Select(data => createNodeMethod(data)).ToList();
-        
-        Log.Excessive($"Adding: {dataToAdd.Count} Nodes");
-        foreach (var newNode in selectedData) {
+    
+        foreach (var data in dataSet) {
+            if (represented.Contains(data))
+                continue;
+    
+            TU newNode = createNodeMethod(data);
             AddNode(newNode);
             anythingChanged = true;
         }
-
+    
         suppressRecalculateLayout = false;
-        
         RecalculateLayout();
-        
+    
         return anythingChanged;
     }
 
