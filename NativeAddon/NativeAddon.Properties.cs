@@ -40,7 +40,7 @@ public abstract unsafe partial class NativeAddon {
 
     public Vector2 ContentSize => (WindowNode?.ContentSize ?? Vector2.Zero) - ContentPadding * 2.0f - new Vector2(0.0f, 4.0f);
 
-    public Vector2 ContentPadding => new(8.0f, 0.0f);
+    public Vector2 ContentPadding { get; set; } = new(8.0f, 0.0f);
 
     public int DepthLayer { get; init; } = 5;
 
