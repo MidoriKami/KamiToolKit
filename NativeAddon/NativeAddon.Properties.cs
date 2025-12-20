@@ -17,9 +17,7 @@ public abstract unsafe partial class NativeAddon {
         Size = windowSize;
         InternalAddon->SetSize((ushort)Size.X, (ushort)Size.Y);
 
-        if (WindowNode is not null) {
-            WindowNode.Size = Size;
-        }
+        WindowNode?.Size = Size;
     }
 
     protected void SetWindowSize(float width, float height)

@@ -122,9 +122,7 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
             node.IsVisible = node.IsMatch(searchString);
         }
 
-        if (selectedOption is not null) {
-            selectedOption.IsSelected = false;
-        }
+        selectedOption?.IsSelected = false;
 
         selectedOption = null;
         

@@ -113,9 +113,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         if (Component->EmptyLength is 0) {
             ForegroundButtonNode.Y = 0.0f;
 
-            if (ContentNode is not null) {
-                ContentNode.Y = 0;
-            }
+            ContentNode?.Y = 0;
         }
 
         var enabledState = Component->EmptyLength is not 0;

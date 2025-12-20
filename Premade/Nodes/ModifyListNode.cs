@@ -91,9 +91,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
     }
 
     private void OnSearchUpdated(string searchString) {
-        if (selectedOptionNode is not null) {
-            selectedOptionNode.IsSelected = false;
-        }
+        selectedOptionNode?.IsSelected = false;
 
         selectedOptionNode = null;
         OnOptionChanged?.Invoke(null);
@@ -144,9 +142,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
     }
 
     private void OnOptionClicked(BaseSearchInfoNode<T> optionNode) {
-        if (selectedOptionNode is not null) {
-            selectedOptionNode.IsSelected = false;
-        }
+        selectedOptionNode?.IsSelected = false;
 
         selectedOptionNode = optionNode;
         selectedOptionNode.IsSelected = true;

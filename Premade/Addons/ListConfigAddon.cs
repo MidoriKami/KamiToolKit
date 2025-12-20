@@ -62,9 +62,7 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
         if (configNode is null) return;
 
         configNode.IsVisible = newOption is not null;
-        if (nothingSelectedTextNode is not null) {
-            nothingSelectedTextNode.IsVisible = newOption is null;
-        }
+        nothingSelectedTextNode?.IsVisible = newOption is null;
 
         configNode.ConfigurationOption = newOption;
     }
