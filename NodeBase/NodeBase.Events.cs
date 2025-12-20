@@ -29,7 +29,7 @@ public abstract unsafe partial class NodeBase {
                     OnVisibilityToggled += ToggleCollisionFlag;
 
                     if (this is not ComponentNode && IsVisible) {
-                        AddFlags(NodeFlags.HasCollision);
+                        AddFlags(NodeFlags.HasCollision, NodeFlags.RespondToMouse);
                     }
 
                     TooltipRegistered = true;
@@ -145,10 +145,10 @@ public abstract unsafe partial class NodeBase {
         if (this is ComponentNode) return;
 
         if (isVisible) {
-            AddFlags(NodeFlags.HasCollision);
+            AddFlags(NodeFlags.HasCollision, NodeFlags.RespondToMouse);
         }
         else {
-            RemoveFlags(NodeFlags.HasCollision);
+            RemoveFlags(NodeFlags.HasCollision, NodeFlags.RespondToMouse);
         }
     }
     
