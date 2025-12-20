@@ -44,7 +44,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
             FontSize = 12,
             AlignmentType = AlignmentType.Left,
             TextColor = ColorHelper.GetColor(1),
-            TextOutlineColor = ColorHelper.GetColor(2),
+            TextOutlineColor = ColorHelper.GetColor(7),
             String = "Demo",
             TextFlags = TextFlags.AutoAdjustNodeSize | TextFlags.Emboss,
         };
