@@ -7,14 +7,27 @@ namespace KamiToolKit.Nodes;
 
 internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
 
-    private ResizeNineGridNode bottomEditNode;
-    private ResizeButtonNode leftCornerEditNode;
-    private ResizeNineGridNode leftEditNode;
-    private ResizeButtonNode rightCornerEditNode;
-    private ResizeNineGridNode rightEditNode;
-    private ResizeNineGridNode topEditNode;
+    private readonly NineGridNode backgroundNode;
+    private readonly ResizeNineGridNode bottomEditNode;
+    private readonly ResizeButtonNode leftCornerEditNode;
+    private readonly ResizeNineGridNode leftEditNode;
+    private readonly ResizeButtonNode rightCornerEditNode;
+    private readonly ResizeNineGridNode rightEditNode;
+    private readonly ResizeNineGridNode topEditNode;
 
     public NodeEditOverlayNode() {
+        backgroundNode = new SimpleNineGridNode {
+            TexturePath = "ui/uld/HUDLayout.tex",
+            TextureSize = new Vector2(44.0f, 32.0f),
+            TextureCoordinates = new Vector2(0.0f, 0.0f),
+            TopOffset = 20,
+            BottomOffset = 8,
+            LeftOffset = 21,
+            RightOffset = 21,
+            Alpha = 0.75f,
+        };
+        backgroundNode.AttachNode(this);
+        
         rightEditNode = new ResizeNineGridNode();
         rightEditNode.AttachNode(this);
 
@@ -50,6 +63,9 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
+        backgroundNode.Size = Size - new Vector2(24.0f, 24.0f);
+        backgroundNode.Position = new Vector2(12.0f, 12.0f);
+        
         const float lineThickness = 4.0f;
 
         leftEditNode.Size = new Vector2(Height - 32.0f, lineThickness);
