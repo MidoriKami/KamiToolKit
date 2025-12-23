@@ -14,11 +14,6 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
 
     public Action? OnClick { get; set; }
 
-    public bool IsEnabled {
-        get => Component->IsEnabled;
-        set => Component->SetEnabledState(value);
-    }
-
     public bool IsChecked {
         get => Component->IsChecked;
         set => Component->SetChecked(value);

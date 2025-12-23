@@ -76,11 +76,6 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
         }
     }
 
-    public bool IsEnabled {
-        get => Component->IsEnabled;
-        set => Component->SetEnabledState(value);
-    }
-
     public bool IsChecked {
         get => Component->IsChecked;
         set => Component->SetChecked(value);

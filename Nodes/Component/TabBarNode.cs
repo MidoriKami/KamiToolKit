@@ -10,10 +10,15 @@ namespace KamiToolKit.Nodes;
 
 public class TabBarNode : SimpleComponentNode {
 
-    private List<TabBarRadioButtonNode> radioButtons = [];
+    private readonly List<TabBarRadioButtonNode> radioButtons = [];
 
     public TabBarNode() {
         BuildTimelines();
+    }
+
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
+        RecalculateLayout();
     }
 
     public void AddTab(ReadOnlySeString label, Action callback, bool isEnabled = true) {
@@ -109,6 +114,7 @@ public class TabBarNode : SimpleComponentNode {
 
             button.Width = step + 5.0f;
             button.X = step * index - 5.0f;
+            button.Height = Height;
         }
     }
 

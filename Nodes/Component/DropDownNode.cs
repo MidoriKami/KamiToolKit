@@ -103,8 +103,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
     public Action? OnUncollapsed { get; set; }
     public Action? OnCollapsed { get; set; }
 
-    public bool IsEnabled { get; set; } = true;
-
     public void Collapse() {
         if (!IsEnabled) return;
         if (IsCollapsed) return;
