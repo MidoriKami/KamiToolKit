@@ -88,11 +88,6 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
         }
     }
 
-    public bool IsEnabled {
-        get => Component->IsEnabled;
-        set => Component->SetEnabledState(value);
-    }
-
     public bool IsChecked {
         get => Component->IsChecked;
         set => Component->SetChecked(value);
