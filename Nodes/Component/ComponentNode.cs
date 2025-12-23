@@ -99,7 +99,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     }
 
     public bool IsEnabled {
-        // get => ComponentBase->GetEnabledState(); // Doesn't exist at this time, but maybe it can be found.
+        get => NodeFlags.HasFlag(NodeFlags.Enabled);
         set => ComponentBase->SetEnabledState(value);
     }
 
