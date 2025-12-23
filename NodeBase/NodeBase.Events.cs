@@ -4,7 +4,6 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit;
 
@@ -17,42 +16,6 @@ public abstract unsafe partial class NodeBase {
 
     private CustomEventListener? nodeEventListener;
     private readonly Dictionary<AtkEventType, EventHandlerInfo> eventHandlers = [];
-
-    public virtual ReadOnlySeString? Tooltip {
-        get;
-        set {
-            field = value;
-            switch (value) {
-                case { IsEmpty: false } when !TooltipRegistered: 
-                    AddEvent(AtkEventType.MouseOver, ShowTooltip);
-                    AddEvent(AtkEventType.MouseOut, HideTooltip);
-                    OnVisibilityToggled += ToggleCollisionFlag;
-
-                    if (this is not ComponentNode && IsVisible) {
-                        AddFlags(NodeFlags.HasCollision);
-                    }
-
-                    TooltipRegistered = true;
-                    break;
-
-                case null when TooltipRegistered: {
-                    RemoveEvent(AtkEventType.MouseOver, ShowTooltip);
-                    RemoveEvent(AtkEventType.MouseOut, HideTooltip);
-                    OnVisibilityToggled -= ToggleCollisionFlag;
-
-                    TooltipRegistered = false;
-                    break;
-                }
-            }
-        }
-    }
-
-    public string TooltipString {
-        get => Tooltip?.ToString() ?? string.Empty;
-        set => Tooltip = value;
-    }
-
-    protected bool TooltipRegistered { get; set; }
 
     public void AddEvent(AtkEventType eventType, Action callback) {
         nodeEventListener ??= new CustomEventListener(HandleEvents);
