@@ -71,6 +71,8 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         CollisionNode.AddEvent(AtkEventType.MouseOver, () => Timeline?.PlayAnimation(IsCollapsed ? 2 : 9));
         CollisionNode.AddEvent(AtkEventType.MouseOut, () => Timeline?.PlayAnimation(IsCollapsed ? 4 : 11));
         CollisionNode.AddEvent(AtkEventType.MouseClick, Toggle);
+
+        IsEnabled = true;
     }
 
     public bool IsCollapsed { get; set; } = true;
