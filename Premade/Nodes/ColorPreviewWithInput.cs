@@ -14,7 +14,7 @@ public class ColorPreviewWithInput : SimpleComponentNode {
     public ColorPreviewWithInput() {
         ColorPreviewNode = new ColorPreviewNode();
         ColorPreviewNode.AttachNode(this);
-
+        
         ColorInputNode = new TextInputNode {
             AutoSelectAll = true,
             OnInputComplete = OnTextInputComplete,
@@ -34,7 +34,7 @@ public class ColorPreviewWithInput : SimpleComponentNode {
 
     public Action<ColorHelpers.HsvaColor>? OnHsvaColorChanged { get; set; }
     public Action<Vector4>? OnColorChanged { get; set; }
-
+    
     public string String {
         get => ColorInputNode.String;
         set => ColorInputNode.String = value;
@@ -57,34 +57,23 @@ public class ColorPreviewWithInput : SimpleComponentNode {
     }
 
     private void OnTextInputComplete(ReadOnlySeString obj) {
-        ReadOnlySpan<char> s = obj.ToString().AsSpan();
+        var str = obj.ToString();
+        if (!str.StartsWith('#')) return;
 
-        if (s.Length == 0)
-            return;
+        var hexString = str.TrimStart('#');
 
-        if (s[0] == '#')
-            s = s[1..];
+        var r = byte.Parse(hexString[0..2], NumberStyles.HexNumber);
+        var g = byte.Parse(hexString[2..4], NumberStyles.HexNumber);
+        var b = byte.Parse(hexString[4..6], NumberStyles.HexNumber);
+        var a = byte.Parse(hexString[6..8], NumberStyles.HexNumber);
 
-        if (s.Length != 8)
-            return;
-
-        const NumberStyles style = NumberStyles.AllowHexSpecifier;
-
-        if (!byte.TryParse(s[..2], style, CultureInfo.InvariantCulture, out byte r) ||
-            !byte.TryParse(s.Slice(2, 2), style, CultureInfo.InvariantCulture, out byte g) ||
-            !byte.TryParse(s.Slice(4, 2), style, CultureInfo.InvariantCulture, out byte b) ||
-            !byte.TryParse(s.Slice(6, 2), style, CultureInfo.InvariantCulture, out byte a)) {
-            return;
-        }
-
-        const float inv255 = 1f / 255f;
-        var newColor = new Vector4(r * inv255, g * inv255, b * inv255, a * inv255);
+        var newColor = new Vector4(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
 
         Color = newColor;
         OnColorChanged?.Invoke(newColor);
         OnHsvaColorChanged?.Invoke(ColorHelpers.RgbaToHsv(newColor));
     }
-
+    
     private void UpdateColorText()
         => ColorInputNode.String = $"#{(int)(Color.X * 255):X2}{(int)(Color.Y * 255):X2}{(int)(Color.Z * 255):X2}{(int)(Color.W * 255):X2}";
 }
