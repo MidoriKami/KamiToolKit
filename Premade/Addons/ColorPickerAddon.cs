@@ -8,29 +8,37 @@ using KamiToolKit.Premade.Widgets;
 namespace KamiToolKit.Premade.Addons;
 
 public class ColorPickerAddon : NativeAddon {
-    
     private ColorPickerWidget? colorPicker;
-    
+
     private HorizontalLineNode? horizontalLine;
     
     private TextButtonNode? confirmButton;
     
     private ColorOptionTextButtonNode? defaultColorPreview;
-
+    
     private TextButtonNode? cancelButton;
 
     private bool isCancelClicked;
 
+    private Vector4 initialRgba;
+    private ColorHelpers.HsvaColor initialHsva;
+
     protected override unsafe void OnSetup(AtkUnitBase* addon) {
         SetWindowSize(new Vector2(400.0f, 425.0f));
-        
+
+        initialHsva = InitialHsvaColor;
+        initialRgba = ColorHelpers.HsvToRgb(initialHsva);
+
         colorPicker = new ColorPickerWidget {
             Position = ContentStartPosition,
             Size = ContentSize,
         };
         colorPicker.AttachNode(this);
-        
-        colorPicker.SetColor(InitialColor);
+
+        colorPicker.ColorPreviewed += hsva => OnHsvaColorPreviewed?.Invoke(hsva);
+        colorPicker.RgbaColorPreviewed += rgba => OnColorPreviewed?.Invoke(rgba);
+
+        colorPicker.SetColor(initialRgba);
 
         horizontalLine = new HorizontalLineNode {
             Position = ContentStartPosition + new Vector2(2.0f, ContentSize.Y - 40.0f),
@@ -68,6 +76,9 @@ public class ColorPickerAddon : NativeAddon {
 
     protected override unsafe void OnHide(AtkUnitBase* addon) {
         if (!isCancelClicked) {
+            OnHsvaColorPreviewed?.Invoke(initialHsva);
+            OnColorPreviewed?.Invoke(initialRgba);
+
             OnColorCancelled?.Invoke();
         }
     }
@@ -75,29 +86,35 @@ public class ColorPickerAddon : NativeAddon {
     private void OnConfirmClicked() {
         if (colorPicker is null) return;
 
-        OnColorConfirmed?.Invoke(ColorHelpers.HsvToRgb(colorPicker.CurrentColor));
+        var rgba = ColorHelpers.HsvToRgb(colorPicker.CurrentColor);
+        OnColorConfirmed?.Invoke(rgba);
         OnHsvaColorConfirmed?.Invoke(colorPicker.CurrentColor);
+
+        isCancelClicked = true;
+
         Close();
     }
-    
+
     private void OnDefaultClicked() {
         if (colorPicker is null) return;
 
         if (DefaultHsvaColor is { } defaultColor) {
-            colorPicker.SetHue(defaultColor.H);
-            colorPicker.SetSaturation(defaultColor.S);
-            colorPicker.SetValue(defaultColor.V);
-            colorPicker.SetAlpha(defaultColor.A);
+            colorPicker.SetColor(defaultColor);
         }
     }
 
     private void OnCancelClicked() {
-        if (colorPicker is null) return;
-
         isCancelClicked = true;
+
+        OnHsvaColorPreviewed?.Invoke(initialHsva);
+        OnColorPreviewed?.Invoke(initialRgba);
+
         OnColorCancelled?.Invoke();
         Close();
     }
+
+    public Action<Vector4>? OnColorPreviewed { get; set; }
+    public Action<ColorHelpers.HsvaColor>? OnHsvaColorPreviewed { get; set; }
 
     public Action<Vector4>? OnColorConfirmed { get; set; }
     public Action<ColorHelpers.HsvaColor>? OnHsvaColorConfirmed { get; set; }
@@ -118,5 +135,6 @@ public class ColorPickerAddon : NativeAddon {
         set => InitialHsvaColor = ColorHelpers.RgbaToHsv(value);
     }
 
-    public ColorHelpers.HsvaColor InitialHsvaColor { get; set; } = ColorHelpers.RgbaToHsv(new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+    public ColorHelpers.HsvaColor InitialHsvaColor { get; set; } =
+        ColorHelpers.RgbaToHsv(new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 }
