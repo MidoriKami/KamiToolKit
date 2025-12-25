@@ -20,6 +20,8 @@ public class HorizontalListNode : LayoutListNode {
             RecalculateLayout();
         }
     }
+    
+    public bool FitToContentHeight { get; set; }
 
     protected override void InternalRecalculateLayout() {
         var startX = Alignment switch {
@@ -41,6 +43,10 @@ public class HorizontalListNode : LayoutListNode {
             if (Alignment is HorizontalListAnchor.Left) {
                 startX += node.Width + ItemSpacing;
             }
+        }
+
+        if (FitToContentHeight) {
+            Height = NodeList.Max(node => node.Height);
         }
     }
     
