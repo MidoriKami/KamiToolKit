@@ -59,16 +59,12 @@ public class ColorPreviewWithInput : SimpleComponentNode {
     private void OnTextInputComplete(ReadOnlySeString obj) {
         var str = obj.ToString();
 
-        if (string.IsNullOrEmpty(str) || !str.StartsWith('#')) {
-            return;
-        }
+        if (string.IsNullOrEmpty(str) || !str.StartsWith('#')) return;
 
         var hexString = str.TrimStart('#');
 
         // Allow #RRGGBB and #RRGGBBAA only
-        if (hexString.Length != 6 && hexString.Length != 8) {
-            return;
-        }
+        if (hexString.Length != 6 && hexString.Length != 8) return;
 
         const NumberStyles style = NumberStyles.HexNumber;
         var culture = CultureInfo.InvariantCulture;
@@ -78,9 +74,7 @@ public class ColorPreviewWithInput : SimpleComponentNode {
         if (!byte.TryParse(hexString[4..6], style, culture, out var b)) return;
 
         byte a = 255;
-        if (hexString.Length == 8 && !byte.TryParse(hexString[6..8], style, culture, out a)) {
-            return;
-        }
+        if (hexString.Length == 8 && !byte.TryParse(hexString[6..8], style, culture, out a)) return;
 
         var newColor = new Vector4(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
 
