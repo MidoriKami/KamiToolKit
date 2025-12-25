@@ -187,19 +187,25 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
     public virtual ReadOnlySeString SeString {
         get => Component->EvaluatedString.AsSpan();
-        set => Component->SetText(value);
+        set {
+            Component->SetText(value);
+            UpdatePlaceholderVisibility();
+        }
     }
 
     public virtual string String {
         get => SeString.ToString();
-        set => Component->SetText(value);
+        set {
+            Component->SetText(value);
+            UpdatePlaceholderVisibility();
+        }
     }
 
     public string? PlaceholderString {
         get;
         set {
             field = value;
-            PlaceholderTextNode.String = value ?? string.Empty;
+            UpdatePlaceholderVisibility();
         }
     }
 
@@ -249,6 +255,11 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
 
         return InputCallbackResult.None;
+    }
+
+    private void UpdatePlaceholderVisibility() {
+        PlaceholderTextNode.String = PlaceholderString ?? string.Empty;
+        PlaceholderTextNode.IsVisible = String.IsNullOrEmpty() && !PlaceholderString.IsNullOrEmpty();
     }
 
     protected override void OnSizeChanged() {
