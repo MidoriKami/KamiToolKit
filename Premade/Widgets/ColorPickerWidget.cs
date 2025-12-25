@@ -14,11 +14,11 @@ public class ColorPickerWidget : SimpleComponentNode {
 
     public ColorHelpers.HsvaColor CurrentColor { get; private set; }
 
-    public event Action<ColorHelpers.HsvaColor>? ColorPreviewed;
-    public event Action<Vector4>? RgbaColorPreviewed;
+    public Action<ColorHelpers.HsvaColor>? ColorPreviewed;
+    public Action<Vector4>? RgbaColorPreviewed;
 
-    private int _batchDepth;
-    private bool _previewDirty;
+    private int batchDepth;
+    private bool previewDirty;
 
     public ColorPickerWidget() {
         ColorPickerNode = new ColorRingWithSquareNode {
@@ -70,25 +70,25 @@ public class ColorPickerWidget : SimpleComponentNode {
     }
 
     private IDisposable BeginBatchUpdate() {
-        _batchDepth++;
+        batchDepth++;
         return new BatchToken(this);
     }
 
     internal void EndBatchUpdate() {
-        _batchDepth--;
-        if (_batchDepth <= 0) {
-            _batchDepth = 0;
+        batchDepth--;
+        if (batchDepth <= 0) {
+            batchDepth = 0;
 
-            if (_previewDirty) {
-                _previewDirty = false;
+            if (previewDirty) {
+                previewDirty = false;
                 RaisePreview();
             }
         }
     }
 
     private void RaisePreviewMaybe() {
-        if (_batchDepth > 0) {
-            _previewDirty = true;
+        if (batchDepth > 0) {
+            previewDirty = true;
             return;
         }
 
