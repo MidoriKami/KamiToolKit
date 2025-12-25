@@ -23,6 +23,12 @@ internal class DalamudInterface {
     [PluginService] public IGameInteropProvider GameInteropProvider { get; set; } = null!;
     [PluginService] public ISeStringEvaluator SeStringEvaluator { get; set; } = null!;
 
+    private DalamudInterface() {
+        if (!KamiToolKitLibrary.IsInitialized)
+            throw new Exception("KamiToolKit not initialized! You must call KamiToolKitLibrary.Initialize() before using KamiToolKit.\n" +
+                                "Don't forget to call KamiToolKitLibrary.Dispose() in your plugins dispose to ensure all assets are freed and to trigger bad practice warnings.");
+    }
+
     public string GetAssetDirectoryPath()
         => Path.Combine(PluginInterface.AssemblyLocation.DirectoryName ?? throw new Exception("Directory from Dalamud is Invalid Somehow"), "Assets");
     

@@ -90,7 +90,7 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
         };
         IdTextNode.AttachNode(this);
 
-        CollisionNode.DrawFlags |= DrawFlags.ClickableCursor;
+        CollisionNode.ShowClickableCursor = true;
         CollisionNode.AddEvent(AtkEventType.MouseOver, HandleEvents);
         CollisionNode.AddEvent(AtkEventType.MouseOut, HandleEvents);
         CollisionNode.AddEvent(AtkEventType.MouseClick, HandleEvents);

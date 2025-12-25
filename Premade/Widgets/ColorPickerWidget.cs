@@ -1,5 +1,7 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using Dalamud.Interface;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Nodes;
 
@@ -10,8 +12,14 @@ public class ColorPickerWidget : SimpleComponentNode {
     public readonly AlphaBarNode AlphaBarNode;
     public readonly ColorPreviewWithInput ColorPreviewWithInput;
 
-    public ColorHelpers.HsvaColor CurrentColor { get; set; }
-    
+    public ColorHelpers.HsvaColor CurrentColor { get; private set; }
+
+    public Action<ColorHelpers.HsvaColor>? ColorPreviewed;
+    public Action<Vector4>? RgbaColorPreviewed;
+
+    private int batchDepth;
+    private bool previewDirty;
+
     public ColorPickerWidget() {
         ColorPickerNode = new ColorRingWithSquareNode {
             OnHueChanged = SetHue,
@@ -24,29 +32,34 @@ public class ColorPickerWidget : SimpleComponentNode {
             OnAlphaChanged = SetAlpha,
         };
         AlphaBarNode.AttachNode(this);
-        
+
         ColorPreviewWithInput = new ColorPreviewWithInput {
             OnHsvaColorChanged = newColor => {
-                SetHue(newColor.H);
-                SetSaturation(newColor.S);
-                SetValue(newColor.V);
-                SetAlpha(newColor.A);
+                using (BeginBatchUpdate()) {
+                    SetHue(newColor.H);
+                    SetSaturation(newColor.S);
+                    SetValue(newColor.V);
+                    SetAlpha(newColor.A);
+                }
             },
         };
         ColorPreviewWithInput.AttachNode(this);
 
         CurrentColor = ColorHelpers.RgbaToHsv(new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
-        SetHue(CurrentColor.H);
-        SetSaturation(CurrentColor.S);
-        SetValue(CurrentColor.V);
-        SetAlpha(CurrentColor.A);
+
+        using (BeginBatchUpdate()) {
+            SetHue(CurrentColor.H);
+            SetSaturation(CurrentColor.S);
+            SetValue(CurrentColor.V);
+            SetAlpha(CurrentColor.A);
+        }
     }
 
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
         var mainWidgetWidth = Width * 3.0f / 4.0f;
-        
+
         ColorPickerNode.Size = new Vector2(mainWidgetWidth, mainWidgetWidth);
 
         AlphaBarNode.Size = new Vector2(Width / 16.0f, mainWidgetWidth - 60.0f);
@@ -56,11 +69,45 @@ public class ColorPickerWidget : SimpleComponentNode {
         ColorPreviewWithInput.Position = new Vector2(Width / 2.0f - 75.0f, ColorPickerNode.Y + ColorPickerNode.Height - 1.0f);
     }
 
+    private IDisposable BeginBatchUpdate() {
+        batchDepth++;
+        return new BatchToken(this);
+    }
+
+    internal void EndBatchUpdate() {
+        batchDepth--;
+        if (batchDepth <= 0) {
+            batchDepth = 0;
+
+            if (previewDirty) {
+                previewDirty = false;
+                RaisePreview();
+            }
+        }
+    }
+
+    private void RaisePreviewMaybe() {
+        if (batchDepth > 0) {
+            previewDirty = true;
+            return;
+        }
+
+        RaisePreview();
+    }
+
+    private void RaisePreview() {
+        var hsva = CurrentColor;
+        ColorPreviewed?.Invoke(hsva);
+        RgbaColorPreviewed?.Invoke(ColorHelpers.HsvToRgb(hsva));
+    }
+
     public void SetAlpha(float alpha) {
         CurrentColor = CurrentColor with { A = alpha };
 
         ColorPreviewWithInput.HsvaColor = CurrentColor;
         AlphaBarNode.HsvaColor = CurrentColor;
+
+        RaisePreviewMaybe();
     }
 
     public void SetHue(float hue) {
@@ -71,20 +118,23 @@ public class ColorPickerWidget : SimpleComponentNode {
         ColorPickerNode.SquareColor = CurrentColor with { S = 1.0f, V = 1.0f };
 
         ColorPreviewWithInput.HsvaColor = CurrentColor;
-
         AlphaBarNode.HsvaColor = CurrentColor;
+
+        RaisePreviewMaybe();
     }
 
     public void SetSaturation(float saturation) {
         CurrentColor = CurrentColor with { S = saturation };
-        
+
         ColorPreviewWithInput.HsvaColor = CurrentColor;
         ColorPickerNode.SelectorColor = CurrentColor;
 
         ColorPickerNode.SquareColor = CurrentColor;
         ColorPickerNode.SquareSaturationValue = CurrentColor;
-        
+
         AlphaBarNode.HsvaColor = CurrentColor;
+
+        RaisePreviewMaybe();
     }
 
     public void SetValue(float value) {
@@ -97,21 +147,27 @@ public class ColorPickerWidget : SimpleComponentNode {
         ColorPickerNode.SquareSaturationValue = CurrentColor;
 
         AlphaBarNode.HsvaColor = CurrentColor;
+
+        RaisePreviewMaybe();
     }
 
     public void SetColor(Vector4 color) {
         var converted = ColorHelpers.RgbaToHsv(color);
 
-        SetHue(converted.H);
-        SetSaturation(converted.S);
-        SetValue(converted.V);
-        SetAlpha(converted.A);
+        using (BeginBatchUpdate()) {
+            SetHue(converted.H);
+            SetSaturation(converted.S);
+            SetValue(converted.V);
+            SetAlpha(converted.A);
+        }
     }
 
     public void SetColor(ColorHelpers.HsvaColor color) {
-        SetHue(color.H);
-        SetSaturation(color.S);
-        SetValue(color.V);
-        SetAlpha(color.A);
+        using (BeginBatchUpdate()) {
+            SetHue(color.H);
+            SetSaturation(color.S);
+            SetValue(color.V);
+            SetAlpha(color.A);
+        }
     }
 }
