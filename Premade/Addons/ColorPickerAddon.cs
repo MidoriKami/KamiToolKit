@@ -9,13 +9,9 @@ namespace KamiToolKit.Premade.Addons;
 
 public class ColorPickerAddon : NativeAddon {
     private ColorPickerWidget? colorPicker;
-
     private HorizontalLineNode? horizontalLine;
-    
     private TextButtonNode? confirmButton;
-    
     private ColorOptionTextButtonNode? defaultColorPreview;
-    
     private TextButtonNode? cancelButton;
 
     private bool isCancelClicked;
