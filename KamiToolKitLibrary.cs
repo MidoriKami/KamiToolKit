@@ -5,11 +5,15 @@ using Serilog.Events;
 namespace KamiToolKit;
 
 public static class KamiToolKitLibrary {
+    internal static bool IsInitialized { get; private set; }
+    
     /// <summary>
     /// Main initialization method for KamiToolKit. This method is required to be invoked before any KamiToolKit features are used.
     /// Failure to do so will not result in any direct warnings, but will result in undefined behavior.
     /// </summary>
     public static void Initialize(IDalamudPluginInterface pluginInterface) {
+        IsInitialized = true;
+       
         // Inject non-Experimental Properties
         pluginInterface.Inject(DalamudInterface.Instance);
         DalamudInterface.Instance.GameInteropProvider.InitializeFromAttributes(DalamudInterface.Instance);
