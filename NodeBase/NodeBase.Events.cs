@@ -17,6 +17,36 @@ public abstract unsafe partial class NodeBase {
     private CustomEventListener? nodeEventListener;
     private readonly Dictionary<AtkEventType, EventHandlerInfo> eventHandlers = [];
 
+    /// <summary>
+    /// When true, mousing over this node will show the finger cursor icon.
+    /// </summary>
+    public bool ShowClickableCursor {
+        get => DrawFlags.HasFlag(DrawFlags.ClickableCursor);
+        set {
+            if (value) {
+                DrawFlags |= DrawFlags.ClickableCursor;
+            }
+            else {
+                DrawFlags &= ~DrawFlags.ClickableCursor;
+            }
+        }
+    }
+
+    /// <summary>
+    /// When true, mousing over this node will show the text input cursor icon.
+    /// </summary>
+    public bool ShowTextInputCursor {
+        get => DrawFlags.HasFlag(DrawFlags.TextInputCursor);
+        set {
+            if (value) {
+                DrawFlags |= DrawFlags.TextInputCursor;
+            }
+            else {
+                DrawFlags &= ~DrawFlags.TextInputCursor;
+            }
+        }
+    }
+
     public void AddEvent(AtkEventType eventType, Action callback) {
         nodeEventListener ??= new CustomEventListener(HandleEvents);
 

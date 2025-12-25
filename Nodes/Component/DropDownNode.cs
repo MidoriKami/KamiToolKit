@@ -67,7 +67,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
         Timeline?.PlayAnimation(4);
 
-        CollisionNode.DrawFlags |= DrawFlags.ClickableCursor;
+        CollisionNode.ShowClickableCursor = true;
         CollisionNode.AddEvent(AtkEventType.MouseOver, () => Timeline?.PlayAnimation(IsCollapsed ? 2 : 9));
         CollisionNode.AddEvent(AtkEventType.MouseOut, () => Timeline?.PlayAnimation(IsCollapsed ? 4 : 11));
         CollisionNode.AddEvent(AtkEventType.MouseClick, Toggle);
