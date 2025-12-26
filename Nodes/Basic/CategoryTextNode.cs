@@ -7,7 +7,7 @@ namespace KamiToolKit.Nodes;
 public sealed class CategoryTextNode : TextNode {
     public CategoryTextNode() {
         Height = 16.0f;
-        TextFlags = TextFlags.AutoAdjustNodeSize | TextFlags.Emboss;
+        TextFlags = TextFlags.AutoAdjustNodeSize;
         TextColor = ColorHelper.GetColor(2);
         TextOutlineColor = ColorHelper.GetColor(7);
         FontType = FontType.Axis;
