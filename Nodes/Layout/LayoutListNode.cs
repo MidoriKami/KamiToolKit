@@ -54,13 +54,9 @@ public abstract class LayoutListNode : SimpleComponentNode {
     }
 
     public void AddNode(IEnumerable<NodeBase> nodes) {
-        AddNode(nodes.ToArray());
-    }
-    
-    public void AddNode(params NodeBase?[] items) {
         suppressRecalculateLayout = true;
         
-        foreach (var node in items) {
+        foreach (var node in nodes) {
             AddNode(node);
         }
         
