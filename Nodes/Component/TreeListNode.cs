@@ -8,7 +8,7 @@ public class TreeListNode : SimpleComponentNode {
 
     private readonly SimpleComponentNode childContainer;
 
-    private List<TreeListCategoryNode> children = [];
+    private readonly List<TreeListCategoryNode> children = [];
 
     public ReadOnlyCollection<TreeListCategoryNode> CategoryNodes => children.AsReadOnly();
 
