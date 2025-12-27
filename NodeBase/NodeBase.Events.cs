@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes;
 
 namespace KamiToolKit;
 
@@ -132,6 +133,17 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
+    private void ToggleCollisionFlag(bool isVisible) {
+        if (this is ComponentNode) return;
+
+        if (isVisible) {
+            AddFlags(NodeFlags.HasCollision);
+        }
+        else {
+            RemoveFlags(NodeFlags.HasCollision);
+        }
+    }
+    
     private void SetNodeEventFlags(AtkEventType eventType) {
         switch (eventType) {
             // Hover events need to propagate down to trigger various timelines

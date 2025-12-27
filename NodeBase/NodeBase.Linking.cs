@@ -123,10 +123,6 @@ public abstract unsafe partial class NodeBase {
         if (ParentAddon is not null && ParentAddon->UldManager.ResourceFlags.HasFlag(AtkUldManagerResourceFlag.Initialized)) {
             ParentAddon->UldManager.UpdateDrawNodeList();
             ParentAddon->UpdateCollisionNodeList(false);
-
-            if (tooltipRegistered) {
-                UnregisterTooltip();
-            }
         }
 
         ParentAddon = null;
@@ -184,10 +180,6 @@ public abstract unsafe partial class NodeBase {
 
         if (ParentAddon is not null) {
             VisitManagedChildren(this, child => child.ParentAddon = ParentAddon);
-
-            if (tooltipPendingRegistration) {
-                RegisterTooltip();
-            }
         }
     }
 
