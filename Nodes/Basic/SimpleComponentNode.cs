@@ -5,9 +5,9 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Nodes;
 
 public class SimpleComponentNode : ComponentNode<AtkComponentBase, AtkUldComponentDataBase> {
-    public override ReadOnlySeString? Tooltip {
-        get => CollisionNode.Tooltip;
-        set => CollisionNode.Tooltip = value;
+    public override ReadOnlySeString TextTooltip {
+        get => CollisionNode.TextTooltip;
+        set => CollisionNode.TextTooltip = value;
     }
 
     public bool DisableCollisionNode {

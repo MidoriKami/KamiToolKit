@@ -6,7 +6,6 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.Timelines;
-using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -166,27 +165,27 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         }
     }
 
-    public override ReadOnlySeString? Tooltip {
-        get;
-        set {
-            field = value;
-            switch (value) {
-                case { IsEmpty: false } when !TooltipRegistered:
-                    AddEvent(AtkEventType.DragDropRollOver, ShowTooltip);
-                    AddEvent(AtkEventType.DragDropRollOut, HideTooltip);
-
-                    TooltipRegistered = true;
-                    break;
-
-                case null when TooltipRegistered:
-                    RemoveEvent(AtkEventType.DragDropRollOver, ShowTooltip);
-                    RemoveEvent(AtkEventType.DragDropRollOut, HideTooltip);
-
-                    TooltipRegistered = false;
-                    break;
-            }
-        }
-    }
+    // public override ReadOnlySeString? TextTooltip {
+    //     get;
+    //     set {
+    //         field = value;
+    //         switch (value) {
+    //             case { IsEmpty: false } when !TooltipRegistered:
+    //                 AddEvent(AtkEventType.DragDropRollOver, ShowTooltip);
+    //                 AddEvent(AtkEventType.DragDropRollOut, HideTooltip);
+    //
+    //                 TooltipRegistered = true;
+    //                 break;
+    //
+    //             case null when TooltipRegistered:
+    //                 RemoveEvent(AtkEventType.DragDropRollOver, ShowTooltip);
+    //                 RemoveEvent(AtkEventType.DragDropRollOut, HideTooltip);
+    //
+    //                 TooltipRegistered = false;
+    //                 break;
+    //         }
+    //     }
+    // }
 
     private void DragDropInsertHandler(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
         atkEvent->SetEventIsHandled();
