@@ -176,7 +176,7 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
 
     private void InputComplete() {
         if (UIInputData.Instance()->IsKeyPressed(SeVirtualKey.RETURN)) {
-            var textInputComponent = InternalComponentNode->GetAsAtkComponentTextInput();
+            var textInputComponent = Node->GetAsAtkComponentTextInput();
             var cursorPos = textInputComponent->CursorPos;
 
             using (var utf8String = new Utf8String()) {
