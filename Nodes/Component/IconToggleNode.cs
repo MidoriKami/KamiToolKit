@@ -43,7 +43,7 @@ public class IconToggleNode : SimpleComponentNode {
         };
         lowlightNode.AttachNode(this);
 
-        AddEvent(AtkEventType.MouseClick, () => UIGlobals.PlaySoundEffect(1));
+        CollisionNode.AddEvent(AtkEventType.MouseClick, () => UIGlobals.PlaySoundEffect(1));
     }
 
     public uint IconId {
