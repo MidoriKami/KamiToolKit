@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
@@ -168,18 +167,5 @@ public abstract unsafe partial class NodeBase {
             case AtkEventType.ButtonClick:
                 break;
         }
-    }
-
-    public void ShowTooltip() {
-        if (Tooltip is not null && TooltipRegistered && ParentAddon is not null) {
-            using var stringBuilder = new RentedSeStringBuilder();
-            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, ResNode, stringBuilder.Builder.Append(Tooltip).GetViewAsSpan());
-        }
-    }
-
-    public void HideTooltip() {
-        if (ParentAddon is null) return;
-
-        AtkStage.Instance()->TooltipManager.HideTooltip(ParentAddon->Id);
     }
 }

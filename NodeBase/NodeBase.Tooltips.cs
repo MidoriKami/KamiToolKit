@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Client.Game;
+﻿using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
 using Lumina.Text.ReadOnly;
@@ -50,4 +51,17 @@ public unsafe partial class NodeBase {
 
     public void ShowInventoryItemTooltip(InventoryType container, short slot)
         => AtkStage.Instance()->ShowInventoryItemTooltip(ResNode, container, slot);
+    
+    public void ShowTooltip() {
+        if (Tooltip is not null && TooltipRegistered && ParentAddon is not null) {
+            using var stringBuilder = new RentedSeStringBuilder();
+            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, ResNode, stringBuilder.Builder.Append(Tooltip).GetViewAsSpan());
+        }
+    }
+
+    public void HideTooltip() {
+        if (ParentAddon is null) return;
+
+        AtkStage.Instance()->TooltipManager.HideTooltip(ParentAddon->Id);
+    }
 }
