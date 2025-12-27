@@ -5,30 +5,28 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.Nodes;
 
 public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComponentNode>(nodeType) {
+    public abstract CollisionNode CollisionNode { get; }
     public abstract AtkComponentBase* ComponentBase { get; }
     public abstract AtkUldComponentDataBase* DataBase { get; }
-    public abstract AtkComponentNode* InternalComponentNode { get; }
 }
 
 public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable where TU : unmanaged {
-
-    public readonly CollisionNode CollisionNode;
-
-    public override AtkComponentBase* ComponentBase => (AtkComponentBase*)Component;
-    public override AtkUldComponentDataBase* DataBase => (AtkUldComponentDataBase*)Data;
-    public override AtkComponentNode* InternalComponentNode => (AtkComponentNode*)ResNode;
+    public sealed override CollisionNode CollisionNode { get; }
+    public sealed override AtkComponentBase* ComponentBase { get; }
+    public sealed override AtkUldComponentDataBase* DataBase { get; }
 
     protected ComponentNode() : base(NodeType.Component) {
         Component = NativeMemoryHelper.Create<T>();
-        var componentBase = (AtkComponentBase*)Component;
+        ComponentBase = (AtkComponentBase*)Component;
 
         Data = NativeMemoryHelper.UiAlloc<TU>();
+        DataBase = (AtkUldComponentDataBase*)Data;
 
-        componentBase->Initialize();
+        ComponentBase->Initialize();
 
         CollisionNode = new CollisionNode {
             NodeId = 1,
-            LinkedComponent = componentBase,
+            LinkedComponent = ComponentBase,
             NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | 
                         NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents | NodeFlags.Fill,
         };
@@ -38,10 +36,10 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
         ChildNodes.Add(CollisionNode);
 
-        componentBase->OwnerNode = Node;
-        componentBase->ComponentFlags = 1;
+        ComponentBase->OwnerNode = Node;
+        ComponentBase->ComponentFlags = 1;
 
-        ref var uldManager = ref componentBase->UldManager;
+        ref var uldManager = ref ComponentBase->UldManager;
 
         uldManager.Objects = (AtkUldObjectInfo*)NativeMemoryHelper.UiAlloc<AtkUldComponentInfo>();
         ref var objects = ref uldManager.Objects;
