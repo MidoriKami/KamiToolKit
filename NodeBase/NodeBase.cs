@@ -42,6 +42,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         Log.Verbose($"Disposing node {GetType()}");
 
+        UnregisterTooltipEvents();
+        
         AtkStage.Instance()->ClearNodeFocus(ResNode);
 
         DetachNode();

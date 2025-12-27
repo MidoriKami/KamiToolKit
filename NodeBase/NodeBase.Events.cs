@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Nodes;
 
 namespace KamiToolKit;
 
@@ -130,17 +129,6 @@ public abstract unsafe partial class NodeBase {
         if (eventHandlers.TryGetValue(eventType, out var handler)) {
             handler.OnActionDelegate?.Invoke();
             handler.OnReceiveEventDelegate?.Invoke(thisPtr, eventType, eventParam, atkEvent, atkEventData);
-        }
-    }
-
-    private void ToggleCollisionFlag(bool isVisible) {
-        if (this is ComponentNode) return;
-
-        if (isVisible) {
-            AddFlags(NodeFlags.HasCollision);
-        }
-        else {
-            RemoveFlags(NodeFlags.HasCollision);
         }
     }
     

@@ -166,7 +166,7 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         }
     }
 
-    public override ReadOnlySeString? Tooltip {
+    public override ReadOnlySeString TextTooltip {
         get;
         set {
             field = value;
@@ -176,13 +176,6 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
                     AddEvent(AtkEventType.DragDropRollOut, HideTooltip);
 
                     TooltipRegistered = true;
-                    break;
-
-                case null when TooltipRegistered:
-                    RemoveEvent(AtkEventType.DragDropRollOver, ShowTooltip);
-                    RemoveEvent(AtkEventType.DragDropRollOut, HideTooltip);
-
-                    TooltipRegistered = false;
                     break;
             }
         }
