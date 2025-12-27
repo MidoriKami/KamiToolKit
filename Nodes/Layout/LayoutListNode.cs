@@ -48,15 +48,15 @@ public abstract class LayoutListNode : SimpleComponentNode {
     protected abstract void InternalRecalculateLayout();
 
     protected virtual void AdjustNode(NodeBase node) { }
+    
+    public ICollection<NodeBase> InitialNodes {
+        init => AddNode(value);
+    }
 
     public void AddNode(IEnumerable<NodeBase> nodes) {
-        AddNode(nodes.ToArray());
-    }
-    
-    public void AddNode(params NodeBase?[] items) {
         suppressRecalculateLayout = true;
         
-        foreach (var node in items) {
+        foreach (var node in nodes) {
             AddNode(node);
         }
         
