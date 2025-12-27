@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -43,7 +43,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
             OnClick = OnEditClicked,
         };
         editButton.AttachNode(this);
-        
+
         removeButton = new TextButtonNode {
             IsEnabled = false,
             String = "Remove",
@@ -57,7 +57,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
 
         searchWidget.Size = new Vector2(Width, 38.0f);
         searchWidget.Position = Vector2.Zero;
-        
+
         listNode.Size = new Vector2(Width, Height - searchWidget.Height - 40.0f);
         listNode.Position = new Vector2(0.0f, searchWidget.Y + searchWidget.Height + 8.0f);
 
@@ -70,14 +70,14 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         removeButton.IsVisible = RemoveEntry is not null;
 
         const float buttonPadding = 5.0f;
-        var buttonWidth = ( Width - buttonPadding * 2.0f ) / 3.0f;
+        var buttonWidth = (Width - buttonPadding * 2.0f) / 3.0f;
 
         addButton.Size = new Vector2(buttonWidth, 24.0f);
         addButton.Position = new Vector2(0.0f, Height - 24.0f);
-        
+
         editButton.Size = new Vector2(buttonWidth, 24.0f);
         editButton.Position = new Vector2(buttonWidth + buttonPadding, Height - 24.0f);
-        
+
         removeButton.Size = new Vector2(buttonWidth, 24.0f);
         removeButton.Position = new Vector2(buttonWidth * 2.0f + buttonPadding * 2.0f, Height - 24.0f);
     }
@@ -85,7 +85,6 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
     private void OnSortOrderChanged(string sortingString, bool reversed) {
         listNode.ContentNode.ReorderNodes((x, y) => {
             if (x is not SearchInfoNode<T> left || y is not SearchInfoNode<T> right) return 0;
-
             return left.Compare(right, sortingString, reversed);
         });
     }
@@ -94,8 +93,11 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         selectedOptionNode?.IsSelected = false;
 
         selectedOptionNode = null;
+        removeButton.IsEnabled = false;
+        editButton.IsEnabled = false;
+
         OnOptionChanged?.Invoke(null);
-        
+
         foreach (var option in listNode.ContentNode.GetNodes<SearchInfoNode<T>>()) {
             option.IsVisible = option.IsMatch(searchString);
         }
@@ -111,7 +113,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         SelectionOptions.Add(option);
         UpdateList();
 
-        var newOptionNode = listNode.ContentNode.GetNodes<SearchInfoNode<T>>().FirstOrDefault(node => node.Option == option);
+        var newOptionNode = listNode.ContentNode.GetNodes<SearchInfoNode<T>>().FirstOrDefault(node => ReferenceEquals(node.Option, option));
         if (newOptionNode is not null) {
             OnOptionClicked(newOptionNode);
         }
@@ -119,7 +121,6 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
 
     private void OnEditClicked() {
         if (selectedOptionNode?.Option is null) return;
-
         EditEntry?.Invoke(selectedOptionNode.Option);
     }
 
@@ -131,9 +132,9 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
 
         selectedOptionNode.IsSelected = false;
         selectedOptionNode = null;
-        
-        removeButton.IsEnabled = selectedOptionNode is not null;
-        editButton.IsEnabled = selectedOptionNode is not null;
+
+        removeButton.IsEnabled = false;
+        editButton.IsEnabled = false;
 
         RemoveEntry?.Invoke(option);
         UpdateList();
@@ -147,18 +148,31 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         selectedOptionNode = optionNode;
         selectedOptionNode.IsSelected = true;
 
-        removeButton.IsEnabled = selectedOptionNode is not null;
-        editButton.IsEnabled = selectedOptionNode is not null;
+        removeButton.IsEnabled = true;
+        editButton.IsEnabled = true;
 
         OnOptionChanged?.Invoke(optionNode.Option);
     }
 
     public void UpdateList() {
-        listNode.ContentNode.SyncWithListData(SelectionOptions, node => node.Option, data => new SearchInfoNode<T> {
-            Size = new Vector2(listNode.ContentNode.Width, 48.0f),
-            OnClicked = OnOptionClicked,
-            Option = data,
-        });
+        var previouslySelectedOption = selectedOptionNode?.Option;
+
+        if (selectedOptionNode is not null) {
+            selectedOptionNode.IsSelected = false;
+            selectedOptionNode = null;
+        }
+
+        removeButton.IsEnabled = false;
+        editButton.IsEnabled = false;
+
+        listNode.ContentNode.SyncWithListData(
+            SelectionOptions,
+            node => node.Option,
+            data => new SearchInfoNode<T> {
+                Size = new Vector2(listNode.ContentNode.Width, 48.0f),
+                OnClicked = OnOptionClicked,
+                Option = data,
+            });
 
         listNode.ContentNode.RecalculateLayout();
         listNode.ContentHeight = listNode.ContentNode.Height;
@@ -171,9 +185,25 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
             node.Size = new Vector2(listNode.ContentNode.Width, 48.0f);
             node.Refresh();
         }
+
+        if (previouslySelectedOption is not null) {
+            var restoredNode = listNode.ContentNode
+                .GetNodes<SearchInfoNode<T>>()
+                .FirstOrDefault(n => ReferenceEquals(n.Option, previouslySelectedOption));
+
+            if (restoredNode is not null) {
+                selectedOptionNode = restoredNode;
+                selectedOptionNode.IsSelected = true;
+                removeButton.IsEnabled = true;
+                editButton.IsEnabled = true;
+            }
+            else {
+                OnOptionChanged?.Invoke(null);
+            }
+        }
     }
 
-    public Action<ModifyListNode<T>>? AddNewEntry { 
+    public Action<ModifyListNode<T>>? AddNewEntry {
         get;
         set {
             field = value;
@@ -181,7 +211,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         }
     }
 
-    public Action<T>? RemoveEntry { 
+    public Action<T>? RemoveEntry {
         get;
         set {
             field = value;
@@ -189,15 +219,15 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         }
     }
 
-    public Action<T>? EditEntry { 
+    public Action<T>? EditEntry {
         get;
         set {
             field = value;
             OnSizeChanged();
         }
     }
-    
-    public Action<T?>? OnOptionChanged { get; init; } 
+
+    public Action<T?>? OnOptionChanged { get; init; }
 
     public List<string>? SortOptions {
         get => searchWidget.SortingOptions;
