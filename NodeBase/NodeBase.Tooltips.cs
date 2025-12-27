@@ -12,7 +12,7 @@ public unsafe partial class NodeBase {
         set {
             field = value;
             switch (value) {
-                case { IsEmpty: false } when !TooltipRegistered: 
+                case { IsEmpty: false } when !TooltipRegistered:
                     AddEvent(AtkEventType.MouseOver, ShowTooltip);
                     AddEvent(AtkEventType.MouseOut, HideTooltip);
                     OnVisibilityToggled += ToggleCollisionFlag;
@@ -42,7 +42,7 @@ public unsafe partial class NodeBase {
     }
 
     protected bool TooltipRegistered { get; set; }
-    
+
     public void ShowActionTooltip(uint actionId, string? textLabel = null)
         => AtkStage.Instance()->ShowActionTooltip(ResNode, actionId, textLabel);
 
@@ -51,11 +51,11 @@ public unsafe partial class NodeBase {
 
     public void ShowInventoryItemTooltip(InventoryType container, short slot)
         => AtkStage.Instance()->ShowInventoryItemTooltip(ResNode, container, slot);
-    
+
     public void ShowTooltip() {
-        if (Tooltip is not null && TooltipRegistered && ParentAddon is not null) {
+        if (Tooltip is {} tooltip && TooltipRegistered && ParentAddon is not null) {
             using var stringBuilder = new RentedSeStringBuilder();
-            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, ResNode, stringBuilder.Builder.Append(Tooltip).GetViewAsSpan());
+            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, ResNode, stringBuilder.Builder.Append(tooltip).GetViewAsSpan());
         }
     }
 
