@@ -53,9 +53,9 @@ public unsafe partial class NodeBase {
         => AtkStage.Instance()->ShowInventoryItemTooltip(ResNode, container, slot);
 
     public void ShowTooltip() {
-        if (Tooltip is not null && TooltipRegistered && ParentAddon is not null) {
+        if (Tooltip is {} tooltip && TooltipRegistered && ParentAddon is not null) {
             using var stringBuilder = new RentedSeStringBuilder();
-            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, ResNode, stringBuilder.Builder.Append(Tooltip.Value).GetViewAsSpan());
+            AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, ResNode, stringBuilder.Builder.Append(tooltip).GetViewAsSpan());
         }
     }
 
