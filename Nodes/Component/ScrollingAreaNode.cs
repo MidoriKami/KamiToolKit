@@ -24,8 +24,9 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
         ContentAreaNode.AttachNode(ContentAreaClipNode);
 
         ScrollBarNode = new ScrollBarNode {
-            ContentNode = ContentAreaNode, 
-            ContentCollisionNode = ScrollingCollisionNode, 
+            ContentNode = ContentAreaNode,
+            ContentCollisionNode = ScrollingCollisionNode,
+            HideWhenDisabled = true,
         };
         ScrollBarNode.AttachNode(this);
 
