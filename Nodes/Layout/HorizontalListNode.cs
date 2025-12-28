@@ -21,6 +21,14 @@ public class HorizontalListNode : LayoutListNode {
         }
     }
     
+    /// <summary>
+    /// Adjusts contained nodes heights to match this nodes height
+    /// </summary>
+    public bool FitHeight { get; set; }
+    
+    /// <summary>
+    /// Resizes the horizontal list node to fit all contents
+    /// </summary>
     public bool FitToContentHeight { get; set; }
 
     protected override void InternalRecalculateLayout() {
@@ -42,6 +50,10 @@ public class HorizontalListNode : LayoutListNode {
 
             if (Alignment is HorizontalListAnchor.Left) {
                 startX += node.Width + ItemSpacing;
+            }
+            
+            if (FitHeight) {
+                node.Height = Height;
             }
         }
 
