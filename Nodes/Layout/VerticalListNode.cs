@@ -13,9 +13,14 @@ public class VerticalListNode : LayoutListNode {
         }
     }
 
-    // Resizes this node to fit all elements
+    /// <summary>
+    /// Resizes this layout node to fit the height of the contained nodes.
+    /// </summary>
     public bool FitContents { get; set; }
 
+    /// <summary>
+    /// Resizes nodes that are inserted to be the same width as the content area
+    /// </summary>
     public bool FitWidth { get; set; }
 
     protected override void InternalRecalculateLayout() {
