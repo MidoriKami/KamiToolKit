@@ -51,6 +51,12 @@ public unsafe partial class OverlayController : IDisposable {
             }
         }
     });
+
+    public void RemoveAllNodes() => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+        foreach (var node in overlayNodes.SelectMany(set => set.Value).ToList()) {
+            RemoveNode(node);
+        }
+    });
     
     public void Dispose() {
         overlaysActive = false;
