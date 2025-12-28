@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Linq;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Nodes;
@@ -88,5 +89,11 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
         ScrollBarNode.UpdateScrollParams();
 
         ScrollBarNode.X = Width - 8.0f;
+    }
+
+    public void FitToContentHeight() {
+        if (ContentNode is LayoutListNode layoutNode) {
+            ContentHeight = layoutNode.Nodes.Sum(node => node.IsVisible ? node.Height + layoutNode.ItemSpacing : 0.0f) + layoutNode.FirstItemSpacing;
+        }
     }
 }
