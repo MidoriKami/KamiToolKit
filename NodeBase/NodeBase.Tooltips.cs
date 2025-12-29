@@ -17,44 +17,56 @@ public unsafe partial class NodeBase {
     public virtual ReadOnlySeString TextTooltip {
         get;
         set {
-            if (value.IsEmpty) return;
             field = value;
-            
-            TryRegisterTooltipEvents();
-            tooltipType |= AtkTooltipManager.AtkTooltipType.Text;
+            if (!value.IsEmpty) {
+                TryRegisterTooltipEvents();
+                tooltipType |= AtkTooltipManager.AtkTooltipType.Text;
+            }
+            else {
+                tooltipType &= ~AtkTooltipManager.AtkTooltipType.Text;
+            }
         }
     }
 
     public virtual uint ActionTooltip {
         get;
         set {
-            if (value is 0) return;
             field = value;
-            
-            TryRegisterTooltipEvents();
-            tooltipType |= AtkTooltipManager.AtkTooltipType.Action;
+            if (value is not 0) {
+                TryRegisterTooltipEvents();
+                tooltipType |= AtkTooltipManager.AtkTooltipType.Action;
+            }
+            else {
+                tooltipType &= ~AtkTooltipManager.AtkTooltipType.Action;
+            }
         }
     }
 
     public virtual uint ItemTooltip {
         get;
         set {
-            if (value is 0) return;
             field = value;
-
-            TryRegisterTooltipEvents();
-            tooltipType |= AtkTooltipManager.AtkTooltipType.Item;
+            if (value is not 0) {
+                TryRegisterTooltipEvents();
+                tooltipType |= AtkTooltipManager.AtkTooltipType.Item;
+            }
+            else {
+                tooltipType &= ~AtkTooltipManager.AtkTooltipType.Item;
+            }
         }
     }
 
     public virtual InventoryItemTooltip? InventoryItemTooltip {
         get;
         set {
-            if (value is null) return;
             field = value;
-            
-            TryRegisterTooltipEvents();
-            tooltipType |= AtkTooltipManager.AtkTooltipType.Item;
+            if (value is not null) {
+                TryRegisterTooltipEvents();
+                tooltipType |= AtkTooltipManager.AtkTooltipType.Item;
+            }
+            else {
+                tooltipType &= ~AtkTooltipManager.AtkTooltipType.Item;
+            }
         }
     }
 
@@ -92,7 +104,7 @@ public unsafe partial class NodeBase {
     
     protected bool TooltipRegistered { get; set; }
 
-    public void ShowTooltip() {
+    protected void ShowTooltip() {
         if (ParentAddon is null) return; // Shouldn't be possible
         if (tooltipType is AtkTooltipManager.AtkTooltipType.None) return;
 
@@ -125,6 +137,8 @@ public unsafe partial class NodeBase {
         else if (tooltipType.HasFlag(AtkTooltipManager.AtkTooltipType.Item) && InventoryItemTooltip is null) {
             tooltipArgs.ItemArgs.Kind = DetailKind.Item;
             tooltipArgs.ItemArgs.ItemId = (int) ItemTooltip;
+            tooltipArgs.ItemArgs.BuyQuantity = -1;
+            tooltipArgs.ItemArgs.Flag1 = 0;
         }
         
         AtkStage.Instance()->TooltipManager.ShowTooltip(tooltipType, ParentAddon->Id, this, &tooltipArgs);
