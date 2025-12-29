@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace KamiToolKit.Nodes;
@@ -23,7 +23,7 @@ public class TextDropDownNode : DropDownNode<TextListNode, string> {
     private void OptionSelectedHandler(string option) {
         OnOptionSelected?.Invoke(option);
         UpdateLabel(option);
-        Toggle();
+        Toggle(false);
     }
 
     protected override void UpdateLabel(string? option) {

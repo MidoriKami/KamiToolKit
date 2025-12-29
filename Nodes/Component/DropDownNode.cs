@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -72,6 +72,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         CollisionNode.AddEvent(AtkEventType.MouseOut, () => Timeline?.PlayAnimation(IsCollapsed ? 4 : 11));
         CollisionNode.AddEvent(AtkEventType.MouseClick, Toggle);
 
+        Component->SoundEffectId = 1;
         Component->SetEnabledState(true);
     }
 
@@ -105,13 +106,18 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
     public Action? OnUncollapsed { get; set; }
     public Action? OnCollapsed { get; set; }
 
-    public void Collapse() {
+    public void Collapse(bool playSoundEffect = true) {
         if (!IsEnabled) return;
         if (IsCollapsed) return;
 
         IsCollapsed = true;
         Timeline?.PlayAnimation(4);
         OptionListNode.Toggle(false);
+
+        // TODO: replace this (and in Uncollapse) with just a check for playSoundEffect and a call to Component->PlaySoundEffect();
+        // when https://github.com/aers/FFXIVClientStructs/commit/e5b6fc51 landed in Dalamud
+        if (playSoundEffect && Component->SoundEffectId is not -1)
+            UIGlobals.PlaySoundEffect((uint)Component->SoundEffectId);
 
         OptionListNode.ReattachNode(this);
 
@@ -121,14 +127,17 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         OnCollapsed?.Invoke();
     }
 
-    public void Uncollapse() {
+    public void Uncollapse(bool playSoundEffect = true) {
         if (!IsEnabled) return;
         if (!IsCollapsed) return;
 
         IsCollapsed = false;
         Timeline?.PlayAnimation(11);
         OptionListNode.Toggle(true);
-        
+
+        if (playSoundEffect && Component->SoundEffectId is not -1)
+            UIGlobals.PlaySoundEffect((uint)Component->SoundEffectId);
+
         if (ParentAddon is not null) {
             OptionListNode.Position = (ScreenPosition - ParentAddon->Position) / ParentAddon->Scale + Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
             MoveListOnScreen();
@@ -143,13 +152,17 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
     }
 
     public void Toggle() {
+        Toggle(true);
+    }
+
+    public void Toggle(bool playSoundEffect) {
         if (!IsEnabled) return;
 
         if (IsCollapsed) {
-            Uncollapse();
+            Uncollapse(playSoundEffect);
         }
         else {
-            Collapse();
+            Collapse(playSoundEffect);
         }
 
         OnCollapseToggled?.Invoke(IsCollapsed);

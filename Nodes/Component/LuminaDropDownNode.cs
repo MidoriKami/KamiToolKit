@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Lumina.Excel;
 
 namespace KamiToolKit.Nodes;
@@ -30,7 +30,7 @@ public class LuminaDropDownNode<T> : DropDownNode<LuminaListNode<T>, T> where T 
     private void OptionSelectedHandler(T option) {
         OnOptionSelected?.Invoke(option);
         UpdateLabel(option);
-        Toggle();
+        Toggle(false);
     }
 
     private void ResolveOptions() {
