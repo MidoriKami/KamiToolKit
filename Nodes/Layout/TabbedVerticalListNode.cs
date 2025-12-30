@@ -26,11 +26,15 @@ public class TabbedVerticalListNode : SimpleComponentNode {
         TabStep -= tabAmount;
     }
 
-    public void AddNode(params NodeBase[] nodes) {
+    public void AddNode(NodeBase node) {
+        AddNode(0, node);
+    }
+    
+    public void AddNode(IEnumerable<NodeBase> nodes) {
         AddNode(0, nodes);
     }
 
-    public void AddNode(int tabIndex, params NodeBase[] nodes) {
+    public void AddNode(int tabIndex, IEnumerable<NodeBase> nodes) {
         foreach (var node in nodes) {
             AddNode(tabIndex, node);
         }
