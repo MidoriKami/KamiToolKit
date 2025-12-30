@@ -67,9 +67,13 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
         }
     }
     
+    public bool AutoUpdateHeight { get; set; }
+    
     public Action<float>? HeightChanged { get; set; }
 
     private void UpdateHeightForContent() {
+        if (!AutoUpdateHeight) return;
+        
         var text = String;
         var lineCount = Math.Max(1, text.Split('\r', '\n').Length);
         var lineHeight = CurrentTextNode.LineSpacing;
