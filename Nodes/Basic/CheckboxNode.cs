@@ -97,13 +97,32 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
         OnClick?.Invoke(Component->IsChecked);
     }
 
+    public bool DisableAutoResize {
+        get => Label.TextFlags.HasFlag(TextFlags.AutoAdjustNodeSize);
+        set {
+            if (value) {
+                Label.TextFlags &= ~TextFlags.AutoAdjustNodeSize;
+                Label.TextFlags |= TextFlags.Ellipsis;
+            }
+            else {
+                Label.TextFlags |= TextFlags.AutoAdjustNodeSize;
+                Label.TextFlags &= ~TextFlags.Ellipsis;
+            }
+        }
+    }
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
         BoxBackground.Size = new Vector2(Height, Height) - new Vector2(4.0f, 4.0f);
         BoxForeground.Size = new Vector2(Height, Height) - new Vector2(4.0f, 4.0f);
+
         Label.Height = Height;
         Label.X = Height;
+
+        if (DisableAutoResize) {
+            Label.Width = Width - Height;
+        }
     }
 
     private void LoadTimelines() {
