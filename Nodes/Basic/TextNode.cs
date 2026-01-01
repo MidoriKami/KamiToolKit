@@ -13,6 +13,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         TextOutlineColor = ColorHelper.GetColor(7);
         FontSize = 12;
         FontType = FontType.Axis;
+        LineSpacing = 12;
     }
 
     public Vector4 TextColor {
