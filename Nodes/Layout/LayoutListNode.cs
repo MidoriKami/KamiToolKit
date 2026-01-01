@@ -15,8 +15,6 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     public IReadOnlyList<NodeBase> Nodes => NodeList;
 
-    public int MaxNodes { get; set; }
-
     public bool ClipListContents {
         get => NodeFlags.HasFlag(NodeFlags.Clip);
         set {
@@ -71,12 +69,6 @@ public abstract class LayoutListNode : SimpleComponentNode {
         NodeList.Add(node);
 
         node.AttachNode(this);
-
-        if (MaxNodes >= 1 && NodeList.Count >= MaxNodes) {
-            var firstNode = NodeList.First();
-            node.NodeId = firstNode.NodeId;
-            RemoveNode(firstNode);
-        }
 
         RecalculateLayout();
     }
