@@ -18,7 +18,7 @@ public class OrderedVerticalListNode<T, TU> : VerticalListNode where T : NodeBas
 
         var orderedList = typedList.OrderBy(OrderSelector).ToList();
 
-        var startY = Alignment switch {
+        var startY = Anchor switch {
             VerticalListAnchor.Top => 0.0f + FirstItemSpacing,
             VerticalListAnchor.Bottom => Height,
             _ => 0.0f,
@@ -27,14 +27,14 @@ public class OrderedVerticalListNode<T, TU> : VerticalListNode where T : NodeBas
         foreach (var node in orderedList) {
             if (!node.IsVisible) continue;
 
-            if (Alignment is VerticalListAnchor.Bottom) {
+            if (Anchor is VerticalListAnchor.Bottom) {
                 startY -= node.Height + ItemSpacing;
             }
 
             node.Y = startY;
             AdjustNode(node);
 
-            if (Alignment is VerticalListAnchor.Top) {
+            if (Anchor is VerticalListAnchor.Top) {
                 startY += node.Height + ItemSpacing;
             }
         }
