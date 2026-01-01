@@ -21,6 +21,7 @@ public class ScrollingListNode : SimpleComponentNode {
         base.OnSizeChanged();
 
         ListNode.Size = Size;
+        ListNode.ContentNode.RecalculateLayout();
         ListNode.FitToContentHeight();
     }
 
@@ -34,7 +35,12 @@ public class ScrollingListNode : SimpleComponentNode {
         set => ListNode.ContentNode.FitWidth = value;
     }
     
-    public VerticalListAnchor Alignment {
+    public VerticalListAnchor Anchor {
+        get => ListNode.ContentNode.Anchor;
+        set => ListNode.ContentNode.Anchor = value;
+    }
+
+    public VerticalListAlignment Alignment {
         get => ListNode.ContentNode.Alignment;
         set => ListNode.ContentNode.Alignment = value;
     }
@@ -57,13 +63,21 @@ public class ScrollingListNode : SimpleComponentNode {
     public ICollection<NodeBase> InitialNodes {
         init => ListNode.ContentNode.AddNode(value);
     }
+    
+    public bool AutoHideScrollbar {
+        get => ListNode.AutoHideScrollBar;
+        set => ListNode.AutoHideScrollBar = value;
+    }
         
     public IReadOnlyList<NodeBase> Nodes => ListNode.ContentNode.Nodes;
     
     public IEnumerable<T> GetNodes<T>() where T : NodeBase => ListNode.ContentNode.GetNodes<T>();
     
-    public void RecalculateLayout() => ListNode.ContentNode.RecalculateLayout();
-   
+    public void RecalculateLayout() {
+        ListNode.ContentNode.RecalculateLayout();
+        ListNode.FitToContentHeight();
+    }
+
     public void AddNode(IEnumerable<NodeBase> nodes) => ListNode.ContentNode.AddNode(nodes);
     
     public void AddNode(NodeBase? node) => ListNode.ContentNode.AddNode(node);
