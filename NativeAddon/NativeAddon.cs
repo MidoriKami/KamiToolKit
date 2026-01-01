@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -182,6 +183,15 @@ public abstract unsafe partial class NativeAddon {
             Open();
         }
     }
+
+    public void AddNode(ICollection<NodeBase> nodes) {
+        foreach (var node in nodes) {
+            AddNode(node);
+        }
+    }
+
+    public void AddNode(NodeBase? node)
+        => node?.AttachNode(this);
 
     private void LoadTimeline() {
         RootNode.AddTimeline(new TimelineBuilder()
