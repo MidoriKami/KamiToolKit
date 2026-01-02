@@ -98,20 +98,18 @@ public unsafe class ContextMenu :  IDisposable {
 
         agentContextMenu->ClearMenu();
 
-        var indexer = 1;
         mainMenuEntries = [];
         mainMenuSubMenus = [];
         subMenuEntries = null;
 
-        foreach (var item in OrderedItems) {
+        foreach (var (index, item) in OrderedItems.Index()) {
             if (item is ContextMenuSubItem subItem) {
-                mainMenuSubMenus.Add(indexer, subItem);
-                agentContextMenu->AddMenuItem(item.Name, contextMenuEventInterface, indexer, !item.IsEnabled, submenu: true);
+                mainMenuSubMenus.Add(index, subItem);
+                agentContextMenu->AddMenuItem(item.Name, contextMenuEventInterface, index, !item.IsEnabled, submenu: true);
             } else {
-                mainMenuEntries.Add(indexer, item);
-                agentContextMenu->AddMenuItem(item.Name, contextMenuEventInterface, indexer, !item.IsEnabled, submenu: false);
+                mainMenuEntries.Add(index, item);
+                agentContextMenu->AddMenuItem(item.Name, contextMenuEventInterface, index, !item.IsEnabled, submenu: false);
             }
-            indexer++;
         }
 
         agentContextMenu->OpenContextMenu();
