@@ -64,7 +64,7 @@ public class ScrollingListNode : SimpleComponentNode {
         init => ListNode.ContentNode.AddNode(value);
     }
     
-    public bool AutoHideScrollbar {
+    public bool AutoHideScrollBar {
         get => ListNode.AutoHideScrollBar;
         set => ListNode.AutoHideScrollBar = value;
     }
