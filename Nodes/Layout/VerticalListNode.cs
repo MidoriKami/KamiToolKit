@@ -5,7 +5,21 @@ namespace KamiToolKit.Nodes;
 
 public class VerticalListNode : LayoutListNode {
 
-    public VerticalListAnchor Alignment {
+    /// <summary>
+    /// Displays items starting from either the bottom or the top of the list
+    /// </summary>
+    public VerticalListAnchor Anchor {
+        get;
+        set {
+            field = value;
+            RecalculateLayout();
+        }
+    }
+
+    /// <summary>
+    /// Displays items either left aligned or right aligned
+    /// </summary>
+    public VerticalListAlignment Alignment {
         get;
         set {
             field = value;
@@ -24,7 +38,7 @@ public class VerticalListNode : LayoutListNode {
     public bool FitWidth { get; set; }
 
     protected override void InternalRecalculateLayout() {
-        var startY = Alignment switch {
+        var startY = Anchor switch {
             VerticalListAnchor.Top => 0.0f + FirstItemSpacing,
             VerticalListAnchor.Bottom => Height,
             _ => 0.0f,
@@ -33,7 +47,7 @@ public class VerticalListNode : LayoutListNode {
         foreach (var node in NodeList) {
             if (!node.IsVisible) continue;
 
-            if (Alignment is VerticalListAnchor.Bottom) {
+            if (Anchor is VerticalListAnchor.Bottom) {
                 startY -= node.Height + ItemSpacing;
             }
 
@@ -42,10 +56,21 @@ public class VerticalListNode : LayoutListNode {
             if (FitWidth) {
                 node.Width = Width;
             }
+            else {
+                switch (Alignment) {
+                    case VerticalListAlignment.Right:
+                        node.X = Width - node.Width;
+                        break;
+                    
+                    case VerticalListAlignment.Left:
+                        node.X = 0.0f;
+                        break;
+                }
+            }
 
             AdjustNode(node);
 
-            if (Alignment is VerticalListAnchor.Top) {
+            if (Anchor is VerticalListAnchor.Top) {
                 startY += node.Height + ItemSpacing;
             }
         }

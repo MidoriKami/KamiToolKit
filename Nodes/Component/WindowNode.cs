@@ -228,7 +228,6 @@ public unsafe class WindowNode : WindowNodeBase {
         ConfigurationButtonNode.X = Width - 47.0f;
         InformationButtonNode.X = Width - 61.0f;
         DividingLineNode.Width = Width - 20.0f;
-
     }
 
     private void LoadTimelines() {
