@@ -151,7 +151,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
     protected NodeBase(NodeType nodeType) {
         if (MainThreadSafety.TryAssertMainThread()) return;
-        
+
         Log.Verbose($"Creating new node {GetType()}");
         Node = NativeMemoryHelper.Create<T>();
 
@@ -159,6 +159,8 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
             throw new Exception($"Unable to allocate memory for {typeof(T)}");
         }
 
+        KamiToolKitLibrary.AllocatedNodes?.TryAdd((nint)Node, GetType());
+        
         BuildVirtualTable();
 
         ResNode->Type = nodeType;
@@ -182,6 +184,8 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
                 InvokeOriginalDestructor(ResNode, true);
             }
 
+            KamiToolKitLibrary.AllocatedNodes?.Remove((nint)Node, out _);
+            
             Node = null;
         }
     }
