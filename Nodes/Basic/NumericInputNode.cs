@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Classes.Timelines;
 
 namespace KamiToolKit.Nodes;
@@ -50,6 +51,7 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
             NodeId = 5,
             Position = new Vector2(6.0f, 6.0f),
             FontType = FontType.Axis,
+            TextColor = ColorHelper.GetColor(1),
             FontSize = 12,
             AlignmentType = AlignmentType.Top,
             String = "999",
