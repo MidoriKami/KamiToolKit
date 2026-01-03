@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
@@ -95,9 +96,14 @@ public class ScrollingListNode : SimpleComponentNode {
     
     public void Clear() => listNode.ContentNode.Clear();
     
-    public delegate TU CreateNewNode<in T, out TU>(T data) where TU : NodeBase;
+    public bool SyncWithListData<T, TU>(IEnumerable<T> dataList, LayoutListNode.GetDataFromNode<T?, TU> getDataFromNode, LayoutListNode.CreateNewNode<T, TU> createNodeMethod) where TU : NodeBase 
+        => listNode.ContentNode.SyncWithListData(dataList, getDataFromNode, createNodeMethod);
 
-    public delegate T GetDataFromNode<out T, in TU>(TU node) where TU : NodeBase;
+    public bool SyncWithListDataByKey<T, TU, TKey>(IReadOnlyList<T> dataList, Func<T, TKey> getKeyFromData, Func<TU, TKey> getKeyFromNode, Action<TU, T> updateNode, 
+        LayoutListNode.CreateNewNode<T, TU> createNodeMethod, IEqualityComparer<TKey>? keyComparer = null) where TU : NodeBase where TKey : notnull 
+        => listNode.ContentNode.SyncWithListDataByKey(dataList, getKeyFromData, getKeyFromNode, updateNode, createNodeMethod, keyComparer);
+    
+    public void ReorderNodes(Comparison<NodeBase> comparison) => listNode.ContentNode.ReorderNodes(comparison);
     
     public VerticalListNode VerticalListNode => listNode.ContentNode;
 }
