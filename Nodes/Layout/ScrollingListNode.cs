@@ -8,91 +8,96 @@ namespace KamiToolKit.Nodes;
 /// </summary>
 public class ScrollingListNode : SimpleComponentNode {
 
-    public readonly ScrollingAreaNode<VerticalListNode> ListNode;
+    private readonly ScrollingAreaNode<VerticalListNode> listNode;
     
     public ScrollingListNode() {
-        ListNode = new ScrollingAreaNode<VerticalListNode> {
+        listNode = new ScrollingAreaNode<VerticalListNode> {
             ContentHeight = 100.0f,
         };
-        ListNode.AttachNode(this);
+        listNode.AttachNode(this);
     }
 
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        ListNode.Size = Size;
-        ListNode.ContentNode.RecalculateLayout();
-        ListNode.FitToContentHeight();
+        listNode.Size = Size;
+        listNode.ContentNode.RecalculateLayout();
+        listNode.FitToContentHeight();
     }
 
     public bool FitContents {
-        get => ListNode.ContentNode.FitContents;
-        set => ListNode.ContentNode.FitContents = value;
+        get => listNode.ContentNode.FitContents;
+        set => listNode.ContentNode.FitContents = value;
     }
     
     public bool FitWidth {
-        get => ListNode.ContentNode.FitWidth;
-        set => ListNode.ContentNode.FitWidth = value;
+        get => listNode.ContentNode.FitWidth;
+        set => listNode.ContentNode.FitWidth = value;
     }
     
     public VerticalListAnchor Anchor {
-        get => ListNode.ContentNode.Anchor;
-        set => ListNode.ContentNode.Anchor = value;
+        get => listNode.ContentNode.Anchor;
+        set => listNode.ContentNode.Anchor = value;
     }
 
     public VerticalListAlignment Alignment {
-        get => ListNode.ContentNode.Alignment;
-        set => ListNode.ContentNode.Alignment = value;
+        get => listNode.ContentNode.Alignment;
+        set => listNode.ContentNode.Alignment = value;
     }
 
     public bool ClipListContents {
-        get => ListNode.ContentNode.ClipListContents;
-        set => ListNode.ContentNode.ClipListContents = value;
+        get => listNode.ContentNode.ClipListContents;
+        set => listNode.ContentNode.ClipListContents = value;
     }
     
     public float ItemSpacing  {
-        get => ListNode.ContentNode.ItemSpacing;
-        set => ListNode.ContentNode.ItemSpacing = value;
+        get => listNode.ContentNode.ItemSpacing;
+        set => listNode.ContentNode.ItemSpacing = value;
     }
     
     public float FirstItemSpacing {
-        get => ListNode.ContentNode.FirstItemSpacing;
-        set => ListNode.ContentNode.FirstItemSpacing = value;
+        get => listNode.ContentNode.FirstItemSpacing;
+        set => listNode.ContentNode.FirstItemSpacing = value;
     }
 
     public ICollection<NodeBase> InitialNodes {
-        init => ListNode.ContentNode.AddNode(value);
+        init => listNode.ContentNode.AddNode(value);
     }
     
     public bool AutoHideScrollBar {
-        get => ListNode.AutoHideScrollBar;
-        set => ListNode.AutoHideScrollBar = value;
-    }
-        
-    public IReadOnlyList<NodeBase> Nodes => ListNode.ContentNode.Nodes;
-    
-    public IEnumerable<T> GetNodes<T>() where T : NodeBase => ListNode.ContentNode.GetNodes<T>();
-    
-    public void RecalculateLayout() {
-        ListNode.ContentNode.RecalculateLayout();
-        ListNode.FitToContentHeight();
+        get => listNode.AutoHideScrollBar;
+        set => listNode.AutoHideScrollBar = value;
     }
 
-    public void AddNode(IEnumerable<NodeBase> nodes) => ListNode.ContentNode.AddNode(nodes);
+    public int ScrollSpeed {
+        get => listNode.ScrollSpeed;
+        set => listNode.ScrollSpeed = value;
+    }
+        
+    public IReadOnlyList<NodeBase> Nodes => listNode.ContentNode.Nodes;
     
-    public void AddNode(NodeBase? node) => ListNode.ContentNode.AddNode(node);
+    public IEnumerable<T> GetNodes<T>() where T : NodeBase => listNode.ContentNode.GetNodes<T>();
     
-    public void RemoveNode(params NodeBase[] nodes) => ListNode.ContentNode.RemoveNode(nodes);
+    public void RecalculateLayout() {
+        listNode.ContentNode.RecalculateLayout();
+        listNode.FitToContentHeight();
+    }
+
+    public void AddNode(IEnumerable<NodeBase> nodes) => listNode.ContentNode.AddNode(nodes);
     
-    public void RemoveNode(NodeBase node) => ListNode.ContentNode.RemoveNode(node);
+    public void AddNode(NodeBase? node) => listNode.ContentNode.AddNode(node);
     
-    public void AddDummy(float size = 0.0f) => ListNode.ContentNode.AddDummy(size);
+    public void RemoveNode(params NodeBase[] nodes) => listNode.ContentNode.RemoveNode(nodes);
     
-    public void Clear() => ListNode.ContentNode.Clear();
+    public void RemoveNode(NodeBase node) => listNode.ContentNode.RemoveNode(node);
+    
+    public void AddDummy(float size = 0.0f) => listNode.ContentNode.AddDummy(size);
+    
+    public void Clear() => listNode.ContentNode.Clear();
     
     public delegate TU CreateNewNode<in T, out TU>(T data) where TU : NodeBase;
 
     public delegate T GetDataFromNode<out T, in TU>(TU node) where TU : NodeBase;
     
-    public VerticalListNode VerticalListNode => ListNode.ContentNode;
+    public VerticalListNode VerticalListNode => listNode.ContentNode;
 }

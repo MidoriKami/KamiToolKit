@@ -17,7 +17,7 @@ public unsafe class TreeListCategoryNode : ResNode {
     public readonly CollisionNode CollisionNode;
     public readonly TextNode LabelNode;
 
-    private List<NodeBase> children = [];
+    private readonly List<NodeBase> children = [];
 
     public IReadOnlyCollection<TreeListHeaderNode> HeaderNodes => children.OfType<TreeListHeaderNode>().ToList();
     public IReadOnlyCollection<NodeBase> Children => children.AsReadOnly();
