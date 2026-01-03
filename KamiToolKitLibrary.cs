@@ -13,7 +13,7 @@ public static class KamiToolKitLibrary {
     /// </summary>
     public static void Initialize(IDalamudPluginInterface pluginInterface) {
         IsInitialized = true;
-       
+
         // Inject non-Experimental Properties
         pluginInterface.Inject(DalamudInterface.Instance);
         DalamudInterface.Instance.GameInteropProvider.InitializeFromAttributes(DalamudInterface.Instance);
@@ -26,6 +26,8 @@ public static class KamiToolKitLibrary {
 
         // Force enable Verbose so that users are able to get advanced logging information on request.
         DalamudInterface.Instance.Log.MinimumLogLevel = LogEventLevel.Verbose;
+
+        DalamudInterface.Instance.Log.Info($"KamiToolKit initialized for {pluginInterface.InternalName}");
     }
 
     /// <summary>
