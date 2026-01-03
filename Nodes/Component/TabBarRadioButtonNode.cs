@@ -40,7 +40,7 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
         LabelNode = new TextNode {
             Position = new Vector2(13.0f, 2.0f),
             AlignmentType = AlignmentType.Center,
-            TextColor = ColorHelper.GetColor(6),
+            TextColor = ColorHelper.GetColor(50),
         };
         LabelNode.AttachNode(this);
 

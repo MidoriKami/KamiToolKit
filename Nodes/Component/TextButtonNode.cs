@@ -22,7 +22,7 @@ public unsafe class TextButtonNode : ButtonBase {
         LabelNode = new TextNode {
             AlignmentType = AlignmentType.Center, 
             Position = new Vector2(16.0f, 3.0f), 
-            TextColor = ColorHelper.GetColor(6),
+            TextColor = ColorHelper.GetColor(50),
         };
         LabelNode.AttachNode(this);
 
