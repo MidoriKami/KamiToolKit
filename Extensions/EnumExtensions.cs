@@ -4,7 +4,7 @@ using Dalamud.Utility;
 
 namespace KamiToolKit.Extensions;
 
-public static class EnumExtensions {
+internal static class EnumExtensions {
     extension(Enum enumValue) {
         public string Description => enumValue.GetDescription();
 
