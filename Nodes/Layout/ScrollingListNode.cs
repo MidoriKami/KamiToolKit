@@ -74,7 +74,14 @@ public class ScrollingListNode : SimpleComponentNode {
         get => listNode.ScrollSpeed;
         set => listNode.ScrollSpeed = value;
     }
-        
+
+    public int ScrollPosition {
+        get => listNode.ScrollPosition;
+        set => listNode.ScrollPosition = value;
+    }
+
+    public float ContentWidth => listNode.ContentNode.Width;
+
     public IReadOnlyList<NodeBase> Nodes => listNode.ContentNode.Nodes;
     
     public IEnumerable<T> GetNodes<T>() where T : NodeBase => listNode.ContentNode.GetNodes<T>();
