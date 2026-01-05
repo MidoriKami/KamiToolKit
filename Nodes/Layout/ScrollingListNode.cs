@@ -91,6 +91,8 @@ public class ScrollingListNode : SimpleComponentNode {
         listNode.FitToContentHeight();
     }
 
+    public void FitToContentHeight() => listNode.FitToContentHeight();
+
     public void AddNode(IEnumerable<NodeBase> nodes) => listNode.ContentNode.AddNode(nodes);
     
     public void AddNode(NodeBase? node) => listNode.ContentNode.AddNode(node);

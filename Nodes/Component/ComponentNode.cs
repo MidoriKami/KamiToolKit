@@ -11,16 +11,13 @@ public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComp
 }
 
 public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable where TU : unmanaged {
-    public sealed override CollisionNode CollisionNode { get; }
-    public sealed override AtkComponentBase* ComponentBase { get; }
-    public sealed override AtkUldComponentDataBase* DataBase { get; }
+    public override sealed CollisionNode CollisionNode { get; }
+    public override sealed AtkComponentBase* ComponentBase => Node->Component;
+    public override sealed AtkUldComponentDataBase* DataBase => Node->Component->UldManager.ComponentData;
 
     protected ComponentNode() : base(NodeType.Component) {
-        Component = NativeMemoryHelper.Create<T>();
-        ComponentBase = (AtkComponentBase*)Component;
-
-        Data = NativeMemoryHelper.UiAlloc<TU>();
-        DataBase = (AtkUldComponentDataBase*)Data;
+        Node->Component = (AtkComponentBase*) NativeMemoryHelper.Create<T>();
+        Node->Component->UldManager.ComponentData = (AtkUldComponentDataBase*)NativeMemoryHelper.UiAlloc<TU>();
 
         ComponentBase->Initialize();
 
@@ -48,7 +45,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         objects->NodeList = (AtkResNode**)NativeMemoryHelper.Malloc(8);
         objects->NodeList[0] = CollisionNode;
         objects->NodeCount = 1;
-        objects->Id = 1001;
+        objects->Id = 1000;
 
         uldManager.InitializeResourceRendererManager();
         uldManager.RootNode = CollisionNode;
@@ -62,10 +59,10 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         if (disposing) {
             if (!isNativeDestructor) {
                 NativeMemoryHelper.UiFree(Data);
-                Data = null;
+                Node->Component->UldManager.ComponentData = null;
 
-                ComponentBase->Deinitialize();
-                ComponentBase->Dtor(1);
+                Node->Component->Deinitialize();
+                Node->Component->Dtor(1);
                 Node->Component = null;
             }
 
@@ -83,7 +80,6 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
     protected void InitializeComponentEvents() {
         ComponentBase->InitializeFromComponentData(DataBase);
-
         ComponentBase->Setup();
         ComponentBase->SetEnabledState(true);
     }
@@ -103,13 +99,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
     public override int ChildCount => ComponentBase->UldManager.NodeListCount;
 
-    internal T* Component {
-        get => (T*)Node->Component;
-        set => Node->Component = (AtkComponentBase*)value;
-    }
+    internal T* Component => (T*)ComponentBase;
 
-    internal TU* Data {
-        get => (TU*)Node->Component->UldManager.ComponentData;
-        set => Node->Component->UldManager.ComponentData = (AtkUldComponentDataBase*)value;
-    }
+    internal TU* Data => (TU*)DataBase;
 }

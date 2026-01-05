@@ -172,7 +172,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
     public T* Node { get; private set; }
 
-    internal sealed override AtkResNode* ResNode => (AtkResNode*)Node;
+    internal override sealed AtkResNode* ResNode => (AtkResNode*)Node;
 
     public static implicit operator T*(NodeBase<T> node) => (T*) node.ResNode;
 
