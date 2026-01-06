@@ -9,7 +9,7 @@ namespace KamiToolKit.Premade.Nodes;
 
 public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeData {
     private SearchWidget searchWidget;
-    private ScrollingAreaNode<VerticalListNode> listNode;
+    private ScrollingListNode listNode;
 
     private TextButtonNode addButton;
     private TextButtonNode editButton;
@@ -24,11 +24,10 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         };
         searchWidget.AttachNode(this);
 
-        listNode = new ScrollingAreaNode<VerticalListNode> {
-            ContentHeight = 100.0f,
+        listNode = new ScrollingListNode {
             AutoHideScrollBar = true,
+            FitContents = true,
         };
-        listNode.ContentNode.FitContents = true;
         listNode.AttachNode(this);
 
         addButton = new TextButtonNode {
@@ -83,7 +82,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
     }
 
     private void OnSortOrderChanged(string sortingString, bool reversed) {
-        listNode.ContentNode.ReorderNodes((x, y) => {
+        listNode.ReorderNodes((x, y) => {
             if (x is not SearchInfoNode<T> left || y is not SearchInfoNode<T> right) return 0;
             return left.Compare(right, sortingString, reversed);
         });
@@ -98,12 +97,11 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
 
         OnOptionChanged?.Invoke(null);
 
-        foreach (var option in listNode.ContentNode.GetNodes<SearchInfoNode<T>>()) {
+        foreach (var option in listNode.GetNodes<SearchInfoNode<T>>()) {
             option.IsVisible = option.IsMatch(searchString);
         }
 
-        listNode.ContentNode.RecalculateLayout();
-        listNode.ContentHeight = listNode.ContentNode.Height;
+        listNode.RecalculateLayout();
     }
 
     private void OnAddClicked()
@@ -113,7 +111,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         SelectionOptions.Add(option);
         UpdateList();
 
-        var newOptionNode = listNode.ContentNode.GetNodes<SearchInfoNode<T>>().FirstOrDefault(node => ReferenceEquals(node.Option, option));
+        var newOptionNode = listNode.GetNodes<SearchInfoNode<T>>().FirstOrDefault(node => ReferenceEquals(node.Option, option));
         if (newOptionNode is not null) {
             OnOptionClicked(newOptionNode);
         }
@@ -165,29 +163,23 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         removeButton.IsEnabled = false;
         editButton.IsEnabled = false;
 
-        listNode.ContentNode.SyncWithListData(
+        listNode.SyncWithListData(
             SelectionOptions,
             node => node.Option,
             data => new SearchInfoNode<T> {
-                Size = new Vector2(listNode.ContentNode.Width, 48.0f),
+                Size = new Vector2(listNode.ContentWidth, 48.0f),
                 OnClicked = OnOptionClicked,
                 Option = data,
             });
 
-        listNode.ContentNode.RecalculateLayout();
-        listNode.ContentHeight = listNode.ContentNode.Height;
+        listNode.RecalculateLayout();
 
         if (SortOptions?.Count > 0) {
             OnSortOrderChanged(SortOptions.First(), false);
         }
 
-        foreach (var node in listNode.ContentNode.GetNodes<BaseSearchInfoNode<T>>()) {
-            node.Size = new Vector2(listNode.ContentNode.Width, 48.0f);
-            node.Refresh();
-        }
-
         if (previouslySelectedOption is not null) {
-            var restoredNode = listNode.ContentNode
+            var restoredNode = listNode
                 .GetNodes<SearchInfoNode<T>>()
                 .FirstOrDefault(n => ReferenceEquals(n.Option, previouslySelectedOption));
 

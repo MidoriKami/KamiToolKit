@@ -12,7 +12,7 @@ namespace KamiToolKit.Premade.Addons;
 public abstract class BaseSearchAddon<T> : NativeAddon {
     
     private SearchWidget? searchWidget;
-    private ScrollingAreaNode<VerticalListNode>? listNode;
+    private ScrollingListNode? listNode;
 
     private TextButtonNode? cancelButton;
     private TextButtonNode? confirmButton;
@@ -29,13 +29,12 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
         };
         searchWidget.AttachNode(this);
 
-        listNode = new ScrollingAreaNode<VerticalListNode> {
+        listNode = new ScrollingListNode {
             Position = new Vector2(ContentStartPosition.X, searchWidget.Y + searchWidget.Height + 8.0f),
             Size = new Vector2(ContentSize.X, ContentSize.Y - searchWidget.Height - 16.0f - 24.0f - 8.0f),
             AutoHideScrollBar = true,
-            ContentHeight = 10.0f,
+            FitContents = true,
         };
-        listNode.ContentNode.FitContents = true;
         listNode.AttachNode(this);
 
         const float buttonPadding = 20.0f;
@@ -61,15 +60,14 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
 
         List<BaseSearchInfoNode<T>> newOptions = [];
         foreach (var newOptionNode in SearchOptions.Select(BuildOptionNode)) {
-            newOptionNode.Size = new Vector2(listNode.ContentNode.Width, 48.0f);
+            newOptionNode.Size = new Vector2(listNode.ContentWidth, 48.0f);
             newOptionNode.OnClicked = OnOptionClicked;
             newOptions.Add(newOptionNode);
         }
         
-        listNode.ContentNode.AddNode(newOptions);
+        listNode.AddNode(newOptions);
 
-        listNode.ContentNode.RecalculateLayout();
-        listNode.ContentHeight = listNode.ContentNode.Height;
+        listNode.RecalculateLayout();
 
         if (SortingOptions.Count > 0) {
             OnSortOrderUpdated(SortingOptions.First(), false);
@@ -109,7 +107,7 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
         confirmButton.IsEnabled = true;
     }
 
-    private void OnSortOrderUpdated(string sortingString, bool reversed) => listNode?.ContentNode.ReorderNodes((x, y) => {
+    private void OnSortOrderUpdated(string sortingString, bool reversed) => listNode?.ReorderNodes((x, y) => {
         if (x is not BaseSearchInfoNode<T> left || y is not BaseSearchInfoNode<T> right) return 0;
 
         return left.Compare(right, sortingString, reversed);
@@ -118,7 +116,7 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
     private void OnSearchUpdated(string searchString) {
         if (listNode is null) return;
 
-        foreach (var node in listNode.ContentNode.GetNodes<BaseSearchInfoNode<T>>()) {
+        foreach (var node in listNode.GetNodes<BaseSearchInfoNode<T>>()) {
             node.IsVisible = node.IsMatch(searchString);
         }
 
@@ -126,8 +124,7 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
 
         selectedOption = null;
         
-        listNode.ContentNode.RecalculateLayout();
-        listNode.ContentHeight = listNode.ContentNode.Height;
+        listNode.RecalculateLayout();
     }
 
     public required List<string> SortingOptions { get; init; }

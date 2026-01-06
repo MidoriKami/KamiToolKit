@@ -76,7 +76,7 @@ public class VerticalListNode : LayoutListNode {
         }
 
         if (FitContents) {
-            Height = NodeList.Sum(node => node.IsVisible ? node.Height + ItemSpacing : 0.0f) + FirstItemSpacing;
+            Height = NodeList.Sum(node => node.IsVisible ? node.Height + ItemSpacing : 0.0f) + FirstItemSpacing - ItemSpacing;
         }
     }
 }
