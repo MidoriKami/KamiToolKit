@@ -21,9 +21,9 @@ public abstract unsafe partial class NodeBase {
 
     private NodeEditOverlayNode? overlayNode;
 
-    public Action? OnResizeComplete { get; set; }
-    public Action? OnMoveComplete { get; set; }
-    public Action? OnEditComplete { get; set; }
+    public Action<NodeBase>? OnResizeComplete { get; set; }
+    public Action<NodeBase>? OnMoveComplete { get; set; }
+    public Action<NodeBase>? OnEditComplete { get; set; }
 
     public bool EnableMoving {
         get;
@@ -144,8 +144,8 @@ public abstract unsafe partial class NodeBase {
 
             // End Resize Event
             case AtkEventType.MouseUp when isResizing: {
-                OnResizeComplete?.Invoke();
-                OnEditComplete?.Invoke();
+                OnResizeComplete?.Invoke(this);
+                OnEditComplete?.Invoke(this);
 
                 isResizing = false;
                 editEventListener.RemoveEvent(AtkEventType.MouseUp);
@@ -165,8 +165,8 @@ public abstract unsafe partial class NodeBase {
 
             // End Move Event
             case AtkEventType.MouseUp when isMoving: {
-                OnMoveComplete?.Invoke();
-                OnEditComplete?.Invoke();
+                OnMoveComplete?.Invoke(this);
+                OnEditComplete?.Invoke(this);
 
                 isMoving = false;
                 editEventListener.RemoveEvent(AtkEventType.MouseUp);
