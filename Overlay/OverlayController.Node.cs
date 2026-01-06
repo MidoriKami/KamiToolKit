@@ -16,9 +16,12 @@ public abstract unsafe class OverlayNode : SimpleOverlayNode {
     private bool preAutoHideState;
     private bool? lastNamePlateVisible;
 
-    public virtual void Update() {
+    public void OnUpdate() { 
+        Update();
         UpdateAutoHide();
     }
+
+    protected abstract void Update();
 
     private void UpdateAutoHide() {
         if (HideWithNativeUi) {
