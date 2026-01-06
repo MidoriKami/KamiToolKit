@@ -11,9 +11,9 @@ public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComp
 }
 
 public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable where TU : unmanaged {
-    public override sealed CollisionNode CollisionNode { get; }
-    public override sealed AtkComponentBase* ComponentBase => Node->Component;
-    public override sealed AtkUldComponentDataBase* DataBase => Node->Component->UldManager.ComponentData;
+    public sealed override CollisionNode CollisionNode { get; }
+    public sealed override AtkComponentBase* ComponentBase => Node->Component;
+    public sealed override AtkUldComponentDataBase* DataBase => Node->Component->UldManager.ComponentData;
 
     protected ComponentNode() : base(NodeType.Component) {
         Node->Component = (AtkComponentBase*) NativeMemoryHelper.Create<T>();
