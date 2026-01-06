@@ -65,7 +65,7 @@ public unsafe partial class OverlayController {
 
         if (overlayNodes.TryGetValue(overlayLayer, out var list)) {
             foreach (var node in list) {
-                node.OnUpdate();
+                node.Update();
             }
         }
     }
