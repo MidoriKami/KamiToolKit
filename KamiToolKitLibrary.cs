@@ -22,7 +22,7 @@ public static class KamiToolKitLibrary {
         pluginInterface.Inject(DalamudInterface.Instance);
         DalamudInterface.Instance.GameInteropProvider.InitializeFromAttributes(DalamudInterface.Instance);
 
-        // Create node datashare
+        // Create node data share
         AllocatedNodes = DalamudInterface.Instance.PluginInterface.GetOrCreateData("KamiToolKitAllocatedNodes", () => new ConcurrentDictionary<nint, Type>());
         
         // Inject Experimental Properties
