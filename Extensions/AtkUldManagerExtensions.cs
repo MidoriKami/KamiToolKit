@@ -7,8 +7,6 @@ using KamiToolKit.Classes;
 namespace KamiToolKit.Extensions;
 
 public static unsafe class AtkUldManagerExtensions {
-
-    /// <param name="manager">AtkUldManager to search</param>
     extension(ref AtkUldManager manager) {
         private bool IsNodeInObjectList(AtkResNode* node) {
             foreach (var objectNode in manager.ObjectNodeSpan) {
@@ -26,6 +24,19 @@ public static unsafe class AtkUldManagerExtensions {
             return false;
         }
 
+        /// <summary>
+        /// Adds node and all children nodes to this UldManager's Object List
+        /// </summary>
+        public void AddNodeToObjectList(NodeBase node) {
+            manager.AddNodeToObjectList(node.ResNode);
+            
+            foreach (var child in NodeBase.GetLocalChildren(node)) {
+                manager.AddNodeToObjectList(child.ResNode);
+            }
+
+            manager.UpdateDrawNodeList();
+        }
+        
         public void AddNodeToObjectList(AtkResNode* newNode) {
             if (newNode is null) return;
 
@@ -48,6 +59,19 @@ public static unsafe class AtkUldManagerExtensions {
 
             manager.Objects->NodeList = newBuffer;
             manager.Objects->NodeCount = newSize;
+        }
+
+        /// <summary>
+        /// Removes node and all children nodes from this UldManager's Object List
+        /// </summary>
+        public void RemoveNodeFromObjectList(NodeBase node) {
+            manager.RemoveNodeFromObjectList(node.ResNode);
+
+            foreach (var child in NodeBase.GetLocalChildren(node)) {
+                manager.RemoveNodeFromObjectList(child.ResNode);
+            }
+
+            manager.UpdateDrawNodeList();
         }
 
         public void RemoveNodeFromObjectList(AtkResNode* node) {
@@ -82,6 +106,18 @@ public static unsafe class AtkUldManagerExtensions {
             }
         }
 
-        public Span<Pointer<AtkResNode>> ObjectNodeSpan => new(manager.Objects->NodeList, manager.Objects->NodeCount);
+        public uint GetMaxNodeId() {
+            uint max = 1;
+            foreach (var child in manager.Nodes) {
+                if (child.Value is null) continue;
+
+                max = Math.Max(child.Value->NodeId, max);
+            }
+
+            return max;
+        }
+
+        public Span<Pointer<AtkResNode>> ObjectNodeSpan 
+            => new(manager.Objects->NodeList, manager.Objects->NodeCount);
     }
 }

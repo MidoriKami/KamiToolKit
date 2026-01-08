@@ -88,7 +88,6 @@ public abstract class LayoutListNode : SimpleComponentNode {
     public virtual void RemoveNode(NodeBase node) {
         if (!NodeList.Contains(node)) return;
 
-        node.DetachNode();
         NodeList.Remove(node);
         node.Dispose();
 

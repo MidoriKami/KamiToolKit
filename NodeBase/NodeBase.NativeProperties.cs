@@ -225,8 +225,13 @@ public abstract unsafe partial class NodeBase {
     public void RemoveFlags(NodeFlags flags)
         => NodeFlags &= ~flags;
 
-    public void MarkDirty()
-        => VisitChildren(ResNode, pointer => pointer.Value->DrawFlags |= 1);
+    public void MarkDirty() {
+        foreach (var child in GetAllChildren(this)) {
+            child.DrawFlags |= DrawFlags.IsDirty;
+        }
+
+        DrawFlags |= DrawFlags.IsDirty;
+    }
 
     public bool CheckCollision(short x, short y, bool inclusive = true)
         => ResNode->CheckCollisionAtCoords(x, y, true);
