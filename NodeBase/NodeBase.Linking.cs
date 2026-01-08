@@ -56,7 +56,9 @@ public abstract unsafe partial class NodeBase {
         if (targetAddon is null) return;
 
         // Check the Addon's node list to find out what NodeId we should be, and set that before attaching
-        NodeId = targetAddon.InternalAddon->UldManager.GetMaxNodeId() + 1;
+        if (NodeId > NodeIdBase) {
+            NodeId = targetAddon.InternalAddon->UldManager.GetMaxNodeId() + 1;
+        }
         
         PerformNativeAttach(targetAddon.RootNode, targetPosition);
 
