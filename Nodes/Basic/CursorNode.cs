@@ -10,6 +10,7 @@ public class CursorNode : ResNode {
 
     public CursorNode() {
         CursorImageNode = new SimpleImageNode {
+            NodeId = 3,
             TexturePath = "ui/uld/TextInputA.tex",
             Size = new Vector2(4.0f, 24.0f),
             TextureCoordinates = new Vector2(68.0f, 0.0f),
