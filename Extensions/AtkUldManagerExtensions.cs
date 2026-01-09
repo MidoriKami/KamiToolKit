@@ -119,5 +119,19 @@ public static unsafe class AtkUldManagerExtensions {
 
         public Span<Pointer<AtkResNode>> ObjectNodeSpan 
             => new(manager.Objects->NodeList, manager.Objects->NodeCount);
+        
+        public T* SearchNodeById<T>(uint nodeId) where T : unmanaged {
+            foreach (var node in manager.Nodes) {
+                if (node.Value is not null) {
+                    if (node.Value->NodeId == nodeId)
+                        return (T*) node.Value;
+                }
+            }
+
+            return null;
+        }
+
+        public AtkResNode* SearchNodeById(uint nodeId)
+            => manager.SearchNodeById<AtkResNode>(nodeId);
     }
 }
