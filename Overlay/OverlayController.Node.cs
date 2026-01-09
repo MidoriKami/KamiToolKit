@@ -12,7 +12,7 @@ public abstract unsafe class OverlayNode : SimpleOverlayNode {
     /// When true, this node will automatically hide when the game hides things like nameplates
     /// </summary>
     public virtual bool HideWithNativeUi => true;
-    protected new bool IsVisible { get; set; }
+    public override bool IsVisible { get; set; }
 
     public void Update() { 
         OnUpdate();

@@ -112,7 +112,7 @@ public abstract unsafe partial class NodeBase {
 
     private bool? lastIsVisible;
     
-    public bool IsVisible {
+    public virtual bool IsVisible {
         get => ResNode->Visible;
         set {
             ResNode->Visible = value;

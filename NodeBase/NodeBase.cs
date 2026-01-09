@@ -165,7 +165,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
         ResNode->Type = nodeType;
         ResNode->NodeId = NodeIdBase + CurrentOffset++;
-        IsVisible = true;
+        ResNode->ToggleVisibility(true);
 
         CreatedNodes.Add(this);
     }
