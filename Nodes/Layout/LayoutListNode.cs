@@ -34,7 +34,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
     public void RecalculateLayout() {
         if (suppressRecalculateLayout) return;
 
-        InternalRecalculateLayout();
+        OnRecalculateLayout();
 
         foreach (var node in NodeList) {
             if (node is LayoutListNode subNode) {
@@ -43,7 +43,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
         }
     }
     
-    protected abstract void InternalRecalculateLayout();
+    protected abstract void OnRecalculateLayout();
 
     protected virtual void AdjustNode(NodeBase node) { }
     

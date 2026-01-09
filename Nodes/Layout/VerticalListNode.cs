@@ -37,7 +37,7 @@ public class VerticalListNode : LayoutListNode {
     /// </summary>
     public bool FitWidth { get; set; }
 
-    protected override void InternalRecalculateLayout() {
+    protected override void OnRecalculateLayout() {
         var startY = Anchor switch {
             VerticalListAnchor.Top => 0.0f + FirstItemSpacing,
             VerticalListAnchor.Bottom => Height,

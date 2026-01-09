@@ -84,7 +84,7 @@ public class ListBoxNode : LayoutListNode {
         RecalculateLayout();
     }
 
-    protected override void InternalRecalculateLayout() {
+    protected override void OnRecalculateLayout() {
         var runningPosition = LayoutOrientation switch {
             LayoutOrientation.Vertical when LayoutAnchor is LayoutAnchor.TopLeft or LayoutAnchor.TopRight 
                 => GetLayoutStartPosition() + new Vector2(0.0f, FirstItemSpacing),

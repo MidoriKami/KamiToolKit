@@ -31,7 +31,7 @@ public class HorizontalListNode : LayoutListNode {
     /// </summary>
     public bool FitToContentHeight { get; set; }
 
-    protected override void InternalRecalculateLayout() {
+    protected override void OnRecalculateLayout() {
         var startX = Alignment switch {
             HorizontalListAnchor.Left => 0.0f + FirstItemSpacing,
             HorizontalListAnchor.Right => Width - FirstItemSpacing,

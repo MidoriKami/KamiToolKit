@@ -8,7 +8,7 @@ public class OrderedVerticalListNode<T, TU> : VerticalListNode where T : NodeBas
 
     public Func<T, TU>? OrderSelector { get; set; }
 
-    protected override void InternalRecalculateLayout() {
+    protected override void OnRecalculateLayout() {
         var typedList = NodeList.OfType<T>();
 
         if (OrderSelector is null) {

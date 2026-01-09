@@ -7,7 +7,7 @@ public class LabelLayoutNode : LayoutListNode {
 
     public bool FillWidth { get; set; }
     
-    protected override void InternalRecalculateLayout() {
+    protected override void OnRecalculateLayout() {
         if (Nodes.Count is 0) return;
         
         var labelNode = Nodes[0];
