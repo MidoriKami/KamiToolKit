@@ -65,6 +65,18 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         }
     }
 
+    public void AddTextFlags(params TextFlags[] flags) {
+        foreach (var flag in flags) {
+            TextFlags |= flag;
+        }
+    }
+
+    public void RemoveTextFlags(params TextFlags[] flags) {
+        foreach (var flag in flags) {
+            TextFlags &= ~flag;
+        }
+    }
+
     public uint FontSize {
         get => Node->FontSize;
         set {
