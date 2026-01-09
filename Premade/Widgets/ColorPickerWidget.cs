@@ -104,8 +104,8 @@ public class ColorPickerWidget : SimpleComponentNode {
     public void SetAlpha(float alpha) {
         CurrentColor = CurrentColor with { A = alpha };
 
-        ColorPreviewWithInput.HsvaColor = CurrentColor;
-        AlphaBarNode.HsvaColor = CurrentColor;
+        ColorPreviewWithInput.ColorHsva = CurrentColor;
+        AlphaBarNode.ColorHsva = CurrentColor;
 
         RaisePreviewMaybe();
     }
@@ -117,8 +117,8 @@ public class ColorPickerWidget : SimpleComponentNode {
         ColorPickerNode.SelectorColor = CurrentColor;
         ColorPickerNode.SquareColor = CurrentColor with { S = 1.0f, V = 1.0f };
 
-        ColorPreviewWithInput.HsvaColor = CurrentColor;
-        AlphaBarNode.HsvaColor = CurrentColor;
+        ColorPreviewWithInput.ColorHsva = CurrentColor;
+        AlphaBarNode.ColorHsva = CurrentColor;
 
         RaisePreviewMaybe();
     }
@@ -126,13 +126,13 @@ public class ColorPickerWidget : SimpleComponentNode {
     public void SetSaturation(float saturation) {
         CurrentColor = CurrentColor with { S = saturation };
 
-        ColorPreviewWithInput.HsvaColor = CurrentColor;
+        ColorPreviewWithInput.ColorHsva = CurrentColor;
         ColorPickerNode.SelectorColor = CurrentColor;
 
         ColorPickerNode.SquareColor = CurrentColor;
         ColorPickerNode.SquareSaturationValue = CurrentColor;
 
-        AlphaBarNode.HsvaColor = CurrentColor;
+        AlphaBarNode.ColorHsva = CurrentColor;
 
         RaisePreviewMaybe();
     }
@@ -140,13 +140,13 @@ public class ColorPickerWidget : SimpleComponentNode {
     public void SetValue(float value) {
         CurrentColor = CurrentColor with { V = value };
 
-        ColorPreviewWithInput.HsvaColor = CurrentColor;
+        ColorPreviewWithInput.ColorHsva = CurrentColor;
         ColorPickerNode.SelectorColor = CurrentColor;
 
         ColorPickerNode.SquareColor = CurrentColor;
         ColorPickerNode.SquareSaturationValue = CurrentColor;
 
-        AlphaBarNode.HsvaColor = CurrentColor;
+        AlphaBarNode.ColorHsva = CurrentColor;
 
         RaisePreviewMaybe();
     }

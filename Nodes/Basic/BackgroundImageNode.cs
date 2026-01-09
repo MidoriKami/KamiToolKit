@@ -19,7 +19,7 @@ public unsafe class BackgroundImageNode : SimpleImageNode {
         }
     }
 
-    public new ColorHelpers.HsvaColor HsvaColor {
+    public new ColorHelpers.HsvaColor ColorHsva {
         get => ColorHelpers.RgbaToHsv(Color);
         set => Color = ColorHelpers.HsvToRgb(value);
     }

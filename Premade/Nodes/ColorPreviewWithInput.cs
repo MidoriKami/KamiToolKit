@@ -48,10 +48,10 @@ public class ColorPreviewWithInput : SimpleComponentNode {
         }
     }
 
-    public override ColorHelpers.HsvaColor HsvaColor {
-        get => ColorPreviewNode.HsvaColor;
+    public override ColorHelpers.HsvaColor ColorHsva {
+        get => ColorPreviewNode.ColorHsva;
         set {
-            ColorPreviewNode.HsvaColor = value;
+            ColorPreviewNode.ColorHsva = value;
             UpdateColorText();
         }
     }

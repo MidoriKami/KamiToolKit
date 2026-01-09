@@ -47,8 +47,8 @@ public class ColorPreviewNode : SimpleComponentNode {
         set => SelectedColorPreviewNode.Color = value;
     }
 
-    public override ColorHelpers.HsvaColor HsvaColor {
-        get => SelectedColorPreviewNode.HsvaColor;
-        set => SelectedColorPreviewNode.HsvaColor = value;
+    public override ColorHelpers.HsvaColor ColorHsva {
+        get => SelectedColorPreviewNode.ColorHsva;
+        set => SelectedColorPreviewNode.ColorHsva = value;
     }
 }

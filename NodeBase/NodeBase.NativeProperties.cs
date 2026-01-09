@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -23,8 +22,8 @@ public abstract unsafe partial class NodeBase {
     }
 
     public virtual Vector2 Position {
-        get => new(X, Y);
-        set => ResNode->SetPositionFloat(value.X, value.Y);
+        get => ResNode->Position;
+        set => ResNode->Position = value;
     }
 
     public virtual float ScreenX {
@@ -37,13 +36,8 @@ public abstract unsafe partial class NodeBase {
         set => ResNode->ScreenY = value;
     }
 
-    public virtual Vector2 ScreenPosition {
-        get => new(ScreenX, ScreenY);
-        set {
-            ScreenX = value.X;
-            ScreenY = value.Y;
-        }
-    }
+    public virtual Vector2 ScreenPosition 
+        => ResNode->ScreenPosition;
 
     public virtual float Width {
         get => ResNode->GetWidth();
@@ -62,16 +56,19 @@ public abstract unsafe partial class NodeBase {
     }
 
     public virtual Vector2 Size {
-        get => new(Width, Height);
+        get => ResNode->Size;
         set {
             Width = value.X;
             Height = value.Y;
+            OnSizeChanged();
         }
     }
 
-    public Bounds Bounds => new() { TopLeft = Position, BottomRight = Position + Size };
+    public Bounds Bounds 
+        => ResNode->Bounds;
 
-    public Vector2 Center => Position + Size / 2f;
+    public Vector2 Center
+        => ResNode->Center;
 
     public virtual float ScaleX {
         get => ResNode->GetScaleX();
@@ -84,8 +81,8 @@ public abstract unsafe partial class NodeBase {
     }
 
     public virtual Vector2 Scale {
-        get => new(ScaleX, ScaleY);
-        set => ResNode->SetScale(value.X, value.Y);
+        get => ResNode->Scale;
+        set => ResNode->Scale = value;
     }
 
     public virtual float Rotation {
@@ -94,8 +91,8 @@ public abstract unsafe partial class NodeBase {
     }
 
     public virtual float RotationDegrees {
-        get => ResNode->GetRotationDegrees();
-        set => ResNode->SetRotationDegrees(value - (int)(value / 360.0f) * 360.0f);
+        get => ResNode->RotationDegrees;
+        set => ResNode->RotationDegrees = value;
     }
 
     public virtual float OriginX {
@@ -109,16 +106,16 @@ public abstract unsafe partial class NodeBase {
     }
 
     public virtual Vector2 Origin {
-        get => new(OriginX, OriginY);
-        set => ResNode->SetOrigin(value.X, value.Y);
+        get => ResNode->Origin;
+        set => ResNode->Origin = value;
     }
 
     private bool? lastIsVisible;
     
     public bool IsVisible {
-        get => ResNode->IsVisible();
+        get => ResNode->Visible;
         set {
-            ResNode->ToggleVisibility(value);
+            ResNode->Visible = value;
             if (lastIsVisible is null || lastIsVisible != value) {
                 OnVisibilityToggled?.Invoke(value);
                 lastIsVisible = value;
@@ -134,13 +131,13 @@ public abstract unsafe partial class NodeBase {
     }
 
     public virtual Vector4 Color {
-        get => ResNode->Color.ToVector4();
-        set => ResNode->Color = value.ToByteColor();
+        get => ResNode->ColorVector;
+        set => ResNode->ColorVector = value;
     }
 
-    public virtual ColorHelpers.HsvaColor HsvaColor {
-        get => ColorHelpers.RgbaToHsv(Color);
-        set => Color = ColorHelpers.HsvToRgb(value);
+    public virtual ColorHelpers.HsvaColor ColorHsva {
+        get => ResNode->ColorHsva;
+        set => ResNode->ColorHsva = value;
     }
 
     public virtual float Alpha {
@@ -149,31 +146,23 @@ public abstract unsafe partial class NodeBase {
     }
 
     public virtual Vector3 AddColor {
-        get => new Vector3(ResNode->AddRed, ResNode->AddGreen, ResNode->AddBlue) / 255.0f;
-        set {
-            ResNode->AddRed = (short)(value.X * 255);
-            ResNode->AddGreen = (short)(value.Y * 255);
-            ResNode->AddBlue = (short)(value.Z * 255);
-        }
+        get => ResNode->AddColor;
+        set => ResNode->AddColor = value;
     }
 
-    public virtual ColorHelpers.HsvaColor HsvaAddColor {
-        get => ColorHelpers.RgbaToHsv(AddColor.AsVector4());
-        set => AddColor = ColorHelpers.HsvToRgb(value).AsVector3();
+    public virtual ColorHelpers.HsvaColor AddColorHsva {
+        get => ResNode->AddColorHsva;
+        set => ResNode->AddColorHsva = value;
     }
 
     public virtual Vector3 MultiplyColor {
-        get => new Vector3(ResNode->MultiplyRed, ResNode->MultiplyGreen, ResNode->MultiplyBlue) / 100.0f;
-        set {
-            ResNode->MultiplyRed = (byte)(value.X * 100.0f);
-            ResNode->MultiplyGreen = (byte)(value.Y * 100.0f);
-            ResNode->MultiplyBlue = (byte)(value.Z * 100.0f);
-        }
+        get => ResNode->MultiplyColor;
+        set => ResNode->MultiplyColor = value;
     }
 
-    public virtual ColorHelpers.HsvaColor HsvaMultiplyColor {
-        get => ColorHelpers.RgbaToHsv(MultiplyColor.AsVector4());
-        set => MultiplyColor = ColorHelpers.HsvToRgb(value).AsVector3();
+    public virtual ColorHelpers.HsvaColor MultiplyColorHsva {
+        get => ResNode->MultiplyColorHsva;
+        set => ResNode->MultiplyColorHsva = value;
     }
 
     public uint NodeId {
@@ -203,41 +192,32 @@ public abstract unsafe partial class NodeBase {
         set => ResNode->Type = value;
     }
 
-    public virtual int ChildCount => ResNode->ChildCount;
+    public virtual int ChildCount 
+        => ResNode->ChildCount;
 
     protected virtual void OnSizeChanged() { }
 
-    public void AddFlags(params NodeFlags[] flags) {
-        foreach (var flag in flags) {
-            AddFlags(flag);
-        }
-    }
+    public void AddFlags(params NodeFlags[] flags)
+        => ResNode->AddFlags(flags);
 
-    public void AddFlags(NodeFlags flags)
-        => NodeFlags |= flags;
-
-    public void RemoveFlags(params NodeFlags[] flags) {
-        foreach (var flag in flags) {
-            RemoveFlags(flag);
-        }
-    }
-
-    public void RemoveFlags(NodeFlags flags)
-        => NodeFlags &= ~flags;
+    public void RemoveFlags(params NodeFlags[] flags)
+        => ResNode->RemoveFlags(flags);
 
     public void MarkDirty() {
         foreach (var child in GetAllChildren(this)) {
-            child.DrawFlags |= DrawFlags.IsDirty;
+            child.ResNode->AddDrawFlag([DrawFlags.IsDirty]);
         }
-
-        DrawFlags |= DrawFlags.IsDirty;
+        ResNode->AddDrawFlag([DrawFlags.IsDirty]);
     }
 
     public bool CheckCollision(short x, short y, bool inclusive = true)
-        => ResNode->CheckCollisionAtCoords(x, y, true);
+        => ResNode->CheckCollision(x, y, inclusive);
+    
+    public bool CheckCollision(Vector2 position, bool inclusive = true)
+        => ResNode->CheckCollision((short) position.X, (short) position.Y, inclusive);
 
     public bool CheckCollision(AtkEventData* eventData, bool inclusive = true)
-        => CheckCollision(eventData->MouseData.PosX, eventData->MouseData.PosY, inclusive);
+        => ResNode->CheckCollision(eventData, inclusive);
 
     public Matrix2x2 Transform {
         get => ResNode->Transform;

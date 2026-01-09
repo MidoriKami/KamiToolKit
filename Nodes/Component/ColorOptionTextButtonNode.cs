@@ -61,8 +61,8 @@ public unsafe class ColorOptionTextButtonNode : ButtonBase {
     }
 
     public ColorHelpers.HsvaColor? DefaultHsvaColor {
-        get => ColorNode.HsvaColor;
-        set => ColorNode.HsvaColor = value ?? default;
+        get => ColorNode.ColorHsva;
+        set => ColorNode.ColorHsva = value ?? default;
     }
 
     public Vector4? DefaultColor {

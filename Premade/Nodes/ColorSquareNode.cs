@@ -53,9 +53,9 @@ public class ColorSquareNode : SimpleComponentNode {
         ColorDotNode.Position = new Vector2(Width, 0.0f) - ColorDotNode.Origin;
     }
 
-    public override ColorHelpers.HsvaColor HsvaMultiplyColor {
-        get => ColorGradientNode.HsvaMultiplyColor;
-        set => ColorGradientNode.HsvaMultiplyColor = value;
+    public override ColorHelpers.HsvaColor MultiplyColorHsva {
+        get => ColorGradientNode.MultiplyColorHsva;
+        set => ColorGradientNode.MultiplyColorHsva = value;
     }
 
     public Vector2 ColorDotPosition {
