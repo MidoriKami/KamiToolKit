@@ -155,7 +155,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    public bool IsFocused => AtkStage.Instance()->AtkInputManager->FocusedNode == CollisionNode.Node;
+    public bool IsFocused 
+        => AtkStage.Instance()->AtkInputManager->FocusedNode == CollisionNode.Node;
 
     public int MaxCharacters {
         get => (int)Component->ComponentTextData.MaxChar;
