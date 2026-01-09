@@ -42,6 +42,8 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         ref var objects = ref uldManager.Objects;
         uldManager.ObjectCount = 1;
 
+        SetInternalComponentType(ComponentType.Base);
+
         objects->NodeList = (AtkResNode**)NativeMemoryHelper.Malloc(8);
         objects->NodeList[0] = CollisionNode;
         objects->NodeCount = 1;
