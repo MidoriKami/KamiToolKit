@@ -51,15 +51,20 @@ public abstract class LayoutListNode : SimpleComponentNode {
         init => AddNode(value);
     }
 
-    public void AddNode(IEnumerable<NodeBase> nodes) {
+    public void AddNode(IEnumerable<NodeBase> nodes)
+    {
         suppressRecalculateLayout = true;
-        
-        foreach (var node in nodes) {
-            AddNode(node);
+        try
+        {
+            foreach (var node in nodes)
+            {
+                AddNode(node);
+            }
         }
-        
-        suppressRecalculateLayout = false;
-        
+        finally
+        {
+            suppressRecalculateLayout = false;
+        }
         RecalculateLayout();
     }
 
@@ -73,15 +78,20 @@ public abstract class LayoutListNode : SimpleComponentNode {
         RecalculateLayout();
     }
 
-    public void RemoveNode(params NodeBase[] items) {
+    public void RemoveNode(params NodeBase[] items)
+    {
         suppressRecalculateLayout = true;
-        
-        foreach (var node in items) {
-            RemoveNode(node);
+        try
+        {
+            foreach (var node in items)
+            {
+                RemoveNode(node);
+            }
         }
-        
-        suppressRecalculateLayout = false;
-        
+        finally
+        {
+            suppressRecalculateLayout = false;
+        }
         RecalculateLayout();
     }
 
@@ -102,16 +112,20 @@ public abstract class LayoutListNode : SimpleComponentNode {
         AddNode(dummyNode);
     }
 
-    public virtual void Clear() {
+    public virtual void Clear()
+    {
         suppressRecalculateLayout = true;
-        
-        foreach (var node in NodeList.ToList()) {
-            RemoveNode(node);
+        try
+        {
+            foreach (var node in NodeList.ToList())
+            {
+                RemoveNode(node);
+            }
         }
-
-        suppressRecalculateLayout = false;
-        
-        NodeList.Clear();
+        finally
+        {
+            suppressRecalculateLayout = false;
+        }
         RecalculateLayout();
     }
 
@@ -119,149 +133,178 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     public delegate T GetDataFromNode<out T, in TU>(TU node) where TU : NodeBase;
     
-    public bool SyncWithListData<T, TU>(IEnumerable<T> dataList, GetDataFromNode<T?, TU> getDataFromNode, CreateNewNode<T, TU> createNodeMethod) where TU : NodeBase {
+    public bool SyncWithListData<T, TU>(IEnumerable<T> dataList, GetDataFromNode<T?, TU> getDataFromNode, CreateNewNode<T, TU> createNodeMethod) where TU : NodeBase
+    {
         suppressRecalculateLayout = true;
-    
         var anythingChanged = false;
-        var nodesOfType = GetNodes<TU>().ToList();
-        var dataSet = dataList.ToHashSet(EqualityComparer<T>.Default);
-        var represented = new HashSet<T>(EqualityComparer<T>.Default);
-    
-        foreach (var node in nodesOfType) {
-            var nodeData = getDataFromNode(node);
-    
-            if (nodeData is null || !dataSet.Contains(nodeData)) {
-                RemoveNode(node);
-                anythingChanged = true;
-                continue;
+        try
+        {
+            var nodesOfType = GetNodes<TU>().ToList();
+            var dataSet = dataList.ToHashSet(EqualityComparer<T>.Default);
+            var represented = new HashSet<T>(EqualityComparer<T>.Default);
+
+            foreach (var node in nodesOfType)
+            {
+                var nodeData = getDataFromNode(node);
+
+                if (nodeData is null || !dataSet.Contains(nodeData))
+                {
+                    RemoveNode(node);
+                    anythingChanged = true;
+                    continue;
+                }
+
+                represented.Add(nodeData);
             }
-    
-            represented.Add(nodeData);
+
+            foreach (var data in dataSet)
+            {
+                if (represented.Contains(data))
+                    continue;
+
+                var newNode = createNodeMethod(data);
+                AddNode(newNode);
+                anythingChanged = true;
+            }
         }
-    
-        foreach (var data in dataSet) {
-            if (represented.Contains(data))
-                continue;
-    
-            var newNode = createNodeMethod(data);
-            AddNode(newNode);
-            anythingChanged = true;
+        finally
+        {
+            suppressRecalculateLayout = false;
         }
-    
-        suppressRecalculateLayout = false;
         RecalculateLayout();
-    
+
         return anythingChanged;
     }
 
     public bool SyncWithListDataByKey<T, TU, TKey>(
-        IReadOnlyList<T> dataList, 
-        Func<T, TKey> getKeyFromData, 
-        Func<TU, TKey> getKeyFromNode, 
-        Action<TU, T> updateNode, 
-        CreateNewNode<T, TU> createNodeMethod, 
-        IEqualityComparer<TKey>? keyComparer = null) where TU : NodeBase where TKey : notnull {
-
+        IReadOnlyList<T> dataList,
+        Func<T, TKey> getKeyFromData,
+        Func<TU, TKey> getKeyFromNode,
+        Action<TU, T> updateNode,
+        CreateNewNode<T, TU> createNodeMethod,
+        IEqualityComparer<TKey>? keyComparer = null) where TU : NodeBase where TKey : notnull
+    {
         suppressRecalculateLayout = true;
-
         var anythingChanged = false;
-        keyComparer ??= EqualityComparer<TKey>.Default;
+        try
+        {
+            keyComparer ??= EqualityComparer<TKey>.Default;
 
-        var existing = new List<TU>(capacity: NodeList.Count);
-        foreach (var t in NodeList) {
-            if (t is TU tu)
-                existing.Add(tu);
-        }
-
-        var byKey = new Dictionary<TKey, TU>(existing.Count, keyComparer);
-        List<TU>? duplicates = null;
-
-        foreach (var node in existing) {
-            var key = getKeyFromNode(node);
-
-            if (!byKey.TryAdd(key, node))
-                (duplicates ??= new List<TU>(4)).Add(node);
-        }
-
-        var desired = new List<TU>(dataList.Count);
-
-        foreach (var data in dataList) {
-            var key = getKeyFromData(data);
-
-            if (byKey.TryGetValue(key, out var existingNode)) {
-                updateNode(existingNode, data);
-                desired.Add(existingNode);
-                byKey.Remove(key);
+            var existing = new List<TU>(capacity: NodeList.Count);
+            foreach (var t in NodeList)
+            {
+                if (t is TU tu)
+                    existing.Add(tu);
             }
-            else {
-                var newNode = createNodeMethod(data);
-                AddNode(newNode);
-                updateNode(newNode, data);
 
-                desired.Add(newNode);
-                anythingChanged = true;
+            var byKey = new Dictionary<TKey, TU>(existing.Count, keyComparer);
+            List<TU>? duplicates = null;
+
+            foreach (var node in existing)
+            {
+                var key = getKeyFromNode(node);
+
+                if (!byKey.TryAdd(key, node))
+                    (duplicates ??= new List<TU>(4)).Add(node);
             }
-        }
 
-        if (byKey.Count != 0) {
-            foreach (var kv in byKey) {
-                RemoveNode(kv.Value);
-                anythingChanged = true;
-            }
-        }
+            var desired = new List<TU>(dataList.Count);
 
-        if (duplicates is not null) {
-            for (var i = 0; i < duplicates.Count; i++) {
-                RemoveNode(duplicates[i]);
-                anythingChanged = true;
-            }
-        }
+            foreach (var data in dataList)
+            {
+                var key = getKeyFromData(data);
 
-        var desiredCount = desired.Count;
-        var j = 0;
-        var mismatch = false;
-
-        for (var i = 0; i < NodeList.Count; i++) {
-            if (NodeList[i] is TU) {
-                if (j >= desiredCount) {
-                    mismatch = true;
-                    break;
+                if (byKey.TryGetValue(key, out var existingNode))
+                {
+                    updateNode(existingNode, data);
+                    desired.Add(existingNode);
+                    byKey.Remove(key);
                 }
+                else
+                {
+                    var newNode = createNodeMethod(data);
+                    AddNode(newNode);
+                    updateNode(newNode, data);
 
-                NodeBase desiredNode = desired[j++];
-                if (!ReferenceEquals(NodeList[i], desiredNode)) {
-                    NodeList[i] = desiredNode;
+                    desired.Add(newNode);
                     anythingChanged = true;
                 }
             }
-        }
 
-        if (!mismatch && j != desiredCount)
-            mismatch = true;
-
-        if (mismatch) {
-            var firstTuIndex = -1;
-
-            for (var i = 0; i < NodeList.Count; i++) {
-                if (NodeList[i] is TU) {
-                    firstTuIndex = i;
-                    break;
+            if (byKey.Count != 0)
+            {
+                foreach (var kv in byKey)
+                {
+                    RemoveNode(kv.Value);
+                    anythingChanged = true;
                 }
             }
 
-            if (firstTuIndex < 0)
-                firstTuIndex = NodeList.Count;
-
-            for (var i = NodeList.Count - 1; i >= 0; i--) {
-                if (NodeList[i] is TU)
-                    NodeList.RemoveAt(i);
+            if (duplicates is not null)
+            {
+                for (var i = 0; i < duplicates.Count; i++)
+                {
+                    RemoveNode(duplicates[i]);
+                    anythingChanged = true;
+                }
             }
 
-            NodeList.InsertRange(firstTuIndex, desired);
-            anythingChanged = true;
-        }
+            var desiredCount = desired.Count;
+            var j = 0;
+            var mismatch = false;
 
-        suppressRecalculateLayout = false;
+            for (var i = 0; i < NodeList.Count; i++)
+            {
+                if (NodeList[i] is TU)
+                {
+                    if (j >= desiredCount)
+                    {
+                        mismatch = true;
+                        break;
+                    }
+
+                    NodeBase desiredNode = desired[j++];
+                    if (!ReferenceEquals(NodeList[i], desiredNode))
+                    {
+                        NodeList[i] = desiredNode;
+                        anythingChanged = true;
+                    }
+                }
+            }
+
+            if (!mismatch && j != desiredCount)
+                mismatch = true;
+
+            if (mismatch)
+            {
+                var firstTuIndex = -1;
+
+                for (var i = 0; i < NodeList.Count; i++)
+                {
+                    if (NodeList[i] is TU)
+                    {
+                        firstTuIndex = i;
+                        break;
+                    }
+                }
+
+                if (firstTuIndex < 0)
+                    firstTuIndex = NodeList.Count;
+
+                for (var i = NodeList.Count - 1; i >= 0; i--)
+                {
+                    if (NodeList[i] is TU)
+                        NodeList.RemoveAt(i);
+                }
+
+                NodeList.InsertRange(firstTuIndex, desired);
+                anythingChanged = true;
+            }
+        }
+        finally
+        {
+            suppressRecalculateLayout = false;
+        }
         RecalculateLayout();
 
         return anythingChanged;
