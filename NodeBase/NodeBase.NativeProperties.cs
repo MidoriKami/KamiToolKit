@@ -58,8 +58,8 @@ public abstract unsafe partial class NodeBase {
     public virtual Vector2 Size {
         get => ResNode->Size;
         set {
-            Width = value.X;
-            Height = value.Y;
+            ResNode->SetWidth((ushort)value.X);
+            ResNode->SetHeight((ushort)value.Y);
             OnSizeChanged();
         }
     }
