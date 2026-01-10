@@ -1,4 +1,4 @@
-﻿namespace KamiToolKit.Classes;
+﻿namespace KamiToolKit.Enums;
 
 public enum CounterFont {
     MoneyFont,

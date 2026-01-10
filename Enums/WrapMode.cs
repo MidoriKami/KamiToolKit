@@ -1,4 +1,4 @@
-﻿namespace KamiToolKit.Classes;
+﻿namespace KamiToolKit.Enums;
 
 public enum WrapMode {
     None = 0,

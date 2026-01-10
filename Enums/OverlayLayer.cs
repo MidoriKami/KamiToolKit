@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KamiToolKit.Classes;
+namespace KamiToolKit.Enums;
 
 public enum OverlayLayer {
     /// <summary>
@@ -25,22 +25,24 @@ public enum OverlayLayer {
 }
 
 public static class OverlayLayerExtensions {
-    public static string GetDescription(this OverlayLayer layer) => layer switch {
-        OverlayLayer.Background => "KTK_Overlay_Back",
-        OverlayLayer.BehindUserInterface => "KTK_Overlay_Middle",
-        OverlayLayer.AboveUserInterface => "KTK_Overlay_Higher",
-        OverlayLayer.Foreground => "KTK_Overlay_Front",
-        _ => throw new Exception("Out of Range"),
-    };
+    extension(OverlayLayer layer) {
+        public string GetDescription() => layer switch {
+            OverlayLayer.Background => "KTK_Overlay_Back",
+            OverlayLayer.BehindUserInterface => "KTK_Overlay_Middle",
+            OverlayLayer.AboveUserInterface => "KTK_Overlay_Higher",
+            OverlayLayer.Foreground => "KTK_Overlay_Front",
+            _ => throw new Exception("Out of Range"),
+        };
 
-    public static int GetOverlayLayer(this OverlayLayer layer) => layer switch {
-        OverlayLayer.Background => 1,
-        OverlayLayer.BehindUserInterface => 3,
-        OverlayLayer.AboveUserInterface => 7,
-        OverlayLayer.Foreground => 13,
-        _ => 1,
-    };
-    
+        public int GetOverlayLayer() => layer switch {
+            OverlayLayer.Background => 1,
+            OverlayLayer.BehindUserInterface => 3,
+            OverlayLayer.AboveUserInterface => 7,
+            OverlayLayer.Foreground => 13,
+            _ => 1,
+        };
+    }
+
     // Note: The game does not have a layer zero, but offsets the desired layer by one.
     public static OverlayLayer GetOverlayLayer(this uint layer) => (layer + 1) switch {
         1 => OverlayLayer.Background,

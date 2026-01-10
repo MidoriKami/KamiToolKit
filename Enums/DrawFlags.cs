@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KamiToolKit.Classes;
+namespace KamiToolKit.Enums;
 
 [Flags]
 public enum DrawFlags : uint {
