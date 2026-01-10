@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -67,16 +67,18 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
 
     private bool IsRingClicked(AtkEventData* data) {
         var clickPosition = data->MousePosition;
-        var center = ColorRingNode.ScreenPosition + ColorRingNode.Size / 2.0f;
+        var scale = ParentAddon is not null ? ParentAddon->Scale : 1.0f;
+        var center = ColorRingNode.ScreenPosition + ColorRingNode.Size * scale / 2.0f;
         var distance = Vector2.Distance(clickPosition, center);
-        var scaledDistance = distance / (Width / 256.0f);
+        var scaledDistance = distance / (Width * scale / 256.0f);
 
         return scaledDistance is >= 82.0f and <= 99.0f;
     }
 
     private float GetRingClickAngle(AtkEventData* data) {
         var clickPosition = data->MousePosition;
-        var center = ColorRingNode.ScreenPosition + ColorRingNode.Size / 2.0f;
+        var scale = ParentAddon is not null ? ParentAddon->Scale : 1.0f;
+        var center = ColorRingNode.ScreenPosition + ColorRingNode.Size * scale / 2.0f;
         var relativePosition = clickPosition - center;
         var calculatedAngle = MathF.Atan2(relativePosition.Y, relativePosition.X) * 180.0f / MathF.PI;
 
@@ -129,10 +131,11 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     private void UpdateSquareColor(Vector2 clickPosition) {
         // Note: ColorSquareNode.ScreenPosition changes as the node rotates
         // However, Position does not change
-        var center = ScreenPosition + ColorSquareNode.Position + ColorSquareNode.Origin; 
+        var scale = ParentAddon is not null ? ParentAddon->Scale : 1.0f;
+        var center = ScreenPosition + (ColorSquareNode.Position + ColorSquareNode.Origin) * scale;
 
         var relativePosition = clickPosition - center;
-        var rotatedPoint = RotatePoint(relativePosition, Vector2.Zero, -ColorSquareNode.RotationDegrees) / ColorSquareNode.Scale;
+        var rotatedPoint = RotatePoint(relativePosition / scale, Vector2.Zero, -ColorSquareNode.RotationDegrees) / ColorSquareNode.Scale;
 
         var xClamped = Math.Clamp(rotatedPoint.X, -ColorSquareNode.Width / 2, ColorSquareNode.Width / 2);
         var yClamped = Math.Clamp(rotatedPoint.Y, -ColorSquareNode.Height / 2, ColorSquareNode.Height / 2);
@@ -181,17 +184,17 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     }
 
     public ColorHelpers.HsvaColor SelectorColor {
-        get => ColorRingSelectorNode.MultiplyColorHsva;
-        set => ColorRingSelectorNode.MultiplyColorHsva = value;
+        get => ColorRingSelectorNode.HsvaMultiplyColor;
+        set => ColorRingSelectorNode.HsvaMultiplyColor = value;
     }
 
     public ColorHelpers.HsvaColor SquareColor {
-        get => ColorSquareNode.MultiplyColorHsva;
-        set => ColorSquareNode.MultiplyColorHsva = value with { S = 1.0f, V = 1.0f };
+        get => ColorSquareNode.HsvaMultiplyColor;
+        set => ColorSquareNode.HsvaMultiplyColor = value with { S = 1.0f, V = 1.0f };
     }
 
     public ColorHelpers.HsvaColor SquareSaturationValue {
-        get => ColorSquareNode.MultiplyColorHsva;
+        get => ColorSquareNode.HsvaMultiplyColor;
         set => ColorSquareNode.ColorDotPosition = new Vector2(ColorSquareNode.Width * value.S, ColorSquareNode.Height - ColorSquareNode.Height * value.V);
     }
 }
