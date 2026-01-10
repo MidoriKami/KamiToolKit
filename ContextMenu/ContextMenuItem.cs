@@ -1,7 +1,7 @@
 using System;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Classes.ContextMenu;
+namespace KamiToolKit.ContextMenu;
 
 public class ContextMenuItem {
     public required ReadOnlySeString Name { get; init; }

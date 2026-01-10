@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Classes.ContextMenu;
+namespace KamiToolKit.ContextMenu;
 
 public unsafe class ContextMenu :  IDisposable {
     private readonly CustomEventInterface contextMenuEventInterface;

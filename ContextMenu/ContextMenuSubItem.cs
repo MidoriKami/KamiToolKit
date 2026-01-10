@@ -1,8 +1,8 @@
 using System;
-using System. Collections.Generic;
-using Lumina.Text. ReadOnly;
+using System.Collections.Generic;
+using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Classes.ContextMenu;
+namespace KamiToolKit.ContextMenu;
 
 /// <summary>
 /// One level of submenu only. Nested submenus not supported.
