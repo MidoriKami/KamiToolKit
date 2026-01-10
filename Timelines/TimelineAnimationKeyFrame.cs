@@ -2,7 +2,7 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.STD;
 
-namespace KamiToolKit.Classes.Timelines;
+namespace KamiToolKit.Timelines;
 
 public class TimelineAnimationKeyFrame : TimelineKeyFrame {
 

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 
-namespace KamiToolKit.Classes.Timelines;
+namespace KamiToolKit.Timelines;
 
 public unsafe class TimelineAnimation : IDisposable {
 

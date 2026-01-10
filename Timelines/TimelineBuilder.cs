@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Numerics;
 
-namespace KamiToolKit.Classes.Timelines;
+namespace KamiToolKit.Timelines;
 
 public class TimelineBuilder {
 

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 
-namespace KamiToolKit.Classes.Timelines;
+namespace KamiToolKit.Timelines;
 
 public unsafe class TimelineLabelSet : IDisposable {
 

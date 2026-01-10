@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
+using KamiToolKit.Classes;
 
-namespace KamiToolKit.Classes.Timelines;
+namespace KamiToolKit.Timelines;
 
 public unsafe class Timeline : IDisposable {
 

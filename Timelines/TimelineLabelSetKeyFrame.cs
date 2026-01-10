@@ -1,6 +1,6 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
 
-namespace KamiToolKit.Classes.Timelines;
+namespace KamiToolKit.Timelines;
 
 public class TimelineLabelSetKeyFrame : TimelineKeyFrame {
 
