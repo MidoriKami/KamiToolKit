@@ -53,7 +53,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     public void AddNode(IEnumerable<NodeBase> nodes)
     {
-        _suppressRecalculateLayout = true;
+        suppressRecalculateLayout = true;
         try
         {
             foreach (var node in nodes)
@@ -63,7 +63,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
         }
         finally
         {
-            _suppressRecalculateLayout = false;
+            suppressRecalculateLayout = false;
         }
         RecalculateLayout();
     }
@@ -80,7 +80,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     public void RemoveNode(params NodeBase[] items)
     {
-        _suppressRecalculateLayout = true;
+        suppressRecalculateLayout = true;
         try
         {
             foreach (var node in items)
@@ -90,7 +90,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
         }
         finally
         {
-            _suppressRecalculateLayout = false;
+            suppressRecalculateLayout = false;
         }
         RecalculateLayout();
     }
@@ -114,7 +114,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
 
     public virtual void Clear()
     {
-        _suppressRecalculateLayout = true;
+        suppressRecalculateLayout = true;
         try
         {
             foreach (var node in NodeList.ToList())
@@ -124,7 +124,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
         }
         finally
         {
-            _suppressRecalculateLayout = false;
+            suppressRecalculateLayout = false;
         }
         RecalculateLayout();
     }
@@ -135,7 +135,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
     
     public bool SyncWithListData<T, TU>(IEnumerable<T> dataList, GetDataFromNode<T?, TU> getDataFromNode, CreateNewNode<T, TU> createNodeMethod) where TU : NodeBase
     {
-        _suppressRecalculateLayout = true;
+        suppressRecalculateLayout = true;
         var anythingChanged = false;
         try
         {
@@ -169,7 +169,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
         }
         finally
         {
-            _suppressRecalculateLayout = false;
+            suppressRecalculateLayout = false;
         }
         RecalculateLayout();
 
@@ -184,7 +184,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
         CreateNewNode<T, TU> createNodeMethod,
         IEqualityComparer<TKey>? keyComparer = null) where TU : NodeBase where TKey : notnull
     {
-        _suppressRecalculateLayout = true;
+        suppressRecalculateLayout = true;
         var anythingChanged = false;
         try
         {
@@ -303,7 +303,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
         }
         finally
         {
-            _suppressRecalculateLayout = false;
+            suppressRecalculateLayout = false;
         }
         RecalculateLayout();
 
