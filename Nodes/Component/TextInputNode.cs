@@ -9,7 +9,8 @@ using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using InteropGenerator.Runtime;
 using KamiToolKit.Classes;
-using KamiToolKit.Classes.Timelines;
+using KamiToolKit.Enums;
+using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;

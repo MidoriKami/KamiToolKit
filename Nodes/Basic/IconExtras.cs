@@ -2,7 +2,8 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Classes.Timelines;
+using KamiToolKit.Enums;
+using KamiToolKit.Timelines;
 
 namespace KamiToolKit.Nodes;
 

@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 
 namespace KamiToolKit.Nodes;
 

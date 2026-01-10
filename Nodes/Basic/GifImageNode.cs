@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Dalamud.Interface.Textures;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Classes.Timelines;
+using KamiToolKit.Timelines;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 

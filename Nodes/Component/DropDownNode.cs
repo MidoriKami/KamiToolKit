@@ -3,11 +3,12 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Classes.Timelines;
+using KamiToolKit.Enums;
+using KamiToolKit.Timelines;
 
 namespace KamiToolKit.Nodes;
 
-public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T : ListNode<TU>, new() {
+public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T : ButtonListNode<TU>, new() {
 
     public readonly NineGridNode BackgroundNode;
     public readonly ImageNode CollapseArrowNode;

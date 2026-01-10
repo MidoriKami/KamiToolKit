@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace KamiToolKit.Nodes;
 
-public class TextDropDownNode : DropDownNode<TextListNode, string> {
+public class TextDropDownNode : DropDownNode<TextButtonListNode, string> {
 
     public TextDropDownNode() {
         OptionListNode.OnOptionSelected += OptionSelectedHandler;

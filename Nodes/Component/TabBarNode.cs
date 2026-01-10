@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Timelines;
+using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;

@@ -2,6 +2,7 @@
 using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 
 namespace KamiToolKit.Nodes;
 

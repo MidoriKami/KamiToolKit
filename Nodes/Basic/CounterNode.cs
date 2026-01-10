@@ -2,6 +2,7 @@ using System.Numerics;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using Lumina.Text.Payloads;
 using Lumina.Text.ReadOnly;
 

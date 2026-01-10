@@ -4,7 +4,7 @@ using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;

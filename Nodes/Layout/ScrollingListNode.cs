@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 
 namespace KamiToolKit.Nodes;
 
