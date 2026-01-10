@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Common.Math;
 
-namespace KamiToolKit.Classes.Timelines;
+namespace KamiToolKit.Timelines;
 
 public class KeyFrameBuilder(FrameSetBuilder parent, int frame) {
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
-namespace KamiToolKit.Classes.Timelines;
+namespace KamiToolKit.Timelines;
 
 public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFrameId) {
 
