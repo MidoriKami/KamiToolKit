@@ -19,10 +19,10 @@ public abstract class LayoutListNode : SimpleComponentNode {
         get => NodeFlags.HasFlag(NodeFlags.Clip);
         set {
             if (value) {
-                AddFlags(NodeFlags.Clip);
+                AddNodeFlags(NodeFlags.Clip);
             }
             else {
-                RemoveFlags(NodeFlags.Clip);
+                RemoveNodeFlags(NodeFlags.Clip);
             }
         }
     }

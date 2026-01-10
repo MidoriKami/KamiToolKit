@@ -209,11 +209,17 @@ public abstract unsafe partial class NodeBase {
 
     protected virtual void OnSizeChanged() { }
 
-    public void AddFlags(params NodeFlags[] flags)
-        => ResNode->AddFlags(flags);
+    public void AddNodeFlags(params NodeFlags[] flags) {
+        foreach (var flag in flags) {
+            NodeFlags |= flag;
+        }
+    }
 
-    public void RemoveFlags(params NodeFlags[] flags)
-        => ResNode->RemoveFlags(flags);
+    public void RemoveNodeFlags(params NodeFlags[] flags) {
+        foreach (var flag in flags) {
+            NodeFlags &= ~flag;
+        }
+    }
 
     public void MarkDirty() {
         foreach (var child in GetAllChildren(this)) {

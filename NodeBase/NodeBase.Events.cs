@@ -137,7 +137,8 @@ public abstract unsafe partial class NodeBase {
             // Hover events need to propagate down to trigger various timelines
             case AtkEventType.MouseOver:
             case AtkEventType.MouseOut:
-                AddFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse);
+            case AtkEventType.MouseWheel:
+                AddNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse);
                 break;
 
             // Any kind of direct interaction should be a blocking event
@@ -145,9 +146,8 @@ public abstract unsafe partial class NodeBase {
             case AtkEventType.MouseDown:
             case AtkEventType.MouseUp:
             case AtkEventType.MouseMove:
-            case AtkEventType.MouseWheel:
             case AtkEventType.MouseClick:
-                AddFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision);
+                AddNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision);
                 break;
             
             // ButtonClick is mostly used as an event that native calls back to, when interacting with buttons

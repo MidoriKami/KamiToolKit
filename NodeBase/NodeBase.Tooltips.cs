@@ -95,10 +95,10 @@ public unsafe partial class NodeBase {
         if (this is ComponentNode) return;
 
         if (isVisible) {
-            AddFlags(NodeFlags.HasCollision);
+            AddNodeFlags(NodeFlags.HasCollision);
         }
         else {
-            RemoveFlags(NodeFlags.HasCollision);
+            RemoveNodeFlags(NodeFlags.HasCollision);
         }
     }
     
