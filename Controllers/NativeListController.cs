@@ -5,8 +5,9 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 
-namespace KamiToolKit.Classes.Controllers;
+namespace KamiToolKit.Controllers;
 
 /// <summary>
 /// Only one or the other field will be valid, be sure to check for null.

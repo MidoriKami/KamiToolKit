@@ -1,7 +1,7 @@
 ﻿using System;
 using FFXIVClientStructs.FFXIV.Client.UI;
 
-namespace KamiToolKit.Classes.Controllers;
+namespace KamiToolKit.Controllers;
 
 public abstract unsafe class AddonEventController<T> where T : unmanaged {
 

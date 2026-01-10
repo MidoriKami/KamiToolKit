@@ -2,8 +2,9 @@
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 
-namespace KamiToolKit.Classes.Controllers;
+namespace KamiToolKit.Controllers;
 
 public class AddonController(string addonName) : AddonController<AtkUnitBase>(addonName);
 
