@@ -72,11 +72,13 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
 
             case AtkEventType.MouseMove: {
                 var mousePosition = new Vector2(atkEventData->MouseData.PosX, atkEventData->MouseData.PosY);
+                var scale = ParentAddon is not null ? ParentAddon->Scale : 1.0f;
+                var scaledHeight = AlphaBarGradientNode.Height * scale;
                 var minY = AlphaBarGradientNode.ScreenY;
-                var maxY = AlphaBarGradientNode.ScreenY + AlphaBarGradientNode.Height;
+                var maxY = AlphaBarGradientNode.ScreenY + scaledHeight;
 
                 if (mousePosition.Y >= minY && mousePosition.Y <= maxY) {
-                    var alphaRatio = 1.0f - (mousePosition.Y - AlphaBarGradientNode.ScreenY) / AlphaBarGradientNode.Height;
+                    var alphaRatio = 1.0f - (mousePosition.Y - AlphaBarGradientNode.ScreenY) / scaledHeight;
 
                     AlphaBarSelectorNode.Y = Height - Height * alphaRatio - 5.0f;
                     OnAlphaChanged?.Invoke(alphaRatio);
@@ -89,7 +91,7 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
                     AlphaBarSelectorNode.Y = Height - 4.0f;
                     OnAlphaChanged?.Invoke(0.0f);
                 }
-                
+
                 break;
             }
         }
