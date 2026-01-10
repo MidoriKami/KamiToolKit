@@ -1,5 +1,5 @@
 using System;
-using KamiToolKit.Premade.Widgets;
+using KamiToolKit.Premade.Color;
 
 namespace KamiToolKit.Classes;
 

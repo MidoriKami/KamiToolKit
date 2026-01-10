@@ -12,7 +12,7 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
     public readonly ImGuiImageNode AlphaBarGradientNode;
     public readonly ImGuiImageNode AlphaBarSelectorNode;
     
-    private ViewportEventListener alphaEventListener;
+    private readonly ViewportEventListener alphaEventListener;
     private bool isAlphaDragging;
 
     public AlphaBarNode() {
