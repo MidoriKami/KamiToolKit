@@ -26,36 +26,42 @@ public abstract unsafe partial class NodeBase : IDisposable {
     private AtkResNode.AtkResNodeVirtualTable* virtualTable;
 
     public void Dispose() {
-        if (MainThreadSafety.TryAssertMainThread()) return;
+        try {
+            if (MainThreadSafety.TryAssertMainThread()) return;
 
-        if (isDisposed) return;
-        isDisposed = true;
+            if (isDisposed) return;
+            isDisposed = true;
 
-        if (!IsNodeValid()) {
-            Log.Warning("WARNING: Node is not valid, attempted to dispose. Aborted.");
-            return;
+            if (!IsNodeValid()) {
+                Log.Warning("WARNING: Node is not valid, attempted to dispose. Aborted.");
+                return;
+            }
+
+            foreach (var child in ChildNodes.ToList()) {
+                child.Dispose();
+            }
+            ChildNodes.Clear();
+
+            Log.Verbose($"Disposing node {GetType()}");
+
+            UnregisterTooltipEvents();
+
+            AtkStage.Instance()->ClearNodeFocus(ResNode);
+
+            DetachNode();
+
+            Timeline?.Dispose();
+            ResNode->Timeline = null;
         }
+        catch (Exception e) {
+            Log.Exception(e);
+        } 
+        finally {
+            Dispose(true, false);
 
-        foreach (var child in ChildNodes.ToList()) {
-            child.Dispose();
+            GC.SuppressFinalize(this);
+            CreatedNodes.Remove(this);
         }
-        ChildNodes.Clear();
-
-        Log.Verbose($"Disposing node {GetType()}");
-
-        UnregisterTooltipEvents();
-        
-        AtkStage.Instance()->ClearNodeFocus(ResNode);
-
-        DetachNode();
-
-        Timeline?.Dispose();
-        ResNode->Timeline = null;
-
-        Dispose(true, false);
-
-        GC.SuppressFinalize(this);
-        CreatedNodes.Remove(this);
     }
 
     /// <summary>
@@ -173,21 +179,27 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
     public T* Node { get; private set; }
 
-    internal override sealed AtkResNode* ResNode => (AtkResNode*)Node;
+    internal sealed override AtkResNode* ResNode => (AtkResNode*)Node;
 
     public static implicit operator T*(NodeBase<T> node) => (T*) node.ResNode;
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
-            base.Dispose(disposing, isNativeDestructor);
-
-            if (!isNativeDestructor) {
-                InvokeOriginalDestructor(ResNode, true);
+            try {
+                base.Dispose(disposing, isNativeDestructor);
             }
+            catch (Exception e) {
+                Log.Exception(e);
+            } 
+            finally {
+                if (!isNativeDestructor) {
+                    InvokeOriginalDestructor(ResNode, true);
+                }
 
-            KamiToolKitLibrary.AllocatedNodes?.Remove((nint)Node, out _);
+                KamiToolKitLibrary.AllocatedNodes?.Remove((nint)Node, out _);
             
-            Node = null;
+                Node = null;
+            }
         }
     }
 }
