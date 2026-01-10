@@ -91,10 +91,10 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
         Width = listNode!.ContentWidth,
         Height = 48.0f,
         Option = option,
-        OnClicked = OnOptionClicked,
+        OnClick = OnOptionClicked,
     };
 
-    private void OnOptionClicked(BaseSearchInfoNode<T> clickedOption) {
+    private void OnOptionClicked(SelectableNode clickedOption) {
         if (confirmButton is null) return;
         
         // Unselect Previous Option
@@ -104,7 +104,7 @@ public class SearchAddon<T> : NativeAddon where T : IInfoNodeData {
         }
 
         // Select New Option
-        selectedOption = clickedOption;
+        selectedOption = (BaseSearchInfoNode<T>) clickedOption;
         selectedOption.IsSelected = true;
 
         // Enable Confirm Button

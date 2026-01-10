@@ -61,7 +61,7 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
         List<BaseSearchInfoNode<T>> newOptions = [];
         foreach (var newOptionNode in SearchOptions.Select(BuildOptionNode)) {
             newOptionNode.Size = new Vector2(listNode.ContentWidth, 48.0f);
-            newOptionNode.OnClicked = OnOptionClicked;
+            newOptionNode.OnClick = OnOptionClicked;
             newOptions.Add(newOptionNode);
         }
         
@@ -90,17 +90,16 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
 
     protected abstract BaseSearchInfoNode<T> BuildOptionNode(T option);
 
-    private void OnOptionClicked(BaseSearchInfoNode<T> clickedOption) {
+    private void OnOptionClicked(SelectableNode clickedOption) {
         if (confirmButton is null) return;
         
         // Unselect Previous Option
-        if (selectedOption is not null) {
-            selectedOption.IsSelected = false;
-            selectedOption = null;
-        }
+        selectedOption?.IsHovered = false;
+        selectedOption?.IsSelected = false;
+        selectedOption = null;
 
         // Select New Option
-        selectedOption = clickedOption;
+        selectedOption = (BaseSearchInfoNode<T>) clickedOption;
         selectedOption.IsSelected = true;
 
         // Enable Confirm Button

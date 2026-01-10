@@ -40,7 +40,7 @@ public class SelectableNode : SimpleComponentNode {
         });
         CollisionNode.AddEvent(AtkEventType.MouseDown, () => {
             if (EnableSelection) {
-                OnClick?.Invoke();
+                OnClick?.Invoke(this);
             }
         });
         CollisionNode.AddEvent(AtkEventType.MouseOut, () => {
@@ -58,7 +58,7 @@ public class SelectableNode : SimpleComponentNode {
         selectedBackgroundNode.Position = new Vector2(-3.0f, -3.0f);
     }
 
-    public Action? OnClick {
+    public Action<SelectableNode>? OnClick {
         get;
         set {
             field = value;

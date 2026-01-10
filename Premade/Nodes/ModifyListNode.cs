@@ -140,16 +140,16 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         OnOptionChanged?.Invoke(null);
     }
 
-    private void OnOptionClicked(BaseSearchInfoNode<T> optionNode) {
+    private void OnOptionClicked(SelectableNode optionNode) {
         selectedOptionNode?.IsSelected = false;
 
-        selectedOptionNode = optionNode;
+        selectedOptionNode = (BaseSearchInfoNode<T>) optionNode;
         selectedOptionNode.IsSelected = true;
 
         removeButton.IsEnabled = true;
         editButton.IsEnabled = true;
 
-        OnOptionChanged?.Invoke(optionNode.Option);
+        OnOptionChanged?.Invoke(selectedOptionNode.Option);
     }
 
     public void UpdateList() {
@@ -168,7 +168,7 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
             node => node.Option,
             data => new SearchInfoNode<T> {
                 Size = new Vector2(listNode.ContentWidth, 48.0f),
-                OnClicked = OnOptionClicked,
+                OnClick = OnOptionClicked,
                 Option = data,
             });
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -8,16 +7,11 @@ using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Premade.Nodes;
 
-public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
-    protected readonly NineGridNode HoveredNineGridNode;
-    protected readonly NineGridNode SelectedNineGridNode;
-
+public abstract class BaseSearchInfoNode<T> : SelectableNode {
     protected readonly IconImageNode IconNode;
     protected readonly TextNode LabelTextNode;
     protected readonly TextNode SubLabelTextNode;
     protected readonly TextNode IdTextNode;
-
-    private CustomEventListener? eventListener;
 
     public required T Option {
         get;
@@ -28,34 +22,6 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
     }
 
     protected BaseSearchInfoNode() {
-        eventListener = new CustomEventListener(HandleEvents);
-        
-        HoveredNineGridNode = new SimpleNineGridNode {
-            NodeId = 2,
-            TexturePath = "ui/uld/ListItemA.tex",
-            TextureCoordinates = new Vector2(0.0f, 22.0f),
-            TextureSize = new Vector2(64.0f, 22.0f),
-            TopOffset = 6,
-            BottomOffset = 6,
-            LeftOffset = 16,
-            RightOffset = 1,
-            IsVisible = false,
-        };
-        HoveredNineGridNode.AttachNode(this);
-
-        SelectedNineGridNode = new SimpleNineGridNode {
-            NodeId = 3,
-            TexturePath = "ui/uld/ListItemA.tex",
-            TextureCoordinates = new Vector2(0.0f, 0.0f),
-            TextureSize = new Vector2(64.0f, 22.0f),
-            TopOffset = 6,
-            BottomOffset = 6,
-            LeftOffset = 16,
-            RightOffset = 1,
-            IsVisible = false,
-        };
-        SelectedNineGridNode.AttachNode(this);
-
         IconNode = new IconImageNode {
             FitTexture = true,
             IconId = 60072,
@@ -91,41 +57,10 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
         IdTextNode.AttachNode(this);
 
         CollisionNode.ShowClickableCursor = true;
-        CollisionNode.AddEvent(AtkEventType.MouseOver, HandleEvents);
-        CollisionNode.AddEvent(AtkEventType.MouseOut, HandleEvents);
-        CollisionNode.AddEvent(AtkEventType.MouseClick, HandleEvents);
-    }
-
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing) {
-            base.Dispose(disposing, isNativeDestructor);
-
-            eventListener?.Dispose();
-            eventListener = null;
-        }
-    }
-
-    private void HandleEvents(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        switch (eventType) {
-            case AtkEventType.MouseOver:
-                IsHovered = true;
-                break;
-            
-            case AtkEventType.MouseOut:
-                IsHovered = false;
-                break;
-            
-            case AtkEventType.MouseClick:
-                OnClicked?.Invoke(this);
-                break;
-        }
     }
 
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
-
-        HoveredNineGridNode.Size = Size;
-        SelectedNineGridNode.Size = Size;
 
         IconNode.Size = new Vector2(Height - 4.0f, Height - 4.0f);
         IconNode.Position = new Vector2(2.0f, 2.0f);
@@ -141,18 +76,7 @@ public abstract unsafe class BaseSearchInfoNode<T> : SimpleComponentNode {
     }
 
     protected abstract void SetOptionParams(T? value);
-    public Action<BaseSearchInfoNode<T>>? OnClicked { get; set; }
     
-    public bool IsHovered {
-        get => HoveredNineGridNode.IsVisible;
-        set => HoveredNineGridNode.IsVisible = value;
-    }
-
-    public bool IsSelected {
-        get => SelectedNineGridNode.IsVisible;
-        set => SelectedNineGridNode.IsVisible = value;
-    }
-
     public abstract int Compare(BaseSearchInfoNode<T> other, string sortOption, bool reversed);
 
     public abstract bool IsMatch(string searchString);
