@@ -130,7 +130,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     public void SetNumber(int number, bool showCommas = false, bool showPlusSign = false, int digits = 0, bool zeroPad = false)
         => Node->SetNumber(number, showCommas, showPlusSign, (byte)digits, zeroPad);
 
-    public Vector2 GetTextDrawSize(ReadOnlySeString text, bool considerScale = false) {
+    public Vector2 GetTextDrawSize(ReadOnlySeString text, bool considerScale = true) {
         using var builder = new RentedSeStringBuilder();
 
         ushort sizeX = 0;
@@ -142,7 +142,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         return new Vector2(sizeX, sizeY);
     }
 
-    public Vector2 GetTextDrawSize(bool considerScale = false) {
+    public Vector2 GetTextDrawSize(bool considerScale = true) {
         ushort sizeX = 0;
         ushort sizeY = 0;
 
