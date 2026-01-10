@@ -182,6 +182,18 @@ public abstract unsafe partial class NodeBase {
                                             | ResNode->DrawFlags & 0b1111_1111_1111_1100_0000_0011_1111_1111;
     }
 
+    public void AddDrawFlags(params DrawFlags[] flags) {
+        foreach (var flag in flags) {
+            DrawFlags |= flag;
+        }
+    }
+
+    public void RemoveDrawFlags(params DrawFlags[] flags) {
+        foreach (var flag in flags) {
+            DrawFlags &= ~flag;
+        }
+    }
+
     public int Priority {
         get => ResNode->GetPriority();
         set => ResNode->SetPriority((ushort)value);
