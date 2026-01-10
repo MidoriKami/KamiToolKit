@@ -40,6 +40,7 @@ public class SelectableNode : SimpleComponentNode {
         });
         CollisionNode.AddEvent(AtkEventType.MouseDown, () => {
             if (EnableSelection) {
+                IsSelected = true;
                 OnClick?.Invoke(this);
             }
         });
@@ -77,7 +78,10 @@ public class SelectableNode : SimpleComponentNode {
         get => selectedBackgroundNode.IsVisible;
         set {
             selectedBackgroundNode.IsVisible = value;
-            hoveredBackgroundNode.IsVisible = !value;
+
+            if (value) {
+                hoveredBackgroundNode.IsVisible = false;
+            }
         }
     }
 }
