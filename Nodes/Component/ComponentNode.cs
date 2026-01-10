@@ -73,6 +73,8 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     }
 
     public static implicit operator AtkEventListener*(ComponentNode<T, TU> node) => &node.ComponentBase->AtkEventListener;
+    public static implicit operator T*(ComponentNode<T, TU> node) => node.Component;
+    public static implicit operator TU*(ComponentNode<T, TU> node) => node.Data;
 
     protected void SetInternalComponentType(ComponentType type) {
         var componentInfo = (AtkUldComponentInfo*)ComponentBase->UldManager.Objects;
