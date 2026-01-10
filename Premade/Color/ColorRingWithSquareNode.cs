@@ -3,9 +3,10 @@ using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Premade.Nodes;
+namespace KamiToolKit.Premade.Color;
 
 public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     public readonly ColorSquareNode ColorSquareNode;

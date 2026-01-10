@@ -4,7 +4,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Premade.Nodes;
+namespace KamiToolKit.Premade.Color;
 
 public class ColorSquareNode : SimpleComponentNode {
     public readonly ImGuiImageNode WhiteGradientNode;

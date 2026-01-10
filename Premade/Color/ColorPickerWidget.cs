@@ -5,7 +5,7 @@ using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Nodes;
 
-namespace KamiToolKit.Premade.Widgets;
+namespace KamiToolKit.Premade.Color;
 
 public class ColorPickerWidget : SimpleComponentNode {
     public readonly ColorRingWithSquareNode ColorPickerNode;

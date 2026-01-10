@@ -2,9 +2,10 @@
 using System.Numerics;
 using Dalamud.Interface;
 using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Premade.Nodes;
+namespace KamiToolKit.Premade.Color;
 
 public class ColorPreviewNode : SimpleComponentNode {
     public readonly BackgroundImageNode SelectedColorPreviewNode;

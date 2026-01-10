@@ -2,10 +2,9 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Addons;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Premade.Nodes;
+namespace KamiToolKit.Premade.Color;
 
 public class ColorEditNode : SimpleOverlayNode {
 

@@ -5,7 +5,7 @@ using Dalamud.Interface;
 using KamiToolKit.Nodes;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Premade.Nodes;
+namespace KamiToolKit.Premade.Color;
 
 public class ColorPreviewWithInput : SimpleComponentNode {
     public readonly ColorPreviewNode ColorPreviewNode;

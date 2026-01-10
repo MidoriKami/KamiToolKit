@@ -3,9 +3,8 @@ using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Widgets;
 
-namespace KamiToolKit.Premade.Addons;
+namespace KamiToolKit.Premade.Color;
 
 public class ColorPickerAddon : NativeAddon {
     private ColorPickerWidget? colorPicker;
