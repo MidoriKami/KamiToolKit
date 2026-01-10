@@ -2,7 +2,7 @@
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using Bounds = KamiToolKit.Classes.Bounds;
 using Vector2 = System.Numerics.Vector2;
 using Vector3 = System.Numerics.Vector3;
