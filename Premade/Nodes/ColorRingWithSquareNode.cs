@@ -184,17 +184,17 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     }
 
     public ColorHelpers.HsvaColor SelectorColor {
-        get => ColorRingSelectorNode.HsvaMultiplyColor;
-        set => ColorRingSelectorNode.HsvaMultiplyColor = value;
+        get => ColorRingSelectorNode.MultiplyColorHsva;
+        set => ColorRingSelectorNode.MultiplyColorHsva = value;
     }
 
     public ColorHelpers.HsvaColor SquareColor {
-        get => ColorSquareNode.HsvaMultiplyColor;
-        set => ColorSquareNode.HsvaMultiplyColor = value with { S = 1.0f, V = 1.0f };
+        get => ColorSquareNode.MultiplyColorHsva;
+        set => ColorSquareNode.MultiplyColorHsva = value with { S = 1.0f, V = 1.0f };
     }
 
     public ColorHelpers.HsvaColor SquareSaturationValue {
-        get => ColorSquareNode.HsvaMultiplyColor;
+        get => ColorSquareNode.MultiplyColorHsva;
         set => ColorSquareNode.ColorDotPosition = new Vector2(ColorSquareNode.Width * value.S, ColorSquareNode.Height - ColorSquareNode.Height * value.V);
     }
 }
