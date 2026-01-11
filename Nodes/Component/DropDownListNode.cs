@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
-using KamiToolKit.Classes.Timelines;
+using KamiToolKit.Enums;
+using KamiToolKit.Timelines;
 
 namespace KamiToolKit.Nodes;
 
 public abstract class ListNode : SimpleComponentNode;
 
 /// Note, automatically inserts buttons to fill the set height, please ensure option count is greater than button count.
-public abstract unsafe class ListNode<T> : ListNode {
+public abstract unsafe class DropDownListNode<T> : ListNode {
 
     public readonly NineGridNode BackgroundNode;
     public readonly ResNode ContainerNode;
     public readonly ScrollBarNode ScrollBarNode;
     public List<ListButtonNode> Nodes = [];
 
-    protected ListNode() {
+    protected DropDownListNode() {
         SetInternalComponentType(ComponentType.Base);
 
         BackgroundNode = new SimpleNineGridNode {
@@ -200,7 +200,7 @@ public abstract unsafe class ListNode<T> : ListNode {
 
     public void Show() {
         IsVisible = true;
-        DrawFlags = DrawFlags.RenderOnTop;
+        AddDrawFlags(DrawFlags.RenderOnTop);
 
         if (ParentAddon is not null) {
             SetFocusable(ParentAddon);
@@ -209,7 +209,7 @@ public abstract unsafe class ListNode<T> : ListNode {
 
     public void Hide() {
         IsVisible = false;
-        DrawFlags = DrawFlags.None;
+        RemoveDrawFlags(DrawFlags.RenderOnTop);
 
         if (ParentAddon is not null) {
             ClearFocusable(ParentAddon);

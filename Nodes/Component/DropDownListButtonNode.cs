@@ -3,9 +3,9 @@ using KamiToolKit.Timelines;
 
 namespace KamiToolKit.Nodes;
 
-public class DropdownButtonListNode : ButtonListNode<string> {
+public class DropDownListButtonNode : DropDownListNode<string> {
 
-    public DropdownButtonListNode() {
+    public DropDownListButtonNode() {
         BuildTimelines();
     }
 

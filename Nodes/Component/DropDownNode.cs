@@ -8,7 +8,7 @@ using KamiToolKit.Timelines;
 
 namespace KamiToolKit.Nodes;
 
-public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T : ButtonListNode<TU>, new() {
+public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T : DropDownListNode<TU>, new() {
 
     public readonly NineGridNode BackgroundNode;
     public readonly ImageNode CollapseArrowNode;

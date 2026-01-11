@@ -4,7 +4,7 @@ using Lumina.Excel;
 
 namespace KamiToolKit.Nodes;
 
-public class LuminaListNode<T> : ListNode<T> where T : struct, IExcelRow<T> {
+public class LuminaDropDownListNode<T> : DropDownListNode<T> where T : struct, IExcelRow<T> {
 
     public delegate string GetLabel(T excelRow);
 
