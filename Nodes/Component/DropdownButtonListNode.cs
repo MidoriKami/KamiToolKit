@@ -1,11 +1,11 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Timelines;
+using KamiToolKit.Timelines;
 
 namespace KamiToolKit.Nodes;
 
-public class TextListNode : ListNode<string> {
+public class DropdownButtonListNode : ButtonListNode<string> {
 
-    public TextListNode() {
+    public DropdownButtonListNode() {
         BuildTimelines();
     }
 
