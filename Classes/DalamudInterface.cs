@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.IoC;
 using Dalamud.Plugin;
@@ -69,7 +70,7 @@ internal static class Log {
         DalamudInterface.Instance.Log.Error($"[KamiToolKit] {message}");
     }
 
-    internal static void Exception(Exception exception) {
-        DalamudInterface.Instance.Log.Error(exception, "Exception doing something, check trace for details.");
+    internal static void Exception(Exception exception, [CallerMemberName] string? callerName = null) {
+        DalamudInterface.Instance.Log.Error(exception, $"Exception in {callerName}");
     }
 }
