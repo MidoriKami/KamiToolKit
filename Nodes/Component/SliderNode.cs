@@ -59,7 +59,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         Data->Min = 0;
         Data->Max = 100;
         Data->OfffsetL = 4;
-        Data->OffsetR = 28;
+        Data->OffsetR = 50;
 
         Data->Nodes[0] = ProgressTextureNode.NodeId;
         Data->Nodes[1] = SliderForegroundButtonNode.NodeId;
@@ -71,7 +71,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         InitializeComponentEvents();
 
         Component->SliderSize = 220;
-        Component->OffsetR = 28;
+        Component->OffsetR = 50;
         Component->OffsetL = 4;
 
         AddEvent(AtkEventType.SliderValueUpdate, ValueChangedHandler);
@@ -113,7 +113,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        SliderBackgroundButtonNode.Size = new Vector2(Width - 18.0f, Height / 2.0f);
+        SliderBackgroundButtonNode.Size = new Vector2(Width - 18.0f - 25.0f, Height / 2.0f);
         SliderBackgroundButtonNode.Position = new Vector2(0.0f, 4.0f);
 
         ProgressTextureNode.Size = new Vector2(0.0f, Height / 2.0f - 1.0f);
@@ -123,10 +123,10 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         SliderForegroundButtonNode.Position = new Vector2(0.0f, 0.0f);
 
         ValueNode.Size = new Vector2(0.0f, Height);
-        ValueNode.Position = new Vector2(Width - 18.0f, 0.0f);
+        ValueNode.Position = new Vector2(Width - 18.0f - 20.0f, 0.0f);
         
         FloatValueNode.Size = new Vector2(0.0f, Height);
-        FloatValueNode.Position = new Vector2(Width - 18.0f, 0.0f);
+        FloatValueNode.Position = new Vector2(Width - 18.0f - 20.0f, 0.0f);
 
         Component->SliderSize = (short)Width;
     }
