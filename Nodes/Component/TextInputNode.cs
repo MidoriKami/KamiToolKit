@@ -233,32 +233,38 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     public Action? OnUnfocused { get; set; }
 
     private InputCallbackResult OnCallback(AtkUnitBase* addon, InputCallbackType type, CStringPointer rawString, CStringPointer evaluatedString, int eventKind) {
-        switch (type) {
-            case InputCallbackType.Enter:
-                if (this is TextMultiLineInputNode) break; 
+        try {
+            switch (type) {
+                case InputCallbackType.Enter:
+                    if (this is TextMultiLineInputNode) break; 
                 
-                OnInputComplete?.Invoke(Component->EvaluatedString.AsSpan());
-                ClearFocus();
-                break;
+                    OnInputComplete?.Invoke(Component->EvaluatedString.AsSpan());
+                    ClearFocus();
+                    break;
 
-            case InputCallbackType.TextChanged:
-                OnInputReceived?.Invoke(Component->EvaluatedString.AsSpan());
-                break;
+                case InputCallbackType.TextChanged:
+                    OnInputReceived?.Invoke(Component->EvaluatedString.AsSpan());
+                    break;
 
-            case InputCallbackType.Escape:
-                OnEscapeEntered?.Invoke();
-                break;
+                case InputCallbackType.Escape:
+                    OnEscapeEntered?.Invoke();
+                    break;
 
-            case InputCallbackType.FocusLost:
-                OnFocusLost?.Invoke();
-                break;
+                case InputCallbackType.FocusLost:
+                    OnFocusLost?.Invoke();
+                    break;
 
-            case InputCallbackType.Tab:
-                OnTabEntered?.Invoke();
-                break;
+                case InputCallbackType.Tab:
+                    OnTabEntered?.Invoke();
+                    break;
+            }
+
+            return InputCallbackResult.None;
         }
-
-        return InputCallbackResult.None;
+        catch (Exception e) {
+            Log.Exception(e);
+            return InputCallbackResult.None;
+        }
     }
 
     private void UpdatePlaceholderVisibility() {
