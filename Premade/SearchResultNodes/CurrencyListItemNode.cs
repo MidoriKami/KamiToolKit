@@ -1,0 +1,51 @@
+﻿using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
+using KamiToolKit.Nodes;
+using Lumina.Excel.Sheets;
+
+namespace KamiToolKit.Premade.SearchResultNodes;
+
+public class CurrencyListItemNode : ListItemNode<Item> {
+    public override float ItemHeight => 48.0f;
+    
+    protected readonly IconImageNode IconNode;
+    protected readonly TextNode LabelTextNode;
+
+    public CurrencyListItemNode() {
+        IconNode = new IconImageNode {
+            FitTexture = true,
+            IconId = 60072,
+        };
+        IconNode.AttachNode(this);
+
+        LabelTextNode = new TextNode {
+            TextFlags = TextFlags.Ellipsis | TextFlags.Emboss,
+            FontSize = 14,
+            LineSpacing = 14,
+            AlignmentType = AlignmentType.Left,
+            TextColor = ColorHelper.GetColor(8),
+            TextOutlineColor = ColorHelper.GetColor(7),
+        };
+        LabelTextNode.AttachNode(this);
+
+        CollisionNode.ShowClickableCursor = true;
+    }
+    
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
+
+        IconNode.Size = new Vector2(Height - 4.0f, Height - 4.0f);
+        IconNode.Position = new Vector2(2.0f, 2.0f);
+
+        LabelTextNode.Size = new Vector2(Width - IconNode.Width - 6.0f, Height);
+        LabelTextNode.Position = new Vector2(IconNode.Bounds.Right + 6.0f, 0.0f);
+    }
+    
+    protected override void SetNodeData(Item itemData) {
+        if (itemData.RowId is 0) return;
+        
+        IconNode.IconId = itemData.Icon;
+        LabelTextNode.String = itemData.Name.ToString();
+    }
+}

@@ -4,20 +4,19 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Nodes;
 using KamiToolKit.Premade.Widgets;
 
-namespace KamiToolKit.Premade.Addons;
+namespace KamiToolKit.Premade.SearchAddons;
 
-public abstract class BaseSearchAddon<T> : NativeAddon {
+public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNode<T>, new() {
     
     private SearchWidget? searchWidget;
-    private ScrollingListNode? listNode;
+    private ListNode<T, TU>? listNode;
 
     private TextButtonNode? cancelButton;
     private TextButtonNode? confirmButton;
 
-    private BaseSearchInfoNode<T>? selectedOption;
+    private T? selectedOption;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon) {
         searchWidget = new SearchWidget {
@@ -29,11 +28,15 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
         };
         searchWidget.AttachNode(this);
 
-        listNode = new ScrollingListNode {
+        listNode = new ListNode<T, TU> {
             Position = new Vector2(ContentStartPosition.X, searchWidget.Y + searchWidget.Height + 8.0f),
             Size = new Vector2(ContentSize.X, ContentSize.Y - searchWidget.Height - 16.0f - 24.0f - 8.0f),
-            AutoHideScrollBar = true,
-            FitContents = true,
+            ItemSpacing = 6.0f,
+            OptionsList = SearchOptions,
+            OnItemSelected = item => {
+                selectedOption = item;
+                confirmButton?.IsEnabled = true;
+            },
         };
         listNode.AttachNode(this);
 
@@ -58,76 +61,48 @@ public abstract class BaseSearchAddon<T> : NativeAddon {
         };
         confirmButton.AttachNode(this);
 
-        List<BaseSearchInfoNode<T>> newOptions = [];
-        foreach (var newOptionNode in SearchOptions.Select(BuildOptionNode)) {
-            newOptionNode.Size = new Vector2(listNode.ContentWidth, 48.0f);
-            newOptionNode.OnClick = OnOptionClicked;
-            newOptions.Add(newOptionNode);
-        }
-        
-        listNode.AddNode(newOptions);
-
-        listNode.RecalculateLayout();
-
         if (SortingOptions.Count > 0) {
             OnSortOrderUpdated(SortingOptions.First(), false);
         }
     }
 
     private void OnCancelClicked() {
-        selectedOption = null;
+        selectedOption = default;
         Close();
     }
 
     private void OnConfirmClicked() {
-        if (selectedOption != null) {
-            SelectionResult?.Invoke(selectedOption.Option);
+        if (selectedOption is not null) {
+            SelectionResult?.Invoke(selectedOption);
         }
         
-        selectedOption = null;
+        selectedOption = default;
         Close();
     }
 
-    protected abstract BaseSearchInfoNode<T> BuildOptionNode(T option);
+    private void OnSortOrderUpdated(string sortingString, bool reversed) {
+        var resortedList = SearchOptions.ToList();
+        resortedList.Sort((left, right) => Comparer(left, right, sortingString, reversed));
 
-    private void OnOptionClicked(SelectableNode clickedOption) {
-        if (confirmButton is null) return;
-        
-        // Unselect Previous Option
-        selectedOption?.IsHovered = false;
-        selectedOption?.IsSelected = false;
-        selectedOption = null;
-
-        // Select New Option
-        selectedOption = (BaseSearchInfoNode<T>) clickedOption;
-        selectedOption.IsSelected = true;
-
-        // Enable Confirm Button
-        confirmButton.IsEnabled = true;
+        listNode?.OptionsList = resortedList;
     }
-
-    private void OnSortOrderUpdated(string sortingString, bool reversed) => listNode?.ReorderNodes((x, y) => {
-        if (x is not BaseSearchInfoNode<T> left || y is not BaseSearchInfoNode<T> right) return 0;
-
-        return left.Compare(right, sortingString, reversed);
-    });
-
+    
     private void OnSearchUpdated(string searchString) {
-        if (listNode is null) return;
-
-        foreach (var node in listNode.GetNodes<BaseSearchInfoNode<T>>()) {
-            node.IsVisible = node.IsMatch(searchString);
-        }
-
-        selectedOption?.IsSelected = false;
-
-        selectedOption = null;
-        
-        listNode.RecalculateLayout();
+        listNode?.OptionsList = SearchOptions.Where(item => IsMatch(item, searchString)).ToList();
     }
 
-    public required List<string> SortingOptions { get; init; }
-    public required List<T> SearchOptions { get; init; }
+    protected abstract int Comparer(T left, T right, string sortingString, bool reversed);
+    protected abstract bool IsMatch(T item, string searchString);
+
+    public List<string> SortingOptions { get; init; } = [ "Alphabetical", "Id" ];
+
+    public List<T> SearchOptions {
+        get;
+        set {
+            field = value;
+            listNode?.OptionsList = value;
+        }
+    } = [];
 
     public Action<T>? SelectionResult { get; set; }
 }

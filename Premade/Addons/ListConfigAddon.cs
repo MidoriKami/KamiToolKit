@@ -8,22 +8,24 @@ using KamiToolKit.Premade.Nodes;
 
 namespace KamiToolKit.Premade.Addons;
 
-public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new() where T : class, IInfoNodeData {
+public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : ConfigNode<T>, new() where TU : ListItemNode<T>, new() {
 
-    private ModifyListNode<T>? selectionListNode;
+    private ModifyListNode<T, TU>? selectionListNode;
     private VerticalLineNode? separatorLine;
-    private TU? configNode;
+    private TV? configNode;
     private TextNode? nothingSelectedTextNode;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon) {
-        selectionListNode = new ModifyListNode<T> {
+        selectionListNode = new ModifyListNode<T, TU> {
             Position = ContentStartPosition,
             Size = new Vector2(250.0f, ContentSize.Y),
             SortOptions = SortOptions,
-            SelectionOptions = Options,
-            OnOptionChanged = OnOptionChanged,
+            Options = Options,
+            SelectionChanged = SelectionChanged,
             AddNewEntry = OnAddClicked,
-            RemoveEntry = OnItemRemoved,
+            RemoveEntry = OnRemoveClicked,
+            ItemComparer = ItemComparer,
+            IsSearchMatch = IsSearchMatch,
         };
         selectionListNode.AttachNode(this);
 
@@ -46,38 +48,96 @@ public class ListConfigAddon<T, TU> : NativeAddon where TU : ConfigNode<T>, new(
         };
         nothingSelectedTextNode.AttachNode(this);
 
-        configNode = new TU {
+        configNode = new TV {
             Position = ContentStartPosition + new Vector2(250.0f + 16.0f, 0.0f),
             Size = ContentSize - new Vector2(250.0f + 16.0f, 0.0f),
-            OnConfigChanged = option => {
-                OnConfigChanged?.Invoke(option);
-                selectionListNode.UpdateList();
-            },
+            OnConfigChanged = option => EditCompleted?.Invoke(option),
             IsVisible = false,
         };
         configNode.AttachNode(this);
     }
 
-    private void OnOptionChanged(T? newOption) {
-        if (configNode is null) return;
-
-        configNode.IsVisible = newOption is not null;
-        nothingSelectedTextNode?.IsVisible = newOption is null;
-
-        configNode.ConfigurationOption = newOption;
+    public required ModifyListNode<T, TU>.ItemCompareDelegate? ItemComparer {
+        get;
+        init {
+            field = value;
+            selectionListNode?.ItemComparer = value;
+        }
     }
 
-    /// <summary>
-    /// Optional, if this is set, a sorting dropdown and reverse button will appear.
-    /// </summary>
-    public List<string>? SortOptions { get; init; }
+    public required ModifyListNode<T, TU>.IsSearchMatchDelegate? IsSearchMatch {
+        get;
+        init {
+            field = value;
+            selectionListNode?.IsSearchMatch = value;
+        }
+    }
 
-    /// <summary>
-    /// Note: Setting new values will not be shown until the window is reopened.
-    /// </summary>
-    public required List<T> Options { get; set; } = [];
+    private void OnAddClicked() {
+        AddClicked?.Invoke(this);
+        selectionListNode?.RefreshList();
+    }
+    
+    private void OnRemoveClicked(T listItem) {
+        RemoveClicked?.Invoke(this, listItem);
+        SelectionChanged(null);
+        selectionListNode?.RefreshList();
+    }
 
-    public required Action<T>? OnConfigChanged { get; init; }
-    public Action<ModifyListNode<T>>? OnAddClicked { get; init; }
-    public Action<T>? OnItemRemoved { get; init; }
+    private void SelectionChanged(T? listItem) {
+        SetConfigNodeItem(listItem);
+    }
+
+    private void SetConfigNodeItem(T? configItem) {
+        if (configNode is null) return;
+        if (nothingSelectedTextNode is null) return;
+
+        configNode.ConfigurationOption = configItem;
+        
+        configNode.IsVisible = configNode.ConfigurationOption is not null;
+        nothingSelectedTextNode.IsVisible = configNode.ConfigurationOption is null;
+    }
+
+    public void RefreshList()
+        => selectionListNode?.RefreshList();
+
+    public void SelectItem(T listItem)
+        => SelectionChanged(listItem);
+
+    public List<string>? SortOptions {
+        get;
+        set {
+            field = value;
+            selectionListNode?.SortOptions = value;
+        }
+    } = ["Alphabetical", "Id"];
+
+    public required List<T> Options { get;
+        set {
+            field = value;
+            selectionListNode?.Options = value;
+        } 
+    } = [];
+
+    public Action<ListConfigAddon<T, TU, TV>>? AddClicked {
+        get;
+        set {
+            field = value;
+            selectionListNode?.AddNewEntry = () => {
+                value?.Invoke(this);
+            };
+        }
+    }
+
+    public Action<ListConfigAddon<T, TU, TV>, T>? RemoveClicked {
+        get;
+        set {
+            field = value;
+            selectionListNode?.RemoveEntry = entry => {
+                value?.Invoke(this, entry);
+            };
+        }
+    }
+
+    public Action<T>? EditCompleted { get; set; }
 }

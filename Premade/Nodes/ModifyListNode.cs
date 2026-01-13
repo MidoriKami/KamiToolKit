@@ -2,20 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Utility;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Widgets;
 
 namespace KamiToolKit.Premade.Nodes;
 
-public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeData {
-    private SearchWidget searchWidget;
-    private ScrollingListNode listNode;
+/// <summary>
+/// A non-owning list node that supports searching, and various callbacks for easily editing a list.
+/// </summary>
+/// <typeparam name="T">Data type to display the data for.</typeparam>
+/// <typeparam name="TU">ListItemNode derived type, for defining the result view.</typeparam>
+public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode<T>, new() {
+    private readonly SearchWidget searchWidget;
+    private readonly ListNode<T, TU> listNode;
 
-    private TextButtonNode addButton;
-    private TextButtonNode editButton;
-    private TextButtonNode removeButton;
-
-    private BaseSearchInfoNode<T>? selectedOptionNode;
+    private readonly TextButtonNode addButton;
+    private readonly TextButtonNode editButton;
+    private readonly TextButtonNode removeButton;
 
     public ModifyListNode() {
         searchWidget = new SearchWidget {
@@ -24,29 +28,30 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         };
         searchWidget.AttachNode(this);
 
-        listNode = new ScrollingListNode {
-            AutoHideScrollBar = true,
-            FitContents = true,
+        listNode = new ListNode<T, TU> {
+            OptionsList = [],
+            OnItemSelected = OnListItemSelected,
         };
         listNode.AttachNode(this);
 
         addButton = new TextButtonNode {
             String = "Add",
             OnClick = OnAddClicked,
+            IsEnabled = false,
         };
         addButton.AttachNode(this);
 
         editButton = new TextButtonNode {
-            IsEnabled = false,
             String = "Edit",
             OnClick = OnEditClicked,
+            IsEnabled = false,
         };
         editButton.AttachNode(this);
 
         removeButton = new TextButtonNode {
-            IsEnabled = false,
             String = "Remove",
             OnClick = OnRemoveClicked,
+            IsEnabled = false,
         };
         removeButton.AttachNode(this);
     }
@@ -54,19 +59,11 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        searchWidget.Size = new Vector2(Width, 38.0f);
+        searchWidget.Size = new Vector2(Width, 65.0f);
         searchWidget.Position = Vector2.Zero;
 
         listNode.Size = new Vector2(Width, Height - searchWidget.Height - 40.0f);
         listNode.Position = new Vector2(0.0f, searchWidget.Y + searchWidget.Height + 8.0f);
-
-        if (AddNewEntry is null && EditEntry is null && RemoveEntry is null) {
-            listNode.Height += 24.0f;
-        }
-
-        addButton.IsVisible = AddNewEntry is not null;
-        editButton.IsVisible = EditEntry is not null;
-        removeButton.IsVisible = RemoveEntry is not null;
 
         const float buttonPadding = 5.0f;
         var buttonWidth = (Width - buttonPadding * 2.0f) / 3.0f;
@@ -80,146 +77,14 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         removeButton.Size = new Vector2(buttonWidth, 24.0f);
         removeButton.Position = new Vector2(buttonWidth * 2.0f + buttonPadding * 2.0f, Height - 24.0f);
     }
-
-    private void OnSortOrderChanged(string sortingString, bool reversed) {
-        listNode.ReorderNodes((x, y) => {
-            if (x is not SearchInfoNode<T> left || y is not SearchInfoNode<T> right) return 0;
-            return left.Compare(right, sortingString, reversed);
-        });
-    }
-
-    private void OnSearchUpdated(string searchString) {
-        selectedOptionNode?.IsSelected = false;
-
-        selectedOptionNode = null;
-        removeButton.IsEnabled = false;
-        editButton.IsEnabled = false;
-
-        OnOptionChanged?.Invoke(null);
-
-        foreach (var option in listNode.GetNodes<SearchInfoNode<T>>()) {
-            option.IsVisible = option.IsMatch(searchString);
-        }
-
-        listNode.RecalculateLayout();
-    }
-
-    private void OnAddClicked()
-        => AddNewEntry?.Invoke(this);
-
-    public void AddOption(T option) {
-        SelectionOptions.Add(option);
-        UpdateList();
-
-        var newOptionNode = listNode.GetNodes<SearchInfoNode<T>>().FirstOrDefault(node => ReferenceEquals(node.Option, option));
-        if (newOptionNode is not null) {
-            OnOptionClicked(newOptionNode);
-        }
-    }
-
-    private void OnEditClicked() {
-        if (selectedOptionNode?.Option is null) return;
-        EditEntry?.Invoke(selectedOptionNode.Option);
-    }
-
-    private void OnRemoveClicked() {
-        if (selectedOptionNode?.Option is null) return;
-
-        var option = selectedOptionNode.Option;
-        SelectionOptions.Remove(selectedOptionNode.Option);
-
-        selectedOptionNode.IsSelected = false;
-        selectedOptionNode = null;
-
-        removeButton.IsEnabled = false;
-        editButton.IsEnabled = false;
-
-        RemoveEntry?.Invoke(option);
-        UpdateList();
-
-        OnOptionChanged?.Invoke(null);
-    }
-
-    private void OnOptionClicked(SelectableNode optionNode) {
-        selectedOptionNode?.IsSelected = false;
-
-        selectedOptionNode = (BaseSearchInfoNode<T>) optionNode;
-        selectedOptionNode.IsSelected = true;
-
-        removeButton.IsEnabled = true;
-        editButton.IsEnabled = true;
-
-        OnOptionChanged?.Invoke(selectedOptionNode.Option);
-    }
-
-    public void UpdateList() {
-        var previouslySelectedOption = selectedOptionNode?.Option;
-
-        if (selectedOptionNode is not null) {
-            selectedOptionNode.IsSelected = false;
-            selectedOptionNode = null;
-        }
-
-        removeButton.IsEnabled = false;
-        editButton.IsEnabled = false;
-
-        listNode.SyncWithListData(
-            SelectionOptions,
-            node => node.Option,
-            data => new SearchInfoNode<T> {
-                Size = new Vector2(listNode.ContentWidth, 48.0f),
-                OnClick = OnOptionClicked,
-                Option = data,
-            });
-
-        listNode.RecalculateLayout();
-
-        if (SortOptions?.Count > 0) {
-            OnSortOrderChanged(SortOptions.First(), false);
-        }
-
-        if (previouslySelectedOption is not null) {
-            var restoredNode = listNode
-                .GetNodes<SearchInfoNode<T>>()
-                .FirstOrDefault(n => ReferenceEquals(n.Option, previouslySelectedOption));
-
-            if (restoredNode is not null) {
-                selectedOptionNode = restoredNode;
-                selectedOptionNode.IsSelected = true;
-                removeButton.IsEnabled = true;
-                editButton.IsEnabled = true;
-            }
-            else {
-                OnOptionChanged?.Invoke(null);
-            }
-        }
-    }
-
-    public Action<ModifyListNode<T>>? AddNewEntry {
+    
+    public List<T> Options {
         get;
         set {
             field = value;
-            OnSizeChanged();
+            listNode.OptionsList = value;
         }
-    }
-
-    public Action<T>? RemoveEntry {
-        get;
-        set {
-            field = value;
-            OnSizeChanged();
-        }
-    }
-
-    public Action<T>? EditEntry {
-        get;
-        set {
-            field = value;
-            OnSizeChanged();
-        }
-    }
-
-    public Action<T?>? OnOptionChanged { get; init; }
+    } = [];
 
     public List<string>? SortOptions {
         get => searchWidget.SortingOptions;
@@ -233,13 +98,106 @@ public class ModifyListNode<T> : SimpleComponentNode where T : class, IInfoNodeD
         }
     }
 
-    public List<T> SelectionOptions {
+    public Action<T?>? SelectionChanged { get; init; }
+
+    public Action? AddNewEntry {
         get;
         set {
-            field = value;
-            UpdateList();
+            field = value; 
+            addButton.IsEnabled = value is not null;
         }
-    } = [];
+    }
 
-    public T? SelectedOption => selectedOptionNode?.Option;
+    public Action<T>? RemoveEntry {
+        get;
+        set {
+            field = value; 
+            removeButton.IsEnabled = value is not null && SelectedOption is not null;
+        }
+    }
+
+    public Action<T>? EditEntry {
+        get;
+        set {
+            field = value; 
+            editButton.IsEnabled = value is not null && SelectedOption is not null;
+        }
+    }
+
+    public delegate int ItemCompareDelegate(T left, T right, string sortingMode);
+    public ItemCompareDelegate? ItemComparer { get; set; }
+    
+    public delegate bool IsSearchMatchDelegate(T obj, string searchString);
+    public IsSearchMatchDelegate? IsSearchMatch { get; set; }
+
+    public T? SelectedOption { get; private set; }
+
+    public float ItemSpacing {
+        get => listNode.ItemSpacing;
+        set {
+            listNode.ItemSpacing = value;
+            OnSizeChanged();
+        }
+    }
+
+    private void OnSortOrderChanged(string sortingString, bool reversed) {
+        if (ItemComparer is null) return;
+
+        var listCopy = Options.ToList();
+        listCopy.Sort((left, right) => ItemComparer.Invoke(left, right, sortingString) * (reversed ? -1 : 1));
+        listNode.OptionsList = listCopy;
+        UpdateButtonStates();
+    }
+    
+    private void OnSearchUpdated(string searchString) {
+        if (IsSearchMatch is null) return;
+
+        if (searchString.IsNullOrEmpty()) {
+            listNode.OptionsList = Options;
+        }
+        else {
+            listNode.OptionsList = Options.Where(item => IsSearchMatch(item, searchString)).ToList();
+        }
+    }
+    
+    private void OnListItemSelected(T? obj) {
+        SelectedOption = obj;
+        SelectionChanged?.Invoke(SelectedOption);
+
+        UpdateButtonStates();
+    }
+
+    private void OnAddClicked() {
+        AddNewEntry?.Invoke();
+        RefreshList();
+    }
+    
+    private void OnEditClicked() {
+        if (SelectedOption is null) return;
+        
+        EditEntry?.Invoke(SelectedOption);
+        RefreshList();
+    }
+    
+    private void OnRemoveClicked() {
+        if (SelectedOption is null) return;
+
+        RemoveEntry?.Invoke(SelectedOption);
+        RefreshList();
+    }
+
+    private void UpdateButtonStates() {
+        editButton.IsEnabled = SelectedOption is not null && EditEntry is not null;
+        removeButton.IsEnabled = SelectedOption is not null && RemoveEntry is not null;
+    }
+
+    /// <summary>
+    /// Refreshes the displayed list data.
+    /// This resets scroll position, so don't spam it.
+    /// </summary>
+    public void RefreshList() {
+        OnSortOrderChanged(searchWidget.SortMode, searchWidget.IsReversed);
+        OnSearchUpdated(searchWidget.SearchText);
+        listNode.FullRebuild();
+    }
 }

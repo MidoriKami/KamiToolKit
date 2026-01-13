@@ -1,27 +1,20 @@
-﻿using System.Drawing;
-using System.Numerics;
-using Dalamud.Interface;
+﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
+using Lumina.Excel.Sheets;
 
-namespace KamiToolKit.Premade.Nodes;
+namespace KamiToolKit.Premade.SearchResultNodes;
 
-public abstract class BaseSearchInfoNode<T> : SelectableNode {
+public class ItemListItemNode : ListItemNode<Item> {
+    public override float ItemHeight => 32.0f;
+    
     protected readonly IconImageNode IconNode;
     protected readonly TextNode LabelTextNode;
     protected readonly TextNode SubLabelTextNode;
     protected readonly TextNode IdTextNode;
 
-    public required T Option {
-        get;
-        set {
-            field = value;
-            SetOptionParams(value);
-        }
-    }
-
-    protected BaseSearchInfoNode() {
+    public ItemListItemNode() {
         IconNode = new IconImageNode {
             FitTexture = true,
             IconId = 60072,
@@ -52,13 +45,13 @@ public abstract class BaseSearchInfoNode<T> : SelectableNode {
             TextFlags = TextFlags.Emboss,
             FontSize = 10,
             AlignmentType = AlignmentType.BottomRight,
-            TextColor = KnownColor.Gray.Vector(),
+            TextColor = ColorHelper.GetColor(3),
         };
         IdTextNode.AttachNode(this);
 
         CollisionNode.ShowClickableCursor = true;
     }
-
+    
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -74,12 +67,12 @@ public abstract class BaseSearchInfoNode<T> : SelectableNode {
         IdTextNode.Size = new Vector2(30.0f, Height / 2.0f);
         IdTextNode.Position = new Vector2(Width - 30.0f, 0.0f);
     }
-
-    protected abstract void SetOptionParams(T? value);
     
-    public abstract int Compare(BaseSearchInfoNode<T> other, string sortOption, bool reversed);
-
-    public abstract bool IsMatch(string searchString);
-
-    public void Refresh() => SetOptionParams(Option);
+    protected override void SetNodeData(Item itemData) {
+        if (itemData.RowId is 0) return;
+        
+        IconNode.IconId = itemData.Icon;
+        LabelTextNode.String = itemData.Name.ToString();
+        SubLabelTextNode.String = itemData.ItemSearchCategory.ValueNullable?.Name.ToString() ?? string.Empty;
+    }
 }
