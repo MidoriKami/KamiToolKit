@@ -14,9 +14,9 @@ public unsafe class SearchWidget : SimpleComponentNode {
     public readonly TextDropDownNode SortOrderDropDown;
     public readonly CircleButtonNode ReverseButtonNode;
 
-    private bool reverseSort;
-    private string searchText = string.Empty;
-    private string sortOption = string.Empty;
+    public bool IsReversed { get; private set; }
+    public string SearchText { get; private set; } = string.Empty;
+    public string SortMode { get; private set; } = string.Empty;
 
     public delegate void SearchUpdated(string searchString);
     public delegate void SortUpdated(string sortingString, bool reversed);
@@ -24,7 +24,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
     public SearchWidget() {
         InputNode = new TextInputNode {
             PlaceholderString = "Search . . .",
-            SeString = searchText,
+            SeString = SearchText,
             OnInputReceived = SearchTextChanged,
         };
         InputNode.AttachNode(this);
@@ -33,7 +33,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
             MaxListOptions = 0,
             Options = [],
             IsVisible = false,
-            SelectedOption = sortOption == string.Empty ? null : sortOption,
+            SelectedOption = SortMode == string.Empty ? null : SortMode,
             OnOptionSelected = DropDownChanged,
         };
         SortOrderDropDown.AttachNode(this);
@@ -52,20 +52,20 @@ public unsafe class SearchWidget : SimpleComponentNode {
     public required SortUpdated OnSortOrderChanged { get; set; }
 
     private void OnReverseButtonClicked() {
-        reverseSort = !reverseSort;
-        OnSortOrderChanged(sortOption, reverseSort);
+        IsReversed = !IsReversed;
+        OnSortOrderChanged(SortMode, IsReversed);
     }
 
     private void DropDownChanged(string newOption) {
-        sortOption = newOption;
-        OnSortOrderChanged(sortOption, reverseSort);
+        SortMode = newOption;
+        OnSortOrderChanged(SortMode, IsReversed);
     }
 
     public required SearchUpdated OnSearchUpdated { get; set; }
 
     private void SearchTextChanged(ReadOnlySeString newSearchString) {
-        searchText = newSearchString.ToString();
-        OnSearchUpdated(searchText);
+        SearchText = newSearchString.ToString();
+        OnSearchUpdated(SearchText);
     }
 
     protected override void OnSizeChanged() {
@@ -100,7 +100,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
             ResNode->SetHeight((ushort)(value.Count > 0 ? 69 : 38));
 
             if (SortingOptions.Count > 0) {
-                sortOption = value.First();
+                SortMode = value.First();
             }
         }
     }
