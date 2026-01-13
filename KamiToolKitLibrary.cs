@@ -11,12 +11,15 @@ public static class KamiToolKitLibrary {
     
     internal static ConcurrentDictionary<nint, Type>? AllocatedNodes;
     
+    internal static string? DefaultWindowSubtitle;
+
     /// <summary>
     /// Main initialization method for KamiToolKit. This method is required to be invoked before any KamiToolKit features are used.
     /// Failure to do so will not result in any direct warnings, but will result in undefined behavior.
     /// </summary>
-    public static void Initialize(IDalamudPluginInterface pluginInterface) {
+    public static void Initialize(IDalamudPluginInterface pluginInterface, string? defaultWindowSubtitle = null) {
         IsInitialized = true;
+        DefaultWindowSubtitle = defaultWindowSubtitle;
 
         // Inject non-Experimental Properties
         pluginInterface.Inject(DalamudInterface.Instance);

@@ -13,6 +13,6 @@ public abstract unsafe class WindowNodeBase : ComponentNode<AtkComponentWindow, 
     public abstract Vector2 ContentStartPosition { get; }
     public abstract float HeaderHeight { get; }
 
-    public void SetTitle(string title, string? subtitle = null)
+    public virtual void SetTitle(string title, string? subtitle = null)
         => Component->SetTitle(title, subtitle ?? string.Empty);
 }

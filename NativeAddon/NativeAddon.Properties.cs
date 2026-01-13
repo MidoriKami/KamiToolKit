@@ -30,7 +30,7 @@ public abstract unsafe partial class NativeAddon {
 
     public required ReadOnlySeString Title { get; set; }
 
-    public ReadOnlySeString Subtitle { get; set; }
+    public ReadOnlySeString? Subtitle { get; set; }
 
     public int OpenWindowSoundEffectId { get; set; } = 23;
 

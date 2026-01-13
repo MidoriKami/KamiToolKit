@@ -111,7 +111,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void SetInitialState() {
-        WindowNode?.SetTitle(Title.ToString(), Subtitle.ToString());
+        WindowNode?.SetTitle(Title.ToString(), Subtitle?.ToString() ?? KamiToolKitLibrary.DefaultWindowSubtitle);
 
         InternalAddon->OpenSoundEffectId = (short)OpenWindowSoundEffectId;
 

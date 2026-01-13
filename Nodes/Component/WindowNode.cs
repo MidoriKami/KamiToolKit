@@ -119,8 +119,8 @@ public unsafe class WindowNode : WindowNodeBase {
             FontSize = 12,
             FontType = FontType.Axis,
             NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            TextColor = ColorHelper.GetColor(8),
-            TextOutlineColor = ColorHelper.GetColor(7),
+            TextColor = ColorHelper.GetColor(3),
+            TextOutlineColor = ColorHelper.GetColor(6),
             BackgroundColor = Vector4.Zero,
             Size = new Vector2(46.0f, 20.0f),
             Position = new Vector2(83.0f, 17.0f),
@@ -133,6 +133,7 @@ public unsafe class WindowNode : WindowNodeBase {
             AlignmentType = AlignmentType.Left,
             FontSize = 23,
             FontType = FontType.TrumpGothic,
+            TextFlags = TextFlags.AutoAdjustNodeSize,
             NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TextColor = ColorHelper.GetColor(2),
             TextOutlineColor = ColorHelper.GetColor(7),
@@ -182,6 +183,11 @@ public unsafe class WindowNode : WindowNodeBase {
             SubtitleNode.IsVisible = true;
             SubtitleNode.X = TitleNode.X + TitleNode.Width + 2.0f;
         }
+    }
+
+    public override void SetTitle(string title, string? subtitle = null) {
+        base.SetTitle(title, subtitle);
+        SubtitleNode.Position = new Vector2(TitleNode.Bounds.Right + 4.0f, SubtitleNode.Y);
     }
 
     public bool ShowCloseButton {
