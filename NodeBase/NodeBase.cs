@@ -18,6 +18,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     private bool isDisposed;
 
+    private bool isDisposedInternal;
+
     internal abstract AtkResNode* ResNode { get; }
     internal bool IsAddonRootNode;
 
@@ -57,10 +59,14 @@ public abstract unsafe partial class NodeBase : IDisposable {
             Log.Exception(e);
         } 
         finally {
-            Dispose(true, false);
-
-            GC.SuppressFinalize(this);
-            CreatedNodes.Remove(this);
+            if (!isDisposedInternal)
+            {
+                isDisposedInternal = true;
+                
+                Dispose(true, false);
+                GC.SuppressFinalize(this);
+                CreatedNodes.Remove(this);
+            }
         }
     }
 
@@ -85,7 +91,12 @@ public abstract unsafe partial class NodeBase : IDisposable {
         }
     }
 
-    ~NodeBase() => Dispose(false, false);
+    ~NodeBase() {
+        if (isDisposedInternal) return;
+        isDisposedInternal = true;
+        
+        Dispose(false, false);
+    }
 
     /// <summary>
     /// Dispose associated resources. If a resource modifies native state directly guard it with isNativeDestructor
