@@ -59,8 +59,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             Log.Exception(e);
         } 
         finally {
-            if (!isDisposedInternal)
-            {
+            if (!isDisposedInternal) {
                 isDisposedInternal = true;
                 
                 Dispose(true, false);
