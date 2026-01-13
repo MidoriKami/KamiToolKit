@@ -16,7 +16,7 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     private bool isRingDrag;
     private bool isSquareDrag;
 
-    private ViewportEventListener eventListener;
+    private readonly ViewportEventListener eventListener;
 
     public ColorRingWithSquareNode() {
         eventListener = new ViewportEventListener(SquareEventHandler);
