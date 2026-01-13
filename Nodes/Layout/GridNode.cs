@@ -8,7 +8,7 @@ public record GridSize(int Columns, int Rows);
 
 public class GridNode : SimpleComponentNode {
 
-    private List<SimpleComponentNode> gridNodes = [];
+    private readonly List<SimpleComponentNode> gridNodes = [];
 
     public SimpleComponentNode this[int x, int y] {
         get => gridNodes[x + y * GridSize.Columns];
