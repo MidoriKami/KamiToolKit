@@ -9,7 +9,7 @@ namespace KamiToolKit.Nodes;
 
 public class RadioButtonGroupNode : SimpleComponentNode {
 
-    private List<RadioButtonNode> radioButtons = [];
+    private readonly List<RadioButtonNode> radioButtons = [];
 
     public RadioButtonGroupNode() {
         BuildTimelines();
