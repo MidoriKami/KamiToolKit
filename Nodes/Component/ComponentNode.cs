@@ -1,3 +1,4 @@
+using System;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -59,16 +60,21 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
-            if (!isNativeDestructor) {
-                NativeMemoryHelper.UiFree(Data);
-                Node->Component->UldManager.ComponentData = null;
+            try {
+                if (!isNativeDestructor) {
+                    NativeMemoryHelper.UiFree(Data);
+                    Node->Component->UldManager.ComponentData = null;
 
-                Node->Component->Deinitialize();
-                Node->Component->Dtor(1);
-                Node->Component = null;
+                    Node->Component->Deinitialize();
+                    Node->Component->Dtor(1);
+                    Node->Component = null;
+                }
             }
-
-            base.Dispose(disposing, isNativeDestructor);
+            catch (Exception e) {
+                Log.Exception(e);
+            } finally {
+                base.Dispose(disposing, isNativeDestructor);
+            }
         }
     }
 
