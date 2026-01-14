@@ -63,12 +63,18 @@ public class SelectableNode : SimpleComponentNode {
         get;
         set {
             field = value;
-            CollisionNode.ShowClickableCursor = value is not null;
+            CollisionNode.ShowClickableCursor = value is not null && EnableSelection;
         }
     }
 
-    public bool EnableSelection { get; set; } = true;
-    
+    public bool EnableSelection {
+        get;
+        set {
+            field = value;
+            CollisionNode.ShowClickableCursor = value;
+        }
+    } = true;
+
     public bool IsHovered {
         get => hoveredBackgroundNode.IsVisible;
         set => hoveredBackgroundNode.IsVisible = value;
