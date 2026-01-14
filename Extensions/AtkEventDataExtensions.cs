@@ -14,7 +14,7 @@ public static class AtkEventDataExtensions {
         public bool IsControlHeld => data.MouseData.Modifier.HasFlag(ModifierFlag.Ctrl);
         public bool IsShiftHeld => data.MouseData.Modifier.HasFlag(ModifierFlag.Shift);
         public bool IsDragging => data.MouseData.Modifier.HasFlag(ModifierFlag.Dragging);
-        public bool IsScrollUp => data.MouseData.WheelDirection is 1;
-        public bool IsScrollDown => data.MouseData.WheelDirection is -1;
+        public bool IsScrollUp => data.MouseData.WheelDirection >= 1;
+        public bool IsScrollDown => data.MouseData.WheelDirection <= -1;
     }
 }
