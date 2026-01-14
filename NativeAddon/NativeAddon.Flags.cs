@@ -35,6 +35,9 @@ public unsafe partial class NativeAddon {
         // Don't load into FocusedAddons list
         FlagHelper.UpdateFlag(ref InternalAddon->Flags1A1, 0x40, true);
 
+        // Disable Controller Nav
+        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A2, 0x2, true);
+        
         // Disable open/close transitions
         FlagHelper.UpdateFlag(ref InternalAddon->Flags1A2, 0x8, true);
         

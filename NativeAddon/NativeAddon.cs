@@ -106,6 +106,10 @@ public abstract unsafe partial class NativeAddon {
 
         InternalAddon->UpdateCollisionNodeList(false);
 
+        // Set focus node to allow controller nav
+        WindowNode?.WindowHeaderFocusNode.AddNodeFlags(NodeFlags.Focusable);
+        InternalAddon->FocusNode = WindowNode is not null ? WindowNode.WindowHeaderFocusNode : RootNode;
+        
         // Now that we have constructed this instance, track it for auto-dispose
         CreatedAddons.Add(this);
     }
