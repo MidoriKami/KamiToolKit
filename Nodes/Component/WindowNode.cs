@@ -29,7 +29,7 @@ public unsafe class WindowNode : WindowNodeBase {
             NodeId = 12,
             Height = 28.0f,
             Position = new Vector2(8.0f, 8.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.EmitsEvents | NodeFlags.Focusable,
         };
         HeaderCollisionNode.AttachNode(this);
 
@@ -220,6 +220,8 @@ public unsafe class WindowNode : WindowNodeBase {
     public override Vector2 ContentSize => new(BackgroundImageNode.Width, BackgroundImageNode.Height - HeaderHeight);
 
     public override Vector2 ContentStartPosition => new(BackgroundImageNode.X, BackgroundImageNode.Y + HeaderHeight);
+
+    public override ResNode WindowHeaderFocusNode => HeaderContainerNode;
 
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
