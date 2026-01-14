@@ -34,7 +34,7 @@ public class SelectableNode : SimpleComponentNode {
         selectedBackgroundNode.AttachNode(this);
         
         CollisionNode.AddEvent(AtkEventType.MouseOver, () => {
-            if (!IsSelected) {
+            if (!IsSelected && EnableHighlight) {
                 IsHovered = true;
             }
         });
@@ -74,6 +74,8 @@ public class SelectableNode : SimpleComponentNode {
             CollisionNode.ShowClickableCursor = value;
         }
     } = true;
+
+    public bool EnableHighlight { get; set; } = true;
 
     public bool IsHovered {
         get => hoveredBackgroundNode.IsVisible;
