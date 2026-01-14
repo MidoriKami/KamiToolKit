@@ -158,6 +158,7 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
         scrollPosition = Math.Clamp(scrollPosition, 0, Math.Max(0, OptionsList.Count - nodeCount));
 
         ScrollBarNode.ScrollPosition = (int)( scrollPosition * (itemHeight + ItemSpacing) );
+        PopulateNodes();
 
         atkEvent->SetEventIsHandled();
     }
