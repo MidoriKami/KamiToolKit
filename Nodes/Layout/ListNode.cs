@@ -154,11 +154,10 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
     }
     
     private void OnMouseWheel(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        scrollPosition -= atkEventData->MouseData.WheelDirection;
+        scrollPosition += atkEventData->IsScrollUp ? -1 : 1;
         scrollPosition = Math.Clamp(scrollPosition, 0, Math.Max(0, OptionsList.Count - nodeCount));
 
-        OnScrollUpdate((int)( scrollPosition * ( itemHeight + ItemSpacing ) ) );
-        RecalculateScroll();
+        ScrollBarNode.ScrollPosition = (int)( scrollPosition * (itemHeight + ItemSpacing) );
 
         atkEvent->SetEventIsHandled();
     }
