@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 
 namespace KamiToolKit.Nodes;
 
@@ -161,18 +160,5 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
         PopulateNodes();
 
         atkEvent->SetEventIsHandled();
-    }
-}
-
-internal static class GenericUtil {
-    public static bool AreEqual<T>(T? left, T? right) {
-        if (default(T) == null) return ReferenceEquals(left, right);
-
-        if (left == null || right == null) return left == null && right == null;
-
-        var leftSpan = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, byte>(ref left), Unsafe.SizeOf<T>());
-        var rightSpan = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, byte>(ref right), Unsafe.SizeOf<T>());
-
-        return leftSpan.SequenceEqual(rightSpan);
     }
 }
