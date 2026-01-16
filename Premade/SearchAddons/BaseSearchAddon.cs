@@ -31,7 +31,7 @@ public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNo
         listNode = new ListNode<T, TU> {
             Position = new Vector2(ContentStartPosition.X, searchWidget.Y + searchWidget.Height + 8.0f),
             Size = new Vector2(ContentSize.X, ContentSize.Y - searchWidget.Height - 16.0f - 24.0f - 8.0f),
-            ItemSpacing = 6.0f,
+            ItemSpacing = ItemSpacing,
             OptionsList = SearchOptions,
             OnItemSelected = item => {
                 selectedOption = item;
@@ -103,6 +103,14 @@ public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNo
             listNode?.OptionsList = value;
         }
     } = [];
+
+    public float ItemSpacing {
+        get;
+        set {
+            field = value;
+            listNode?.ItemSpacing = value;
+        }
+    } = 6.0f;
 
     public Action<T>? SelectionResult { get; set; }
 }

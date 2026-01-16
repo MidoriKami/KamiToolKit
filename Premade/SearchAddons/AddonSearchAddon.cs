@@ -12,18 +12,7 @@ public unsafe class AddonSearchAddon : BaseSearchAddon<Pointer<AtkUnitBase>, Add
     public AddonSearchAddon() {
         SearchOptions = GetAllAddons();
         SortingOptions = [ "Visibility", "Alphabetical" ];
-    }
-    
-    private int lastAddonCount;
-    
-    protected override void OnUpdate(AtkUnitBase* addon) {
-        base.OnUpdate(addon);
-
-        var newAddonCount = RaptureAtkUnitManager.Instance()->AllLoadedUnitsList.Entries.Length;
-        if (newAddonCount != lastAddonCount) {
-            SearchOptions = GetAllAddons();
-            lastAddonCount = newAddonCount;
-        }
+        ItemSpacing = 3.0f;
     }
 
     protected override int Comparer(Pointer<AtkUnitBase> left, Pointer<AtkUnitBase> right, string sortingString, bool reversed) {
@@ -31,15 +20,15 @@ public unsafe class AddonSearchAddon : BaseSearchAddon<Pointer<AtkUnitBase>, Add
 
         switch (sortingString) {
             case "Alphabetical":
-                return string.CompareOrdinal(left.Value->NameString, right.Value->NameString);
+                return string.CompareOrdinal(left.Value->NameString, right.Value->NameString) * (reversed ? -1 : 1);
 
             case "Visibility":
-                var visibilityComparison = left.Value->IsVisible.CompareTo(right.Value->IsVisible);
+                var visibilityComparison = right.Value->IsVisible.CompareTo(left.Value->IsVisible);
                 if (visibilityComparison is 0) {
                     visibilityComparison = string.CompareOrdinal(left.Value->NameString, right.Value->NameString);
                 }
 
-                return visibilityComparison;
+                return visibilityComparison * (reversed ? -1 : 1);
         }
 
         return 0;
@@ -55,6 +44,7 @@ public unsafe class AddonSearchAddon : BaseSearchAddon<Pointer<AtkUnitBase>, Add
         List<Pointer<AtkUnitBase>> addons = [];
         
         foreach (var entry in RaptureAtkUnitManager.Instance()->AllLoadedUnitsList.Entries) {
+            if (entry.Value is null) continue;
             addons.Add(entry);
         }
         
