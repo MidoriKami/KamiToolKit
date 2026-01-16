@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-using System.Numerics;
-using Dalamud.Interface;
+﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
@@ -46,7 +44,7 @@ public abstract class GenericListItemNode<T> : ListItemNode<T> {
             TextFlags = TextFlags.Emboss,
             FontSize = 10,
             AlignmentType = AlignmentType.BottomRight,
-            TextColor = KnownColor.Gray.Vector(),
+            TextColor = ColorHelper.GetColor(3),
         };
         IdTextNode.AttachNode(this);
 
