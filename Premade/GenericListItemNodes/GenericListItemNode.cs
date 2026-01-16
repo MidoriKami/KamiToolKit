@@ -2,19 +2,18 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using Lumina.Excel.Sheets;
 
-namespace KamiToolKit.Premade.SearchResultNodes;
+namespace KamiToolKit.Premade.GenericListItemNodes;
 
-public class ItemListItemNode : ListItemNode<Item> {
-    public override float ItemHeight => 32.0f;
+public abstract class GenericListItemNode<T> : ListItemNode<T> {
+    public override float ItemHeight => 48.0f;
     
     protected readonly IconImageNode IconNode;
     protected readonly TextNode LabelTextNode;
     protected readonly TextNode SubLabelTextNode;
     protected readonly TextNode IdTextNode;
 
-    public ItemListItemNode() {
+    protected GenericListItemNode() {
         IconNode = new IconImageNode {
             FitTexture = true,
             IconId = 60072,
@@ -51,7 +50,7 @@ public class ItemListItemNode : ListItemNode<Item> {
 
         CollisionNode.ShowClickableCursor = true;
     }
-    
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -68,11 +67,15 @@ public class ItemListItemNode : ListItemNode<Item> {
         IdTextNode.Position = new Vector2(Width - 30.0f, 0.0f);
     }
     
-    protected override void SetNodeData(Item itemData) {
-        if (itemData.RowId is 0) return;
-        
-        IconNode.IconId = itemData.Icon;
-        LabelTextNode.String = itemData.Name.ToString();
-        SubLabelTextNode.String = itemData.ItemSearchCategory.ValueNullable?.Name.ToString() ?? string.Empty;
+    protected override void SetNodeData(T itemData) {
+        IconNode.IconId = GetIconId(itemData);
+        LabelTextNode.String = GetLabelText(itemData);
+        SubLabelTextNode.String = GetSubLabelText(itemData);
+        IdTextNode.String = GetId(itemData).ToString() ?? string.Empty;
     }
+
+    protected abstract uint GetIconId(T data);
+    protected abstract string GetLabelText(T data);
+    protected abstract string GetSubLabelText(T data);
+    protected abstract uint? GetId(T data);
 }

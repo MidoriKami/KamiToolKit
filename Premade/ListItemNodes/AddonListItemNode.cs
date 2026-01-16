@@ -4,7 +4,7 @@ using FFXIVClientStructs.Interop;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Premade.SearchResultNodes;
+namespace KamiToolKit.Premade.ListItemNodes;
 
 public unsafe class AddonListItemNode : ListItemNode<Pointer<AtkUnitBase>> {
     public override float ItemHeight => 48.0f;

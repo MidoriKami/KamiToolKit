@@ -2,18 +2,19 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
+using Lumina.Excel.Sheets;
 
-namespace KamiToolKit.Premade.GenericSearchListItemNodes;
+namespace KamiToolKit.Premade.ListItemNodes;
 
-public abstract class GenericListItemNode<T> : ListItemNode<T> {
-    public override float ItemHeight => 48.0f;
+public class ItemListItemNode : ListItemNode<Item> {
+    public override float ItemHeight => 32.0f;
     
     protected readonly IconImageNode IconNode;
     protected readonly TextNode LabelTextNode;
     protected readonly TextNode SubLabelTextNode;
     protected readonly TextNode IdTextNode;
 
-    protected GenericListItemNode() {
+    public ItemListItemNode() {
         IconNode = new IconImageNode {
             FitTexture = true,
             IconId = 60072,
@@ -50,7 +51,7 @@ public abstract class GenericListItemNode<T> : ListItemNode<T> {
 
         CollisionNode.ShowClickableCursor = true;
     }
-
+    
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -67,15 +68,11 @@ public abstract class GenericListItemNode<T> : ListItemNode<T> {
         IdTextNode.Position = new Vector2(Width - 30.0f, 0.0f);
     }
     
-    protected override void SetNodeData(T itemData) {
-        IconNode.IconId = GetIconId(itemData);
-        LabelTextNode.String = GetLabelText(itemData);
-        SubLabelTextNode.String = GetSubLabelText(itemData);
-        IdTextNode.String = GetId(itemData).ToString() ?? string.Empty;
+    protected override void SetNodeData(Item itemData) {
+        if (itemData.RowId is 0) return;
+        
+        IconNode.IconId = itemData.Icon;
+        LabelTextNode.String = itemData.Name.ToString();
+        SubLabelTextNode.String = itemData.ItemSearchCategory.ValueNullable?.Name.ToString() ?? string.Empty;
     }
-
-    protected abstract uint GetIconId(T data);
-    protected abstract string GetLabelText(T data);
-    protected abstract string GetSubLabelText(T data);
-    protected abstract uint? GetId(T data);
 }

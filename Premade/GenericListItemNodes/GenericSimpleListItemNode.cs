@@ -3,15 +3,15 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Premade.GenericSearchListItemNodes;
+namespace KamiToolKit.Premade.GenericListItemNodes;
 
-public abstract class GenericCurrencyListItemNode<T> : ListItemNode<T> {
+public abstract class GenericSimpleListItemNode<T> : ListItemNode<T> {
     public override float ItemHeight => 48.0f;
     
     protected readonly IconImageNode IconNode;
     protected readonly TextNode LabelTextNode;
 
-    protected GenericCurrencyListItemNode() {
+    protected GenericSimpleListItemNode() {
         IconNode = new IconImageNode {
             FitTexture = true,
             IconId = 60072,

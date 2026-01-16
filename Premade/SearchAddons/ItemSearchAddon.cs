@@ -1,4 +1,4 @@
-﻿using KamiToolKit.Premade.SearchResultNodes;
+﻿using KamiToolKit.Premade.ListItemNodes;
 
 namespace KamiToolKit.Premade.SearchAddons;
 

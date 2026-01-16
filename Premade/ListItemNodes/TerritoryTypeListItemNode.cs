@@ -4,7 +4,7 @@ using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using Lumina.Excel.Sheets;
 
-namespace KamiToolKit.Premade.SearchResultNodes;
+namespace KamiToolKit.Premade.ListItemNodes;
 
 public class TerritoryTypeListItemNode : ListItemNode<TerritoryType> {
     public override float ItemHeight => 64.0f;

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using KamiToolKit.Classes;
-using KamiToolKit.Premade.SearchResultNodes;
+using KamiToolKit.Premade.ListItemNodes;
 using Lumina.Excel.Sheets;
 
 namespace KamiToolKit.Premade.SearchAddons;

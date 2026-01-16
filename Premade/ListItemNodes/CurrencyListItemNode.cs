@@ -4,7 +4,7 @@ using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using Lumina.Excel.Sheets;
 
-namespace KamiToolKit.Premade.SearchResultNodes;
+namespace KamiToolKit.Premade.ListItemNodes;
 
 public class CurrencyListItemNode : ListItemNode<Item> {
     public override float ItemHeight => 48.0f;

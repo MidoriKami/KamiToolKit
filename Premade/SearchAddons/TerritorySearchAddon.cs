@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using Dalamud.Utility;
 using KamiToolKit.Classes;
-using KamiToolKit.Premade.SearchResultNodes;
+using KamiToolKit.Premade.ListItemNodes;
 using Lumina.Excel.Sheets;
 
 namespace KamiToolKit.Premade.SearchAddons;
