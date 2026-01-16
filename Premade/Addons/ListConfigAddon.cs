@@ -25,7 +25,8 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
             AddNewEntry = OnAddClicked,
             RemoveEntry = OnRemoveClicked,
             ItemComparer = ItemComparer,
-            IsSearchMatch = IsSearchMatch,
+            IsSearchMatch = OnSearchUpdated,
+            ItemSpacing = ItemSpacing,
         };
         selectionListNode.AttachNode(this);
 
@@ -88,6 +89,11 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
         SetConfigNodeItem(listItem);
     }
 
+    private bool OnSearchUpdated(T obj, string searchString) {
+        SelectItem(null);
+        return IsSearchMatch?.Invoke(obj, searchString) ?? false;
+    }
+    
     private void SetConfigNodeItem(T? configItem) {
         if (configNode is null) return;
         if (nothingSelectedTextNode is null) return;
@@ -101,7 +107,7 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
     public void RefreshList()
         => selectionListNode?.RefreshList();
 
-    public void SelectItem(T listItem)
+    public void SelectItem(T? listItem)
         => SelectionChanged(listItem);
 
     public List<string>? SortOptions {
@@ -118,6 +124,14 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
             selectionListNode?.Options = value;
         } 
     } = [];
+
+    public float ItemSpacing {
+        get;
+        set {
+            field = value;
+            selectionListNode?.ItemSpacing = value;
+        }
+    }
 
     public Action<ListConfigAddon<T, TU, TV>>? AddClicked {
         get;
