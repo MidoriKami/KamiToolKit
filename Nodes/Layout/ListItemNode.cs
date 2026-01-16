@@ -7,7 +7,7 @@ public abstract class ListItemNode<T> : SelectableNode {
 
     public T? ItemData {
         get;
-        internal set {
+        set {
             if (value is not null) {
                 if (!GenericUtil.AreEqual(field, value)) {
                     SetNodeData(value);
