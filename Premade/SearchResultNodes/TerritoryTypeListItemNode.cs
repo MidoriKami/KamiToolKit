@@ -12,16 +12,19 @@ public class TerritoryTypeListItemNode : ListItemNode<TerritoryType> {
     private readonly SimpleImageNode territoryImageNode;
     private readonly TextNode territoryTitleNode;
     private readonly TextNode territoryDescriptionNode;
+    private readonly TextNode territoryIdNode;
 
     public TerritoryTypeListItemNode() {
         territoryImageNode = new SimpleImageNode {
             FitTexture = true,
+            IsVisible = false,
         };
         territoryImageNode.AttachNode(this);
 
         territoryTitleNode = new TextNode {
             TextFlags = TextFlags.Ellipsis,
             AlignmentType = AlignmentType.BottomLeft,
+            String = "None Selected",
         };
         territoryTitleNode.AttachNode(this);
 
@@ -31,6 +34,12 @@ public class TerritoryTypeListItemNode : ListItemNode<TerritoryType> {
             TextColor = ColorHelper.GetColor(2),
         };
         territoryDescriptionNode.AttachNode(this);
+
+        territoryIdNode = new TextNode {
+            AlignmentType = AlignmentType.Right,
+            TextColor = ColorHelper.GetColor(3),
+        };
+        territoryIdNode.AttachNode(this);
     }
 
     protected override void OnSizeChanged() {
@@ -39,7 +48,10 @@ public class TerritoryTypeListItemNode : ListItemNode<TerritoryType> {
         territoryImageNode.Size = new Vector2((Height - 4.0f) * 1.777f, Height - 4.0f);
         territoryImageNode.Position = new Vector2(2.0f, 2.0f);
 
-        territoryTitleNode.Size = new Vector2(Width - territoryImageNode.Width - 10.0f, Height / 2.0f);
+        territoryIdNode.Size = new Vector2(30.0f, 30.0f);
+        territoryIdNode.Position = new Vector2(Width - territoryIdNode.Width, 0.0f);
+        
+        territoryTitleNode.Size = new Vector2(Width - territoryImageNode.Width - 10.0f - territoryIdNode.Width - 4.0f, Height / 2.0f);
         territoryTitleNode.Position = new Vector2(territoryImageNode.Bounds.Right + 8.0f, 0.0f);
 
         territoryDescriptionNode.Size = territoryTitleNode.Size;
@@ -48,9 +60,15 @@ public class TerritoryTypeListItemNode : ListItemNode<TerritoryType> {
 
     protected override void SetNodeData(TerritoryType territory) {
         if (territory.RowId is 0) return;
+
+        territoryIdNode.String = territory.RowId.ToString();
         
         if (territory.LoadingImage.ValueNullable?.FileName is { IsEmpty: false } filePath) {
             territoryImageNode.LoadTexture($"ui/loadingimage/{filePath}_hr1.tex");
+            territoryImageNode.IsVisible = true;
+        }
+        else {
+            territoryImageNode.IsVisible = false;
         }
 
         territoryTitleNode.String = territory.PlaceName.ValueNullable?.Name.ToString() ?? string.Empty;
