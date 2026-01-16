@@ -10,6 +10,7 @@ public class TerritoryTypeListItemNode : ListItemNode<TerritoryType> {
     public override float ItemHeight => 64.0f;
 
     private readonly SimpleImageNode territoryImageNode;
+    private readonly SimpleImageNode placeholderImageNode;
     private readonly TextNode territoryTitleNode;
     private readonly TextNode territoryDescriptionNode;
     private readonly TextNode territoryIdNode;
@@ -21,6 +22,12 @@ public class TerritoryTypeListItemNode : ListItemNode<TerritoryType> {
         };
         territoryImageNode.AttachNode(this);
 
+        placeholderImageNode = new IconImageNode {
+            FitTexture = true,
+            IconId = 60072,
+        };
+        placeholderImageNode.AttachNode(this);
+        
         territoryTitleNode = new TextNode {
             TextFlags = TextFlags.Ellipsis,
             AlignmentType = AlignmentType.BottomLeft,
@@ -51,6 +58,9 @@ public class TerritoryTypeListItemNode : ListItemNode<TerritoryType> {
         territoryIdNode.Size = new Vector2(30.0f, 30.0f);
         territoryIdNode.Position = new Vector2(Width - territoryIdNode.Width, 0.0f);
         
+        placeholderImageNode.Size = new Vector2(Height - 4.0f, Height - 4.0f);
+        placeholderImageNode.Position = new Vector2(2.0f, 2.0f);
+        
         territoryTitleNode.Size = new Vector2(Width - territoryImageNode.Width - 10.0f - territoryIdNode.Width - 4.0f, Height / 2.0f);
         territoryTitleNode.Position = new Vector2(territoryImageNode.Bounds.Right + 8.0f, 0.0f);
 
@@ -70,6 +80,8 @@ public class TerritoryTypeListItemNode : ListItemNode<TerritoryType> {
         else {
             territoryImageNode.IsVisible = false;
         }
+        
+        placeholderImageNode.IsVisible = !territoryImageNode.IsVisible;
 
         territoryTitleNode.String = territory.PlaceName.ValueNullable?.Name.ToString() ?? string.Empty;
         territoryDescriptionNode.String = territory.ContentFinderCondition.RowId is 0 ? string.Empty : territory.ContentFinderCondition.Value.Name.ToString();
