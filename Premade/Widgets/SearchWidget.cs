@@ -24,7 +24,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
     public SearchWidget() {
         InputNode = new TextInputNode {
             PlaceholderString = "Search . . .",
-            SeString = SearchText,
+            String = SearchText,
             OnInputReceived = SearchTextChanged,
         };
         InputNode.AttachNode(this);

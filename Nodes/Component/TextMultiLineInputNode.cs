@@ -1,5 +1,4 @@
 using System;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -41,20 +40,11 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
         set => Component->ComponentTextData.MaxByte = value;
     }
 
-    public override ReadOnlySeString SeString {
-        get => base.SeString;
-        set {
-            base.SeString = value;
-            PlaceholderTextNode.IsVisible = PlaceholderString is not null && value.IsEmpty;
-            UpdateHeightForContent();
-        }
-    }
-
-    public override string String {
+    public override ReadOnlySeString String {
         get => base.String;
         set {
             base.String = value;
-            PlaceholderTextNode.IsVisible = PlaceholderString is not null && value.IsNullOrEmpty() && !FocusNode.IsVisible;
+            PlaceholderTextNode.IsVisible = PlaceholderString is not null && value.IsEmpty;
             UpdateHeightForContent();
         }
     }
@@ -75,7 +65,7 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
         if (!AutoUpdateHeight) return;
         
         var text = String;
-        var lineCount = Math.Max(1, text.Split('\r', '\n').Length);
+        var lineCount = Math.Max(1, text.ToString().Split('\r', '\n').Length);
         var lineHeight = CurrentTextNode.LineSpacing;
         var contentHeight = Math.Max(Height, lineCount * lineHeight + 20);
         

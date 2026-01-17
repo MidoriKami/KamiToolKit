@@ -143,7 +143,7 @@ public abstract unsafe class DropDownListNode<T> : ListNode {
                 Size = new Vector2(Width - 25.0f, NodeHeight),
                 Position = new Vector2(8.0f, NodeHeight * index + 9.0f),
                 
-                Label = $"Button {index}",
+                String = $"Button {index}",
                 OnClick = () => OnOptionClick(index),
             };
 
@@ -177,7 +177,7 @@ public abstract unsafe class DropDownListNode<T> : ListNode {
             var option = Options[index + CurrentStartIndex];
 
             Nodes[index].Selected = SelectedOption?.Equals(option) ?? false;
-            Nodes[index].Label = GetLabelForOption(option);
+            Nodes[index].String = GetLabelForOption(option);
         }
     }
 

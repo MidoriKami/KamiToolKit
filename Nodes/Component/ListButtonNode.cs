@@ -52,12 +52,7 @@ public unsafe class ListButtonNode : ButtonBase {
         set => Component->SetChecked(value);
     }
 
-    public ReadOnlySeString Label {
-        get => LabelNode.SeString;
-        set => LabelNode.SeString = value;
-    }
-
-    public string String {
+    public ReadOnlySeString String {
         get => LabelNode.String;
         set => LabelNode.String = value;
     }

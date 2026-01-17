@@ -63,12 +63,7 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
 
     public Action? OnClick { get; set; }
 
-    public ReadOnlySeString SeString {
-        get => TextNode.SeString;
-        set => TextNode.SeString = value;
-    }
-
-    public string String {
+    public ReadOnlySeString String {
         get => TextNode.String;
         set => TextNode.String = value;
     }

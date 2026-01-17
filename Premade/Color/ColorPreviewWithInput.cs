@@ -35,7 +35,7 @@ public class ColorPreviewWithInput : SimpleComponentNode {
     public Action<ColorHelpers.HsvaColor>? OnHsvaColorChanged { get; set; }
     public Action<Vector4>? OnColorChanged { get; set; }
     
-    public string String {
+    public ReadOnlySeString String {
         get => ColorInputNode.String;
         set => ColorInputNode.String = value;
     }

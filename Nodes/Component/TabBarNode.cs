@@ -24,7 +24,7 @@ public class TabBarNode : SimpleComponentNode {
     public void AddTab(ReadOnlySeString label, Action callback, bool isEnabled = true) {
         var newButton = new TabBarRadioButtonNode {
             Height = Height, 
-            SeString = label, 
+            String = label, 
             OnClick = callback,
             IsEnabled = isEnabled,
             MultiplyColor = isEnabled ? Vector3.One : new Vector3(0.6f, 0.6f, 0.6f),
@@ -53,14 +53,14 @@ public class TabBarNode : SimpleComponentNode {
     }
 
     public void SelectTab(ReadOnlySeString label) {
-        var button = radioButtons.FirstOrDefault(button => button.SeString == label);
+        var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
         
         ClickHandler(button);
     }
     
     public void DisableTab(ReadOnlySeString label) {
-        var button = radioButtons.FirstOrDefault(button => button.SeString == label);
+        var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
 
         button.IsEnabled = false;
@@ -68,7 +68,7 @@ public class TabBarNode : SimpleComponentNode {
     }
 
     public void EnableTab(ReadOnlySeString label) {
-        var button = radioButtons.FirstOrDefault(button => button.SeString == label);
+        var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
 
         button.IsEnabled = true;
@@ -76,7 +76,7 @@ public class TabBarNode : SimpleComponentNode {
     }
 
     public void ToggleTab(ReadOnlySeString label) {
-        var button = radioButtons.FirstOrDefault(button => button.SeString == label);
+        var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
 
         button.IsEnabled = !button.IsEnabled;
@@ -90,7 +90,7 @@ public class TabBarNode : SimpleComponentNode {
     }
     
     public void RemoveTab(ReadOnlySeString label) {
-        var button = radioButtons.FirstOrDefault(button => button.SeString == label);
+        var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
 
         button.Dispose();

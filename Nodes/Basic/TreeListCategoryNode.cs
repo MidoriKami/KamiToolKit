@@ -107,12 +107,7 @@ public unsafe class TreeListCategoryNode : ResNode {
 
     public float VerticalPadding { get; set; } = 4.0f;
 
-    public ReadOnlySeString SeString {
-        get => LabelNode.SeString;
-        set => LabelNode.SeString = value;
-    }
-
-    public string String {
+    public ReadOnlySeString String {
         get => LabelNode.String;
         set => LabelNode.String = value;
     }
@@ -143,7 +138,7 @@ public unsafe class TreeListCategoryNode : ResNode {
     public void AddHeader(ReadOnlySeString label) {
         var newHeaderNode = new TreeListHeaderNode {
             Size = new Vector2(Width, 24.0f), 
-            SeString = label, 
+            String = label, 
         };
 
         AddNode(newHeaderNode);

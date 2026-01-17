@@ -141,7 +141,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         
         CollisionNode.AddEvent(AtkEventType.FocusStop, () => {
             OnUnfocused?.Invoke();
-            if (!PlaceholderString.IsNullOrEmpty() && String.IsNullOrEmpty()) {
+            if (!PlaceholderString.IsNullOrEmpty() && String.IsEmpty) {
                 PlaceholderTextNode.IsVisible = true;
                 PlaceholderTextNode.String = PlaceholderString;
             }
@@ -187,16 +187,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         set => Component->EnableFocusSounds = value;
     }
 
-    public virtual ReadOnlySeString SeString {
+    public virtual ReadOnlySeString String {
         get => Component->EvaluatedString.AsSpan();
-        set {
-            Component->SetText(value);
-            UpdatePlaceholderVisibility();
-        }
-    }
-
-    public virtual string String {
-        get => SeString.ToString();
         set {
             Component->SetText(value);
             UpdatePlaceholderVisibility();
@@ -269,7 +261,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
     private void UpdatePlaceholderVisibility() {
         PlaceholderTextNode.String = PlaceholderString ?? string.Empty;
-        PlaceholderTextNode.IsVisible = String.IsNullOrEmpty() && !PlaceholderString.IsNullOrEmpty();
+        PlaceholderTextNode.IsVisible = String.IsEmpty && !PlaceholderString.IsNullOrEmpty();
     }
 
     protected override void OnSizeChanged() {

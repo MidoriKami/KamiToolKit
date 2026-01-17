@@ -53,17 +53,7 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
         set => Component->ComponentTextData.MaxByte = value;
     }
 
-    public override string String {
-        get => fullText.ToString();
-        set {
-            isProgrammaticTextSet = true;
-            fullText = value;
-            UpdateCurrentTextDisplay();
-            isProgrammaticTextSet = false;
-        }
-    }
-
-    public override ReadOnlySeString SeString {
+    public override ReadOnlySeString String {
         get => fullText;
         set {
             isProgrammaticTextSet = true;
@@ -150,7 +140,7 @@ internal unsafe class TextMultiLineInputNodeScrollable : TextInputNode {
         var currentEndLine = Math.Min(startLineIndex + maxVisibleLines, totalLines);
         var limitText = $"{startLineIndex + 1}-{currentEndLine}/{totalLines}";
 
-        TextLimitsNode.SeString = limitText;
+        TextLimitsNode.String = limitText;
     }
 
     private void UpdateCurrentTextDisplay() {

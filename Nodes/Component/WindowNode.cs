@@ -3,6 +3,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Timelines;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -168,7 +169,7 @@ public unsafe class WindowNode : WindowNodeBase {
         set => Component->OwnerUnitBase = value;
     }
 
-    public string Title {
+    public ReadOnlySeString Title {
         get => TitleNode.String;
         set {
             TitleNode.String = value;
@@ -176,7 +177,7 @@ public unsafe class WindowNode : WindowNodeBase {
         }
     }
 
-    public string Subtitle {
+    public ReadOnlySeString Subtitle {
         get => SubtitleNode.String;
         set {
             SubtitleNode.String = value;

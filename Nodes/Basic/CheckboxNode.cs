@@ -73,15 +73,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
 
     public Action<bool>? OnClick { get; set; }
 
-    public ReadOnlySeString SeString {
-        get => Label.SeString;
-        set {
-            Label.SeString = value;
-            Width = Height + Label.Width + 4.0f;
-        }
-    }
-
-    public string String {
+    public ReadOnlySeString String {
         get => Label.String;
         set {
             Label.String = value;

@@ -80,9 +80,9 @@ public class ColorEditNode : SimpleOverlayNode {
         set => previewNode.Color = value;
     }
 
-    public ReadOnlySeString Label {
-        get => labelNode.SeString;
-        set => labelNode.SeString = value;
+    public ReadOnlySeString String {
+        get => labelNode.String;
+        set => labelNode.String = value;
     }
 
     public Vector4? DefaultColor { get; set; }

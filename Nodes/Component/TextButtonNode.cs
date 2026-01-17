@@ -34,12 +34,7 @@ public unsafe class TextButtonNode : ButtonBase {
         InitializeComponentEvents();
     }
 
-    public ReadOnlySeString SeString {
-        get => LabelNode.SeString;
-        set => LabelNode.SeString = value;
-    }
-
-    public string String {
+    public ReadOnlySeString String {
         get => LabelNode.String;
         set => LabelNode.String = value;
     }

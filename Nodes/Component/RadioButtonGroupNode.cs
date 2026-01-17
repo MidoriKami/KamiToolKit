@@ -16,14 +16,14 @@ public class RadioButtonGroupNode : SimpleComponentNode {
     }
 
     public ReadOnlySeString? SelectedOption {
-        get => radioButtons.FirstOrDefault(button => button.IsSelected)?.SeString;
+        get => radioButtons.FirstOrDefault(button => button.IsSelected)?.String;
         set {
             if (value == null)
                 return;
 
             foreach (var radioButton in radioButtons) {
-                radioButton.IsChecked = radioButton.SeString == value;
-                radioButton.IsSelected = radioButton.SeString == value;
+                radioButton.IsChecked = radioButton.String == value;
+                radioButton.IsSelected = radioButton.String == value;
             }
 
             RecalculateLayout();
@@ -35,7 +35,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
     public void AddButton(ReadOnlySeString label, Action callback) {
         var newRadioButton = new RadioButtonNode {
             Height = 16.0f, 
-            SeString = label, 
+            String = label, 
             Callback = callback,
         };
 
@@ -53,7 +53,7 @@ public class RadioButtonGroupNode : SimpleComponentNode {
     }
 
     public void RemoveButton(ReadOnlySeString label) {
-        var button = radioButtons.FirstOrDefault(button => button.SeString == label);
+        var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
 
         button.Dispose();

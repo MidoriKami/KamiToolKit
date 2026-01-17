@@ -63,17 +63,12 @@ internal unsafe class RadioButtonNode : ComponentNode<AtkComponentRadioButton, A
 
     public Action? Callback { get; set; }
 
-    public ReadOnlySeString SeString {
-        get => LabelNode.SeString;
+    public ReadOnlySeString String {
+        get => LabelNode.String;
         set {
-            LabelNode.SeString = value;
+            LabelNode.String = value;
             Width = LabelNode.Width + LabelNode.Position.X;
         }
-    }
-
-    public string String {
-        get => LabelNode.String;
-        set => LabelNode.String = value;
     }
 
     public bool IsChecked {

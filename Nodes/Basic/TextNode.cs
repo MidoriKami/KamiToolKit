@@ -106,17 +106,12 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         set => Node->TextId = value;
     }
 
-    public ReadOnlySeString SeString {
+    public ReadOnlySeString String {
         get => new(Node->GetText().AsSpan());
         set {
             using var builder = new RentedSeStringBuilder();
             Node->SetText(builder.Builder.Append(value).GetViewAsSpan());
         }
-    }
-
-    public string String {
-        get => new ReadOnlySeStringSpan(Node->GetText().AsSpan()).ToString();
-        set => Node->SetText(value);
     }
 
     public override Vector2 Size {
@@ -153,6 +148,6 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
 
     private void UpdateText() {
         using var builder = new RentedSeStringBuilder();
-        Node->SetText(builder.Builder.Append(SeString).GetViewAsSpan());
+        Node->SetText(builder.Builder.Append(String).GetViewAsSpan());
     }
 }
