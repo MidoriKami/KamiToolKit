@@ -4,7 +4,7 @@ using Dalamud.Interface;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class ProgressBarCastNode : SimpleComponentNode {
+public unsafe class ProgressBarCastNode : ProgressNode {
 
     public readonly NineGridNode BackgroundImageNode;
     public readonly NineGridNode ProgressNode;
@@ -30,7 +30,7 @@ public unsafe class ProgressBarCastNode : SimpleComponentNode {
             RightOffset = 10,
         };
         ProgressNode.AttachNode(this);
-        
+
         BorderImageNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/Parameter_Gauge.tex",
             TextureSize = new Vector2(160.0f, 20.0f),
@@ -41,12 +41,12 @@ public unsafe class ProgressBarCastNode : SimpleComponentNode {
         BorderImageNode.AttachNode(this);
     }
 
-    public float Progress {
+    public override float Progress {
         get => ProgressNode.Width / Width;
         set => ProgressNode.Width = Width * value;
     }
 
-    public Vector4 BackgroundColor {
+    public override Vector4 BackgroundColor {
         get => new(BackgroundImageNode.AddColor.X, BackgroundImageNode.AddColor.Y, BackgroundImageNode.AddColor.Z, BackgroundImageNode.ResNode->Color.A / 255.0f);
         set {
             BackgroundImageNode.ResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
@@ -62,7 +62,7 @@ public unsafe class ProgressBarCastNode : SimpleComponentNode {
         }
     }
 
-    public Vector4 BarColor {
+    public override Vector4 BarColor {
         get => new(ProgressNode.AddColor.X, ProgressNode.AddColor.Y, ProgressNode.AddColor.Z, ProgressNode.ResNode->Color.A / 255.0f);
         set {
             ProgressNode.ResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
