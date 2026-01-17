@@ -31,4 +31,10 @@ public abstract class ListItemNode<T> : SelectableNode {
     protected abstract void SetNodeData(T itemData);
 
     public virtual void Update() { }
+
+    protected void DisableInteractions() {
+        EnableSelection = false;
+        EnableHighlight = false;
+        DisableCollisionNode = true;
+    }
 }

@@ -101,7 +101,6 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
             };
             node.AttachNode(this);
             nodeList.Add(node); 
-            node.Update();
         }
     }
 
