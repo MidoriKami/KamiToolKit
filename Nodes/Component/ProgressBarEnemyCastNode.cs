@@ -2,11 +2,11 @@
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class ProgressBarEnemyCastNode : SimpleComponentNode {
-    
+public unsafe class ProgressBarEnemyCastNode : ProgressNode {
+
     public readonly NineGridNode BackgroundImageNode;
     public readonly NineGridNode ProgressNode;
-    
+
     public ProgressBarEnemyCastNode() {
         BackgroundImageNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/PartyList_GaugeCast.tex",
@@ -26,13 +26,13 @@ public unsafe class ProgressBarEnemyCastNode : SimpleComponentNode {
         };
         ProgressNode.AttachNode(this);
     }
-    
-    public float Progress {
+
+    public override float Progress {
         get => ProgressNode.Width / Width;
         set => ProgressNode.Width = Width * value;
     }
-    
-    public Vector4 BackgroundColor {
+
+    public override Vector4 BackgroundColor {
         get => new(BackgroundImageNode.AddColor.X, BackgroundImageNode.AddColor.Y, BackgroundImageNode.AddColor.Z, BackgroundImageNode.ResNode->Color.A / 255.0f);
         set {
             BackgroundImageNode.ResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
@@ -40,14 +40,14 @@ public unsafe class ProgressBarEnemyCastNode : SimpleComponentNode {
         }
     }
 
-    public Vector4 BarColor {
+    public override Vector4 BarColor {
         get => new(ProgressNode.AddColor.X, ProgressNode.AddColor.Y, ProgressNode.AddColor.Z, ProgressNode.ResNode->Color.A / 255.0f);
         set {
             ProgressNode.ResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
             ProgressNode.AddColor = value.AsVector3Color();
         }
     }
-    
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
