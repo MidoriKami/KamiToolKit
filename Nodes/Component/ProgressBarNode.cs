@@ -2,7 +2,7 @@
 
 namespace KamiToolKit.Nodes;
 
-public class ProgressBarNode : SimpleComponentNode {
+public class ProgressBarNode : ProgressNode {
 
     public readonly NineGridNode BackgroundNode;
     public readonly NineGridNode ForegroundNode;
@@ -27,17 +27,17 @@ public class ProgressBarNode : SimpleComponentNode {
         ForegroundNode.AttachNode(this);
     }
 
-    public Vector4 BackgroundColor {
+    public override Vector4 BackgroundColor {
         get => BackgroundNode.Color;
         set => BackgroundNode.Color = value;
     }
 
-    public Vector4 BarColor {
+    public override Vector4 BarColor {
         get => ForegroundNode.Color;
         set => ForegroundNode.Color = value;
     }
 
-    public float Progress {
+    public override float Progress {
         get => ForegroundNode.Width / Width;
         set => ForegroundNode.Width = Width * value;
     }
