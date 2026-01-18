@@ -81,9 +81,31 @@ public abstract unsafe partial class NodeBase {
         if (targetNode is null) return;
 
         if (targetNode->GetNodeType() is NodeType.Component) {
+            
+            // If target is a ComponentNode,
+            // then we don't ever wanna be a child of the ComponentNode itself,
+            // we will want to be a sibling of the root node.
+            // Therefore, redirect the target position to be siblings.
+            targetPosition = targetPosition switch {
+                NodePosition.AsLastChild => NodePosition.AfterAllSiblings,
+                NodePosition.AsFirstChild => NodePosition.BeforeAllSiblings,
+                _ => targetPosition,
+            };
+            
+            // If however, we are using BeforeTarget or AfterTarget,
+            // then we do want to attach to the ComponentNode
+            // else, attach to its root node.
             var componentNode = targetNode->GetAsAtkComponentNode();
             if (componentNode is not null) {
-                // We need to check the components node list, to get a safely assigned nodeId
+                targetNode = targetPosition switch {
+                    NodePosition.AfterTarget => targetNode,
+                    NodePosition.BeforeTarget => targetNode,
+                    NodePosition.AfterAllSiblings => componentNode->Component->UldManager.RootNode,
+                    NodePosition.BeforeAllSiblings => componentNode->Component->UldManager.RootNode,
+                    _ => throw new ArgumentOutOfRangeException(nameof(targetPosition), targetPosition, null),
+                };
+                
+                // We also need to check the components node list, to get a safely assigned nodeId
                 if (NodeId > NodeIdBase) {
                     NodeId = componentNode->Component->UldManager.GetMaxNodeId() + 1;
                 }
