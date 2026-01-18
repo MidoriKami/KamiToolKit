@@ -51,7 +51,14 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
         get;
         set {
             field = value;
-            FullRebuild();
+
+            var newNodeCount = (int)(Height / (itemHeight + ItemSpacing));
+            if (newNodeCount != nodeCount) {
+                FullRebuild();
+            }
+            else {
+                PopulateNodes();
+            }
         }
     } = [];
 
