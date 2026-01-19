@@ -58,6 +58,7 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
             }
             else {
                 PopulateNodes();
+                RecalculateScroll();
             }
         }
     } = [];
