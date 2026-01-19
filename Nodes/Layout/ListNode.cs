@@ -30,7 +30,11 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
 
         ScrollBarNode.Size = new Vector2(8.0f, Height);
         ScrollBarNode.Position = new Vector2(Width - 8.0f, 0.0f);
-        FullRebuild();
+        
+        var newNodeCount = (int)(Height / (itemHeight + ItemSpacing));
+        if (newNodeCount != nodeCount) {
+            FullRebuild();
+        }
     }
 
     public Action<T?>? OnItemSelected { get; set; }
@@ -47,7 +51,14 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
         get;
         set {
             field = value;
-            FullRebuild();
+
+            var newNodeCount = (int)(Height / (itemHeight + ItemSpacing));
+            if (newNodeCount != nodeCount) {
+                FullRebuild();
+            }
+            else {
+                PopulateNodes();
+            }
         }
     } = [];
 
