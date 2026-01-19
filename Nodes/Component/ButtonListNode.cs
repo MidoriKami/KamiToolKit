@@ -11,14 +11,14 @@ namespace KamiToolKit.Nodes;
 public abstract class ListNode : SimpleComponentNode;
 
 /// Note, automatically inserts buttons to fill the set height, please ensure option count is greater than button count.
-public abstract unsafe class DropDownListNode<T> : ListNode {
+public abstract unsafe class ButtonListNode<T> : ListNode {
 
     public readonly NineGridNode BackgroundNode;
     public readonly ResNode ContainerNode;
     public readonly ScrollBarNode ScrollBarNode;
     public List<ListButtonNode> Nodes = [];
 
-    protected DropDownListNode() {
+    protected ButtonListNode() {
         SetInternalComponentType(ComponentType.Base);
 
         BackgroundNode = new SimpleNineGridNode {
