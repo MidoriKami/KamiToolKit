@@ -18,16 +18,18 @@ public unsafe partial class OverlayController {
             DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreUpdate, addonName, OnOverlayAddonUpdate);
             DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnOverlayAddonFinalize);
 
-            var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
-            if (addon is not null) {
-                overlayAddons.TryAdd(overlayLayer, addon);
-            }
-            else {
-                CreateOverlayAddon(overlayLayer).Open();
-            }
+            DalamudInterface.Instance.Framework.RunOnTick(() => {
+                var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
+                if (addon is not null) {
+                    overlayAddons.TryAdd(overlayLayer, addon);
+                }
+                else {
+                    CreateOverlayAddon(overlayLayer).Open();
+                }
+                
+                overlaysActive = true;
+            }, delayTicks: 2);
         }
-
-        overlaysActive = true;
     }
 
     private void RemoveOverlays() {

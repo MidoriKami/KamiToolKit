@@ -34,7 +34,6 @@ public unsafe partial class OverlayController : IDisposable {
             overlayNodes[node.OverlayLayer].Add(node);
 
             if (overlaysActive && overlayAddons.TryGetValue(node.OverlayLayer, out var addon)) {
-                node.NodeId = (uint)addon.Value->UldManager.NodeListCount + 1;
                 node.AttachNode(addon);
             }
         }
