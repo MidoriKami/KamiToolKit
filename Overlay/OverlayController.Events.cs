@@ -23,12 +23,11 @@ public unsafe partial class OverlayController {
                 var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
                 if (addon is not null) {
                     overlayAddons.TryAdd(overlayLayer, addon);
+                    AttachNodes(overlayLayer);
                 }
                 else {
                     CreateOverlayAddon(overlayLayer).Open();
                 }
-                
-                overlaysActive = true;
             }, delayTicks: 2);
         }
     }
