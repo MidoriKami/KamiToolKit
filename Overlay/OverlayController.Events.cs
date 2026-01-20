@@ -18,6 +18,7 @@ public unsafe partial class OverlayController {
             DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreUpdate, addonName, OnOverlayAddonUpdate);
             DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnOverlayAddonFinalize);
 
+            // Temporary until https://github.com/goatcorp/Dalamud/pull/2584 is merged
             DalamudInterface.Instance.Framework.RunOnTick(() => {
                 var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
                 if (addon is not null) {
