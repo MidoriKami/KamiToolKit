@@ -1,5 +1,5 @@
 ﻿namespace KamiToolKit.Nodes;
 
-public class DropDownListButtonNode : DropDownListNode<string> {
+public class TextButtonListNode : ButtonListNode<string> {
     protected override string GetLabelForOption(string option) => option;
 }

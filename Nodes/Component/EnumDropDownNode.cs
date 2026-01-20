@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace KamiToolKit.Nodes;
 
-public class EnumDropDownNode<T> : DropDownNode<EnumDropDownListNode<T>, T> where T : Enum{
+public class EnumDropDownNode<T> : DropDownNode<EnumButtonListNode<T>, T> where T : Enum{
 
     public EnumDropDownNode() {
         OptionListNode.OnOptionSelected += OptionSelectedHandler;
