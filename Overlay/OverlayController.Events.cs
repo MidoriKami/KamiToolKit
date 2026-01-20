@@ -30,6 +30,10 @@ public unsafe partial class OverlayController {
                 }
             }, delayTicks: 2);
         }
+        
+        DalamudInterface.Instance.Framework.RunOnTick(() => {
+            overlaysActive = true;
+        }, delayTicks: 3);
     }
 
     private void RemoveOverlays() {
