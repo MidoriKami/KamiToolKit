@@ -35,6 +35,8 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
         if (newNodeCount != nodeCount) {
             FullRebuild();
         }
+
+        RecalculateScroll();
     }
 
     public Action<T?>? OnItemSelected { get; set; }
