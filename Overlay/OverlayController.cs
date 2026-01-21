@@ -42,6 +42,7 @@ public unsafe class OverlayController : IDisposable {
 
             var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(node.OverlayLayer.Description);
             if (addon is not null) {
+                node.NodeId = (uint)addon->UldManager.NodeListCount + 1;
                 node.AttachNode(addon);
             }
         }
@@ -135,6 +136,7 @@ public unsafe class OverlayController : IDisposable {
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(layer.Description);
         if (addon is not null) {
             foreach (var node in list) {
+                node.NodeId = (uint)addon->UldManager.NodeListCount + 1;
                 node.AttachNode(addon);
             }
         }
