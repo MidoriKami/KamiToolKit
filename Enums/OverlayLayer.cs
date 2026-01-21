@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace KamiToolKit.Enums;
 
@@ -6,35 +7,31 @@ public enum OverlayLayer {
     /// <summary>
     /// Layer that is the back most, this is below nameplates, but above the world itself.
     /// </summary>
+    [Description("KTK_Overlay_Back")]
     Background,
     
     /// <summary>
     /// Above nameplate layer
     /// </summary>
+    [Description("KTK_Overlay_Middle")]
     BehindUserInterface,
     
     /// <summary>
     /// Above most windows but below certain popup windows like battle text
     /// </summary>
+    [Description("KTK_Overlay_Higher")]
     AboveUserInterface,
     
     /// <summary>
     /// Above everything, use with caution
     /// </summary>
+    [Description("KTK_Overlay_Front")]
     Foreground,
 }
 
 public static class OverlayLayerExtensions {
     extension(OverlayLayer layer) {
-        public string GetDescription() => layer switch {
-            OverlayLayer.Background => "KTK_Overlay_Back",
-            OverlayLayer.BehindUserInterface => "KTK_Overlay_Middle",
-            OverlayLayer.AboveUserInterface => "KTK_Overlay_Higher",
-            OverlayLayer.Foreground => "KTK_Overlay_Front",
-            _ => throw new Exception("Out of Range"),
-        };
-
-        public int GetOverlayLayer() => layer switch {
+        public int DepthLayer => layer switch {
             OverlayLayer.Background => 1,
             OverlayLayer.BehindUserInterface => 3,
             OverlayLayer.AboveUserInterface => 7,

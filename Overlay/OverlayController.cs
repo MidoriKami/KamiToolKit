@@ -2,29 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Game.Addon.Lifecycle;
+using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using FFXIVClientStructs.Interop;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 
 namespace KamiToolKit.Overlay;
 
-public unsafe partial class OverlayController : IDisposable {
-
+public unsafe class OverlayController : IDisposable {
     private readonly Dictionary<OverlayLayer, List<OverlayNode>> overlayNodes = [];
-    private readonly Dictionary<OverlayLayer, Pointer<AtkUnitBase>> overlayAddons = [];
-
-    private bool overlaysActive;
     
     public OverlayController() {
         DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "NamePlate", (_,_) => AddOverlays());
         DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "NamePlate",  (_,_) => RemoveOverlays());
-        
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName("NamePlate");
-        if (addon is not null) {
-            AddOverlays();
+
+        // Register Listeners Immediately
+        foreach (var overlayLayer in Enum.GetValues<OverlayLayer>()) {
+            var addonName = overlayLayer.Description;
+
+            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, addonName, OnOverlayAddonSetup);
+            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreUpdate, addonName, OnOverlayAddonUpdate);
+            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnOverlayAddonFinalize);
         }
+
+        // Ensure multiple instance of this controller aren't 
+        DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+            if (RaptureAtkUnitManager.Instance()->GetAddonByName("NamePlate") is not null) {
+                DalamudInterface.Instance.Framework.RunOnTick(AddOverlays, delayTicks: 3);
+            }
+        });
     }
 
     public void AddNode(OverlayNode node) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {         
@@ -33,7 +40,8 @@ public unsafe partial class OverlayController : IDisposable {
         if (!overlayNodes[node.OverlayLayer].Contains(node)) {
             overlayNodes[node.OverlayLayer].Add(node);
 
-            if (overlaysActive && overlayAddons.TryGetValue(node.OverlayLayer, out var addon)) {
+            var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(node.OverlayLayer.Description);
+            if (addon is not null) {
                 node.AttachNode(addon);
             }
         }
@@ -46,7 +54,7 @@ public unsafe partial class OverlayController : IDisposable {
 
     public void RemoveNode(OverlayNode node) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
         if (overlayNodes.TryGetValue(node.OverlayLayer, out var list)) {
-            if (overlaysActive && list.Remove(node)) {
+            if (list.Remove(node)) {
                 node.Dispose();
             }
         }
@@ -59,8 +67,6 @@ public unsafe partial class OverlayController : IDisposable {
     });
     
     public void Dispose() {
-        overlaysActive = false;
-
         DalamudInterface.Instance.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, "NamePlate");
         DalamudInterface.Instance.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "NamePlate");
         DalamudInterface.Instance.AddonLifecycle.UnregisterListener(OnOverlayAddonFinalize, OnOverlayAddonSetup, OnOverlayAddonUpdate);
@@ -70,6 +76,75 @@ public unsafe partial class OverlayController : IDisposable {
         }
 
         overlayNodes.Clear();
-        overlayAddons.Clear();
+    }
+    
+    private void AddOverlays() {
+        foreach (var overlayLayer in Enum.GetValues<OverlayLayer>()) {
+            var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(overlayLayer.Description);
+            if (addon is null) {
+                CreateOverlayAddon(overlayLayer).Open();
+            }
+        }
+    }
+
+    private void RemoveOverlays() {
+        foreach (var overlayLayer in Enum.GetValues<OverlayLayer>()) {
+            if (overlayNodes.TryGetValue(overlayLayer, out var list)) {
+                foreach (var node in list) {
+                    node.DetachNode();
+                }
+            }
+        }
+    }
+    
+    private static OverlayAddon CreateOverlayAddon(OverlayLayer layer) => new() {
+        Title = layer.Description,
+        InternalName = layer.Description,
+        DepthLayer = layer.DepthLayer,
+        IsOverlayAddon = true,
+    };
+
+    private void OnOverlayAddonSetup(AddonEvent type, AddonArgs args) {
+        var addon = (AtkUnitBase*)args.Addon.Address;
+        var overlayLayer = addon->DepthLayer.GetOverlayLayer();
+
+        AttachNodes(overlayLayer);
+    }
+
+    private void OnOverlayAddonUpdate(AddonEvent type, AddonArgs args) {
+        var addon = (AtkUnitBase*)args.Addon.Address;
+        var overlayLayer = addon->DepthLayer.GetOverlayLayer();
+        
+        if (overlayNodes.TryGetValue(overlayLayer, out var list)) {
+            foreach (var node in list) {
+                node.Update();
+            }
+        }
+    }
+
+    private void OnOverlayAddonFinalize(AddonEvent type, AddonArgs args) {
+        var addon = (AtkUnitBase*)args.Addon.Address;
+        var overlayLayer = addon->DepthLayer.GetOverlayLayer();
+
+        DetachNodes(overlayLayer);
+    }
+
+    private void AttachNodes(OverlayLayer layer) {
+        if (!overlayNodes.TryGetValue(layer, out var list)) return;
+
+        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(layer.Description);
+        if (addon is not null) {
+            foreach (var node in list) {
+                node.AttachNode(addon);
+            }
+        }
+    }
+
+    private void DetachNodes(OverlayLayer layer) {
+        if (!overlayNodes.TryGetValue(layer, out var list)) return;
+
+        foreach (var node in list) {
+            node.DetachNode();
+        }
     }
 }
