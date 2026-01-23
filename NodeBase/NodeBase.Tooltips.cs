@@ -82,7 +82,6 @@ public unsafe partial class NodeBase {
     }
     
     private void UnregisterTooltipEvents() {
-
         if (tooltipEventsRegistered) {
             RemoveEvent(AtkEventType.MouseOver, ShowTooltip);
             RemoveEvent(AtkEventType.MouseOut, HideTooltip);
