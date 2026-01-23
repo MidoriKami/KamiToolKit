@@ -75,7 +75,7 @@ public class CircleButtonNode : ButtonBase {
         ButtonIcon.GearCogWithChatBubble => new UldTextureInfo(168.0f, 84.0f, 28.0f, 28.0f),
         ButtonIcon.FlatbedCartBoxes => new UldTextureInfo(196.0f, 84.0f, 28.0f, 28.0f),
 
-        ButtonIcon.MagnifyingGlass => new UldTextureInfo(0.0f, 128.0f, 24.0f, 24.0f),
+        ButtonIcon.MagnifyingGlass => new UldTextureInfo(0.0f, 112.0f, 24.0f, 24.0f),
         ButtonIcon.EditSmall => new UldTextureInfo(24.0f, 112.0f, 24.0f, 24.0f),
         ButtonIcon.WeaponDraw => new UldTextureInfo(48.0f, 112.0f, 24.0f, 24.0f),
         ButtonIcon.Headgear => new UldTextureInfo(72.0f, 112.0f, 24.0f, 24.0f),
