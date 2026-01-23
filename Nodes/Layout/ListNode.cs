@@ -30,10 +30,14 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
 
         ScrollBarNode.Size = new Vector2(8.0f, Height);
         ScrollBarNode.Position = new Vector2(Width - 8.0f, 0.0f);
-        
+
         var newNodeCount = (int)(Height / (itemHeight + ItemSpacing));
         if (newNodeCount != nodeCount) {
             FullRebuild();
+        }
+        
+        foreach (var node in nodeList) {
+            node.Width = ScrollBarNode.Bounds.Left - 8.0f;
         }
 
         RecalculateScroll();
