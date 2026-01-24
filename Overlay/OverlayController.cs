@@ -34,7 +34,7 @@ public unsafe class OverlayController : IDisposable {
         });
     }
 
-    public void AddNode(OverlayNode node) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {         
+    public void AddNode(OverlayNode node) => DalamudInterface.Instance.Framework.RunOnTick(() => {         
         overlayNodes.TryAdd(node.OverlayLayer, []);
 
         if (!overlayNodes[node.OverlayLayer].Contains(node)) {
@@ -46,26 +46,26 @@ public unsafe class OverlayController : IDisposable {
                 node.AttachNode(addon);
             }
         }
-    });
+    }, delayTicks: 3);
 
-    public void CreateNode(Func<OverlayNode> creationFunction) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {         
+    public void CreateNode(Func<OverlayNode> creationFunction) => DalamudInterface.Instance.Framework.RunOnTick(() => {         
         var newNode = creationFunction();
         AddNode(newNode);
-    });
+    }, delayTicks: 3);
 
-    public void RemoveNode(OverlayNode node) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+    public void RemoveNode(OverlayNode node) => DalamudInterface.Instance.Framework.RunOnTick(() => {
         if (overlayNodes.TryGetValue(node.OverlayLayer, out var list)) {
             if (list.Remove(node)) {
                 node.Dispose();
             }
         }
-    });
+    }, delayTicks: 3);
 
-    public void RemoveAllNodes() => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+    public void RemoveAllNodes() => DalamudInterface.Instance.Framework.RunOnTick(() => {
         foreach (var node in overlayNodes.SelectMany(set => set.Value).ToList()) {
             RemoveNode(node);
         }
-    });
+    }, delayTicks: 3);
     
     public void Dispose() {
         DalamudInterface.Instance.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, "NamePlate");
