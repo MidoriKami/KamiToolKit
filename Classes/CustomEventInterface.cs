@@ -10,21 +10,21 @@ public unsafe class CustomEventInterface : IDisposable {
     private readonly AtkEventInterface* eventInterface;
 
     private AtkEventInterface.Delegates.ReceiveEvent? receiveEventDelegate;
-    private AtkEventInterface.Delegates.ReceiveEvent2? receiveEventDelegate2;
+    private AtkEventInterface.Delegates.ReceiveEventWithResult? receiveEventWithResultDelegate;
 
-    public CustomEventInterface(AtkEventInterface.Delegates.ReceiveEvent eventHandler, AtkEventInterface.Delegates.ReceiveEvent2? eventHandler2 = null) {
+    public CustomEventInterface(AtkEventInterface.Delegates.ReceiveEvent eventHandler, AtkEventInterface.Delegates.ReceiveEventWithResult? receiveEventWithResult = null) {
         receiveEventDelegate = eventHandler;
-        receiveEventDelegate2 = eventHandler2;
+        receiveEventWithResultDelegate = receiveEventWithResult;
 
         eventInterface = NativeMemoryHelper.UiAlloc<AtkEventInterface>();
         eventInterface->VirtualTable = (AtkEventInterface.AtkEventInterfaceVirtualTable*)NativeMemoryHelper.Malloc((ulong)sizeof(void*) * 2);
         eventInterface->VirtualTable->ReceiveEvent = (delegate* unmanaged<AtkEventInterface*, AtkValue*, AtkValue*, uint, ulong, AtkValue*>)Marshal.GetFunctionPointerForDelegate(receiveEventDelegate);
 
-        if (receiveEventDelegate2 is not null) {
-            eventInterface->VirtualTable->ReceiveEvent2 = (delegate* unmanaged<AtkEventInterface*, AtkValue*, AtkValue*, uint, ulong, AtkValue*>)Marshal.GetFunctionPointerForDelegate(receiveEventDelegate2);
+        if (receiveEventWithResultDelegate is not null) {
+            eventInterface->VirtualTable->ReceiveEventWithResult = (delegate* unmanaged<AtkEventInterface*, AtkValue*, AtkValue*, uint, ulong, AtkValue*>)Marshal.GetFunctionPointerForDelegate(receiveEventWithResultDelegate);
         }
         else {
-            eventInterface->VirtualTable->ReceiveEvent2 = (delegate* unmanaged<AtkEventInterface*, AtkValue*, AtkValue*, uint, ulong, AtkValue*>)(delegate* unmanaged<void>)&NullSub;
+            eventInterface->VirtualTable->ReceiveEventWithResult = (delegate* unmanaged<AtkEventInterface*, AtkValue*, AtkValue*, uint, ulong, AtkValue*>)(delegate* unmanaged<void>)&NullSub;
         }
     }
 
@@ -35,7 +35,7 @@ public unsafe class CustomEventInterface : IDisposable {
         NativeMemoryHelper.UiFree(eventInterface);
 
         receiveEventDelegate = null;
-        receiveEventDelegate2 = null;
+        receiveEventWithResultDelegate = null;
     }
 
     [UnmanagedCallersOnly] private static void NullSub() { }
