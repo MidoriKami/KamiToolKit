@@ -97,7 +97,7 @@ public unsafe class Timeline : IDisposable {
     public void StopAnimation() {
         if (InternalTimeline is null) return;
         
-        InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, (ushort)0);
+        InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, 0);
     }
 
     public void UpdateKeyFrame(

@@ -64,7 +64,7 @@ public abstract unsafe partial class NativeAddon {
 
         InternalAddon->NameString = InternalName;
 
-        InternalAddon->OpenSoundEffectId = (short)OpenWindowSoundEffectId;
+        InternalAddon->ShowSoundEffectId = (short)OpenWindowSoundEffectId;
 
         UpdateFlags();
     }
@@ -117,7 +117,7 @@ public abstract unsafe partial class NativeAddon {
     private void SetInitialState() {
         WindowNode?.SetTitle(Title.ToString(), Subtitle?.ToString() ?? KamiToolKitLibrary.DefaultWindowSubtitle);
 
-        InternalAddon->OpenSoundEffectId = (short)OpenWindowSoundEffectId;
+        InternalAddon->ShowSoundEffectId = (short)OpenWindowSoundEffectId;
 
         var addonConfig = LoadAddonConfig();
         if (addonConfig.Position != Vector2.Zero) {

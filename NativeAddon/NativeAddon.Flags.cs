@@ -27,7 +27,7 @@ public unsafe partial class NativeAddon {
     private void SetOverlayFlags() {
 
         OpenWindowSoundEffectId = 0;
-        InternalAddon->OpenSoundEffectId = 0;
+        InternalAddon->ShowSoundEffectId = 0;
 
         // Disable ability to focus window
         FlagHelper.UpdateFlag(ref InternalAddon->Flags1A0, 0x80, true);
