@@ -85,7 +85,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         CursorNode.AttachNode(this);
 
         PlaceholderTextNode = new TextNode {
-            Position = new Vector2(10.0f, 6.0f),
+            Position = new Vector2(8.0f, 0.0f),
             TextColor = ColorHelper.GetColor(3),
         };
         PlaceholderTextNode.AttachNode(this);
