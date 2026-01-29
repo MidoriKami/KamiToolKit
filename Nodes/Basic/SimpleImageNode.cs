@@ -56,8 +56,8 @@ public unsafe class SimpleImageNode : ImageNode {
 
     public Vector2 ActualTextureSize => PartsList[0]->LoadedTextureSize;
 
-    public void LoadTexture(string path)
-        => PartsList[0]->LoadTexture(path);
+    public void LoadTexture(string path, bool resolveTheme = true)
+        => PartsList[0]->LoadTexture(path, resolveTheme);
     
     public void LoadIcon(uint iconId)
         => PartsList[0]->LoadIcon(iconId);
