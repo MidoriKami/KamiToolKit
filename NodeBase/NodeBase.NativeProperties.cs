@@ -223,9 +223,9 @@ public abstract unsafe partial class NodeBase {
 
     public void MarkDirty() {
         foreach (var child in GetAllChildren(this)) {
-            child.ResNode->AddDrawFlag([DrawFlags.IsDirty]);
+            child.ResNode->AddDrawFlag(DrawFlags.IsDirty);
         }
-        ResNode->AddDrawFlag([DrawFlags.IsDirty]);
+        ResNode->AddDrawFlag(DrawFlags.IsDirty);
     }
 
     public bool CheckCollision(short x, short y, bool inclusive = true)
