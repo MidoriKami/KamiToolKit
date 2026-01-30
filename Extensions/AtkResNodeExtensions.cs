@@ -90,13 +90,13 @@ public static unsafe class AtkResNodeExtensions {
             set => node.MultiplyColor = ColorHelpers.HsvToRgb(value).AsVector3();
         }
 
-        public void AddFlags(params NodeFlags[] flags) {
+        public void AddNodeFlag(params NodeFlags[] flags) {
             foreach (var flag in flags) {
                 node.NodeFlags |= flag;
             }
         }
 
-        public void RemoveFlags(params NodeFlags[] flags) {
+        public void RemoveNodeFlag(params NodeFlags[] flags) {
             foreach (var flag in flags) {
                 node.NodeFlags &= ~flag;
             }
