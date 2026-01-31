@@ -61,24 +61,29 @@ public unsafe class OverlayController : IDisposable {
     }
 
     private void CheckOverlayState(IFramework framework) {
-        if (controllerState == ControllerState.WaitForNameplate) {
-            CheckNameplateReady();
-        }
-        else if (controllerState == ControllerState.WaitForReady) {
-            CheckOverlayAddonsReady();
-        }
-        else if (controllerState == ControllerState.Ready) {
-            DalamudInterface.Instance.Framework.Update -= CheckOverlayState;
+        switch (controllerState) {
+            case ControllerState.WaitForNameplate:
+                CheckNameplateReady();
+                break;
+
+            case ControllerState.WaitForReady:
+                CheckOverlayAddonsReady();
+                break;
+
+            case ControllerState.Ready:
+                DalamudInterface.Instance.Framework.Update -= CheckOverlayState;
+                break;
         }
     }
 
     private void CheckNameplateReady() {
         var nameplate = RaptureAtkUnitManager.Instance()->GetAddonByName("NamePlate");
-        if (nameplate is null || !nameplate->IsReady)
-            return;
+        if (nameplate is null) return;
+        if (!nameplate->IsReady) return;
 
         foreach (var overlayLayer in Enum.GetValues<OverlayLayer>()) {
             var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(overlayLayer.Description);
+
             if (addon is null) {
                 if (addonState[overlayLayer] == OverlayAddonState.None) {
                     addonState[overlayLayer] = OverlayAddonState.WaitForReady;
@@ -99,28 +104,29 @@ public unsafe class OverlayController : IDisposable {
 
         foreach (var overlayLayer in Enum.GetValues<OverlayLayer>()) {
             var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(overlayLayer.Description);
-            if (addon is not null && addon->IsReady) {
-                var state = addonState[overlayLayer];
-                if (state == OverlayAddonState.WaitForReady) {
-                    AttachAllNodes(overlayLayer);
-                    addonState[overlayLayer] = OverlayAddonState.Ready;
-                }
-                totalAddonsReady++;
+            if (addon is null) continue;
+            if (!addon->IsReady) continue;
+
+            if (addonState[overlayLayer] is OverlayAddonState.WaitForReady) {
+                AttachAllNodes(overlayLayer);
+                addonState[overlayLayer] = OverlayAddonState.Ready;
             }
+            totalAddonsReady++;
         }
 
-        if (totalAddonsReady == totalAddons)
+        if (totalAddonsReady == totalAddons) {
             controllerState = ControllerState.Ready;
+        }
     }
 
     private void AttachAllNodes(OverlayLayer layer) {
         if (!overlayNodes.TryGetValue(layer, out var list)) return;
 
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(layer.Description);
-        if (addon is not null) {
-            foreach (var node in list) {
-                AttachNode(addon, node);
-            }
+        if (addon is null) return;
+
+        foreach (var node in list) {
+            AttachNode(addon, node);
         }
     }
 
@@ -135,23 +141,23 @@ public unsafe class OverlayController : IDisposable {
     public void AddNode(OverlayNode node) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
         overlayNodes.TryAdd(node.OverlayLayer, []);
 
-        if (!overlayNodes[node.OverlayLayer].Contains(node)) {
-            overlayNodes[node.OverlayLayer].Add(node);
+        if (overlayNodes[node.OverlayLayer].Contains(node)) return;
 
-            if (addonState[node.OverlayLayer] == OverlayAddonState.Ready) {
-                var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(node.OverlayLayer.Description);
-                if (addon is not null) {
-                    AttachNode(addon, node);
-                }
-            }
-        }
+        overlayNodes[node.OverlayLayer].Add(node);
+
+        if (addonState[node.OverlayLayer] is not OverlayAddonState.Ready) return;
+
+        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(node.OverlayLayer.Description);
+        if (addon is null) return;
+
+        AttachNode(addon, node);
     });
 
     public void RemoveNode(OverlayNode node) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-        if (overlayNodes.TryGetValue(node.OverlayLayer, out var list)) {
-            if (list.Remove(node)) {
-                node.Dispose();
-            }
+        if (!overlayNodes.TryGetValue(node.OverlayLayer, out var list)) return;
+
+        if (list.Remove(node)) {
+            node.Dispose();
         }
     });
 
@@ -169,10 +175,10 @@ public unsafe class OverlayController : IDisposable {
         ClearState();
 
         foreach (var overlayLayer in Enum.GetValues<OverlayLayer>()) {
-            if (overlayNodes.TryGetValue(overlayLayer, out var list)) {
-                foreach (var node in list) {
-                    node.DetachNode();
-                }
+            if (!overlayNodes.TryGetValue(overlayLayer, out var list)) continue;
+
+            foreach (var node in list) {
+                node.DetachNode();
             }
         }
 
@@ -196,10 +202,10 @@ public unsafe class OverlayController : IDisposable {
         var addon = (AtkUnitBase*)args.Addon.Address;
         var overlayLayer = addon->DepthLayer.GetOverlayLayer();
 
-        if (overlayNodes.TryGetValue(overlayLayer, out var list)) {
-            foreach (var node in list) {
-                node.Update();
-            }
+        if (!overlayNodes.TryGetValue(overlayLayer, out var list)) return;
+
+        foreach (var node in list) {
+            node.Update();
         }
     }
 
@@ -207,14 +213,12 @@ public unsafe class OverlayController : IDisposable {
     // Helpers
     //
 
-    private static OverlayAddon CreateOverlayAddon(OverlayLayer layer) {
-        return new OverlayAddon {
-            Title = layer.Description,
-            InternalName = layer.Description,
-            DepthLayer = layer.DepthLayer,
-            IsOverlayAddon = true,
-        };
-    }
+    private static OverlayAddon CreateOverlayAddon(OverlayLayer layer) => new() {
+        Title = layer.Description,
+        InternalName = layer.Description,
+        DepthLayer = layer.DepthLayer,
+        IsOverlayAddon = true,
+    };
 
     private static void AttachNode(AtkUnitBase* addon, OverlayNode node) {
         node.NodeId = (uint)addon->UldManager.NodeListCount + 1;
