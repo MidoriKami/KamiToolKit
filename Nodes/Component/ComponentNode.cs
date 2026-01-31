@@ -62,9 +62,6 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         if (disposing) {
             try {
                 if (!isNativeDestructor) {
-                    NativeMemoryHelper.UiFree(Data);
-                    Node->Component->UldManager.ComponentData = null;
-
                     Node->Component->Deinitialize();
                     Node->Component->Dtor(1);
                     Node->Component = null;
