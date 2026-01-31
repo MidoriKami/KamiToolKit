@@ -13,20 +13,9 @@ namespace KamiToolKit.Overlay;
 
 public unsafe class OverlayController : IDisposable {
     private readonly Dictionary<OverlayLayer, List<OverlayNode>> overlayNodes = [];
-    private readonly Dictionary<OverlayLayer, AddonState> addonState = [];
+    private readonly Dictionary<OverlayLayer, OverlayAddonState> addonState = [];
+
     private ControllerState controllerState = ControllerState.WaitForNameplate;
-
-    private enum ControllerState {
-        WaitForNameplate,
-        WaitForReady,
-        Ready
-    }
-
-    private enum AddonState {
-        None,
-        WaitForReady,
-        Ready
-    }
 
     public OverlayController() {
         ClearState();
@@ -62,7 +51,7 @@ public unsafe class OverlayController : IDisposable {
         controllerState = ControllerState.WaitForNameplate;
 
         foreach (var overlayLayer in Enum.GetValues<OverlayLayer>()) {
-            addonState[overlayLayer] = AddonState.None;
+            addonState[overlayLayer] = OverlayAddonState.None;
         }
     }
 
@@ -91,13 +80,13 @@ public unsafe class OverlayController : IDisposable {
         foreach (var overlayLayer in Enum.GetValues<OverlayLayer>()) {
             var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(overlayLayer.Description);
             if (addon is null) {
-                if (addonState[overlayLayer] == AddonState.None) {
-                    addonState[overlayLayer] = AddonState.WaitForReady;
+                if (addonState[overlayLayer] == OverlayAddonState.None) {
+                    addonState[overlayLayer] = OverlayAddonState.WaitForReady;
                     CreateOverlayAddon(overlayLayer).Open();
                 }
             }
             else {
-                addonState[overlayLayer] = AddonState.WaitForReady;
+                addonState[overlayLayer] = OverlayAddonState.WaitForReady;
             }
         }
 
@@ -112,9 +101,9 @@ public unsafe class OverlayController : IDisposable {
             var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(overlayLayer.Description);
             if (addon is not null && addon->IsReady) {
                 var state = addonState[overlayLayer];
-                if (state == AddonState.WaitForReady) {
+                if (state == OverlayAddonState.WaitForReady) {
                     AttachAllNodes(overlayLayer);
-                    addonState[overlayLayer] = AddonState.Ready;
+                    addonState[overlayLayer] = OverlayAddonState.Ready;
                 }
                 totalAddonsReady++;
             }
@@ -149,7 +138,7 @@ public unsafe class OverlayController : IDisposable {
         if (!overlayNodes[node.OverlayLayer].Contains(node)) {
             overlayNodes[node.OverlayLayer].Add(node);
 
-            if (addonState[node.OverlayLayer] == AddonState.Ready) {
+            if (addonState[node.OverlayLayer] == OverlayAddonState.Ready) {
                 var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(node.OverlayLayer.Description);
                 if (addon is not null) {
                     AttachNode(addon, node);
@@ -200,7 +189,7 @@ public unsafe class OverlayController : IDisposable {
             }
         }
 
-        addonState[overlayLayer] = AddonState.None;
+        addonState[overlayLayer] = OverlayAddonState.None;
     }
 
     private void OnOverlayAddonUpdate(AddonEvent type, AddonArgs args) {
