@@ -77,6 +77,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             CreatedNodes.Remove(this);
 
             logIndent--;
+            LogIndented("Dispose Complete");
             logIndent--;
         }
         catch (Exception e) {
