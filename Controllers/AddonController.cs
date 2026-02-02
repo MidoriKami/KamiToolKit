@@ -18,6 +18,8 @@ public unsafe class AddonController<T> : AddonEventController<T>, IDisposable wh
     private AtkUnitBase* AddonPointer => (AtkUnitBase*)DalamudInterface.Instance.GameGui.GetAddonByName(AddonName).Address;
     private bool IsEnabled { get; set; }
 
+    private bool isSetupComplete;
+
     /// <summary>
     ///     This class provides functionality to add-and manage custom elements for any Addon
     /// </summary>
@@ -45,6 +47,7 @@ public unsafe class AddonController<T> : AddonEventController<T>, IDisposable wh
 
             if (AddonPointer is not null) {
                 OnInnerAttach?.Invoke((T*)AddonPointer);
+                isSetupComplete = true;
             }
 
             IsEnabled = true;
@@ -59,13 +62,15 @@ public unsafe class AddonController<T> : AddonEventController<T>, IDisposable wh
         switch (type) {
             case AddonEvent.PostSetup:
                 OnInnerAttach?.Invoke(addon);
+                isSetupComplete = true;
                 return;
 
             case AddonEvent.PreFinalize:
                 OnInnerDetach?.Invoke(addon);
+                isSetupComplete = false;
                 return;
 
-            case AddonEvent.PostRefresh or AddonEvent.PostRequestedUpdate:
+            case AddonEvent.PostRefresh or AddonEvent.PostRequestedUpdate when isSetupComplete:
                 OnInnerRefresh?.Invoke(addon);
                 return;
 
