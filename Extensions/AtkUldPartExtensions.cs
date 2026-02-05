@@ -61,6 +61,8 @@ public static unsafe class AtkUldPartExtensions {
 
         public void LoadTexture(IDalamudTextureWrap textureWrap) {
             var texturePointer = (Texture*)DalamudInterface.Instance.TextureProvider.ConvertToKernelTexture(textureWrap, true);
+            if (texturePointer is null) return;
+            
             part.LoadTexture(texturePointer);
         }
         
