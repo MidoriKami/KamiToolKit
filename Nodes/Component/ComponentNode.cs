@@ -106,7 +106,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
     public override int ChildCount => ComponentBase->UldManager.NodeListCount;
 
-    internal T* Component => (T*)ComponentBase;
+    public T* Component => (T*)ComponentBase;
 
-    internal TU* Data => (TU*)DataBase;
+    public TU* Data => (TU*)DataBase;
 }
