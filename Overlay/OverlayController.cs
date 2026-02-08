@@ -202,6 +202,7 @@ public unsafe class OverlayController : IDisposable {
         var addon = (AtkUnitBase*)args.Addon.Address;
         var overlayLayer = addon->DepthLayer.GetOverlayLayer();
 
+        if (addonState[overlayLayer] is not OverlayAddonState.Ready) return;
         if (!overlayNodes.TryGetValue(overlayLayer, out var list)) return;
 
         foreach (var node in list) {
