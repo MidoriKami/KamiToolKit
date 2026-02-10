@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 
@@ -23,6 +25,10 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
 
             base.Dispose(disposing, isNativeDestructor);
         }
+    }
+
+    public ICollection<Part> Parts {
+        set => PartsList.Add(value.ToArray());
     }
 
     public uint PartId {
