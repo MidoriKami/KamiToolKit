@@ -121,7 +121,8 @@ public abstract unsafe partial class NativeAddon {
 
         var addonConfig = LoadAddonConfig();
         if (addonConfig.Position != Vector2.Zero) {
-            InternalAddon->SetPosition((short)addonConfig.Position.X, (short)addonConfig.Position.Y);
+            var clampedPosition = GetScreenClampedPosition(addonConfig.Position);
+            InternalAddon->SetPosition((short)clampedPosition.X, (short)clampedPosition.Y);
         }
         else {
             var screenSize = new Vector2(AtkStage.Instance()->ScreenSize.Width, AtkStage.Instance()->ScreenSize.Height);
@@ -138,7 +139,8 @@ public abstract unsafe partial class NativeAddon {
         SetWindowSize(Size);
 
         if (LastClosePosition != Vector2.Zero && RememberClosePosition) {
-            InternalAddon->SetPosition((short)LastClosePosition.X, (short)LastClosePosition.Y);
+            var clampedPosition = GetScreenClampedPosition(LastClosePosition);
+            InternalAddon->SetPosition((short)clampedPosition.X, (short)clampedPosition.Y);
         }
     }
 
@@ -211,5 +213,14 @@ public abstract unsafe partial class NativeAddon {
             .AddLabel(80, 109, AtkTimelineJumpBehavior.PlayOnce, 0)
             .EndFrameSet()
             .Build());
+    }
+
+    private Vector2 GetScreenClampedPosition(Vector2 position) {
+        if (!OpenInBounds) return position;
+        
+        var screenSize = (Vector2) AtkStage.Instance()->ScreenSize;
+        var clampedX = Math.Clamp(position.X, 0.0f, screenSize.X - Size.X);
+        var clampedY = Math.Clamp(position.Y, 0.0f, screenSize.Y - Size.Y);
+        return new Vector2(clampedX, clampedY);
     }
 }
