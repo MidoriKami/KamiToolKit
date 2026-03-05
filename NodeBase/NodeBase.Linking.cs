@@ -139,6 +139,7 @@ public abstract unsafe partial class NodeBase {
         ResNode->ParentNode = null;
         ResNode->NextSiblingNode = null;
         ResNode->PrevSiblingNode = null;
+        ResNode->ChildNode = null;
     }
     
     private void RemoveUldManagerObjectReferences() {
