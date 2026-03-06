@@ -13,6 +13,8 @@ public abstract unsafe partial class NodeBase {
     internal readonly List<NodeBase> ChildNodes = [];
     private NodeBase? parentNode;
 
+    private readonly HashSet<string> addonsPendingUpdate = [];
+
     internal AtkUldManager* ParentUldManager { get; set; }
     internal AtkUnitBase* ParentAddon { get; private set; }
 
@@ -139,7 +141,6 @@ public abstract unsafe partial class NodeBase {
         ResNode->ParentNode = null;
         ResNode->NextSiblingNode = null;
         ResNode->PrevSiblingNode = null;
-        ResNode->ChildNode = null;
     }
     
     private void RemoveUldManagerObjectReferences() {
@@ -152,8 +153,18 @@ public abstract unsafe partial class NodeBase {
     private void RemoveParentAddonReferences() {
         if (ParentAddon is null) return;
         
-        ParentAddon->UldManager.UpdateDrawNodeList();
-        ParentAddon->UpdateCollisionNodeList(false);
+        // Queue collision update for next frame
+        addonsPendingUpdate.Add(ParentAddon->NameString);
+        DalamudInterface.Instance.Framework.RunOnTick(() => {
+            if (addonsPendingUpdate.Contains(ParentAddon->NameString)) {
+                var currentInstance = RaptureAtkUnitManager.Instance()->GetAddonByName(ParentAddon->NameString);
+                if (currentInstance == ParentAddon) {
+                    currentInstance->UpdateCollisionNodeList(false);
+                    currentInstance->UldManager.UpdateDrawNodeList();
+                    addonsPendingUpdate.Remove(ParentAddon->NameString);
+                }
+            }
+        });
             
         ParentAddon = null;
             
