@@ -6,14 +6,16 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit.Controllers;
 
+public class MultiAddonController(params string[] addonNames) : MultiAddonController<AtkUnitBase>(addonNames);
+
 /// <summary>
 /// For use with addons that have multiple persistent variants, but where only one is used at a time.
 /// For example, Inventories or CastBars.
 /// Using this with other addons will duplicate their associated events incorrectly.
 /// </summary>
-public unsafe class MultiAddonController : AddonEventController<AtkUnitBase>, IDisposable {
+public unsafe class MultiAddonController<T> : AddonEventController<T>, IDisposable where T : unmanaged {
     
-    private readonly List<AddonController> addonControllers = [];
+    private readonly List<AddonController<T>> addonControllers = [];
 
     public MultiAddonController(params string[] addonNames) {
         foreach (var addonName in addonNames) {
@@ -25,7 +27,7 @@ public unsafe class MultiAddonController : AddonEventController<AtkUnitBase>, ID
             // Don't allow duplicate addon controllers
             if (addonControllers.Any(controller => controller.AddonName == addonName)) continue;
 
-            var newController = new AddonController(addonName);
+            var newController = new AddonController<T>(addonName);
 
             addonControllers.Add(newController);
 
@@ -36,16 +38,16 @@ public unsafe class MultiAddonController : AddonEventController<AtkUnitBase>, ID
         }
     }
 
-    private void ControllerOnAttach(AtkUnitBase* addon) 
+    private void ControllerOnAttach(T* addon) 
         => OnInnerAttach?.Invoke(addon);
 
-    private void ControllerOnDetach(AtkUnitBase* addon)
+    private void ControllerOnDetach(T* addon)
         => OnInnerDetach?.Invoke(addon);
 
-    private void ControllerOnRefresh(AtkUnitBase* addon)
+    private void ControllerOnRefresh(T* addon)
         => OnInnerRefresh?.Invoke(addon);
 
-    private void ControllerOnUpdate(AtkUnitBase* addon)
+    private void ControllerOnUpdate(T* addon)
         => OnInnerUpdate?.Invoke(addon);
 
     public void Dispose() {
