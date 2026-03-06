@@ -153,8 +153,6 @@ public abstract unsafe partial class NodeBase {
     private void RemoveParentAddonReferences() {
         if (ParentAddon is null) return;
 
-        ParentAddon->UldManager.UpdateDrawNodeList();
-
         var addonName = ParentAddon->NameString;
         
         // Queue collision update for next frame
@@ -162,6 +160,7 @@ public abstract unsafe partial class NodeBase {
             DalamudInterface.Instance.Framework.RunOnTick(() => {
                 var currentInstance = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
                 if (currentInstance is not null) {
+                    currentInstance->UldManager.UpdateDrawNodeList();
                     currentInstance->UpdateCollisionNodeList(false);
                 }
 
