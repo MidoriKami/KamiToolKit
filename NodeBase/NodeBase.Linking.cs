@@ -152,20 +152,23 @@ public abstract unsafe partial class NodeBase {
     
     private void RemoveParentAddonReferences() {
         if (ParentAddon is null) return;
+
+        ParentAddon->UldManager.UpdateDrawNodeList();
+
+        var addonName = ParentAddon->NameString;
         
         // Queue collision update for next frame
-        addonsPendingUpdate.Add(ParentAddon->NameString);
-        DalamudInterface.Instance.Framework.RunOnTick(() => {
-            if (addonsPendingUpdate.Contains(ParentAddon->NameString)) {
-                var currentInstance = RaptureAtkUnitManager.Instance()->GetAddonByName(ParentAddon->NameString);
-                if (currentInstance == ParentAddon) {
+        if (addonsPendingUpdate.Add(addonName)) {
+            DalamudInterface.Instance.Framework.RunOnTick(() => {
+                var currentInstance = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
+                if (currentInstance is not null) {
                     currentInstance->UpdateCollisionNodeList(false);
-                    currentInstance->UldManager.UpdateDrawNodeList();
-                    addonsPendingUpdate.Remove(ParentAddon->NameString);
                 }
-            }
-        });
-            
+
+                addonsPendingUpdate.Remove(addonName);
+            });
+        }
+
         ParentAddon = null;
             
         foreach (var child in GetAllChildren(this)) {
