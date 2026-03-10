@@ -15,6 +15,10 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         FontType = FontType.Axis;
         LineSpacing = 12;
         AlignmentType = AlignmentType.Left;
+
+        if (AtkStage.Instance()->AtkUIColorHolder->ActiveColorThemeType is 0) {
+            AddTextFlags(TextFlags.Emboss);
+        }
     }
 
     public Vector4 TextColor {
