@@ -143,6 +143,12 @@ public unsafe partial class NodeBase {
         AtkStage.Instance()->TooltipManager.ShowTooltip(tooltipType, ParentAddon->Id, this, &tooltipArgs);
     }
 
+    public void ShowTextTooltip(ReadOnlySeString tooltip) {
+        if (tooltip.IsEmpty) return;
+
+        AtkStage.Instance()->TooltipManager.ShowTooltip(ParentAddon->Id, null, tooltip);
+    }
+
     public void HideTooltip() {
         if (ParentAddon is null) return;
 
