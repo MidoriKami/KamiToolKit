@@ -113,6 +113,11 @@ public unsafe class MapOverlayController : IDisposable {
         if (overlayNode is null) return;
         if (clippingContainerNode is null) return;
 
+        if (showingTooltip && AgentMap.Instance()->IsControlKeyPressed) {
+            AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
+            showingTooltip = false;
+        }
+
         ref var areaMap = ref addon->AreaMap;
 
         var mapComponent = areaMap.ComponentMap;
@@ -161,12 +166,14 @@ public unsafe class MapOverlayController : IDisposable {
         if (mapAddon is null) return;
 
         var anyCollisions = false;
-        
-        foreach (var node in markerNodes) {
-            if (node.CheckCollision(atkEventData)) {
-                node.ShowTextTooltip(node.TextTooltip);
-                showingTooltip = true;
-                anyCollisions = true;
+
+        if (!AgentMap.Instance()->IsControlKeyPressed) {
+            foreach (var node in markerNodes) {
+                if (node.CheckCollision(atkEventData)) {
+                    node.ShowTextTooltip(node.TextTooltip);
+                    showingTooltip = true;
+                    anyCollisions = true;
+                }
             }
         }
 
