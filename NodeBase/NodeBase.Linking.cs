@@ -220,6 +220,8 @@ public abstract unsafe partial class NodeBase {
 
             if (uldManagersPendingUpdate.Add((nint)ParentUldManager)) {
                 DalamudInterface.Instance.Framework.RunOnTick(() => {
+                    if (ResNode is null) return;
+
                     manager->AddNodeToObjectList(this);
                     uldManagersPendingUpdate.Remove((nint)manager);
                 });
