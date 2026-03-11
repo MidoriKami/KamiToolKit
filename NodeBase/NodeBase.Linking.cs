@@ -217,14 +217,14 @@ public abstract unsafe partial class NodeBase {
         if (ParentUldManager is not null) {
             // Queue UldManager update for next frame
             var manager = ParentUldManager;
-
-            if (uldManagersPendingUpdate.Add((nint)ParentUldManager)) {
-                DalamudInterface.Instance.Framework.RunOnTick(() => {
-                    manager->AddNodeToObjectList(this);
-                    uldManagersPendingUpdate.Remove((nint)manager);
-                });
-            }
-
+            var node = this;
+            DalamudInterface.Instance.Framework.RunOnTick(() => {
+                if (manager != null && node.ResNode != null)
+                {
+                    manager->AddNodeToObjectList(node);
+                }
+                uldManagersPendingUpdate.Remove((nint)manager);
+            });
             ParentUldManager->AddNodeToObjectList(this);
         }
 
