@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -19,6 +20,7 @@ public unsafe class MapOverlayController : IDisposable {
     private readonly ViewportEventListener viewportEventListener;
 
     private bool showingTooltip;
+    private bool showingInteractCursor;
 
     private readonly List<MapMarkerNode> markerNodes = [];
 
@@ -93,6 +95,7 @@ public unsafe class MapOverlayController : IDisposable {
         };
         clippingContainerNode.AttachNode(mapComponentNode, NodePosition.AfterTarget);
         viewportEventListener.AddEvent(AtkEventType.MouseMove, clippingContainerNode);
+        viewportEventListener.AddEvent(AtkEventType.MouseDown, clippingContainerNode);
         
         overlayNode = new SimpleOverlayNode();
         overlayNode.AttachNode(clippingContainerNode);
@@ -113,14 +116,14 @@ public unsafe class MapOverlayController : IDisposable {
         if (overlayNode is null) return;
         if (clippingContainerNode is null) return;
 
-        if (DalamudInterface.Instance.ClientState.IsPvP) {
-            clippingContainerNode.IsVisible = false;
-            return;
-        }
-        
         if (showingTooltip && AgentMap.Instance()->IsControlKeyPressed) {
             AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
             showingTooltip = false;
+        }
+        
+        if (DalamudInterface.Instance.ClientState.IsPvP) {
+            clippingContainerNode.IsVisible = false;
+            return;
         }
 
         ref var areaMap = ref addon->AreaMap;
@@ -163,10 +166,20 @@ public unsafe class MapOverlayController : IDisposable {
         overlayNode?.Dispose();
         overlayNode = null;
     }
-    
-    private void OnViewportEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        if (eventType is not AtkEventType.MouseMove) return;
 
+    private void OnViewportEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        switch (eventType) {
+            case AtkEventType.MouseMove:
+                ProcessMouseMove(atkEventData);
+                break;
+
+            case AtkEventType.MouseDown when !AgentMap.Instance()->IsControlKeyPressed:
+                ProcessMouseClick(atkEventData);
+                break;
+        }
+    }
+
+    private void ProcessMouseMove(AtkEventData* atkEventData) {
         var mapAddon = RaptureAtkUnitManager.Instance()->GetAddonByName("AreaMap");
         if (mapAddon is null) return;
 
@@ -174,10 +187,15 @@ public unsafe class MapOverlayController : IDisposable {
 
         if (!AgentMap.Instance()->IsControlKeyPressed) {
             foreach (var node in markerNodes) {
-                if (node.IsVisible && node.CheckCollision(atkEventData)) {
+                if (node.ShouldShowTooltip() && node.CheckCollision(atkEventData)) {
                     node.ShowTextTooltip(node.TextTooltip);
                     showingTooltip = true;
                     anyCollisions = true;
+                }
+
+                if (node.OnClick is not null) {
+                    DalamudInterface.Instance.AddonEventManager.SetCursor(AddonCursorType.Clickable);
+                    showingInteractCursor = true;
                 }
             }
         }
@@ -185,6 +203,19 @@ public unsafe class MapOverlayController : IDisposable {
         if (!anyCollisions && showingTooltip) {
             AtkStage.Instance()->TooltipManager.HideTooltip(mapAddon->Id);
             showingTooltip = false;
+        }
+
+        if (!anyCollisions && showingInteractCursor) {
+            DalamudInterface.Instance.AddonEventManager.ResetCursor();
+            showingInteractCursor = false;
+        }
+    }
+
+    private void ProcessMouseClick(AtkEventData* atkEventData) {
+        foreach (var node in markerNodes) {
+            if (node.IsVisible && node.CheckCollision(atkEventData)) {
+                node.OnClick?.Invoke();
+            }
         }
     }
 

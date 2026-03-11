@@ -5,6 +5,7 @@ using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using Lumina.Excel.Sheets;
 using Lumina.Text.ReadOnly;
+using Action = System.Action;
 
 namespace KamiToolKit.Premade.Nodes;
 
@@ -110,4 +111,8 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
     }
 
     protected virtual void OnUpdate() { }
+
+    public Action? OnClick { get; set; }
+
+    public bool ShouldShowTooltip() => base.IsVisible;
 }
