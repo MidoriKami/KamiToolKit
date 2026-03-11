@@ -117,6 +117,11 @@ public unsafe class MapOverlayController : IDisposable {
             clippingContainerNode.IsVisible = false;
             return;
         }
+        
+        if (showingTooltip && AgentMap.Instance()->IsControlKeyPressed) {
+            AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
+            showingTooltip = false;
+        }
 
         ref var areaMap = ref addon->AreaMap;
 
