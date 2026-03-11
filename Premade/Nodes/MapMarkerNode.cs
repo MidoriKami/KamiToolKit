@@ -17,6 +17,8 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
 
     public new Vector2 Size { get; set; }
 
+    public float MarkerScale { get; set; } = 1.0f;
+
     public new Vector2 Position { get; set; }
 
     public new ReadOnlySeString TextTooltip { get; set; } = string.Empty;
@@ -97,7 +99,7 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
         var mapScale = mapRow.SizeFactor / 100.0f;
         var mapOffset = new Vector2(mapRow.OffsetX, mapRow.OffsetY) + new Vector2(1024.0f, 1024.0f);
 
-        base.Size = Size * mapScale;
+        base.Size = Size * MarkerScale;
         base.Origin = Size / 2.0f;
 
         iconNode?.Size = base.Size;
