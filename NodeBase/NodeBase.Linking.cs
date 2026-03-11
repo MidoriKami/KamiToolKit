@@ -14,6 +14,7 @@ public abstract unsafe partial class NodeBase {
     private NodeBase? parentNode;
 
     private readonly HashSet<string> addonsPendingUpdate = [];
+    private readonly HashSet<nint> uldManagersPendingUpdate = [];
 
     internal AtkUldManager* ParentUldManager { get; set; }
     internal AtkUnitBase* ParentAddon { get; private set; }
@@ -214,6 +215,14 @@ public abstract unsafe partial class NodeBase {
         }
 
         if (ParentUldManager is not null) {
+            // Queue UldManager update for next frame
+            if (uldManagersPendingUpdate.Add((nint)ParentUldManager)) {
+                DalamudInterface.Instance.Framework.RunOnTick(() => {
+                    ParentUldManager->AddNodeToObjectList(this);
+                    uldManagersPendingUpdate.Remove((nint)ParentUldManager);
+                });
+            }
+            
             ParentUldManager->AddNodeToObjectList(this);
         }
 
@@ -222,8 +231,20 @@ public abstract unsafe partial class NodeBase {
                 Log.Warning("Warning, attaching to AddonNamePlate is not supported. Use OverlayController instead.");
             }
             
-            ParentAddon->UldManager.UpdateDrawNodeList();
-            ParentAddon->UpdateCollisionNodeList(false);
+            var addonName = ParentAddon->NameString;
+            
+            // Queue collision update for next frame
+            if (addonsPendingUpdate.Add(addonName)) {
+                DalamudInterface.Instance.Framework.RunOnTick(() => {
+                    var currentInstance = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
+                    if (currentInstance is not null) {
+                        currentInstance->UldManager.UpdateDrawNodeList();
+                        currentInstance->UpdateCollisionNodeList(false);
+                    }
+
+                    addonsPendingUpdate.Remove(addonName);
+                });
+            }
         }
     }
 
