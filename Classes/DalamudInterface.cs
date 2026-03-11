@@ -23,6 +23,7 @@ internal class DalamudInterface {
     [PluginService] public IGameGui GameGui { get; set; } = null!;
     [PluginService] public IGameInteropProvider GameInteropProvider { get; set; } = null!;
     [PluginService] public ISeStringEvaluator SeStringEvaluator { get; set; } = null!;
+    [PluginService] public IClientState ClientState { get; set; } = null!;
 
     private DalamudInterface() {
         if (!KamiToolKitLibrary.IsInitialized)

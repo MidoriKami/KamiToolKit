@@ -113,9 +113,9 @@ public unsafe class MapOverlayController : IDisposable {
         if (overlayNode is null) return;
         if (clippingContainerNode is null) return;
 
-        if (showingTooltip && AgentMap.Instance()->IsControlKeyPressed) {
-            AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
-            showingTooltip = false;
+        if (DalamudInterface.Instance.ClientState.IsPvP) {
+            clippingContainerNode.IsVisible = false;
+            return;
         }
 
         ref var areaMap = ref addon->AreaMap;
