@@ -54,13 +54,12 @@ public static class KamiToolKitLibrary {
     /// Cleans up any potentially leaked resources that KamiToolKit has allocated.
     /// </summary>
     public static void Cleanup() {
+        DalamudInterface.Instance.PluginInterface.RelinquishData("KamiToolKitAllocatedNodes");
+        Experimental.Instance.DisposeHooks();
+        
         if (MainThreadSafety.TryAssertMainThread()) return;
 
         NodeBase.DisposeNodes();
         NativeAddon.DisposeAddons();
-
-        DalamudInterface.Instance.PluginInterface.RelinquishData("KamiToolKitAllocatedNodes");
-        
-        Experimental.Instance.DisposeHooks();
     }
 }
