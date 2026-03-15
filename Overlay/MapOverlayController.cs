@@ -17,7 +17,7 @@ public unsafe class MapOverlayController : IDisposable {
     private readonly AddonController<AddonAreaMap> mapController;
     private SimpleOverlayNode? clippingContainerNode;
     private SimpleOverlayNode? overlayNode;
-    private readonly ViewportEventListener viewportEventListener;
+    private ViewportEventListener? viewportEventListener;
 
     private bool showingTooltip;
     private bool showingInteractCursor;
@@ -28,8 +28,6 @@ public unsafe class MapOverlayController : IDisposable {
     private readonly List<MapMarkerNode> queuedNodes = [];
     
     public MapOverlayController() {
-        viewportEventListener = new ViewportEventListener(OnViewportEvent);
-        
         mapController = new AddonController<AddonAreaMap>("AreaMap");
         mapController.OnAttach += OnAttach;
         mapController.OnPreUpdate += OnUpdate;
@@ -38,7 +36,8 @@ public unsafe class MapOverlayController : IDisposable {
     }
 
     public void Dispose() {
-        viewportEventListener.Dispose();
+        viewportEventListener?.Dispose();
+        viewportEventListener = null;
         
         mapController.Dispose();
 
@@ -62,25 +61,18 @@ public unsafe class MapOverlayController : IDisposable {
     }
 
     public void AddMarker(MapMarkerInfo markerInfo) {
-        if (overlayNode is not null) {
-            AttachMarker(markerInfo);
-        }
-        else {
-            queuedMarkers.Add(markerInfo);
-        }
+        queuedMarkers.Add(markerInfo);
     }
 
     public void AddMarker(MapMarkerNode marker) {
-        if (overlayNode is not null) {
-            markerNodes.Add(marker);
-            marker.AttachNode(overlayNode);
-        }
-        else {
-            queuedNodes.Add(marker);
-        }
+        queuedNodes.Add(marker);
     }
 
     public void RemoveMarker(MapMarkerNode marker) {
+        if (queuedNodes.Remove(marker)) {
+            marker.Dispose();
+        }
+
         if (markerNodes.Remove(marker)) {
             marker.Dispose();
         }
@@ -94,27 +86,18 @@ public unsafe class MapOverlayController : IDisposable {
             NodeFlags = NodeFlags.Clip | NodeFlags.Visible,
         };
         clippingContainerNode.AttachNode(mapComponentNode, NodePosition.AfterTarget);
+
+        viewportEventListener = new ViewportEventListener(OnViewportEvent);
         viewportEventListener.AddEvent(AtkEventType.MouseMove, clippingContainerNode);
         viewportEventListener.AddEvent(AtkEventType.MouseDown, clippingContainerNode);
         
         overlayNode = new SimpleOverlayNode();
         overlayNode.AttachNode(clippingContainerNode);
-
-        foreach (var queuedMarker in queuedMarkers) {
-            AttachMarker(queuedMarker);
-        }
-        queuedMarkers.Clear();
-
-        foreach (var queuedNode in queuedNodes) {
-            markerNodes.Add(queuedNode);
-            queuedNode.AttachNode(overlayNode);
-        }
-        queuedNodes.Clear();
     }
 
     private void OnUpdate(AddonAreaMap* addon) {
-        if (overlayNode is null) return;
         if (clippingContainerNode is null) return;
+        if (overlayNode is null) return;
 
         if (showingTooltip && AgentMap.Instance()->IsControlKeyPressed) {
             AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
@@ -125,6 +108,8 @@ public unsafe class MapOverlayController : IDisposable {
             clippingContainerNode.IsVisible = false;
             return;
         }
+
+        ProcessQueues();
 
         ref var areaMap = ref addon->AreaMap;
 
@@ -153,18 +138,45 @@ public unsafe class MapOverlayController : IDisposable {
     }
 
     private void OnDetach(AddonAreaMap* addon) {
+        viewportEventListener?.Dispose();
+        viewportEventListener = null;
+
         foreach (var marker in markerNodes) {
             marker.DetachNode();
             queuedNodes.Add(marker);
         }
-
-        viewportEventListener.RemoveEvent(AtkEventType.MouseMove);
+        markerNodes.Clear();
 
         clippingContainerNode?.Dispose();
         clippingContainerNode = null;
         
         overlayNode?.Dispose();
         overlayNode = null;
+    }
+    
+    private void ProcessQueues() {
+        foreach (var markerInfo in queuedMarkers) {
+            var newMarkerNode = new MapMarkerNode {
+                IconId = markerInfo.IconId,
+                MapId = markerInfo.MapId,
+                Texture = markerInfo.Texture,
+                TexturePath = markerInfo.TexturePath,
+                Size = markerInfo.Size ?? new Vector2(16.0f, 16.0f),
+                Origin = (markerInfo.Size ?? new Vector2(16.0f, 16.0f)) / 2.0f,
+                Position = markerInfo.Position ?? new Vector2(1024.0f, 1024.0f),
+                TextTooltip = markerInfo.Tooltip ?? string.Empty,
+            };
+    
+            markerNodes.Add(newMarkerNode);
+            newMarkerNode.AttachNode(overlayNode);
+        }
+        queuedMarkers.Clear();
+
+        foreach (var markerNode in queuedNodes) {
+            markerNodes.Add(markerNode);
+            markerNode.AttachNode(overlayNode);
+        }
+        queuedNodes.Clear();
     }
 
     private void OnViewportEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
@@ -218,20 +230,4 @@ public unsafe class MapOverlayController : IDisposable {
             }
         }
     }
-
-    private void AttachMarker(MapMarkerInfo markerInfo) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-        var newMarkerNode = new MapMarkerNode {
-            IconId = markerInfo.IconId,
-            MapId = markerInfo.MapId,
-            Texture = markerInfo.Texture,
-            TexturePath = markerInfo.TexturePath,
-            Size = markerInfo.Size ?? new Vector2(16.0f, 16.0f),
-            Origin = (markerInfo.Size ?? new Vector2(16.0f, 16.0f)) / 2.0f,
-            Position = markerInfo.Position ?? new Vector2(1024.0f, 1024.0f),
-            TextTooltip = markerInfo.Tooltip ?? string.Empty,
-        };
-    
-        markerNodes.Add(newMarkerNode);
-        newMarkerNode.AttachNode(overlayNode);
-    });
 }
