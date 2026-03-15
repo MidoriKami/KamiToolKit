@@ -199,7 +199,7 @@ public unsafe class MapOverlayController : IDisposable {
 
         if (!AgentMap.Instance()->IsControlKeyPressed) {
             foreach (var node in markerNodes) {
-                if (node.ShouldShowTooltip() && node.CheckCollision(atkEventData)) {
+                if (node.IsActuallyVisible() && node.CheckCollision(atkEventData)) {
                     node.ShowTextTooltip(node.TextTooltip);
                     showingTooltip = true;
                     anyCollisions = true;
@@ -225,7 +225,7 @@ public unsafe class MapOverlayController : IDisposable {
 
     private void ProcessMouseClick(AtkEventData* atkEventData) {
         foreach (var node in markerNodes) {
-            if (node.IsVisible && node.CheckCollision(atkEventData)) {
+            if (node.IsActuallyVisible() && node.CheckCollision(atkEventData)) {
                 node.OnClick?.Invoke();
             }
         }

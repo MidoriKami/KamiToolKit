@@ -116,5 +116,5 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
 
     public Action? OnClick { get; set; }
 
-    public bool ShouldShowTooltip() => base.IsVisible;
+    public bool IsActuallyVisible() => ResNode is not null && ResNode->IsActuallyVisible;
 }
