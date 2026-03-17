@@ -27,6 +27,9 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
             ItemComparer = ItemComparer,
             IsSearchMatch = OnSearchUpdated,
             ItemSpacing = ItemSpacing,
+            EnableAddButton = EnableAddButton,
+            EnableRemoveButton = EnableRemoveButton,
+            EnableEditButton = EnableEditButton,
         };
         selectionListNode.AttachNode(this);
 
@@ -132,6 +135,10 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
             selectionListNode?.ItemSpacing = value;
         }
     }
+
+    public bool EnableAddButton { get; set; } = true;
+    public bool EnableRemoveButton { get; set; } = false;
+    public bool EnableEditButton { get; set; } = false;
 
     public Action<ListConfigAddon<T, TU, TV>>? AddClicked {
         get;

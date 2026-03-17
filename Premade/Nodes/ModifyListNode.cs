@@ -100,11 +100,26 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
 
     public Action<T?>? SelectionChanged { get; init; }
 
+    public bool EnableAddButton {
+        get;
+        set => addButton.IsEnabled = AddNewEntry is not null && value;
+    } = true;
+
+    public bool EnableRemoveButton { 
+        get;
+        set => addButton.IsEnabled = RemoveEntry is not null && value;
+    } = false;
+
+    public bool EnableEditButton { 
+        get;
+        set => addButton.IsEnabled = EditEntry is not null && value;
+    } = false;
+    
     public Action? AddNewEntry {
         get;
         set {
             field = value; 
-            addButton.IsEnabled = value is not null;
+            addButton.IsEnabled = value is not null && EnableAddButton;
         }
     }
 
@@ -112,7 +127,7 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
         get;
         set {
             field = value; 
-            removeButton.IsEnabled = value is not null && SelectedOption is not null;
+            removeButton.IsEnabled = value is not null && SelectedOption is not null && EnableRemoveButton;
         }
     }
 
@@ -120,7 +135,7 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
         get;
         set {
             field = value; 
-            editButton.IsEnabled = value is not null && SelectedOption is not null;
+            editButton.IsEnabled = value is not null && SelectedOption is not null && EnableEditButton;
         }
     }
 
