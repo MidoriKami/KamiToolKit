@@ -102,40 +102,49 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
 
     public bool EnableAddButton {
         get;
-        set => addButton.IsEnabled = AddNewEntry is not null && value;
+        set {
+            field = value;
+            UpdateButtonStates();
+        }
     } = true;
 
     public bool EnableRemoveButton { 
         get;
-        set => addButton.IsEnabled = RemoveEntry is not null && value;
+        set {
+            field = value;
+            UpdateButtonStates();
+        }
     } = false;
 
-    public bool EnableEditButton { 
+    public bool EnableEditButton {
         get;
-        set => addButton.IsEnabled = EditEntry is not null && value;
+        set {
+            field = value;
+            UpdateButtonStates();
+        }
     } = false;
-    
+
     public Action? AddNewEntry {
         get;
         set {
-            field = value; 
-            addButton.IsEnabled = value is not null && EnableAddButton;
+            field = value;
+            UpdateButtonStates();
         }
     }
 
     public Action<T>? RemoveEntry {
         get;
         set {
-            field = value; 
-            removeButton.IsEnabled = value is not null && SelectedOption is not null && EnableRemoveButton;
+            field = value;
+            UpdateButtonStates();
         }
     }
 
     public Action<T>? EditEntry {
         get;
         set {
-            field = value; 
-            editButton.IsEnabled = value is not null && SelectedOption is not null && EnableEditButton;
+            field = value;
+            UpdateButtonStates();
         }
     }
 
@@ -202,8 +211,9 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
     }
 
     private void UpdateButtonStates() {
-        editButton.IsEnabled = SelectedOption is not null && EditEntry is not null;
-        removeButton.IsEnabled = SelectedOption is not null && RemoveEntry is not null;
+        editButton.IsEnabled = SelectedOption is not null && EditEntry is not null && EnableEditButton;
+        removeButton.IsEnabled = SelectedOption is not null && RemoveEntry is not null && EnableRemoveButton;
+        addButton.IsEnabled = AddNewEntry is not null && EnableAddButton;
     }
 
     /// <summary>
