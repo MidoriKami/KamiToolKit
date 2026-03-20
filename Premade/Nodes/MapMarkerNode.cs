@@ -100,7 +100,7 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
         var mapOffset = new Vector2(mapRow.OffsetX, mapRow.OffsetY) + new Vector2(1024.0f, 1024.0f);
 
         base.Size = Size * MarkerScale;
-        base.Origin = Size / 2.0f;
+        base.Origin = base.Size / 2.0f;
 
         iconNode?.Size = base.Size;
         iconNode?.Origin = base.Size / 2.0f;
