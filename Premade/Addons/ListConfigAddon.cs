@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Nodes;
 
@@ -27,9 +28,8 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
             ItemComparer = ItemComparer,
             IsSearchMatch = OnSearchUpdated,
             ItemSpacing = ItemSpacing,
-            EnableAddButton = EnableAddButton,
-            EnableRemoveButton = EnableRemoveButton,
-            EnableEditButton = EnableEditButton,
+            DisplayMode = (AddClicked is not null ? ListConfigDisplayMode.Add : ListConfigDisplayMode.None) | 
+                          (RemoveClicked is not null ? ListConfigDisplayMode.Remove : ListConfigDisplayMode.None),
         };
         selectionListNode.AttachNode(this);
 
@@ -136,14 +136,18 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
         }
     }
 
-    public bool EnableAddButton { get; set; } = true;
-    public bool EnableRemoveButton { get; set; } = false;
-    public bool EnableEditButton { get; set; } = false;
-
     public Action<ListConfigAddon<T, TU, TV>>? AddClicked {
         get;
         set {
             field = value;
+
+            if (value is not null) {
+                selectionListNode?.DisplayMode |= ListConfigDisplayMode.Add;
+            }
+            else {
+                selectionListNode?.DisplayMode &= ~ListConfigDisplayMode.Add;
+            }
+
             selectionListNode?.AddNewEntry = () => {
                 value?.Invoke(this);
             };
@@ -154,6 +158,14 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
         get;
         set {
             field = value;
+
+            if (value is not null) {
+                selectionListNode?.DisplayMode |= ListConfigDisplayMode.Remove;
+            }
+            else {
+                selectionListNode?.DisplayMode &= ~ListConfigDisplayMode.Remove;
+            }
+            
             selectionListNode?.RemoveEntry = entry => {
                 value?.Invoke(this, entry);
             };
