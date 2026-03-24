@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
@@ -20,7 +20,7 @@ public abstract partial class NativeAddon : IDisposable {
         }
         
         if (!isDisposed) {
-            Log.Debug($"Disposing addon {GetType()}");
+            Services.Log.Debug($"Disposing addon {GetType()}");
 
             Close();
 
@@ -42,13 +42,12 @@ public abstract partial class NativeAddon : IDisposable {
         foreach (var addon in CreatedAddons.ToArray()) {
             if (addon.IsOverlayAddon) continue;
             
-            Log.Warning($"Addon {addon.GetType()} was not disposed properly please ensure you call dispose at an appropriate time.");
-            Log.Debug($"Automatically disposing addon {addon.GetType()} as a safety measure.");
+            Services.Log.Warning($"Addon {addon.GetType()} was not disposed properly please ensure you call dispose at an appropriate time.");
+            Services.Log.Debug($"Automatically disposing addon {addon.GetType()} as a safety measure.");
 
             addon.Dispose();
         }
 
         CreatedAddons.Clear();
-        DisposeCloseCallback();
     }
 }

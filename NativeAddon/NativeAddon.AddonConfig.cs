@@ -5,6 +5,7 @@ using System.Text.Json;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
@@ -15,7 +16,7 @@ public unsafe partial class NativeAddon {
     };
     
     private AddonConfig LoadAddonConfig() {
-        var directory = DalamudInterface.Instance.PluginInterface.ConfigDirectory;
+        var directory = Services.PluginInterface.ConfigDirectory;
         var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
         if (!file.Exists) {
             file.Create().Close();
@@ -33,7 +34,7 @@ public unsafe partial class NativeAddon {
             addonConfig ??= new AddonConfig();
         }
         catch (Exception e) {
-            DalamudInterface.Instance.Log.Error(e, "Exception while deserializing AddonConfig, creating new config.");
+            Services.Log.Error(e, "Exception while deserializing AddonConfig, creating new config.");
             addonConfig = new AddonConfig();
             SaveAddonConfig(addonConfig);
         }
@@ -42,7 +43,7 @@ public unsafe partial class NativeAddon {
     }
 
     private void SaveAddonConfig(AddonConfig addonConfig) {
-        var directory = DalamudInterface.Instance.PluginInterface.ConfigDirectory;
+        var directory = Services.PluginInterface.ConfigDirectory;
         var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
 
         var data = JsonSerializer.Serialize(addonConfig, serializerOptions);

@@ -2,6 +2,7 @@ using System;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 
 namespace KamiToolKit.Nodes;
 
@@ -68,7 +69,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
                 }
             }
             catch (Exception e) {
-                Log.Exception(e);
+                Services.Log.Exception(e);
             } finally {
                 base.Dispose(disposing, isNativeDestructor);
             }

@@ -9,6 +9,7 @@ using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using InteropGenerator.Runtime;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Enums;
 using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
@@ -128,7 +129,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             OnFocused?.Invoke();
 
             if (AutoSelectAll && Component->EvaluatedString.Length > 0) {
-                DalamudInterface.Instance.Framework.RunOnTick(() => {
+                Services.Framework.RunOnTick(() => {
                     var keyModifiers = new AtkTextInput.KeyModifiers {
                         IsControlDown = true,
                     };
@@ -253,7 +254,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             return InputCallbackResult.None;
         }
         catch (Exception e) {
-            Log.Exception(e);
+            Services.Log.Exception(e);
             return InputCallbackResult.None;
         }
     }

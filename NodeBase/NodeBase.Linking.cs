@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit;
@@ -180,7 +181,7 @@ public abstract unsafe partial class NodeBase {
         
         // Queue collision update for next frame
         if (addonsPendingUpdate.Add(addonName)) {
-            DalamudInterface.Instance.Framework.RunOnTick(() => {
+            Services.Framework.RunOnTick(() => {
                 var currentInstance = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
                 if (currentInstance is not null) {
                     currentInstance->UldManager.UpdateDrawNodeList();
@@ -219,7 +220,7 @@ public abstract unsafe partial class NodeBase {
             var manager = ParentUldManager;
 
             if (uldManagersPendingUpdate.Add((nint)ParentUldManager)) {
-                DalamudInterface.Instance.Framework.RunOnTick(() => {
+                Services.Framework.RunOnTick(() => {
                     if (ResNode is null) return;
 
                     manager->AddNodeToObjectList(this);
@@ -232,14 +233,14 @@ public abstract unsafe partial class NodeBase {
 
         if (ParentAddon is not null) {
             if (ParentAddon->NameString is "NamePlate") {
-                Log.Warning("Warning, attaching to AddonNamePlate is not supported. Use OverlayController instead.");
+                Services.Log.Warning("Warning, attaching to AddonNamePlate is not supported. Use OverlayController instead.");
             }
             
             var addonName = ParentAddon->NameString;
             
             // Queue collision update for next frame
             if (addonsPendingUpdate.Add(addonName)) {
-                DalamudInterface.Instance.Framework.RunOnTick(() => {
+                Services.Framework.RunOnTick(() => {
                     var currentInstance = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
                     if (currentInstance is not null) {
                         currentInstance->UldManager.UpdateDrawNodeList();

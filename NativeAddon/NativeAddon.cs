@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Nodes;
 using KamiToolKit.Timelines;
 
@@ -23,17 +24,17 @@ public abstract unsafe partial class NativeAddon {
 
     private void AllocateAddon() {
         if (InternalAddon is not null) {
-            Log.Warning("Tried to allocate addon that was already allocated.");
+            Services.Log.Warning("Tried to allocate addon that was already allocated.");
             return;
         }
 
         var currentAddonCount = RaptureAtkUnitManager.Instance()->AllLoadedUnitsList.Count;
         if (currentAddonCount >= 200) {
-            Log.Warning($"WARNING: Current Addon Count is approaching hard limits ({currentAddonCount}/250). Please ensure custom Addons are not being used as overlays.");
+            Services.Log.Warning($"WARNING: Current Addon Count is approaching hard limits ({currentAddonCount}/250). Please ensure custom Addons are not being used as overlays.");
         }
 
         if (currentAddonCount >= 225) {
-            Log.Error($"ERROR: Current Addon Count is too high. Aborting allocation ({currentAddonCount}/250).");
+            Services.Log.Error($"ERROR: Current Addon Count is too high. Aborting allocation ({currentAddonCount}/250).");
             return;
         }
 
@@ -41,11 +42,7 @@ public abstract unsafe partial class NativeAddon {
             throw new NullReferenceException("InternalName is empty, this is not allowed.");
         }
 
-        Log.Verbose($"[{InternalName}] Allocating NativeAddon");
-
-        if (!IsOverlayAddon) {
-            InitializeCloseCallback();
-        }
+        Services.Log.Verbose($"[{InternalName}] Allocating NativeAddon");
 
         InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
 
@@ -149,8 +146,8 @@ public abstract unsafe partial class NativeAddon {
     /// <summary>
     ///     Initializes and Opens this instance of Addon
     /// </summary>
-    public void Open() => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-        Log.Verbose($"[{InternalName}] Open Called");
+    public void Open() => Services.Framework.RunOnFrameworkThread(() => {
+        Services.Log.Verbose($"[{InternalName}] Open Called");
 
         if (InternalAddon is null) {
             AllocateAddon();
@@ -162,7 +159,7 @@ public abstract unsafe partial class NativeAddon {
             }
         }
         else {
-            Log.Verbose($"[{InternalName}] Already open, skipping call.");
+            Services.Log.Verbose($"[{InternalName}] Already open, skipping call.");
         }
     });
 
@@ -172,8 +169,8 @@ public abstract unsafe partial class NativeAddon {
     public void Close() {
         if (InternalAddon is null) return;
 
-        DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
-            Log.Verbose($"[{InternalName}] Close");
+        Services.Framework.RunOnFrameworkThread(() => {
+            Services.Log.Verbose($"[{InternalName}] Close");
 
             if (InternalAddon is not null) {
                 InternalAddon->Close(false);

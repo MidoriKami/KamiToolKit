@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Premade.Color;
@@ -14,26 +14,26 @@ public class ColorSquareNode : SimpleComponentNode {
 
     public ColorSquareNode() {
         WhiteGradientNode = new ImGuiImageNode {
-            TexturePath = DalamudInterface.Instance.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
+            TexturePath = Services.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
             FitTexture = true,
         };
         WhiteGradientNode.AttachNode(this);
         
         ColorGradientNode = new ImGuiImageNode {
-            TexturePath = DalamudInterface.Instance.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
+            TexturePath = Services.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
             FitTexture = true,
             ImageNodeFlags = ImageNodeFlags.FlipH,
         };
         ColorGradientNode.AttachNode(this);
 
         BlackGradientNode = new ImGuiImageNode {
-            TexturePath = DalamudInterface.Instance.GetAssetPath("VerticalGradient_AlphaToBlack.png"),
+            TexturePath = Services.GetAssetPath("VerticalGradient_AlphaToBlack.png"),
             FitTexture = true,
         };
         BlackGradientNode.AttachNode(this);
         
         ColorDotNode = new ImGuiImageNode {
-            TexturePath = DalamudInterface.Instance.GetAssetPath("color_select_dot.png"),
+            TexturePath = Services.GetAssetPath("color_select_dot.png"),
             FitTexture = true,
         };
         ColorDotNode.AttachNode(this);

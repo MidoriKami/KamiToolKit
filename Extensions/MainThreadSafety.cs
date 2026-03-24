@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 
 namespace KamiToolKit.Extensions;
 
@@ -14,7 +14,7 @@ public static unsafe class MainThreadSafety {
         if (Framework.Instance()->IsDestroying) return true;
 
         if (!ThreadSafety.IsMainThread) {
-            Log.Error($"{callerFilePath?.Split(@"\")[^1][..^2]}{callerName} must be invoked from the main thread.");
+            Services.Log.Error($"{callerFilePath?.Split(@"\")[^1][..^2]}{callerName} must be invoked from the main thread.");
             return true;
         }
 

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using Dalamud.Plugin;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using Serilog.Events;
 
 namespace KamiToolKit;
 
 public static class KamiToolKitLibrary {
     internal static bool IsInitialized { get; private set; }
+    internal static IDalamudPluginInterface? PluginInterface { get; private set; }
     
     internal static ConcurrentDictionary<nint, Type>? AllocatedNodes;
     
@@ -20,24 +21,20 @@ public static class KamiToolKitLibrary {
     public static void Initialize(IDalamudPluginInterface pluginInterface, string? defaultWindowSubtitle = null) {
         IsInitialized = true;
         DefaultWindowSubtitle = defaultWindowSubtitle;
+        PluginInterface = pluginInterface;
 
         // Inject non-Experimental Properties
-        pluginInterface.Inject(DalamudInterface.Instance);
-        DalamudInterface.Instance.GameInteropProvider.InitializeFromAttributes(DalamudInterface.Instance);
+        PluginInterface.Create<Services>();
 
         // Create node data share
-        AllocatedNodes = DalamudInterface.Instance.PluginInterface.GetOrCreateData("KamiToolKitAllocatedNodes", () => new ConcurrentDictionary<nint, Type>());
-        
-        // Inject Experimental Properties
-        pluginInterface.Inject(Experimental.Instance);
-        DalamudInterface.Instance.GameInteropProvider.InitializeFromAttributes(Experimental.Instance);
-
-        Experimental.Instance.EnableHooks();
+        AllocatedNodes = PluginInterface.GetOrCreateData("KamiToolKitAllocatedNodes", () => new ConcurrentDictionary<nint, Type>());
 
         // Force enable Verbose so that users are able to get advanced logging information on request.
-        DalamudInterface.Instance.Log.MinimumLogLevel = LogEventLevel.Verbose;
+        Services.Log.MinimumLogLevel = LogEventLevel.Verbose;
 
-        DalamudInterface.Instance.Log.Info($"KamiToolKit initialized for {pluginInterface.InternalName}");
+        Services.Log.Info($"KamiToolKit initialized for {PluginInterface.InternalName}");
+        
+        NativeAddon.InitializeCloseCallback();
     }
 
     /// <summary>
@@ -54,12 +51,12 @@ public static class KamiToolKitLibrary {
     /// Cleans up any potentially leaked resources that KamiToolKit has allocated.
     /// </summary>
     public static void Cleanup() {
-        DalamudInterface.Instance.PluginInterface.RelinquishData("KamiToolKitAllocatedNodes");
-        Experimental.Instance.DisposeHooks();
-        
-        if (MainThreadSafety.TryAssertMainThread()) return;
-
         NodeBase.DisposeNodes();
         NativeAddon.DisposeAddons();
+        NativeAddon.DisposeCloseCallback();
+
+        if (MainThreadSafety.TryAssertMainThread()) return;
+
+        Services.PluginInterface.RelinquishData("KamiToolKitAllocatedNodes");
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using Lumina.Excel;
 
 namespace KamiToolKit.Nodes;
@@ -30,7 +30,7 @@ public class LuminaButtonListNode<T> : ButtonListNode<T> where T : struct, IExce
         if (LabelFunction is null) return;
         if (FilterFunction is null) return;
 
-        Options = DalamudInterface.Instance.DataManager.GetExcelSheet<T>()
+        Options = Services.DataManager.GetExcelSheet<T>()
             .Where(row => FilterFunction(row))
             .ToList();
     }

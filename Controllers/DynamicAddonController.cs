@@ -4,7 +4,7 @@ using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 
 namespace KamiToolKit.Controllers;
 
@@ -25,7 +25,7 @@ public unsafe class DynamicAddonController : AddonEventController<AtkUnitBase>, 
 
     public void AddAddon(string name) {
         if (name is "NamePlate") {
-            Log.Error("Attaching to NamePlate is not supported. Use OverlayController instead.");
+            Services.Log.Error("Attaching to NamePlate is not supported. Use OverlayController instead.");
             return;
         }
         
@@ -83,13 +83,13 @@ public unsafe class DynamicAddonController : AddonEventController<AtkUnitBase>, 
     }
 
     private void AddListeners(string name) {
-        DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, name, OnAddonEvent);
-        DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, name, OnAddonEvent);
-        DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, name, OnAddonEvent);
-        DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, name, OnAddonEvent);
-        DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, name, OnAddonEvent);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, name, OnAddonEvent);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, name, OnAddonEvent);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, name, OnAddonEvent);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, name, OnAddonEvent);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, name, OnAddonEvent);
 
-        DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+        Services.Framework.RunOnFrameworkThread(() => {
             var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(name);
             if (addon is not null) {
                 OnInnerAttach?.Invoke(addon);
@@ -98,13 +98,13 @@ public unsafe class DynamicAddonController : AddonEventController<AtkUnitBase>, 
     }
 
     private void RemoveListeners(string name) {
-        DalamudInterface.Instance.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, name, OnAddonEvent);
-        DalamudInterface.Instance.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, name, OnAddonEvent);
-        DalamudInterface.Instance.AddonLifecycle.UnregisterListener(AddonEvent.PostRefresh, name, OnAddonEvent);
-        DalamudInterface.Instance.AddonLifecycle.UnregisterListener(AddonEvent.PostRequestedUpdate, name, OnAddonEvent);
-        DalamudInterface.Instance.AddonLifecycle.UnregisterListener(AddonEvent.PostUpdate, name, OnAddonEvent);
+        Services.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, name, OnAddonEvent);
+        Services.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, name, OnAddonEvent);
+        Services.AddonLifecycle.UnregisterListener(AddonEvent.PostRefresh, name, OnAddonEvent);
+        Services.AddonLifecycle.UnregisterListener(AddonEvent.PostRequestedUpdate, name, OnAddonEvent);
+        Services.AddonLifecycle.UnregisterListener(AddonEvent.PostUpdate, name, OnAddonEvent);
 
-        DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+        Services.Framework.RunOnFrameworkThread(() => {
             var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(name);
             if (addon is not null) {
                 OnInnerDetach?.Invoke(addon);
@@ -113,7 +113,7 @@ public unsafe class DynamicAddonController : AddonEventController<AtkUnitBase>, 
     }
 
     public void Dispose() {
-        DalamudInterface.Instance.AddonLifecycle.UnregisterListener(OnAddonEvent);
+        Services.AddonLifecycle.UnregisterListener(OnAddonEvent);
         Disable();
     }
 }

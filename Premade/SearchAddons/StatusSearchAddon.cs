@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Premade.ListItemNodes;
 using Lumina.Excel.Sheets;
 
@@ -8,7 +8,7 @@ namespace KamiToolKit.Premade.SearchAddons;
 
 public class StatusSearchAddon : BaseSearchAddon<Status, StatusListItemNode> {
     public StatusSearchAddon() {
-        SearchOptions = DalamudInterface.Instance.DataManager.GetExcelSheet<Status>()
+        SearchOptions = Services.DataManager.GetExcelSheet<Status>()
             .Where(territory => territory.RowId is not 0)
             .Where(territory => !territory.Name.IsEmpty)
             .ToList();

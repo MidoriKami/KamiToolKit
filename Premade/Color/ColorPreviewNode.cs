@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 
@@ -19,7 +19,7 @@ public class ColorPreviewNode : SimpleComponentNode {
         SelectedColorPreviewBorderNode.AttachNode(this);
 
         AlphaLayerPreviewNode = new ImGuiImageNode {
-            TexturePath = DalamudInterface.Instance.GetAssetPath("alpha_background.png"),
+            TexturePath = Services.GetAssetPath("alpha_background.png"),
             WrapMode = WrapMode.Tile,
         };
         AlphaLayerPreviewNode.AttachNode(this);

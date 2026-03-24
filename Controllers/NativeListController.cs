@@ -5,7 +5,7 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 
 namespace KamiToolKit.Controllers;
 
@@ -40,20 +40,22 @@ public unsafe class NativeListController(string addonName) : IDisposable {
     }
 
     public void Enable() {
-        DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, addonName, OnAddonSetup);
-        DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnAddonFinalize);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, addonName, OnAddonSetup);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnAddonFinalize);
 
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
-        if (addon is not null) {
-            Log.Warning("Caution: ListController was loaded after list was initialized, data may be stale.");
-            LoadPopulators(addon);
-        }
+        Services.Framework.RunOnFrameworkThread(() => {
+            var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
+            if (addon is not null) {
+                Services.Log.Warning("Caution: ListController was loaded after list was initialized, data may be stale.");
+                LoadPopulators(addon);
+            }
+        });
     }
 
     public void Disable() => Dispose();
 
     public void Dispose() {
-        DalamudInterface.Instance.AddonLifecycle.UnregisterListener(OnAddonSetup, OnAddonFinalize);
+        Services.AddonLifecycle.UnregisterListener(OnAddonSetup, OnAddonFinalize);
 
         onListPopulate?.Dispose();
         onListPopulate = null;
@@ -81,12 +83,12 @@ public unsafe class NativeListController(string addonName) : IDisposable {
         var populateMethod = GetPopulatorNode(addon)->Populator;
 
         if (populateMethod.Populate is not null) {
-            onListPopulate = DalamudInterface.Instance.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateDelegate>(populateMethod.Populate, OnPopulateDetour);
+            onListPopulate = Services.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateDelegate>(populateMethod.Populate, OnPopulateDetour);
             onListPopulate?.Enable();
         }
 
         if (populateMethod.PopulateWithRenderer is not null) {
-            onRendererPopulate = DalamudInterface.Instance.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateWithRendererDelegate>(populateMethod.PopulateWithRenderer, OnRendererPopulateDetour);
+            onRendererPopulate = Services.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateWithRendererDelegate>(populateMethod.PopulateWithRenderer, OnRendererPopulateDetour);
             onRendererPopulate?.Enable();
         }
 
@@ -116,7 +118,7 @@ public unsafe class NativeListController(string addonName) : IDisposable {
             }
         }
         catch (Exception e) {
-            Log.Exception(e);
+            Services.Log.Error(e, "");
         }
     }
     
@@ -143,7 +145,7 @@ public unsafe class NativeListController(string addonName) : IDisposable {
             }
         }
         catch (Exception e) {
-            Log.Exception(e);
+            Services.Log.Exception(e);
         }
     }
 

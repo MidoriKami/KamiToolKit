@@ -6,7 +6,7 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Enums;
 
 namespace KamiToolKit.Overlay;
@@ -20,21 +20,21 @@ public unsafe class OverlayController : IDisposable {
     public OverlayController() {
         ClearState();
 
-        DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "NamePlate", OnNamePlatePreFinalize);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "NamePlate", OnNamePlatePreFinalize);
 
         foreach (var overlayLayer in Enum.GetValues<OverlayLayer>()) {
             var addonName = overlayLayer.Description;
 
-            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreUpdate, addonName, OnOverlayAddonUpdate);
-            DalamudInterface.Instance.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnOverlayAddonFinalize);
+            Services.AddonLifecycle.RegisterListener(AddonEvent.PreUpdate, addonName, OnOverlayAddonUpdate);
+            Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnOverlayAddonFinalize);
         }
 
         BeginStateCheck();
     }
 
     public void Dispose() {
-        DalamudInterface.Instance.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "NamePlate");
-        DalamudInterface.Instance.AddonLifecycle.UnregisterListener(OnOverlayAddonFinalize, OnOverlayAddonUpdate);
+        Services.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "NamePlate");
+        Services.AddonLifecycle.UnregisterListener(OnOverlayAddonFinalize, OnOverlayAddonUpdate);
 
         foreach (var node in overlayNodes.SelectMany(nodeList => nodeList.Value)) {
             node.Dispose();
@@ -56,8 +56,8 @@ public unsafe class OverlayController : IDisposable {
     }
 
     private void BeginStateCheck() {
-        DalamudInterface.Instance.Framework.Update -= CheckOverlayState;
-        DalamudInterface.Instance.Framework.Update += CheckOverlayState;
+        Services.Framework.Update -= CheckOverlayState;
+        Services.Framework.Update += CheckOverlayState;
     }
 
     private void CheckOverlayState(IFramework framework) {
@@ -71,7 +71,7 @@ public unsafe class OverlayController : IDisposable {
                 break;
 
             case ControllerState.Ready:
-                DalamudInterface.Instance.Framework.Update -= CheckOverlayState;
+                Services.Framework.Update -= CheckOverlayState;
                 break;
         }
     }
@@ -134,11 +134,11 @@ public unsafe class OverlayController : IDisposable {
     // Public node access
     //
 
-    public void CreateNode(Func<OverlayNode> creationFunction) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+    public void CreateNode(Func<OverlayNode> creationFunction) => Services.Framework.RunOnFrameworkThread(() => {
         AddNode(creationFunction());
     });
 
-    public void AddNode(OverlayNode node) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+    public void AddNode(OverlayNode node) => Services.Framework.RunOnFrameworkThread(() => {
         overlayNodes.TryAdd(node.OverlayLayer, []);
 
         if (overlayNodes[node.OverlayLayer].Contains(node)) return;
@@ -153,7 +153,7 @@ public unsafe class OverlayController : IDisposable {
         AttachNode(addon, node);
     });
 
-    public void RemoveNode(OverlayNode node) => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+    public void RemoveNode(OverlayNode node) => Services.Framework.RunOnFrameworkThread(() => {
         if (!overlayNodes.TryGetValue(node.OverlayLayer, out var list)) return;
 
         if (list.Remove(node)) {
@@ -161,7 +161,7 @@ public unsafe class OverlayController : IDisposable {
         }
     });
 
-    public void RemoveAllNodes() => DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+    public void RemoveAllNodes() => Services.Framework.RunOnFrameworkThread(() => {
         foreach (var node in overlayNodes.SelectMany(set => set.Value).ToList()) {
             RemoveNode(node);
         }

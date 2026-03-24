@@ -3,6 +3,7 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 
 namespace KamiToolKit.Extensions;
 
@@ -98,11 +99,11 @@ public static unsafe class AtkUldManagerExtensions {
         }
 
         public void PrintObjectList() {
-            Log.Debug("Beginning NodeList");
+            Services.Log.Debug("Beginning NodeList");
 
             foreach (var index in Enumerable.Range(0, manager.Objects->NodeCount)) {
                 var nodePointer = manager.Objects->NodeList[index];
-                Log.Debug($"[{index}]: {(nint)nodePointer:X}");
+                Services.Log.Debug($"[{index}]: {(nint)nodePointer:X}");
             }
         }
 

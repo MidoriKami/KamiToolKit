@@ -3,6 +3,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 
@@ -27,14 +28,14 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         ColorSquareNode.AttachNode(this);
 
         ColorRingNode = new ImGuiImageNode {
-            TexturePath = DalamudInterface.Instance.GetAssetPath("color_ring.png"),
+            TexturePath = Services.GetAssetPath("color_ring.png"),
             FitTexture = true,
             ImageNodeFlags = ImageNodeFlags.FlipV,
         };
         ColorRingNode.AttachNode(this);
 
         ColorRingSelectorNode = new ImGuiImageNode {
-            TexturePath = DalamudInterface.Instance.GetAssetPath("color_ring_selector.png"),
+            TexturePath = Services.GetAssetPath("color_ring_selector.png"),
             FitTexture = true,
             MultiplyColor = new Vector3(1.0f, 0.0f, 0.0f),
         };

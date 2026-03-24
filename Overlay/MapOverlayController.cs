@@ -7,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Controllers;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Nodes;
 using MapMarkerInfo = KamiToolKit.Classes.MapMarkerInfo;
@@ -104,7 +105,7 @@ public unsafe class MapOverlayController : IDisposable {
             showingTooltip = false;
         }
         
-        if (DalamudInterface.Instance.ClientState.IsPvP) {
+        if (Services.ClientState.IsPvP) {
             clippingContainerNode.IsVisible = false;
             return;
         }
@@ -206,7 +207,7 @@ public unsafe class MapOverlayController : IDisposable {
                 }
 
                 if (node.OnClick is not null) {
-                    DalamudInterface.Instance.AddonEventManager.SetCursor(AddonCursorType.Clickable);
+                    Services.AddonEventManager.SetCursor(AddonCursorType.Clickable);
                     showingInteractCursor = true;
                 }
             }
@@ -218,7 +219,7 @@ public unsafe class MapOverlayController : IDisposable {
         }
 
         if (!anyCollisions && showingInteractCursor) {
-            DalamudInterface.Instance.AddonEventManager.ResetCursor();
+            Services.AddonEventManager.ResetCursor();
             showingInteractCursor = false;
         }
     }

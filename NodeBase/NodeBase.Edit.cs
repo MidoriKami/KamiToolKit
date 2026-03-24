@@ -3,6 +3,7 @@ using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 
@@ -198,8 +199,8 @@ public abstract unsafe partial class NodeBase {
     }
 
     private static void SetCursor(AddonCursorType cursor)
-        => DalamudInterface.Instance.AddonEventManager.SetCursor(cursor);
+        => Services.AddonEventManager.SetCursor(cursor);
 
     private static void ResetCursor()
-        => DalamudInterface.Instance.AddonEventManager.ResetCursor();
+        => Services.AddonEventManager.ResetCursor();
 }

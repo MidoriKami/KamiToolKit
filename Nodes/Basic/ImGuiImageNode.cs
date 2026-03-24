@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Dalamud.Interface.Textures.TextureWraps;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 
 namespace KamiToolKit.Nodes;
 
@@ -19,7 +20,7 @@ public class ImGuiImageNode : SimpleImageNode {
             if (Path.IsPathRooted(value)) {
                 LoadTextureFromFile(value);
             }
-            else if (DalamudInterface.Instance.DataManager.FileExists(value)) {
+            else if (Services.DataManager.FileExists(value)) {
                 PartsList[0]->LoadTexture(value);
             }
         }
@@ -39,10 +40,10 @@ public class ImGuiImageNode : SimpleImageNode {
     }
 
     public void LoadTextureFromFile(string fileSystemPath) {
-        DalamudInterface.Instance.Framework.RunOnTick(async () => {
+        Services.Framework.RunOnTick(async () => {
             Alpha = 0.0f;
 
-            var newTexture = await DalamudInterface.Instance.TextureProvider.GetFromFile(fileSystemPath).RentAsync();
+            var newTexture = await Services.TextureProvider.GetFromFile(fileSystemPath).RentAsync();
 
             LoadTexture(newTexture);
             TextureSize = newTexture.Size;

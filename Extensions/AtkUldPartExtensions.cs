@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using Dalamud.Interface.Textures.TextureWraps;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 
 namespace KamiToolKit.Extensions;
 
@@ -24,16 +24,16 @@ public static unsafe class AtkUldPartExtensions {
                 var texturePath = path.Replace("_hr1", string.Empty);
 
                 var themedPath = texturePath.Replace("uld", GetThemePathModifier());
-                if (DalamudInterface.Instance.DataManager.FileExists(themedPath) && resolveTheme) {
+                if (Services.DataManager.FileExists(themedPath) && resolveTheme) {
                     texturePath = themedPath;
                 }
 
-                if (DalamudInterface.Instance.DataManager.FileExists(texturePath)) {
+                if (Services.DataManager.FileExists(texturePath)) {
                     part.UldAsset->AtkTexture.LoadTextureWithDefaultVersion(texturePath);
                 }
             }
             catch (Exception e) {
-                Log.Exception(e);
+                Services.Log.Error(e, "Error in AtkUldPartExtensions LoadTexture");
             }
         }
 
@@ -60,7 +60,7 @@ public static unsafe class AtkUldPartExtensions {
         }
 
         public void LoadTexture(IDalamudTextureWrap textureWrap) {
-            var texturePointer = (Texture*)DalamudInterface.Instance.TextureProvider.ConvertToKernelTexture(textureWrap, true);
+            var texturePointer = (Texture*)Services.TextureProvider.ConvertToKernelTexture(textureWrap, true);
             if (texturePointer is null) return;
             
             part.LoadTexture(texturePointer);
@@ -105,6 +105,6 @@ public static unsafe class AtkUldPartExtensions {
         var pathResult = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(bytePointer).String;
 
         // If the resolved path doesn't exist, re-process with default folder
-        return DalamudInterface.Instance.DataManager.FileExists(pathResult) ? targetFolder : IconSubFolder.None;
+        return Services.DataManager.FileExists(pathResult) ? targetFolder : IconSubFolder.None;
     }
 }

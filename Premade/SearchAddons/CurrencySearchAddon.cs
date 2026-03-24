@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Premade.ListItemNodes;
 using Lumina.Excel.Sheets;
 
@@ -11,7 +11,7 @@ public class CurrencySearchAddon : ItemSearchAddonBase<CurrencyListItemNode> {
         => SearchOptions = GetCurrencyItems().ToList();
 
     private static IEnumerable<Item> GetCurrencyItems() {
-        var dataManager = DalamudInterface.Instance.DataManager;
+        var dataManager = Services.DataManager;
 
         var obsoleteTomes = dataManager.GetExcelSheet<TomestonesItem>()
             .Where(item => item.Tomestones.RowId is 0)

@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Enums;
 
 namespace KamiToolKit;
@@ -47,7 +48,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             isDisposed = true;
 
             if (!IsNodeValid()) {
-                Log.Warning("Invalid node, dispose aborted.");
+                Services.Log.Warning("Invalid node, dispose aborted.");
                 return;
             }
 
@@ -81,13 +82,13 @@ public abstract unsafe partial class NodeBase : IDisposable {
             logIndent--;
         }
         catch (Exception e) {
-            Log.Exception(e);
+            Services.Log.Exception(e);
             logIndent = 0;
         } 
     }
 
     private static void LogIndented(string message)
-        => Log.Verbose(new string(' ', logIndent * 2) + message);
+        => Services.Log.Verbose(new string(' ', logIndent * 2) + message);
 
     /// <summary>
     ///     Warning, this is only to ensure there are no memory leaks.
@@ -97,7 +98,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         var leakedNodeCount = CreatedNodes.Count(node => !node.IsAddonRootNode && node.ResNode is not null && node.ResNode->ParentNode is null);
 
         if (leakedNodeCount is not 0) {
-            Log.Warning($"There were {leakedNodeCount} node(s) that were not disposed safely.");
+            Services.Log.Warning($"There were {leakedNodeCount} node(s) that were not disposed safely.");
         }
 
         foreach (var node in CreatedNodes.ToArray()) {
@@ -105,7 +106,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             if (node.ResNode->ParentNode is not null) continue;
             if (node.IsAddonRootNode) continue;
 
-            Log.Warning($"Forcing disposal of: {node.GetType()}");
+            Services.Log.Warning($"Forcing disposal of: {node.GetType()}");
             node.Dispose();
         }
     }
@@ -163,7 +164,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         Dispose(true, true);
         InvokeOriginalDestructor(thisPtr, free);
 
-        Log.Verbose($"Native has disposed node {GetType()}");
+        Services.Log.Verbose($"Native has disposed node {GetType()}");
         GC.SuppressFinalize(this);
         CreatedNodes.Remove(this);
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 
 namespace KamiToolKit.Controllers;
 
@@ -20,7 +20,7 @@ public unsafe class MultiAddonController<T> : AddonEventController<T>, IDisposab
     public MultiAddonController(params string[] addonNames) {
         foreach (var addonName in addonNames) {
             if (addonName is "NamePlate") {
-                Log.Error("Attaching to NamePlate is not supported. Use OverlayController instead.");
+                Services.Log.Error("Attaching to NamePlate is not supported. Use OverlayController instead.");
                 continue;
             }
 
@@ -51,7 +51,7 @@ public unsafe class MultiAddonController<T> : AddonEventController<T>, IDisposab
         => OnInnerUpdate?.Invoke(addon);
 
     public void Dispose() {
-        DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+        Services.Framework.RunOnFrameworkThread(() => {
             addonControllers.ForEach(controller => controller.Dispose());
             addonControllers.Clear();
         });

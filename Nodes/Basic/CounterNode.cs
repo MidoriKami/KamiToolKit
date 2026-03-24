@@ -2,6 +2,7 @@ using System.Numerics;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Enums;
 using Lumina.Text.Payloads;
 using Lumina.Text.ReadOnly;
@@ -133,7 +134,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         using var rentedBuilder = new RentedSeStringBuilder();
 
         // <kilo(lnum1,\,)>
-        var evaluatedString = DalamudInterface.Instance.SeStringEvaluator.EvaluateFromAddon(18, [ value ]);
+        var evaluatedString = Services.SeStringEvaluator.EvaluateFromAddon(18, [ value ]);
 
         foreach (var payload in evaluatedString) {
             switch (payload.Type) {

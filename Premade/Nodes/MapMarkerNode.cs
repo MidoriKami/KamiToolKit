@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Nodes;
 using Lumina.Excel.Sheets;
 using Lumina.Text.ReadOnly;
@@ -91,7 +91,7 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
     public void Update() {
         OnUpdate();
 
-        if (!DalamudInterface.Instance.DataManager.GetExcelSheet<Map>().TryGetRow(MapId, out var mapRow)) {
+        if (!Services.DataManager.GetExcelSheet<Map>().TryGetRow(MapId, out var mapRow)) {
             IsVisible = false;
             return;
         }

@@ -2,6 +2,7 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
@@ -19,7 +20,7 @@ public abstract unsafe partial class NativeAddon {
     private bool isSetup;
 
     private void Initialize(AtkUnitBase* thisPtr) {
-        Log.Verbose($"[{InternalName}] Initialize");
+        Services.Log.Verbose($"[{InternalName}] Initialize");
 
         AtkUnitBase.StaticVirtualTablePointer->Initialize(thisPtr);
 
@@ -29,7 +30,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void Setup(AtkUnitBase* addon, uint valueCount, AtkValue* values) {
-        Log.Verbose($"[{InternalName}] Setup");
+        Services.Log.Verbose($"[{InternalName}] Setup");
 
         if (!IsOverlayAddon) {
             SetInitialState();
@@ -49,7 +50,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void Show(AtkUnitBase* addon, bool silenceOpenSoundEffect, uint unsetShowHideFlags) {
-        Log.Verbose($"[{InternalName}] Show");
+        Services.Log.Verbose($"[{InternalName}] Show");
 
         OnShow(addon);
 
@@ -57,7 +58,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void Update(AtkUnitBase* addon, float delta) {
-        Log.Excessive($"[{InternalName}] Update");
+        Services.Log.Excessive($"[{InternalName}] Update");
 
         OnUpdate(addon);
 
@@ -65,7 +66,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void Draw(AtkUnitBase* addon) {
-        Log.Excessive($"[{InternalName}] Draw");
+        Services.Log.Excessive($"[{InternalName}] Draw");
 
         OnDraw(addon);
 
@@ -73,7 +74,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void Hide(AtkUnitBase* addon, bool unkBool, bool callHideCallback, uint setShowHideFlags) {
-        Log.Verbose($"[{InternalName}] Hide");
+        Services.Log.Verbose($"[{InternalName}] Hide");
 
         OnHide(addon);
         SaveAddonConfig();
@@ -83,13 +84,13 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void Hide2(AtkUnitBase* addon) {
-        Log.Verbose($"[{InternalName}] Hide2");
+        Services.Log.Verbose($"[{InternalName}] Hide2");
 
         AtkUnitBase.StaticVirtualTablePointer->Hide2(addon);
     }
 
     private void Finalizer(AtkUnitBase* addon) {
-        Log.Verbose($"[{InternalName}] Finalize");
+        Services.Log.Verbose($"[{InternalName}] Finalize");
 
         OnFinalize(addon);
 
@@ -102,7 +103,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private AtkEventListener* Destructor(AtkUnitBase* addon, byte flags) {
-        Log.Verbose($"[{InternalName}] Destructor");
+        Services.Log.Verbose($"[{InternalName}] Destructor");
 
         var result = AtkUnitBase.StaticVirtualTablePointer->Dtor(addon, flags);
 
@@ -120,7 +121,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void RequestedUpdate(AtkUnitBase* thisPtr, NumberArrayData** numberArrayData, StringArrayData** stringArrayData) {
-        Log.Verbose($"[{InternalName}] RequestedUpdate");
+        Services.Log.Verbose($"[{InternalName}] RequestedUpdate");
 
         // Prevent calls to OnRequestedUpdate before Setup is completed. The game will try to call this after Show but before Setup
         if (isSetup) {
@@ -131,7 +132,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private bool Refresh(AtkUnitBase* thisPtr, uint valueCount, AtkValue* values) {
-        Log.Verbose($"[{InternalName}] Refresh");
+        Services.Log.Verbose($"[{InternalName}] Refresh");
         
         OnRefresh(thisPtr, new Span<AtkValue>(values, (int)valueCount));
         
@@ -139,7 +140,7 @@ public abstract unsafe partial class NativeAddon {
     }
 
     private void ScreenSizeChange(AtkUnitBase* thisPtr, int width, int height) {
-        Log.Verbose($"[{InternalName}] ScreenSizeChange");
+        Services.Log.Verbose($"[{InternalName}] ScreenSizeChange");
 
         AtkUnitBase.StaticVirtualTablePointer->OnScreenSizeChange(thisPtr, width, height);
 

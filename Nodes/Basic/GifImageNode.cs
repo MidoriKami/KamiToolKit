@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dalamud.Interface.Textures;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Timelines;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -71,7 +72,7 @@ public class GifImageNode : ResNode {
 
                 frame.CopyPixelDataTo(buffer);
 
-                var texture = await DalamudInterface.Instance.TextureProvider.CreateFromRawAsync(RawImageSpecification.Rgba32(frame.Width, frame.Height), buffer);
+                var texture = await Services.TextureProvider.CreateFromRawAsync(RawImageSpecification.Rgba32(frame.Width, frame.Height), buffer);
 
                 unsafe {
                     var newPart = ImageNode.AddPart(new Part {
@@ -99,12 +100,12 @@ public class GifImageNode : ResNode {
 
             Timeline?.PlayAnimation( AtkTimelineJumpBehavior.LoopForever, 200);
 
-            await DalamudInterface.Instance.Framework.RunOnFrameworkThread(() => {
+            await Services.Framework.RunOnFrameworkThread(() => {
                 OnGifLoaded?.Invoke();
             });
         }
         catch (Exception e) {
-            Log.Exception(e);
+            Services.Log.Exception(e);
         }
     }
 

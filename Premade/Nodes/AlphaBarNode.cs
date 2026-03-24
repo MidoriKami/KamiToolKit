@@ -3,6 +3,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Dalamud;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Premade.Nodes;
@@ -22,14 +23,14 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
         AlphaBarBackgroundNode.AttachNode(this);
 
         AlphaBarGradientNode = new ImGuiImageNode {
-            TexturePath = DalamudInterface.Instance.GetAssetPath("VerticalGradient_WhiteToAlpha.png"),
+            TexturePath = Services.GetAssetPath("VerticalGradient_WhiteToAlpha.png"),
             FitTexture = true,
         };
         AlphaBarGradientNode.AttachNode(this);
         AlphaBarGradientNode.AddEvent(AtkEventType.MouseDown, OnAlphaBarMouseDown);
 
         AlphaBarSelectorNode = new ImGuiImageNode {
-            TexturePath = DalamudInterface.Instance.GetAssetPath("alpha_selector.png"),
+            TexturePath = Services.GetAssetPath("alpha_selector.png"),
             FitTexture = true,
         };
         AlphaBarSelectorNode.AttachNode(this);
