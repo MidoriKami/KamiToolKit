@@ -118,7 +118,7 @@ public unsafe class NativeListController(string addonName) : IDisposable {
             }
         }
         catch (Exception e) {
-            Services.Log.Error(e, "");
+            Services.Log.Exception(e);
         }
     }
     
