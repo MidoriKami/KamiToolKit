@@ -181,19 +181,23 @@ internal static unsafe class NodeLinker {
 
     public static void DetachNode(AtkResNode* node) {
         if (node is null) return;
-        if (node->ParentNode is null) return;
 
-        if (node->ParentNode->ChildNode == node)
-            node->ParentNode->ChildNode = node->PrevSiblingNode;
+        var parentNode = node->ParentNode;
+
+        if (parentNode != null && parentNode->ChildNode == node) {
+            parentNode->ChildNode = node->PrevSiblingNode != null
+                ? node->PrevSiblingNode
+                : node->NextSiblingNode;
+
+            if (parentNode->GetNodeType() is not NodeType.Component && parentNode->ChildCount > 0) {
+                parentNode->ChildCount--;
+            }
+        }
 
         if (node->PrevSiblingNode != null)
             node->PrevSiblingNode->NextSiblingNode = node->NextSiblingNode;
 
         if (node->NextSiblingNode != null)
             node->NextSiblingNode->PrevSiblingNode = node->PrevSiblingNode;
-
-        if (node->ParentNode->GetNodeType() is not NodeType.Component) {
-            node->ParentNode->ChildCount--;
-        }
     }
 }
