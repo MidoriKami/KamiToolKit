@@ -1,6 +1,5 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.UI;
 using KamiToolKit.Enums;
-using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Node.Simple;
 
 namespace KamiToolKit.Overlay.UiOverlay;
