@@ -4,7 +4,7 @@ using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
-public abstract partial class NativeAddon : IDisposable {
+public partial class NativeAddon : IDisposable {
 
     private static readonly List<NativeAddon> CreatedAddons = [];
 

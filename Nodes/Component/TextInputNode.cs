@@ -11,6 +11,7 @@ using InteropGenerator.Runtime;
 using KamiToolKit.Classes;
 using KamiToolKit.Dalamud;
 using KamiToolKit.Enums;
+using KamiToolKit.Premade.Node.Simple;
 using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
 

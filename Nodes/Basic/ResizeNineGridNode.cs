@@ -1,9 +1,10 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Premade.Node.Simple;
 
 namespace KamiToolKit.Nodes;
 
-public class ResizeNineGridNode : SimpleComponentNode {
+internal class ResizeNineGridNode : SimpleComponentNode {
 
     public readonly NineGridNode BorderNode;
 

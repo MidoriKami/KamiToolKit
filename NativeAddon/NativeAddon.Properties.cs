@@ -5,7 +5,7 @@ using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit;
 
-public abstract unsafe partial class NativeAddon {
+public unsafe partial class NativeAddon {
     public void SetWindowPosition(Vector2 windowPosition) {
         if (InternalAddon is null) return;
         InternalAddon->SetPosition((short)windowPosition.X, (short)windowPosition.Y);

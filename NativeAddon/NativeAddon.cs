@@ -12,7 +12,7 @@ using KamiToolKit.Timelines;
 
 namespace KamiToolKit;
 
-public abstract unsafe partial class NativeAddon {
+public unsafe partial class NativeAddon {
 
     private GCHandle? disposeHandle;
 

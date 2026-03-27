@@ -7,17 +7,13 @@ public unsafe partial class NativeAddon {
     private void UpdateFlags() {
 
         // Disable Native AddonConfig
-        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A2, 0x40, true);
-        
-        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A1, 0x4, DisableClose);
+        InternalAddon->DisableAddonConfig = true;
+        InternalAddon->DisableUserClose = DisableClose;
+        InternalAddon->DisableHideTransition = DisableCloseTransition;
+        InternalAddon->EnableTitleBarContextMenu = EnableContextMenu;
+        InternalAddon->DisableUserScaling = DisableScaleContextOption;
 
-        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A2, 0x8, DisableCloseTransition);
-        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A2, 0x40, DisableAddonConfig);
-
-        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A3, 0x20, DisableClamping);
-        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A3, 0x1, EnableContextMenu);
-        
-        FlagHelper.UpdateFlag(ref InternalAddon->Flags1C8, 0x800, DisableScaleContextOption);
+        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A3, 1 << 5, DisableClamping);
 
         if (IsOverlayAddon) {
             SetOverlayFlags();
@@ -28,22 +24,14 @@ public unsafe partial class NativeAddon {
 
         OpenWindowSoundEffectId = 0;
         InternalAddon->ShowSoundEffectId = 0;
-
-        // Disable ability to focus window
-        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A0, 0x80, true);
-            
-        // Don't load into FocusedAddons list
-        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A1, 0x40, true);
+        InternalAddon->DisableFocusability = true;
+        InternalAddon->DisableFocusOnShow = true;
+        InternalAddon->DisableHideTransition = true;
+        InternalAddon->DisableShowHideSoundEffects = true;
 
         // Disable Controller Nav
         FlagHelper.UpdateFlag(ref InternalAddon->Flags1A2, 0x2, true);
-        
-        // Disable open/close transitions
-        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A2, 0x8, true);
-        
-        // Disable open/close sounds
-        FlagHelper.UpdateFlag(ref InternalAddon->Flags1A2, 0x20, true);
-        
+
         // Enable ClickThrough
         FlagHelper.UpdateFlag(ref InternalAddon->Flags1A3, 0x40, true);
     }
@@ -51,8 +39,6 @@ public unsafe partial class NativeAddon {
     public bool DisableClose { get; init; }
 
     public bool DisableCloseTransition { get; init; }
-
-    internal bool DisableAddonConfig { get; init; } = true;
 
     public bool EnableContextMenu { get; init; } = true;
 

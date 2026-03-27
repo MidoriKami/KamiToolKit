@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using KamiToolKit.Enums;
+using KamiToolKit.Premade.Node.Simple;
 using KamiToolKit.Timelines;
 
 namespace KamiToolKit.Nodes;

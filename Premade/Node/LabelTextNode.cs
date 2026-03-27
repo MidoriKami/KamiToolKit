@@ -1,0 +1,16 @@
+﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
+using KamiToolKit.Nodes;
+
+namespace KamiToolKit.Premade.Node;
+
+public sealed class LabelTextNode : TextNode {
+    public LabelTextNode() {
+        TextColor = ColorHelper.GetColor(8); 
+        TextOutlineColor = ColorHelper.GetColor(7);
+        FontType = FontType.Axis;
+        FontSize = 14;
+        LineSpacing = 24;
+        AlignmentType = AlignmentType.Left;
+    }
+}

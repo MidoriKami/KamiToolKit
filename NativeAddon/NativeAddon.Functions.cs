@@ -6,7 +6,7 @@ using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
-public abstract unsafe partial class NativeAddon {
+public unsafe partial class NativeAddon {
 
     protected virtual void OnSetup(AtkUnitBase* addon) { }
     protected virtual void OnShow(AtkUnitBase* addon) { }

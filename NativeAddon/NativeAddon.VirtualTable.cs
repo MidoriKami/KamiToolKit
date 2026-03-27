@@ -4,7 +4,7 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit;
 
-public abstract unsafe partial class NativeAddon {
+public unsafe partial class NativeAddon {
 
     private const int VirtualTableEntryCount = 200;
 

@@ -4,7 +4,7 @@ using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
-public abstract unsafe partial class NativeAddon {
+public unsafe partial class NativeAddon {
     private static Hook<AtkUnitBase.Delegates.FireCallback>? fireCallbackHook;
 
     internal static void InitializeCloseCallback() {
