@@ -40,6 +40,11 @@ public unsafe class TextButtonNode : ButtonBase {
         set => LabelNode.String = value;
     }
 
+    public uint TextId {
+        get =>LabelNode.TextId;
+        set => LabelNode.TextId = value;
+    }
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
