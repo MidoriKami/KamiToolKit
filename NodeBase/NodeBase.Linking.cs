@@ -244,6 +244,7 @@ public abstract unsafe partial class NodeBase {
                     var currentInstance = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
                     if (currentInstance is not null) {
                         currentInstance->UldManager.UpdateDrawNodeList();
+                        Experimental.SetupTextRecursive?.Invoke(&currentInstance->UldManager);
                         currentInstance->UpdateCollisionNodeList(false);
                     }
 

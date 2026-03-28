@@ -14,6 +14,8 @@ public static class KamiToolKitLibrary {
     
     internal static string? DefaultWindowSubtitle;
 
+    internal static Experimental Experimental = new();
+
     /// <summary>
     /// Main initialization method for KamiToolKit. This method is required to be invoked before any KamiToolKit features are used.
     /// Failure to do so will not result in any direct warnings, but will result in undefined behavior.
@@ -25,6 +27,7 @@ public static class KamiToolKitLibrary {
 
         // Inject non-Experimental Properties
         PluginInterface.Create<Services>();
+        Services.GameInteropProvider.InitializeFromAttributes(Experimental);
 
         // Create node data share
         AllocatedNodes = PluginInterface.GetOrCreateData("KamiToolKitAllocatedNodes", () => new ConcurrentDictionary<nint, Type>());
