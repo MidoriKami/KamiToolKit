@@ -224,6 +224,7 @@ public abstract unsafe partial class NodeBase {
                     if (ResNode is null) return;
 
                     manager->AddNodeToObjectList(this);
+                    manager->SetupText();
                     uldManagersPendingUpdate.Remove((nint)manager);
                 });
             }
@@ -244,7 +245,6 @@ public abstract unsafe partial class NodeBase {
                     var currentInstance = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
                     if (currentInstance is not null) {
                         currentInstance->UldManager.UpdateDrawNodeList();
-                        Experimental.SetupTextRecursive?.Invoke(&currentInstance->UldManager);
                         currentInstance->UpdateCollisionNodeList(false);
                     }
 
