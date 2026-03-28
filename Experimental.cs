@@ -1,11 +1,6 @@
-﻿using Dalamud.Utility.Signatures;
-using FFXIVClientStructs.FFXIV.Component.GUI;
-
+﻿// ReSharper disable RedundantUnsafeContext
 namespace KamiToolKit;
 
 internal unsafe class Experimental {
-    public delegate void PopulateTextLabelsDelegate(AtkUldManager* atkUldManager);
-
-    [Signature("E8 ?? ?? ?? ?? 45 84 F6 74 59")]
-    public static PopulateTextLabelsDelegate? SetupTextRecursive = null;
+    // Nothing in testing right now.
 }
