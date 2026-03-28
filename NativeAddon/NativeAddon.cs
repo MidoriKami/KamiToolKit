@@ -117,7 +117,7 @@ public unsafe partial class NativeAddon {
         InternalAddon->ShowSoundEffectId = (short)OpenWindowSoundEffectId;
 
         var addonConfig = LoadAddonConfig();
-        if (addonConfig.Position != Vector2.Zero) {
+        if (addonConfig.Position != Vector2.Zero && RememberClosePosition) {
             var clampedPosition = GetScreenClampedPosition(addonConfig.Position);
             InternalAddon->SetPosition((short)clampedPosition.X, (short)clampedPosition.Y);
         }
