@@ -28,10 +28,13 @@ public unsafe class MapOverlayController : IDisposable {
     private readonly List<MapMarkerNode> queuedNodes = [];
     
     public MapOverlayController() {
-        mapController = new AddonController<AddonAreaMap>("AreaMap");
-        mapController.OnAttach += OnAttach;
-        mapController.OnPreUpdate += OnUpdate;
-        mapController.OnDetach += OnDetach;
+        mapController = new AddonController<AddonAreaMap> {
+            AddonName = "AreaMap",
+            OnSetup = OnAttach,
+            OnPreUpdate = OnUpdate,
+            OnFinalize = OnDetach,
+        };
+
         mapController.Enable();
     }
 
