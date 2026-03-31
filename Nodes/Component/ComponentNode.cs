@@ -62,7 +62,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             try {
-                if (!isNativeDestructor) {
+                if (!isNativeDestructor && Node != null && Node->Component != null) {
                     Node->Component->Deinitialize();
                     Node->Component->Dtor(1);
                     Node->Component = null;
