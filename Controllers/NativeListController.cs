@@ -17,7 +17,8 @@ public unsafe class ListItemData {
     public AtkComponentListItemRenderer* ItemRenderer { get; set; }
 }
 
-public unsafe class NativeListController(string addonName) : IDisposable {
+public unsafe class NativeListController : IDisposable {
+    public required string AddonName { get; init; }
 
     public required ShouldModifyElementHandler ShouldModifyElement { get; init; }
     public required UpdateElementHandler UpdateElement { get; init; }
@@ -28,23 +29,16 @@ public unsafe class NativeListController(string addonName) : IDisposable {
     private Hook<AtkComponentListItemPopulator.PopulateWithRendererDelegate>? onRendererPopulate;
 
     public readonly List<uint> ModifiedIndexes = [];
-    
-    public event Action? OnClose {
-        add => OnInnerClose += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
-    
-    public event Action? OnOpen {
-        add => OnInnerOpen += value;
-        remove => throw new Exception("Do not remove events, on dispose addon state will be managed properly.");
-    }
+
+    public Action? OnClose { get; init; }
+    public Action? OnOpen { get; init; }
 
     public void Enable() {
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, addonName, OnAddonSetup);
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnAddonFinalize);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonSetup);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, AddonName, OnAddonFinalize);
 
         Services.Framework.RunOnFrameworkThread(() => {
-            var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
+            var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
             if (addon is not null) {
                 Services.Log.Warning("Caution: ListController was loaded after list was initialized, data may be stale.");
                 LoadPopulators(addon);
@@ -52,17 +46,18 @@ public unsafe class NativeListController(string addonName) : IDisposable {
         });
     }
 
-    public void Disable() => Dispose();
-
-    public void Dispose() {
+    public void Disable() {
         Services.AddonLifecycle.UnregisterListener(OnAddonSetup, OnAddonFinalize);
 
         onListPopulate?.Dispose();
         onListPopulate = null;
-        
+
         onRendererPopulate?.Dispose();
         onRendererPopulate = null;
     }
+
+    public void Dispose()
+        => Disable();
 
     private void OnAddonSetup(AddonEvent type, AddonArgs args)
         => LoadPopulators((AtkUnitBase*)args.Addon.Address);
@@ -75,8 +70,8 @@ public unsafe class NativeListController(string addonName) : IDisposable {
         onRendererPopulate = null;
         
         ModifiedIndexes.Clear();
-        
-        OnInnerClose?.Invoke();
+
+        OnClose?.Invoke();
     }
     
     private void LoadPopulators(AtkUnitBase* addon) {
@@ -92,7 +87,7 @@ public unsafe class NativeListController(string addonName) : IDisposable {
             onRendererPopulate?.Enable();
         }
 
-        OnInnerOpen?.Invoke();
+        OnOpen?.Invoke();
     }
 
     private void OnPopulateDetour(AtkUnitBase* unitBase, AtkComponentListItemPopulator.ListItemInfo* itemInfo, AtkResNode** nodeList) {
@@ -153,7 +148,4 @@ public unsafe class NativeListController(string addonName) : IDisposable {
     public delegate AtkComponentListItemRenderer* GetPopulatorNodeHandler(AtkUnitBase* addon);
     public delegate void UpdateElementHandler(AtkUnitBase* unitBase, ListItemData listItemInfo, AtkResNode** nodeList);
     public delegate void ResetElementHandler(AtkUnitBase* unitBase, ListItemData listItemInfo, AtkResNode** nodeList);
-
-    private Action? OnInnerClose { get; set; }
-    private Action? OnInnerOpen { get; set; }
 }
