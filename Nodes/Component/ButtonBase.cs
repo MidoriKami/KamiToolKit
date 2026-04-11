@@ -19,7 +19,7 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
         set => Component->SetChecked(value);
     }
 
-    private void ClickHandler() {
+    protected virtual void ClickHandler() {
         OnClick?.Invoke();
     }
 
