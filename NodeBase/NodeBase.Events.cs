@@ -126,32 +126,27 @@ public abstract unsafe partial class NodeBase {
     }
 
     private void HandleEvents(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        try {
-            if (!IsVisible) return;
+        if (!IsVisible) return;
 
-            if (eventHandlers.TryGetValue(eventType, out var handler)) {
-                
-                foreach (var noArgHandler in Delegate.EnumerateInvocationList(handler.OnActionDelegate)) {
-                    try {
-                        noArgHandler();
-                    }
-                    catch (Exception e) {
-                        Services.Log.Exception(e);
-                    }
+        if (eventHandlers.TryGetValue(eventType, out var handler)) {
+            
+            foreach (var noArgHandler in Delegate.EnumerateInvocationList(handler.OnActionDelegate)) {
+                try {
+                    noArgHandler();
                 }
-
-                foreach (var argHandler in Delegate.EnumerateInvocationList(handler.OnReceiveEventDelegate)) {
-                    try {
-                        argHandler(thisPtr, eventType, eventParam, atkEvent, atkEventData);
-                    }
-                    catch (Exception e) {
-                        Services.Log.Exception(e);
-                    }
+                catch (Exception e) {
+                    Services.Log.Exception(e);
                 }
             }
-        }
-        catch (Exception e) {
-            Services.Log.Exception(e);
+
+            foreach (var argHandler in Delegate.EnumerateInvocationList(handler.OnReceiveEventDelegate)) {
+                try {
+                    argHandler(thisPtr, eventType, eventParam, atkEvent, atkEventData);
+                }
+                catch (Exception e) {
+                    Services.Log.Exception(e);
+                }
+            }
         }
     }
     
