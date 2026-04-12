@@ -72,22 +72,26 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         onRendererPopulate = null;
     }
 
-    public void Dispose()
-        => Disable();
-
-    private void OnAddonSetup(AddonEvent type, AddonArgs args)
-        => LoadPopulators((T*)args.Addon.Address);
-
-    private void OnAddonFinalize(AddonEvent type, AddonArgs args) {
+    public void Dispose() {
         onListPopulate?.Dispose();
         onListPopulate = null;
         
         onRendererPopulate?.Dispose();
         onRendererPopulate = null;
         
+        Disable();
+    }
+
+    private void OnAddonSetup(AddonEvent type, AddonArgs args)
+        => LoadPopulators((T*)args.Addon.Address);
+
+    private void OnAddonFinalize(AddonEvent type, AddonArgs args) {
+        onListPopulate?.Disable();
+        onRendererPopulate?.Disable();
+
         ModifiedIndexes.Clear();
     }
-    
+
     private void LoadPopulators(T* addon) {
         var populateMethod = GetPopulatorNode(addon)->Populator;
 
