@@ -10,6 +10,7 @@ public unsafe class ListItemData {
     public AtkComponentListItemPopulator.ListItemInfo* ItemInfo { get; init; }
     public AtkComponentListItemRenderer* ItemRenderer { get; init; }
     public AtkResNode** NodeList { get; init; }
+    public int ItemIndex { get; init; }
 
     /// <summary>
     /// Gets a number stored in the ItemInfo

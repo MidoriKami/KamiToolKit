@@ -24,17 +24,20 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     /// <summary>
     /// Define a function that will return true if the provided list item should be modified by this controller.
     /// </summary>
-    public required ShouldModifyElementHandler ShouldModifyElement { get; init; }
+    /// <remarks>
+    /// If no function is defined it will be assumed that each line should be edited.
+    /// </remarks>
+    public ShouldModifyElementHandler? ShouldModifyElement { get; init; }
     
     /// <summary>
     /// Define how specifically you want the list item to be modified.
     /// </summary>
-    public required UpdateElementHandler UpdateElement { get; init; }
+    public UpdateElementHandler? UpdateElement { get; init; }
     
     /// <summary>
     /// Define how specifically you want the list item to be reset.
     /// </summary>
-    public required ResetElementHandler ResetElement { get; init; }
+    public ResetElementHandler? ResetElement { get; init; }
     
     /// <summary>
     /// Function that gets the root ComponentItemRenderer to extract the populator functions from.
@@ -104,13 +107,14 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
             var listItemData = new TU {
                 ItemInfo = itemInfo,
                 NodeList = nodeList,
+                ItemIndex = itemInfo->ListItemIndex,
             };
             
-            var shouldModifyElement = ShouldModifyElement((T*)unitBase, listItemData);
+            var shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
 
             if (!shouldModifyElement) {
                 if (ModifiedIndexes.Contains(itemInfo->ListItem->Renderer->OwnerNode->NodeId)) {
-                    ResetElement.Invoke((T*)unitBase, listItemData);
+                    ResetElement?.Invoke((T*)unitBase, listItemData);
                     ModifiedIndexes.Remove(itemInfo->ListItem->Renderer->OwnerNode->NodeId);
                 }
             }
@@ -118,7 +122,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
             onListPopulate!.Original(unitBase, itemInfo, nodeList);
 
             if (shouldModifyElement) {
-                UpdateElement.Invoke((T*)unitBase, listItemData);
+                UpdateElement?.Invoke((T*)unitBase, listItemData);
                 ModifiedIndexes.Add(itemInfo->ListItem->Renderer->OwnerNode->NodeId);
             }
         }
@@ -132,13 +136,14 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
             var listItemData = new TU {
                 ItemRenderer = listItemRenderer,
                 NodeList = nodeList,
+                ItemIndex = listItemIndex,
             };
             
-            var shouldModifyElement = ShouldModifyElement((T*)unitBase, listItemData);
+            var shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
 
             if (!shouldModifyElement) {
                 if (ModifiedIndexes.Contains(listItemRenderer->OwnerNode->NodeId)) {
-                    ResetElement.Invoke((T*)unitBase, listItemData);
+                    ResetElement?.Invoke((T*)unitBase, listItemData);
                     ModifiedIndexes.Remove(listItemRenderer->OwnerNode->NodeId);
                 }
             }
@@ -146,7 +151,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
             onRendererPopulate!.Original(unitBase, listItemIndex, nodeList, listItemRenderer);
 
             if (shouldModifyElement) {
-                UpdateElement.Invoke((T*)unitBase, listItemData);
+                UpdateElement?.Invoke((T*)unitBase, listItemData);
                 ModifiedIndexes.Add(listItemRenderer->OwnerNode->NodeId);
             }
         }
