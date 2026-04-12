@@ -19,7 +19,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     internal static uint CurrentOffset;
 
     private bool isDisposed;
-    internal event Action<NodeBase>? Disposed;
+    internal bool IsDisposed => isDisposed;
 
     internal abstract AtkResNode* ResNode { get; }
     internal bool IsAddonRootNode;
@@ -47,7 +47,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
             }
 
             isDisposed = true;
-            NotifyDisposed();
 
             if (!IsNodeValid()) {
                 Services.Log.Warning("Invalid node, dispose aborted.");
@@ -91,11 +90,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     private static void LogIndented(string message)
         => Services.Log.Verbose(new string(' ', logIndent * 2) + message);
-
-    private void NotifyDisposed() {
-        Disposed?.Invoke(this);
-        Disposed = null;
-    }
 
     /// <summary>
     ///     Warning, this is only to ensure there are no memory leaks.
@@ -168,10 +162,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     }
 
     private void DestructorDetour(AtkResNode* thisPtr, bool free) {
-        if (!isDisposed) {
-            isDisposed = true;
-            NotifyDisposed();
-        }
+        isDisposed = true;
 
         Dispose(true, true);
         InvokeOriginalDestructor(thisPtr, free);
