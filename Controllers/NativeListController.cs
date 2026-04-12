@@ -92,12 +92,12 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         var populateMethod = GetPopulatorNode(addon)->Populator;
 
         if (populateMethod.Populate is not null) {
-            onListPopulate = Services.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateDelegate>(populateMethod.Populate, OnPopulateDetour);
+            onListPopulate ??= Services.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateDelegate>(populateMethod.Populate, OnPopulateDetour);
             onListPopulate?.Enable();
         }
 
         if (populateMethod.PopulateWithRenderer is not null) {
-            onRendererPopulate = Services.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateWithRendererDelegate>(populateMethod.PopulateWithRenderer, OnRendererPopulateDetour);
+            onRendererPopulate ??= Services.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateWithRendererDelegate>(populateMethod.PopulateWithRenderer, OnRendererPopulateDetour);
             onRendererPopulate?.Enable();
         }
     }
