@@ -33,6 +33,9 @@ public unsafe class OverlayController : IDisposable {
     }
 
     public void Dispose() {
+        controllerState = ControllerState.Disposing;
+        Services.Framework.Update -= CheckOverlayState;
+        
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "NamePlate");
         Services.AddonLifecycle.UnregisterListener(OnOverlayAddonFinalize, OnOverlayAddonUpdate);
 
@@ -57,6 +60,8 @@ public unsafe class OverlayController : IDisposable {
 
     private void BeginStateCheck() {
         Services.Framework.Update -= CheckOverlayState;
+
+        if (controllerState is ControllerState.Disposing) return;
         Services.Framework.Update += CheckOverlayState;
     }
 
@@ -70,7 +75,7 @@ public unsafe class OverlayController : IDisposable {
                 CheckOverlayAddonsReady();
                 break;
 
-            case ControllerState.Ready:
+            case ControllerState.Ready or ControllerState.Disposing:
                 Services.Framework.Update -= CheckOverlayState;
                 break;
         }

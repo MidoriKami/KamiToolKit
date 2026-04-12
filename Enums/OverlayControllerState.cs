@@ -4,4 +4,5 @@ internal enum ControllerState {
     WaitForNameplate,
     WaitForReady,
     Ready,
+    Disposing,
 }

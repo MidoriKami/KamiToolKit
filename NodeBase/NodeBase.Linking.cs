@@ -56,6 +56,7 @@ public abstract unsafe partial class NodeBase {
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
     private void PerformManagedAttach(NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild) {
+        if (isDisposed) return;
         if (MainThreadSafety.TryAssertMainThread()) return;
         if (targetAddon is null) return;
 
@@ -71,6 +72,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     private void PerformManagedAttach(NodeBase? targetNode, NodePosition targetPosition) {
+        if (isDisposed) return;
         if (MainThreadSafety.TryAssertMainThread()) return;
         if (targetNode is null) return;
 
@@ -81,6 +83,7 @@ public abstract unsafe partial class NodeBase {
     }
     
     private void PerformNativeAttach(AtkResNode* targetNode, NodePosition targetPosition) {
+        if (isDisposed) return;
         if (MainThreadSafety.TryAssertMainThread()) return;
         if (targetNode is null) return;
 
@@ -144,6 +147,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     internal void ReattachNode(AtkResNode* newTarget) {
+        if (isDisposed) return;
         if (newTarget is null) return;
         
         DetachNode();
@@ -151,6 +155,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     public void DetachNode() {
+        if (isDisposed) return;
         if (MainThreadSafety.TryAssertMainThread()) return;
         if (ResNode is null) return;
 
