@@ -112,6 +112,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
                 ItemInfo = itemInfo,
                 NodeList = nodeList,
                 ItemIndex = itemInfo->ListItemIndex,
+                NodeId = itemInfo->ListItem->Renderer->OwnerNode->NodeId,
             };
             
             var shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
@@ -141,6 +142,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
                 ItemRenderer = listItemRenderer,
                 NodeList = nodeList,
                 ItemIndex = listItemIndex,
+                NodeId = listItemRenderer->OwnerNode->NodeId,
             };
             
             var shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;

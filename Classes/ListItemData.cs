@@ -11,6 +11,7 @@ public unsafe class ListItemData {
     public AtkComponentListItemRenderer* ItemRenderer { get; init; }
     public AtkResNode** NodeList { get; init; }
     public int ItemIndex { get; init; }
+    public uint NodeId { get; init; }
 
     /// <summary>
     /// Gets a number stored in the ItemInfo
