@@ -26,6 +26,8 @@ public static unsafe class AtkUnitBaseExtensions {
             set => addon.Resize(value);
         }
 
+        public bool IsActuallyVisible => addon.GetIsActuallyVisible();
+
         public Vector2 RootSize => addon.GetRootSize();
         public Vector2 Position => new(addon.X, addon.Y);
 
@@ -63,6 +65,15 @@ public static unsafe class AtkUnitBaseExtensions {
 
             addon.WindowNode->Component->UldManager.UpdateDrawNodeList();
             addon.UpdateCollisionNodeList(false);
+        }
+
+        private bool GetIsActuallyVisible() {
+            if (!addon.IsVisible) return false;
+            if (addon.RootNode is null) return false;
+            if (!addon.RootNode->IsVisible()) return false;
+            if ((addon.VisibilityFlags & 5) is not 0) return false;
+
+            return true;
         }
     }
 }
