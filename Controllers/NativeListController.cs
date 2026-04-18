@@ -108,8 +108,10 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
 
     private void OnPopulateDetour(AtkUnitBase* unitBase, AtkComponentListItemPopulator.ListItemInfo* itemInfo, AtkResNode** nodeList) {
         try {
-            // Only Process Populator for the specific addon name.
-            if (unitBase->NameString != AddonName) {
+            var listItemNode = itemInfo->ListItem->Renderer->OwnerNode;
+
+            var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode((AtkResNode*)listItemNode);
+            if (parentAddon is null || parentAddon->NameString != AddonName) {
                 onListPopulate!.Original(unitBase, itemInfo, nodeList);
                 return;
             }
@@ -144,12 +146,14 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     
     private void OnRendererPopulateDetour(AtkUnitBase* unitBase, int listItemIndex, AtkResNode** nodeList, AtkComponentListItemRenderer* listItemRenderer) {
         try {
-            // Only Process Populator for the specific addon name.
-            if (unitBase->NameString != AddonName) {
+            var listItemNode = listItemRenderer->OwnerNode;
+
+            var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode((AtkResNode*)listItemNode);
+            if (parentAddon is null || parentAddon->NameString != AddonName) {
                 onRendererPopulate!.Original(unitBase, listItemIndex, nodeList, listItemRenderer);
                 return;
             }
-            
+
             var listItemData = new TU {
                 ItemRenderer = listItemRenderer,
                 NodeList = nodeList,
