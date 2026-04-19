@@ -26,6 +26,8 @@ public unsafe class MapOverlayController : IDisposable {
 
     private readonly List<MapMarkerInfo> queuedMarkers = [];
     private readonly List<MapMarkerNode> queuedNodes = [];
+
+    public bool IsVisible { get; set; } = true;
     
     public MapOverlayController() {
         mapController = new AddonController<AddonAreaMap> {
@@ -125,7 +127,7 @@ public unsafe class MapOverlayController : IDisposable {
         var mapComponent = areaMap.ComponentMap;
         if (mapComponent is null) return;
 
-        clippingContainerNode.IsVisible = !agentMap->IsControlKeyPressed;
+        clippingContainerNode.IsVisible = !agentMap->IsControlKeyPressed && IsVisible;
 
         clippingContainerNode.Size = mapComponent->OwnerNode->AtkResNode.Size;
         clippingContainerNode.Position = mapComponent->OwnerNode->AtkResNode.Position;
