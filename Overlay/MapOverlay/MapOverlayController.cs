@@ -44,18 +44,8 @@ public unsafe class MapOverlayController : IDisposable {
         
         mapController.Dispose();
 
-        foreach (var node in markerNodes) {
-            node.Dispose();
-        }
-        markerNodes.Clear();
+        RemoveAllMarkers();
 
-        foreach (var node in queuedNodes) {
-            node.Dispose();
-        }
-        queuedNodes.Clear();
-
-        queuedMarkers.Clear();
-        
         overlayNode?.Dispose();
         overlayNode = null;
         
@@ -79,6 +69,20 @@ public unsafe class MapOverlayController : IDisposable {
         if (markerNodes.Remove(marker)) {
             marker.Dispose();
         }
+    }
+
+    public void RemoveAllMarkers() {
+        foreach (var node in markerNodes) {
+            node.Dispose();
+        }
+        markerNodes.Clear();
+
+        foreach (var node in queuedNodes) {
+            node.Dispose();
+        }
+        queuedNodes.Clear();
+
+        queuedMarkers.Clear();
     }
 
     private void OnAttach(AddonAreaMap* addon) {
