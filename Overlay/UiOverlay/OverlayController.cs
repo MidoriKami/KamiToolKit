@@ -36,11 +36,13 @@ public unsafe class OverlayController : IDisposable {
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "NamePlate");
         Services.AddonLifecycle.UnregisterListener(OnOverlayAddonFinalize, OnOverlayAddonUpdate);
 
-        foreach (var node in overlayNodes.SelectMany(nodeList => nodeList.Value)) {
-            node.Dispose();
-        }
+        Services.Framework.RunOnFrameworkThread(() => {
+            foreach (var node in overlayNodes.SelectMany(nodeList => nodeList.Value)) {
+                node.Dispose();
+            }
 
-        overlayNodes.Clear();
+            overlayNodes.Clear();
+        });
     }
 
     //
