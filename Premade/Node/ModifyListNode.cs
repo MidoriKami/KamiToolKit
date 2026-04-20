@@ -96,7 +96,7 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
         }
     } = [];
 
-    public List<string>? SortOptions {
+    public List<Enum>? SortOptions {
         get => searchWidget.SortingOptions;
         set {
             searchWidget.SortingOptions = value ?? [];
@@ -134,7 +134,7 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
         }
     }
 
-    public delegate int ItemCompareDelegate(T left, T right, string sortingMode);
+    public delegate int ItemCompareDelegate(T left, T right, Enum sortingMode);
     public ItemCompareDelegate? ItemComparer { get; set; }
     
     public delegate bool IsSearchMatchDelegate(T obj, string searchString);
@@ -150,11 +150,11 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
         }
     }
 
-    private void OnSortOrderChanged(string sortingString, bool reversed) {
+    private void OnSortOrderChanged(Enum sortingOption, bool reversed) {
         if (ItemComparer is null) return;
 
         var listCopy = Options.ToList();
-        listCopy.Sort((left, right) => ItemComparer.Invoke(left, right, sortingString) * (reversed ? -1 : 1));
+        listCopy.Sort((left, right) => ItemComparer.Invoke(left, right, sortingOption) * (reversed ? -1 : 1));
         listNode.OptionsList = listCopy;
         UpdateButtonStates();
     }

@@ -113,13 +113,13 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
     public void SelectItem(T? listItem)
         => SelectionChanged(listItem);
 
-    public List<string>? SortOptions {
+    public List<Enum>? SortOptions {
         get;
         set {
             field = value;
             selectionListNode?.SortOptions = value;
         }
-    } = ["Alphabetical", "Id"];
+    } = [ DefaultSortOptions.Alphabetical, DefaultSortOptions.Id ];
 
     public required List<T> Options { get;
         set {

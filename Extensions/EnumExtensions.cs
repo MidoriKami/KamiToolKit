@@ -12,7 +12,14 @@ internal static class EnumExtensions {
 
         private string GetDescription() {
             var attribute = enumValue.GetAttribute<DescriptionAttribute>();
-            return attribute?.Description ?? enumValue.ToString();
+
+            if (KamiToolKitLibrary.ResourceManager is not null && KamiToolKitLibrary.CurrentCulture is not null) {
+                var translatedString = KamiToolKitLibrary.ResourceManager.GetString(attribute?.Description ?? string.Empty, KamiToolKitLibrary.CurrentCulture);
+                if (translatedString is not null) return translatedString;
+            }
+            
+            if (attribute is not null) return attribute.Description;
+            return enumValue.ToString();
         }
     }
     

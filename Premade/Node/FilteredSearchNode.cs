@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Node.Simple;
 using Lumina.Text.ReadOnly;
@@ -12,15 +14,15 @@ namespace KamiToolKit.Premade.Node;
 /// </summary>
 public unsafe class SearchWidget : SimpleComponentNode {
     public readonly TextInputNode InputNode;
-    public readonly TextDropDownNode SortOrderDropDown;
+    public readonly EnumDropDownNode<Enum> SortOrderDropDown;
     public readonly CircleButtonNode ReverseButtonNode;
 
     public bool IsReversed { get; private set; }
     public string SearchText { get; private set; } = string.Empty;
-    public string SortMode { get; private set; } = string.Empty;
+    public Enum SortMode { get; private set; } = DefaultSortOptions.Unset;
 
     public delegate void SearchUpdated(string searchString);
-    public delegate void SortUpdated(string sortingString, bool reversed);
+    public delegate void SortUpdated(Enum sortingMode, bool reversed);
 
     public SearchWidget() {
         InputNode = new TextInputNode {
@@ -30,11 +32,11 @@ public unsafe class SearchWidget : SimpleComponentNode {
         };
         InputNode.AttachNode(this);
 
-        SortOrderDropDown = new TextDropDownNode {
+        SortOrderDropDown = new EnumDropDownNode<Enum> {
             MaxListOptions = 0,
             Options = [],
             IsVisible = false,
-            SelectedOption = SortMode == string.Empty ? null : SortMode,
+            SelectedOption = (DefaultSortOptions) SortMode == DefaultSortOptions.Unset ? DefaultSortOptions.Alphabetical : SortMode,
             OnOptionSelected = DropDownChanged,
         };
         SortOrderDropDown.AttachNode(this);
@@ -57,7 +59,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
         OnSortOrderChanged(SortMode, IsReversed);
     }
 
-    private void DropDownChanged(string newOption) {
+    private void DropDownChanged(Enum newOption) {
         SortMode = newOption;
         OnSortOrderChanged(SortMode, IsReversed);
     }
@@ -90,7 +92,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
         set => SortOrderDropDown.MaxListOptions = value;
     }
 
-    public List<string> SortingOptions {
+    public List<Enum> SortingOptions {
         get => SortOrderDropDown.Options ?? [];
         set {
             SortOrderDropDown.Options = value;
@@ -106,5 +108,5 @@ public unsafe class SearchWidget : SimpleComponentNode {
         }
     }
 
-    public string? SelectedOption => SortOrderDropDown.SelectedOption;
+    public Enum? SelectedOption => SortOrderDropDown.SelectedOption;
 }

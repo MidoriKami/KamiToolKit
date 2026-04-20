@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Globalization;
+using System.Resources;
 using Dalamud.Plugin;
 using KamiToolKit.Dalamud;
 using Serilog.Events;
@@ -15,6 +17,9 @@ public static class KamiToolKitLibrary {
     internal static string? DefaultWindowSubtitle;
 
     internal static Experimental Experimental = new();
+    
+    internal static ResourceManager? ResourceManager;
+    internal static CultureInfo? CurrentCulture;
 
     /// <summary>
     /// Main initialization method for KamiToolKit. This method is required to be invoked before any KamiToolKit features are used.
@@ -40,6 +45,20 @@ public static class KamiToolKitLibrary {
         NativeAddon.InitializeCloseCallback();
     }
 
+    /// <summary>
+    /// Sets the resource manager that KTK will use to resolve enums.
+    /// </summary>
+    public static void SetResourceManager(ResourceManager resourceManager) {
+        ResourceManager = resourceManager;
+    }
+
+    /// <summary>
+    /// Sets the current culture that KTK will use to resolve enums.
+    /// </summary>
+    public static void SetCurrentCulture(CultureInfo culture) {
+        CurrentCulture = culture;
+    }
+    
     /// <summary>
     /// Alias for Cleanup
     /// </summary>

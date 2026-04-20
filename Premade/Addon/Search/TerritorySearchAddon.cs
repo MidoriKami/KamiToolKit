@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Dalamud.Utility;
 using KamiToolKit.Dalamud;
+using KamiToolKit.Enums;
 using KamiToolKit.Premade.Node.ListItem;
 using Lumina.Excel.Sheets;
 
@@ -16,10 +18,10 @@ public class TerritorySearchAddon : BaseSearchAddon<TerritoryType, TerritoryType
             .ToList();
     }
 
-    protected override int Comparer(TerritoryType left, TerritoryType right, string sortingString, bool reversed) {
-        var result = sortingString switch {
-            "Alphabetical" => string.CompareOrdinal(left.Name.ToString(), right.Name.ToString()),
-            "Id" => left.RowId.CompareTo(right.RowId), 
+    protected override int Comparer(TerritoryType left, TerritoryType right, Enum sortingMode, bool reversed) {
+        var result = sortingMode switch {
+            DefaultSortOptions.Alphabetical => string.CompareOrdinal(left.Name.ToString(), right.Name.ToString()),
+            DefaultSortOptions.Id => left.RowId.CompareTo(right.RowId), 
             _ => 0,
         };
         

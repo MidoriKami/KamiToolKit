@@ -1,14 +1,16 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using Lumina.Excel.Sheets;
 
 namespace KamiToolKit.Premade.Addon.Search;
 
 public class ItemSearchAddonBase<T> : BaseSearchAddon<Item, T> where T : ListItemNode<Item>, new() {
-    protected override int Comparer(Item left, Item right, string sortingString, bool reversed) {
-        var result = sortingString switch {
-            "Alphabetical" => string.CompareOrdinal(left.Name.ToString(), right.Name.ToString()),
-            "Id" => left.RowId.CompareTo(right.RowId), 
+    protected override int Comparer(Item left, Item right, Enum sortingMode, bool reversed) {
+        var result = sortingMode switch {
+            DefaultSortOptions.Alphabetical => string.CompareOrdinal(left.Name.ToString(), right.Name.ToString()),
+            DefaultSortOptions.Id => left.RowId.CompareTo(right.RowId), 
             _ => 0,
         };
         
