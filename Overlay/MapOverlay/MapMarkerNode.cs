@@ -25,6 +25,8 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
     public new ReadOnlySeString TextTooltip { get; set; } = string.Empty;
 
     public uint MapId { get; set; }
+    
+    public bool AllowAnyMap { get; set; }
 
     public uint? IconId {
         get;
@@ -110,7 +112,7 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
         imGuiImageNode?.Origin = base.Size / 2.0f;
         
         base.Position = Position * mapScale + mapOffset - base.Size / 2.0f;
-        base.IsVisible = IsVisible && AgentMap.Instance()->SelectedMapId == MapId;
+        base.IsVisible = IsVisible && (AllowAnyMap || AgentMap.Instance()->SelectedMapId == MapId);
     }
 
     protected virtual void OnUpdate() { }
