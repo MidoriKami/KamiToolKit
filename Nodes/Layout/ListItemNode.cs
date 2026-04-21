@@ -3,8 +3,11 @@ using KamiToolKit.Premade.Node;
 
 namespace KamiToolKit.Nodes;
 
+public interface IListItemNode {
+    abstract static float ItemHeight { get; }
+}
+
 public abstract class ListItemNode<T> : SelectableNode {
-    public abstract float ItemHeight { get; }
 
     public T? ItemData {
         get;

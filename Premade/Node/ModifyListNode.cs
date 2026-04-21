@@ -14,7 +14,7 @@ namespace KamiToolKit.Premade.Node;
 /// </summary>
 /// <typeparam name="T">Data type to display the data for.</typeparam>
 /// <typeparam name="TU">ListItemNode derived type, for defining the result view.</typeparam>
-public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode<T>, new() {
+public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode<T>, IListItemNode, new() {
     private readonly SearchWidget searchWidget;
     private readonly ListNode<T, TU> listNode;
 

@@ -6,8 +6,8 @@ using Lumina.Excel.Sheets;
 
 namespace KamiToolKit.Premade.Node.ListItem;
 
-public class StatusListItemNode : ListItemNode<Status> {
-    public override float ItemHeight => 48.0f;
+public class StatusListItemNode : ListItemNode<Status>, IListItemNode {
+    public static float ItemHeight => 48.0f;
 
     protected readonly IconImageNode IconImageNode;
     protected readonly TextNode StatusLabelNode;

@@ -8,13 +8,11 @@ using KamiToolKit.Premade.Node.Simple;
 
 namespace KamiToolKit.Nodes;
 
-public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNode<T>, new() {
+public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNode<T>, IListItemNode, new() {
     public readonly ScrollBarNode ScrollBarNode;
 
     public ListNode() {
-        using (var displayNode = new TU()) {
-            itemHeight = displayNode.ItemHeight;
-        }
+        itemHeight = TU.ItemHeight;
 
         ScrollBarNode = new ScrollBarNode {
             OnValueChanged = OnScrollUpdate,

@@ -6,8 +6,8 @@ using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Premade.Node.ListItem;
 
-public unsafe class AddonListItemNode : ListItemNode<Pointer<AtkUnitBase>> {
-    public override float ItemHeight => 48.0f;
+public unsafe class AddonListItemNode : ListItemNode<Pointer<AtkUnitBase>>, IListItemNode {
+    public static float ItemHeight => 48.0f;
     
     protected readonly IconImageNode IconNode;
     protected readonly TextNode LabelTextNode;
@@ -48,4 +48,5 @@ public unsafe class AddonListItemNode : ListItemNode<Pointer<AtkUnitBase>> {
         IconNode.IconId = itemData.Value->IsVisible ? (uint) 60071 : 60072;
         LabelTextNode.String = itemData.Value->NameString;
     }
+
 }

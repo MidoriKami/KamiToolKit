@@ -9,7 +9,7 @@ using KamiToolKit.Premade.Node;
 
 namespace KamiToolKit.Premade.Addon.Search;
 
-public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNode<T>, new() {
+public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNode<T>, IListItemNode, new() {
     
     private SearchWidget? searchWidget;
     private ListNode<T, TU>? listNode;

@@ -7,8 +7,8 @@ using Lumina.Excel.Sheets;
 
 namespace KamiToolKit.Premade.Node.ListItem;
 
-public class TerritoryTypeListItemNode : ListItemNode<TerritoryType> {
-    public override float ItemHeight => 64.0f;
+public class TerritoryTypeListItemNode : ListItemNode<TerritoryType>, IListItemNode {
+    public static float ItemHeight => 64.0f;
 
     private readonly SimpleImageNode territoryImageNode;
     private readonly SimpleImageNode placeholderImageNode;

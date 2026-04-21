@@ -6,7 +6,7 @@ using Lumina.Excel.Sheets;
 
 namespace KamiToolKit.Premade.Addon.Search;
 
-public class ItemSearchAddonBase<T> : BaseSearchAddon<Item, T> where T : ListItemNode<Item>, new() {
+public class ItemSearchAddonBase<T> : BaseSearchAddon<Item, T> where T : ListItemNode<Item>, IListItemNode, new() {
     protected override int Comparer(Item left, Item right, Enum sortingMode, bool reversed) {
         var result = sortingMode switch {
             DefaultSortOptions.Alphabetical => string.CompareOrdinal(left.Name.ToString(), right.Name.ToString()),

@@ -5,8 +5,8 @@ using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Premade.Node.ListItem;
 
-public abstract class IconListItemNode<T> : ListItemNode<T> {
-    public override float ItemHeight => 48.0f;
+public abstract class IconListItemNode<T> : ListItemNode<T>, IListItemNode {
+    public static float ItemHeight => 48.0f;
     
     protected readonly IconImageNode IconNode;
     protected readonly TextNode LabelTextNode;
