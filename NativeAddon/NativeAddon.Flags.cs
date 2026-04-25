@@ -3,7 +3,6 @@
 namespace KamiToolKit;
 
 public unsafe partial class NativeAddon {
-
     private void UpdateFlags() {
 
         // Disable Native AddonConfig

@@ -16,7 +16,7 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
     private TV? configNode;
     private TextNode? nothingSelectedTextNode;
 
-    protected override unsafe void OnSetup(AtkUnitBase* addon) {
+    protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan) {
         selectionListNode = new ModifyListNode<T, TU> {
             Position = ContentStartPosition,
             Size = new Vector2(250.0f, ContentSize.Y),

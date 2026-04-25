@@ -20,7 +20,7 @@ public class ColorPickerAddon : NativeAddon {
     private Vector4 initialRgba;
     private ColorHelpers.HsvaColor initialHsva;
 
-    protected override unsafe void OnSetup(AtkUnitBase* addon) {
+    protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan) {
         SetWindowSize(new Vector2(400.0f, 425.0f));
 
         initialHsva = InitialHsvaColor;

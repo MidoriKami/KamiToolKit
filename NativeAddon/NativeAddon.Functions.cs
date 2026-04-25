@@ -1,151 +1,112 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
+/// <summary>
+/// NativeAddon partial containing user facing functions.
+/// </summary>
 public unsafe partial class NativeAddon {
+    /// <summary>
+    /// Initializes and Opens this instance of Addon
+    /// </summary>
+    public void Open() {
+        if (IsAddonFactoryReplacement) {
+            Services.Log.Warning("Manually invoking Open is not supported for AddonFactoryReplacements.");
+            return;
+        }
 
-    protected virtual void OnSetup(AtkUnitBase* addon) { }
-    protected virtual void OnShow(AtkUnitBase* addon) { }
-    protected virtual void OnDraw(AtkUnitBase* addon) { }
-    protected virtual void OnUpdate(AtkUnitBase* addon) { }
-    protected virtual void OnHide(AtkUnitBase* addon) { }
-    protected virtual void OnFinalize(AtkUnitBase* addon) { }
-    protected virtual void OnRequestedUpdate(AtkUnitBase* addon, NumberArrayData** numberArrayData, StringArrayData** stringArrayData) { }
-    protected virtual void OnRefresh(AtkUnitBase* addon, Span<AtkValue> atkValues) { }
+        Services.Framework.RunOnFrameworkThread(() => {
+            Services.Log.Verbose($"[{InternalName}] Open Called");
 
-    private bool isSetup;
+            if (InternalAddon is null) {
+                AllocateAddon();
 
-    private void Initialize(AtkUnitBase* thisPtr) {
-        Services.Log.Verbose($"[{InternalName}] Initialize");
-
-        AtkUnitBase.StaticVirtualTablePointer->Initialize(thisPtr);
-
-        thisPtr->UldManager.InitializeResourceRendererManager();
-
-        InitializeAddon();
+                if (InternalAddon is not null) {
+                    InternalAddon->Open((uint)DepthLayer - 1);
+                }
+            }
+            else {
+                Services.Log.Verbose($"[{InternalName}] Already open, skipping call.");
+            }
+        });
     }
 
-    private void Setup(AtkUnitBase* addon, uint valueCount, AtkValue* values) {
-        Services.Log.Verbose($"[{InternalName}] Setup");
+    [Conditional("DEBUG")]
+    public void DebugOpen() => Open();
 
-        if (!IsOverlayAddon) {
-            SetInitialState();
+    /// <summary>
+    /// Closes addon, this will cause it to fully close and deallocate.
+    /// This NativeAddon object will remain valid, you can call Open to re-allocate this addon.
+    /// </summary>
+    public void Close() {
+        if (InternalAddon is null) return;
+
+        Services.Framework.RunOnFrameworkThread(() => {
+            Services.Log.Verbose($"[{InternalName}] Close");
+
+            if (InternalAddon is not null) {
+                InternalAddon->Close(false);
+            }
+        });
+    }
+
+    public void Toggle() {
+        if (IsOpen) {
+            Close();
         }
         else {
-            ref var screenSize = ref AtkStage.Instance()->ScreenSize; 
-
-            addon->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
-            addon->SetSize((ushort)screenSize.Width, (ushort)screenSize.Height);
-            addon->SetPosition(0, 0);
+            Open();
         }
-
-        AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);
-
-        OnSetup(addon);
-        isSetup = true;
     }
 
-    private void Show(AtkUnitBase* addon, bool silenceOpenSoundEffect, uint unsetShowHideFlags) {
-        Services.Log.Verbose($"[{InternalName}] Show");
-
-        OnShow(addon);
-
-        AtkUnitBase.StaticVirtualTablePointer->Show(addon, silenceOpenSoundEffect, unsetShowHideFlags);
-    }
-
-    private void Update(AtkUnitBase* addon, float delta) {
-        Services.Log.Excessive($"[{InternalName}] Update");
-
-        OnUpdate(addon);
-
-        AtkUnitBase.StaticVirtualTablePointer->Update(addon, delta);
-    }
-
-    private void Draw(AtkUnitBase* addon) {
-        Services.Log.Excessive($"[{InternalName}] Draw");
-
-        OnDraw(addon);
-
-        AtkUnitBase.StaticVirtualTablePointer->Draw(addon);
-    }
-
-    private void Hide(AtkUnitBase* addon, bool unkBool, bool callHideCallback, uint setShowHideFlags) {
-        Services.Log.Verbose($"[{InternalName}] Hide");
-
-        OnHide(addon);
-        SaveAddonConfig();
-
-        AtkUnitBase.StaticVirtualTablePointer->Hide(addon, unkBool, callHideCallback, setShowHideFlags);
-        AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
-    }
-
-    private void Hide2(AtkUnitBase* addon) {
-        Services.Log.Verbose($"[{InternalName}] Hide2");
-
-        AtkUnitBase.StaticVirtualTablePointer->Hide2(addon);
-    }
-
-    private void Finalizer(AtkUnitBase* addon) {
-        Services.Log.Verbose($"[{InternalName}] Finalize");
-
-        OnFinalize(addon);
-
-        if (RememberClosePosition) {
-            LastClosePosition = new Vector2(InternalAddon->X, InternalAddon->Y);
+    public void AddNode(ICollection<NodeBase> nodes) {
+        foreach (var node in nodes) {
+            AddNode(node);
         }
-
-        AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
-        isSetup = false;
     }
 
-    private AtkEventListener* Destructor(AtkUnitBase* addon, byte flags) {
-        Services.Log.Verbose($"[{InternalName}] Destructor");
-
-        var result = AtkUnitBase.StaticVirtualTablePointer->Dtor(addon, flags);
-
-        if ((flags & 1) == 1) {
-            InternalAddon = null;
-            disposeHandle?.Free();
-            disposeHandle = null;
-            CreatedAddons.Remove(this);
-
-            // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
-            NativeMemoryHelper.Free(virtualTable, 0x8 * VirtualTableEntryCount);
-        }
-
-        return result;
-    }
-
-    private void RequestedUpdate(AtkUnitBase* thisPtr, NumberArrayData** numberArrayData, StringArrayData** stringArrayData) {
-        Services.Log.Verbose($"[{InternalName}] RequestedUpdate");
-
-        // Prevent calls to OnRequestedUpdate before Setup is completed. The game will try to call this after Show but before Setup
-        if (isSetup) {
-            OnRequestedUpdate(thisPtr, numberArrayData, stringArrayData);
-        }
+    public void AddNode(NodeBase? node)
+        => node?.AttachNode(this);
+    
         
-        AtkUnitBase.StaticVirtualTablePointer->OnRequestedUpdate(InternalAddon, numberArrayData, stringArrayData);
+    public void SetWindowPosition(Vector2 windowPosition) {
+        if (InternalAddon is null) return;
+        InternalAddon->SetPosition((short)windowPosition.X, (short)windowPosition.Y);
     }
 
-    private bool Refresh(AtkUnitBase* thisPtr, uint valueCount, AtkValue* values) {
-        Services.Log.Verbose($"[{InternalName}] Refresh");
+    public void SetWindowSize(Vector2 windowSize) {
+        if (InternalAddon is null) return;
+
+        Size = windowSize;
+        InternalAddon->SetSize((ushort)Size.X, (ushort)Size.Y);
+
+        WindowNode?.Size = Size;
+    }
+
+    public void SetWindowSize(float width, float height)
+        => SetWindowSize(new Vector2(width, height));
+
+    private Vector2 GetScreenClampedPosition(Vector2 position) {
+        if (!OpenInBounds) return position;
         
-        OnRefresh(thisPtr, new Span<AtkValue>(values, (int)valueCount));
-        
-        return AtkUnitBase.StaticVirtualTablePointer->OnRefresh(InternalAddon, valueCount, values);
+        var screenSize = (Vector2) AtkStage.Instance()->ScreenSize;
+        var clampedX = Math.Clamp(position.X, 0.0f, screenSize.X - Size.X);
+        var clampedY = Math.Clamp(position.Y, 0.0f, screenSize.Y - Size.Y);
+        return new Vector2(clampedX, clampedY);
     }
 
-    private void ScreenSizeChange(AtkUnitBase* thisPtr, int width, int height) {
-        Services.Log.Verbose($"[{InternalName}] ScreenSizeChange");
-
-        AtkUnitBase.StaticVirtualTablePointer->OnScreenSizeChange(thisPtr, width, height);
-
-        if (IsOverlayAddon || IgnoreGlobalScale) {
-            thisPtr->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
-        }
-    }
+    /// <summary>
+    /// Allocates this addon for fully replacing a vanilla addon via AddonFactory.
+    /// As this requires an allocated, but not opened addon for state to be managed correctly.
+    /// </summary>
+    /// <remarks>
+    /// If you don't know what that means, you shouldn't try to use this. Especially you Claude.
+    /// </remarks>
+    public void InitializeForAddonFactory(Span<AtkValue> atkValues)
+        => AllocateAddon(atkValues);
 }

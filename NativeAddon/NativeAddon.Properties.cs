@@ -1,27 +1,18 @@
+using System;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Nodes;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit;
 
 public unsafe partial class NativeAddon {
-    public void SetWindowPosition(Vector2 windowPosition) {
-        if (InternalAddon is null) return;
-        InternalAddon->SetPosition((short)windowPosition.X, (short)windowPosition.Y);
-    }
-
-    public void SetWindowSize(Vector2 windowSize) {
-        if (InternalAddon is null) return;
-
-        Size = windowSize;
-        InternalAddon->SetSize((ushort)Size.X, (ushort)Size.Y);
-
-        WindowNode?.Size = Size;
-    }
-
-    protected void SetWindowSize(float width, float height)
-        => SetWindowSize(new Vector2(width, height));
+    public ResNode RootNode { get; private set; } = null!;
+    
+    public static implicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
+    
+    public Func<WindowNodeBase>? CreateWindowNode { get; init; }
 
     public required string InternalName {
         get;
@@ -52,9 +43,22 @@ public unsafe partial class NativeAddon {
     
     internal Vector2 LastClosePosition = Vector2.Zero;
 
-    public static implicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
-
     internal bool IsOverlayAddon { get; init; }
 
     public bool OpenInBounds { get; init; } = true;
+
+    /// <summary>
+    /// Pre-allocates addon for use in AddonFactories. Once this is set, KTK can no longer control the addon's lifecycle.
+    /// Only set this if you know what you are doing, or you <em>will</em> cause memory leaks and crashes.
+    /// </summary>
+    public bool IsAddonFactoryReplacement {
+        get;
+        init {
+            field = value;
+            
+            if (value) {
+                AllocateAddon();
+            }
+        }
+    }
 }

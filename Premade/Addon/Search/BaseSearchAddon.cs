@@ -19,7 +19,7 @@ public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNo
 
     private T? selectedOption;
 
-    protected override unsafe void OnSetup(AtkUnitBase* addon) {
+    protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan) {
         searchWidget = new SearchWidget {
             Size = ContentSize,
             Position = ContentStartPosition,
