@@ -46,19 +46,4 @@ public unsafe partial class NativeAddon {
     internal bool IsOverlayAddon { get; init; }
 
     public bool OpenInBounds { get; init; } = true;
-
-    /// <summary>
-    /// Pre-allocates addon for use in AddonFactories. Once this is set, KTK can no longer control the addon's lifecycle.
-    /// Only set this if you know what you are doing, or you <em>will</em> cause memory leaks and crashes.
-    /// </summary>
-    public bool IsAddonFactoryReplacement {
-        get;
-        init {
-            field = value;
-            
-            if (value) {
-                AllocateAddon();
-            }
-        }
-    }
 }

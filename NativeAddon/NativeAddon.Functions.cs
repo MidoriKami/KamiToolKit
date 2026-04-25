@@ -14,27 +14,20 @@ public unsafe partial class NativeAddon {
     /// <summary>
     /// Initializes and Opens this instance of Addon
     /// </summary>
-    public void Open() {
-        if (IsAddonFactoryReplacement) {
-            Services.Log.Warning("Manually invoking Open is not supported for AddonFactoryReplacements.");
-            return;
+    public void Open() => Services.Framework.RunOnFrameworkThread(() => {
+        Services.Log.Verbose($"[{InternalName}] Open Called");
+
+        if (InternalAddon is null) {
+            AllocateAddon();
+
+            if (InternalAddon is not null) {
+                InternalAddon->Open((uint)DepthLayer - 1);
+            }
         }
-
-        Services.Framework.RunOnFrameworkThread(() => {
-            Services.Log.Verbose($"[{InternalName}] Open Called");
-
-            if (InternalAddon is null) {
-                AllocateAddon();
-
-                if (InternalAddon is not null) {
-                    InternalAddon->Open((uint)DepthLayer - 1);
-                }
-            }
-            else {
-                Services.Log.Verbose($"[{InternalName}] Already open, skipping call.");
-            }
-        });
-    }
+        else {
+            Services.Log.Verbose($"[{InternalName}] Already open, skipping call.");
+        }
+    });
 
     [Conditional("DEBUG")]
     public void DebugOpen() => Open();
