@@ -251,6 +251,8 @@ public unsafe class MapOverlayController : IDisposable {
         var mapAddon = RaptureAtkUnitManager.Instance()->GetAddonByName("AreaMap");
         if (mapAddon is null) return;
 
+        if (RaptureAtkModule.Instance()->AtkCollisionManager.IntersectingAddon != mapAddon) return;
+
         var anyCollisions = false;
 
         if (!AgentMap.Instance()->IsControlKeyPressed) {
