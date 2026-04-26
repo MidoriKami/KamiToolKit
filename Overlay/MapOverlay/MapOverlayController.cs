@@ -16,6 +16,7 @@ namespace KamiToolKit.Overlay.MapOverlay;
 public unsafe class MapOverlayController : IDisposable {
     private readonly AddonController<AddonAreaMap> mapController;
     private SimpleOverlayNode? clippingContainerNode;
+    private SimpleOverlayNode? flagContainerNode;
     private SimpleOverlayNode? overlayNode;
     private ViewportEventListener? viewportEventListener;
 
@@ -26,6 +27,8 @@ public unsafe class MapOverlayController : IDisposable {
 
     private readonly List<MapMarkerInfo> queuedMarkers = [];
     private readonly List<MapMarkerNode> queuedNodes = [];
+
+    private MapMarkerNode? flagNode;
 
     public bool IsVisible { get; set; } = true;
     
@@ -102,6 +105,16 @@ public unsafe class MapOverlayController : IDisposable {
         
         overlayNode = new SimpleOverlayNode();
         overlayNode.AttachNode(clippingContainerNode);
+        
+        flagContainerNode = new SimpleOverlayNode();
+        flagContainerNode.AttachNode(clippingContainerNode);
+
+        flagNode = new MapMarkerNode {
+            Size = new Vector2(32.0f, 32.0f),
+            IconId = 60561,
+            AllowAnyMap = true,
+        };
+        flagNode.AttachNode(flagContainerNode);
     }
 
     private void OnUpdate(AddonAreaMap* addon) {
@@ -156,6 +169,8 @@ public unsafe class MapOverlayController : IDisposable {
             marker.Update();
             marker.Scale = Vector2.One / new Vector2(areaMap.MarkerPositionScaling, areaMap.MarkerPositionScaling);
         }
+
+        UpdateFlagNode(agentMap, areaMap);
     }
 
     private void OnDetach(AddonAreaMap* addon) {
@@ -174,7 +189,7 @@ public unsafe class MapOverlayController : IDisposable {
         overlayNode?.Dispose();
         overlayNode = null;
     }
-    
+
     private void ProcessQueues() {
         foreach (var markerInfo in queuedMarkers) {
             var newMarkerNode = new MapMarkerNode {
@@ -199,6 +214,23 @@ public unsafe class MapOverlayController : IDisposable {
             markerNode.AttachNode(overlayNode);
         }
         queuedNodes.Clear();
+    }
+
+    private void UpdateFlagNode(AgentMap* agentMap, Atk2DAreaMap areaMap) {
+        if (overlayNode is null) return;
+
+        if (flagContainerNode is not null && flagNode is not null) {
+            flagContainerNode.Size = overlayNode.Size;
+            flagContainerNode.Scale = overlayNode.Scale;
+            flagContainerNode.Position = overlayNode.Position;
+
+            ref var flagMarker = ref agentMap->FlagMapMarkers[0];
+        
+            flagNode?.Position = new Vector2(flagMarker.XFloat, flagMarker.YFloat);
+            flagNode?.IsVisible = agentMap->FlagMarkerCount is not 0;
+            flagNode?.Update();
+            flagNode?.Scale = Vector2.One / new Vector2(areaMap.MarkerPositionScaling, areaMap.MarkerPositionScaling);
+        }
     }
 
     private void OnViewportEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
