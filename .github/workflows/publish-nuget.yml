@@ -1,0 +1,103 @@
+name: Publish NuGet
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version (x.y.z). Leave empty to bump patch."
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      DALAMUD_HOME: /tmp/dalamud
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Download Dalamud
+        run: |
+          set -euo pipefail
+          rm -rf "$DALAMUD_HOME"
+          mkdir -p "$DALAMUD_HOME"
+          ZIP=/tmp/dalamud-latest.zip
+          curl -fsSL "https://goatcorp.github.io/dalamud-distrib/latest.zip" -o "$ZIP"
+          unzip -q "$ZIP" -d "$DALAMUD_HOME"
+
+      - name: Resolve version
+        id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          MANUAL_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          PACKAGE_ID="KamiToolKit"
+          ID_LOWER=$(echo "$PACKAGE_ID" | tr '[:upper:]' '[:lower:]')
+
+          resolve_bump() {
+            local URL="https://api.nuget.org/v3-flatcontainer/${ID_LOWER}/index.json"
+            local HTTP
+            HTTP=$(curl -sSL -o /tmp/nuget-versions.json -w "%{http_code}" "$URL")
+            if [ "$HTTP" != "200" ]; then
+              echo "1.0.0"
+              return 0
+            fi
+            local LATEST
+            LATEST=$(jq -r '(.versions // []) | .[-1] // empty' /tmp/nuget-versions.json)
+            if [ -z "$LATEST" ] || [ "$LATEST" = "null" ]; then
+              echo "1.0.0"
+              return 0
+            fi
+            local BASE="${LATEST%%-*}"
+            local MA MI PA
+            IFS='.' read -r MA MI PA <<< "$BASE"
+            MA=${MA:-0}
+            MI=${MI:-0}
+            PA=${PA:-0}
+            PA=$((PA + 1))
+            echo "${MA}.${MI}.${PA}"
+          }
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            if [ -n "${MANUAL_VERSION:-}" ]; then
+              VER="${MANUAL_VERSION#v}"
+            else
+              VER=$(resolve_bump)
+            fi
+          else
+            VER="${REF_NAME#v}"
+          fi
+
+          echo "Resolved package version: $VER"
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+
+      - name: Pack
+        run: >
+          dotnet pack KamiToolKit.csproj
+          --configuration Release
+          -p:DALAMUD_HOME=/tmp/dalamud
+          -p:PackageVersion=${{ steps.version.outputs.version }}
+          -p:Version=${{ steps.version.outputs.version }}
+          --output ./artifacts
+
+      - name: Push to NuGet.org
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: >
+          dotnet nuget push ./artifacts/*.nupkg
+          --api-key "$NUGET_API_KEY"
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
