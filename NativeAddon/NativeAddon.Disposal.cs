@@ -32,7 +32,6 @@ public partial class NativeAddon : IDisposable {
         }
 
         isDisposed = true;
-        DisposeCloseCallback();
     }
 
     ~NativeAddon() => Dispose();
