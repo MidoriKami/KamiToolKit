@@ -2,6 +2,8 @@ name: Publish NuGet
 
 on:
   push:
+    branches:
+      - master
     tags:
       - "v*"
   workflow_dispatch:
@@ -40,6 +42,7 @@ jobs:
         id: version
         env:
           EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
           REF_NAME: ${{ github.ref_name }}
           MANUAL_VERSION: ${{ inputs.version }}
         run: |
@@ -77,27 +80,82 @@ jobs:
             else
               VER=$(resolve_bump)
             fi
-          else
+          elif [[ "$REF" == refs/tags/* ]]; then
             VER="${REF_NAME#v}"
+          else
+            VER=$(resolve_bump)
           fi
 
           echo "Resolved package version: $VER"
           echo "version=$VER" >> "$GITHUB_OUTPUT"
 
-      - name: Pack
-        run: >
-          dotnet pack KamiToolKit.csproj
-          --configuration Release
-          -p:DALAMUD_HOME=/tmp/dalamud
-          -p:PackageVersion=${{ steps.version.outputs.version }}
-          -p:Version=${{ steps.version.outputs.version }}
-          --output ./artifacts
-
-      - name: Push to NuGet.org
+      - name: Pack and push
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: >
-          dotnet nuget push ./artifacts/*.nupkg
-          --api-key "$NUGET_API_KEY"
-          --source https://api.nuget.org/v3/index.json
-          --skip-duplicate
+          INITIAL_VERSION: ${{ steps.version.outputs.version }}
+          IS_TAG_PUSH: ${{ startsWith(github.ref, 'refs/tags/') }}
+        run: |
+          set -euo pipefail
+
+          bump_patch() {
+            local v="$1"
+            local BASE="${v%%-*}"
+            local MA MI PA
+            IFS='.' read -r MA MI PA <<< "$BASE"
+            MA=${MA:-0}
+            MI=${MI:-0}
+            PA=${PA:-0}
+            PA=$((PA + 1))
+            echo "${MA}.${MI}.${PA}"
+          }
+
+          pack() {
+            local ver="$1"
+            rm -rf ./artifacts
+            mkdir -p ./artifacts
+            dotnet pack KamiToolKit.csproj \
+              --configuration Release \
+              -p:DALAMUD_HOME=/tmp/dalamud \
+              -p:PackageVersion="$ver" \
+              -p:Version="$ver" \
+              --output ./artifacts
+          }
+
+          VER="$INITIAL_VERSION"
+          MAX_ATTEMPTS=10
+
+          for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
+            echo "Pack attempt $attempt / $MAX_ATTEMPTS (version $VER)"
+            pack "$VER"
+
+            set +e
+            dotnet nuget push ./artifacts/*.nupkg \
+              --api-key "$NUGET_API_KEY" \
+              --source https://api.nuget.org/v3/index.json \
+              >push.log 2>&1
+            rc=$?
+            set -e
+
+            if [ "$rc" -eq 0 ]; then
+              echo "Published $VER"
+              exit 0
+            fi
+
+            cat push.log
+
+            if [ "$IS_TAG_PUSH" = "true" ]; then
+              echo "Push failed for tag build; not bumping version."
+              exit "$rc"
+            fi
+
+            if grep -qiE 'already exists|conflict|409' push.log; then
+              VER=$(bump_patch "$VER")
+              echo "Package version already on feed (or pending); bumping to $VER and retrying."
+              continue
+            fi
+
+            exit "$rc"
+          done
+
+          echo "Exceeded $MAX_ATTEMPTS publish attempts."
+          exit 1
