@@ -10,7 +10,8 @@ using KamiToolKit.Premade.Node.ListItem;
 namespace KamiToolKit.Premade.Addon.Search;
 
 public unsafe class AddonSearchAddon : BaseSearchAddon<Pointer<AtkUnitBase>, AddonListItemNode> {
-
+    public bool AllowNameplateResult { get; init; } = false;
+    
     public AddonSearchAddon() {
         SearchOptions = GetAllAddons();
         SortingOptions = [ AddonSearchSortOptions.Visibility, AddonSearchSortOptions.Alphabetical ];
@@ -42,11 +43,12 @@ public unsafe class AddonSearchAddon : BaseSearchAddon<Pointer<AtkUnitBase>, Add
         return regex.IsMatch(item.Value->NameString);
     }
 
-    private static List<Pointer<AtkUnitBase>> GetAllAddons() {
+    private List<Pointer<AtkUnitBase>> GetAllAddons() {
         List<Pointer<AtkUnitBase>> addons = [];
         
         foreach (var entry in RaptureAtkUnitManager.Instance()->AllLoadedUnitsList.Entries) {
             if (entry.Value is null) continue;
+            if (entry.Value->NameString is "NamePlate" && !AllowNameplateResult) continue;
             addons.Add(entry);
         }
         
