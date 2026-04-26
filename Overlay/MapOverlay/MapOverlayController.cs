@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
@@ -154,8 +154,8 @@ public unsafe class MapOverlayController : IDisposable {
         // Start with current position
         var offset = new Vector2(areaMap.MapOffsetX, areaMap.MapOffsetY);
 
-        // Add map-specific offset
-        offset += new Vector2(agentMap->CurrentOffsetX, agentMap->CurrentOffsetY);
+        // Add map-specific offset using the selected map
+        offset += new Vector2(agentMap->SelectedOffsetX, agentMap->SelectedOffsetY);
 
         // Set object position relative to center of node
         offset += overlayNode.Size / 2.0f;

@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiToolKit.Dalamud;
@@ -100,7 +100,8 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
         }
 
         var mapScale = mapRow.SizeFactor / 100.0f;
-        var mapOffset = new Vector2(mapRow.OffsetX, mapRow.OffsetY) + new Vector2(1024.0f, 1024.0f);
+        // Fix: For offseted maps, multiply the offset by the scale factor - 1
+        var mapOffset = (new Vector2(mapRow.OffsetX, mapRow.OffsetY) * (mapScale - 1)) + new Vector2(1024.0f, 1024.0f);
 
         base.Size = Size * MarkerScale;
         base.Origin = base.Size / 2.0f;
