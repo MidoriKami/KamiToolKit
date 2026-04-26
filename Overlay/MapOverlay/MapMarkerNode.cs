@@ -100,8 +100,8 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
         }
 
         var mapScale = mapRow.SizeFactor / 100.0f;
-        // Fix: For offseted maps, multiply the offset by the scale factor - 1
-        var mapOffset = (new Vector2(mapRow.OffsetX, mapRow.OffsetY) * (mapScale - 1)) + new Vector2(1024.0f, 1024.0f);
+        var mapOffset = new Vector2(mapRow.OffsetX, mapRow.OffsetY) * (mapScale - 1);
+        var centerOffset = new Vector2(1024.0f, 1024.0f);
 
         base.Size = Size * MarkerScale;
         base.Origin = base.Size / 2.0f;
@@ -112,7 +112,7 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
         imGuiImageNode?.Size = base.Size;
         imGuiImageNode?.Origin = base.Size / 2.0f;
         
-        base.Position = Position * mapScale + mapOffset - base.Size / 2.0f;
+        base.Position = Position * mapScale + mapOffset + centerOffset - base.Size / 2.0f;
         base.IsVisible = IsVisible && (AllowAnyMap || AgentMap.Instance()->SelectedMapId == MapId);
     }
 
