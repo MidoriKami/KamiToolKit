@@ -214,6 +214,8 @@ public unsafe class MapOverlayController : IDisposable {
     }
 
     private void ProcessMouseMove(AtkEventData* atkEventData) {
+        if (clippingContainerNode is null) return;
+        
         var mapAddon = RaptureAtkUnitManager.Instance()->GetAddonByName("AreaMap");
         if (mapAddon is null) return;
 
@@ -221,7 +223,7 @@ public unsafe class MapOverlayController : IDisposable {
 
         if (!AgentMap.Instance()->IsControlKeyPressed) {
             foreach (var node in markerNodes) {
-                if (node.IsActuallyVisible() && node.CheckCollision(atkEventData)) {
+                if (node.IsActuallyVisible() && node.CheckCollision(atkEventData) && clippingContainerNode.CheckCollision(atkEventData)) {
                     node.ShowTextTooltip(node.TextTooltip);
                     showingTooltip = true;
                     anyCollisions = true;
