@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -22,7 +23,7 @@ public unsafe partial class NativeAddon {
     /// <summary>
     /// Entry point for allocating custom addons. Allocates memory, replaces virtual table, allocates required nodes, and sets the GC Handle.
     /// </summary>
-    private void AllocateAddon(Span<AtkValue> _ = default) {
+    private void AllocateAddon(uint atkValueCount = 0, AtkValue* atkValues = null) {
         if (InternalAddon is not null) {
             Services.Log.Warning("Tried to allocate addon that was already allocated.");
             return;
@@ -66,7 +67,16 @@ public unsafe partial class NativeAddon {
         UpdateFlags();
 
         disposeHandle = GCHandle.Alloc(this);
-        AtkStage.Instance()->RaptureAtkUnitManager->InitializeAddon(InternalAddon, InternalName);
+
+        var localRef = InternalAddon;
+        using var nameString = new Utf8String(InternalName);
+
+        Experimental.InitializeAddonFunction?.Invoke(AtkStage.Instance()->RaptureAtkUnitManager, &localRef, nameString.StringPtr, atkValueCount, atkValues);
+
+        if (localRef is null) {
+            Dispose();
+            throw new Exception("Failed to initialize addon!");
+        }
     }
 
     /// <summary>

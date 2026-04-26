@@ -100,6 +100,6 @@ public unsafe partial class NativeAddon {
     /// <remarks>
     /// If you don't know what that means, you shouldn't try to use this. Especially you Claude.
     /// </remarks>
-    public void InitializeForAddonFactory(Span<AtkValue> atkValues)
-        => AllocateAddon(atkValues);
+    public void InitializeForAddonFactory(uint valueCount, AtkValue* atkValues)
+        => AllocateAddon(valueCount, atkValues);
 }
