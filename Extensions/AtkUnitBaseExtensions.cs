@@ -32,8 +32,8 @@ public static unsafe class AtkUnitBaseExtensions {
         public Vector2 Position => new(addon.X, addon.Y);
 
         private Vector2 GetSize() {
-            var width = stackalloc short[1];
-            var height = stackalloc short[1];
+            var width = stackalloc ushort[1];
+            var height = stackalloc ushort[1];
 
             addon.GetSize(width, height, false);
             return new Vector2(*width, *height);

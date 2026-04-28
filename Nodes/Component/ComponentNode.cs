@@ -1,5 +1,6 @@
 using System;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Dalamud;
@@ -12,7 +13,7 @@ public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComp
     public abstract AtkUldComponentDataBase* DataBase { get; }
 }
 
-public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable where TU : unmanaged {
+public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable<T> where TU : unmanaged {
     public sealed override CollisionNode CollisionNode { get; }
     public sealed override AtkComponentBase* ComponentBase => Node->Component;
     public sealed override AtkUldComponentDataBase* DataBase => Node->Component->UldManager.ComponentData;
@@ -110,4 +111,13 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     public T* Component => (T*)ComponentBase;
 
     public TU* Data => (TU*)DataBase;
+
+    public virtual NodeBase FocusNode => CollisionNode;
+
+    public void SetFocus() {
+        var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(this);
+        if (addon is null) return;
+
+        AtkStage.Instance()->AtkInputManager->SetFocus(FocusNode, addon, 0);
+    }
 }

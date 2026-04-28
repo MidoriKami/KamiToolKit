@@ -7,7 +7,7 @@ using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
-public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable {
+public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable<T> {
     protected NodeBase(NodeType nodeType) {
         if (MainThreadSafety.TryAssertMainThread()) return;
 
