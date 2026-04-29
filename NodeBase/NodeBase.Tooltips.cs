@@ -14,7 +14,7 @@ public unsafe partial class NodeBase {
 
     private AtkTooltipType tooltipType = AtkTooltipType.None;
     private bool tooltipEventsRegistered;
-    
+
     public virtual ReadOnlySeString TextTooltip {
         get;
         set {
@@ -73,15 +73,15 @@ public unsafe partial class NodeBase {
 
     private void TryRegisterTooltipEvents() {
         if (tooltipEventsRegistered) return;
-        
+
         AddEvent(AtkEventType.MouseOver, ShowTooltip);
         AddEvent(AtkEventType.MouseOut, HideTooltip);
         OnVisibilityToggled += ToggleCollisionFlag;
         ToggleCollisionFlag(IsVisible);
-        
+
         tooltipEventsRegistered = true;
     }
-    
+
     private void UnregisterTooltipEvents() {
         if (tooltipEventsRegistered) {
             RemoveEvent(AtkEventType.MouseOver, ShowTooltip);
@@ -101,7 +101,7 @@ public unsafe partial class NodeBase {
             RemoveNodeFlags(NodeFlags.HasCollision);
         }
     }
-    
+
     protected bool TooltipRegistered { get; set; }
 
     public void ShowTooltip() {
@@ -113,7 +113,7 @@ public unsafe partial class NodeBase {
         if (!TextTooltip.IsEmpty) {
             stringBuffer[0].SetManagedString(stringBuilder.Builder.Append(TextTooltip).GetViewAsSpan());
         }
-        
+
         var tooltipArgs = new AtkTooltipManager.AtkTooltipArgs();
 
         if (tooltipType.HasFlag(AtkTooltipType.Text)) {
@@ -140,7 +140,7 @@ public unsafe partial class NodeBase {
             tooltipArgs.ItemArgs.BuyQuantity = -1;
             tooltipArgs.ItemArgs.Flag1 = 0;
         }
-        
+
         AtkStage.Instance()->TooltipManager.ShowTooltip(tooltipType, ParentAddon->Id, this, &tooltipArgs);
     }
 
