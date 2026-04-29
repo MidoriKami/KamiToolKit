@@ -1,4 +1,4 @@
-﻿using Dalamud.Utility;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Enums;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -112,7 +112,6 @@ public unsafe partial class NodeBase {
         if (!TextTooltip.IsEmpty) {
             stringBuffer.SetManagedString(stringBuilder.Builder.Append(TextTooltip).GetViewAsSpan());
         }
-        stringBuffer.Dtor();
 
         var tooltipArgs = new AtkTooltipManager.AtkTooltipArgs();
 
