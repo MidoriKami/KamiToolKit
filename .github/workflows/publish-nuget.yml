@@ -35,7 +35,7 @@ jobs:
           rm -rf "$DALAMUD_HOME"
           mkdir -p "$DALAMUD_HOME"
           ZIP=/tmp/dalamud-latest.zip
-          curl -fsSL "https://goatcorp.github.io/dalamud-distrib/latest.zip" -o "$ZIP"
+          curl -fsSL "https://goatcorp.github.io/dalamud-distrib/stg/latest.zip" -o "$ZIP"
           unzip -q "$ZIP" -d "$DALAMUD_HOME"
 
       - name: Resolve version
