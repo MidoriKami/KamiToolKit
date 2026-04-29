@@ -7,7 +7,7 @@ public unsafe partial class NativeAddon {
 
         // Disable Native AddonConfig
         InternalAddon->DisableAddonConfig = true;
-        InternalAddon->DisableUserClose = DisableClose;
+        InternalAddon->ShouldFireCallbackAndHideOrClose = DisableClose;
         InternalAddon->DisableHideTransition = DisableCloseTransition;
         InternalAddon->EnableTitleBarContextMenu = EnableContextMenu;
         InternalAddon->DisableUserScaling = DisableScaleContextOption;

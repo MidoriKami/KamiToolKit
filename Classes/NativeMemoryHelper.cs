@@ -27,7 +27,7 @@ internal static class NativeMemoryHelper {
     public static unsafe void UiFree<T>(T* memory, uint elementCount) where T : unmanaged
         => IMemorySpace.Free(memory, (ulong)sizeof(T) * elementCount);
 
-    public static unsafe T* Create<T>() where T : unmanaged, ICreatable {
+    public static unsafe T* Create<T>() where T : unmanaged, ICreatable<T> {
         var memory = IMemorySpace.GetUISpace()->Create<T>();
 
         if (memory is null) {

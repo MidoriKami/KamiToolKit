@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Node.Simple;
 
@@ -40,15 +41,19 @@ public class SelectableNode : SimpleComponentNode {
                 IsHovered = true;
             }
         });
+
         CollisionNode.AddEvent(AtkEventType.MouseDown, () => {
             if (EnableSelection) {
-                IsSelected = true;
+                IsSelected = !IsSelected;
                 OnClick?.Invoke(this);
             }
         });
+
         CollisionNode.AddEvent(AtkEventType.MouseOut, () => {
             IsHovered = false;
         });
+        
+        CollisionNode.AddDrawFlags(DrawFlags.ClickableCursor);
     }
 
     protected override void OnSizeChanged() {

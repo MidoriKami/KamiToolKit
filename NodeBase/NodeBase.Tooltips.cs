@@ -2,6 +2,7 @@
 using FFXIVClientStructs.FFXIV.Client.Enums;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using FFXIVClientStructs.Interop;
 using KamiToolKit.Nodes;
 using Lumina.Text.ReadOnly;
 
@@ -11,19 +12,19 @@ public record InventoryItemTooltip(InventoryType Inventory, short Slot);
 
 public unsafe partial class NodeBase {
 
-    private AtkTooltipManager.AtkTooltipType tooltipType = AtkTooltipManager.AtkTooltipType.None;
+    private AtkTooltipType tooltipType = AtkTooltipType.None;
     private bool tooltipEventsRegistered;
-    
+
     public virtual ReadOnlySeString TextTooltip {
         get;
         set {
             field = value;
             if (!value.IsEmpty) {
                 TryRegisterTooltipEvents();
-                tooltipType |= AtkTooltipManager.AtkTooltipType.Text;
+                tooltipType |= AtkTooltipType.Text;
             }
             else {
-                tooltipType &= ~AtkTooltipManager.AtkTooltipType.Text;
+                tooltipType &= ~AtkTooltipType.Text;
             }
         }
     }
@@ -34,10 +35,10 @@ public unsafe partial class NodeBase {
             field = value;
             if (value is not 0) {
                 TryRegisterTooltipEvents();
-                tooltipType |= AtkTooltipManager.AtkTooltipType.Action;
+                tooltipType |= AtkTooltipType.Action;
             }
             else {
-                tooltipType &= ~AtkTooltipManager.AtkTooltipType.Action;
+                tooltipType &= ~AtkTooltipType.Action;
             }
         }
     }
@@ -48,10 +49,10 @@ public unsafe partial class NodeBase {
             field = value;
             if (value is not 0) {
                 TryRegisterTooltipEvents();
-                tooltipType |= AtkTooltipManager.AtkTooltipType.Item;
+                tooltipType |= AtkTooltipType.Item;
             }
             else {
-                tooltipType &= ~AtkTooltipManager.AtkTooltipType.Item;
+                tooltipType &= ~AtkTooltipType.Item;
             }
         }
     }
@@ -62,25 +63,25 @@ public unsafe partial class NodeBase {
             field = value;
             if (value is not null) {
                 TryRegisterTooltipEvents();
-                tooltipType |= AtkTooltipManager.AtkTooltipType.Item;
+                tooltipType |= AtkTooltipType.Item;
             }
             else {
-                tooltipType &= ~AtkTooltipManager.AtkTooltipType.Item;
+                tooltipType &= ~AtkTooltipType.Item;
             }
         }
     }
 
     private void TryRegisterTooltipEvents() {
         if (tooltipEventsRegistered) return;
-        
+
         AddEvent(AtkEventType.MouseOver, ShowTooltip);
         AddEvent(AtkEventType.MouseOut, HideTooltip);
         OnVisibilityToggled += ToggleCollisionFlag;
         ToggleCollisionFlag(IsVisible);
-        
+
         tooltipEventsRegistered = true;
     }
-    
+
     private void UnregisterTooltipEvents() {
         if (tooltipEventsRegistered) {
             RemoveEvent(AtkEventType.MouseOver, ShowTooltip);
@@ -100,46 +101,46 @@ public unsafe partial class NodeBase {
             RemoveNodeFlags(NodeFlags.HasCollision);
         }
     }
-    
+
     protected bool TooltipRegistered { get; set; }
 
-    public void ShowTooltip() {
+    public virtual void ShowTooltip() {
         if (ParentAddon is null) return; // Shouldn't be possible
-        if (tooltipType is AtkTooltipManager.AtkTooltipType.None) return;
+        if (tooltipType is AtkTooltipType.None) return;
 
         using var stringBuilder = new RentedSeStringBuilder();
-        using var stringBuffer = new AtkValue();
+        using var stringBuffer = new RentedAtkValues(1);
         if (!TextTooltip.IsEmpty) {
-            stringBuffer.SetManagedString(stringBuilder.Builder.Append(TextTooltip).GetViewAsSpan());
+            stringBuffer[0].SetManagedString(stringBuilder.Builder.Append(TextTooltip).GetViewAsSpan());
         }
-        
+
         var tooltipArgs = new AtkTooltipManager.AtkTooltipArgs();
 
-        if (tooltipType.HasFlag(AtkTooltipManager.AtkTooltipType.Text)) {
+        if (tooltipType.HasFlag(AtkTooltipType.Text)) {
             tooltipArgs.TextArgs.AtkArrayType = 0;
-            tooltipArgs.TextArgs.Text = stringBuffer.String;
+            tooltipArgs.TextArgs.Text = stringBuffer[0].String;
         }
 
-        if (tooltipType.HasFlag(AtkTooltipManager.AtkTooltipType.Action)) {
+        if (tooltipType.HasFlag(AtkTooltipType.Action)) {
             tooltipArgs.ActionArgs.Flags = 1;
             tooltipArgs.ActionArgs.Kind = DetailKind.Action;
             tooltipArgs.ActionArgs.Id = (int)ActionTooltip;
         }
 
-        if (tooltipType.HasFlag(AtkTooltipManager.AtkTooltipType.Item) && InventoryItemTooltip is {} inventoryTooltip) {
+        if (tooltipType.HasFlag(AtkTooltipType.Item) && InventoryItemTooltip is {} inventoryTooltip) {
             tooltipArgs.ItemArgs.Kind = DetailKind.InventoryItem;
             tooltipArgs.ItemArgs.InventoryType = inventoryTooltip.Inventory;
             tooltipArgs.ItemArgs.Slot = inventoryTooltip.Slot;
             tooltipArgs.ItemArgs.BuyQuantity = -1;
             tooltipArgs.ItemArgs.Flag1 = 0;
         }
-        else if (tooltipType.HasFlag(AtkTooltipManager.AtkTooltipType.Item) && InventoryItemTooltip is null) {
+        else if (tooltipType.HasFlag(AtkTooltipType.Item) && InventoryItemTooltip is null) {
             tooltipArgs.ItemArgs.Kind = DetailKind.Item;
             tooltipArgs.ItemArgs.ItemId = (int) ItemTooltip;
             tooltipArgs.ItemArgs.BuyQuantity = -1;
             tooltipArgs.ItemArgs.Flag1 = 0;
         }
-        
+
         AtkStage.Instance()->TooltipManager.ShowTooltip(tooltipType, ParentAddon->Id, this, &tooltipArgs);
     }
 

@@ -21,7 +21,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     public readonly NineGridNode BackgroundNode;
     public readonly TextNode CurrentTextNode;
     public readonly CursorNode CursorNode;
-    public readonly NineGridNode FocusNode;
+    public readonly NineGridNode FocusBorderNode;
     public readonly TextInputSelectionListNode SelectionListNode;
     public readonly TextNode TextLimitsNode;
     public readonly TextNode PlaceholderTextNode;
@@ -41,7 +41,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         };
         BackgroundNode.AttachNode(this);
 
-        FocusNode = new SimpleNineGridNode {
+        FocusBorderNode = new SimpleNineGridNode {
             NodeId = 18,
             TexturePath = "ui/uld/TextInputA.tex",
             TextureCoordinates = new Vector2(0.0f, 0.0f),
@@ -49,7 +49,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             Offsets = new Vector4(10.0f),
             Size = new Vector2(152.0f, 28.0f),
         };
-        FocusNode.AttachNode(this);
+        FocusBorderNode.AttachNode(this);
 
         TextLimitsNode = new TextNode {
             NodeId = 17,
@@ -210,8 +210,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     }
 
     public bool IsError {
-        get => FocusNode.MultiplyColor == new Vector3(1.0f, 0.6f, 0.6f);
-        set => FocusNode.MultiplyColor = value ? new Vector3(1.0f, 0.6f, 0.6f) : Vector3.One;
+        get => FocusBorderNode.MultiplyColor == new Vector3(1.0f, 0.6f, 0.6f);
+        set => FocusBorderNode.MultiplyColor = value ? new Vector3(1.0f, 0.6f, 0.6f) : Vector3.One;
     }
 
     public bool AutoSelectAll { get; set; } = true;
@@ -274,7 +274,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         base.OnSizeChanged();
 
         BackgroundNode.Size = Size;
-        FocusNode.Size = Size;
+        FocusBorderNode.Size = Size;
         PlaceholderTextNode.Size = Size - new Vector2(0.0f, 2.0f);
         PlaceholderTextNode.Position = new Vector2(8.0f, 2.0f);
         TextLimitsNode.Size = new Vector2(Width + 18.0f, Height - 9.0f);
@@ -299,7 +299,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             .AddFrameSetWithFrame(20, 29, 20, alpha: 127)
             .Build());
 
-        FocusNode.AddTimeline(new TimelineBuilder()
+        FocusBorderNode.AddTimeline(new TimelineBuilder()
             .BeginFrameSet(10, 19)
             .AddFrame(10, alpha: 0)
             .AddFrame(12, alpha: 255)

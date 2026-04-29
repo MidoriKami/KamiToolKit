@@ -5,7 +5,7 @@ namespace KamiToolKit.Enums;
 
 public enum OverlayLayer {
     /// <summary>
-    /// Layer that is the back most, this is below nameplates, but above the world itself.
+    /// Layer that is the back most, but above the world itself. Some UI Elements may still render under this layer.
     /// </summary>
     [Description("KTK_Overlay_Back")]
     Background,

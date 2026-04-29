@@ -106,7 +106,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         }
     }
 
-    private void OnPopulateDetour(AtkUnitBase* unitBase, AtkComponentListItemPopulator.ListItemInfo* itemInfo, AtkResNode** nodeList) {
+    private void OnPopulateDetour(AtkEventListener* unitBase, AtkComponentListItemPopulator.ListItemInfo* itemInfo, AtkResNode** nodeList) {
         try {
             var listItemNode = itemInfo->ListItem->Renderer->OwnerNode;
 
@@ -144,7 +144,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         }
     }
     
-    private void OnRendererPopulateDetour(AtkUnitBase* unitBase, int listItemIndex, AtkResNode** nodeList, AtkComponentListItemRenderer* listItemRenderer) {
+    private void OnRendererPopulateDetour(AtkEventListener* unitBase, int listItemIndex, AtkResNode** nodeList, AtkComponentListItemRenderer* listItemRenderer) {
         try {
             var listItemNode = listItemRenderer->OwnerNode;
 
