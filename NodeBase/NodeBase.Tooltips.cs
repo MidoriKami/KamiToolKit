@@ -2,6 +2,7 @@
 using FFXIVClientStructs.FFXIV.Client.Enums;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using FFXIVClientStructs.Interop;
 using KamiToolKit.Nodes;
 using Lumina.Text.ReadOnly;
 
@@ -108,16 +109,16 @@ public unsafe partial class NodeBase {
         if (tooltipType is AtkTooltipType.None) return;
 
         using var stringBuilder = new RentedSeStringBuilder();
-        using var stringBuffer = new AtkValue();
+        using var stringBuffer = new RentedAtkValues(1);
         if (!TextTooltip.IsEmpty) {
-            stringBuffer.SetManagedString(stringBuilder.Builder.Append(TextTooltip).GetViewAsSpan());
+            stringBuffer[0].SetManagedString(stringBuilder.Builder.Append(TextTooltip).GetViewAsSpan());
         }
         
         var tooltipArgs = new AtkTooltipManager.AtkTooltipArgs();
 
         if (tooltipType.HasFlag(AtkTooltipType.Text)) {
             tooltipArgs.TextArgs.AtkArrayType = 0;
-            tooltipArgs.TextArgs.Text = stringBuffer.String;
+            tooltipArgs.TextArgs.Text = stringBuffer[0].String;
         }
 
         if (tooltipType.HasFlag(AtkTooltipType.Action)) {
