@@ -104,7 +104,7 @@ public unsafe partial class NodeBase {
 
     protected bool TooltipRegistered { get; set; }
 
-    public void ShowTooltip() {
+    public virtual void ShowTooltip() {
         if (ParentAddon is null) return; // Shouldn't be possible
         if (tooltipType is AtkTooltipType.None) return;
 

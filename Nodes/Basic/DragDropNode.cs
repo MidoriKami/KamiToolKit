@@ -1,8 +1,5 @@
 using System;
 using System.Numerics;
-using Dalamud.Game;
-using FFXIVClientStructs.FFXIV.Client.Enums;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
@@ -239,22 +236,11 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
     }
 
     // Show fancy tooltip for the currently stored data
-    public void ShowTooltip(AtkTooltipType type, ActionKind actionKind) {
+    public override void ShowTooltip() {
         if (AtkStage.Instance()->DragDropManager.IsDragging) return;
+        ActionTooltip = (uint) Payload.Int2;
 
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(ResNode);
-        if (addon is null) return;
-
-        var tooltipArgs = new AtkTooltipManager.AtkTooltipArgs();
-        tooltipArgs.Ctor();
-        tooltipArgs.ActionArgs.Id = Payload.Int2;
-        tooltipArgs.ActionArgs.Kind = (DetailKind)actionKind;
-
-        AtkStage.Instance()->TooltipManager.ShowTooltip(
-            AtkTooltipType.Action,
-            addon->Id,
-            ResNode,
-            &tooltipArgs);
+        base.ShowTooltip();
     }
 
     private void LoadTimelines() {
