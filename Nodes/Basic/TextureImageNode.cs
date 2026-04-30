@@ -17,9 +17,11 @@ public unsafe class TextureImageNode : SimpleImageNode {
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
-            var asset = PartsList[0]->UldAsset;
-            asset->AtkTexture.KernelTexture = null;
-            asset->AtkTexture.TextureType = 0;
+            if (!isNativeDestructor) {
+                var asset = PartsList[0]->UldAsset;
+                asset->AtkTexture.KernelTexture = null;
+                asset->AtkTexture.TextureType = 0;
+            }
             
             base.Dispose(disposing, isNativeDestructor);
         }
