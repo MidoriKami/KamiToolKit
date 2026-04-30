@@ -227,7 +227,7 @@ public unsafe class MapOverlayController : IDisposable {
             ref var flagMarker = ref agentMap->FlagMapMarkers[0];
         
             flagNode?.Position = new Vector2(flagMarker.XFloat, flagMarker.YFloat);
-            flagNode?.IsVisible = agentMap->FlagMarkerCount is not 0;
+            flagNode?.IsVisible = agentMap->FlagMarkerCount is not 0 && flagMarker.TerritoryId == agentMap->SelectedTerritoryId;
             flagNode?.Update();
             flagNode?.Scale = Vector2.One / new Vector2(areaMap.MarkerPositionScaling, areaMap.MarkerPositionScaling);
         }
