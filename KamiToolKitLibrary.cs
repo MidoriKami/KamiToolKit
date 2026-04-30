@@ -35,7 +35,7 @@ public static class KamiToolKitLibrary {
         Services.GameInteropProvider.InitializeFromAttributes(Experimental);
 
         // Create node data share
-        AllocatedNodes = PluginInterface.GetOrCreateData("KamiToolKitAllocatedNodes", () => new ConcurrentDictionary<nint, Type>());
+        AllocatedNodes = PluginInterface.GetOrCreateData("TypeMappedCustomNodes", () => new ConcurrentDictionary<nint, Type>());
 
         // Force enable Verbose so that users are able to get advanced logging information on request.
         Services.Log.MinimumLogLevel = LogEventLevel.Verbose;
