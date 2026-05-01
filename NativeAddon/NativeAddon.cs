@@ -71,7 +71,7 @@ public unsafe partial class NativeAddon {
         var localRef = InternalAddon;
         using var nameString = new Utf8String(InternalName);
 
-        Experimental.InitializeAddonFunction?.Invoke(AtkStage.Instance()->RaptureAtkUnitManager, &localRef, nameString.StringPtr, atkValueCount, atkValues);
+        AtkStage.Instance()->RaptureAtkUnitManager->InitializeAddon(&localRef, nameString.StringPtr, atkValueCount, atkValues);
 
         if (localRef is null) {
             Dispose();
