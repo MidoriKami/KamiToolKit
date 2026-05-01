@@ -40,7 +40,7 @@ public static class KamiToolKitLibrary {
         // Force enable Verbose so that users are able to get advanced logging information on request.
         Services.Log.MinimumLogLevel = LogEventLevel.Verbose;
 
-        Services.Log.Info($"KamiToolKit initialized for {PluginInterface.InternalName}");
+        Services.Log.Info($"KamiToolKit initialized for {PluginInterface.InternalName} Default SubTitle: '{defaultWindowSubtitle}'");
         
         NativeAddon.InitializeCloseCallback();
     }
