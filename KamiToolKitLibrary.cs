@@ -9,15 +9,16 @@ using Serilog.Events;
 namespace KamiToolKit;
 
 public static class KamiToolKitLibrary {
-    internal static bool IsInitialized { get; private set; }
+    private const string NodeDataShareKey = "TypeMappedCustomNodes";
+
     internal static IDalamudPluginInterface? PluginInterface { get; private set; }
-    
+
     internal static ConcurrentDictionary<nint, Type>? AllocatedNodes;
-    
+
     internal static string? DefaultWindowSubtitle;
 
     internal static Experimental Experimental = new();
-    
+
     internal static ResourceManager? ResourceManager;
     internal static CultureInfo? CurrentCulture;
 
@@ -26,7 +27,6 @@ public static class KamiToolKitLibrary {
     /// Failure to do so will not result in any direct warnings, but will result in undefined behavior.
     /// </summary>
     public static void Initialize(IDalamudPluginInterface pluginInterface, string? defaultWindowSubtitle = null) {
-        IsInitialized = true;
         DefaultWindowSubtitle = defaultWindowSubtitle;
         PluginInterface = pluginInterface;
 
@@ -35,7 +35,7 @@ public static class KamiToolKitLibrary {
         Services.GameInteropProvider.InitializeFromAttributes(Experimental);
 
         // Create node data share
-        AllocatedNodes = PluginInterface.GetOrCreateData("TypeMappedCustomNodes", () => new ConcurrentDictionary<nint, Type>());
+        AllocatedNodes = PluginInterface.GetOrCreateData(NodeDataShareKey, () => new ConcurrentDictionary<nint, Type>());
 
         // Force enable Verbose so that users are able to get advanced logging information on request.
         Services.Log.MinimumLogLevel = LogEventLevel.Verbose;
@@ -73,12 +73,16 @@ public static class KamiToolKitLibrary {
     /// Cleans up any potentially leaked resources that KamiToolKit has allocated.
     /// </summary>
     public static void Cleanup() {
-        NodeBase.DisposeNodes();
-        NativeAddon.DisposeAddons();
+        NodeBase.WarnLeakedNodes();
+        NativeAddon.WarnLeakedAddons();
+
         NativeAddon.DisposeCloseCallback();
 
         if (MainThreadSafety.TryAssertMainThread()) return;
 
-        Services.PluginInterface.RelinquishData("KamiToolKitAllocatedNodes");
+        NativeAddon.DisposeAddons();
+        NodeBase.DisposeNodes();
+
+        Services.PluginInterface.RelinquishData(NodeDataShareKey);
     }
 }

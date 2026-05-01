@@ -90,11 +90,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     private static void LogIndented(string message)
         => Services.Log.Verbose(new string(' ', logIndent * 2) + message);
 
-    /// <summary>
-    ///     Warning, this is only to ensure there are no memory leaks.
-    ///     Ensure you have detached nodes safely from native ui before disposing.
-    /// </summary>
-    internal static void DisposeNodes() {
+    internal static void WarnLeakedNodes() {
         var leakedNodeCount = CreatedNodes.Count(node => !node.IsAddonRootNode && node.ResNode is not null && node.ResNode->ParentNode is null);
 
         if (leakedNodeCount is not 0) {
@@ -107,6 +103,19 @@ public abstract unsafe partial class NodeBase : IDisposable {
             if (node.IsAddonRootNode) continue;
 
             Services.Log.Warning($"Forcing disposal of: {node.GetType()}");
+        }
+    }
+    
+    /// <summary>
+    /// Warning, this is only to ensure there are no memory leaks.
+    /// Ensure you have detached nodes safely from native ui before disposing.
+    /// </summary>
+    internal static void DisposeNodes() {
+        foreach (var node in CreatedNodes.ToArray()) {
+            if (node.ResNode is null) continue;
+            if (node.ResNode->ParentNode is not null) continue;
+            if (node.IsAddonRootNode) continue;
+
             node.Dispose();
         }
     }

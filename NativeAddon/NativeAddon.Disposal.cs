@@ -36,12 +36,18 @@ public partial class NativeAddon : IDisposable {
 
     ~NativeAddon() => Dispose();
 
+    internal static void WarnLeakedAddons() {
+        foreach (var addon in CreatedAddons.ToArray()) {
+            if (addon.IsOverlayAddon) continue;
+
+            Services.Log.Warning($"Addon {addon.GetType()} was not disposed properly please ensure you call dispose at an appropriate time.");
+            Services.Log.Debug($"Automatically disposing addon {addon.GetType()} as a safety measure.");
+        }
+    }
+
     internal static void DisposeAddons() {
         foreach (var addon in CreatedAddons.ToArray()) {
             if (addon.IsOverlayAddon) continue;
-            
-            Services.Log.Warning($"Addon {addon.GetType()} was not disposed properly please ensure you call dispose at an appropriate time.");
-            Services.Log.Debug($"Automatically disposing addon {addon.GetType()} as a safety measure.");
 
             addon.Dispose();
         }
