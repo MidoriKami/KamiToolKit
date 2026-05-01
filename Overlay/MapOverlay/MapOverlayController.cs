@@ -109,11 +109,7 @@ public unsafe class MapOverlayController : IDisposable {
         flagContainerNode = new SimpleOverlayNode();
         flagContainerNode.AttachNode(clippingContainerNode);
 
-        flagNode = new MapMarkerNode {
-            Size = new Vector2(32.0f, 32.0f),
-            IconId = 60561,
-            AllowAnyMap = true,
-        };
+        flagNode = new FlagMarkerNode();
         flagNode.AttachNode(flagContainerNode);
     }
 
@@ -170,7 +166,7 @@ public unsafe class MapOverlayController : IDisposable {
             marker.Scale = Vector2.One / new Vector2(areaMap.MarkerPositionScaling, areaMap.MarkerPositionScaling);
         }
 
-        UpdateFlagNode(agentMap, areaMap);
+        UpdateFlagNode(areaMap);
     }
 
     private void OnDetach(AddonAreaMap* addon) {
@@ -216,7 +212,7 @@ public unsafe class MapOverlayController : IDisposable {
         queuedNodes.Clear();
     }
 
-    private void UpdateFlagNode(AgentMap* agentMap, Atk2DAreaMap areaMap) {
+    private void UpdateFlagNode(Atk2DAreaMap areaMap) {
         if (overlayNode is null) return;
 
         if (flagContainerNode is not null && flagNode is not null) {
@@ -224,12 +220,8 @@ public unsafe class MapOverlayController : IDisposable {
             flagContainerNode.Scale = overlayNode.Scale;
             flagContainerNode.Position = overlayNode.Position;
 
-            ref var flagMarker = ref agentMap->FlagMapMarkers[0];
-        
-            flagNode?.Position = new Vector2(flagMarker.XFloat, flagMarker.YFloat);
-            flagNode?.IsVisible = agentMap->FlagMarkerCount is not 0 && flagMarker.TerritoryId == agentMap->SelectedTerritoryId;
-            flagNode?.Update();
-            flagNode?.Scale = Vector2.One / new Vector2(areaMap.MarkerPositionScaling, areaMap.MarkerPositionScaling);
+            flagNode.Update();
+            flagNode.Scale = Vector2.One / new Vector2(areaMap.MarkerPositionScaling, areaMap.MarkerPositionScaling);
         }
     }
 

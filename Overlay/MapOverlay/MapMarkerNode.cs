@@ -27,6 +27,8 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
     public uint MapId { get; set; }
     
     public bool AllowAnyMap { get; set; }
+    
+    internal bool IsPrescaled { get; set; }
 
     public uint? IconId {
         get;
@@ -102,6 +104,11 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
         var mapScale = mapRow.SizeFactor / 100.0f;
         var mapOffset = new Vector2(mapRow.OffsetX, mapRow.OffsetY) * (mapScale - 1);
         var centerOffset = new Vector2(1024.0f, 1024.0f);
+
+        if (IsPrescaled) {
+            mapScale *= 2.0f;
+            mapOffset = Vector2.Zero;
+        }
 
         base.Size = Size * MarkerScale;
         base.Origin = base.Size / 2.0f;
