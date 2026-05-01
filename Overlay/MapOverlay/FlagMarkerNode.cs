@@ -8,7 +8,6 @@ public unsafe class FlagMarkerNode : MapMarkerNode {
         IconId = 60561;
         AllowAnyMap = true;
         Size = new Vector2(32.0f, 32.0f);
-        IsPrescaled = true;
     }
 
     protected override void OnUpdate() {
@@ -16,7 +15,12 @@ public unsafe class FlagMarkerNode : MapMarkerNode {
         
         ref var flagMarker = ref agentMap->FlagMapMarkers[0];
         
-        Position = new Vector2(flagMarker.XFloat, flagMarker.YFloat);
+        // For flags, take the map positions of the flag, remove the offset from it
+        // then multiply by mapSize before adding offset back
+        var markerXPos = ((flagMarker.XFloat - agentMap->SelectedOffsetX) * agentMap->SelectedMapSizeFactorFloat) + agentMap->SelectedOffsetX;
+        var markerYPos = ((flagMarker.YFloat - agentMap->SelectedOffsetY) * agentMap->SelectedMapSizeFactorFloat) + agentMap->SelectedOffsetY;
+
+        Position = new Vector2(markerXPos, markerYPos);
         IsVisible = agentMap->FlagMarkerCount is not 0 && flagMarker.TerritoryId == agentMap->SelectedTerritoryId;
 
         base.OnUpdate();
