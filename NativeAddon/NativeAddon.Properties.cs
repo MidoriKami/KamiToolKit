@@ -9,9 +9,9 @@ namespace KamiToolKit;
 
 public unsafe partial class NativeAddon {
     public ResNode RootNode { get; private set; } = null!;
-    
+
     public static implicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
-    
+
     public Func<WindowNodeBase>? CreateWindowNode { get; init; }
 
     public required string InternalName {
@@ -40,7 +40,7 @@ public unsafe partial class NativeAddon {
     public int AddonId => InternalAddon is null ? 0 : InternalAddon->Id;
 
     public bool RememberClosePosition { get; set; } = true;
-    
+
     internal Vector2 LastClosePosition = Vector2.Zero;
 
     internal bool IsOverlayAddon { get; init; }

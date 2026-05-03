@@ -53,8 +53,8 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
         OptionListNode = new T {
             NodeId = NodeIdBase,
-            Position = new Vector2(4.0f, 21.0f), 
-            Size = new Vector2(242.0f, 243.0f), 
+            Position = new Vector2(4.0f, 21.0f),
+            Size = new Vector2(242.0f, 243.0f),
             IsVisible = false,
         };
         OptionListNode.AttachNode(this);
@@ -172,7 +172,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
     public void RecalculateScrollParams()
         => OptionListNode.RecalculateScrollParams();
-    
+
     private void MoveListOnScreen() {
         var screenSize = AtkStage.Instance()->ScreenSize;
         var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(ResNode);

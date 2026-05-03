@@ -33,23 +33,23 @@ public unsafe class IconExtras : ResNode {
         TimelineImageNode.AttachNode(this);
 
         CooldownNode = new CooldownNode {
-            NodeId = 16, 
-            Size = new Vector2(48.0f, 48.0f), 
+            NodeId = 16,
+            Size = new Vector2(48.0f, 48.0f),
             NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         CooldownNode.AttachNode(this);
 
         AlternateCooldownNode = new AlternateCooldownNode {
-            NodeId = 14, 
+            NodeId = 14,
             Size = new Vector2(44.0f, 48.0f),
-            Position = new Vector2(2.0f, 0.0f), 
+            Position = new Vector2(2.0f, 0.0f),
             NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         AlternateCooldownNode.AttachNode(this);
 
         AntsNode = new AntsNode {
-            NodeId = 12, 
-            Size = new Vector2(48.0f, 48.0f), 
+            NodeId = 12,
+            Size = new Vector2(48.0f, 48.0f),
             NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         AntsNode.AttachNode(this);
@@ -79,9 +79,9 @@ public unsafe class IconExtras : ResNode {
         foreach (var xIndex in Enumerable.Range(0, 5)) {
             var coordinate = new Vector2(xIndex * 20.0f, yIndex * 20.0f);
             ChargeCountImageNode.AddPart(new Part {
-                TexturePath = "ui/uld/IconA_ChargeIcon.tex", 
-                TextureCoordinates = coordinate, 
-                Size = new Vector2(20.0f, 20.0f), 
+                TexturePath = "ui/uld/IconA_ChargeIcon.tex",
+                TextureCoordinates = coordinate,
+                Size = new Vector2(20.0f, 20.0f),
                 Id = (uint)(xIndex + yIndex),
             });
         }

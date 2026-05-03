@@ -26,29 +26,29 @@ public abstract unsafe partial class NodeBase {
 
     public void AttachNode(AtkUnitBase* targetAddon, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach(targetAddon is not null ? targetAddon->RootNode : null, targetPosition);
-    
+
     [OverloadResolutionPriority(1)]
     public void AttachNode(NodeBase? targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformManagedAttach(targetNode, targetPosition);
 
     public void AttachNode(AtkResNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach(targetNode, targetPosition);
-    
+
     public void AttachNode(AtkImageNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
-    
+
     public void AttachNode(AtkTextNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
-    
+
     public void AttachNode(AtkNineGridNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
-    
+
     public void AttachNode(AtkCounterNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
-    
+
     public void AttachNode(AtkCollisionNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
-    
+
     public void AttachNode(AtkClippingMaskNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
@@ -63,7 +63,7 @@ public abstract unsafe partial class NodeBase {
         if (NodeId > NodeIdBase) {
             NodeId = targetAddon.InternalAddon->UldManager.GetMaxNodeId() + 1;
         }
-        
+
         PerformNativeAttach(targetAddon.RootNode, targetPosition);
 
         parentNode = targetAddon.RootNode;
@@ -79,13 +79,13 @@ public abstract unsafe partial class NodeBase {
         parentNode = targetNode;
         parentNode.ChildNodes.Add(this);
     }
-    
+
     private void PerformNativeAttach(AtkResNode* targetNode, NodePosition targetPosition) {
         if (MainThreadSafety.TryAssertMainThread()) return;
         if (targetNode is null) return;
 
         if (targetNode->GetNodeType() is NodeType.Component) {
-            
+
             // If target is a ComponentNode,
             // then we don't ever wanna be a child of the ComponentNode itself,
             // we will want to be a sibling of the root node.
@@ -95,7 +95,7 @@ public abstract unsafe partial class NodeBase {
                 NodePosition.AsFirstChild => NodePosition.BeforeAllSiblings,
                 _ => targetPosition,
             };
-            
+
             // If however, we are using BeforeTarget or AfterTarget,
             // then we do want to attach to the ComponentNode
             // else, attach to its root node.
@@ -113,10 +113,10 @@ public abstract unsafe partial class NodeBase {
                 if (targetPosition is NodePosition.AfterTarget or NodePosition.BeforeTarget) {
                     if (NodeId > NodeIdBase) {
                         var targetsParentUldManager = GetUldManagerForNode(targetNode);
-                        
+
                         // Failed to get uldManager from node tree
                         if (targetsParentUldManager is null) {
-                            
+
                             // Try to get parent addon from target node
                             var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(targetNode);
                             if (parentAddon is not null) {
@@ -145,7 +145,7 @@ public abstract unsafe partial class NodeBase {
 
     internal void ReattachNode(AtkResNode* newTarget) {
         if (newTarget is null) return;
-        
+
         DetachNode();
         AttachNode(newTarget);
     }
@@ -166,19 +166,19 @@ public abstract unsafe partial class NodeBase {
         ResNode->NextSiblingNode = null;
         ResNode->PrevSiblingNode = null;
     }
-    
+
     private void RemoveUldManagerObjectReferences() {
         if (ParentUldManager is null) return;
 
         ParentUldManager->RemoveNodeFromObjectList(this);
         ParentUldManager = null;
     }
-    
+
     private void RemoveParentAddonReferences() {
         if (ParentAddon is null) return;
 
         var addonName = ParentAddon->NameString;
-        
+
         // Queue collision update for next frame
         if (addonsPendingUpdate.Add(addonName)) {
             Services.Framework.RunOnTick(() => {
@@ -193,15 +193,15 @@ public abstract unsafe partial class NodeBase {
         }
 
         ParentAddon = null;
-            
+
         foreach (var child in GetAllChildren(this)) {
             child.ParentAddon = null;
         }
     }
-    
+
     private void RemoveParentNodeReferences() {
         if (parentNode is null) return;
-        
+
         parentNode.ChildNodes.Remove(this);
         parentNode = null;
     }
@@ -236,9 +236,9 @@ public abstract unsafe partial class NodeBase {
             if (ParentAddon->NameString is "NamePlate") {
                 Services.Log.Warning("Warning, attaching to AddonNamePlate is not supported. Use OverlayController instead.");
             }
-            
+
             var addonName = ParentAddon->NameString;
-            
+
             // Queue collision update for next frame
             if (addonsPendingUpdate.Add(addonName)) {
                 Services.Framework.RunOnTick(() => {

@@ -37,7 +37,7 @@ public unsafe class CustomEventListener : IDisposable {
     [UnmanagedCallersOnly] private static void NullSub() { }
 
     public static implicit operator AtkEventListener*(CustomEventListener listener) => listener.eventListener;
-    
+
     // A wrapper around the raw callback to ensure that exceptions are handled safely.
     private void HandleEventSafely(AtkEventListener* thisPtr, AtkEventType eventType, int param, AtkEvent* eventObject, AtkEventData* data) {
         try {

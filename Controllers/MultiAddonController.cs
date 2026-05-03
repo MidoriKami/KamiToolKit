@@ -14,7 +14,7 @@ public class MultiAddonController : MultiAddonController<AtkUnitBase>;
 /// Using this with other addons will duplicate their associated events incorrectly.
 /// </summary>
 public unsafe class MultiAddonController<T> : IAddonEventController<T>, IDisposable where T : unmanaged {
-    
+
     private readonly List<AddonController<T>> addonControllers = [];
 
     public required List<string> AddonNames {
@@ -42,14 +42,14 @@ public unsafe class MultiAddonController<T> : IAddonEventController<T>, IDisposa
             }
         }
     }
-    
+
     public void Enable()
         => addonControllers.ForEach(controller => controller.Enable());
 
     public void Disable()
         => addonControllers.ForEach(controller => controller.Disable());
 
-    private void ControllerOnAttach(T* addon) 
+    private void ControllerOnAttach(T* addon)
         => OnSetup?.Invoke(addon);
 
     private void ControllerOnDetach(T* addon)
@@ -60,10 +60,10 @@ public unsafe class MultiAddonController<T> : IAddonEventController<T>, IDisposa
 
     private void ControllerOnUpdate(T* addon)
         => OnUpdate?.Invoke(addon);
-    
+
     private void ControllerOnPreRefresh(T* addon)
         => OnPreRefresh?.Invoke(addon);
-    
+
     private void ControllerOnPreUpdate(T* addon)
         => OnPreUpdate?.Invoke(addon);
 

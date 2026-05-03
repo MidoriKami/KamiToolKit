@@ -28,10 +28,10 @@ public unsafe class ColorOptionTextButtonNode : ButtonBase {
             DisableCollisionNode = true,
         };
         ColorNode.AttachNode(this);
-        
+
         LabelNode = new TextNode {
-            AlignmentType = AlignmentType.Center, 
-            Position = new Vector2(16.0f, 3.0f), 
+            AlignmentType = AlignmentType.Center,
+            Position = new Vector2(16.0f, 3.0f),
         };
 
         LabelNode.AttachNode(this);
@@ -70,7 +70,7 @@ public unsafe class ColorOptionTextButtonNode : ButtonBase {
     private void LoadTimelines() {
         var foregroundPositionOffset = new Vector2(24.0f, 3.0f);
         var colorElementPositionOffset = new Vector2(16.0f, 2.0f);
-        
+
         AddTimeline(new TimelineBuilder()
             .BeginFrameSet(1, 53)
             .AddLabelPair(1, 10, 1)
@@ -105,7 +105,7 @@ public unsafe class ColorOptionTextButtonNode : ButtonBase {
             .AddFrameSetWithFrame(37, 46, 37, colorElementPositionOffset, 255, multiplyColor: new Vector3(100.0f))
             .AddFrameSetWithFrame(47, 53, 47, colorElementPositionOffset, 255, multiplyColor: new Vector3(100.0f))
             .Build());
-        
+
         LabelNode.AddTimeline(new TimelineBuilder()
             .AddFrameSetWithFrame(1, 10, 1, foregroundPositionOffset, 255, multiplyColor: new Vector3(100.0f))
             .AddFrameSetWithFrame(11, 17, 11, foregroundPositionOffset, 255, multiplyColor: new Vector3(100.0f))

@@ -35,8 +35,8 @@ public class RadioButtonGroupNode : SimpleComponentNode {
 
     public void AddButton(ReadOnlySeString label, Action callback) {
         var newRadioButton = new RadioButtonNode {
-            Height = 16.0f, 
-            String = label, 
+            Height = 16.0f,
+            String = label,
             Callback = callback,
         };
 

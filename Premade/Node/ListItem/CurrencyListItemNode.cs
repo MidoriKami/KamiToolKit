@@ -31,7 +31,7 @@ public class CurrencyListItemNode : ListItemNode<Item>, IListItemNode {
 
         CollisionNode.ShowClickableCursor = true;
     }
-    
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -41,10 +41,10 @@ public class CurrencyListItemNode : ListItemNode<Item>, IListItemNode {
         LabelTextNode.Size = new Vector2(Width - IconNode.Width - 6.0f, Height);
         LabelTextNode.Position = new Vector2(IconNode.Bounds.Right + 6.0f, 0.0f);
     }
-    
+
     protected override void SetNodeData(Item itemData) {
         if (itemData.RowId is 0) return;
-        
+
         IconNode.IconId = itemData.Icon;
         LabelTextNode.String = itemData.Name.ToString();
     }

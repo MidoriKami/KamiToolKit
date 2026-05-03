@@ -28,7 +28,7 @@ public class TerritoryTypeListItemNode : ListItemNode<TerritoryType>, IListItemN
             IconId = 60072,
         };
         placeholderImageNode.AttachNode(this);
-        
+
         territoryTitleNode = new TextNode {
             TextFlags = TextFlags.Ellipsis,
             AlignmentType = AlignmentType.BottomLeft,
@@ -58,10 +58,10 @@ public class TerritoryTypeListItemNode : ListItemNode<TerritoryType>, IListItemN
 
         territoryIdNode.Size = new Vector2(30.0f, 30.0f);
         territoryIdNode.Position = new Vector2(Width - territoryIdNode.Width, 0.0f);
-        
+
         placeholderImageNode.Size = new Vector2(Height - 4.0f, Height - 4.0f);
         placeholderImageNode.Position = new Vector2(2.0f, 2.0f);
-        
+
         territoryTitleNode.Size = new Vector2(Width - territoryImageNode.Width - 10.0f - territoryIdNode.Width - 4.0f, Height / 2.0f);
         territoryTitleNode.Position = new Vector2(territoryImageNode.Bounds.Right + 8.0f, 0.0f);
 
@@ -73,7 +73,7 @@ public class TerritoryTypeListItemNode : ListItemNode<TerritoryType>, IListItemN
         if (territory.RowId is 0) return;
 
         territoryIdNode.String = territory.RowId.ToString();
-        
+
         if (territory.LoadingImage.ValueNullable?.FileName is { IsEmpty: false } filePath) {
             territoryImageNode.LoadTexture($"ui/loadingimage/{filePath}_hr1.tex");
             territoryImageNode.IsVisible = true;
@@ -81,7 +81,7 @@ public class TerritoryTypeListItemNode : ListItemNode<TerritoryType>, IListItemN
         else {
             territoryImageNode.IsVisible = false;
         }
-        
+
         placeholderImageNode.IsVisible = !territoryImageNode.IsVisible;
 
         territoryTitleNode.String = territory.PlaceName.ValueNullable?.Name.ToString() ?? string.Empty;

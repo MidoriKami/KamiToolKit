@@ -19,7 +19,7 @@ public class ColorSquareNode : SimpleComponentNode {
             FitTexture = true,
         };
         WhiteGradientNode.AttachNode(this);
-        
+
         ColorGradientNode = new ImGuiImageNode {
             TexturePath = Services.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
             FitTexture = true,
@@ -32,7 +32,7 @@ public class ColorSquareNode : SimpleComponentNode {
             FitTexture = true,
         };
         BlackGradientNode.AttachNode(this);
-        
+
         ColorDotNode = new ImGuiImageNode {
             TexturePath = Services.GetAssetPath("color_select_dot.png"),
             FitTexture = true,

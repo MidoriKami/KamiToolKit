@@ -43,13 +43,13 @@ public class Vector2EditWidget : SimpleComponentNode {
             String = YLabel ?? "Height",
         };
         HeightTextNode.AttachNode(GridNode[1, 0]);
-        
+
         WidthInputNode = new NumericInputNode {
             Position = new Vector2(2.0f, 2.0f),
             OnValueUpdate = OnXValueUpdated,
         };
         WidthInputNode.AttachNode(GridNode[0, 1]);
-        
+
         HeightInputNode = new NumericInputNode {
             Position = new Vector2(2.0f, 2.0f),
             OnValueUpdate = OnYValueUpdated,
@@ -61,10 +61,10 @@ public class Vector2EditWidget : SimpleComponentNode {
         base.OnSizeChanged();
 
         GridNode.Size = Size;
-        
+
         WidthTextNode.Size = GridNode[0, 0].Size;
         HeightTextNode.Size = GridNode[1, 0].Size;
-        
+
         WidthInputNode.Size = GridNode[0, 1].Size;
         HeightInputNode.Size = GridNode[1, 1].Size;
     }
@@ -73,7 +73,7 @@ public class Vector2EditWidget : SimpleComponentNode {
         Value = Value with { X = newValue };
         OnValueChanged?.Invoke(Value);
     }
-    
+
     private void OnYValueUpdated(int newValue) {
         Value = Value with { Y = newValue };
         OnValueChanged?.Invoke(Value);
@@ -83,11 +83,11 @@ public class Vector2EditWidget : SimpleComponentNode {
         get;
         set {
             field = value;
-            WidthInputNode.Value = (int) value.X;
-            HeightInputNode.Value = (int) value.Y;
+            WidthInputNode.Value = (int)value.X;
+            HeightInputNode.Value = (int)value.Y;
         }
     }
-    
+
     public Action<Vector2>? OnValueChanged { get; set; }
 
     public string? XLabel { get; set; }

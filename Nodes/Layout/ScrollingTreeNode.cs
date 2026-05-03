@@ -10,7 +10,7 @@ namespace KamiToolKit.Nodes;
 public class ScrollingTreeNode : SimpleComponentNode {
 
     private readonly ScrollingAreaNode<TreeListNode> listNode;
-    
+
     public ScrollingTreeNode() {
         listNode = new ScrollingAreaNode<TreeListNode> {
             ContentHeight = 100.0f,
@@ -24,12 +24,12 @@ public class ScrollingTreeNode : SimpleComponentNode {
         listNode.Size = Size;
         RecalculateLayout();
     }
-    
+
     public float CategoryVerticalSpacing {
         get => listNode.ContentNode.CategoryVerticalSpacing;
         set => listNode.ContentNode.CategoryVerticalSpacing = value;
     }
-    
+
     public bool AutoHideScrollBar {
         get => listNode.AutoHideScrollBar;
         set => listNode.AutoHideScrollBar = value;
@@ -39,15 +39,15 @@ public class ScrollingTreeNode : SimpleComponentNode {
         get => listNode.ScrollSpeed;
         set => listNode.ScrollSpeed = value;
     }
-        
+
     public IReadOnlyList<TreeListCategoryNode> CategoryNodes => listNode.ContentNode.CategoryNodes;
-    
+
     public void RecalculateLayout() {
         listNode.ContentNode.RefreshLayout();
         listNode.ContentHeight = CategoryNodes.Sum(node => node.IsVisible ? node.Height + CategoryVerticalSpacing : 0.0f);
     }
 
-    public void AddCategoryNode(TreeListCategoryNode node)  => listNode.ContentNode.AddCategoryNode(node);
+    public void AddCategoryNode(TreeListCategoryNode node) => listNode.ContentNode.AddCategoryNode(node);
 
     public TreeListNode TreeListNode => listNode.ContentNode;
 }

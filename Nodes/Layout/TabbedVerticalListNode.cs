@@ -12,7 +12,7 @@ public class TabbedVerticalListNode : SimpleComponentNode {
     public float TabSize { get; set; } = 18.0f;
 
     public float ItemVerticalSpacing { get; set; }
-    
+
     public bool FitWidth { get; set; }
 
     public int TabStep { get; set; }
@@ -30,7 +30,7 @@ public class TabbedVerticalListNode : SimpleComponentNode {
     public void AddNode(NodeBase node) {
         AddNode(0, node);
     }
-    
+
     public void AddNode(IEnumerable<NodeBase> nodes) {
         AddNode(0, nodes);
     }
@@ -85,13 +85,13 @@ public class TabbedVerticalListNode : SimpleComponentNode {
 
             if (FitWidth) {
                 node.Width = Width - node.X - ItemVerticalSpacing;
-                
+
                 // Also update layout of any contained nodes
                 if (node is LayoutListNode layoutNode) {
                     layoutNode.RecalculateLayout();
                 }
             }
-            
+
             startY += node.Height + ItemVerticalSpacing;
         }
 

@@ -14,7 +14,7 @@ public unsafe partial class NativeAddon {
         WriteIndented = true,
         IncludeFields = true,
     };
-    
+
     private AddonConfig LoadAddonConfig() {
         var directory = Services.PluginInterface.ConfigDirectory;
         var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
@@ -27,7 +27,7 @@ public unsafe partial class NativeAddon {
         }
 
         AddonConfig? addonConfig;
-        
+
         try {
             var data = File.ReadAllText(file.FullName);
             addonConfig = JsonSerializer.Deserialize<AddonConfig>(data, serializerOptions);
@@ -38,7 +38,7 @@ public unsafe partial class NativeAddon {
             addonConfig = new AddonConfig();
             SaveAddonConfig(addonConfig);
         }
-        
+
         return addonConfig;
     }
 
@@ -47,16 +47,16 @@ public unsafe partial class NativeAddon {
         var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
 
         var data = JsonSerializer.Serialize(addonConfig, serializerOptions);
-        
+
         FilesystemUtil.WriteAllTextSafe(file.FullName, data);
     }
-    
+
     private void SaveAddonConfig() {
         var configData = new AddonConfig {
             Position = new Vector2(InternalAddon->X, InternalAddon->Y),
             Scale = InternalAddon->Scale / AtkUnitBase.GetGlobalUIScale(),
         };
-        
+
         SaveAddonConfig(configData);
     }
 }

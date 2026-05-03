@@ -11,7 +11,7 @@ public unsafe partial class NativeAddon {
         fireCallbackHook = Services.GameInteropProvider.HookFromAddress<AtkUnitBase.Delegates.FireCallback>(AtkUnitBase.Addresses.FireCallback.Value, OnFireCallback);
         fireCallbackHook.Enable();
     }
-    
+
     private static bool OnFireCallback(AtkUnitBase* thisPtr, uint valueCount, AtkValue* values, bool close) {
         Services.Log.Excessive($"[{thisPtr->NameString}] OnFireCallback");
 

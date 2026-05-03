@@ -31,7 +31,7 @@ public unsafe class MapOverlayController : IDisposable {
     private MapMarkerNode? flagNode;
 
     public bool IsVisible { get; set; } = true;
-    
+
     public MapOverlayController() {
         mapController = new AddonController<AddonAreaMap> {
             AddonName = "AreaMap",
@@ -46,14 +46,14 @@ public unsafe class MapOverlayController : IDisposable {
     public void Dispose() {
         viewportEventListener?.Dispose();
         viewportEventListener = null;
-        
+
         mapController.Dispose();
 
         RemoveAllMarkers();
 
         overlayNode?.Dispose();
         overlayNode = null;
-        
+
         clippingContainerNode?.Dispose();
         clippingContainerNode = null;
     }
@@ -102,10 +102,10 @@ public unsafe class MapOverlayController : IDisposable {
         viewportEventListener = new ViewportEventListener(OnViewportEvent);
         viewportEventListener.AddEvent(AtkEventType.MouseMove, clippingContainerNode);
         viewportEventListener.AddEvent(AtkEventType.MouseDown, clippingContainerNode);
-        
+
         overlayNode = new SimpleOverlayNode();
         overlayNode.AttachNode(clippingContainerNode);
-        
+
         flagContainerNode = new SimpleOverlayNode();
         flagContainerNode.AttachNode(clippingContainerNode);
 
@@ -118,12 +118,12 @@ public unsafe class MapOverlayController : IDisposable {
         if (overlayNode is null) return;
 
         var agentMap = AgentMap.Instance();
-        
+
         if (showingTooltip && agentMap->IsControlKeyPressed) {
             AtkStage.Instance()->TooltipManager.HideTooltip(addon->Id);
             showingTooltip = false;
         }
-        
+
         if (Services.ClientState.IsPvP) {
             clippingContainerNode.IsVisible = false;
             return;
@@ -181,7 +181,7 @@ public unsafe class MapOverlayController : IDisposable {
 
         clippingContainerNode?.Dispose();
         clippingContainerNode = null;
-        
+
         overlayNode?.Dispose();
         overlayNode = null;
     }
@@ -199,7 +199,7 @@ public unsafe class MapOverlayController : IDisposable {
                 TextTooltip = markerInfo.Tooltip ?? string.Empty,
                 AllowAnyMap = markerInfo.AllowAnyMap,
             };
-    
+
             markerNodes.Add(newMarkerNode);
             newMarkerNode.AttachNode(overlayNode);
         }
@@ -239,7 +239,7 @@ public unsafe class MapOverlayController : IDisposable {
 
     private void ProcessMouseMove(AtkEventData* atkEventData) {
         if (clippingContainerNode is null) return;
-        
+
         var mapAddon = RaptureAtkUnitManager.Instance()->GetAddonByName("AreaMap");
         if (mapAddon is null) return;
 

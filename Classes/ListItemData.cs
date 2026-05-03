@@ -26,6 +26,6 @@ public unsafe class ListItemData {
     public T* GetNode<T>(int index) where T : unmanaged {
         if (NodeList is null) return null;
 
-        return (T*) NodeList[index];
+        return (T*)NodeList[index];
     }
 }

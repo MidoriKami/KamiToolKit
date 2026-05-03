@@ -70,7 +70,7 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
                 FrameIndex = frameId, Rotation = rotation.Value, Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
             });
         }
-        
+
         if (rotationDegrees is not null) {
             animationKeyFrames.Add(new TimelineAnimationKeyFrame {
                 FrameIndex = frameId, Rotation = rotationDegrees.Value * MathF.PI / 180.0f, Interpolation = interpolation ?? AtkTimelineInterpolation.Linear,
@@ -119,8 +119,8 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
     public FrameSetBuilder AddLabelPair(int frameStart, int frameStop, int labelId) {
         labelKeyFrames.Add(new TimelineLabelSetKeyFrame {
             FrameIndex = frameStart,
-            GroupType = AtkTimelineKeyGroupType.Label, 
-            JumpBehavior = AtkTimelineJumpBehavior.Start, 
+            GroupType = AtkTimelineKeyGroupType.Label,
+            JumpBehavior = AtkTimelineJumpBehavior.Start,
             LabelId = labelId,
         });
 

@@ -12,9 +12,9 @@ public unsafe class FlagMarkerNode : MapMarkerNode {
 
     protected override void OnUpdate() {
         var agentMap = AgentMap.Instance();
-        
+
         ref var flagMarker = ref agentMap->FlagMapMarkers[0];
-        
+
         // For flags, take the map positions of the flag, remove the offset from it
         // then multiply by mapSize before adding offset back
         var markerXPos = ((flagMarker.XFloat - agentMap->SelectedOffsetX) * agentMap->SelectedMapSizeFactorFloat) + agentMap->SelectedOffsetX;

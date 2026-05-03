@@ -13,7 +13,7 @@ namespace KamiToolKit.Overlay.MapOverlay;
 public unsafe class MapMarkerNode : SimpleOverlayNode {
     private IconImageNode? iconNode;
     private ImGuiImageNode? imGuiImageNode;
-    
+
     public override bool IsVisible { get; set; } = true;
 
     public new Vector2 Size { get; set; }
@@ -25,7 +25,7 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
     public new ReadOnlySeString TextTooltip { get; set; } = string.Empty;
 
     public uint MapId { get; set; }
-    
+
     public bool AllowAnyMap { get; set; }
 
     public uint? IconId {
@@ -38,15 +38,15 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
                 iconNode.IconId = value.Value;
                 return;
             }
-            
+
             imGuiImageNode?.Dispose();
             imGuiImageNode = null;
-                
+
             iconNode = new IconImageNode {
                 IconId = value.Value,
                 FitTexture = true,
             };
-                
+
             iconNode.AttachNode(this);
         }
     } = 0;
@@ -56,13 +56,13 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
         set {
             if (value is null) return;
             field = value;
-            
+
             iconNode?.Dispose();
             iconNode = null;
-            
+
             imGuiImageNode?.Dispose();
             imGuiImageNode = null;
-            
+
             imGuiImageNode = new ImGuiImageNode {
                 LoadedTexture = value,
                 FitTexture = true,
@@ -76,7 +76,7 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
         set {
             if (value is null) return;
             field = value;
-            
+
             iconNode?.Dispose();
             iconNode = null;
 
@@ -111,7 +111,7 @@ public unsafe class MapMarkerNode : SimpleOverlayNode {
 
         imGuiImageNode?.Size = base.Size;
         imGuiImageNode?.Origin = base.Size / 2.0f;
-        
+
         base.Position = (Position * mapScale) + mapOffset + centerOffset - (base.Size / 2.0f);
         base.IsVisible = IsVisible && (AllowAnyMap || AgentMap.Instance()->SelectedMapId == MapId);
     }

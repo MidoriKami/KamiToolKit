@@ -28,7 +28,7 @@ public class MultiStateButtonNode<T> : TextButtonNode where T : notnull {
             UpdateDisplay();
         }
     }
-    
+
     public T SelectedState {
         get => States[SelectedIndex];
         set => SelectedIndex = States.IndexOf(value);
@@ -52,7 +52,7 @@ public class MultiStateButtonNode<T> : TextButtonNode where T : notnull {
         if (state is Enum enumState) {
             return enumState.Description;
         }
-        
+
         return state.ToString() ?? "Unable to Parse Type";
     }
 }

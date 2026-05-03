@@ -24,8 +24,8 @@ public class TabBarNode : SimpleComponentNode {
 
     public void AddTab(ReadOnlySeString label, Action callback, bool isEnabled = true) {
         var newButton = new TabBarRadioButtonNode {
-            Height = Height, 
-            String = label, 
+            Height = Height,
+            String = label,
             OnClick = callback,
             IsEnabled = isEnabled,
             MultiplyColor = isEnabled ? Vector3.One : new Vector3(0.6f, 0.6f, 0.6f),
@@ -56,10 +56,10 @@ public class TabBarNode : SimpleComponentNode {
     public void SelectTab(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
-        
+
         ClickHandler(button);
     }
-    
+
     public void DisableTab(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
@@ -89,7 +89,7 @@ public class TabBarNode : SimpleComponentNode {
             button.MultiplyColor = new Vector3(0.6f, 0.6f, 0.6f);
         }
     }
-    
+
     public void RemoveTab(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;

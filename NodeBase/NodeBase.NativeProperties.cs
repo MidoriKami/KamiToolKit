@@ -36,7 +36,7 @@ public abstract unsafe partial class NodeBase {
         set => ResNode->ScreenY = value;
     }
 
-    public virtual Vector2 ScreenPosition 
+    public virtual Vector2 ScreenPosition
         => ResNode->ScreenPosition;
 
     public virtual float Width {
@@ -64,7 +64,7 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
-    public Bounds Bounds 
+    public Bounds Bounds
         => ResNode->Bounds;
 
     public Vector2 Center
@@ -111,7 +111,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     private bool? lastIsVisible;
-    
+
     public virtual bool IsVisible {
         get => ResNode->Visible;
         set {
@@ -171,15 +171,15 @@ public abstract unsafe partial class NodeBase {
     }
 
     public virtual DrawFlags DrawFlags {
-        get => (DrawFlags) ResNode->DrawFlags;
-        set => ResNode->DrawFlags = (uint) value & 0b1111_1111_1111_1100_0000_0011_1111_1111 | 
-                                            ResNode->DrawFlags & 0b0000_0000_0000_0011_1111_1100_0000_0000;
+        get => (DrawFlags)ResNode->DrawFlags;
+        set => ResNode->DrawFlags = (uint)value & 0b1111_1111_1111_1100_0000_0011_1111_1111 |
+                                    ResNode->DrawFlags & 0b0000_0000_0000_0011_1111_1100_0000_0000;
     }
 
     public virtual int ClipCount {
         get => (int)((ResNode->DrawFlags & 0b0000_0000_0000_0011_1111_1100_0000_0000) >> 10);
-        set => ResNode->DrawFlags = (uint)(value << 10 & 0b0000_0000_0000_0011_1111_1100_0000_0000) 
-                                            | ResNode->DrawFlags & 0b1111_1111_1111_1100_0000_0011_1111_1111;
+        set => ResNode->DrawFlags = (uint)(value << 10 & 0b0000_0000_0000_0011_1111_1100_0000_0000)
+                                    | ResNode->DrawFlags & 0b1111_1111_1111_1100_0000_0011_1111_1111;
     }
 
     public void AddDrawFlags(params DrawFlags[] flags) {
@@ -204,7 +204,7 @@ public abstract unsafe partial class NodeBase {
         set => ResNode->Type = value;
     }
 
-    public virtual int ChildCount 
+    public virtual int ChildCount
         => ResNode->ChildCount;
 
     protected virtual void OnSizeChanged() { }
@@ -223,16 +223,16 @@ public abstract unsafe partial class NodeBase {
 
     public void MarkDirty() {
         foreach (var child in GetAllChildren(this)) {
-            child.ResNode->AddDrawFlag( [ DrawFlags.IsDirty ] );
+            child.ResNode->AddDrawFlag([DrawFlags.IsDirty]);
         }
-        ResNode->AddDrawFlag([ DrawFlags.IsDirty ] );
+        ResNode->AddDrawFlag([DrawFlags.IsDirty]);
     }
 
     public bool CheckCollision(short x, short y, bool inclusive = true)
         => ResNode->CheckCollision(x, y, inclusive);
-    
+
     public bool CheckCollision(Vector2 position, bool inclusive = true)
-        => ResNode->CheckCollision((short) position.X, (short) position.Y, inclusive);
+        => ResNode->CheckCollision((short)position.X, (short)position.Y, inclusive);
 
     public bool CheckCollision(AtkEventData* eventData, bool inclusive = true)
         => ResNode->CheckCollision(eventData, inclusive);

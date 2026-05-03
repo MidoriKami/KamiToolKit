@@ -28,7 +28,7 @@ public unsafe class TreeListCategoryNode : ResNode {
 
     public TreeListCategoryNode() {
         CollisionNode = new CollisionNode {
-            Height = 28.0f, 
+            Height = 28.0f,
         };
         CollisionNode.AttachNode(this);
 
@@ -51,16 +51,16 @@ public unsafe class TreeListCategoryNode : ResNode {
         };
 
         CollapseArrowNode.AddPart(new Part {
-            TexturePath = "ui/uld/ListItemB.tex", 
-            TextureCoordinates = new Vector2(0.0f, 0.0f), 
-            Size = new Vector2(24.0f, 24.0f), 
+            TexturePath = "ui/uld/ListItemB.tex",
+            TextureCoordinates = new Vector2(0.0f, 0.0f),
+            Size = new Vector2(24.0f, 24.0f),
             Id = 0,
         });
 
         CollapseArrowNode.AddPart(new Part {
-            TexturePath = "ui/uld/ListItemB.tex", 
-            TextureCoordinates = new Vector2(24.0f, 0.0f), 
-            Size = new Vector2(24.0f, 24.0f), 
+            TexturePath = "ui/uld/ListItemB.tex",
+            TextureCoordinates = new Vector2(24.0f, 0.0f),
+            Size = new Vector2(24.0f, 24.0f),
             Id = 1,
         });
         CollapseArrowNode.AttachNode(this);
@@ -77,7 +77,7 @@ public unsafe class TreeListCategoryNode : ResNode {
         LabelNode.AttachNode(this);
 
         ChildContainer = new SimpleComponentNode {
-            Position = new Vector2(0.0f, 24.0f + VerticalPadding), 
+            Position = new Vector2(0.0f, 24.0f + VerticalPadding),
         };
         ChildContainer.AttachNode(this);
 
@@ -138,8 +138,8 @@ public unsafe class TreeListCategoryNode : ResNode {
 
     public void AddHeader(ReadOnlySeString label) {
         var newHeaderNode = new TreeListHeaderNode {
-            Size = new Vector2(Width, 24.0f), 
-            String = label, 
+            Size = new Vector2(Width, 24.0f),
+            String = label,
         };
 
         AddNode(newHeaderNode);

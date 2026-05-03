@@ -41,7 +41,7 @@ public static unsafe class AtkUnitBaseExtensions {
 
         private Vector2 GetRootSize() {
             if (addon.RootNode is null) return Vector2.Zero;
-        
+
             return new Vector2(addon.RootNode->Width, addon.RootNode->Height);
         }
 

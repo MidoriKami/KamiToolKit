@@ -8,7 +8,7 @@ using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.ContextMenu;
 
-public unsafe class ContextMenu :  IDisposable {
+public unsafe class ContextMenu : IDisposable {
     private readonly CustomEventInterface contextMenuEventInterface;
 
     private Dictionary<long, ContextMenuItem>? mainMenuEntries;
@@ -107,7 +107,8 @@ public unsafe class ContextMenu :  IDisposable {
             if (item is ContextMenuSubItem subItem) {
                 mainMenuSubMenus.Add(index, subItem);
                 agentContextMenu->AddMenuItem(item.Name, contextMenuEventInterface, index, !item.IsEnabled, submenu: true);
-            } else {
+            }
+            else {
                 mainMenuEntries.Add(index, item);
                 agentContextMenu->AddMenuItem(item.Name, contextMenuEventInterface, index, !item.IsEnabled, submenu: false);
             }

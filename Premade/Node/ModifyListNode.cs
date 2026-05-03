@@ -77,7 +77,7 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
         removeButton.Size = new Vector2(buttonWidth, 24.0f);
         removeButton.Position = new Vector2(buttonWidth * 2.0f + buttonPadding * 2.0f, Height - 24.0f);
     }
-    
+
     public ListConfigDisplayMode DisplayMode {
         get;
         set {
@@ -86,8 +86,8 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
             editButton.IsVisible = value.HasFlag(ListConfigDisplayMode.Edit);
             removeButton.IsVisible = value.HasFlag(ListConfigDisplayMode.Remove);
         }
-    } = ListConfigDisplayMode.Add | ListConfigDisplayMode.Edit |  ListConfigDisplayMode.Remove;
-    
+    } = ListConfigDisplayMode.Add | ListConfigDisplayMode.Edit | ListConfigDisplayMode.Remove;
+
     public List<T> Options {
         get;
         set {
@@ -135,9 +135,11 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
     }
 
     public delegate int ItemCompareDelegate(T left, T right, Enum sortingMode);
+
     public ItemCompareDelegate? ItemComparer { get; set; }
-    
+
     public delegate bool IsSearchMatchDelegate(T obj, string searchString);
+
     public IsSearchMatchDelegate? IsSearchMatch { get; set; }
 
     public T? SelectedOption { get; private set; }
@@ -158,7 +160,7 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
         listNode.OptionsList = listCopy;
         UpdateButtonStates();
     }
-    
+
     private void OnSearchUpdated(string searchString) {
         if (IsSearchMatch is null) return;
 
@@ -169,7 +171,7 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
             listNode.OptionsList = Options.Where(item => IsSearchMatch(item, searchString)).ToList();
         }
     }
-    
+
     private void OnListItemSelected(T? obj) {
         SelectedOption = obj;
         SelectionChanged?.Invoke(SelectedOption);
@@ -181,14 +183,14 @@ public class ModifyListNode<T, TU> : SimpleComponentNode where TU : ListItemNode
         AddNewEntry?.Invoke();
         RefreshList();
     }
-    
+
     private void OnEditClicked() {
         if (SelectedOption is null) return;
-        
+
         EditEntry?.Invoke(SelectedOption);
         RefreshList();
     }
-    
+
     private void OnRemoveClicked() {
         if (SelectedOption is null) return;
 

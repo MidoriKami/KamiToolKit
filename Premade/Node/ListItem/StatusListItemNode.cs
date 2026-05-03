@@ -11,7 +11,7 @@ public class StatusListItemNode : ListItemNode<Status>, IListItemNode {
 
     protected readonly IconImageNode IconImageNode;
     protected readonly TextNode StatusLabelNode;
-    
+
     public StatusListItemNode() {
         IconImageNode = new IconImageNode {
             FitTexture = true,
@@ -32,8 +32,8 @@ public class StatusListItemNode : ListItemNode<Status>, IListItemNode {
 
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
-        
-        IconImageNode.Size = new Vector2((Height - 4.0f) * 0.75f , Height - 4.0f);
+
+        IconImageNode.Size = new Vector2((Height - 4.0f) * 0.75f, Height - 4.0f);
         IconImageNode.Position = new Vector2(2.0f, 2.0f);
 
         StatusLabelNode.Size = new Vector2(Width - IconImageNode.Width - 6.0f, Height);

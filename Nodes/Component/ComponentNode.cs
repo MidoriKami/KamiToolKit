@@ -19,7 +19,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     public sealed override AtkUldComponentDataBase* DataBase => Node->Component->UldManager.ComponentData;
 
     protected ComponentNode() : base(NodeType.Component) {
-        Node->Component = (AtkComponentBase*) NativeMemoryHelper.Create<T>();
+        Node->Component = (AtkComponentBase*)NativeMemoryHelper.Create<T>();
         Node->Component->UldManager.ComponentData = (AtkUldComponentDataBase*)NativeMemoryHelper.UiAlloc<TU>();
 
         ComponentBase->Initialize();
@@ -27,7 +27,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         CollisionNode = new CollisionNode {
             NodeId = 1,
             LinkedComponent = ComponentBase,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | 
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision |
                         NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents | NodeFlags.Fill,
         };
 

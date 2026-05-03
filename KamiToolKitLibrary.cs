@@ -41,7 +41,7 @@ public static class KamiToolKitLibrary {
         Services.Log.MinimumLogLevel = LogEventLevel.Verbose;
 
         Services.Log.Info($"KamiToolKit initialized for {PluginInterface.InternalName} Default SubTitle: '{defaultWindowSubtitle}'");
-        
+
         NativeAddon.InitializeCloseCallback();
     }
 
@@ -58,12 +58,12 @@ public static class KamiToolKitLibrary {
     public static void SetCurrentCulture(CultureInfo culture) {
         CurrentCulture = culture;
     }
-    
+
     /// <summary>
     /// Alias for Cleanup
     /// </summary>
     public static void Dispose() => Cleanup();
-    
+
     /// <summary>
     /// Alias for Cleanup
     /// </summary>

@@ -8,7 +8,7 @@ public abstract unsafe class WindowNodeBase : ComponentNode<AtkComponentWindow, 
     protected WindowNodeBase() {
         SetInternalComponentType(ComponentType.Window);
     }
-    
+
     public abstract Vector2 ContentSize { get; }
     public abstract Vector2 ContentStartPosition { get; }
     public abstract float HeaderHeight { get; }

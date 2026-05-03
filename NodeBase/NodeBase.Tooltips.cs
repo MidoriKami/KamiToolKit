@@ -127,7 +127,7 @@ public unsafe partial class NodeBase {
             tooltipArgs.ActionArgs.Id = (int)ActionTooltip;
         }
 
-        if (tooltipType.HasFlag(AtkTooltipType.Item) && InventoryItemTooltip is {} inventoryTooltip) {
+        if (tooltipType.HasFlag(AtkTooltipType.Item) && InventoryItemTooltip is { } inventoryTooltip) {
             tooltipArgs.ItemArgs.Kind = DetailKind.InventoryItem;
             tooltipArgs.ItemArgs.InventoryType = inventoryTooltip.Inventory;
             tooltipArgs.ItemArgs.Slot = inventoryTooltip.Slot;
@@ -136,7 +136,7 @@ public unsafe partial class NodeBase {
         }
         else if (tooltipType.HasFlag(AtkTooltipType.Item) && InventoryItemTooltip is null) {
             tooltipArgs.ItemArgs.Kind = DetailKind.Item;
-            tooltipArgs.ItemArgs.ItemId = (int) ItemTooltip;
+            tooltipArgs.ItemArgs.ItemId = (int)ItemTooltip;
             tooltipArgs.ItemArgs.BuyQuantity = -1;
             tooltipArgs.ItemArgs.Flag1 = 0;
         }

@@ -76,10 +76,10 @@ public class GifImageNode : ResNode {
 
                 unsafe {
                     var newPart = ImageNode.AddPart(new Part {
-                        Size = texture.Size, 
+                        Size = texture.Size,
                         Id = currentPartId++,
                     });
-                
+
                     newPart->LoadTexture(texture);
                 }
             }
@@ -98,7 +98,7 @@ public class GifImageNode : ResNode {
                 .EndFrameSet()
                 .Build());
 
-            Timeline?.PlayAnimation( AtkTimelineJumpBehavior.LoopForever, 200);
+            Timeline?.PlayAnimation(AtkTimelineJumpBehavior.LoopForever, 200);
 
             await Services.Framework.RunOnFrameworkThread(() => {
                 OnGifLoaded?.Invoke();

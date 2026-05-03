@@ -30,14 +30,14 @@ public static unsafe class AtkUldManagerExtensions {
         /// </summary>
         public void AddNodeToObjectList(NodeBase node) {
             manager.AddNodeToObjectList(node.ResNode);
-            
+
             foreach (var child in NodeBase.GetLocalChildren(node)) {
                 manager.AddNodeToObjectList(child.ResNode);
             }
 
             manager.UpdateDrawNodeList();
         }
-        
+
         public void AddNodeToObjectList(AtkResNode* newNode) {
             if (newNode is null) return;
 
@@ -118,14 +118,14 @@ public static unsafe class AtkUldManagerExtensions {
             return max;
         }
 
-        public Span<Pointer<AtkResNode>> ObjectNodeSpan 
+        public Span<Pointer<AtkResNode>> ObjectNodeSpan
             => new(manager.Objects->NodeList, manager.Objects->NodeCount);
-        
+
         public T* SearchNodeById<T>(uint nodeId) where T : unmanaged {
             foreach (var node in manager.Nodes) {
                 if (node.Value is not null) {
                     if (node.Value->NodeId == nodeId)
-                        return (T*) node.Value;
+                        return (T*)node.Value;
                 }
             }
 

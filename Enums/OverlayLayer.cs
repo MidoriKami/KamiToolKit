@@ -9,19 +9,19 @@ public enum OverlayLayer {
     /// </summary>
     [Description("KTK_Overlay_Back")]
     Background,
-    
+
     /// <summary>
     /// Above nameplate layer
     /// </summary>
     [Description("KTK_Overlay_Middle")]
     BehindUserInterface,
-    
+
     /// <summary>
     /// Above most windows but below certain popup windows like battle text
     /// </summary>
     [Description("KTK_Overlay_Higher")]
     AboveUserInterface,
-    
+
     /// <summary>
     /// Above everything, use with caution
     /// </summary>

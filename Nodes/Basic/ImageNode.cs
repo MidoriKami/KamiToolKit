@@ -27,19 +27,19 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
 
     public uint PartId {
         get => Node->PartId;
-        set => Node->PartId = (ushort) value;
+        set => Node->PartId = (ushort)value;
     }
 
     public WrapMode WrapMode {
-        get => (WrapMode) Node->WrapMode;
-        set => Node->WrapMode = (byte) value;
+        get => (WrapMode)Node->WrapMode;
+        set => Node->WrapMode = (byte)value;
     }
 
     public ImageNodeFlags ImageNodeFlags {
         get => Node->Flags;
         set => Node->Flags = value;
     }
-    
+
     /// <summary>
     ///     When set to true, will cause the loaded texture to
     ///     fit itself to the size of the node
@@ -55,7 +55,7 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
 
     public AtkUldPart* AddPart(Part part)
         => PartsList.Add(part);
-    
+
     public void AddPart(params Part[] parts)
         => PartsList.Add(parts);
 }

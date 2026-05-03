@@ -13,7 +13,7 @@ public unsafe class IconImageNode : SimpleImageNode {
     public IconImageNode() {
         TextureSize = new Vector2(32.0f, 32.0f);
     }
-    
+
     public uint IconId {
         get;
         set {
@@ -23,7 +23,7 @@ public unsafe class IconImageNode : SimpleImageNode {
             }
         }
     }
-    
+
     public bool IsTextureReady => PartsList[0]->IsTextureReady;
     public uint? LoadedIconId => Node->IconId;
 }

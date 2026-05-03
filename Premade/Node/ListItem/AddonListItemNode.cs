@@ -8,7 +8,7 @@ namespace KamiToolKit.Premade.Node.ListItem;
 
 public unsafe class AddonListItemNode : ListItemNode<Pointer<AtkUnitBase>>, IListItemNode {
     public static float ItemHeight => 48.0f;
-    
+
     protected readonly IconImageNode IconNode;
     protected readonly TextNode LabelTextNode;
 
@@ -31,7 +31,7 @@ public unsafe class AddonListItemNode : ListItemNode<Pointer<AtkUnitBase>>, ILis
 
         CollisionNode.ShowClickableCursor = true;
     }
-    
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -41,11 +41,11 @@ public unsafe class AddonListItemNode : ListItemNode<Pointer<AtkUnitBase>>, ILis
         LabelTextNode.Size = new Vector2(Width - IconNode.Width - 6.0f, Height);
         LabelTextNode.Position = new Vector2(IconNode.Bounds.Right + 6.0f, 0.0f);
     }
-    
+
     protected override void SetNodeData(Pointer<AtkUnitBase> itemData) {
         if (itemData.Value is null) return;
 
-        IconNode.IconId = itemData.Value->IsVisible ? (uint) 60071 : 60072;
+        IconNode.IconId = itemData.Value->IsVisible ? (uint)60071 : 60072;
         LabelTextNode.String = itemData.Value->NameString;
     }
 

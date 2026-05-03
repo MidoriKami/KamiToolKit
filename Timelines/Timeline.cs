@@ -88,7 +88,7 @@ public unsafe class Timeline : IDisposable {
 
     public void PlayAnimation(AtkTimelineJumpBehavior behavior, int labelId, bool force = false) {
         if (InternalTimeline is null) return;
-        
+
         if (InternalTimeline->ActiveLabelId != labelId || force) {
             InternalTimeline->PlayAnimation(behavior, (ushort)labelId);
         }
@@ -96,7 +96,7 @@ public unsafe class Timeline : IDisposable {
 
     public void StopAnimation() {
         if (InternalTimeline is null) return;
-        
+
         InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, 0);
     }
 

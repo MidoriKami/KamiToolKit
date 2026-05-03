@@ -24,7 +24,7 @@ public class IconButtonNode : ButtonBase {
         BackgroundNode.AttachNode(this);
 
         ImageNode = new IconImageNode {
-            TextureSize = new Vector2(32.0f, 32.0f), 
+            TextureSize = new Vector2(32.0f, 32.0f),
             FitTexture = true,
         };
         ImageNode.AttachNode(this);

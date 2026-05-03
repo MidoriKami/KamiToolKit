@@ -11,6 +11,7 @@ using KamiToolKit.Dalamud;
 namespace KamiToolKit.Controllers;
 
 public class NativeListController : NativeListController<AtkUnitBase, ListItemData>;
+
 public class NativeListController<T> : NativeListController<T, ListItemData> where T : unmanaged;
 
 /// <summary>
@@ -28,17 +29,17 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     /// If no function is defined it will be assumed that each line should be edited.
     /// </remarks>
     public ShouldModifyElementHandler? ShouldModifyElement { get; init; }
-    
+
     /// <summary>
     /// Define how specifically you want the list item to be modified.
     /// </summary>
     public UpdateElementHandler? UpdateElement { get; init; }
-    
+
     /// <summary>
     /// Define how specifically you want the list item to be reset.
     /// </summary>
     public ResetElementHandler? ResetElement { get; init; }
-    
+
     /// <summary>
     /// Function that gets the root ComponentItemRenderer to extract the populator functions from.
     /// </summary>
@@ -54,7 +55,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, AddonName, OnAddonFinalize);
 
         Services.Framework.RunOnFrameworkThread(() => {
-            var addon = (T*) RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
+            var addon = (T*)RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
             if (addon is not null) {
                 Services.Log.Warning("Caution: ListController was loaded after list was initialized, data may be stale.");
                 LoadPopulators(addon);
@@ -75,10 +76,10 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     public void Dispose() {
         onListPopulate?.Dispose();
         onListPopulate = null;
-        
+
         onRendererPopulate?.Dispose();
         onRendererPopulate = null;
-        
+
         Disable();
     }
 
@@ -115,14 +116,14 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
                 onListPopulate!.Original(unitBase, itemInfo, nodeList);
                 return;
             }
-            
+
             var listItemData = new TU {
                 ItemInfo = itemInfo,
                 NodeList = nodeList,
                 ItemIndex = itemInfo->ListItemIndex,
                 NodeId = itemInfo->ListItem->Renderer->OwnerNode->NodeId,
             };
-            
+
             var shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
 
             if (!shouldModifyElement) {
@@ -131,7 +132,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
                     ModifiedIndexes.Remove(itemInfo->ListItem->Renderer->OwnerNode->NodeId);
                 }
             }
-            
+
             onListPopulate!.Original(unitBase, itemInfo, nodeList);
 
             if (shouldModifyElement) {
@@ -143,7 +144,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
             Services.Log.Exception(e);
         }
     }
-    
+
     private void OnRendererPopulateDetour(AtkEventListener* unitBase, int listItemIndex, AtkResNode** nodeList, AtkComponentListItemRenderer* listItemRenderer) {
         try {
             var listItemNode = listItemRenderer->OwnerNode;
@@ -160,7 +161,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
                 ItemIndex = listItemIndex,
                 NodeId = listItemRenderer->OwnerNode->NodeId,
             };
-            
+
             var shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
 
             if (!shouldModifyElement) {
@@ -169,7 +170,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
                     ModifiedIndexes.Remove(listItemRenderer->OwnerNode->NodeId);
                 }
             }
-            
+
             onRendererPopulate!.Original(unitBase, listItemIndex, nodeList, listItemRenderer);
 
             if (shouldModifyElement) {
@@ -183,7 +184,10 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     }
 
     public delegate bool ShouldModifyElementHandler(T* unitBase, TU listItem);
+
     public delegate AtkComponentListItemRenderer* GetPopulatorNodeHandler(T* addon);
+
     public delegate void UpdateElementHandler(T* unitBase, TU listItem);
+
     public delegate void ResetElementHandler(T* unitBase, TU listItem);
 }

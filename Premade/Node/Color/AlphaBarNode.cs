@@ -13,7 +13,7 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
     public readonly ImGuiImageNode AlphaBarBackgroundNode;
     public readonly ImGuiImageNode AlphaBarGradientNode;
     public readonly ImGuiImageNode AlphaBarSelectorNode;
-    
+
     private readonly ViewportEventListener alphaEventListener;
     private bool isAlphaDragging;
 
@@ -37,7 +37,7 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
         AlphaBarSelectorNode.AttachNode(this);
         AlphaBarSelectorNode.AddEvent(AtkEventType.MouseDown, OnAlphaBarMouseDown);
     }
-    
+
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             base.Dispose(disposing, isNativeDestructor);
@@ -63,7 +63,7 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
             isAlphaDragging = true;
         }
     }
-    
+
     private void AlphaSliderEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
         switch (eventType) {
             case AtkEventType.MouseUp:

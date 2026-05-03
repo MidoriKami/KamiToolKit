@@ -29,8 +29,8 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         DragDropBackgroundNode.AttachNode(this);
 
         IconNode = new IconNode {
-            NodeId = 2, 
-            Size = new Vector2(44.0f, 48.0f), 
+            NodeId = 2,
+            Size = new Vector2(44.0f, 48.0f),
             NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         IconNode.AttachNode(this);
@@ -238,7 +238,7 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
     // Show fancy tooltip for the currently stored data
     public override void ShowTooltip() {
         if (AtkStage.Instance()->DragDropManager.IsDragging) return;
-        ActionTooltip = (uint) Payload.Int2;
+        ActionTooltip = (uint)Payload.Int2;
 
         base.ShowTooltip();
     }

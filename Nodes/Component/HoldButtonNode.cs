@@ -27,8 +27,8 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
         };
         BackgroundNode.AttachNode(this);
 
-        ProgressNode = new HoldButtonProgressNode { 
-            Size = new Vector2(100.0f, 36.0f), 
+        ProgressNode = new HoldButtonProgressNode {
+            Size = new Vector2(100.0f, 36.0f),
         };
         ProgressNode.AttachNode(this);
 

@@ -81,20 +81,20 @@ public class ListBoxNode : LayoutListNode {
 
         Border.Size = Size + new Vector2(30.0f, 30.0f);
         Border.Position = -new Vector2(15.0f, 15.0f);
-        
+
         RecalculateLayout();
     }
 
     protected override void OnRecalculateLayout() {
         var runningPosition = LayoutOrientation switch {
-            LayoutOrientation.Vertical when LayoutAnchor is LayoutAnchor.TopLeft or LayoutAnchor.TopRight 
+            LayoutOrientation.Vertical when LayoutAnchor is LayoutAnchor.TopLeft or LayoutAnchor.TopRight
                 => GetLayoutStartPosition() + new Vector2(0.0f, FirstItemSpacing),
 
-            LayoutOrientation.Vertical when LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.BottomRight 
+            LayoutOrientation.Vertical when LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.BottomRight
                 => GetLayoutStartPosition() - new Vector2(0.0f, FirstItemSpacing),
 
-            LayoutOrientation.Horizontal when LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.TopLeft 
-                =>  GetLayoutStartPosition() + new Vector2(FirstItemSpacing, 0.0f),
+            LayoutOrientation.Horizontal when LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.TopLeft
+                => GetLayoutStartPosition() + new Vector2(FirstItemSpacing, 0.0f),
 
             LayoutOrientation.Horizontal when LayoutAnchor is LayoutAnchor.BottomRight or LayoutAnchor.TopRight
                 => GetLayoutStartPosition() - new Vector2(FirstItemSpacing, 0.0f),
@@ -105,21 +105,21 @@ public class ListBoxNode : LayoutListNode {
         foreach (var node in NodeList.Where(node => node.IsVisible)) {
             if (LayoutOrientation is LayoutOrientation.Vertical) {
                 switch (LayoutAnchor) {
-                    case LayoutAnchor.TopLeft: 
+                    case LayoutAnchor.TopLeft:
                         node.Position = runningPosition;
                         runningPosition.Y += node.Height * node.Scale.Y + ItemSpacing;
                         break;
-            
-                    case LayoutAnchor.TopRight: 
+
+                    case LayoutAnchor.TopRight:
                         node.Position = runningPosition - new Vector2(node.Width * node.Scale.X, 0.0f);
                         runningPosition.Y += node.Height * node.Scale.Y + ItemSpacing;
                         break;
-            
+
                     case LayoutAnchor.BottomLeft:
                         node.Position = runningPosition - new Vector2(0.0f, node.Height * node.Scale.Y);
                         runningPosition.Y -= node.Height * node.Scale.Y + ItemSpacing;
                         break;
-            
+
                     case LayoutAnchor.BottomRight:
                         node.Position = runningPosition - new Vector2(node.Width * node.Scale.X, node.Height * node.Scale.Y);
                         runningPosition.Y -= node.Height * node.Scale.Y + ItemSpacing;
@@ -132,17 +132,17 @@ public class ListBoxNode : LayoutListNode {
                         node.Position = runningPosition;
                         runningPosition.X += node.Width * node.Scale.X + ItemSpacing;
                         break;
-            
+
                     case LayoutAnchor.TopRight:
                         node.Position = runningPosition - new Vector2(node.Width * node.Scale.X, 0.0f);
                         runningPosition.X -= node.Width * node.Scale.X + ItemSpacing;
                         break;
-                
+
                     case LayoutAnchor.BottomLeft:
                         node.Position = runningPosition - new Vector2(0.0f, node.Height * node.Scale.Y);
                         runningPosition.X += node.Width * node.Scale.X + ItemSpacing;
                         break;
-                
+
                     case LayoutAnchor.BottomRight:
                         node.Position = runningPosition - new Vector2(node.Width * node.Scale.X, node.Height * node.Scale.Y);
                         runningPosition.X -= node.Width * node.Scale.X + ItemSpacing;

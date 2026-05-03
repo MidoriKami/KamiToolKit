@@ -14,7 +14,7 @@ public static unsafe class AtkUldPartExtensions {
         public bool IsTextureReady => part.UldAsset is not null && part.UldAsset->AtkTexture.IsTextureReady();
         public Vector2 LoadedTextureSize => part.GetActualTextureSize();
         public string LoadedPath => part.GetLoadedPath();
-        
+
         public void LoadTexture(string path, bool resolveTheme = true) {
             try {
                 if (part.UldAsset is null) return;
@@ -39,7 +39,7 @@ public static unsafe class AtkUldPartExtensions {
 
         public void LoadIcon(uint iconId)
             => part.UldAsset->AtkTexture.LoadIconTexture(iconId, GetIconSubFolder(iconId));
-        
+
         private Vector2 GetActualTextureSize() {
             if (part.UldAsset is null) return Vector2.Zero;
             if (!part.UldAsset->AtkTexture.IsTextureReady()) return Vector2.Zero;
@@ -53,7 +53,7 @@ public static unsafe class AtkUldPartExtensions {
 
         public void LoadTexture(Texture* texture) {
             if (part.UldAsset is null) return;
-        
+
             part.TryUnloadTexture();
             part.UldAsset->AtkTexture.KernelTexture = texture;
             part.UldAsset->AtkTexture.TextureType = TextureType.KernelTexture;
@@ -62,10 +62,10 @@ public static unsafe class AtkUldPartExtensions {
         public void LoadTexture(IDalamudTextureWrap textureWrap) {
             var texturePointer = (Texture*)Services.TextureProvider.ConvertToKernelTexture(textureWrap, true);
             if (texturePointer is null) return;
-            
+
             part.LoadTexture(texturePointer);
         }
-        
+
         private string GetLoadedPath() {
             if (part.UldAsset is null) return string.Empty;
             if (part.UldAsset->AtkTexture.Resource is null) return string.Empty;
@@ -95,11 +95,11 @@ public static unsafe class AtkUldPartExtensions {
         var textureManager = AtkStage.Instance()->AtkTextureResourceManager;
         Span<byte> buffer = stackalloc byte[0x100];
         buffer.Clear();
-        var bytePointer = (byte*) Unsafe.AsPointer(ref buffer[0]);
+        var bytePointer = (byte*)Unsafe.AsPointer(ref buffer[0]);
 
         var textureScale = textureManager->DefaultTextureScale;
         var targetFolder = (IconSubFolder)textureManager->IconLanguage;
-        
+
         // Try to resolve the path using the current language
         AtkTexture.GetIconPath(bytePointer, iconId, textureScale, targetFolder);
         var pathResult = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(bytePointer).String;

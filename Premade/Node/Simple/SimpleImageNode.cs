@@ -59,7 +59,7 @@ public unsafe class SimpleImageNode : ImageNode {
 
     public void LoadTexture(string path, bool resolveTheme = true)
         => PartsList[0]->LoadTexture(path, resolveTheme);
-    
+
     public void LoadIcon(uint iconId)
         => PartsList[0]->LoadIcon(iconId);
 }

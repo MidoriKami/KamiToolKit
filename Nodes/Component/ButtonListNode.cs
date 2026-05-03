@@ -39,8 +39,8 @@ public abstract unsafe class ButtonListNode<T> : ListNode {
         ContainerNode.AttachNode(this);
 
         ScrollBarNode = new ScrollBarNode {
-            Position = new Vector2(0.0f, 9.0f), 
-            Size = new Vector2(8.0f, 0.0f), 
+            Position = new Vector2(0.0f, 9.0f),
+            Size = new Vector2(8.0f, 0.0f),
             OnValueChanged = OnScrollUpdate,
             HideWhenDisabled = true,
         };
@@ -50,7 +50,7 @@ public abstract unsafe class ButtonListNode<T> : ListNode {
 
         ContainerNode.AddEvent(AtkEventType.MouseWheel, OnMouseWheel);
     }
-    
+
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             if (isFocusSet && !isNativeDestructor) {
@@ -143,7 +143,7 @@ public abstract unsafe class ButtonListNode<T> : ListNode {
                 NodeId = (uint)index,
                 Size = new Vector2(Width - 25.0f, NodeHeight),
                 Position = new Vector2(8.0f, NodeHeight * index + 9.0f),
-                
+
                 String = $"Button {index}",
                 OnClick = () => OnOptionClick(index),
             };

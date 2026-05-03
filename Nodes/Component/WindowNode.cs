@@ -64,8 +64,8 @@ public unsafe class WindowNode : WindowNodeBase {
         BackgroundImageNode.AttachNode(this);
 
         HeaderContainerNode = new ResNode {
-            NodeId = 2, 
-            Size = new Vector2(477.0f, 38.0f), 
+            NodeId = 2,
+            Size = new Vector2(477.0f, 38.0f),
         };
         HeaderContainerNode.AttachNode(this);
 

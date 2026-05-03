@@ -17,7 +17,7 @@ public partial class NativeAddon : IDisposable {
             GC.SuppressFinalize(this);
             return;
         }
-        
+
         if (!isDisposed) {
             Services.Log.Debug($"Disposing addon {GetType()}");
 

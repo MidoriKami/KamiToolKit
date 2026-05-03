@@ -8,7 +8,7 @@ namespace KamiToolKit.Premade.Node.ListItem;
 
 public class ItemListItemNode : ListItemNode<Item>, IListItemNode {
     public static float ItemHeight => 32.0f;
-    
+
     protected readonly IconImageNode IconNode;
     protected readonly TextNode LabelTextNode;
     protected readonly TextNode SubLabelTextNode;
@@ -51,7 +51,7 @@ public class ItemListItemNode : ListItemNode<Item>, IListItemNode {
 
         CollisionNode.ShowClickableCursor = true;
     }
-    
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -67,10 +67,10 @@ public class ItemListItemNode : ListItemNode<Item>, IListItemNode {
         IdTextNode.Size = new Vector2(30.0f, Height / 2.0f);
         IdTextNode.Position = new Vector2(Width - 30.0f, 0.0f);
     }
-    
+
     protected override void SetNodeData(Item itemData) {
         if (itemData.RowId is 0) return;
-        
+
         IconNode.IconId = itemData.Icon;
         LabelTextNode.String = itemData.Name.ToString();
         SubLabelTextNode.String = itemData.ItemSearchCategory.ValueNullable?.Name.ToString() ?? string.Empty;

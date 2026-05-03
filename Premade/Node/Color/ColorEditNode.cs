@@ -12,7 +12,7 @@ public class ColorEditNode : SimpleOverlayNode {
 
     private readonly ColorPreviewNode previewNode;
     private readonly TextNode labelNode;
-    
+
     private ColorPickerAddon? colorPicker = new() {
         InternalName = "ColorPicker",
         Title = "Color Picker",
@@ -38,7 +38,7 @@ public class ColorEditNode : SimpleOverlayNode {
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         base.Dispose(disposing, isNativeDestructor);
-        
+
         colorPicker?.Dispose();
         colorPicker = null;
     }
@@ -52,12 +52,12 @@ public class ColorEditNode : SimpleOverlayNode {
         labelNode.Size = new Vector2(Width - Height - 12.0f, Height);
         labelNode.Position = new Vector2(previewNode.Bounds.Right + 12.0f, 0.0f);
     }
-    
+
     private void OnClicked() {
         var originalColor = CurrentColor;
         colorPicker?.DefaultColor = DefaultColor;
         colorPicker?.InitialColor = CurrentColor;
-            
+
         colorPicker?.OnColorPreviewed = color => {
             previewNode.Color = color;
             CurrentColor = color;
@@ -88,7 +88,7 @@ public class ColorEditNode : SimpleOverlayNode {
     }
 
     public Vector4? DefaultColor { get; set; }
-    
+
     public Action? OnColorCancelled { get; set; }
     public Action<Vector4>? OnColorPreviewed { get; set; }
     public Action<Vector4>? OnColorConfirmed { get; set; }

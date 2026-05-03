@@ -15,7 +15,7 @@ public class ColorPreviewWithInput : SimpleComponentNode {
     public ColorPreviewWithInput() {
         ColorPreviewNode = new ColorPreviewNode();
         ColorPreviewNode.AttachNode(this);
-        
+
         ColorInputNode = new TextInputNode {
             AutoSelectAll = true,
             OnInputComplete = OnTextInputComplete,
@@ -35,7 +35,7 @@ public class ColorPreviewWithInput : SimpleComponentNode {
 
     public Action<ColorHelpers.HsvaColor>? OnHsvaColorChanged { get; set; }
     public Action<Vector4>? OnColorChanged { get; set; }
-    
+
     public ReadOnlySeString String {
         get => ColorInputNode.String;
         set => ColorInputNode.String = value;
@@ -83,7 +83,7 @@ public class ColorPreviewWithInput : SimpleComponentNode {
         OnColorChanged?.Invoke(newColor);
         OnHsvaColorChanged?.Invoke(ColorHelpers.RgbaToHsv(newColor));
     }
-    
+
     private void UpdateColorText()
         => ColorInputNode.String = $"#{(int)(Color.X * 255):X2}{(int)(Color.Y * 255):X2}{(int)(Color.Z * 255):X2}{(int)(Color.W * 255):X2}";
 }

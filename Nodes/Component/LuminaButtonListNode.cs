@@ -9,7 +9,7 @@ public class LuminaButtonListNode<T> : ButtonListNode<T> where T : struct, IExce
     public delegate string GetLabel(T excelRow);
 
     public delegate bool ShouldShow(T excelRow);
-    
+
     public GetLabel? LabelFunction {
         get;
         set {

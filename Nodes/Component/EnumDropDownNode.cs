@@ -8,7 +8,7 @@ public class EnumDropDownNode<T> : DropDownNode<EnumButtonListNode<T>, T> where 
     public EnumDropDownNode() {
         OptionListNode.OnOptionSelected += OptionSelectedHandler;
     }
-    
+
     public Action<T>? OnOptionSelected { get; set; }
 
     public required List<T>? Options {
@@ -25,7 +25,7 @@ public class EnumDropDownNode<T> : DropDownNode<EnumButtonListNode<T>, T> where 
         UpdateLabel(option);
         Toggle(false);
     }
-    
+
     protected override void UpdateLabel(T? option) {
         LabelNode.String = option?.Description;
     }

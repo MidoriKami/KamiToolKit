@@ -7,7 +7,7 @@ namespace KamiToolKit.Premade.Node.ListItem;
 
 public abstract class LabelListItemNode<T> : ListItemNode<T>, IListItemNode {
     public static float ItemHeight => 24.0f;
-    
+
     protected readonly TextNode StringNode;
 
     protected LabelListItemNode() {

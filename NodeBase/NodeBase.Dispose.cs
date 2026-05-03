@@ -71,7 +71,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             LogIndented("Disposing Timeline");
             Timeline?.Dispose();
             ResNode->Timeline = null;
-            
+
             LogIndented("Invoking Native Dispose");
             Dispose(true, false);
             GC.SuppressFinalize(this);
@@ -84,7 +84,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         catch (Exception e) {
             Services.Log.Exception(e);
             logIndent = 0;
-        } 
+        }
     }
 
     private static void LogIndented(string message)
@@ -105,7 +105,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             Services.Log.Warning($"Forcing disposal of: {node.GetType()}");
         }
     }
-    
+
     /// <summary>
     /// Warning, this is only to ensure there are no memory leaks.
     /// Ensure you have detached nodes safely from native ui before disposing.
@@ -135,7 +135,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// resources that exist in managed spaces, as the game has already cleaned up everything else.
     /// </param>
     protected virtual void Dispose(bool disposing, bool isNativeDestructor) {
-        
+
         // Dispose of managed resources that must be disposed regardless of how dispose is invoked
         DisposeEvents();
         DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
@@ -155,7 +155,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     protected void BuildVirtualTable() {
         // Back up original destructor pointer
         originalDestructorFunction = ResNode->VirtualTable->Destroy;
-        
+
         // Overwrite virtual table with a custom copy,
         // Note: Currently there are only 2 vfuncs, but there's no harm in copying more for if they ever add more vfuncs to the game.
         virtualTable = (AtkResNode.AtkResNodeVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 4);
@@ -166,7 +166,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         destructorFunction = DestructorDetour;
 
         // Replace native destructor with
-        virtualTable->Destroy = (delegate* unmanaged<AtkResNode*, bool, void>) Marshal.GetFunctionPointerForDelegate(destructorFunction);
+        virtualTable->Destroy = (delegate* unmanaged<AtkResNode*, bool, void>)Marshal.GetFunctionPointerForDelegate(destructorFunction);
     }
 
     private void DestructorDetour(AtkResNode* thisPtr, bool free) {
@@ -182,7 +182,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     protected void InvokeOriginalDestructor(AtkResNode* thisPtr, bool free) {
         if (virtualTable is null) return; // Shouldn't be possible, but just in case.
-        
+
         originalDestructorFunction(thisPtr, free);
         NativeMemoryHelper.Free(virtualTable, 0x8 * 4);
         virtualTable = null;

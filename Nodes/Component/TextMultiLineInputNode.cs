@@ -20,7 +20,7 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
 
         CollisionNode.AddEvent(AtkEventType.InputReceived, InputComplete);
 
-        Component->InputSanitizationFlags = AllowedEntities.UppercaseLetters | AllowedEntities.LowercaseLetters | AllowedEntities.Numbers | 
+        Component->InputSanitizationFlags = AllowedEntities.UppercaseLetters | AllowedEntities.LowercaseLetters | AllowedEntities.Numbers |
                                             AllowedEntities.SpecialCharacters | AllowedEntities.CharacterList | AllowedEntities.OtherCharacters |
                                             AllowedEntities.Payloads | AllowedEntities.Unknown9;
 
@@ -56,19 +56,19 @@ public unsafe class TextMultiLineInputNode : TextInputNode {
             base.OnInputReceived += value;
         }
     }
-    
+
     public bool AutoUpdateHeight { get; set; }
-    
+
     public Action<float>? HeightChanged { get; set; }
 
     private void UpdateHeightForContent() {
         if (!AutoUpdateHeight) return;
-        
+
         var text = String;
         var lineCount = Math.Max(1, text.ToString().Split('\r', '\n').Length);
         var lineHeight = CurrentTextNode.LineSpacing;
         var contentHeight = Math.Max(Height, lineCount * lineHeight + 20);
-        
+
         var oldHeight = Height;
         Height = contentHeight;
 

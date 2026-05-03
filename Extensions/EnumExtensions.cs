@@ -17,12 +17,12 @@ internal static class EnumExtensions {
                 var translatedString = KamiToolKitLibrary.ResourceManager.GetString(attribute?.Description ?? string.Empty, KamiToolKitLibrary.CurrentCulture);
                 if (translatedString is not null) return translatedString;
             }
-            
+
             if (attribute is not null) return attribute.Description;
             return enumValue.ToString();
         }
     }
-    
+
     extension<T>(ref T flagValue) where T : unmanaged, Enum {
         public void SetFlags(params T[] flags) {
             foreach (var flag in flags) {

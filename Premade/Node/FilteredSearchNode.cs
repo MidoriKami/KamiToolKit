@@ -22,6 +22,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
     public Enum SortMode { get; private set; } = DefaultSortOptions.Unset;
 
     public delegate void SearchUpdated(string searchString);
+
     public delegate void SortUpdated(Enum sortingMode, bool reversed);
 
     public SearchWidget() {
@@ -36,12 +37,12 @@ public unsafe class SearchWidget : SimpleComponentNode {
             MaxListOptions = 0,
             Options = [],
             IsVisible = false,
-            SelectedOption = (DefaultSortOptions) SortMode == DefaultSortOptions.Unset ? DefaultSortOptions.Alphabetical : SortMode,
+            SelectedOption = (DefaultSortOptions)SortMode == DefaultSortOptions.Unset ? DefaultSortOptions.Alphabetical : SortMode,
             OnOptionSelected = DropDownChanged,
         };
         SortOrderDropDown.AttachNode(this);
 
-        ReverseButtonNode = new CircleButtonNode {            
+        ReverseButtonNode = new CircleButtonNode {
             Icon = ButtonIcon.Sort,
             OnClick = OnReverseButtonClicked,
             TextTooltip = "Reverse Sort Direction",
@@ -99,7 +100,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
             SortOrderDropDown.MaxListOptions = value.Count / 2 + 1;
             SortOrderDropDown.IsVisible = value.Count > 0;
             ReverseButtonNode.IsVisible = value.Count > 0;
-            
+
             ResNode->SetHeight((ushort)(value.Count > 0 ? 69 : 38));
 
             if (SortingOptions.Count > 0) {

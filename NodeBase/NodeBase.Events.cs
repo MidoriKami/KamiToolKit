@@ -74,7 +74,7 @@ public abstract unsafe partial class NodeBase {
             eventHandlers[eventType].OnReceiveEventDelegate += callback;
         }
     }
-    
+
     public void RemoveEvent(AtkEventType eventType) {
         if (nodeEventListener is null) return;
 
@@ -95,7 +95,7 @@ public abstract unsafe partial class NodeBase {
 
         if (eventHandlers.TryGetValue(eventType, out var handler)) {
             handler.OnActionDelegate -= callback;
-            
+
             if (handler.OnReceiveEventDelegate is null && handler.OnActionDelegate is null) {
                 RemoveEvent(eventType);
             }
@@ -107,7 +107,7 @@ public abstract unsafe partial class NodeBase {
 
         if (eventHandlers.TryGetValue(eventType, out var handler)) {
             handler.OnReceiveEventDelegate -= callback;
-            
+
             if (handler.OnReceiveEventDelegate is null && handler.OnActionDelegate is null) {
                 RemoveEvent(eventType);
             }
@@ -129,7 +129,7 @@ public abstract unsafe partial class NodeBase {
         if (!IsVisible) return;
 
         if (eventHandlers.TryGetValue(eventType, out var handler)) {
-            
+
             foreach (var noArgHandler in Delegate.EnumerateInvocationList(handler.OnActionDelegate)) {
                 try {
                     noArgHandler();
@@ -149,7 +149,7 @@ public abstract unsafe partial class NodeBase {
             }
         }
     }
-    
+
     private void SetNodeEventFlags(AtkEventType eventType) {
         switch (eventType) {
             // Hover events need to propagate down to trigger various timelines
@@ -167,7 +167,7 @@ public abstract unsafe partial class NodeBase {
             case AtkEventType.MouseClick:
                 AddNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision);
                 break;
-            
+
             // ButtonClick is mostly used as an event that native calls back to, when interacting with buttons
             // We do not want to re-emit, or block events in this case
             case AtkEventType.ButtonClick:

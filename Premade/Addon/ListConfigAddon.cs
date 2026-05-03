@@ -9,7 +9,7 @@ using KamiToolKit.Premade.Node;
 
 namespace KamiToolKit.Premade.Addon;
 
-public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : ConfigNode<T>, new() where TU : ListItemNode<T>, IListItemNode, new() {
+public class ListConfigAddon<T, TU, TV> : NativeAddon where T : class where TV : ConfigNode<T>, new() where TU : ListItemNode<T>, IListItemNode, new() {
 
     private ModifyListNode<T, TU>? selectionListNode;
     private VerticalLineNode? separatorLine;
@@ -28,7 +28,7 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
             ItemComparer = ItemComparer,
             IsSearchMatch = OnSearchUpdated,
             ItemSpacing = ItemSpacing,
-            DisplayMode = (AddClicked is not null ? ListConfigDisplayMode.Add : ListConfigDisplayMode.None) | 
+            DisplayMode = (AddClicked is not null ? ListConfigDisplayMode.Add : ListConfigDisplayMode.None) |
                           (RemoveClicked is not null ? ListConfigDisplayMode.Remove : ListConfigDisplayMode.None),
         };
         selectionListNode.AttachNode(this);
@@ -81,7 +81,7 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
         AddClicked?.Invoke(this);
         selectionListNode?.RefreshList();
     }
-    
+
     private void OnRemoveClicked(T listItem) {
         RemoveClicked?.Invoke(this, listItem);
         SelectionChanged(null);
@@ -96,13 +96,13 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
         SelectItem(null);
         return IsSearchMatch?.Invoke(obj, searchString) ?? false;
     }
-    
+
     private void SetConfigNodeItem(T? configItem) {
         if (configNode is null) return;
         if (nothingSelectedTextNode is null) return;
 
         configNode.ConfigurationOption = configItem;
-        
+
         configNode.IsVisible = configNode.ConfigurationOption is not null;
         nothingSelectedTextNode.IsVisible = configNode.ConfigurationOption is null;
     }
@@ -119,13 +119,14 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
             field = value;
             selectionListNode?.SortOptions = value;
         }
-    } = [ DefaultSortOptions.Alphabetical, DefaultSortOptions.Id ];
+    } = [DefaultSortOptions.Alphabetical, DefaultSortOptions.Id];
 
-    public required List<T> Options { get;
+    public required List<T> Options {
+        get;
         set {
             field = value;
             selectionListNode?.Options = value;
-        } 
+        }
     } = [];
 
     public float ItemSpacing {
@@ -165,7 +166,7 @@ public class ListConfigAddon<T, TU, TV> : NativeAddon where T: class where TV : 
             else {
                 selectionListNode?.DisplayMode &= ~ListConfigDisplayMode.Remove;
             }
-            
+
             selectionListNode?.RemoveEntry = entry => {
                 value?.Invoke(this, entry);
             };

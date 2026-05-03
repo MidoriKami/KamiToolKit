@@ -29,7 +29,7 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
             Alpha = 0.75f,
         };
         backgroundNode.AttachNode(this);
-        
+
         rightEditNode = new ResizeNineGridNode();
         rightEditNode.AttachNode(this);
 
@@ -67,7 +67,7 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
 
         backgroundNode.Size = Size - new Vector2(24.0f, 24.0f);
         backgroundNode.Position = new Vector2(12.0f, 12.0f);
-        
+
         const float lineThickness = 4.0f;
 
         leftEditNode.Size = new Vector2(Height - 32.0f, lineThickness);
@@ -148,7 +148,7 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
         if (rightCornerEditNode.IsHovered) SetCursor(AddonCursorType.ResizeNWSR);
         if (leftCornerEditNode.IsHovered) SetCursor(AddonCursorType.ResizeNESW);
     }
-    
+
     private static void SetCursor(AddonCursorType cursor)
         => Services.AddonEventManager.SetCursor(cursor);
 }

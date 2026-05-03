@@ -19,7 +19,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
         }
 
         KamiToolKitLibrary.AllocatedNodes?.TryAdd((nint)Node, GetType());
-        
+
         BuildVirtualTable();
 
         ResNode->Type = nodeType;
@@ -33,7 +33,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
     internal sealed override AtkResNode* ResNode => (AtkResNode*)Node;
 
-    public static implicit operator T*(NodeBase<T> node) => (T*) node.ResNode;
+    public static implicit operator T*(NodeBase<T> node) => (T*)node.ResNode;
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
@@ -42,14 +42,13 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
             }
             catch (Exception e) {
                 Services.Log.Exception(e);
-            } 
-            finally {
+            } finally {
                 if (!isNativeDestructor) {
                     InvokeOriginalDestructor(ResNode, true);
                 }
 
                 KamiToolKitLibrary.AllocatedNodes?.Remove((nint)Node, out _);
-            
+
                 Node = null;
             }
         }

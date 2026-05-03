@@ -22,7 +22,7 @@ public unsafe class TextureImageNode : SimpleImageNode {
                 asset->AtkTexture.KernelTexture = null;
                 asset->AtkTexture.TextureType = 0;
             }
-            
+
             base.Dispose(disposing, isNativeDestructor);
         }
     }

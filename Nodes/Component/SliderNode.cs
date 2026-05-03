@@ -33,7 +33,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         ProgressTextureNode.AttachNode(this);
 
         SliderForegroundButtonNode = new SliderForegroundButtonNode {
-            Size = new Vector2(16.0f, 16.0f), 
+            Size = new Vector2(16.0f, 16.0f),
         };
         SliderForegroundButtonNode.AttachNode(this);
 
@@ -125,7 +125,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 
         ValueNode.Size = new Vector2(0.0f, Height);
         ValueNode.Position = new Vector2(Width - 18.0f - 20.0f, 0.0f);
-        
+
         FloatValueNode.Size = new Vector2(0.0f, Height);
         FloatValueNode.Position = new Vector2(Width - 18.0f - 20.0f, 0.0f);
 
@@ -142,7 +142,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
             var formatInfo = new NumberFormatInfo {
                 NumberDecimalDigits = DecimalPlaces,
             };
-            
+
             FloatValueNode.IsVisible = true;
             FloatValueNode.String = string.Format(formatInfo, "{0:F}", Value / MathF.Pow(10, DecimalPlaces));
             ValueNode.FontSize = 0;

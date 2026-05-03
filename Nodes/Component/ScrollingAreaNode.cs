@@ -17,7 +17,7 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
         ScrollingCollisionNode.AttachNode(this);
 
         ContentAreaClipNode = new SimpleComponentNode {
-            NodeFlags = NodeFlags.Clip | NodeFlags.EmitsEvents | NodeFlags.Visible, 
+            NodeFlags = NodeFlags.Clip | NodeFlags.EmitsEvents | NodeFlags.Visible,
         };
         ContentAreaClipNode.AttachNode(this);
 
@@ -38,7 +38,7 @@ public unsafe class ScrollingAreaNode<T> : SimpleComponentNode where T : NodeBas
             ScrollingCollisionNode,
             ScrollBarNode,
             false);
-        
+
         ScrollingCollisionNode.ResNode->AtkEventManager.RegisterEvent(
             AtkEventType.MouseWheel,
             5,

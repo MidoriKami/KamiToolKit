@@ -13,12 +13,12 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         SetInternalComponentType(ComponentType.ScrollBar);
 
         BackgroundButtonNode = new ScrollBarBackgroundButtonNode {
-            Size = new Vector2(8.0f, 306.0f), 
+            Size = new Vector2(8.0f, 306.0f),
         };
         BackgroundButtonNode.AttachNode(this);
 
         ForegroundButtonNode = new ScrollBarForegroundButtonNode {
-            Size = new Vector2(8.0f, 306.0f), 
+            Size = new Vector2(8.0f, 306.0f),
         };
         ForegroundButtonNode.AttachNode(this);
 
@@ -70,7 +70,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         get => Component->MouseWheelSpeed;
         set => Component->MouseWheelSpeed = (short)value;
     }
-    
+
     public bool HideWhenDisabled { get; set; }
 
     private void UpdateHandler() {
@@ -117,7 +117,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         }
 
         var enabledState = Component->EmptyLength is not 0;
-        
+
         Component->SetEnabledState(enabledState);
 
         if (HideWhenDisabled) {

@@ -65,8 +65,8 @@ public unsafe partial class NativeAddon {
 
     public void AddNode(NodeBase? node)
         => node?.AttachNode(this);
-    
-        
+
+
     public void SetWindowPosition(Vector2 windowPosition) {
         if (InternalAddon is null) return;
         InternalAddon->SetPosition((short)windowPosition.X, (short)windowPosition.Y);
@@ -86,8 +86,8 @@ public unsafe partial class NativeAddon {
 
     private Vector2 GetScreenClampedPosition(Vector2 position) {
         if (!OpenInBounds) return position;
-        
-        var screenSize = (Vector2) AtkStage.Instance()->ScreenSize;
+
+        var screenSize = (Vector2)AtkStage.Instance()->ScreenSize;
         var clampedX = Math.Clamp(position.X, 0.0f, screenSize.X - Size.X);
         var clampedY = Math.Clamp(position.Y, 0.0f, screenSize.Y - Size.Y);
         return new Vector2(clampedX, clampedY);

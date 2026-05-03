@@ -25,23 +25,23 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
         IconImage.AttachNode(this);
 
         IconExtras = new IconExtras {
-            NodeId = 6, 
-            Size = new Vector2(60, 60), 
-            Position = new Vector2(-2.0f, 0.0f), 
+            NodeId = 6,
+            Size = new Vector2(60, 60),
+            Position = new Vector2(-2.0f, 0.0f),
         };
         IconExtras.AttachNode(this);
 
         IconIndicator1 = new IconIndicator(5) {
-            NodeId = 4, 
-            Size = new Vector2(18.0f, 18.0f), 
-            Position = new Vector2(27.0f, 11.0f), 
+            NodeId = 4,
+            Size = new Vector2(18.0f, 18.0f),
+            Position = new Vector2(27.0f, 11.0f),
         };
         IconIndicator1.AttachNode(this);
 
         IconIndicator2 = new IconIndicator(3) {
-            NodeId = 2, 
-            Size = new Vector2(18.0f, 18.0f), 
-            Position = new Vector2(27.0f, -2.0f), 
+            NodeId = 2,
+            Size = new Vector2(18.0f, 18.0f),
+            Position = new Vector2(27.0f, -2.0f),
         };
         IconIndicator2.AttachNode(this);
 

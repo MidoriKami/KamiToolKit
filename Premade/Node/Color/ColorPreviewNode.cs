@@ -36,10 +36,10 @@ public class ColorPreviewNode : SimpleComponentNode {
 
         SelectedColorPreviewBorderNode.Size = new Vector2(Height - 4.0f, Width - 4.0f);
         SelectedColorPreviewBorderNode.Position = new Vector2(2.0f, 2.0f);
-        
+
         AlphaLayerPreviewNode.Size = new Vector2(Height - 6.0f, Width - 6.0f);
         AlphaLayerPreviewNode.Position = new Vector2(3.0f, 3.0f);
-        
+
         SelectedColorPreviewNode.Size = new Vector2(Height - 6.0f, Width - 6.0f);
         SelectedColorPreviewNode.Position = new Vector2(3.0f, 3.0f);
     }

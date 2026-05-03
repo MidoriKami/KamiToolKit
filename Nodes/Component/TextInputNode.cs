@@ -72,9 +72,9 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         CurrentTextNode.AttachNode(this);
 
         SelectionListNode = new TextInputSelectionListNode {
-            NodeId = 4, 
-            Position = new Vector2(0.0f, 22.0f), 
-            Size = new Vector2(186.0f, 208.0f), 
+            NodeId = 4,
+            Position = new Vector2(0.0f, 22.0f),
+            Size = new Vector2(186.0f, 208.0f),
         };
         SelectionListNode.AttachNode(this);
 
@@ -108,11 +108,11 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         Data->Nodes[14] = SelectionListNode.BackgroundNode.NodeId;
         Data->Nodes[15] = TextLimitsNode.NodeId;
 
-        Data->CandidateColor = new ByteColor { R = 66 }; 
+        Data->CandidateColor = new ByteColor { R = 66 };
         Data->IMEColor = new ByteColor { R = 67 };
         Data->FocusColor = KnownColor.Black.Vector().ToByteColor();
 
-        Flags = TextInputFlags.EnableIme | TextInputFlags.AllowUpperCase | TextInputFlags.AllowLowerCase | 
+        Flags = TextInputFlags.EnableIme | TextInputFlags.AllowUpperCase | TextInputFlags.AllowLowerCase |
                 TextInputFlags.EnableDictionary | TextInputFlags.AllowNumberInput | TextInputFlags.AllowSymbolInput;
 
         EnableCompletion = false;
@@ -121,7 +121,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         LoadTimelines();
 
         pinnedCallbackFunction = OnCallback;
-        Component->Callback = (delegate* unmanaged<AtkUnitBase*, InputCallbackType, CStringPointer, CStringPointer, int, InputCallbackResult>) Marshal.GetFunctionPointerForDelegate(pinnedCallbackFunction);
+        Component->Callback = (delegate* unmanaged<AtkUnitBase*, InputCallbackType, CStringPointer, CStringPointer, int, InputCallbackResult>)Marshal.GetFunctionPointerForDelegate(pinnedCallbackFunction);
 
         InitializeComponentEvents();
 
@@ -139,7 +139,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
                 }, delayTicks: 1);
             }
         });
-        
+
         CollisionNode.AddEvent(AtkEventType.FocusStop, () => {
             OnUnfocused?.Invoke();
             if (!PlaceholderString.IsNullOrEmpty() && String.IsEmpty) {
@@ -152,12 +152,12 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             base.Dispose(disposing, isNativeDestructor);
-            
+
             pinnedCallbackFunction = null;
         }
     }
 
-    public bool IsFocused 
+    public bool IsFocused
         => AtkStage.Instance()->AtkInputManager->FocusedNode == CollisionNode.Node;
 
     public int MaxCharacters {
@@ -171,7 +171,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     }
 
     public TextInputFlags Flags {
-        get => (TextInputFlags) ((byte)Data->Flags1 | (byte)Data->Flags2 << 8);
+        get => (TextInputFlags)((byte)Data->Flags1 | (byte)Data->Flags2 << 8);
         set {
             Data->Flags1 = (TextInputFlags1)((ushort)value & 0xFF);
             Data->Flags2 = (TextInputFlags2)((ushort)value >> 8);
@@ -234,8 +234,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         try {
             switch (type) {
                 case InputCallbackType.Enter:
-                    if (this is TextMultiLineInputNode) break; 
-                
+                    if (this is TextMultiLineInputNode) break;
+
                     OnInputComplete?.Invoke(Component->EvaluatedString.AsSpan());
                     ClearFocus();
                     break;

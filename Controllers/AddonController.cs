@@ -90,7 +90,7 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
             case AddonEvent.PreUpdate:
                 OnPreUpdate?.Invoke(addon);
                 break;
-            
+
             case AddonEvent.PostUpdate:
                 OnUpdate?.Invoke(addon);
                 return;

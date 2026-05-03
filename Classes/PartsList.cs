@@ -59,11 +59,11 @@ public unsafe class PartsList : IDisposable {
 
         ref var newPart = ref InternalPartsList->Parts[PartCount];
 
-        newPart.Width = (ushort) item.Width;
-        newPart.Height = (ushort) item.Height;
-        newPart.U = (ushort) item.U;
-        newPart.V = (ushort) item.V;
-        
+        newPart.Width = (ushort)item.Width;
+        newPart.Height = (ushort)item.Height;
+        newPart.U = (ushort)item.U;
+        newPart.V = (ushort)item.V;
+
         newPart.UldAsset = NativeMemoryHelper.UiAlloc<AtkUldAsset>();
         newPart.UldAsset->Id = item.Id;
         newPart.UldAsset->AtkTexture.Ctor();

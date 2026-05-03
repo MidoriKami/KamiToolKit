@@ -49,16 +49,16 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
     protected Vector2 TextureCoordinates {
         get => new(PartsList[0]->U, PartsList[0]->V);
         set {
-            PartsList[0]->U = (ushort) value.X;
-            PartsList[0]->V = (ushort) value.X;
+            PartsList[0]->U = (ushort)value.X;
+            PartsList[0]->V = (ushort)value.X;
         }
     }
 
     protected Vector2 TextureSize {
         get => new(PartsList[0]->Width, PartsList[0]->Height);
         set {
-            PartsList[0]->Width = (ushort) value.X;
-            PartsList[0]->Height = (ushort) value.X;
+            PartsList[0]->Width = (ushort)value.X;
+            PartsList[0]->Height = (ushort)value.X;
         }
     }
 
@@ -78,8 +78,8 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
     }
 
     public AlignmentType TextAlignment {
-        get => (AlignmentType) Node->TextAlign;
-        set => Node->TextAlign = (ushort) value;
+        get => (AlignmentType)Node->TextAlign;
+        set => Node->TextAlign = (ushort)value;
     }
 
     public float CounterWidth {
@@ -134,7 +134,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         using var rentedBuilder = new RentedSeStringBuilder();
 
         // <kilo(lnum1,\,)>
-        var evaluatedString = Services.SeStringEvaluator.EvaluateFromAddon(18, [ value ]);
+        var evaluatedString = Services.SeStringEvaluator.EvaluateFromAddon(18, [value]);
 
         foreach (var payload in evaluatedString) {
             switch (payload.Type) {

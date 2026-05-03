@@ -10,10 +10,10 @@ public class ItemSearchAddonBase<T> : BaseSearchAddon<Item, T> where T : ListIte
     protected override int Comparer(Item left, Item right, Enum sortingMode, bool reversed) {
         var result = sortingMode switch {
             DefaultSortOptions.Alphabetical => string.CompareOrdinal(left.Name.ToString(), right.Name.ToString()),
-            DefaultSortOptions.Id => left.RowId.CompareTo(right.RowId), 
+            DefaultSortOptions.Id => left.RowId.CompareTo(right.RowId),
             _ => 0,
         };
-        
+
         return reversed ? -result : result;
     }
 
@@ -23,9 +23,9 @@ public class ItemSearchAddonBase<T> : BaseSearchAddon<Item, T> where T : ListIte
         if (isDescriptionSearch) {
             searchString = searchString[1..];
         }
-        
-        var regex = new Regex(searchString,RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-        
+
+        var regex = new Regex(searchString, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
         if (regex.IsMatch(item.RowId.ToString())) return true;
         if (regex.IsMatch(item.Name.ToString())) return true;
         if (regex.IsMatch(item.Description.ToString()) && isDescriptionSearch) return true;

@@ -7,7 +7,7 @@ namespace KamiToolKit.Premade.Node.ListItem;
 
 public abstract class SimpleListItemNode<T> : ListItemNode<T>, IListItemNode {
     public static float ItemHeight => 48.0f;
-    
+
     protected readonly IconImageNode IconNode;
     protected readonly TextNode LabelTextNode;
 
@@ -30,7 +30,7 @@ public abstract class SimpleListItemNode<T> : ListItemNode<T>, IListItemNode {
 
         CollisionNode.ShowClickableCursor = true;
     }
-    
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

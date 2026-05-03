@@ -5,7 +5,7 @@ namespace KamiToolKit.Extensions;
 public static unsafe class AtkImageNodeExtensions {
     extension(ref AtkImageNode node) {
         public uint IconId => node.GetIconId();
-        
+
         private uint GetIconId() {
             if (node.PartsList is null) return 0;
             if (node.PartsList->Parts is null) return 0;

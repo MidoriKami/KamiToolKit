@@ -10,7 +10,7 @@ using KamiToolKit.Premade.Node;
 namespace KamiToolKit.Premade.Addon.Search;
 
 public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNode<T>, IListItemNode, new() {
-    
+
     private SearchWidget? searchWidget;
     private ListNode<T, TU>? listNode;
 
@@ -44,7 +44,7 @@ public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNo
         const float buttonPadding = 20.0f;
         var contentWidth = ContentSize.X - buttonPadding * 2;
         var buttonWidth = contentWidth / 3.0f;
-        
+
         cancelButton = new TextButtonNode {
             Size = new Vector2(buttonWidth, 24.0f),
             Position = new Vector2(ContentStartPosition.X, ContentStartPosition.Y + ContentSize.Y - 24.0f - 8.0f),
@@ -52,7 +52,7 @@ public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNo
             OnClick = OnCancelClicked,
         };
         cancelButton.AttachNode(this);
-        
+
         confirmButton = new TextButtonNode {
             Size = new Vector2(buttonWidth, 24.0f),
             Position = new Vector2(ContentStartPosition.X + buttonWidth * 2 + buttonPadding * 2, ContentStartPosition.Y + ContentSize.Y - 24.0f - 8.0f),
@@ -76,7 +76,7 @@ public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNo
         if (selectedOption is not null) {
             SelectionResult?.Invoke(selectedOption);
         }
-        
+
         selectedOption = default;
         Close();
     }
@@ -87,7 +87,7 @@ public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNo
 
         listNode?.OptionsList = resortedList;
     }
-    
+
     private void OnSearchUpdated(string searchString) {
         listNode?.OptionsList = SearchOptions.Where(item => IsMatch(item, searchString)).ToList();
     }
@@ -95,7 +95,7 @@ public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNo
     protected abstract int Comparer(T left, T right, Enum sortingMode, bool reversed);
     protected abstract bool IsMatch(T item, string searchString);
 
-    public List<Enum> SortingOptions { get; init; } = [ DefaultSortOptions.Alphabetical, DefaultSortOptions.Id ];
+    public List<Enum> SortingOptions { get; init; } = [DefaultSortOptions.Alphabetical, DefaultSortOptions.Id];
 
     public List<T> SearchOptions {
         get;

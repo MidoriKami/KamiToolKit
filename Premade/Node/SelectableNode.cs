@@ -23,7 +23,7 @@ public class SelectableNode : SimpleComponentNode {
             IsVisible = false,
         };
         hoveredBackgroundNode.AttachNode(this);
-        
+
         selectedBackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/ListItemA.tex",
             TextureCoordinates = new Vector2(0.0f, 0.0f),
@@ -35,7 +35,7 @@ public class SelectableNode : SimpleComponentNode {
             IsVisible = false,
         };
         selectedBackgroundNode.AttachNode(this);
-        
+
         CollisionNode.AddEvent(AtkEventType.MouseOver, () => {
             if (!IsSelected && EnableHighlight) {
                 IsHovered = true;
@@ -52,16 +52,16 @@ public class SelectableNode : SimpleComponentNode {
         CollisionNode.AddEvent(AtkEventType.MouseOut, () => {
             IsHovered = false;
         });
-        
+
         CollisionNode.AddDrawFlags(DrawFlags.ClickableCursor);
     }
 
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
-        
+
         hoveredBackgroundNode.Size = Size + new Vector2(6.0f, 6.0f);
         hoveredBackgroundNode.Position = new Vector2(-3.0f, -3.0f);
-        
+
         selectedBackgroundNode.Size = Size + new Vector2(6.0f, 6.0f);
         selectedBackgroundNode.Position = new Vector2(-3.0f, -3.0f);
     }
@@ -88,7 +88,7 @@ public class SelectableNode : SimpleComponentNode {
         get => hoveredBackgroundNode.IsVisible;
         set => hoveredBackgroundNode.IsVisible = value;
     }
-    
+
     public bool IsSelected {
         get => selectedBackgroundNode.IsVisible;
         set {

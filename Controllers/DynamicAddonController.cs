@@ -40,7 +40,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
 
     public void Disable() {
         isEnabled = false;
-        
+
         foreach (var name in trackedAddons) {
             RemoveListeners(name);
         }
@@ -51,7 +51,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
             Services.Log.Error("Attaching to NamePlate is not supported. Use OverlayController instead.");
             return;
         }
-        
+
         trackedAddons.Add(name);
 
         if (isEnabled) {
@@ -82,7 +82,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
             case AddonEvent.PreRefresh or AddonEvent.PreRequestedUpdate:
                 OnPreRefresh?.Invoke(addon);
                 return;
-            
+
             case AddonEvent.PostRefresh or AddonEvent.PostRequestedUpdate:
                 OnRefresh?.Invoke(addon);
                 return;
@@ -90,7 +90,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
             case AddonEvent.PreUpdate:
                 OnPreUpdate?.Invoke(addon);
                 return;
-            
+
             case AddonEvent.PostUpdate:
                 OnUpdate?.Invoke(addon);
                 return;

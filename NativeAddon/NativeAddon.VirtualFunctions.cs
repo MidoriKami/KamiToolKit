@@ -35,7 +35,7 @@ public unsafe partial class NativeAddon {
             SetInitialState();
         }
         else {
-            ref var screenSize = ref AtkStage.Instance()->ScreenSize; 
+            ref var screenSize = ref AtkStage.Instance()->ScreenSize;
 
             addon->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
             addon->SetSize((ushort)screenSize.Width, (ushort)screenSize.Height);
@@ -44,7 +44,7 @@ public unsafe partial class NativeAddon {
 
         AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);
 
-        OnSetup(addon, new Span<AtkValue>(values, (int) valueCount));
+        OnSetup(addon, new Span<AtkValue>(values, (int)valueCount));
         isSetup = true;
     }
 
@@ -126,15 +126,15 @@ public unsafe partial class NativeAddon {
         if (isSetup) {
             OnRequestedUpdate(thisPtr, numberArrayData, stringArrayData);
         }
-        
+
         AtkUnitBase.StaticVirtualTablePointer->OnRequestedUpdate(InternalAddon, numberArrayData, stringArrayData);
     }
 
     private bool Refresh(AtkUnitBase* thisPtr, uint valueCount, AtkValue* values) {
         Services.Log.Verbose($"[{InternalName}] Refresh");
-        
+
         OnRefresh(thisPtr, new Span<AtkValue>(values, (int)valueCount));
-        
+
         return AtkUnitBase.StaticVirtualTablePointer->OnRefresh(InternalAddon, valueCount, values);
     }
 

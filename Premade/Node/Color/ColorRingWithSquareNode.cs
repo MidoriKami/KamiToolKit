@@ -22,7 +22,7 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
 
     public ColorRingWithSquareNode() {
         eventListener = new ViewportEventListener(SquareEventHandler);
-        
+
         ColorSquareNode = new ColorSquareNode {
             DrawFlags = DrawFlags.UseTransformedCollision,
         };
@@ -87,7 +87,7 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
 
         return calculatedAngle;
     }
-    
+
     private void OnMouseDown(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
         if (ColorSquareNode.CheckCollision(atkEventData)) {
             UpdateSquareColor(atkEventData->MousePosition);
@@ -163,12 +163,12 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
             eventListener.RemoveEvent(AtkEventType.MouseUp);
         }
     }
-    
+
     private static Vector2 RotatePoint(Vector2 pointToRotate, Vector2 centerPoint, float angleInDegrees) {
         var angleInRadians = angleInDegrees * (MathF.PI / 180);
         var cosTheta = MathF.Cos(angleInRadians);
         var sinTheta = MathF.Sin(angleInRadians);
-        return new Vector2 { 
+        return new Vector2 {
             X = cosTheta * (pointToRotate.X - centerPoint.X) - sinTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.X,
             Y = sinTheta * (pointToRotate.X - centerPoint.X) + cosTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.Y,
         };

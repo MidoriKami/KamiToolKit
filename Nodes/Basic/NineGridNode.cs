@@ -78,7 +78,7 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
 
     public AtkUldPart* AddPart(Part part)
         => PartsList.Add(part);
-    
+
     public void AddPart(params Part[] parts)
         => PartsList.Add(parts);
 }

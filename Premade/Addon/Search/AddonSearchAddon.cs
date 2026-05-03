@@ -11,10 +11,10 @@ namespace KamiToolKit.Premade.Addon.Search;
 
 public unsafe class AddonSearchAddon : BaseSearchAddon<Pointer<AtkUnitBase>, AddonListItemNode> {
     public bool AllowNameplateResult { get; init; } = false;
-    
+
     public AddonSearchAddon() {
         SearchOptions = GetAllAddons();
-        SortingOptions = [ AddonSearchSortOptions.Visibility, AddonSearchSortOptions.Alphabetical ];
+        SortingOptions = [AddonSearchSortOptions.Visibility, AddonSearchSortOptions.Alphabetical];
         ItemSpacing = 3.0f;
     }
 
@@ -38,20 +38,20 @@ public unsafe class AddonSearchAddon : BaseSearchAddon<Pointer<AtkUnitBase>, Add
     }
 
     protected override bool IsMatch(Pointer<AtkUnitBase> item, string searchString) {
-        var regex = new Regex(searchString,RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-        
+        var regex = new Regex(searchString, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
         return regex.IsMatch(item.Value->NameString);
     }
 
     private List<Pointer<AtkUnitBase>> GetAllAddons() {
         List<Pointer<AtkUnitBase>> addons = [];
-        
+
         foreach (var entry in RaptureAtkUnitManager.Instance()->AllLoadedUnitsList.Entries) {
             if (entry.Value is null) continue;
             if (entry.Value->NameString is "NamePlate" && !AllowNameplateResult) continue;
             addons.Add(entry);
         }
-        
+
         return addons;
     }
 }

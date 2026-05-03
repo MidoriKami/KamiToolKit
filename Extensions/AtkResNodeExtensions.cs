@@ -13,14 +13,14 @@ public static unsafe class AtkResNodeExtensions {
             set => node.SetPositionFloat(value.X, value.Y);
         }
 
-        public Vector2 ScreenPosition 
+        public Vector2 ScreenPosition
             => new(node.ScreenX, node.ScreenY);
 
         public Vector2 Size {
             get => new(node.GetWidth(), node.GetHeight());
             set {
-                node.SetWidth((ushort) value.X);
-                node.SetHeight((ushort) value.Y);
+                node.SetWidth((ushort)value.X);
+                node.SetHeight((ushort)value.Y);
             }
         }
 
@@ -28,12 +28,12 @@ public static unsafe class AtkResNodeExtensions {
             TopLeft = node.Position,
             BottomRight = node.Position + node.Size,
         };
-        
-        public Vector2 Center 
+
+        public Vector2 Center
             => node.Position + node.Size / 2.0f;
-        
+
         public Vector2 Scale {
-            get => new (node.GetScaleX(), node.GetScaleY());
+            get => new(node.GetScaleX(), node.GetScaleY());
             set => node.SetScale(value.X, value.Y);
         }
 
@@ -118,7 +118,7 @@ public static unsafe class AtkResNodeExtensions {
             => node.CheckCollisionAtCoords(x, y, inclusive);
 
         public bool CheckCollision(Vector2 position, bool inclusive = true)
-            => node.CheckCollisionAtCoords((short) position.X, (short) position.Y, inclusive);
+            => node.CheckCollisionAtCoords((short)position.X, (short)position.Y, inclusive);
 
         public bool CheckCollision(AtkEventData* eventData, bool inclusive = true)
             => node.CheckCollisionAtCoords(eventData->MouseData.PosX, eventData->MouseData.PosY, inclusive);

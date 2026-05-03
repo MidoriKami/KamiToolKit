@@ -20,12 +20,12 @@ public class HorizontalListNode : LayoutListNode {
             RecalculateLayout();
         }
     }
-    
+
     /// <summary>
     /// Adjusts contained nodes heights to match this nodes height
     /// </summary>
     public bool FitHeight { get; set; }
-    
+
     /// <summary>
     /// Resizes the horizontal list node to fit all contents
     /// </summary>
@@ -51,7 +51,7 @@ public class HorizontalListNode : LayoutListNode {
             if (Alignment is HorizontalListAnchor.Left) {
                 startX += node.Width + ItemSpacing;
             }
-            
+
             if (FitHeight) {
                 node.Height = Height;
             }
@@ -61,6 +61,6 @@ public class HorizontalListNode : LayoutListNode {
             Height = NodeList.Max(node => node.Height);
         }
     }
-    
+
     public float AreaRemaining => Width - NodeList.Sum(node => node.Width + ItemSpacing) - ItemSpacing;
 }

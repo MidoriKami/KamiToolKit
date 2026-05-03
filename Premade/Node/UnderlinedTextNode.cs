@@ -13,7 +13,7 @@ public class UnderlinedTextNode : SimpleComponentNode {
     public UnderlinedTextNode() {
         LabelTextNode = new CategoryTextNode();
         LabelTextNode.AttachNode(this);
-        
+
         LineNode = new HorizontalLineNode {
             Height = 4.0f,
         };

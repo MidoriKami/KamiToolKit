@@ -61,7 +61,7 @@ public class VerticalListNode : LayoutListNode {
                     case VerticalListAlignment.Right:
                         node.X = Width - node.Width;
                         break;
-                    
+
                     case VerticalListAlignment.Left:
                         node.X = 0.0f;
                         break;

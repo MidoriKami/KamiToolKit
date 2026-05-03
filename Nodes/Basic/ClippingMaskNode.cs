@@ -30,7 +30,7 @@ public unsafe class ClippingMaskNode : NodeBase<AtkClippingMaskNode> {
 
     public AtkUldPart* AddPart(Part part)
         => PartsList.Add(part);
-    
+
     public void AddPart(params Part[] parts)
         => PartsList.Add(parts);
 }

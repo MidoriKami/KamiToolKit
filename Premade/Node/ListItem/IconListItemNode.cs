@@ -7,7 +7,7 @@ namespace KamiToolKit.Premade.Node.ListItem;
 
 public abstract class IconListItemNode<T> : ListItemNode<T>, IListItemNode {
     public static float ItemHeight => 48.0f;
-    
+
     protected readonly IconImageNode IconNode;
     protected readonly TextNode LabelTextNode;
     protected readonly TextNode SubLabelTextNode;
@@ -66,7 +66,7 @@ public abstract class IconListItemNode<T> : ListItemNode<T>, IListItemNode {
         IdTextNode.Size = new Vector2(30.0f, Height / 2.0f);
         IdTextNode.Position = new Vector2(Width - 30.0f, 0.0f);
     }
-    
+
     protected override void SetNodeData(T itemData) {
         IconNode.IconId = GetIconId(itemData);
         LabelTextNode.String = GetLabelText(itemData);

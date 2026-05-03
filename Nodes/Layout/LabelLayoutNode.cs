@@ -6,12 +6,12 @@ namespace KamiToolKit.Nodes;
 public class LabelLayoutNode : LayoutListNode {
 
     public bool FillWidth { get; set; }
-    
+
     protected override void OnRecalculateLayout() {
         if (Nodes.Count is 0) return;
-        
+
         var labelNode = Nodes[0];
-        
+
         var labelNodeWidth = labelNode.Width;
         labelNode.Position = new Vector2(0.0f, 0.0f);
 
@@ -20,7 +20,7 @@ public class LabelLayoutNode : LayoutListNode {
             node.X = position;
 
             if (FillWidth) {
-                node.Width = (Width - labelNodeWidth - FirstItemSpacing) / (Nodes.Count - 1); 
+                node.Width = (Width - labelNodeWidth - FirstItemSpacing) / (Nodes.Count - 1);
             }
 
             position += node.Width + ItemSpacing;
