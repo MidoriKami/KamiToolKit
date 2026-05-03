@@ -152,6 +152,11 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
         }
     }
 
+    public void ResetScroll() {
+        scrollPosition = 0;
+        ScrollBarNode.ScrollPosition = 0;
+    }
+
     private void RecalculateScroll() {
         if (OptionsList.Count < nodeCount) {
             ScrollBarNode.ScrollPosition = 0;

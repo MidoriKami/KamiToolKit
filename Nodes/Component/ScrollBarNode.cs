@@ -85,7 +85,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
     }
 
     /// <summary>
-    ///     Updates from attached Content and Collision nodes
+    /// Updates from attached Content and Collision nodes
     /// </summary>
     public void UpdateScrollParams() {
         if (Component->ContentNode is null) return;
