@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -6,6 +7,7 @@ using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Premade.Node.Simple;
 using KamiToolKit.Timelines;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -85,6 +87,25 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         set => OptionListNode.MaxButtons = value;
     }
 
+    public List<TU> Options {
+        get => OptionListNode.Options ?? [];
+        set {
+            OptionListNode.Options = value;
+
+            if (Options.Count is 0) {
+                LabelNode.String = PlaceholderString ?? "Empty Options, No Placeholder";
+            }
+            else {
+                if (PlaceholderString is { } placeholder) {
+                    LabelNode.String = placeholder;
+                }
+                else {
+                    SelectedOption = value[0];
+                }
+            }
+        }
+    }
+
     public TU? SelectedOption {
         get => OptionListNode.SelectedOption;
         set {
@@ -116,10 +137,9 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         Timeline?.PlayAnimation(4);
         OptionListNode.Toggle(false);
 
-        // TODO: replace this (and in Uncollapse) with just a check for playSoundEffect and a call to Component->PlaySoundEffect();
-        // when https://github.com/aers/FFXIVClientStructs/commit/e5b6fc51 landed in Dalamud
-        if (playSoundEffect && Component->SoundEffectId is not -1)
-            UIGlobals.PlaySoundEffect((uint)Component->SoundEffectId);
+        if (playSoundEffect && Component->SoundEffectId is not -1) {
+            Component->PlaySoundEffect();
+        }
 
         OptionListNode.ReattachNode(this);
 
@@ -137,8 +157,9 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         Timeline?.PlayAnimation(11);
         OptionListNode.Toggle(true);
 
-        if (playSoundEffect && Component->SoundEffectId is not -1)
-            UIGlobals.PlaySoundEffect((uint)Component->SoundEffectId);
+        if (playSoundEffect && Component->SoundEffectId is not -1) {
+            Component->PlaySoundEffect();
+        }
 
         if (ParentAddon is not null) {
             OptionListNode.Position = (ScreenPosition - ParentAddon->Position) / ParentAddon->Scale + Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
@@ -191,6 +212,25 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
         if (OptionListNode.ScreenPosition.Y + scaledListSize.Y > screenSize.Height) {
             OptionListNode.Y += (screenSize.Height - OptionListNode.ScreenPosition.Y - scaledListSize.Y) / scale;
+        }
+    }
+
+    public ReadOnlySeString? PlaceholderString {
+        get;
+        set {
+            field = value;
+
+            if (Options.Count is 0) {
+                LabelNode.String = PlaceholderString ?? "Empty Options, No Placeholder";
+            }
+            else {
+                if (PlaceholderString is { } placeholder) {
+                    LabelNode.String = placeholder;
+                }
+                else {
+                    UpdateLabel(SelectedOption);
+                }
+            }
         }
     }
 

@@ -13,32 +13,18 @@ public class LuminaDropDownNode<T> : DropDownNode<LuminaButtonListNode<T>, T> wh
 
     public LuminaButtonListNode<T>.GetLabel? LabelFunction {
         get => OptionListNode.LabelFunction;
-        set {
-            OptionListNode.LabelFunction = value;
-            ResolveOptions();
-        }
+        set => OptionListNode.LabelFunction = value;
     }
 
     public LuminaButtonListNode<T>.ShouldShow? FilterFunction {
         get => OptionListNode.FilterFunction;
-        set {
-            OptionListNode.FilterFunction = value;
-            ResolveOptions();
-        }
+        set => OptionListNode.FilterFunction = value;
     }
 
     private void OptionSelectedHandler(T option) {
         OnOptionSelected?.Invoke(option);
         UpdateLabel(option);
         Toggle(false);
-    }
-
-    private void ResolveOptions() {
-        if (LabelFunction is null) return;
-        if (FilterFunction is null) return;
-
-        OptionListNode.SelectDefaultOption();
-        LabelNode.String = LabelFunction.Invoke(OptionListNode.SelectedOption);
     }
 
     protected override void UpdateLabel(T option) {
