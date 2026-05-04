@@ -94,7 +94,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
     }
 
     public List<Enum> SortingOptions {
-        get => SortOrderDropDown.Options ?? [];
+        get => SortOrderDropDown.Options;
         set {
             SortOrderDropDown.Options = value;
             SortOrderDropDown.MaxListOptions = value.Count / 2 + 1;
