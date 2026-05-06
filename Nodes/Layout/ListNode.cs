@@ -5,11 +5,13 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Premade.Node.Simple;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
 public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNode<T>, IListItemNode, new() {
     public readonly ScrollBarNode ScrollBarNode;
+    public readonly TextNode NoResultsTextNode;
 
     public ListNode() {
         itemHeight = TU.ItemHeight;
@@ -21,6 +23,11 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
         };
         ScrollBarNode.AttachNode(this);
 
+        NoResultsTextNode = new TextNode {
+            AlignmentType = AlignmentType.Center,
+        };
+        NoResultsTextNode.AttachNode(this);
+
         AddEvent(AtkEventType.MouseWheel, OnMouseWheel);
     }
 
@@ -29,6 +36,9 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
 
         ScrollBarNode.Size = new Vector2(8.0f, Height);
         ScrollBarNode.Position = new Vector2(Width - 8.0f, 0.0f);
+
+        NoResultsTextNode.Size = new Vector2(Width - 8.0f, Height);
+        NoResultsTextNode.Position = Vector2.Zero;
 
         var newNodeCount = (int)(Height / (itemHeight + ItemSpacing));
         if (newNodeCount != nodeCount) {
@@ -41,6 +51,8 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
 
         RecalculateScroll();
     }
+
+    public ReadOnlySeString? NoResultsString { get; set; }
 
     public Action<T?>? OnItemSelected { get; set; }
 
@@ -64,6 +76,14 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
             else {
                 PopulateNodes();
                 RecalculateScroll();
+            }
+
+            if (NoResultsString is { } warningString && value.Count is 0) {
+                NoResultsTextNode.String = warningString;
+                NoResultsTextNode.IsVisible = true;
+            }
+            else {
+                NoResultsTextNode.IsVisible = false;
             }
         }
     } = [];
