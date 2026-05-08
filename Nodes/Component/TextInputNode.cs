@@ -151,9 +151,10 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
-            base.Dispose(disposing, isNativeDestructor);
-
+            Component->Callback = null;
             pinnedCallbackFunction = null;
+
+            base.Dispose(disposing, isNativeDestructor);
         }
     }
 
