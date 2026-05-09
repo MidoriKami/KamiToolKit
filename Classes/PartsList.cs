@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
@@ -12,6 +12,7 @@ public unsafe class PartsList : IDisposable {
     internal AtkUldPartsList* InternalPartsList;
 
     private bool isDisposed;
+    private uint partCapacity;
 
     public PartsList() {
         InternalPartsList = NativeMemoryHelper.UiAlloc<AtkUldPartsList>();
@@ -36,8 +37,14 @@ public unsafe class PartsList : IDisposable {
                 part.UldAsset = null;
             }
 
+            if (InternalPartsList->Parts is not null) {
+                NativeMemoryHelper.UiFree(InternalPartsList->Parts, partCapacity);
+                InternalPartsList->Parts = null;
+            }
+
             NativeMemoryHelper.UiFree(InternalPartsList);
             InternalPartsList = null;
+            partCapacity = 0;
         }
 
         isDisposed = true;
@@ -49,13 +56,45 @@ public unsafe class PartsList : IDisposable {
     }
 
     public void Add(params Part[] items) {
+        EnsureCapacity(PartCount + (uint)items.Length);
+
         foreach (var part in items) {
-            Add(part);
+            AddPart(part);
         }
     }
 
     public AtkUldPart* Add(Part item) {
-        NativeMemoryHelper.ResizeArray(ref InternalPartsList->Parts, PartCount, PartCount + 1);
+        EnsureCapacity(PartCount + 1);
+
+        return AddPart(item);
+    }
+
+    private void EnsureCapacity(uint capacity) {
+        if (partCapacity >= capacity) return;
+
+        var newCapacity = partCapacity is 0 ? 4U : partCapacity;
+
+        while (newCapacity < capacity) {
+            if (newCapacity > uint.MaxValue / 2) {
+                newCapacity = capacity;
+                break;
+            }
+
+            newCapacity *= 2;
+        }
+
+        var newBuffer = NativeMemoryHelper.UiAlloc<AtkUldPart>(newCapacity);
+
+        if (InternalPartsList->Parts is not null) {
+            NativeMemoryHelper.Copy(InternalPartsList->Parts, newBuffer, PartCount);
+            NativeMemoryHelper.UiFree(InternalPartsList->Parts, partCapacity);
+        }
+
+        InternalPartsList->Parts = newBuffer;
+        partCapacity = newCapacity;
+    }
+
+    private AtkUldPart* AddPart(Part item) {
 
         ref var newPart = ref InternalPartsList->Parts[PartCount];
 

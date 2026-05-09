@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -10,6 +11,17 @@ using KamiToolKit.Dalamud;
 namespace KamiToolKit.Extensions;
 
 public static unsafe class AtkUldPartExtensions {
+    private static readonly Dictionary<string, bool> FileExistsCache = [];
+
+    private static bool FileExists(string path) {
+        if (FileExistsCache.TryGetValue(path, out var result)) return result;
+
+        var fileExists = Services.DataManager.FileExists(path);
+        FileExistsCache.TryAdd(path, fileExists);
+
+        return fileExists;
+    }
+
     extension(ref AtkUldPart part) {
         public bool IsTextureReady => part.UldAsset is not null && part.UldAsset->AtkTexture.IsTextureReady();
         public Vector2 LoadedTextureSize => part.GetActualTextureSize();
@@ -24,11 +36,11 @@ public static unsafe class AtkUldPartExtensions {
                 var texturePath = path.Replace("_hr1", string.Empty);
 
                 var themedPath = texturePath.Replace("uld", GetThemePathModifier());
-                if (Services.DataManager.FileExists(themedPath) && resolveTheme) {
+                if (FileExists(themedPath) && resolveTheme) {
                     texturePath = themedPath;
                 }
 
-                if (Services.DataManager.FileExists(texturePath)) {
+                if (FileExists(texturePath)) {
                     part.UldAsset->AtkTexture.LoadTextureWithDefaultVersion(texturePath);
                 }
             }
@@ -105,6 +117,6 @@ public static unsafe class AtkUldPartExtensions {
         var pathResult = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(bytePointer).String;
 
         // If the resolved path doesn't exist, re-process with default folder
-        return Services.DataManager.FileExists(pathResult) ? targetFolder : IconSubFolder.None;
+        return FileExists(pathResult) ? targetFolder : IconSubFolder.None;
     }
 }
