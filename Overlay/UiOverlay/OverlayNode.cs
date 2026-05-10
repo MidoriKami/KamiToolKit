@@ -16,14 +16,17 @@ public abstract unsafe class OverlayNode : SimpleOverlayNode {
     /// <summary>
     ///  When true, this node automatically hides when the Toggle UI Display Mode hotkey is used
     /// </summary>
-    public virtual bool HideWithUIToggled => true;
+    public virtual bool HideWithUiToggled => true;
 
     public override bool IsVisible { get; set; } = true;
 
     public void Update() {
         OnUpdate();
 
-        base.IsVisible = IsVisible && !(HideWithNativeUi && !IsNameplateVisible()) && !(HideWithUIToggled && IsUIHidden());
+        var showWithNativeUi = !(HideWithNativeUi && !IsNameplateVisible());
+        var showWithUiToggled = !(HideWithUiToggled && (RaptureAtkUnitManager.Instance()->Flags & AtkUnitManagerFlags.UiHidden) != 0);
+
+        base.IsVisible = IsVisible && showWithNativeUi && showWithUiToggled;
     }
 
     protected abstract void OnUpdate();
@@ -34,6 +37,4 @@ public abstract unsafe class OverlayNode : SimpleOverlayNode {
 
         return nameplateAddon->IsVisible;
     }
-
-    private static bool IsUIHidden() => (RaptureAtkUnitManager.Instance()->Flags & AtkUnitManagerFlags.UiHidden) != 0;
 }
