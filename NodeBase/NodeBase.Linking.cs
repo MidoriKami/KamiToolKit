@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -182,6 +183,8 @@ public abstract unsafe partial class NodeBase {
         // Queue collision update for next frame
         if (addonsPendingUpdate.Add(addonName)) {
             Services.Framework.RunOnTick(() => {
+                if (Framework.Instance()->IsDestroying) return; // Game Unloading, don't try to refresh anything.
+
                 var currentInstance = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
                 if (currentInstance is not null) {
                     currentInstance->UldManager.UpdateDrawNodeList();
@@ -221,6 +224,7 @@ public abstract unsafe partial class NodeBase {
 
             if (uldManagersPendingUpdate.Add((nint)ParentUldManager)) {
                 Services.Framework.RunOnTick(() => {
+                    if (Framework.Instance()->IsDestroying) return; // Game Unloading, don't try to refresh anything.
                     if (ResNode is null) return;
 
                     manager->AddNodeToObjectList(this);
