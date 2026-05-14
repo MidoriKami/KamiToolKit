@@ -27,6 +27,7 @@ public unsafe partial class NativeAddon {
         InternalAddon->DisableFocusOnShow = true;
         InternalAddon->DisableHideTransition = true;
         InternalAddon->DisableShowHideSoundEffects = true;
+        InternalAddon->IgnoreUIDisplayMode = true;
 
         // Disable Controller Nav
         FlagHelper.UpdateFlag(ref InternalAddon->Flags1A2, 0x2, true);

@@ -1,4 +1,5 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
 using KamiToolKit.Premade.Node.Simple;
 
@@ -13,12 +14,20 @@ public abstract unsafe class OverlayNode : SimpleOverlayNode {
     /// </summary>
     public virtual bool HideWithNativeUi => true;
 
+    /// <summary>
+    ///  When true, this node automatically hides when the Toggle UI Display Mode hotkey is used
+    /// </summary>
+    public virtual bool HideWithUiToggled => true;
+
     public override bool IsVisible { get; set; } = true;
 
     public void Update() {
         OnUpdate();
 
-        base.IsVisible = IsVisible && !(HideWithNativeUi && !IsNameplateVisible());
+        var showWithNativeUi = !(HideWithNativeUi && !IsNameplateVisible());
+        var showWithUiToggled = !(HideWithUiToggled && IsUiHidden());
+
+        base.IsVisible = IsVisible && showWithNativeUi && showWithUiToggled;
     }
 
     protected abstract void OnUpdate();
@@ -29,4 +38,7 @@ public abstract unsafe class OverlayNode : SimpleOverlayNode {
 
         return nameplateAddon->IsVisible;
     }
+
+    private static bool IsUiHidden()
+        => RaptureAtkUnitManager.Instance()->Flags.HasFlag(AtkUnitManagerFlags.UiHidden);
 }
