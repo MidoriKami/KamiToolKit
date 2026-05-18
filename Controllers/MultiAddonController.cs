@@ -6,6 +6,7 @@ using KamiToolKit.Dalamud;
 
 namespace KamiToolKit.Controllers;
 
+/// <inheritdoc/>
 public class MultiAddonController : MultiAddonController<AtkUnitBase>;
 
 /// <summary>
