@@ -49,13 +49,15 @@ public unsafe class MapOverlayController : IDisposable {
 
         mapController.Dispose();
 
-        RemoveAllMarkers();
+        Services.Framework.RunOnFrameworkThread(() => {
+            RemoveAllMarkers();
 
-        overlayNode?.Dispose();
-        overlayNode = null;
+            overlayNode?.Dispose();
+            overlayNode = null;
 
-        clippingContainerNode?.Dispose();
-        clippingContainerNode = null;
+            clippingContainerNode?.Dispose();
+            clippingContainerNode = null;
+        });
     }
 
     public void AddMarker(MapMarkerInfo markerInfo) {
