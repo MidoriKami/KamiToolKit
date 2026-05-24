@@ -201,8 +201,11 @@ public abstract unsafe partial class NodeBase {
         }
 
         if (ParentUldManager is not null) {
-            ParentUldManager->SetupText();
             ParentUldManager->AddNodeToObjectList(this);
+
+            if (this is TextNode { TextId: not 0 }) {
+                ParentUldManager->SetupText();
+            }
         }
 
         if (ParentAddon is not null) {
