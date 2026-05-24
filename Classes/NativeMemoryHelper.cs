@@ -43,6 +43,9 @@ internal static class NativeMemoryHelper {
     public static unsafe void Free(void* memory, ulong size)
         => IMemorySpace.Free(memory, size);
 
+    public static unsafe void* Realloc(void* memory, ulong size)
+        => IMemorySpace.GetUISpace()->AlignedRealloc(memory, size, 0x10);
+
     public static unsafe void ResizeArray<T>(ref T* array, int oldSize, uint newSize) where T : unmanaged
         => ResizeArray(ref array, oldSize, (int)newSize);
 

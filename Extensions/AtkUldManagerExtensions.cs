@@ -29,6 +29,8 @@ public static unsafe class AtkUldManagerExtensions {
         /// Adds node and all children nodes to this UldManager's Object List
         /// </summary>
         public void AddNodeToObjectList(NodeBase node) {
+            if (!manager.ResourceFlags.HasFlag(AtkUldManagerResourceFlag.Initialized)) return;
+
             manager.AddNodeToObjectList(node.ResNode);
 
             foreach (var child in NodeBase.GetLocalChildren(node)) {
@@ -39,6 +41,7 @@ public static unsafe class AtkUldManagerExtensions {
         }
 
         public void AddNodeToObjectList(AtkResNode* newNode) {
+            if (!manager.ResourceFlags.HasFlag(AtkUldManagerResourceFlag.Initialized)) return;
             if (newNode is null) return;
 
             // If the node is already in the object list, skip.
@@ -46,16 +49,8 @@ public static unsafe class AtkUldManagerExtensions {
 
             var oldSize = manager.Objects->NodeCount;
             var newSize = oldSize + 1;
-            var newBuffer = (AtkResNode**)NativeMemoryHelper.Malloc((ulong)(newSize * 8));
 
-            if (oldSize > 0) {
-                foreach (var index in Enumerable.Range(0, oldSize)) {
-                    newBuffer[index] = manager.Objects->NodeList[index];
-                }
-
-                NativeMemoryHelper.Free(manager.Objects->NodeList, (ulong)(oldSize * 8));
-            }
-
+            var newBuffer = (AtkResNode**)NativeMemoryHelper.Realloc(manager.Objects->NodeList, (ulong)(newSize * 8));
             newBuffer[newSize - 1] = newNode;
 
             manager.Objects->NodeList = newBuffer;
@@ -66,6 +61,7 @@ public static unsafe class AtkUldManagerExtensions {
         /// Removes node and all children nodes from this UldManager's Object List
         /// </summary>
         public void RemoveNodeFromObjectList(NodeBase node) {
+            if (!manager.ResourceFlags.HasFlag(AtkUldManagerResourceFlag.Initialized)) return;
             manager.RemoveNodeFromObjectList(node.ResNode);
 
             foreach (var child in NodeBase.GetLocalChildren(node)) {
@@ -76,6 +72,7 @@ public static unsafe class AtkUldManagerExtensions {
         }
 
         public void RemoveNodeFromObjectList(AtkResNode* node) {
+            if (!manager.ResourceFlags.HasFlag(AtkUldManagerResourceFlag.Initialized)) return;
             if (node is null) return;
 
             // If the node isn't in the object list, skip.

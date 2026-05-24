@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -14,9 +13,6 @@ public abstract unsafe partial class NodeBase {
 
     internal readonly List<NodeBase> ChildNodes = [];
     private NodeBase? parentNode;
-
-    private readonly HashSet<string> addonsPendingUpdate = [];
-    private readonly HashSet<nint> uldManagersPendingUpdate = [];
 
     internal AtkUldManager* ParentUldManager { get; set; }
     internal AtkUnitBase* ParentAddon { get; private set; }
@@ -178,22 +174,8 @@ public abstract unsafe partial class NodeBase {
     private void RemoveParentAddonReferences() {
         if (ParentAddon is null) return;
 
-        var addonName = ParentAddon->NameString;
-
-        // Queue collision update for next frame
-        if (addonsPendingUpdate.Add(addonName)) {
-            Services.Framework.RunOnTick(() => {
-                if (Framework.Instance()->IsDestroying) return; // Game Unloading, don't try to refresh anything.
-
-                var currentInstance = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
-                if (currentInstance is not null) {
-                    currentInstance->UldManager.UpdateDrawNodeList();
-                    currentInstance->UpdateCollisionNodeList(false);
-                }
-
-                addonsPendingUpdate.Remove(addonName);
-            });
-        }
+        ParentAddon->UldManager.UpdateDrawNodeList();
+        ParentAddon->UpdateCollisionNodeList(false);
 
         ParentAddon = null;
 
@@ -219,20 +201,7 @@ public abstract unsafe partial class NodeBase {
         }
 
         if (ParentUldManager is not null) {
-            // Queue UldManager update for next frame
-            var manager = ParentUldManager;
-
-            if (uldManagersPendingUpdate.Add((nint)ParentUldManager)) {
-                Services.Framework.RunOnTick(() => {
-                    if (Framework.Instance()->IsDestroying) return; // Game Unloading, don't try to refresh anything.
-                    if (ResNode is null) return;
-
-                    manager->AddNodeToObjectList(this);
-                    manager->SetupText();
-                    uldManagersPendingUpdate.Remove((nint)manager);
-                });
-            }
-
+            ParentUldManager->SetupText();
             ParentUldManager->AddNodeToObjectList(this);
         }
 
@@ -241,20 +210,8 @@ public abstract unsafe partial class NodeBase {
                 Services.Log.Warning("Warning, attaching to AddonNamePlate is not supported. Use OverlayController instead.");
             }
 
-            var addonName = ParentAddon->NameString;
-
-            // Queue collision update for next frame
-            if (addonsPendingUpdate.Add(addonName)) {
-                Services.Framework.RunOnTick(() => {
-                    var currentInstance = RaptureAtkUnitManager.Instance()->GetAddonByName(addonName);
-                    if (currentInstance is not null) {
-                        currentInstance->UldManager.UpdateDrawNodeList();
-                        currentInstance->UpdateCollisionNodeList(false);
-                    }
-
-                    addonsPendingUpdate.Remove(addonName);
-                });
-            }
+            ParentAddon->UldManager.UpdateDrawNodeList();
+            ParentAddon->UpdateCollisionNodeList(false);
         }
     }
 
