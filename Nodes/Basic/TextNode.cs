@@ -106,6 +106,11 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         }
     }
 
+    public uint SheetType {
+        get => Node->SheetType;
+        set => Node->SheetType = (byte)value;
+    }
+
     public uint TextId {
         get => Node->TextId;
         set => Node->TextId = value;
