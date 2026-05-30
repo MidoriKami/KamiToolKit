@@ -178,6 +178,12 @@ public unsafe class ListNode<T, TU> : SimpleComponentNode where TU : ListItemNod
         PopulateNodes();
     }
 
+    public void ClearSelection() {
+        if (selectedItem is not null) {
+            selectedItem = default;
+        }
+    }
+
     private void RecalculateScroll() {
         if (OptionsList.Count < nodeCount) {
             ScrollBarNode.ScrollPosition = 0;
