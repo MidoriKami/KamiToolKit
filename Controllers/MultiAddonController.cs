@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Dalamud;
 
@@ -68,10 +69,12 @@ public unsafe class MultiAddonController<T> : IAddonEventController<T>, IDisposa
     private void ControllerOnPreUpdate(T* addon)
         => OnPreUpdate?.Invoke(addon);
 
-    public void Dispose() => Services.Framework.RunOnFrameworkThread(() => {
+    public void Dispose() {
+        ThreadSafety.AssertMainThread();
+
         addonControllers.ForEach(controller => controller.Dispose());
         addonControllers.Clear();
-    });
+    }
 
     public IAddonEventController<T>.AddonControllerEvent? OnSetup { get; init; }
     public IAddonEventController<T>.AddonControllerEvent? OnFinalize { get; init; }

@@ -7,7 +7,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Dalamud;
 using KamiToolKit.Nodes;
-using KamiToolKit.Timelines;
 
 namespace KamiToolKit;
 
@@ -16,7 +15,7 @@ namespace KamiToolKit;
 /// </summary>
 public unsafe partial class NativeAddon {
     private GCHandle? disposeHandle;
-    internal AtkUnitBase* InternalAddon;
+    protected internal AtkUnitBase* InternalAddon;
 
     protected WindowNodeBase? WindowNode { get; private set; }
 
@@ -80,54 +79,6 @@ public unsafe partial class NativeAddon {
     }
 
     /// <summary>
-    /// Initializes data components of the addon to sane default values.
-    /// </summary>
-    private void InitializeAddon() {
-        var widgetInfo = NativeMemoryHelper.UiAlloc<AtkUldWidgetInfo>(1, 16);
-        widgetInfo->Id = 1;
-        widgetInfo->NodeCount = 0;
-        widgetInfo->NodeList = null;
-        widgetInfo->WidgetAlignment = new AtkWidgetAlignment {
-            AlignmentType = AlignmentType.Center,
-            X = 50.0f,
-            Y = 50.0f,
-        };
-
-        InternalAddon->UldManager.Objects = (AtkUldObjectInfo*)widgetInfo;
-        InternalAddon->UldManager.ObjectCount = 1;
-        InternalAddon->UldManager.ResourceFlags |= AtkUldManagerResourceFlag.ArraysAllocated;
-
-        InternalAddon->RootNode = RootNode;
-        InternalAddon->UldManager.AddNodeToObjectList(RootNode);
-
-        LoadTimeline();
-
-        InternalAddon->UldManager.UpdateDrawNodeList();
-        InternalAddon->UldManager.LoadedState = AtkLoadState.Loaded;
-
-        if (!IsOverlayAddon && WindowNode is not null) {
-            WindowNode.AttachNode(this, NodePosition.AsFirstChild);
-            InternalAddon->WindowNode = WindowNode;
-            InternalAddon->UldManager.AddNodeToObjectList(WindowNode);
-        }
-
-        // UldManager finished loading the uld
-        InternalAddon->Flags198 |= 2 << 0x1C;
-
-        // LoadUldByName called
-        InternalAddon->Flags1A2 |= 4;
-
-        InternalAddon->UpdateCollisionNodeList(false);
-
-        // Set focus node to allow controller nav
-        WindowNode?.WindowHeaderFocusNode.AddNodeFlags(NodeFlags.Focusable);
-        InternalAddon->FocusNode = WindowNode is not null ? WindowNode.WindowHeaderFocusNode : RootNode;
-
-        // Now that we have constructed this instance, track it for auto-dispose
-        CreatedAddons.Add(this);
-    }
-
-    /// <summary>
     /// Before the first OnSetup virtual function is invoked, set various fields such as open SFX, title, and initial position.
     /// </summary>
     private void SetInitialState() {
@@ -158,24 +109,5 @@ public unsafe partial class NativeAddon {
             var clampedPosition = GetScreenClampedPosition(LastClosePosition);
             InternalAddon->SetPosition((short)clampedPosition.X, (short)clampedPosition.Y);
         }
-    }
-
-    /// <summary>
-    /// Load timelines for WindowNode to properly show focused/unfocused state.
-    /// </summary>
-    private void LoadTimeline() {
-        RootNode.AddTimeline(new TimelineBuilder()
-            .BeginFrameSet(1, 89)
-            .AddLabel(1, 101, AtkTimelineJumpBehavior.PlayOnce, 0)
-            .AddLabel(10, 102, AtkTimelineJumpBehavior.PlayOnce, 0)
-            .AddLabel(20, 103, AtkTimelineJumpBehavior.PlayOnce, 0)
-            .AddLabel(30, 104, AtkTimelineJumpBehavior.PlayOnce, 0)
-            .AddLabel(40, 105, AtkTimelineJumpBehavior.PlayOnce, 0)
-            .AddLabel(50, 106, AtkTimelineJumpBehavior.PlayOnce, 0)
-            .AddLabel(60, 107, AtkTimelineJumpBehavior.PlayOnce, 0)
-            .AddLabel(70, 108, AtkTimelineJumpBehavior.PlayOnce, 0)
-            .AddLabel(80, 109, AtkTimelineJumpBehavior.PlayOnce, 0)
-            .EndFrameSet()
-            .Build());
     }
 }

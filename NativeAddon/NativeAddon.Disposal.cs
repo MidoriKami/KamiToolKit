@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
-public partial class NativeAddon : IDisposable {
+public partial class NativeAddon : IDisposable, IAsyncDisposable {
     private static readonly List<NativeAddon> CreatedAddons = [];
 
     private bool isDisposed;
@@ -26,6 +27,28 @@ public partial class NativeAddon : IDisposable {
             // Close will remove this node automatically on AtkUnitBase.Finalize,
             // However, this is after the plugin unloads,
             // and will trigger a warning in auto-dispose if we don't remove this now.
+            CreatedAddons.Remove(this);
+
+            GC.SuppressFinalize(this);
+        }
+
+        isDisposed = true;
+    }
+
+    public virtual async ValueTask DisposeAsync() {
+        if (IsOverlayAddon) {
+            // Intentionally leak OverlayAddons,
+            // until Dalamud can implement OverlayAddons globally.
+            CreatedAddons.Remove(this);
+            GC.SuppressFinalize(this);
+            return;
+        }
+
+        if (!isDisposed) {
+            Services.Log.Debug($"Disposing addon {GetType()}");
+
+            await CloseAsync();
+
             CreatedAddons.Remove(this);
 
             GC.SuppressFinalize(this);

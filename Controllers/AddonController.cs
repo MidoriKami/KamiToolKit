@@ -1,6 +1,7 @@
 ﻿using System;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Dalamud;
 
@@ -27,42 +28,49 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
     }
 
     public void Enable() {
-        Services.Framework.RunOnFrameworkThread(() => {
-            if (IsEnabled) return;
+        ThreadSafety.AssertMainThread();
+        if (IsEnabled) return;
 
-            Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonEvent);
-            Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, AddonName, OnAddonEvent);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonEvent);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, AddonName, OnAddonEvent);
+
+        if (OnRefresh is not null || OnPreRefresh is not null) {
             Services.AddonLifecycle.RegisterListener(AddonEvent.PreRefresh, AddonName, OnAddonEvent);
             Services.AddonLifecycle.RegisterListener(AddonEvent.PreRequestedUpdate, AddonName, OnAddonEvent);
             Services.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, AddonName, OnAddonEvent);
             Services.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, AddonName, OnAddonEvent);
-            Services.AddonLifecycle.RegisterListener(AddonEvent.PreUpdate, AddonName, OnAddonEvent);
+        }
+
+        if (OnUpdate is not null) {
             Services.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, AddonName, OnAddonEvent);
+        }
 
-            if (AddonPointer is not null) {
-                OnSetup?.Invoke((T*)AddonPointer);
-                isSetupComplete = true;
-            }
+        if (OnPreUpdate is not null) {
+            Services.AddonLifecycle.RegisterListener(AddonEvent.PreUpdate, AddonName, OnAddonEvent);
+        }
 
-            IsEnabled = true;
-        });
+        if (AddonPointer is not null) {
+            OnSetup?.Invoke((T*)AddonPointer);
+            isSetupComplete = true;
+        }
+
+        IsEnabled = true;
     }
 
     public virtual void Dispose()
         => Disable();
 
     public void Disable() {
-        Services.Framework.RunOnFrameworkThread(() => {
-            if (!IsEnabled) return;
+        ThreadSafety.AssertMainThread();
+        if (!IsEnabled) return;
 
-            Services.AddonLifecycle.UnregisterListener(OnAddonEvent);
+        Services.AddonLifecycle.UnregisterListener(OnAddonEvent);
 
-            if (AddonPointer is not null) {
-                OnFinalize?.Invoke((T*)AddonPointer);
-            }
+        if (AddonPointer is not null) {
+            OnFinalize?.Invoke((T*)AddonPointer);
+        }
 
-            IsEnabled = false;
-        });
+        IsEnabled = false;
     }
 
     private void OnAddonEvent(AddonEvent type, AddonArgs args) {

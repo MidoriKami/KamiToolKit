@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -9,7 +10,7 @@ namespace KamiToolKit;
 
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable<T> {
     protected NodeBase(NodeType nodeType) {
-        if (MainThreadSafety.TryAssertMainThread()) return;
+        ThreadSafety.AssertMainThread();
 
         Services.Log.Verbose($"Creating new node {GetType()}");
         Node = NativeMemoryHelper.Create<T>();

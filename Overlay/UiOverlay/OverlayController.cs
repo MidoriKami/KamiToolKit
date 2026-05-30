@@ -4,6 +4,7 @@ using System.Linq;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Dalamud;
@@ -18,6 +19,8 @@ public unsafe class OverlayController : IDisposable {
     private ControllerState controllerState = ControllerState.WaitForNameplate;
 
     public OverlayController() {
+        ThreadSafety.AssertMainThread();
+
         ClearState();
 
         Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "NamePlate", OnNamePlatePreFinalize);
@@ -33,16 +36,16 @@ public unsafe class OverlayController : IDisposable {
     }
 
     public void Dispose() {
+        ThreadSafety.AssertMainThread();
+
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "NamePlate");
         Services.AddonLifecycle.UnregisterListener(OnOverlayAddonFinalize, OnOverlayAddonUpdate);
 
-        Services.Framework.RunOnFrameworkThread(() => {
-            foreach (var node in overlayNodes.SelectMany(nodeList => nodeList.Value)) {
-                node.Dispose();
-            }
+        foreach (var node in overlayNodes.SelectMany(nodeList => nodeList.Value)) {
+            node.Dispose();
+        }
 
-            overlayNodes.Clear();
-        });
+        overlayNodes.Clear();
     }
 
     //
@@ -136,11 +139,9 @@ public unsafe class OverlayController : IDisposable {
     // Public node access
     //
 
-    public void CreateNode(Func<OverlayNode> creationFunction) => Services.Framework.RunOnFrameworkThread(() => {
-        AddNode(creationFunction());
-    });
+    public void AddNode(OverlayNode node) {
+        ThreadSafety.AssertMainThread();
 
-    public void AddNode(OverlayNode node) => Services.Framework.RunOnFrameworkThread(() => {
         overlayNodes.TryAdd(node.OverlayLayer, []);
 
         if (overlayNodes[node.OverlayLayer].Contains(node)) return;
@@ -153,21 +154,25 @@ public unsafe class OverlayController : IDisposable {
         if (addon is null) return;
 
         AttachNode(addon, node);
-    });
+    }
 
-    public void RemoveNode(OverlayNode node) => Services.Framework.RunOnFrameworkThread(() => {
+    public void RemoveNode(OverlayNode node) {
+        ThreadSafety.AssertMainThread();
+
         if (!overlayNodes.TryGetValue(node.OverlayLayer, out var list)) return;
 
         if (list.Remove(node)) {
             node.Dispose();
         }
-    });
+    }
 
-    public void RemoveAllNodes() => Services.Framework.RunOnFrameworkThread(() => {
+    public void RemoveAllNodes() {
+        ThreadSafety.AssertMainThread();
+
         foreach (var node in overlayNodes.SelectMany(set => set.Value).ToList()) {
             RemoveNode(node);
         }
-    });
+    }
 
     //
     // Events
