@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -53,7 +54,7 @@ public abstract unsafe partial class NodeBase {
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
     private void PerformManagedAttach(NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild) {
-        if (MainThreadSafety.TryAssertMainThread()) return;
+        ThreadSafety.AssertMainThread();
         if (targetAddon is null) return;
 
         // Check the Addon's node list to find out what NodeId we should be, and set that before attaching
@@ -68,7 +69,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     private void PerformManagedAttach(NodeBase? targetNode, NodePosition targetPosition) {
-        if (MainThreadSafety.TryAssertMainThread()) return;
+        ThreadSafety.AssertMainThread();
         if (targetNode is null) return;
 
         PerformNativeAttach(targetNode, targetPosition);
@@ -78,7 +79,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     private void PerformNativeAttach(AtkResNode* targetNode, NodePosition targetPosition) {
-        if (MainThreadSafety.TryAssertMainThread()) return;
+        ThreadSafety.AssertMainThread();
         if (targetNode is null) return;
 
         if (targetNode->GetNodeType() is NodeType.Component) {
@@ -148,7 +149,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     public void DetachNode() {
-        if (MainThreadSafety.TryAssertMainThread()) return;
+        ThreadSafety.AssertMainThread();
         if (ResNode is null) return;
 
         UnlinkFromNative();

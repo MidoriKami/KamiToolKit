@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using Dalamud.Interface.Textures.TextureWraps;
 using KamiToolKit.Classes;
 using KamiToolKit.Dalamud;
@@ -41,7 +42,7 @@ public class ImGuiImageNode : SimpleImageNode {
     }
 
     public void LoadTextureFromFile(string fileSystemPath) {
-        Services.Framework.RunOnTick(async () => {
+        Task.Run(async () => {
             Alpha = 0.0f;
 
             var newTexture = await Services.TextureProvider.GetFromFile(fileSystemPath).RentAsync();

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Dalamud;
@@ -33,15 +33,18 @@ public abstract unsafe partial class NodeBase : IDisposable {
             LogIndented($"Beginning Dispose for {GetType()}");
             logIndent++;
 
-            if (MainThreadSafety.TryAssertMainThread()) {
-                if (Framework.Instance()->IsDestroying) {
-                    LogIndented("Game is shutting down, aborting manual dispose.");
-                }
+            if (isDisposed) {
+                LogIndented("Node was already disposed, skipping.");
                 return;
             }
 
-            if (isDisposed) {
-                LogIndented("Node was already disposed, skipping.");
+            if (Services.Framework.IsFrameworkUnloading) {
+                LogIndented("Game is shutting down, aborting manual dispose.");
+                return;
+            }
+
+            if (!ThreadSafety.IsMainThread) {
+                LogIndented($"{GetType()}'s Dispose must be called from the main thread.");
                 return;
             }
 

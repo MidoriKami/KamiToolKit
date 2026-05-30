@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using InteropGenerator.Runtime;
@@ -11,7 +12,7 @@ namespace KamiToolKit.Controllers;
 /// Controller intended to interact with the games native Addon Factory system
 /// to fully replace a built-in game addon with a custom <see cref="NativeAddon"/>.
 /// </summary>
-public unsafe class AddonFactoryController : IDisposable {
+public class AddonFactoryController : IDisposable {
     public required string AddonName { get; init; }
 
     private nint? originalFactoryCreateAddress;
@@ -29,40 +30,42 @@ public unsafe class AddonFactoryController : IDisposable {
     /// <summary>
     /// Enables the addon factory replacement.
     /// </summary>
-    public void Enable() => Services.Framework.RunOnFrameworkThread(() => {
+    public unsafe void Enable() {
+        ThreadSafety.AssertMainThread();
+
         var factoryInfo = RaptureAtkModule.Instance()->GetAddonFactoryInfo(AddonName);
         if (factoryInfo is null) return;
 
         originalFactoryCreateAddress = (nint?)factoryInfo->Create;
         pinnedFactoryCreateMethod = CreateCustomAddon;
         factoryInfo->Create = (delegate* unmanaged<RaptureAtkModule*, CStringPointer, uint, AtkValue*, AtkUnitBase*>) Marshal.GetFunctionPointerForDelegate(pinnedFactoryCreateMethod);
-    });
+    }
 
     /// <summary>
     /// Disables addon factory replacement and disposes any open replaced addons.
     /// </summary>
-    public void Disable() {
+    public unsafe void Disable() {
+        ThreadSafety.AssertMainThread();
+
         nativeAddon?.Dispose();
         nativeAddon = null;
 
-        Services.Framework.RunOnFrameworkThread(() => {
-            var factoryInfo = RaptureAtkModule.Instance()->GetAddonFactoryInfo(AddonName);
-            if (factoryInfo is null) return;
+        var factoryInfo = RaptureAtkModule.Instance()->GetAddonFactoryInfo(AddonName);
+        if (factoryInfo is null) return;
 
-            // This is dumb, but the compiler will warn otherwise.
-            if (originalFactoryCreateAddress is null) {
-                factoryInfo->Create = null;
-            }
-            else {
-                factoryInfo->Create = (delegate* unmanaged<RaptureAtkModule*, CStringPointer, uint, AtkValue*, AtkUnitBase*>) originalFactoryCreateAddress;
-            }
+        // This is dumb, but the compiler will warn otherwise.
+        if (originalFactoryCreateAddress is null) {
+            factoryInfo->Create = null;
+        }
+        else {
+            factoryInfo->Create = (delegate* unmanaged<RaptureAtkModule*, CStringPointer, uint, AtkValue*, AtkUnitBase*>) originalFactoryCreateAddress;
+        }
 
-            pinnedFactoryCreateMethod = null;
-            originalFactoryCreateAddress = null;
-        });
+        pinnedFactoryCreateMethod = null;
+        originalFactoryCreateAddress = null;
     }
 
-    private AtkUnitBase* CreateCustomAddon(RaptureAtkModule* raptureAtkModule, CStringPointer addonName, uint valueCount, AtkValue* values) {
+    private unsafe AtkUnitBase* CreateCustomAddon(RaptureAtkModule* raptureAtkModule, CStringPointer addonName, uint valueCount, AtkValue* values) {
         try {
             nativeAddon?.Dispose();
             nativeAddon = CreateNativeAddonFunction();

@@ -22,12 +22,13 @@ public class TabBarNode : SimpleComponentNode {
         RecalculateLayout();
     }
 
-    public void AddTab(ReadOnlySeString label, Action callback, bool isEnabled = true) {
+    public void AddTab(ReadOnlySeString label, Action callback, ReadOnlySeString? tooltip = null, bool isEnabled = true) {
         var newButton = new TabBarRadioButtonNode {
             Height = Height,
             String = label,
             OnClick = callback,
             IsEnabled = isEnabled,
+            TextTooltip = tooltip ?? string.Empty,
             MultiplyColor = isEnabled ? Vector3.One : new Vector3(0.6f, 0.6f, 0.6f),
         };
 

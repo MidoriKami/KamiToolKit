@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -51,19 +52,21 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     public readonly List<uint> ModifiedIndexes = [];
 
     public void Enable() {
+        ThreadSafety.AssertMainThread();
+
         Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonSetup);
         Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, AddonName, OnAddonFinalize);
 
-        Services.Framework.RunOnFrameworkThread(() => {
-            var addon = (T*)RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
-            if (addon is not null) {
-                Services.Log.Warning("Caution: ListController was loaded after list was initialized, data may be stale.");
-                LoadPopulators(addon);
-            }
-        });
+        var addon = (T*)RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
+        if (addon is not null) {
+            Services.Log.Warning("Caution: ListController was loaded after list was initialized, data may be stale.");
+            LoadPopulators(addon);
+        }
     }
 
     public void Disable() {
+        ThreadSafety.AssertMainThread();
+
         Services.AddonLifecycle.UnregisterListener(OnAddonSetup, OnAddonFinalize);
 
         onListPopulate?.Dispose();
@@ -73,15 +76,8 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         onRendererPopulate = null;
     }
 
-    public void Dispose() {
-        onListPopulate?.Dispose();
-        onListPopulate = null;
-
-        onRendererPopulate?.Dispose();
-        onRendererPopulate = null;
-
-        Disable();
-    }
+    public void Dispose()
+        => Disable();
 
     private void OnAddonSetup(AddonEvent type, AddonArgs args)
         => LoadPopulators((T*)args.Addon.Address);

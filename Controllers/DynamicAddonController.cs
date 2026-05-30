@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Dalamud;
@@ -98,6 +99,8 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
     }
 
     private void AddListeners(string name) {
+        ThreadSafety.AssertMainThread();
+
         Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, name, OnAddonEvent);
         Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, name, OnAddonEvent);
         Services.AddonLifecycle.RegisterListener(AddonEvent.PreRefresh, name, OnAddonEvent);
@@ -107,15 +110,15 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
         Services.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, name, OnAddonEvent);
         Services.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, name, OnAddonEvent);
 
-        Services.Framework.RunOnFrameworkThread(() => {
-            var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(name);
-            if (addon is not null) {
-                OnSetup?.Invoke(addon);
-            }
-        });
+        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(name);
+        if (addon is not null) {
+            OnSetup?.Invoke(addon);
+        }
     }
 
     private void RemoveListeners(string name) {
+        ThreadSafety.AssertMainThread();
+
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, name, OnAddonEvent);
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, name, OnAddonEvent);
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PreRefresh, name, OnAddonEvent);
@@ -125,12 +128,10 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PostRequestedUpdate, name, OnAddonEvent);
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PostUpdate, name, OnAddonEvent);
 
-        Services.Framework.RunOnFrameworkThread(() => {
-            var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(name);
-            if (addon is not null) {
-                OnFinalize?.Invoke(addon);
-            }
-        });
+        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(name);
+        if (addon is not null) {
+            OnFinalize?.Invoke(addon);
+        }
     }
 
     public void Dispose() {
