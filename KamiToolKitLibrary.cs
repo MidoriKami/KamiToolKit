@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Globalization;
 using System.Resources;
 using Dalamud.Plugin;
+using Dalamud.Utility;
 using KamiToolKit.Dalamud;
 using Serilog.Events;
 
@@ -78,11 +79,15 @@ public static class KamiToolKitLibrary {
 
         NativeAddon.DisposeCloseCallback();
 
-        if (MainThreadSafety.TryAssertMainThread()) return;
+        if (Services.Framework.IsFrameworkUnloading) return;
 
-        NativeAddon.DisposeAddons();
-        NodeBase.DisposeNodes();
+        try {
+            if (!ThreadSafety.IsMainThread) return;
 
-        Services.PluginInterface.RelinquishData(NodeDataShareKey);
+            NativeAddon.DisposeAddons();
+            NodeBase.DisposeNodes();
+        } finally {
+            Services.PluginInterface.RelinquishData(NodeDataShareKey);
+        }
     }
 }
