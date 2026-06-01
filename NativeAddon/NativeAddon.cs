@@ -110,4 +110,7 @@ public unsafe partial class NativeAddon {
             InternalAddon->SetPosition((short)clampedPosition.X, (short)clampedPosition.Y);
         }
     }
+
+    protected void UpdateAnchoringLayout()
+        => SetWindowSize(Size);
 }
