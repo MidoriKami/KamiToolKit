@@ -87,7 +87,9 @@ public class VerticalListNode : LayoutListNode {
         var componentNodes = NodeList.OfType<ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
 
-        // todo: figure out bottom alignment nav.
+        if (Anchor is VerticalListAnchor.Bottom) {
+            componentNodes = componentNodes.AsEnumerable().Reverse().ToList();
+        }
 
         foreach (var (index, node) in componentNodes.Index()) {
             node.NavIndex = (byte) (index + NavIndex);
