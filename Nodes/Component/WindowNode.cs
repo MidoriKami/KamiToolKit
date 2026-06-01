@@ -23,32 +23,37 @@ public unsafe class WindowNode : WindowNodeBase {
     public readonly TextNode TitleNode;
 
     public WindowNode() {
+        NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents;
+
         CollisionNode.NodeId = 13;
+        CollisionNode.NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.HasCollision | NodeFlags.EmitsEvents;
+
         Component->ShowFlags = 1;
 
         HeaderCollisionNode = new CollisionNode {
             Uses = 2,
             NodeId = 12,
-            Height = 28.0f,
+            Size = new Vector2(0.0f, 28.0f),
             Position = new Vector2(8.0f, 8.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.EmitsEvents | NodeFlags.Focusable,
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight |
+                        NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.EmitsEvents,
         };
         HeaderCollisionNode.AttachNode(this);
 
         BackgroundNode = new WindowBackgroundNode(false) {
             NodeId = 11,
-            Position = Vector2.Zero,
             Offsets = new Vector4(64.0f, 32.0f, 32.0f, 32.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft |
+                        NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
             PartsRenderType = 19,
         };
         BackgroundNode.AttachNode(this);
 
         BorderNode = new WindowBackgroundNode(true) {
             NodeId = 10,
-            Position = Vector2.Zero,
             Offsets = new Vector4(64.0f, 32.0f, 32.0f, 32.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft |
+                        NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
             PartsRenderType = 7,
         };
         BorderNode.AttachNode(this);
@@ -56,7 +61,8 @@ public unsafe class WindowNode : WindowNodeBase {
         BackgroundImageNode = new SimpleImageNode {
             NodeId = 9,
             WrapMode = WrapMode.Stretch,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft |NodeFlags.AnchorRight | NodeFlags.AnchorBottom |
+                        NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TexturePath = "ui/uld/WindowA_Gradation.tex",
             TextureCoordinates = new Vector2(6.0f, 2.0f),
             TextureSize = new Vector2(24.0f, 24.0f),
@@ -65,7 +71,9 @@ public unsafe class WindowNode : WindowNodeBase {
 
         HeaderContainerNode = new ResNode {
             NodeId = 2,
-            Size = new Vector2(477.0f, 38.0f),
+            Size = new Vector2(0.0f, 38.0f),
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight |
+                        NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         HeaderContainerNode.AttachNode(this);
 
@@ -74,18 +82,21 @@ public unsafe class WindowNode : WindowNodeBase {
             TexturePath = "ui/uld/WindowA_Line.tex",
             TextureCoordinates = Vector2.Zero,
             TextureSize = new Vector2(32.0f, 4.0f),
-            Size = new Vector2(650.0f, 4.0f),
+            Size = new Vector2(0.0f, 4.0f),
             LeftOffset = 12.0f,
             RightOffset = 12.0f,
             Position = new Vector2(10.0f, 33.0f),
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.AnchorRight |
+                        NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
         };
         DividingLineNode.AttachNode(HeaderContainerNode);
 
         CloseButtonNode = new TextureButtonNode {
             NodeId = 7,
             Size = new Vector2(28.0f, 28.0f),
-            Position = new Vector2(449.0f, 6.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            Position = new Vector2(0.0f, 6.0f),
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorRight |
+                        NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TexturePath = "ui/uld/WindowA_Button.tex",
             TextureCoordinates = new Vector2(0.0f, 0.0f),
             TextureSize = new Vector2(28.0f, 28.0f),
@@ -95,8 +106,9 @@ public unsafe class WindowNode : WindowNodeBase {
         ConfigurationButtonNode = new TextureButtonNode {
             NodeId = 6,
             Size = new Vector2(16.0f, 16.0f),
-            Position = new Vector2(435.0f, 8.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            Position = new Vector2(0.0f, 8.0f),
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorRight |
+                        NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TexturePath = "ui/uld/WindowA_Button.tex",
             TextureCoordinates = new Vector2(44.0f, 0.0f),
             TextureSize = new Vector2(16.0f, 16.0f),
@@ -106,8 +118,9 @@ public unsafe class WindowNode : WindowNodeBase {
         InformationButtonNode = new TextureButtonNode {
             NodeId = 5,
             Size = new Vector2(16.0f, 16.0f),
-            Position = new Vector2(421.0f, 8.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            Position = new Vector2(0.0f, 8.0f),
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorRight |
+                        NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TexturePath = "ui/uld/WindowA_Button.tex",
             TextureCoordinates = new Vector2(28.0f, 0.0f),
             TextureSize = new Vector2(16.0f, 16.0f),
@@ -120,7 +133,8 @@ public unsafe class WindowNode : WindowNodeBase {
             AlignmentType = AlignmentType.Left,
             FontSize = 12,
             FontType = FontType.Axis,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft |
+                        NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TextColor = ColorHelper.GetColor(3),
             TextOutlineColor = ColorHelper.GetColor(6),
             BackgroundColor = Vector4.Zero,
@@ -136,7 +150,8 @@ public unsafe class WindowNode : WindowNodeBase {
             FontSize = 23,
             FontType = FontType.TrumpGothic,
             TextFlags = TextFlags.AutoAdjustNodeSize,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft |
+                        NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TextColor = ColorHelper.GetColor(2),
             TextOutlineColor = ColorHelper.GetColor(7),
             BackgroundColor = Vector4.Zero,
@@ -157,8 +172,6 @@ public unsafe class WindowNode : WindowNodeBase {
         Data->Nodes[5] = 0;
         Data->Nodes[6] = HeaderContainerNode.NodeId;
         Data->Nodes[7] = 0;
-
-        NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents;
 
         LoadTimelines();
 

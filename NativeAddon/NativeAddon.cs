@@ -50,7 +50,7 @@ public unsafe partial class NativeAddon {
 
         RootNode = new ResNode {
             NodeId = 1,
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.Focusable | NodeFlags.EmitsEvents,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill,
             IsAddonRootNode = true,
         };
 
