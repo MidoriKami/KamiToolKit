@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Premade.Node.Simple;
 
 namespace KamiToolKit.Nodes;
 
-public abstract class LayoutListNode : SimpleComponentNode {
+public abstract class LayoutListNode : ResNode {
 
     protected readonly List<NodeBase> NodeList = [];
     private bool suppressRecalculateLayout;
+
+    public int NavIndex { get; set; }
 
     public IEnumerable<T> GetNodes<T>() where T : NodeBase => NodeList.OfType<T>();
 
@@ -36,6 +37,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
         if (suppressRecalculateLayout) return;
 
         OnRecalculateLayout();
+        OnRecalculateNavigation();
 
         foreach (var node in NodeList) {
             if (node is LayoutListNode subNode) {
@@ -45,6 +47,7 @@ public abstract class LayoutListNode : SimpleComponentNode {
     }
 
     protected abstract void OnRecalculateLayout();
+    protected abstract void OnRecalculateNavigation();
 
     protected virtual void AdjustNode(NodeBase node) { }
 

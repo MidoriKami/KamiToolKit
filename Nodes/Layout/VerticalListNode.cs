@@ -5,6 +5,9 @@ namespace KamiToolKit.Nodes;
 
 public class VerticalListNode : LayoutListNode {
 
+    public int NavLeft { get; set; }
+    public int NavRight { get; set; }
+
     /// <summary>
     /// Displays items starting from either the bottom or the top of the list
     /// </summary>
