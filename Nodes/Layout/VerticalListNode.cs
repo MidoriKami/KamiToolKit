@@ -82,4 +82,33 @@ public class VerticalListNode : LayoutListNode {
             Height = NodeList.Sum(node => node.IsVisible ? node.Height + ItemSpacing : 0.0f) + FirstItemSpacing - ItemSpacing;
         }
     }
+
+    protected override void OnRecalculateNavigation() {
+        var componentNodes = NodeList.OfType<ComponentNode>().ToList();
+        if (componentNodes.Count is 0) return;
+
+        // todo: figure out bottom alignment nav.
+
+        foreach (var (index, node) in componentNodes.Index()) {
+            node.NavIndex = (byte) (index + NavIndex);
+            node.NavLeft = NavLeft;
+            node.NavRight = NavRight;
+
+            // First Element
+            if (index is 0) {
+                node.NavUp = (byte) (componentNodes.Count - 1 + NavIndex);
+            }
+            else {
+                node.NavUp = (byte) (index - 1 + NavIndex);
+            }
+
+            // Last Element
+            if (index == componentNodes.Count - 1) {
+                node.NavDown = (byte) NavIndex;
+            }
+            else {
+                node.NavDown = (byte) (index + 1 + NavIndex);
+            }
+        }
+    }
 }
