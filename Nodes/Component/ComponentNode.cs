@@ -11,6 +11,33 @@ public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComp
     public abstract CollisionNode CollisionNode { get; }
     public abstract AtkComponentBase* ComponentBase { get; }
     public abstract AtkUldComponentDataBase* DataBase { get; }
+
+    public ref AtkCursorNavigationInfo CursorNavInfo => ref ComponentBase->CursorNavigationInfo;
+
+    public int NavIndex {
+        get => CursorNavInfo.Index;
+        set => CursorNavInfo.Index = (byte) value;
+    }
+
+    public int NavLeft {
+        get => CursorNavInfo.LeftIndex;
+        set => CursorNavInfo.LeftIndex = (byte) value;
+    }
+
+    public int NavRight {
+        get => CursorNavInfo.RightIndex;
+        set => CursorNavInfo.RightIndex = (byte) value;
+    }
+
+    public int NavUp {
+        get => CursorNavInfo.UpIndex;
+        set => CursorNavInfo.UpIndex = (byte) value;
+    }
+
+    public int NavDown {
+        get => CursorNavInfo.DownIndex;
+        set => CursorNavInfo.DownIndex = (byte) value;
+    }
 }
 
 public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable<T> where TU : unmanaged {
