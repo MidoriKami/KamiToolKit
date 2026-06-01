@@ -58,6 +58,8 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         uldManager.UpdateDrawNodeList();
         uldManager.ResourceFlags = AtkUldManagerResourceFlag.Initialized | AtkUldManagerResourceFlag.ArraysAllocated;
         uldManager.LoadedState = AtkLoadState.Loaded;
+
+        AddNodeFlags(NodeFlags.EmitsEvents);
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
