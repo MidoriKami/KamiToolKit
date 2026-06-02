@@ -3,14 +3,13 @@ using Dalamud.Interface.Textures.TextureWraps;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiToolKit.Dalamud;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
 using Lumina.Excel.Sheets;
 using Lumina.Text.ReadOnly;
 using Action = System.Action;
 
 namespace KamiToolKit.Overlay.MapOverlay;
 
-public unsafe class MapMarkerNode : SimpleOverlayNode {
+public unsafe class MapMarkerNode : ResNode {
     private IconImageNode? iconNode;
     private ImGuiImageNode? imGuiImageNode;
 
