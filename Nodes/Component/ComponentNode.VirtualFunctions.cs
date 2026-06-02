@@ -34,7 +34,7 @@ public abstract unsafe partial class ComponentNode<T, TU> {
     }
 
     private void ReceiveEvent(AtkComponentBase* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        Services.Log.Verbose($"[{GetType().Name}][{Component->GetType().Name}] Receive Event");
+        Services.Log.Verbose($"[{GetType().Name}][{Component->GetType().Name}] [{eventType}] {eventParam}");
 
         OnReceiveEvent(eventType, eventParam, atkEvent, atkEventData);
 
