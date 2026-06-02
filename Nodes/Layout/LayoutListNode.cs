@@ -37,7 +37,10 @@ public abstract class LayoutListNode : ResNode {
         if (suppressRecalculateLayout) return;
 
         OnRecalculateLayout();
-        OnRecalculateNavigation();
+
+        if (NavIndex is not 0) {
+            OnRecalculateNavigation();
+        }
 
         foreach (var node in NodeList) {
             if (node is LayoutListNode subNode) {
