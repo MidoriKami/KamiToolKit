@@ -235,8 +235,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         try {
             switch (type) {
                 case InputCallbackType.Enter:
-                    if (this is TextMultiLineInputNode) break;
-
                     OnInputComplete?.Invoke(Component->EvaluatedString.AsSpan());
                     ClearFocus();
                     break;
