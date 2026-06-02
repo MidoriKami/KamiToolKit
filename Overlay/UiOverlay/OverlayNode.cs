@@ -1,11 +1,11 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Overlay.UiOverlay;
 
-public abstract unsafe class OverlayNode : SimpleOverlayNode {
+public abstract unsafe class OverlayNode : ResNode {
 
     public abstract OverlayLayer OverlayLayer { get; }
 
