@@ -23,9 +23,10 @@ public abstract unsafe partial class NodeBase : IDisposable {
     internal abstract AtkResNode* ResNode { get; }
     internal bool IsAddonRootNode;
 
-    private delegate* unmanaged<AtkResNode*, bool, void> originalDestructorFunction;
-    private AtkResNode.Delegates.Destroy destructorFunction = null!;
-    private AtkResNode.AtkResNodeVirtualTable* virtualTable;
+    private AtkResNode.Delegates.Destroy destroyFunction = null!;
+
+    private AtkResNode.AtkResNodeVirtualTable* originalVirtualTable;
+    private AtkResNode.AtkResNodeVirtualTable* modifiedVirtualTable;
 
     public void Dispose() {
         try {
@@ -157,37 +158,33 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     protected void BuildVirtualTable() {
         // Back up original destructor pointer
-        originalDestructorFunction = ResNode->VirtualTable->Destroy;
+        originalVirtualTable = ResNode->VirtualTable;
 
         // Overwrite virtual table with a custom copy,
         // Note: Currently there are only 2 vfuncs, but there's no harm in copying more for if they ever add more vfuncs to the game.
-        virtualTable = (AtkResNode.AtkResNodeVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 4);
-        NativeMemory.Copy(ResNode->VirtualTable, virtualTable, 0x8 * 4);
-        ResNode->VirtualTable = virtualTable;
+        modifiedVirtualTable = (AtkResNode.AtkResNodeVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 4);
+        NativeMemory.Copy(ResNode->VirtualTable, modifiedVirtualTable, 0x8 * 4);
+        ResNode->VirtualTable = modifiedVirtualTable;
 
         // Pin managed function to virtual table entry
-        destructorFunction = DestructorDetour;
+        destroyFunction = Destroy;
 
         // Replace native destructor with
-        virtualTable->Destroy = (delegate* unmanaged<AtkResNode*, bool, void>)Marshal.GetFunctionPointerForDelegate(destructorFunction);
+        modifiedVirtualTable->Destroy = (delegate* unmanaged<AtkResNode*, bool, void>)Marshal.GetFunctionPointerForDelegate(destroyFunction);
     }
 
-    private void DestructorDetour(AtkResNode* thisPtr, bool free) {
+    protected void Destroy(AtkResNode* thisPtr, bool free) {
         Dispose(true, true);
-        InvokeOriginalDestructor(thisPtr, free);
+
+        originalVirtualTable->Destroy(thisPtr, free);
+
+        NativeMemoryHelper.Free(modifiedVirtualTable, 0x8 * 4);
+        modifiedVirtualTable = null;
 
         Services.Log.Verbose($"Native has disposed node {GetType()}");
         GC.SuppressFinalize(this);
         CreatedNodes.Remove(this);
 
         isDisposed = true;
-    }
-
-    protected void InvokeOriginalDestructor(AtkResNode* thisPtr, bool free) {
-        if (virtualTable is null) return; // Shouldn't be possible, but just in case.
-
-        originalDestructorFunction(thisPtr, free);
-        NativeMemoryHelper.Free(virtualTable, 0x8 * 4);
-        virtualTable = null;
     }
 }
