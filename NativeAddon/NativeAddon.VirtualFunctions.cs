@@ -22,7 +22,7 @@ public unsafe partial class NativeAddon {
     private void Initialize(AtkUnitBase* thisPtr) {
         Services.Log.Verbose($"[{InternalName}] Initialize");
 
-        AtkUnitBase.StaticVirtualTablePointer->Initialize(thisPtr);
+        originalVirtualTable->Initialize(thisPtr);
 
         var widgetInfo = NativeMemoryHelper.UiAlloc<AtkUldWidgetInfo>(1, 16);
         widgetInfo->Id = 1;
@@ -92,7 +92,7 @@ public unsafe partial class NativeAddon {
             addon->SetPosition(0, 0);
         }
 
-        AtkUnitBase.StaticVirtualTablePointer->OnSetup(addon, valueCount, values);
+        originalVirtualTable->OnSetup(addon, valueCount, values);
 
         OnSetup(addon, new Span<AtkValue>(values, (int)valueCount));
         isSetup = true;
@@ -103,7 +103,7 @@ public unsafe partial class NativeAddon {
 
         OnShow(addon);
 
-        AtkUnitBase.StaticVirtualTablePointer->Show(addon, silenceOpenSoundEffect, unsetShowHideFlags);
+        originalVirtualTable->Show(addon, silenceOpenSoundEffect, unsetShowHideFlags);
     }
 
     private void Update(AtkUnitBase* addon, float delta) {
@@ -111,7 +111,7 @@ public unsafe partial class NativeAddon {
 
         OnUpdate(addon);
 
-        AtkUnitBase.StaticVirtualTablePointer->Update(addon, delta);
+        originalVirtualTable->Update(addon, delta);
     }
 
     private void Draw(AtkUnitBase* addon) {
@@ -119,7 +119,7 @@ public unsafe partial class NativeAddon {
 
         OnDraw(addon);
 
-        AtkUnitBase.StaticVirtualTablePointer->Draw(addon);
+        originalVirtualTable->Draw(addon);
     }
 
     private void Hide(AtkUnitBase* addon, bool unkBool, bool callHideCallback, uint setShowHideFlags) {
@@ -128,14 +128,14 @@ public unsafe partial class NativeAddon {
         OnHide(addon);
         SaveAddonConfig();
 
-        AtkUnitBase.StaticVirtualTablePointer->Hide(addon, unkBool, callHideCallback, setShowHideFlags);
-        AtkUnitBase.StaticVirtualTablePointer->Close(addon, false);
+        originalVirtualTable->Hide(addon, unkBool, callHideCallback, setShowHideFlags);
+        originalVirtualTable->Close(addon, false);
     }
 
     private void Hide2(AtkUnitBase* addon) {
         Services.Log.Verbose($"[{InternalName}] Hide2");
 
-        AtkUnitBase.StaticVirtualTablePointer->Hide2(addon);
+        originalVirtualTable->Hide2(addon);
     }
 
     private void Finalizer(AtkUnitBase* addon) {
@@ -147,14 +147,14 @@ public unsafe partial class NativeAddon {
             LastClosePosition = new Vector2(InternalAddon->X, InternalAddon->Y);
         }
 
-        AtkUnitBase.StaticVirtualTablePointer->Finalizer(InternalAddon);
+        originalVirtualTable->Finalizer(addon);
         isSetup = false;
     }
 
     private AtkEventListener* Destructor(AtkUnitBase* addon, byte flags) {
         Services.Log.Verbose($"[{InternalName}] Destructor");
 
-        var result = AtkUnitBase.StaticVirtualTablePointer->Dtor(addon, flags);
+        var result = originalVirtualTable->Dtor(addon, flags);
 
         if ((flags & 1) == 1) {
             InternalAddon = null;
@@ -163,7 +163,7 @@ public unsafe partial class NativeAddon {
             CreatedAddons.Remove(this);
 
             // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
-            NativeMemoryHelper.Free(virtualTable, 0x8 * VirtualTableEntryCount);
+            NativeMemoryHelper.Free(modifiedVirtualTable, 0x8 * VirtualTableEntryCount);
         }
 
         return result;
@@ -177,7 +177,7 @@ public unsafe partial class NativeAddon {
             OnRequestedUpdate(thisPtr, numberArrayData, stringArrayData);
         }
 
-        AtkUnitBase.StaticVirtualTablePointer->OnRequestedUpdate(InternalAddon, numberArrayData, stringArrayData);
+        originalVirtualTable->OnRequestedUpdate(thisPtr, numberArrayData, stringArrayData);
     }
 
     private bool Refresh(AtkUnitBase* thisPtr, uint valueCount, AtkValue* values) {
@@ -185,13 +185,13 @@ public unsafe partial class NativeAddon {
 
         OnRefresh(thisPtr, new Span<AtkValue>(values, (int)valueCount));
 
-        return AtkUnitBase.StaticVirtualTablePointer->OnRefresh(InternalAddon, valueCount, values);
+        return originalVirtualTable->OnRefresh(thisPtr,valueCount, values);
     }
 
     private void ScreenSizeChange(AtkUnitBase* thisPtr, int width, int height) {
         Services.Log.Verbose($"[{InternalName}] ScreenSizeChange");
 
-        AtkUnitBase.StaticVirtualTablePointer->OnScreenSizeChange(thisPtr, width, height);
+        originalVirtualTable->OnScreenSizeChange(thisPtr, width, height);
 
         if (IsOverlayAddon || IgnoreGlobalScale) {
             thisPtr->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
