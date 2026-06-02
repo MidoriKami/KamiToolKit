@@ -9,11 +9,11 @@ using KamiToolKit.Premade.Node.Color;
 namespace KamiToolKit.Premade.Addon;
 
 public class ColorPickerAddon : NativeAddon {
-    private ColorPickerWidget? colorPicker;
-    private HorizontalLineNode? horizontalLine;
-    private TextButtonNode? confirmButton;
-    private ColorOptionTextButtonNode? defaultColorPreview;
-    private TextButtonNode? cancelButton;
+    protected ColorPickerWidget? ColorPicker;
+    protected HorizontalLineNode? HorizontalLine;
+    protected TextButtonNode? ConfirmButton;
+    protected ColorOptionTextButtonNode? DefaultColorPreview;
+    protected TextButtonNode? CancelButton;
 
     private bool isCancelClicked;
 
@@ -26,49 +26,49 @@ public class ColorPickerAddon : NativeAddon {
         initialHsva = InitialHsvaColor;
         initialRgba = ColorHelpers.HsvToRgb(initialHsva);
 
-        colorPicker = new ColorPickerWidget {
+        ColorPicker = new ColorPickerWidget {
             Position = ContentStartPosition,
             Size = ContentSize,
         };
-        colorPicker.AttachNode(this);
+        ColorPicker.AttachNode(this);
 
-        colorPicker.ColorPreviewed += hsva => OnHsvaColorPreviewed?.Invoke(hsva);
-        colorPicker.RgbaColorPreviewed += rgba => OnColorPreviewed?.Invoke(rgba);
+        ColorPicker.ColorPreviewed += hsva => OnHsvaColorPreviewed?.Invoke(hsva);
+        ColorPicker.RgbaColorPreviewed += rgba => OnColorPreviewed?.Invoke(rgba);
 
-        colorPicker.SetColor(initialRgba);
+        ColorPicker.SetColor(initialRgba);
 
-        horizontalLine = new HorizontalLineNode {
+        HorizontalLine = new HorizontalLineNode {
             Position = ContentStartPosition + new Vector2(2.0f, ContentSize.Y - 40.0f),
             Size = new Vector2(ContentSize.X - 4.0f, 2.0f),
         };
-        horizontalLine.AttachNode(this);
+        HorizontalLine.AttachNode(this);
 
-        confirmButton = new TextButtonNode {
+        ConfirmButton = new TextButtonNode {
             Position = ContentStartPosition + new Vector2(0.0f, ContentSize.Y - 24.0f),
             Size = new Vector2(100.0f, 24.0f),
             String = "Confirm",
             OnClick = OnConfirmClicked,
         };
-        confirmButton.AttachNode(this);
+        ConfirmButton.AttachNode(this);
 
         if (DefaultHsvaColor is { } defaultColor) {
-            defaultColorPreview = new ColorOptionTextButtonNode {
+            DefaultColorPreview = new ColorOptionTextButtonNode {
                 Size = new Vector2(100.0f, 24.0f),
                 Position = ContentStartPosition + new Vector2(ContentSize.X / 2.0f - 50.0f, ContentSize.Y - 24.0f),
                 String = "Default",
                 OnClick = OnDefaultClicked,
                 DefaultHsvaColor = defaultColor,
             };
-            defaultColorPreview.AttachNode(this);
+            DefaultColorPreview.AttachNode(this);
         }
 
-        cancelButton = new TextButtonNode {
+        CancelButton = new TextButtonNode {
             Position = ContentStartPosition + new Vector2(ContentSize.X - 100.0f, ContentSize.Y - 24.0f),
             Size = new Vector2(100.0f, 24.0f),
             String = "Cancel",
             OnClick = OnCancelClicked,
         };
-        cancelButton.AttachNode(this);
+        CancelButton.AttachNode(this);
     }
 
     protected override unsafe void OnHide(AtkUnitBase* addon) {
@@ -81,11 +81,11 @@ public class ColorPickerAddon : NativeAddon {
     }
 
     private void OnConfirmClicked() {
-        if (colorPicker is null) return;
+        if (ColorPicker is null) return;
 
-        var rgba = ColorHelpers.HsvToRgb(colorPicker.CurrentColor);
+        var rgba = ColorHelpers.HsvToRgb(ColorPicker.CurrentColor);
         OnColorConfirmed?.Invoke(rgba);
-        OnHsvaColorConfirmed?.Invoke(colorPicker.CurrentColor);
+        OnHsvaColorConfirmed?.Invoke(ColorPicker.CurrentColor);
 
         isCancelClicked = true;
 
@@ -93,10 +93,10 @@ public class ColorPickerAddon : NativeAddon {
     }
 
     private void OnDefaultClicked() {
-        if (colorPicker is null) return;
+        if (ColorPicker is null) return;
 
         if (DefaultHsvaColor is { } defaultColor) {
-            colorPicker.SetColor(defaultColor);
+            ColorPicker.SetColor(defaultColor);
         }
     }
 
