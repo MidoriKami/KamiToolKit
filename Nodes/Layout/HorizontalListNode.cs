@@ -5,6 +5,9 @@ namespace KamiToolKit.Nodes;
 
 public class HorizontalListNode : LayoutListNode {
 
+    public int NavUp { get; set; }
+    public int NavDown { get; set; }
+
     public HorizontalListAnchor Alignment {
         get;
         set {
@@ -59,6 +62,37 @@ public class HorizontalListNode : LayoutListNode {
 
         if (FitToContentHeight) {
             Height = NodeList.Max(node => node.Height);
+        }
+    }
+
+    protected override void OnRecalculateNavigation() {
+        var componentNodes = NodeList.OfType<ComponentNode>().ToList();
+        if (componentNodes.Count is 0) return;
+
+        if (Alignment is HorizontalListAnchor.Right) {
+            componentNodes = componentNodes.AsEnumerable().Reverse().ToList();
+        }
+
+        foreach (var (index, node) in componentNodes.Index()) {
+            node.NavIndex = index + NavIndex;
+            node.NavUp = NavUp;
+            node.NavDown = NavDown;
+
+            // First Element
+            if (index is 0) {
+                node.NavLeft = componentNodes.Count - 1 + NavIndex;
+            }
+            else {
+                node.NavLeft = index - 1 + NavIndex;
+            }
+
+            // Last Element
+            if (index == componentNodes.Count - 1) {
+                node.NavRight = NavIndex;
+            }
+            else {
+                node.NavRight = index + 1 + NavIndex;
+            }
         }
     }
 
