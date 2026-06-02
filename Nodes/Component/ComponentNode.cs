@@ -40,7 +40,7 @@ public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComp
     }
 }
 
-public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable<T> where TU : unmanaged {
+public abstract unsafe partial class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable<T> where TU : unmanaged {
     public sealed override CollisionNode CollisionNode { get; }
     public sealed override AtkComponentBase* ComponentBase => Node->Component;
     public sealed override AtkUldComponentDataBase* DataBase => Node->Component->UldManager.ComponentData;
@@ -48,6 +48,8 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     protected ComponentNode() : base(NodeType.Component) {
         Node->Component = (AtkComponentBase*)NativeMemoryHelper.Create<T>();
         Node->Component->UldManager.ComponentData = (AtkUldComponentDataBase*)NativeMemoryHelper.UiAlloc<TU>();
+
+        RegisterVirtualTable();
 
         ComponentBase->Initialize();
 
@@ -132,7 +134,11 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
     public virtual bool IsEnabled {
         get => NodeFlags.HasFlag(NodeFlags.Enabled);
-        set => ComponentBase->SetEnabledState(value);
+        set {
+            if (IsEnabled != value) {
+                ComponentBase->SetEnabledState(value);
+            }
+        }
     }
 
     public override int ChildCount => ComponentBase->UldManager.NodeListCount;
