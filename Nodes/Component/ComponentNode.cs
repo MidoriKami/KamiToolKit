@@ -60,6 +60,8 @@ public abstract unsafe partial class ComponentNode<T, TU> : ComponentNode where 
                         NodeFlags.RespondToMouse | NodeFlags.Focusable | NodeFlags.EmitsEvents | NodeFlags.Fill,
         };
 
+        FocusNode = CollisionNode;
+
         CollisionNode.ResNode->ParentNode = ResNode;
         CollisionNode.ParentUldManager = &((AtkComponentBase*)Component)->UldManager;
 
@@ -147,7 +149,7 @@ public abstract unsafe partial class ComponentNode<T, TU> : ComponentNode where 
 
     public TU* Data => (TU*)DataBase;
 
-    public virtual NodeBase FocusNode => CollisionNode;
+    public NodeBase FocusNode { get; set; }
 
     public void SetFocus() {
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(this);
