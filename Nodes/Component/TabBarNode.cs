@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Premade.Node.Simple;
 using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
-public class TabBarNode : SimpleComponentNode {
+public class TabBarNode : ResNode {
+    public int NavIndex { get; set; }
+    public int NavDown { get; set; }
+    public int NavUp { get; set; }
 
     private readonly List<TabBarRadioButtonNode> radioButtons = [];
 
@@ -117,6 +119,25 @@ public class TabBarNode : SimpleComponentNode {
             button.Width = step + 5.0f;
             button.X = step * index - 5.0f;
             button.Height = Height;
+
+            button.NavIndex = NavIndex + index;
+
+            if (index is 0) {
+                button.NavLeft = radioButtons.Count - 1 + NavIndex;
+            }
+            else {
+                button.NavLeft = index - 1 + NavIndex;
+            }
+
+            if (index == radioButtons.Count - 1) {
+                button.NavRight = NavIndex;
+            }
+            else {
+                button.NavRight = index + 1 + NavIndex;
+            }
+
+            button.NavUp = NavUp;
+            button.NavDown = NavDown;
         }
     }
 
