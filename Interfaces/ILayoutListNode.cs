@@ -40,7 +40,7 @@ public interface ILayoutListNode {
     /// An init only collection of nodes, to add a predefined amount of nodes to the list.
     /// This is the preferred way of adding nodes.
     /// </summary>
-    ICollection<NodeBase> InitialNodes { init; }
+    ICollection<NodeBase> InitialNodes { set; }
 
     /// <summary>
     /// Get a readonly enumerable of the contained nodes of the specified type.
