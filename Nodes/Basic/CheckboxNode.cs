@@ -60,7 +60,6 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
         LoadTimelines();
 
         AddEvent(AtkEventType.ButtonClick, ClickHandler);
-        AddEvent(AtkEventType.InputReceived, ClickHandler);
 
         InitializeComponentEvents();
         Component->Left = 20;
