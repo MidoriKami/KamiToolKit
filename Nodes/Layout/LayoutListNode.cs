@@ -85,7 +85,7 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
     /// This is the preferred way of adding nodes.
     /// </summary>
     public ICollection<NodeBase> InitialNodes {
-        init => AddNode(value);
+        set => AddNode(value);
     }
 
     /// <summary>
