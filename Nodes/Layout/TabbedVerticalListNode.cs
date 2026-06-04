@@ -1,13 +1,56 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// A vertical list node with features for adding nodes with specified tab values.
+/// A specialized vertical list node with features for adding nodes with specified tab values.
 /// </summary>
-public class TabbedVerticalListNode : LayoutListNode {
+public class TabbedVerticalListNode : ResNode, ILayoutListNode {
+
+    // <inheritdoc/>
+    public int NavIndex { get; set; }
+
+    // <inheritdoc/>
+    public IReadOnlyList<NodeBase> Nodes => nodeList.Select(node => node.Node).ToList();
+
+    // <inheritdoc/>
+    public bool ClipListContents { get; set; }
+
+    // <inheritdoc/>
+    public float ItemSpacing { get; set; }
+
+    // <inheritdoc/>
+    public float FirstItemSpacing { get; set; }
+
+    // <inheritdoc/>
+    public ICollection<NodeBase> InitialNodes {
+        set => AddNode(value);
+    }
+
+    // <inheritdoc/>
+    public IEnumerable<T> GetNodes<T>() where T : NodeBase
+        => Nodes.OfType<T>();
+
+    // <inheritdoc/>
+    public void RecalculateLayout() {
+        if (suppressRecalculateLayout) return;
+
+        OnRecalculateLayout();
+
+        if (NavIndex is not 0) {
+            OnRecalculateNavigation();
+        }
+
+        foreach (var node in Nodes) {
+            if (node is LayoutListNode subNode) {
+                subNode.RecalculateLayout();
+            }
+        }
+    }
 
     /// <summary>
     /// How much space to add for each tab value.
@@ -35,37 +78,55 @@ public class TabbedVerticalListNode : LayoutListNode {
     /// following nodes tab to be increased by the specified amount.
     /// </summary>
     /// <param name="tabAmount">Tab value to increase.</param>
-    public void AddTab(int tabAmount) {
-        TabStep += tabAmount;
-    }
+    public void AddTab(int tabAmount)
+        => TabStep += tabAmount;
 
     /// <summary>
     /// Adds <see cref="tabAmount"/> to <see cref="TabStep"/> causing all
     /// following nodes tab to be decreased by the specified amount.
     /// </summary>
     /// <param name="tabAmount">Tab value to decrease.</param>
-    public void SubtractTab(int tabAmount) {
-        TabStep -= tabAmount;
-    }
+    public void SubtractTab(int tabAmount)
+        => TabStep -= tabAmount;
 
     // <inheritdoc/>
-    public override void AddNode(NodeBase? node) {
-        base.AddNode(node);
+    public void AddNode(NodeBase? node) {
         if (node is null) return;
 
         AddNode(0, node);
     }
 
     // <inheritdoc/>
-    public override void AddNode(IEnumerable<NodeBase> nodes) {
-        nodes = nodes.ToList();
-        base.AddNode(nodes);
-
-        suppressRecalculate = true;
+    public void AddNode(IEnumerable<NodeBase> nodes) {
+        suppressRecalculateLayout = true;
         AddNode(0, nodes);
-        suppressRecalculate = false;
+        suppressRecalculateLayout = false;
         RecalculateLayout();
     }
+
+    // <inheritdoc/>
+    public void RemoveNode(IEnumerable<NodeBase> items) {
+        suppressRecalculateLayout = true;
+        foreach (var node in items) {
+            RemoveNode(node);
+        }
+        suppressRecalculateLayout = false;
+        RecalculateLayout();
+    }
+
+    // <inheritdoc/>
+    public void RemoveNode(NodeBase node) {
+        if (nodeList.All(entry => entry.Node != node)) return;
+
+        nodeList.RemoveAll(entry => entry.Node == node);
+        node.Dispose();
+
+        RecalculateLayout();
+    }
+
+    // <inheritdoc/>
+    public void AddDummy(float size = 0)
+        => AddNode(new ResNode{ Width = size, Height = size });
 
     /// <summary>
     /// Adds several nodes with the specified tab index to the list.
@@ -76,11 +137,11 @@ public class TabbedVerticalListNode : LayoutListNode {
     /// Tab index provided will be <em>added</em> to the current accumulated <see cref="TabStep"/>.
     /// </remarks>
     public void AddNode(int tabIndex, IEnumerable<NodeBase> nodes) {
-        suppressRecalculate = true;
+        suppressRecalculateLayout = true;
         foreach (var node in nodes) {
             AddNode(tabIndex, node);
         }
-        suppressRecalculate = false;
+        suppressRecalculateLayout = false;
     }
 
     /// <summary>
@@ -95,15 +156,13 @@ public class TabbedVerticalListNode : LayoutListNode {
         nodeList.Add(new TabbedNodeEntry<NodeBase>(node, tabIndex + TabStep));
 
         node.AttachNode(this);
-        node.NodeId = (uint)nodeList.Count + 1;
-
-        if (!suppressRecalculate) {
+        if (!suppressRecalculateLayout) {
             RecalculateLayout();
         }
     }
 
     // <inheritdoc/>
-    public override void Clear() {
+    public void Clear() {
         foreach (var nodeEntry in nodeList) {
             nodeEntry.Node.Dispose();
         }
@@ -112,7 +171,11 @@ public class TabbedVerticalListNode : LayoutListNode {
         RecalculateLayout();
     }
 
-    protected override void OnRecalculateLayout() {
+    // <inheritdoc/>
+    public void ReorderNodes(Comparison<NodeBase> comparison)
+        => nodeList.Sort((left, right) => comparison(left.Node, right.Node));
+
+    private void OnRecalculateLayout() {
         var startY = 0.0f + FirstItemSpacing;
 
         foreach (var (node, tab) in nodeList) {
@@ -123,11 +186,6 @@ public class TabbedVerticalListNode : LayoutListNode {
 
             if (FitWidth) {
                 node.Width = Width - node.X - ItemSpacing;
-
-                // Also update layout of any contained nodes
-                if (node is LayoutListNode layoutNode) {
-                    layoutNode.RecalculateLayout();
-                }
             }
 
             startY += node.Height + ItemSpacing;
@@ -138,10 +196,10 @@ public class TabbedVerticalListNode : LayoutListNode {
         }
     }
 
-    protected override void OnRecalculateNavigation() {
+    private void OnRecalculateNavigation() {
         // todo: this !
     }
 
     private readonly List<TabbedNodeEntry<NodeBase>> nodeList = [];
-    private bool suppressRecalculate = false;
+    private bool suppressRecalculateLayout;
 }
