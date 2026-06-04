@@ -38,6 +38,11 @@ public abstract unsafe class ComponentNode(NodeType nodeType) : NodeBase<AtkComp
         get => CursorNavInfo.DownIndex;
         set => CursorNavInfo.DownIndex = (byte) value;
     }
+
+    public NodeBase FocusNode {
+        get => field ?? CollisionNode;
+        set;
+    }
 }
 
 public abstract unsafe partial class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable<T> where TU : unmanaged {
@@ -148,8 +153,6 @@ public abstract unsafe partial class ComponentNode<T, TU> : ComponentNode where 
     public T* Component => (T*)ComponentBase;
 
     public TU* Data => (TU*)DataBase;
-
-    public NodeBase FocusNode { get; set; }
 
     public void SetFocus() {
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(this);
