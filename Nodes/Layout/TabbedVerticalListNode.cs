@@ -14,6 +14,16 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     // <inheritdoc/>
     public int NavIndex { get; set; }
 
+    /// <summary>
+    /// Gets or sets the left nav index for this list.
+    /// </summary>
+    public int NavLeft { get; set; }
+
+    /// <summary>
+    /// Gets or sets the right nav index for this list.
+    /// </summary>
+    public int NavRight { get; set; }
+
     // <inheritdoc/>
     public IReadOnlyList<NodeBase> Nodes => nodeList.Select(node => node.Node).ToList();
 
@@ -89,6 +99,39 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     public void SubtractTab(int tabAmount)
         => TabStep -= tabAmount;
 
+    /// <summary>
+    /// Adds several nodes with the specified tab index to the list.
+    /// </summary>
+    /// <param name="tabIndex">Tab index to use</param>
+    /// <param name="nodes">Nodes to add</param>
+    /// <remarks>
+    /// Tab index provided will be <em>added</em> to the current accumulated <see cref="TabStep"/>.
+    /// </remarks>
+    public void AddNode(int tabIndex, IEnumerable<NodeBase> nodes) {
+        suppressRecalculateLayout = true;
+        foreach (var node in nodes) {
+            AddNode(tabIndex, node);
+        }
+        suppressRecalculateLayout = false;
+    }
+
+    /// <summary>
+    /// Adds a single node with the specified tab index to the list.
+    /// </summary>
+    /// <param name="tabIndex">Tab index to use</param>
+    /// <param name="node">Node to add</param>
+    /// <remarks>
+    /// Tab index provided will be <em>added</em> to the current accumulated <see cref="TabStep"/>
+    /// </remarks>
+    public void AddNode(int tabIndex, NodeBase node) {
+        nodeList.Add(new TabbedNodeEntry<NodeBase>(node, tabIndex + TabStep));
+
+        node.AttachNode(this);
+        if (!suppressRecalculateLayout) {
+            RecalculateLayout();
+        }
+    }
+
     // <inheritdoc/>
     public void AddNode(NodeBase? node) {
         if (node is null) return;
@@ -128,39 +171,6 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     public void AddDummy(float size = 0)
         => AddNode(new ResNode{ Width = size, Height = size });
 
-    /// <summary>
-    /// Adds several nodes with the specified tab index to the list.
-    /// </summary>
-    /// <param name="tabIndex">Tab index to use</param>
-    /// <param name="nodes">Nodes to add</param>
-    /// <remarks>
-    /// Tab index provided will be <em>added</em> to the current accumulated <see cref="TabStep"/>.
-    /// </remarks>
-    public void AddNode(int tabIndex, IEnumerable<NodeBase> nodes) {
-        suppressRecalculateLayout = true;
-        foreach (var node in nodes) {
-            AddNode(tabIndex, node);
-        }
-        suppressRecalculateLayout = false;
-    }
-
-    /// <summary>
-    /// Adds a single node with the specified tab index to the list.
-    /// </summary>
-    /// <param name="tabIndex">Tab index to use</param>
-    /// <param name="node">Node to add</param>
-    /// <remarks>
-    /// Tab index provided will be <em>added</em> to the current accumulated <see cref="TabStep"/>
-    /// </remarks>
-    public void AddNode(int tabIndex, NodeBase node) {
-        nodeList.Add(new TabbedNodeEntry<NodeBase>(node, tabIndex + TabStep));
-
-        node.AttachNode(this);
-        if (!suppressRecalculateLayout) {
-            RecalculateLayout();
-        }
-    }
-
     // <inheritdoc/>
     public void Clear() {
         foreach (var nodeEntry in nodeList) {
@@ -197,7 +207,30 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     }
 
     private void OnRecalculateNavigation() {
-        // todo: this !
+        var componentNodes = nodeList.Select(nodeEntry => nodeEntry.Node).OfType<ComponentNode>().ToList();
+        if (componentNodes.Count is 0) return;
+
+        foreach (var (index, node) in componentNodes.Index()) {
+            node.NavIndex = (byte) (index + NavIndex);
+            node.NavLeft = NavLeft;
+            node.NavRight = NavRight;
+
+            // First Element
+            if (index is 0) {
+                node.NavUp = (byte) (componentNodes.Count - 1 + NavIndex);
+            }
+            else {
+                node.NavUp = (byte) (index - 1 + NavIndex);
+            }
+
+            // Last Element
+            if (index == componentNodes.Count - 1) {
+                node.NavDown = (byte) NavIndex;
+            }
+            else {
+                node.NavDown = (byte) (index + 1 + NavIndex);
+            }
+        }
     }
 
     private readonly List<TabbedNodeEntry<NodeBase>> nodeList = [];
