@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Addon;
@@ -8,19 +9,52 @@ using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Premade.Node.Color;
 
-public class ColorEditNode : SimpleOverlayNode {
+/// <summary>
+/// A node representing a colored square, and a label, all of which are clickable to open a color picker window.
+/// </summary>
+public class ColorEditNode : SimpleComponentNode {
 
-    private readonly ColorPreviewNode previewNode;
-    private readonly TextNode labelNode;
+    /// <summary>
+    /// Gets or sets the current color.
+    /// </summary>
+    public Vector4 CurrentColor {
+        get => previewNode.Color;
+        set => previewNode.Color = value;
+    }
 
-    private ColorPickerAddon? colorPicker = new() {
-        InternalName = "ColorPicker",
-        Title = "Color Picker",
-    };
+    /// <summary>
+    /// Gets or sets the string displayed next to the color box.
+    /// </summary>
+    public ReadOnlySeString String {
+        get => labelNode.String;
+        set => labelNode.String = value;
+    }
 
-    public ColorEditNode() {
-        DisableCollisionNode = true;
+    /// <summary>
+    /// Gets or sets a color that will be set when the user clicks "Default" in the color picker window.
+    /// </summary>
+    public Vector4? DefaultColor { get; set; }
 
+    /// <summary>
+    /// Action to be called if the color picker window is closed, or canceled without confirming a new color.
+    /// </summary>
+    public Action? OnColorCancelled { get; set; }
+
+    /// <summary>
+    /// Action to be called on any color change within the color picker.
+    /// </summary>
+    /// <remarks>
+    /// Use this to show a preview of what the new colors effect will be, without saving the color.
+    /// You can then use <see cref="OnColorCancelled"/> to restore the original color.
+    /// </remarks>
+    public Action<Vector4>? OnColorPreviewed { get; set; }
+
+    /// <summary>
+    /// Action to be called when a color is confirmed from the color picker.
+    /// </summary>
+    public Action<Vector4>? OnColorConfirmed { get; set; }
+
+    public unsafe ColorEditNode() {
         previewNode = new ColorPreviewNode();
         previewNode.AttachNode(this);
 
@@ -34,13 +68,10 @@ public class ColorEditNode : SimpleOverlayNode {
 
         labelNode.ShowClickableCursor = true;
         labelNode.AddEvent(AtkEventType.MouseClick, OnClicked);
-    }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        base.Dispose(disposing, isNativeDestructor);
-
-        colorPicker?.Dispose();
-        colorPicker = null;
+        CollisionNode.ShowClickableCursor = true;
+        CollisionNode.AddEvent(AtkEventType.MouseClick, OnClicked);
+        CollisionNode.AddEvent(AtkEventType.InputReceived, OnInputReceived);
     }
 
     protected override void OnSizeChanged() {
@@ -51,6 +82,19 @@ public class ColorEditNode : SimpleOverlayNode {
 
         labelNode.Size = new Vector2(Width - Height - 12.0f, Height);
         labelNode.Position = new Vector2(previewNode.Bounds.Right + 12.0f, 0.0f);
+    }
+
+    protected override void Dispose(bool disposing, bool isNativeDestructor) {
+        base.Dispose(disposing, isNativeDestructor);
+
+        colorPicker?.Dispose();
+        colorPicker = null;
+    }
+
+    private unsafe void OnInputReceived(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        if (eventType is AtkEventType.InputReceived && (InputId)atkEventData->InputData.InputId is InputId.OK) {
+            OnClicked();
+        }
     }
 
     private void OnClicked() {
@@ -77,19 +121,11 @@ public class ColorEditNode : SimpleOverlayNode {
         colorPicker?.Toggle();
     }
 
-    public Vector4 CurrentColor {
-        get => previewNode.Color;
-        set => previewNode.Color = value;
-    }
+    private ColorPickerAddon? colorPicker = new() {
+        InternalName = "ColorPicker",
+        Title = "Color Picker",
+    };
 
-    public ReadOnlySeString String {
-        get => labelNode.String;
-        set => labelNode.String = value;
-    }
-
-    public Vector4? DefaultColor { get; set; }
-
-    public Action? OnColorCancelled { get; set; }
-    public Action<Vector4>? OnColorPreviewed { get; set; }
-    public Action<Vector4>? OnColorConfirmed { get; set; }
+    private readonly ColorPreviewNode previewNode;
+    private readonly TextNode labelNode;
 }
