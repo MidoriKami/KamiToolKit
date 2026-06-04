@@ -51,8 +51,12 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
     /// <summary>
     /// Recalculates sizes to update scroll params correctly.
     /// </summary>
-    public void RecalculateSizes()
-        => OnSizeChanged();
+    public void RecalculateSizes() {
+        if (ContentNode is LayoutListNode layoutNode) {
+            layoutNode.RecalculateLayout();
+        }
+        OnSizeChanged();
+    }
 
     public unsafe ScrollingNode() {
         ClippingContentNode = new ResNode {
