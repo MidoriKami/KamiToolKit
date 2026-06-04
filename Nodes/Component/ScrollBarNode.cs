@@ -4,10 +4,109 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Nodes;
 
+/// <summary>
+/// Node representing a scrollbar
+/// </summary>
 public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldComponentDataScrollBar> {
 
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
     public readonly ScrollBarBackgroundButtonNode BackgroundButtonNode;
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
     public readonly ScrollBarForegroundButtonNode ForegroundButtonNode;
+
+    /// <summary>
+    /// Event that is called when the scroll bar's scroll position is changed.
+    /// </summary>
+    public Action<int>? OnValueChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the current scroll position, triggering the component to update.
+    /// </summary>
+    public int ScrollPosition {
+        get => Component->ScrollPosition;
+        set => Component->SetScrollPosition(value);
+    }
+
+    /// <summary>
+    /// Gets or sets the scroll speed, default is 24px per scroll.
+    /// </summary>
+    public int ScrollSpeed {
+        get => Component->MouseWheelSpeed;
+        set => Component->MouseWheelSpeed = (short)value;
+    }
+
+    /// <summary>
+    /// Hides this node entirely, if the scrollbar is disabled due to content area being bigger than the scrollbar.
+    /// </summary>
+    public bool HideWhenDisabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether this scrollbar is accepting mouse events.
+    /// </summary>
+    public bool IsAcceptingMouseWheelEvents {
+        get => Component->IsAcceptingMouseWheelEvents;
+        set => Component->IsAcceptingMouseWheelEvents = value;
+    }
+
+    public void SetContentNodes(NodeBase contentNode, CollisionNode collisionNode) {
+        Component->SetContentNode(contentNode, collisionNode);
+        UpdateScrollParams();
+    }
+
+    /// <summary>
+    /// Updates from attached Content and Collision nodes
+    /// </summary>
+    public void UpdateScrollParams() {
+        if (Component->ContentNode is null) return;
+        if (Component->ContentCollisionNode is null) return;
+
+        UpdateScrollParams(
+            Component->ContentCollisionNode->Height,
+            Component->ContentNode->Height
+        );
+    }
+
+    /// <summary>
+    /// Update the scroll bars size and positioning based on manually input values.
+    /// It's recommend to use <see cref="UpdateScrollParams()"/> instead, if the content node is sized correctly.
+    /// </summary>
+    /// <param name="barHeight">The actual displayed height of the scrollbar</param>
+    /// <param name="offScreenHeight">The actual size of the content area, this should be larger than the scrollbar.</param>
+    public void UpdateScrollParams(int barHeight, int offScreenHeight) {
+        var distance = offScreenHeight - barHeight;
+
+        Component->ScrollbarLength = (short)barHeight;
+        Component->ScrollMaxPosition = Math.Max(distance, 0);
+        Component->ContentNodeOffScreenLength = Math.Max((short)distance, (short)0);
+        Component->EmptyLength = Math.Max(barHeight - (int)((float)barHeight / offScreenHeight * barHeight), 0);
+        ForegroundButtonNode.Height = barHeight - Component->EmptyLength;
+
+        if (Component->ScrollPosition > Component->ScrollMaxPosition) {
+            Component->SetScrollPosition(Component->ScrollMaxPosition);
+        }
+
+        if (Component->EmptyLength is 0) {
+            ForegroundButtonNode.Y = 0.0f;
+
+            if (Component->ContentNode is not null) {
+                Component->ContentNode->Y = 0;
+            }
+        }
+
+        var enabledState = Component->EmptyLength is not 0;
+
+        Component->SetEnabledState(enabledState);
+
+        if (HideWhenDisabled) {
+            BackgroundButtonNode.IsVisible = enabledState;
+            ForegroundButtonNode.IsVisible = enabledState;
+        }
+    }
 
     public ScrollBarNode() {
         SetInternalComponentType(ComponentType.ScrollBar);
@@ -38,45 +137,6 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         AddEvent(AtkEventType.ValueUpdate, UpdateHandler);
     }
 
-    public Action<int>? OnValueChanged { get; set; }
-
-    public NodeBase? ContentNode {
-        get;
-        set {
-            field = value;
-
-            if (value is not null) {
-                Component->ContentNode = value;
-                UpdateScrollParams();
-            }
-        }
-    }
-
-    public CollisionNode? ContentCollisionNode {
-        get;
-        set {
-            field = value;
-            Component->ContentCollisionNode = value is null ? null : value.Node;
-            UpdateScrollParams();
-        }
-    }
-
-    public int ScrollPosition {
-        get => Component->ScrollPosition;
-        set => Component->SetScrollPosition(value);
-    }
-
-    public int ScrollSpeed {
-        get => Component->MouseWheelSpeed;
-        set => Component->MouseWheelSpeed = (short)value;
-    }
-
-    public bool HideWhenDisabled { get; set; }
-
-    private void UpdateHandler() {
-        OnValueChanged?.Invoke(Component->PendingScrollPosition);
-    }
-
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -84,45 +144,6 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         ForegroundButtonNode.Size = Size;
     }
 
-    /// <summary>
-    /// Updates from attached Content and Collision nodes
-    /// </summary>
-    public void UpdateScrollParams() {
-        if (Component->ContentNode is null) return;
-        if (Component->ContentCollisionNode is null) return;
-
-        var content = Component->ContentNode;
-        var collision = Component->ContentCollisionNode;
-
-        UpdateScrollParams(collision->Height, content->Height);
-    }
-
-    public void UpdateScrollParams(int barHeight, int offScreenHeight) {
-        var distance = offScreenHeight - barHeight;
-
-        Component->ScrollbarLength = (short)barHeight;
-        Component->ScrollMaxPosition = Math.Max(distance, 0);
-        Component->ContentNodeOffScreenLength = Math.Max((short)distance, (short)0);
-        Component->EmptyLength = Math.Max(barHeight - (int)((float)barHeight / offScreenHeight * barHeight), 0);
-        ForegroundButtonNode.Height = barHeight - Component->EmptyLength;
-
-        if (Component->ScrollPosition > Component->ScrollMaxPosition) {
-            Component->SetScrollPosition(Component->ScrollMaxPosition);
-        }
-
-        if (Component->EmptyLength is 0) {
-            ForegroundButtonNode.Y = 0.0f;
-
-            ContentNode?.Y = 0;
-        }
-
-        var enabledState = Component->EmptyLength is not 0;
-
-        Component->SetEnabledState(enabledState);
-
-        if (HideWhenDisabled) {
-            BackgroundButtonNode.IsVisible = enabledState;
-            ForegroundButtonNode.IsVisible = enabledState;
-        }
-    }
+    private void UpdateHandler()
+        => OnValueChanged?.Invoke(Component->PendingScrollPosition);
 }
