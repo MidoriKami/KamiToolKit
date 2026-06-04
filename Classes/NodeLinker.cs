@@ -1,16 +1,8 @@
 ﻿using System;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Enums;
 
 namespace KamiToolKit.Classes;
-
-public enum NodePosition {
-    BeforeTarget,
-    AfterTarget,
-    BeforeAllSiblings,
-    AfterAllSiblings,
-    AsLastChild,
-    AsFirstChild,
-}
 
 internal static unsafe class NodeLinker {
     internal static void AttachNode(AtkResNode* node, AtkResNode* attachTargetNode, NodePosition position) {
