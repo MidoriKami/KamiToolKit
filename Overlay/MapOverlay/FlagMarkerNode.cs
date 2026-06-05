@@ -3,6 +3,10 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
 namespace KamiToolKit.Overlay.MapOverlay;
 
+/// <summary>
+/// Specialized implmenetation of a <see cref="MapMarkerNode"/> for use in <see cref="MapOverlayController"/>
+/// to render a flag marker node over top all the other custom marker nodes so flags can still be seen when using the overlay.
+/// </summary>
 public unsafe class FlagMarkerNode : MapMarkerNode {
     public FlagMarkerNode() {
         IconId = 60561;

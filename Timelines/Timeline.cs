@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
-using KamiToolKit.Classes;
+using KamiToolKit.Classes.Internal;
 
 namespace KamiToolKit.Timelines;
 

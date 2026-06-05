@@ -1,7 +1,7 @@
 using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using KamiToolKit.Dalamud;
+using KamiToolKit.Classes.Internal;
 using KamiToolKit.Nodes;
 using Lumina.Excel.Sheets;
 using Lumina.Text.ReadOnly;
@@ -9,24 +9,67 @@ using Action = System.Action;
 
 namespace KamiToolKit.Overlay.MapOverlay;
 
+/// <summary>
+/// Inheritable node intended for use with <see cref="MapOverlayController"/>.
+/// </summary>
 public unsafe class MapMarkerNode : ResNode {
-    private IconImageNode? iconNode;
-    private ImGuiImageNode? imGuiImageNode;
 
+    /// <summary>
+    /// Gets or sets the action to be called when this marker is clicked on.
+    /// </summary>
+    public Action? OnClick { get; set; }
+
+    /// <summary>
+    /// Gets whether this node is actually being shown.
+    /// </summary>
+    public bool IsActuallyVisible
+        => ResNode is not null && ResNode->IsActuallyVisible;
+
+    /// <summary>
+    /// Gets or sets the markers visibility.
+    /// </summary>
     public override bool IsVisible { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets the markers size. Default is 32x32.
+    /// </summary>
     public new Vector2 Size { get; set; }
 
+    /// <summary>
+    /// Gets or sets the markers scale. Default is 1.0f.
+    /// </summary>
     public float MarkerScale { get; set; } = 1.0f;
 
+    /// <summary>
+    /// Gets or sets the markers position on the map.
+    /// </summary>
+    /// <remarks>
+    /// Expects a value between 0.0f and 1024.0f, where 0,0 is the center of the map.
+    /// </remarks>
     public new Vector2 Position { get; set; }
 
+    /// <summary>
+    /// Gets or sets the tooltip shown when hovering over this marker.
+    /// </summary>
     public new ReadOnlySeString TextTooltip { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the mapId this marker is allowed to be in.
+    /// Use <see cref="AllowAnyMap"/> to allow on any map.
+    /// </summary>
     public uint MapId { get; set; }
 
+    /// <summary>
+    /// Gets or sets whether this marker is allowed to be shown when viewing any map.
+    /// </summary>
     public bool AllowAnyMap { get; set; }
 
+    /// <summary>
+    /// Gets or sets the iconId to be shown with this marker.
+    /// </summary>
+    /// <remarks>
+    /// Setting this will unload any <see cref="Texture"/> or <see cref="TexturePath"/> that is set.
+    /// </remarks>
     public uint? IconId {
         get;
         set {
@@ -50,6 +93,12 @@ public unsafe class MapMarkerNode : ResNode {
         }
     } = 0;
 
+    /// <summary>
+    /// Gets or sets the DalamudTextureWrap to be shown with this marker.
+    /// </summary>
+    /// <remarks>
+    /// Setting this will unload any <see cref="IconId"/> or <see cref="TexturePath"/> that is set.
+    /// </remarks>
     public IDalamudTextureWrap? Texture {
         get;
         set {
@@ -70,6 +119,12 @@ public unsafe class MapMarkerNode : ResNode {
         }
     } = null;
 
+    /// <summary>
+    /// Gets or sets the texture path to load and to be shown with this marker.
+    /// </summary>
+    /// <remarks>
+    /// Setting this will unload any <see cref="IconId"/> or <see cref="Texture"/> that is set.
+    /// </remarks>
     public string? TexturePath {
         get;
         set {
@@ -90,6 +145,10 @@ public unsafe class MapMarkerNode : ResNode {
         }
     } = null;
 
+    /// <summary>
+    /// Updates the nodes size position and scale according to the params of the specific map being shown.
+    /// Triggers <see cref="OnUpdate"/>.
+    /// </summary>
     public void Update() {
         OnUpdate();
 
@@ -117,7 +176,6 @@ public unsafe class MapMarkerNode : ResNode {
 
     protected virtual void OnUpdate() { }
 
-    public Action? OnClick { get; set; }
-
-    public bool IsActuallyVisible() => ResNode is not null && ResNode->IsActuallyVisible;
+    private IconImageNode? iconNode;
+    private ImGuiImageNode? imGuiImageNode;
 }

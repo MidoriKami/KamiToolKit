@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Interface;
-using KamiToolKit.Classes;
+using KamiToolKit.Classes.Internal;
 using KamiToolKit.Premade.Node.Simple;
 
 namespace KamiToolKit.Premade.Node.Color;

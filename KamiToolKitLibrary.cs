@@ -4,7 +4,8 @@ using System.Globalization;
 using System.Resources;
 using Dalamud.Plugin;
 using Dalamud.Utility;
-using KamiToolKit.Dalamud;
+using KamiToolKit.BaseTypes;
+using KamiToolKit.Classes.Internal;
 using Serilog.Events;
 
 namespace KamiToolKit;

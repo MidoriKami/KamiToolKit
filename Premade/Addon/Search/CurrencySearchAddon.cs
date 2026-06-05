@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using KamiToolKit.Dalamud;
+using KamiToolKit.Classes.Internal;
 using KamiToolKit.Premade.Node.ListItem;
 using Lumina.Excel.Sheets;
 

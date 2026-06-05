@@ -1,4 +1,6 @@
-﻿namespace KamiToolKit.Nodes;
+﻿using KamiToolKit.BaseTypes;
+
+namespace KamiToolKit.Nodes;
 
 public abstract class AlignedVerticalListNode : VerticalListNode {
     protected override void AdjustNode(NodeBase node) {

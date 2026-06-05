@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using Dalamud.Interface.Textures.TextureWraps;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Dalamud;
+using KamiToolKit.Classes.Internal;
 
 namespace KamiToolKit.Extensions;
 

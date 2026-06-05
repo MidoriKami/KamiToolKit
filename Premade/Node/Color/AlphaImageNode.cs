@@ -1,4 +1,4 @@
-﻿using KamiToolKit.Dalamud;
+﻿using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 

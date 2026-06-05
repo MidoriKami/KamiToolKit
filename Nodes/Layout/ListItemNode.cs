@@ -1,4 +1,4 @@
-﻿using KamiToolKit.Classes;
+﻿using KamiToolKit.Classes.Internal;
 using KamiToolKit.Premade.Node;
 
 namespace KamiToolKit.Nodes;

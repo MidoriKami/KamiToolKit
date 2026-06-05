@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using KamiToolKit.Dalamud;
+using KamiToolKit.Classes.Internal;
 
 namespace KamiToolKit.Extensions;
 

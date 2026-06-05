@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using Dalamud.Utility;
-using KamiToolKit.Dalamud;
+using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
 using KamiToolKit.Premade.Node.ListItem;
 using Lumina.Excel.Sheets;

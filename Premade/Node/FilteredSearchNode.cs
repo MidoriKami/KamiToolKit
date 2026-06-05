@@ -43,7 +43,7 @@ public unsafe class SearchWidget : SimpleComponentNode {
         SortOrderDropDown.AttachNode(this);
 
         ReverseButtonNode = new CircleButtonNode {
-            Icon = ButtonIcon.Sort,
+            Icon = CircleButtonIcon.Sort,
             OnClick = OnReverseButtonClicked,
             TextTooltip = "Reverse Sort Direction",
             IsVisible = false,

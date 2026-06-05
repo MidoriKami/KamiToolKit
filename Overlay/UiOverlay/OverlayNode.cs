@@ -5,8 +5,14 @@ using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Overlay.UiOverlay;
 
+/// <summary>
+/// Node used in <see cref="OverlayController"/> to display ui elements in the HUD.
+/// </summary>
 public abstract unsafe class OverlayNode : ResNode {
 
+    /// <summary>
+    /// The UI Layer that should show this node.
+    /// </summary>
     public abstract OverlayLayer OverlayLayer { get; }
 
     /// <summary>
@@ -19,8 +25,14 @@ public abstract unsafe class OverlayNode : ResNode {
     /// </summary>
     public virtual bool HideWithUiToggled => true;
 
+    /// <summary>
+    /// Gets or sets whether this node should be visible.
+    /// </summary>
     public override bool IsVisible { get; set; } = true;
 
+    /// <summary>
+    /// Updates the nodes automatic visibility functions and then triggers <see cref="OnUpdate"/>
+    /// </summary>
     public void Update() {
         OnUpdate();
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Classes.Internal;
 
 namespace KamiToolKit.Timelines;
 

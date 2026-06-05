@@ -1,4 +1,6 @@
-﻿namespace KamiToolKit.Classes;
+﻿using KamiToolKit.BaseTypes;
+
+namespace KamiToolKit.Classes;
 
 /// <summary>
 /// A tabbed node data entry for use with <see cref="KamiToolKit.Nodes.TabbedVerticalListNode"/>

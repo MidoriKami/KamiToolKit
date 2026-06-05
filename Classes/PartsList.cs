@@ -1,6 +1,7 @@
 ﻿﻿using System;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes.Internal;
 
 namespace KamiToolKit.Classes;
 

@@ -7,33 +7,72 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Classes.Internal;
 using KamiToolKit.Controllers;
-using KamiToolKit.Dalamud;
 using KamiToolKit.Enums;
 using KamiToolKit.Premade.Node.Simple;
 using MapMarkerInfo = KamiToolKit.Classes.MapMarkerInfo;
 
 namespace KamiToolKit.Overlay.MapOverlay;
 
+/// <summary>
+/// Controller for <see cref="MapMarkerNode"/>'s that are rendered over top of the games native map.
+/// </summary>
 public unsafe class MapOverlayController : IDisposable {
-    private readonly AddonController<AddonAreaMap> mapController;
-    private SimpleOverlayNode? clippingContainerNode;
-    private SimpleOverlayNode? flagContainerNode;
-    private SimpleOverlayNode? overlayNode;
-    private ViewportEventListener? viewportEventListener;
 
-    private bool showingTooltip;
-    private bool showingInteractCursor;
-
-    private readonly List<MapMarkerNode> markerNodes = [];
-
-    private readonly List<MapMarkerInfo> queuedMarkers = [];
-    private readonly List<MapMarkerNode> queuedNodes = [];
-
-    private MapMarkerNode? flagNode;
-
+    /// <summary>
+    /// Gets or sets whether the overlay is visible.
+    /// </summary>
     public bool IsVisible { get; set; } = true;
 
+    /// <summary>
+    /// Adds a single marker to the map with the provided info.
+    /// </summary>
+    public void AddMarker(MapMarkerInfo markerInfo)
+        => queuedMarkers.Add(markerInfo);
+
+    /// <summary>
+    /// Adds a single <see cref="MapMarkerNode"/> to the map.
+    /// </summary>
+    /// <remarks>
+    /// The overlay then takes ownership of this node. Manually disposing this node will break things.
+    /// </remarks>
+    public void AddMarker(MapMarkerNode marker)
+        => queuedNodes.Add(marker);
+
+    /// <summary>
+    /// Removes and disposes the specified marker from the overlay.
+    /// </summary>
+    public void RemoveMarker(MapMarkerNode marker) {
+        if (queuedNodes.Remove(marker)) {
+            marker.Dispose();
+        }
+
+        if (markerNodes.Remove(marker)) {
+            marker.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Removes and dispose all map markers for this overlay.
+    /// </summary>
+    public void RemoveAllMarkers() {
+        foreach (var node in markerNodes) {
+            node.Dispose();
+        }
+        markerNodes.Clear();
+
+        foreach (var node in queuedNodes) {
+            node.Dispose();
+        }
+        queuedNodes.Clear();
+
+        queuedMarkers.Clear();
+    }
+
+    /// <remarks>
+    /// Must be constructed on the main thread. // todo: consider .Enable pattern
+    /// </remarks>
     public MapOverlayController() {
         ThreadSafety.AssertMainThread();
 
@@ -62,38 +101,6 @@ public unsafe class MapOverlayController : IDisposable {
 
         clippingContainerNode?.Dispose();
         clippingContainerNode = null;
-    }
-
-    public void AddMarker(MapMarkerInfo markerInfo) {
-        queuedMarkers.Add(markerInfo);
-    }
-
-    public void AddMarker(MapMarkerNode marker) {
-        queuedNodes.Add(marker);
-    }
-
-    public void RemoveMarker(MapMarkerNode marker) {
-        if (queuedNodes.Remove(marker)) {
-            marker.Dispose();
-        }
-
-        if (markerNodes.Remove(marker)) {
-            marker.Dispose();
-        }
-    }
-
-    public void RemoveAllMarkers() {
-        foreach (var node in markerNodes) {
-            node.Dispose();
-        }
-        markerNodes.Clear();
-
-        foreach (var node in queuedNodes) {
-            node.Dispose();
-        }
-        queuedNodes.Clear();
-
-        queuedMarkers.Clear();
     }
 
     private void OnAttach(AddonAreaMap* addon) {
@@ -255,7 +262,7 @@ public unsafe class MapOverlayController : IDisposable {
 
         if (!AgentMap.Instance()->IsControlKeyPressed) {
             foreach (var node in markerNodes) {
-                if (node.IsActuallyVisible() && node.CheckCollision(atkEventData) && clippingContainerNode.CheckCollision(atkEventData)) {
+                if (node.IsActuallyVisible && node.CheckCollision(atkEventData) && clippingContainerNode.CheckCollision(atkEventData)) {
                     node.ShowTextTooltip(node.TextTooltip);
                     showingTooltip = true;
                     anyCollisions = true;
@@ -281,9 +288,25 @@ public unsafe class MapOverlayController : IDisposable {
 
     private void ProcessMouseClick(AtkEventData* atkEventData) {
         foreach (var node in markerNodes) {
-            if (node.IsActuallyVisible() && node.CheckCollision(atkEventData)) {
+            if (node.IsActuallyVisible && node.CheckCollision(atkEventData)) {
                 node.OnClick?.Invoke();
             }
         }
     }
+
+    private readonly AddonController<AddonAreaMap> mapController;
+    private SimpleOverlayNode? clippingContainerNode;
+    private SimpleOverlayNode? flagContainerNode;
+    private SimpleOverlayNode? overlayNode;
+    private ViewportEventListener? viewportEventListener;
+
+    private bool showingTooltip;
+    private bool showingInteractCursor;
+
+    private readonly List<MapMarkerNode> markerNodes = [];
+
+    private readonly List<MapMarkerInfo> queuedMarkers = [];
+    private readonly List<MapMarkerNode> queuedNodes = [];
+
+    private MapMarkerNode? flagNode;
 }

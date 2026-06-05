@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Enums;
 using KamiToolKit.Premade.Node;
 
@@ -150,6 +151,10 @@ public class ListBoxNode : LayoutListNode {
                 }
             }
         }
+    }
+
+    protected override void OnRecalculateNavigation() {
+        // todo : this!
     }
 
     public override void AddNode(NodeBase? node) {

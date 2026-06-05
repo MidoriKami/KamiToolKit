@@ -3,8 +3,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
-using KamiToolKit.Classes;
-using KamiToolKit.Dalamud;
+using KamiToolKit.BaseTypes;
+using KamiToolKit.Classes.Internal;
 
 namespace KamiToolKit.Extensions;
 

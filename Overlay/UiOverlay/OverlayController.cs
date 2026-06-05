@@ -7,17 +7,75 @@ using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Dalamud;
+using KamiToolKit.BaseTypes;
+using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
+using KamiToolKit.Extensions.Internal;
 
 namespace KamiToolKit.Overlay.UiOverlay;
 
+/// <summary>
+/// Overlay controller for interacting with various overlay addons for displaying ui elements as part of the HUD.
+/// </summary>
 public unsafe class OverlayController : IDisposable {
-    private readonly Dictionary<OverlayLayer, List<OverlayNode>> overlayNodes = [];
-    private readonly Dictionary<OverlayLayer, OverlayAddonState> addonState = [];
 
-    private ControllerState controllerState = ControllerState.WaitForNameplate;
+    /// <summary>
+    /// Adds a node to the overlay.
+    /// </summary>
+    /// <remarks>
+    /// This must be done from the main game thread.
+    /// The added node is then owned by the overlay.
+    /// </remarks>
+    public void AddNode(OverlayNode node) {
+        ThreadSafety.AssertMainThread();
 
+        overlayNodes.TryAdd(node.OverlayLayer, []);
+
+        if (overlayNodes[node.OverlayLayer].Contains(node)) return;
+
+        overlayNodes[node.OverlayLayer].Add(node);
+
+        if (addonState[node.OverlayLayer] is not OverlayAddonState.Ready) return;
+
+        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(node.OverlayLayer.Description);
+        if (addon is null) return;
+
+        AttachNode(addon, node);
+    }
+
+    /// <summary>
+    /// Removes and disposes the specified node from the overlay.
+    /// </summary>
+    /// <remarks>
+    /// This must be done from the main game thread.
+    /// </remarks>
+    public void RemoveNode(OverlayNode node) {
+        ThreadSafety.AssertMainThread();
+
+        if (!overlayNodes.TryGetValue(node.OverlayLayer, out var list)) return;
+
+        if (list.Remove(node)) {
+            node.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Removes and disposes all attached nodes.
+    /// </summary>
+    /// <remarks>
+    /// Must be done from the main game thread.
+    /// </remarks>
+    public void RemoveAllNodes() {
+        ThreadSafety.AssertMainThread();
+
+        foreach (var node in overlayNodes.SelectMany(set => set.Value).ToList()) {
+            RemoveNode(node);
+        }
+    }
+
+    /// <remarks>
+    /// Must be constructed from the main game thread
+    /// </remarks>
     public OverlayController() {
         ThreadSafety.AssertMainThread();
 
@@ -136,45 +194,6 @@ public unsafe class OverlayController : IDisposable {
     }
 
     //
-    // Public node access
-    //
-
-    public void AddNode(OverlayNode node) {
-        ThreadSafety.AssertMainThread();
-
-        overlayNodes.TryAdd(node.OverlayLayer, []);
-
-        if (overlayNodes[node.OverlayLayer].Contains(node)) return;
-
-        overlayNodes[node.OverlayLayer].Add(node);
-
-        if (addonState[node.OverlayLayer] is not OverlayAddonState.Ready) return;
-
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(node.OverlayLayer.Description);
-        if (addon is null) return;
-
-        AttachNode(addon, node);
-    }
-
-    public void RemoveNode(OverlayNode node) {
-        ThreadSafety.AssertMainThread();
-
-        if (!overlayNodes.TryGetValue(node.OverlayLayer, out var list)) return;
-
-        if (list.Remove(node)) {
-            node.Dispose();
-        }
-    }
-
-    public void RemoveAllNodes() {
-        ThreadSafety.AssertMainThread();
-
-        foreach (var node in overlayNodes.SelectMany(set => set.Value).ToList()) {
-            RemoveNode(node);
-        }
-    }
-
-    //
     // Events
     //
 
@@ -232,4 +251,9 @@ public unsafe class OverlayController : IDisposable {
         node.NodeId = (uint)addon->UldManager.NodeListCount + 1;
         node.AttachNode(addon);
     }
+
+    private readonly Dictionary<OverlayLayer, List<OverlayNode>> overlayNodes = [];
+    private readonly Dictionary<OverlayLayer, OverlayAddonState> addonState = [];
+
+    private ControllerState controllerState = ControllerState.WaitForNameplate;
 }

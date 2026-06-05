@@ -46,4 +46,8 @@ public class HorizontalFlexNode : LayoutListNode {
             }
         }
     }
+
+    protected override void OnRecalculateNavigation() {
+        // todo : this!
+    }
 }

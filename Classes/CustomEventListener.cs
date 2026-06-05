@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Dalamud;
+using KamiToolKit.Classes.Internal;
 
 namespace KamiToolKit.Classes;
 

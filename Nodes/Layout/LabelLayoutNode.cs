@@ -26,4 +26,8 @@ public class LabelLayoutNode : LayoutListNode {
             position += node.Width + ItemSpacing;
         }
     }
+
+    protected override void OnRecalculateNavigation() {
+        // todo : this!
+    }
 }
