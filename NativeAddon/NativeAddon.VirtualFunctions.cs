@@ -8,6 +8,9 @@ using KamiToolKit.Timelines;
 
 namespace KamiToolKit;
 
+/// <summary>
+/// Native addon partial for wiring up virtual table calls to overridable functions.
+/// </summary>
 public unsafe partial class NativeAddon {
     protected virtual void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan) { }
     protected virtual void OnShow(AtkUnitBase* addon) { }
@@ -17,8 +20,6 @@ public unsafe partial class NativeAddon {
     protected virtual void OnFinalize(AtkUnitBase* addon) { }
     protected virtual void OnRequestedUpdate(AtkUnitBase* addon, NumberArrayData** numberArrayData, StringArrayData** stringArrayData) { }
     protected virtual void OnRefresh(AtkUnitBase* addon, Span<AtkValue> atkValues) { }
-
-    private bool isSetup;
 
     private void Initialize(AtkUnitBase* thisPtr) {
         Services.Log.Verbose($"[{InternalName}] Initialize");
@@ -198,4 +199,6 @@ public unsafe partial class NativeAddon {
             thisPtr->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
         }
     }
+
+    private bool isSetup;
 }

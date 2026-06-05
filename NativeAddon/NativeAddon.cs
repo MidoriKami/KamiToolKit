@@ -14,14 +14,38 @@ namespace KamiToolKit;
 /// NativeAddon Partial containing internal and private functions for allocating and initialize addon states.
 /// </summary>
 public unsafe partial class NativeAddon {
-    private GCHandle? disposeHandle;
-    protected internal AtkUnitBase* InternalAddon;
 
+    /// <summary>
+    /// Triggers a window update via AtkUnitBase.SetSize(...), to have the game recalculate NodeFlags.Anchor{Direction}.
+    /// </summary>
+    protected void UpdateAnchoringLayout()
+        => SetWindowSize(Size);
+
+    /// <summary>
+    /// Pointer to the contained addon. This is also accessible via <see cref="op_Implicit"/>
+    /// </summary>
+    protected internal AtkUnitBase* InternalAddon { get; private set; }
+
+    /// <summary>
+    /// Converts this instance to a AtkUnitBase for seamless game interop.
+    /// </summary>
+    public static implicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
+
+    /// <summary>
+    /// Window node for this NativeAddon. May be null if <see cref="CreateWindowNode"/> returns a null windowNode
+    /// </summary>
     protected WindowNodeBase? WindowNode { get; private set; }
 
     /// <summary>
-    /// Entry point for allocating custom addons. Allocates memory, replaces virtual table, allocates required nodes, and sets the GC Handle.
+    /// Gets or inits a function to be called for creating the window with a custom window node.
     /// </summary>
+    public Func<WindowNodeBase>? CreateWindowNode { get; init; }
+
+    /// <summary>
+    /// Root node for this NativeAddon.
+    /// </summary>
+    public ResNode RootNode { get; private set; } = null!;
+
     private void AllocateAddon(uint atkValueCount = 0, AtkValue* atkValues = null) {
         if (InternalAddon is not null) {
             Services.Log.Warning("Tried to allocate addon that was already allocated.");
@@ -55,8 +79,7 @@ public unsafe partial class NativeAddon {
         };
 
         if (!IsOverlayAddon) {
-            WindowNode = CreateWindowNode?.Invoke() ?? new WindowNode();
-            WindowNode.NodeId = 2;
+            WindowNode = CreateWindowNode?.Invoke() ?? new WindowNode { NodeId = 2 };
         }
 
         InternalAddon->NameString = InternalName;
@@ -78,9 +101,6 @@ public unsafe partial class NativeAddon {
         }
     }
 
-    /// <summary>
-    /// Before the first OnSetup virtual function is invoked, set various fields such as open SFX, title, and initial position.
-    /// </summary>
     private void SetInitialState() {
         WindowNode?.SetTitle(Title.ToString(), Subtitle?.ToString() ?? KamiToolKitLibrary.DefaultWindowSubtitle);
 
@@ -111,6 +131,5 @@ public unsafe partial class NativeAddon {
         }
     }
 
-    protected void UpdateAnchoringLayout()
-        => SetWindowSize(Size);
+    private GCHandle? disposeHandle;
 }

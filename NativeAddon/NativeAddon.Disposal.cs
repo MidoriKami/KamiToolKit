@@ -5,11 +5,17 @@ using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
+/// <summary>
+/// NativeAddon partial for managing disposal and dispose states.
+/// </summary>
 public partial class NativeAddon : IDisposable, IAsyncDisposable {
-    private static readonly List<NativeAddon> CreatedAddons = [];
 
-    private bool isDisposed;
-
+    /// <summary>
+    /// Triggers the disposal of this addon. <br/> <br/>
+    /// This will not await the addon to actually close which happens several frames later
+    /// due to the addons closing animation. If you need to fully wait for the window to close use <see cref="DisposeAsync"/> and await the result.
+    /// </summary>
+    /// <code>await thisInstance.DisposeAsync();</code>
     public virtual void Dispose() {
         if (IsOverlayAddon) {
             // Intentionally leak OverlayAddons,
@@ -35,6 +41,12 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
         isDisposed = true;
     }
 
+    /// <summary>
+    /// Triggers the disposal of this addon, and awaits for it to fully close before returning <see cref="ValueTask.CompletedTask"/>
+    /// </summary>
+    /// <remarks>
+    /// This <em>must not</em> be called from the main thread, or it will deadlock the game.
+    /// </remarks>
     public virtual async ValueTask DisposeAsync() {
         if (IsOverlayAddon) {
             // Intentionally leak OverlayAddons,
@@ -77,4 +89,8 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
 
         CreatedAddons.Clear();
     }
+
+    private static readonly List<NativeAddon> CreatedAddons = [];
+
+    private bool isDisposed;
 }

@@ -9,6 +9,9 @@ using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
+/// <summary>
+/// Native addon partial for saving/loading the addons size and position.
+/// </summary>
 public unsafe partial class NativeAddon {
     private readonly JsonSerializerOptions serializerOptions = new() {
         WriteIndented = true,

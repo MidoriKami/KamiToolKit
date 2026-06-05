@@ -1,49 +1,39 @@
-﻿using System;
-using System.Linq;
-using System.Numerics;
-using System.Reflection;
-using FFXIVClientStructs.Attributes;
+﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Extensions;
 
+/// <summary>
+/// Extension methods for AtkUnitBase.
+/// </summary>
 public static unsafe class AtkUnitBaseExtensions {
-
-    public static string GetAddonTypeName<T>() where T : unmanaged {
-        var type = typeof(T);
-        var attribute = type.GetCustomAttributes().OfType<AddonAttribute>().FirstOrDefault();
-
-        if (attribute is null) throw new Exception("Unable to find AddonAttribute to resolve addon name.");
-        var addonName = attribute.AddonIdentifiers.FirstOrDefault();
-
-        if (addonName is null) throw new Exception("Addon attribute names are empty.");
-        return addonName;
-    }
-
     extension(ref AtkUnitBase addon) {
+
+        /// <summary>
+        /// Gets or sets the addon size, if setting will update the addons state.
+        /// </summary>
         public Vector2 Size {
             get => addon.GetSize();
             set => addon.Resize(value);
         }
 
-        public bool IsActuallyVisible => addon.GetIsActuallyVisible();
+        /// <summary>
+        /// Gets if the addon is actually visible, by checking various visibility flags.
+        /// </summary>
+        public bool IsActuallyVisible
+            => addon.GetIsActuallyVisible();
 
-        public Vector2 RootSize => addon.GetRootSize();
-        public Vector2 Position => new(addon.X, addon.Y);
+        /// <summary>
+        /// Gets the size of the root node.
+        /// </summary>
+        public Vector2 RootSize
+            => addon.GetRootSize();
 
-        private Vector2 GetSize() {
-            var width = stackalloc ushort[1];
-            var height = stackalloc ushort[1];
-
-            addon.GetSize(width, height, false);
-            return new Vector2(*width, *height);
-        }
-
-        private Vector2 GetRootSize() {
-            if (addon.RootNode is null) return Vector2.Zero;
-
-            return new Vector2(addon.RootNode->Width, addon.RootNode->Height);
-        }
+        /// <summary>
+        /// Gets the addons position.
+        /// </summary>
+        public Vector2 Position
+            => new(addon.X, addon.Y);
 
         /// <summary>
         /// Resizes the target addon to the new size, making sure to adjust various WindowNode properties
@@ -65,6 +55,20 @@ public static unsafe class AtkUnitBaseExtensions {
 
             addon.WindowNode->Component->UldManager.UpdateDrawNodeList();
             addon.UpdateCollisionNodeList(false);
+        }
+
+        private Vector2 GetSize() {
+            var width = stackalloc ushort[1];
+            var height = stackalloc ushort[1];
+
+            addon.GetSize(width, height, false);
+            return new Vector2(*width, *height);
+        }
+
+        private Vector2 GetRootSize() {
+            if (addon.RootNode is null) return Vector2.Zero;
+
+            return new Vector2(addon.RootNode->Width, addon.RootNode->Height);
         }
 
         private bool GetIsActuallyVisible() {

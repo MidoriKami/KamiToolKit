@@ -2,7 +2,46 @@
 
 namespace KamiToolKit;
 
+/// <summary>
+/// NativeAddon partial for managing flag states.
+/// </summary>
 public unsafe partial class NativeAddon {
+
+    /// <summary>
+    /// Disables the close button. Use with caution.
+    /// </summary>
+    public bool DisableClose { get; init; }
+
+    /// <summary>
+    /// Disables closing animation. (But doesn't actually...)
+    /// </summary>
+    public bool DisableCloseTransition { get; init; }
+
+    /// <summary>
+    /// Gets or sets whether right-clicking the header should show a context menu, for scaling or resetting this addon.
+    /// </summary>
+    public bool EnableContextMenu { get; init; } = true;
+
+    /// <summary>
+    /// Gets or sets whether this window should be able to be dragged off-screen.
+    /// </summary>
+    public bool DisableClamping { get; init; } = true;
+
+    /// <summary>
+    /// Gets or sets whether the context menu for this addon should allow changing the scale.
+    /// </summary>
+    public bool DisableScaleContextOption { get; init; }
+
+    /// <summary>
+    /// Gets or sets whether this addon should close when esc is pressed with no windows focused.
+    /// </summary>
+    public bool RespectCloseAll { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets whether this addon should ignore AtkUnitBase.GlobalScale.
+    /// </summary>
+    public bool IgnoreGlobalScale { get; set; } = false;
+
     private void UpdateFlags() {
 
         // Disable Native AddonConfig
@@ -35,18 +74,4 @@ public unsafe partial class NativeAddon {
         // Enable ClickThrough
         FlagHelper.UpdateFlag(ref InternalAddon->Flags1A3, 0x40, true);
     }
-
-    public bool DisableClose { get; init; }
-
-    public bool DisableCloseTransition { get; init; }
-
-    public bool EnableContextMenu { get; init; } = true;
-
-    public bool DisableClamping { get; init; } = true;
-
-    public bool DisableScaleContextOption { get; init; }
-
-    public bool RespectCloseAll { get; set; } = true;
-
-    public bool IgnoreGlobalScale { get; set; } = false;
 }

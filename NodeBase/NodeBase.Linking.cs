@@ -58,11 +58,6 @@ public abstract unsafe partial class NodeBase {
         ThreadSafety.AssertMainThread();
         if (targetAddon is null) return;
 
-        // Check the Addon's node list to find out what NodeId we should be, and set that before attaching
-        if (NodeId > NodeIdBase) {
-            NodeId = targetAddon.InternalAddon->UldManager.GetMaxNodeId() + 1;
-        }
-
         PerformNativeAttach(targetAddon.RootNode, targetPosition);
 
         parentNode = targetAddon.RootNode;
@@ -107,33 +102,6 @@ public abstract unsafe partial class NodeBase {
                     NodePosition.BeforeAllSiblings => componentNode->Component->UldManager.RootNode,
                     _ => throw new ArgumentOutOfRangeException(nameof(targetPosition), targetPosition, null),
                 };
-
-                // If we aren't inserting as this elements child, then we need to find the parent UldManager and use that instead
-                if (targetPosition is NodePosition.AfterTarget or NodePosition.BeforeTarget) {
-                    if (NodeId > NodeIdBase) {
-                        var targetsParentUldManager = GetUldManagerForNode(targetNode);
-
-                        // Failed to get uldManager from node tree
-                        if (targetsParentUldManager is null) {
-
-                            // Try to get parent addon from target node
-                            var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(targetNode);
-                            if (parentAddon is not null) {
-                                targetsParentUldManager = &parentAddon->UldManager;
-                            }
-                        }
-
-                        if (targetsParentUldManager is not null) {
-                            NodeId = targetsParentUldManager->GetMaxNodeId() + 1;
-                        }
-                    }
-                }
-                else {
-                    // We also need to check the components node list, to get a safely assigned nodeId
-                    if (NodeId > NodeIdBase) {
-                        NodeId = componentNode->Component->UldManager.GetMaxNodeId() + 1;
-                    }
-                }
             }
         }
 

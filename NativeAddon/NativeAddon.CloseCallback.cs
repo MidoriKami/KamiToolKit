@@ -4,6 +4,9 @@ using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
+/// <summary>
+/// Native addon partial for managing the global close callback.
+/// </summary>
 public unsafe partial class NativeAddon {
     private static Hook<AtkUnitBase.Delegates.FireCallback>? fireCallbackHook;
 

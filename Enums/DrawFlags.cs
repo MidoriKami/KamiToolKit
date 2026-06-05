@@ -2,10 +2,21 @@
 
 namespace KamiToolKit.Enums;
 
+/// <summary>
+/// Enumeration of AtkResNode DrawFlags. ClientStructs didn't
+/// </summary>
 [Flags]
 public enum DrawFlags : uint {
+    /// <summary>
+    /// No flags active.
+    /// </summary>
     None = 0,
+
+    /// <summary>
+    /// Triggers the game to re-evaluate this node on next update.
+    /// </summary>
     IsDirty = 0x1,
+
     IsAnimating = 0x2,
     CalculateTransformation = 0x4,
     DisableRapidUp = 0x10,
@@ -13,9 +24,29 @@ public enum DrawFlags : uint {
     DisableRapidLeft = 0x40,
     DisableRapidRight = 0x80,
     DisableTimelineLabel = 0x100,
+
+    /// <summary>
+    /// Causes this node to change the games cursor to a finger pointer cursor when hovering this node.
+    /// </summary>
     ClickableCursor = 0x100000,
+
+    /// <summary>
+    /// Forces this node to render over top of all other nodes, regardless of its position in the tree.
+    /// </summary>
     RenderOnTop = 0x200000,
+
+    /// <summary>
+    /// Causes this node to change the game cursor to a text input syncom when hovering this node.
+    /// </summary>
     TextInputCursor = 0x400000,
+
+    /// <summary>
+    /// Calculates collision for this node spherically based on its width/height
+    /// </summary>
     UseEllipticalCollision = 0x800000,
+
+    /// <summary>
+    /// Calculates collision for this node based on its actual size/scale/rotation transformation.
+    /// </summary>
     UseTransformedCollision = 0x1000000,
 }

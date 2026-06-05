@@ -3,7 +3,11 @@ using System.Collections.Generic;
 
 namespace KamiToolKit.Interfaces;
 
+/// <summary>
+/// Interface representing the capabilities of a LayoutListNode.
+/// </summary>
 public interface ILayoutListNode {
+
     /// <summary>
     /// Nav index for use with setting contained nodes controller nav values.
     /// </summary>

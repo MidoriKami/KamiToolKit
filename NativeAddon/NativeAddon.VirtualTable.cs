@@ -4,6 +4,9 @@ using KamiToolKit.Classes;
 
 namespace KamiToolKit;
 
+/// <summary>
+/// NativeAddon partial for replacing the default virtual table with a custom virtual table.
+/// </summary>
 public unsafe partial class NativeAddon {
 
     private const int VirtualTableEntryCount = 200;

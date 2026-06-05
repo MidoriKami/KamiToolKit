@@ -13,9 +13,13 @@ namespace KamiToolKit;
 /// NativeAddon partial containing user facing functions.
 /// </summary>
 public partial class NativeAddon {
+
     /// <summary>
     /// Initializes and Opens this instance of Addon
     /// </summary>
+    /// <remarks>
+    /// Must be invoked from the games main thread.
+    /// </remarks>
     public unsafe void Open() {
         ThreadSafety.AssertMainThread();
 
@@ -33,13 +37,13 @@ public partial class NativeAddon {
         }
     }
 
-    [Conditional("DEBUG")]
-    public void DebugOpen() => Open();
-
     /// <summary>
     /// Closes addon, this will cause it to fully close and deallocate.
     /// This NativeAddon object will remain valid, you can call Open to re-allocate this addon.
     /// </summary>
+    /// <remarks>
+    /// Must be called from the games main thread.
+    /// </remarks>
     public unsafe void Close() {
         ThreadSafety.AssertMainThread();
         if (InternalAddon is null) return;
@@ -57,13 +61,11 @@ public partial class NativeAddon {
     /// <summary>
     /// Closes addon, but awaits for it to be fully unloaded before reporting completed.
     /// </summary>
+    /// <remarks>
+    /// <em>Must not be called from the main thread</em>
+    /// </remarks>
     public async Task CloseAsync() {
-        if (ThreadSafety.IsMainThread) {
-            Services.Log.Warning(
-                "\nCalled CloseAsync from the main thread.\n" +
-                "You're probably reading this in dalamud.log, because you just deadlocked your game. :)"
-            );
-        }
+        ThreadSafety.AssertNotMainThread();
 
         unsafe {
             if (InternalAddon is null) {
@@ -79,6 +81,9 @@ public partial class NativeAddon {
         }
     }
 
+    /// <summary>
+    /// Toggles the addon from Open to Closed and vice versa.
+    /// </summary>
     public void Toggle() {
         if (IsOpen) {
             Close();
@@ -88,21 +93,36 @@ public partial class NativeAddon {
         }
     }
 
+    /// <summary>
+    /// Attaches a collection nodes to this addon's root node.
+    /// </summary>
     public void AddNode(ICollection<NodeBase> nodes) {
         foreach (var node in nodes) {
             AddNode(node);
         }
     }
 
+    /// <summary>
+    /// Attaches a specific node to this addon's root node.
+    /// </summary>
+    /// <param name="node"></param>
     public void AddNode(NodeBase? node)
         => node?.AttachNode(this);
 
-
+    /// <summary>
+    /// Sets the addon's position.
+    /// </summary>
+    /// <remarks>
+    /// Can only be used on an already open addon.
+    /// </remarks>
     public unsafe void SetWindowPosition(Vector2 windowPosition) {
         if (InternalAddon is null) return;
         InternalAddon->SetPosition((short)windowPosition.X, (short)windowPosition.Y);
     }
 
+    /// <summary>
+    /// Sets the addon's size via Vector2.
+    /// </summary>
     public unsafe void SetWindowSize(Vector2 windowSize) {
         if (InternalAddon is null) return;
 
@@ -112,17 +132,17 @@ public partial class NativeAddon {
         WindowNode?.Size = Size;
     }
 
+    /// <summary>
+    /// Sets the windows size via floats.
+    /// </summary>
     public void SetWindowSize(float width, float height)
         => SetWindowSize(new Vector2(width, height));
 
-    private unsafe Vector2 GetScreenClampedPosition(Vector2 position) {
-        if (!OpenInBounds) return position;
-
-        var screenSize = (Vector2)AtkStage.Instance()->ScreenSize;
-        var clampedX = Math.Clamp(position.X, 0.0f, screenSize.X - Size.X);
-        var clampedY = Math.Clamp(position.Y, 0.0f, screenSize.Y - Size.Y);
-        return new Vector2(clampedX, clampedY);
-    }
+    /// <summary>
+    /// Opens the window but only when the plugin is built in debug mode.
+    /// </summary>
+    [Conditional("DEBUG")]
+    public void DebugOpen() => Open();
 
     /// <summary>
     /// Allocates this addon for fully replacing a vanilla addon via AddonFactory.
@@ -133,4 +153,13 @@ public partial class NativeAddon {
     /// </remarks>
     public unsafe void InitializeForAddonFactory(uint valueCount, AtkValue* atkValues)
         => AllocateAddon(valueCount, atkValues);
+
+    private unsafe Vector2 GetScreenClampedPosition(Vector2 position) {
+        if (!OpenInBounds) return position;
+
+        var screenSize = (Vector2)AtkStage.Instance()->ScreenSize;
+        var clampedX = Math.Clamp(position.X, 0.0f, screenSize.X - Size.X);
+        var clampedY = Math.Clamp(position.Y, 0.0f, screenSize.Y - Size.Y);
+        return new Vector2(clampedX, clampedY);
+    }
 }
