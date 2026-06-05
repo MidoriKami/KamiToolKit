@@ -9,6 +9,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Controllers;
 using KamiToolKit.Dalamud;
+using KamiToolKit.Enums;
 using KamiToolKit.Premade.Node.Simple;
 using MapMarkerInfo = KamiToolKit.Classes.MapMarkerInfo;
 
