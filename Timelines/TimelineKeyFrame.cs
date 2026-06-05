@@ -1,7 +1,11 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Enums;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// Represents the native data of a single keyframe and an adaptor to the native struct. Not intended for external use.
+/// </summary>
 public abstract class TimelineKeyFrame {
 
     public KeyFrameGroupType GroupSelector { get; set; }

@@ -10,6 +10,7 @@ using KamiToolKit.Premade.Node;
 
 namespace KamiToolKit.Premade.Addon.Search;
 
+[Obsolete("Pending Removal")]
 public abstract class BaseSearchAddon<T, TU> : NativeAddon where TU : ListItemNode<T>, IListItemNode, new() {
 
     private SearchWidget? searchWidget;

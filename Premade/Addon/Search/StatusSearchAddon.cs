@@ -8,6 +8,7 @@ using Lumina.Excel.Sheets;
 
 namespace KamiToolKit.Premade.Addon.Search;
 
+[Obsolete("Pending Removal")]
 public class StatusSearchAddon : BaseSearchAddon<Status, StatusListItemNode> {
     public StatusSearchAddon() {
         SearchOptions = Services.DataManager.GetExcelSheet<Status>()

@@ -1,9 +1,13 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.STD;
+using KamiToolKit.Enums;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// Adaptor class for easily setting keyframe internal values. Not intended for external use.
+/// </summary>
 public class TimelineAnimationKeyFrame : TimelineKeyFrame {
 
     private readonly NodeTint nodeTint = new();

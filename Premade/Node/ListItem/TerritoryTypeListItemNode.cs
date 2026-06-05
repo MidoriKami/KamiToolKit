@@ -1,12 +1,14 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using Lumina.Excel.Sheets;
 
 namespace KamiToolKit.Premade.Node.ListItem;
 
+[Obsolete("Pending Removal")]
 public class TerritoryTypeListItemNode : ListItemNode<TerritoryType>, IListItemNode {
     public static float ItemHeight => 64.0f;
 

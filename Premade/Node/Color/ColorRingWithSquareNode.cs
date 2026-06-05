@@ -6,12 +6,12 @@ using KamiToolKit.Classes;
 using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Premade.Node.Color;
 
 public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
-    public readonly ColorSquareNode ColorSquareNode;
+    public readonly ColorGradientSquare ColorGradientSquare;
     public readonly ImGuiImageNode ColorRingNode;
     public readonly ImGuiImageNode ColorRingSelectorNode;
 
@@ -23,10 +23,10 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     public ColorRingWithSquareNode() {
         eventListener = new ViewportEventListener(SquareEventHandler);
 
-        ColorSquareNode = new ColorSquareNode {
+        ColorGradientSquare = new ColorGradientSquare {
             DrawFlags = DrawFlags.UseTransformedCollision,
         };
-        ColorSquareNode.AttachNode(this);
+        ColorGradientSquare.AttachNode(this);
 
         ColorRingNode = new ImGuiImageNode {
             TexturePath = Services.GetAssetPath("color_ring.png"),
@@ -58,9 +58,9 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        ColorSquareNode.Size = Size / 2.0f - new Vector2(24.0f, 24.0f);
-        ColorSquareNode.Position = Size / 4.0f + new Vector2(12.0f, 12.0f);
-        ColorSquareNode.RotationDegrees = 45.0f;
+        ColorGradientSquare.Size = Size / 2.0f - new Vector2(24.0f, 24.0f);
+        ColorGradientSquare.Position = Size / 4.0f + new Vector2(12.0f, 12.0f);
+        ColorGradientSquare.RotationDegrees = 45.0f;
 
         ColorRingNode.Size = Size;
 
@@ -89,13 +89,13 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     }
 
     private void OnMouseDown(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        if (ColorSquareNode.CheckCollision(atkEventData)) {
+        if (ColorGradientSquare.CheckCollision(atkEventData)) {
             UpdateSquareColor(atkEventData->MousePosition);
 
             if (!isSquareDrag) {
                 isSquareDrag = true;
-                eventListener.AddEvent(AtkEventType.MouseMove, ColorSquareNode);
-                eventListener.AddEvent(AtkEventType.MouseUp, ColorSquareNode);
+                eventListener.AddEvent(AtkEventType.MouseMove, ColorGradientSquare);
+                eventListener.AddEvent(AtkEventType.MouseUp, ColorGradientSquare);
             }
         }
 
@@ -135,18 +135,18 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         // Note: ColorSquareNode.ScreenPosition changes as the node rotates
         // However, Position does not change
         var scale = ParentAddon is not null ? ParentAddon->Scale : 1.0f;
-        var center = ScreenPosition + (ColorSquareNode.Position + ColorSquareNode.Origin) * scale;
+        var center = ScreenPosition + (ColorGradientSquare.Position + ColorGradientSquare.Origin) * scale;
 
         var relativePosition = clickPosition - center;
-        var rotatedPoint = RotatePoint(relativePosition / scale, Vector2.Zero, -ColorSquareNode.RotationDegrees) / ColorSquareNode.Scale;
+        var rotatedPoint = RotatePoint(relativePosition / scale, Vector2.Zero, -ColorGradientSquare.RotationDegrees) / ColorGradientSquare.Scale;
 
-        var xClamped = Math.Clamp(rotatedPoint.X, -ColorSquareNode.Width / 2, ColorSquareNode.Width / 2);
-        var yClamped = Math.Clamp(rotatedPoint.Y, -ColorSquareNode.Height / 2, ColorSquareNode.Height / 2);
+        var xClamped = Math.Clamp(rotatedPoint.X, -ColorGradientSquare.Width / 2, ColorGradientSquare.Width / 2);
+        var yClamped = Math.Clamp(rotatedPoint.Y, -ColorGradientSquare.Height / 2, ColorGradientSquare.Height / 2);
 
-        ColorSquareNode.ColorDotPosition = new Vector2(xClamped, yClamped) + ColorSquareNode.Origin;
+        ColorGradientSquare.ColorDotPosition = new Vector2(xClamped, yClamped) + ColorGradientSquare.Origin;
 
-        var saturation = ColorSquareNode.ColorDotPosition.X / ColorSquareNode.Width;
-        var lightness = 1 - ColorSquareNode.ColorDotPosition.Y / ColorSquareNode.Height;
+        var saturation = ColorGradientSquare.ColorDotPosition.X / ColorGradientSquare.Width;
+        var lightness = 1 - ColorGradientSquare.ColorDotPosition.Y / ColorGradientSquare.Height;
 
         OnSaturationChanged?.Invoke(saturation);
         OnValueChanged?.Invoke(lightness);
@@ -179,9 +179,9 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     public Action<float>? OnValueChanged { get; init; }
 
     public override float RotationDegrees {
-        get => ColorSquareNode.RotationDegrees;
+        get => ColorGradientSquare.RotationDegrees;
         set {
-            ColorSquareNode.RotationDegrees = value + 45.0f;
+            ColorGradientSquare.RotationDegrees = value + 45.0f;
             ColorRingSelectorNode.RotationDegrees = value;
         }
     }
@@ -192,12 +192,12 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     }
 
     public ColorHelpers.HsvaColor SquareColor {
-        get => ColorSquareNode.MultiplyColorHsva;
-        set => ColorSquareNode.MultiplyColorHsva = value with { S = 1.0f, V = 1.0f };
+        get => ColorGradientSquare.MultiplyColorHsva;
+        set => ColorGradientSquare.MultiplyColorHsva = value with { S = 1.0f, V = 1.0f };
     }
 
     public ColorHelpers.HsvaColor SquareSaturationValue {
-        get => ColorSquareNode.MultiplyColorHsva;
-        set => ColorSquareNode.ColorDotPosition = new Vector2(ColorSquareNode.Width * value.S, ColorSquareNode.Height - ColorSquareNode.Height * value.V);
+        get => ColorGradientSquare.MultiplyColorHsva;
+        set => ColorGradientSquare.ColorDotPosition = new Vector2(ColorGradientSquare.Width * value.S, ColorGradientSquare.Height - ColorGradientSquare.Height * value.V);
     }
 }

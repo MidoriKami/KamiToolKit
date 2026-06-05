@@ -1,8 +1,9 @@
 ﻿using System;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Premade.Node;
 
+[Obsolete("Pending Removal")]
 public abstract class ConfigNode<T> : SimpleComponentNode {
     public T? ConfigurationOption {
         get;

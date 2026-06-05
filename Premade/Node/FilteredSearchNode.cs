@@ -4,7 +4,7 @@ using System.Linq;
 using System.Numerics;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Premade.Node;
@@ -12,6 +12,7 @@ namespace KamiToolKit.Premade.Node;
 /// <summary>
 /// Represents a search element that has a searchbar, and a dropdown for reordering elements.
 /// </summary>
+[Obsolete("Pending Removal")]
 public unsafe class SearchWidget : SimpleComponentNode {
     public readonly TextInputNode InputNode;
     public readonly EnumDropDownNode<Enum> SortOrderDropDown;

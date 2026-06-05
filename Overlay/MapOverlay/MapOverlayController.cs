@@ -10,7 +10,8 @@ using KamiToolKit.Classes;
 using KamiToolKit.Classes.Internal;
 using KamiToolKit.Controllers;
 using KamiToolKit.Enums;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes;
+using KamiToolKit.Nodes.Simplified;
 using MapMarkerInfo = KamiToolKit.Classes.MapMarkerInfo;
 
 namespace KamiToolKit.Overlay.MapOverlay;
@@ -107,7 +108,7 @@ public unsafe class MapOverlayController : IDisposable {
         var mapComponentNode = addon->GetNodeById(53);
         if (mapComponentNode is null) return;
 
-        clippingContainerNode = new SimpleOverlayNode {
+        clippingContainerNode = new ResNode {
             NodeFlags = NodeFlags.Clip | NodeFlags.Visible,
         };
         clippingContainerNode.AttachNode(mapComponentNode, NodePosition.AfterTarget);
@@ -116,10 +117,10 @@ public unsafe class MapOverlayController : IDisposable {
         viewportEventListener.AddEvent(AtkEventType.MouseMove, clippingContainerNode);
         viewportEventListener.AddEvent(AtkEventType.MouseDown, clippingContainerNode);
 
-        overlayNode = new SimpleOverlayNode();
+        overlayNode = new ResNode();
         overlayNode.AttachNode(clippingContainerNode);
 
-        flagContainerNode = new SimpleOverlayNode();
+        flagContainerNode = new ResNode();
         flagContainerNode.AttachNode(clippingContainerNode);
 
         flagNode = new FlagMarkerNode();
@@ -295,9 +296,9 @@ public unsafe class MapOverlayController : IDisposable {
     }
 
     private readonly AddonController<AddonAreaMap> mapController;
-    private SimpleOverlayNode? clippingContainerNode;
-    private SimpleOverlayNode? flagContainerNode;
-    private SimpleOverlayNode? overlayNode;
+    private ResNode? clippingContainerNode;
+    private ResNode? flagContainerNode;
+    private ResNode? overlayNode;
     private ViewportEventListener? viewportEventListener;
 
     private bool showingTooltip;

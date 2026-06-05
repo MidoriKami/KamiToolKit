@@ -3,8 +3,8 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
+using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Premade.Addon;
-using KamiToolKit.Premade.Node.Simple;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Premade.Node.Color;
@@ -18,8 +18,8 @@ public class ColorEditNode : SimpleComponentNode {
     /// Gets or sets the current color.
     /// </summary>
     public Vector4 CurrentColor {
-        get => previewNode.Color;
-        set => previewNode.Color = value;
+        get => squareNode.Color;
+        set => squareNode.Color = value;
     }
 
     /// <summary>
@@ -55,16 +55,16 @@ public class ColorEditNode : SimpleComponentNode {
     public Action<Vector4>? OnColorConfirmed { get; set; }
 
     public unsafe ColorEditNode() {
-        previewNode = new ColorPreviewNode();
-        previewNode.AttachNode(this);
+        squareNode = new ColorSquareNode();
+        squareNode.AttachNode(this);
 
         labelNode = new TextNode {
             AlignmentType = AlignmentType.Left,
         };
         labelNode.AttachNode(this);
 
-        previewNode.CollisionNode.ShowClickableCursor = true;
-        previewNode.CollisionNode.AddEvent(AtkEventType.MouseClick, OnClicked);
+        squareNode.ShowClickableCursor = true;
+        squareNode.AddEvent(AtkEventType.MouseClick, OnClicked);
 
         labelNode.ShowClickableCursor = true;
         labelNode.AddEvent(AtkEventType.MouseClick, OnClicked);
@@ -77,11 +77,11 @@ public class ColorEditNode : SimpleComponentNode {
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        previewNode.Size = new Vector2(Height - 6.0f, Height - 6.0f);
-        previewNode.Position = new Vector2(3.0f, 3.0f);
+        squareNode.Size = new Vector2(Height - 6.0f, Height - 6.0f);
+        squareNode.Position = new Vector2(3.0f, 3.0f);
 
         labelNode.Size = new Vector2(Width - Height - 12.0f, Height);
-        labelNode.Position = new Vector2(previewNode.Bounds.Right + 12.0f, 0.0f);
+        labelNode.Position = new Vector2(squareNode.Bounds.Right + 12.0f, 0.0f);
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
@@ -103,7 +103,7 @@ public class ColorEditNode : SimpleComponentNode {
         colorPicker?.InitialColor = CurrentColor;
 
         colorPicker?.OnColorPreviewed = color => {
-            previewNode.Color = color;
+            squareNode.Color = color;
             CurrentColor = color;
             OnColorPreviewed?.Invoke(color);
         };
@@ -126,6 +126,6 @@ public class ColorEditNode : SimpleComponentNode {
         Title = "Color Picker",
     };
 
-    private readonly ColorPreviewNode previewNode;
+    private readonly ColorSquareNode squareNode;
     private readonly TextNode labelNode;
 }

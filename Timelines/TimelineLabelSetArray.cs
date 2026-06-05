@@ -6,6 +6,9 @@ using KamiToolKit.Classes.Internal;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// Managed adaptor for native data. Not intended for external use.
+/// </summary>
 public unsafe class TimelineLabelSetArray : IDisposable {
 
     internal AtkTimelineLabelSet* InternalLabelSetArray = null;

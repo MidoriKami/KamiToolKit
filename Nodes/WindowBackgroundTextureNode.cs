@@ -6,13 +6,13 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Specialization of a NineGridNode for use with <see cref="WindowNode"/>. Not intended for external use.
 /// </summary>
-public class WindowBackgroundNode : NineGridNode {
+public class WindowBackgroundTextureNode : NineGridNode {
 
     /// <summary>
     /// Loads the parts required for a window node's background texture. <see cref="selectedPath"/> is used to select the texture with a
     /// brighter border to indicate the window is focused.
     /// </summary>
-    public WindowBackgroundNode(bool selectedPath, string path = "ui/uld/WindowA_Bg") {
+    public WindowBackgroundTextureNode(bool selectedPath, string path = "ui/uld/WindowA_Bg") {
         var basePath = $"{path}{(selectedPath ? "Selected" : "Normal")}";
 
         PartsList.Add(

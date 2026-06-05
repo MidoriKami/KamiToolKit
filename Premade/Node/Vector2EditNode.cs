@@ -3,10 +3,11 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Premade.Node;
 
+[Obsolete("Pending Removal")]
 public class Vector2EditWidget : SimpleComponentNode {
     public readonly GridNode GridNode;
     public readonly TextNode WidthTextNode;

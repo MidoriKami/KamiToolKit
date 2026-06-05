@@ -10,14 +10,14 @@ namespace KamiToolKit.Nodes;
 /// Node that manages the layout of other nodes
 public class ListBoxNode : LayoutListNode {
 
-    public readonly BackgroundImageNode Background;
+    public readonly ColorImageNode Color;
     public readonly BorderNineGridNode Border;
 
     public ListBoxNode() {
-        Background = new BackgroundImageNode {
+        Color = new ColorImageNode {
             IsVisible = false,
         };
-        Background.AttachNode(this);
+        Color.AttachNode(this);
 
         Border = new BorderNineGridNode {
             IsVisible = false,
@@ -51,13 +51,13 @@ public class ListBoxNode : LayoutListNode {
     }
 
     public Vector4 BackgroundColor {
-        get => Background.Color;
-        set => Background.Color = value;
+        get => Color.Color;
+        set => Color.Color = value;
     }
 
     public bool ShowBackground {
-        get => Background.IsVisible;
-        set => Background.IsVisible = value;
+        get => Color.IsVisible;
+        set => Color.IsVisible = value;
     }
 
     public bool ShowBorder {
@@ -78,7 +78,7 @@ public class ListBoxNode : LayoutListNode {
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        Background.Size = Size;
+        Color.Size = Size;
 
         Border.Size = Size + new Vector2(30.0f, 30.0f);
         Border.Position = -new Vector2(15.0f, 15.0f);

@@ -3,18 +3,74 @@ using System.Globalization;
 using System.Numerics;
 using Dalamud.Interface;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Premade.Node.Color;
 
-public class ColorPreviewWithInput : SimpleComponentNode {
-    public readonly ColorPreviewNode ColorPreviewNode;
-    public readonly TextInputNode ColorInputNode;
+/// <summary>
+/// Node representing a color preview and a hex string representation of the color.
+/// </summary>
+public class ColorPreviewWithInput : ResNode {
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ColorSquareNode ColorSquareNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public TextInputNode ColorInputNode { get; }
+
+    /// <summary>
+    /// Action that is invoked when the color is changed, provides the color as HSVA.
+    /// </summary>
+    public Action<ColorHelpers.HsvaColor>? OnHsvaColorChanged { get; set; }
+
+    /// <summary>
+    /// Action that is invoked when the color is changed, provides the color as RGBA.
+    /// </summary>
+    public Action<Vector4>? OnColorChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the current color string.
+    /// </summary>
+    public ReadOnlySeString String {
+        get => ColorInputNode.String;
+        set => ColorInputNode.String = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the current color as RGBA.
+    /// </summary>
+    /// <remarks>
+    /// Also updates the text display.
+    /// </remarks>
+    public override Vector4 Color {
+        get => ColorSquareNode.Color;
+        set {
+            ColorSquareNode.Color = value;
+            UpdateColorText();
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the current color as HSVA.
+    /// </summary>
+    /// <remarks>
+    /// Also updates the text display.
+    /// </remarks>
+    public override ColorHelpers.HsvaColor ColorHsva {
+        get => ColorSquareNode.ColorHsva;
+        set {
+            ColorSquareNode.ColorHsva = value;
+            UpdateColorText();
+        }
+    }
 
     public ColorPreviewWithInput() {
-        ColorPreviewNode = new ColorPreviewNode();
-        ColorPreviewNode.AttachNode(this);
+        ColorSquareNode = new ColorSquareNode();
+        ColorSquareNode.AttachNode(this);
 
         ColorInputNode = new TextInputNode {
             AutoSelectAll = true,
@@ -26,36 +82,13 @@ public class ColorPreviewWithInput : SimpleComponentNode {
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        ColorPreviewNode.Size = new Vector2(Height, Height);
-        ColorPreviewNode.Position = Vector2.Zero;
+        ColorSquareNode.Size = new Vector2(Height, Height);
+        ColorSquareNode.Position = Vector2.Zero;
 
         ColorInputNode.Size = new Vector2(Width - Height - 8.0f, Height - 2.0f);
         ColorInputNode.Position = new Vector2(Height + 8.0f, 1.0f);
     }
 
-    public Action<ColorHelpers.HsvaColor>? OnHsvaColorChanged { get; set; }
-    public Action<Vector4>? OnColorChanged { get; set; }
-
-    public ReadOnlySeString String {
-        get => ColorInputNode.String;
-        set => ColorInputNode.String = value;
-    }
-
-    public override Vector4 Color {
-        get => ColorPreviewNode.Color;
-        set {
-            ColorPreviewNode.Color = value;
-            UpdateColorText();
-        }
-    }
-
-    public override ColorHelpers.HsvaColor ColorHsva {
-        get => ColorPreviewNode.ColorHsva;
-        set {
-            ColorPreviewNode.ColorHsva = value;
-            UpdateColorText();
-        }
-    }
 
     private void OnTextInputComplete(ReadOnlySeString obj) {
         var str = obj.ToString();

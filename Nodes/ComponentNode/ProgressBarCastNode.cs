@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Nodes;
 

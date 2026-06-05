@@ -1,9 +1,11 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Premade.Node;
+namespace KamiToolKit.Nodes;
 
+/// <summary>
+/// Specialization of a <see cref="TextNode"/> that represents a text label often used next to configurable elements.
+/// </summary>
 public sealed class LabelTextNode : TextNode {
     public LabelTextNode() {
         TextColor = ColorHelper.GetColor(8);

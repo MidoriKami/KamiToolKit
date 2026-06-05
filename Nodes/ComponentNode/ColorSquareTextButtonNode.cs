@@ -1,21 +1,58 @@
 ﻿using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Nodes;
+using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Premade.Node.Color;
-using KamiToolKit.Premade.Node.Simple;
 using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Premade.Node;
+namespace KamiToolKit.Nodes;
 
-public unsafe class ColorOptionTextButtonNode : ButtonBase {
+/// <summary>
+/// Specialization of a <see cref="TextButtonNode"/> that displays a colored square with the currently set color.
+/// </summary>
+public unsafe class ColorSquareTextButtonNode : ButtonBase {
 
-    public readonly NineGridNode BackgroundNode;
-    public readonly TextNode LabelNode;
-    public readonly ColorPreviewNode ColorNode;
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public NineGridNode BackgroundNode { get; }
 
-    public ColorOptionTextButtonNode() {
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public TextNode LabelNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ColorSquareNode ColorNode { get; }
+
+    /// <summary>
+    /// Gets or sets the buttons label.
+    /// </summary>
+    public ReadOnlySeString String {
+        get => LabelNode.String;
+        set => LabelNode.String = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the color to display in the square.
+    /// </summary>
+    public ColorHelpers.HsvaColor? DefaultHsvaColor {
+        get => ColorNode.ColorHsva;
+        set => ColorNode.ColorHsva = value ?? default;
+    }
+
+    /// <summary>
+    /// Gets or sets the color to display in the square.
+    /// </summary>
+    public Vector4? DefaultColor {
+        get => ColorNode.Color;
+        set => ColorNode.Color = value ?? default;
+    }
+
+    public ColorSquareTextButtonNode() {
         BackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/ButtonA.tex",
             TextureSize = new Vector2(100.0f, 28.0f),
@@ -24,9 +61,7 @@ public unsafe class ColorOptionTextButtonNode : ButtonBase {
         };
         BackgroundNode.AttachNode(this);
 
-        ColorNode = new ColorPreviewNode {
-            DisableCollisionNode = true,
-        };
+        ColorNode = new ColorSquareNode();
         ColorNode.AttachNode(this);
 
         LabelNode = new TextNode {
@@ -44,27 +79,12 @@ public unsafe class ColorOptionTextButtonNode : ButtonBase {
         InitializeComponentEvents();
     }
 
-    public ReadOnlySeString String {
-        get => LabelNode.String;
-        set => LabelNode.String = value;
-    }
-
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
         LabelNode.Size = new Vector2(Width - 32.0f, Height - 8.0f);
         BackgroundNode.Size = Size;
         ColorNode.Size = new Vector2(17.0f, 17.0f);
-    }
-
-    public ColorHelpers.HsvaColor? DefaultHsvaColor {
-        get => ColorNode.ColorHsva;
-        set => ColorNode.ColorHsva = value ?? default;
-    }
-
-    public Vector4? DefaultColor {
-        get => ColorNode.Color;
-        set => ColorNode.Color = value ?? default;
     }
 
     private void LoadTimelines() {

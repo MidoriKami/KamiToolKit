@@ -1,66 +1,79 @@
-﻿using System.Numerics;
+﻿using System.Drawing;
+using System.Numerics;
 using Dalamud.Interface;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.Internal;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
 
 namespace KamiToolKit.Premade.Node.Color;
 
-public class ColorSquareNode : SimpleComponentNode {
-    public readonly ImGuiImageNode WhiteGradientNode;
-    public readonly ImGuiImageNode ColorGradientNode;
-    public readonly ImGuiImageNode BlackGradientNode;
-    public readonly ImGuiImageNode ColorDotNode;
+/// <summary>
+/// Square Image Node with Alpha background texture to represent a color.
+/// </summary>
+public class ColorSquareNode : ResNode {
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ColorImageNode SelectedColorPreviewNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ImGuiImageNode AlphaLayerPreviewNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ColorImageNode SelectedColorPreviewBorderNode { get; }
+
+    /// <summary>
+    /// Gets or sets the displayed color as RGBA.
+    /// </summary>
+    /// <remarks>
+    /// Expects values between 0.0f and 1.0f.
+    /// </remarks>
+    public override Vector4 Color {
+        get => SelectedColorPreviewNode.Color;
+        set => SelectedColorPreviewNode.Color = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the displayed color as HSVA.
+    /// </summary>
+    public override ColorHelpers.HsvaColor ColorHsva {
+        get => SelectedColorPreviewNode.ColorHsva;
+        set => SelectedColorPreviewNode.ColorHsva = value;
+    }
 
     public ColorSquareNode() {
-        WhiteGradientNode = new ImGuiImageNode {
-            TexturePath = Services.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
-            FitTexture = true,
+        SelectedColorPreviewBorderNode = new ColorImageNode {
+            Color = KnownColor.White.Vector(),
         };
-        WhiteGradientNode.AttachNode(this);
+        SelectedColorPreviewBorderNode.AttachNode(this);
 
-        ColorGradientNode = new ImGuiImageNode {
-            TexturePath = Services.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
-            FitTexture = true,
-            ImageNodeFlags = ImageNodeFlags.FlipH,
+        AlphaLayerPreviewNode = new ImGuiImageNode {
+            TexturePath = Services.GetAssetPath("alpha_background.png"),
+            WrapMode = WrapMode.Tile,
         };
-        ColorGradientNode.AttachNode(this);
+        AlphaLayerPreviewNode.AttachNode(this);
 
-        BlackGradientNode = new ImGuiImageNode {
-            TexturePath = Services.GetAssetPath("VerticalGradient_AlphaToBlack.png"),
-            FitTexture = true,
+        SelectedColorPreviewNode = new ColorImageNode {
+            Color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f),
         };
-        BlackGradientNode.AttachNode(this);
-
-        ColorDotNode = new ImGuiImageNode {
-            TexturePath = Services.GetAssetPath("color_select_dot.png"),
-            FitTexture = true,
-        };
-        ColorDotNode.AttachNode(this);
+        SelectedColorPreviewNode.AttachNode(this);
     }
 
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        WhiteGradientNode.Size = Size;
-        ColorGradientNode.Size = Size;
-        BlackGradientNode.Size = Size;
+        SelectedColorPreviewBorderNode.Size = new Vector2(Height - 4.0f, Width - 4.0f);
+        SelectedColorPreviewBorderNode.Position = new Vector2(2.0f, 2.0f);
 
-        Origin = Size / 2.0f;
+        AlphaLayerPreviewNode.Size = new Vector2(Height - 6.0f, Width - 6.0f);
+        AlphaLayerPreviewNode.Position = new Vector2(3.0f, 3.0f);
 
-        ColorDotNode.Size = new Vector2(16.0f, 16.0f);
-        ColorDotNode.Origin = ColorDotNode.Size / 2.0f;
-        ColorDotNode.Position = new Vector2(Width, 0.0f) - ColorDotNode.Origin;
-    }
-
-    public override ColorHelpers.HsvaColor MultiplyColorHsva {
-        get => ColorGradientNode.MultiplyColorHsva;
-        set => ColorGradientNode.MultiplyColorHsva = value;
-    }
-
-    public Vector2 ColorDotPosition {
-        get => ColorDotNode.Position + ColorDotNode.Origin;
-        set => ColorDotNode.Position = value - ColorDotNode.Origin;
+        SelectedColorPreviewNode.Size = new Vector2(Height - 6.0f, Width - 6.0f);
+        SelectedColorPreviewNode.Position = new Vector2(3.0f, 3.0f);
     }
 }

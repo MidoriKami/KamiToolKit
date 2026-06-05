@@ -1,12 +1,11 @@
 using System.Numerics;
-using KamiToolKit.Premade.Node.Simple;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// Custom implementation of a progress bar node.
 /// </summary>
-public abstract class ProgressNode : SimpleComponentNode {
+public abstract class ProgressNode : ResNode {
 
     /// <summary>
     /// Gets or sets the current progress representation.

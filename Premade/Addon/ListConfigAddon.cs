@@ -10,6 +10,7 @@ using KamiToolKit.Premade.Node;
 
 namespace KamiToolKit.Premade.Addon;
 
+[Obsolete("Pending complete rework.")]
 public class ListConfigAddon<T, TU, TV> : NativeAddon where T : class where TV : ConfigNode<T>, new() where TU : ListItemNode<T>, IListItemNode, new() {
 
     private ModifyListNode<T, TU>? selectionListNode;

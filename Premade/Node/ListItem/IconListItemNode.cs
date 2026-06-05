@@ -1,10 +1,12 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Premade.Node.ListItem;
 
+[Obsolete("Pending Removal")]
 public abstract class IconListItemNode<T> : ListItemNode<T>, IListItemNode {
     public static float ItemHeight => 48.0f;
 
@@ -48,7 +50,7 @@ public abstract class IconListItemNode<T> : ListItemNode<T>, IListItemNode {
         };
         IdTextNode.AttachNode(this);
 
-        CollisionNode.ShowClickableCursor = true;
+        ShowClickableCursor = true;
     }
 
     protected override void OnSizeChanged() {

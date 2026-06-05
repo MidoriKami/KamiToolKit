@@ -1,10 +1,12 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Premade.Node.ListItem;
 
+[Obsolete("Pending Removal")]
 public abstract class LabelListItemNode<T> : ListItemNode<T>, IListItemNode {
     public static float ItemHeight => 24.0f;
 

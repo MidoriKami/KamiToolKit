@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using KamiToolKit.Extensions.Internal;
-using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Premade.Node;
+namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// A TextButton that has a configurable set of states
+/// Specialization of <see cref="TextButtonNode"/> that has multiple label states.
 /// </summary>
 public class MultiStateButtonNode<T> : TextButtonNode where T : notnull {
+
+    /// <summary>
+    /// Gets or sets the action that is invoked when the button is clicked, with the object of the new state.
+    /// </summary>
     public Action<T>? OnStateChanged { get; set; }
 
-    public MultiStateButtonNode()
-        => OnClick = CycleState;
-
+    /// <summary>
+    /// Gets or sets the list of available states.
+    /// </summary>
     public required List<T> States {
         get;
         set {
@@ -22,18 +25,16 @@ public class MultiStateButtonNode<T> : TextButtonNode where T : notnull {
         }
     }
 
-    private int SelectedIndex {
-        get;
-        set {
-            field = value;
-            UpdateDisplay();
-        }
-    }
-
+    /// <summary>
+    /// Gets or set the currently selected state.
+    /// </summary>
     public T SelectedState {
         get => States[SelectedIndex];
         set => SelectedIndex = States.IndexOf(value);
     }
+
+    public MultiStateButtonNode()
+        => OnClick = CycleState;
 
     private void CycleState() {
         if (States.Count is 0) return;
@@ -49,11 +50,19 @@ public class MultiStateButtonNode<T> : TextButtonNode where T : notnull {
         String = GetStateText(States[SelectedIndex]);
     }
 
-    protected virtual string GetStateText(T state) {
+    private string GetStateText(T state) {
         if (state is Enum enumState) {
             return enumState.Description;
         }
 
         return state.ToString() ?? "Unable to Parse Type";
+    }
+
+    private int SelectedIndex {
+        get;
+        set {
+            field = value;
+            UpdateDisplay();
+        }
     }
 }

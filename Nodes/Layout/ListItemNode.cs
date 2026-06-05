@@ -39,6 +39,5 @@ public abstract class ListItemNode<T> : SelectableNode {
     protected void DisableInteractions() {
         EnableSelection = false;
         EnableHighlight = false;
-        DisableCollisionNode = true;
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System.Numerics;
 using KamiToolKit.Classes;
-using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Premade.Node.Simple;
+namespace KamiToolKit.Nodes.Simplified;
 
+/// <summary>
+/// A simplified implementation of a <see cref="CounterNode"/>, with default font set to Money font.
+/// </summary>
 public unsafe class SimpleCounterNode : CounterNode {
     public SimpleCounterNode() {
         PartsList.Add(new Part {

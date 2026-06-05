@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using KamiToolKit.Classes;
@@ -6,6 +7,7 @@ using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Premade.Node.ListItem;
 
+[Obsolete("Pending Removal")]
 public unsafe class AddonListItemNode : ListItemNode<Pointer<AtkUnitBase>>, IListItemNode {
     public static float ItemHeight => 48.0f;
 
@@ -29,7 +31,7 @@ public unsafe class AddonListItemNode : ListItemNode<Pointer<AtkUnitBase>>, ILis
         };
         LabelTextNode.AttachNode(this);
 
-        CollisionNode.ShowClickableCursor = true;
+        ShowClickableCursor = true;
     }
 
     protected override void OnSizeChanged() {

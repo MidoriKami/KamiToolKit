@@ -2,7 +2,7 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
 
@@ -21,12 +21,12 @@ public unsafe class WindowNode : WindowNodeBase {
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
-    public WindowBackgroundNode BackgroundNode { get; }
+    public WindowBackgroundTextureNode BackgroundTextureNode { get; }
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
-    public WindowBackgroundNode BorderNode { get; }
+    public WindowBackgroundTextureNode BorderTextureNode { get; }
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -133,8 +133,8 @@ public unsafe class WindowNode : WindowNodeBase {
     /// Gets or sets whether the border node is visible.
     /// </summary>
     public bool Focused {
-        get => BorderNode.IsVisible;
-        set => BorderNode.IsVisible = value;
+        get => BorderTextureNode.IsVisible;
+        set => BorderTextureNode.IsVisible = value;
     }
 
     /// <inheritdoc/>
@@ -177,23 +177,23 @@ public unsafe class WindowNode : WindowNodeBase {
         };
         HeaderCollisionNode.AttachNode(this);
 
-        BackgroundNode = new WindowBackgroundNode(false) {
+        BackgroundTextureNode = new WindowBackgroundTextureNode(false) {
             NodeId = 11,
             Offsets = new Vector4(64.0f, 32.0f, 32.0f, 32.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft |
                         NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
             PartsRenderType = 19,
         };
-        BackgroundNode.AttachNode(this);
+        BackgroundTextureNode.AttachNode(this);
 
-        BorderNode = new WindowBackgroundNode(true) {
+        BorderTextureNode = new WindowBackgroundTextureNode(true) {
             NodeId = 10,
             Offsets = new Vector4(64.0f, 32.0f, 32.0f, 32.0f),
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft |
                         NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.EmitsEvents,
             PartsRenderType = 7,
         };
-        BorderNode.AttachNode(this);
+        BorderTextureNode.AttachNode(this);
 
         BackgroundImageNode = new SimpleImageNode {
             NodeId = 9,
@@ -320,8 +320,8 @@ public unsafe class WindowNode : WindowNodeBase {
 
         HeaderContainerNode.Width = Width;
         HeaderCollisionNode.Width = Width - 14.0f;
-        BackgroundNode.Size = Size;
-        BorderNode.Size = Size;
+        BackgroundTextureNode.Size = Size;
+        BorderTextureNode.Size = Size;
         BackgroundImageNode.Size = new Vector2(Width - 8.0f, Height - 16.0f);
         BackgroundImageNode.Position = new Vector2(4.0f, 4.0f);
 
@@ -340,13 +340,13 @@ public unsafe class WindowNode : WindowNodeBase {
             .EndFrameSet()
             .Build());
 
-        BackgroundNode.AddTimeline(new TimelineBuilder()
+        BackgroundTextureNode.AddTimeline(new TimelineBuilder()
             .AddFrameSetWithFrame(1, 9, 1, multiplyColor: new Vector3(100.0f))
             .AddFrameSetWithFrame(10, 19, 10, multiplyColor: new Vector3(100.0f))
             .AddFrameSetWithFrame(20, 29, 20, multiplyColor: new Vector3(50.0f))
             .Build());
 
-        BorderNode.AddTimeline(new TimelineBuilder()
+        BorderTextureNode.AddTimeline(new TimelineBuilder()
             .BeginFrameSet(10, 19)
             .AddFrame(10, alpha: 0)
             .AddFrame(12, alpha: 255)

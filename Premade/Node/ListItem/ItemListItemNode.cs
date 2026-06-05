@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
@@ -6,6 +7,7 @@ using Lumina.Excel.Sheets;
 
 namespace KamiToolKit.Premade.Node.ListItem;
 
+[Obsolete("Pending Removal")]
 public class ItemListItemNode : ListItemNode<Item>, IListItemNode {
     public static float ItemHeight => 32.0f;
 
@@ -49,7 +51,7 @@ public class ItemListItemNode : ListItemNode<Item>, IListItemNode {
         };
         IdTextNode.AttachNode(this);
 
-        CollisionNode.ShowClickableCursor = true;
+        ShowClickableCursor = true;
     }
 
     protected override void OnSizeChanged() {

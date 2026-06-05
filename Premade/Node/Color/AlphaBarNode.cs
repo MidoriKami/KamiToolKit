@@ -5,17 +5,55 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.Internal;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Premade.Node.Color;
 
+/// <summary>
+/// A custom component node representing an alpha slider.
+/// </summary>
 public unsafe class AlphaBarNode : SimpleComponentNode {
-    public readonly ImGuiImageNode AlphaBarBackgroundNode;
-    public readonly ImGuiImageNode AlphaBarGradientNode;
-    public readonly ImGuiImageNode AlphaBarSelectorNode;
 
-    private readonly ViewportEventListener alphaEventListener;
-    private bool isAlphaDragging;
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ImGuiImageNode AlphaBarBackgroundNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ImGuiImageNode AlphaBarGradientNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ImGuiImageNode AlphaBarSelectorNode { get; }
+
+    /// <summary>
+    /// Action to be invoked when the alpha value is changed. Provides the new value.
+    /// </summary>
+    /// <remarks>
+    /// Alpha value is in the range of 0.0f to 1.0f.
+    /// </remarks>
+    public Action<float>? OnAlphaChanged { get; init; }
+
+    /// <inheritdoc/>
+    public override Vector4 Color {
+        get => AlphaBarGradientNode.Color;
+        set {
+            AlphaBarGradientNode.MultiplyColor = value.AsVector3();
+            AlphaBarSelectorNode.Y = Height - Height * value.W - 5.0f;
+        }
+    }
+
+    /// <inheritdoc/>
+    public override ColorHelpers.HsvaColor ColorHsva {
+        get => AlphaBarGradientNode.MultiplyColorHsva;
+        set {
+            AlphaBarGradientNode.MultiplyColorHsva = value with { A = 1.0f };
+            AlphaBarSelectorNode.Y = Height - Height * value.A - 5.0f;
+        }
+    }
 
     public AlphaBarNode() {
         alphaEventListener = new ViewportEventListener(AlphaSliderEvent);
@@ -38,14 +76,6 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
         AlphaBarSelectorNode.AddEvent(AtkEventType.MouseDown, OnAlphaBarMouseDown);
     }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing) {
-            base.Dispose(disposing, isNativeDestructor);
-
-            alphaEventListener.Dispose();
-        }
-    }
-
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -54,6 +84,14 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
 
         AlphaBarSelectorNode.Size = new Vector2(Width + 4.0f, 10.0f);
         AlphaBarSelectorNode.Position = new Vector2(-2.0f, 0.0f);
+    }
+
+    protected override void Dispose(bool disposing, bool isNativeDestructor) {
+        if (disposing) {
+            base.Dispose(disposing, isNativeDestructor);
+
+            alphaEventListener.Dispose();
+        }
     }
 
     private void OnAlphaBarMouseDown() {
@@ -99,21 +137,6 @@ public unsafe class AlphaBarNode : SimpleComponentNode {
         }
     }
 
-    public Action<float>? OnAlphaChanged { get; init; }
-
-    public override Vector4 Color {
-        get => AlphaBarGradientNode.Color;
-        set {
-            AlphaBarGradientNode.MultiplyColor = value.AsVector3();
-            AlphaBarSelectorNode.Y = Height - Height * value.W - 5.0f;
-        }
-    }
-
-    public override ColorHelpers.HsvaColor ColorHsva {
-        get => AlphaBarGradientNode.MultiplyColorHsva;
-        set {
-            AlphaBarGradientNode.MultiplyColorHsva = value with { A = 1.0f };
-            AlphaBarSelectorNode.Y = Height - Height * value.A - 5.0f;
-        }
-    }
+    private readonly ViewportEventListener alphaEventListener;
+    private bool isAlphaDragging;
 }

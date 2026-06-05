@@ -9,6 +9,7 @@ using Lumina.Excel.Sheets;
 
 namespace KamiToolKit.Premade.Addon.Search;
 
+[Obsolete("Pending Removal")]
 public class TerritorySearchAddon : BaseSearchAddon<TerritoryType, TerritoryTypeListItemNode> {
     public TerritorySearchAddon() {
         SearchOptions = Services.DataManager.GetExcelSheet<TerritoryType>()

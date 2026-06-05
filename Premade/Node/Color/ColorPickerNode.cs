@@ -2,10 +2,11 @@
 using System.Numerics;
 using Dalamud.Interface;
 using KamiToolKit.Classes.Internal;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Premade.Node.Color;
 
+[Obsolete("Pending Rework and Rename")]
 public class ColorPickerWidget : SimpleComponentNode {
     public readonly ColorRingWithSquareNode ColorPickerNode;
     public readonly AlphaBarNode AlphaBarNode;

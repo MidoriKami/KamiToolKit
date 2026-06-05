@@ -5,6 +5,9 @@ using KamiToolKit.Classes.Internal;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// Managed adaptor for native structs. Not intended for external use.
+/// </summary>
 public unsafe class TimelineResource : IDisposable {
 
     private readonly TimelineAnimationArray animationArray;

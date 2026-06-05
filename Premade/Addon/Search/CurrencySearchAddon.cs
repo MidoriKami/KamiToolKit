@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using KamiToolKit.Classes.Internal;
 using KamiToolKit.Premade.Node.ListItem;
@@ -6,6 +7,7 @@ using Lumina.Excel.Sheets;
 
 namespace KamiToolKit.Premade.Addon.Search;
 
+[Obsolete("Pending Removal")]
 public class CurrencySearchAddon : ItemSearchAddonBase<CurrencyListItemNode> {
     public CurrencySearchAddon()
         => SearchOptions = GetCurrencyItems().ToList();

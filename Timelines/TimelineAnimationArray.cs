@@ -6,13 +6,19 @@ using KamiToolKit.Classes.Internal;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// Wrapper around an AtkTimelineAnimation array. Not intended for external use.
+/// </summary>
 public unsafe class TimelineAnimationArray : IDisposable {
 
-    internal AtkTimelineAnimation* InternalTimelineArray = null;
-
-    private List<TimelineAnimation> timelineAnimations = [];
+    /// <summary>
+    /// Gets the number of timeline animations.
+    /// </summary>
     public uint Count { get; private set; }
 
+    /// <summary>
+    /// Gets or sets the timeline animations used.
+    /// </summary>
     public List<TimelineAnimation> Animations {
         get => timelineAnimations;
         set {
@@ -37,7 +43,7 @@ public unsafe class TimelineAnimationArray : IDisposable {
             InternalTimelineArray = null;
         }
 
-        // Allocate new array
+        // Allocate new array todo: consider realloc?
         InternalTimelineArray = NativeMemoryHelper.UiAlloc<AtkTimelineAnimation>(timelineAnimations.Count);
 
         // Copy all Animations into it
@@ -47,4 +53,8 @@ public unsafe class TimelineAnimationArray : IDisposable {
 
         Count = (uint)timelineAnimations.Count;
     }
+
+    internal AtkTimelineAnimation* InternalTimelineArray = null;
+
+    private List<TimelineAnimation> timelineAnimations = [];
 }

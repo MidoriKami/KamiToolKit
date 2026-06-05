@@ -12,7 +12,7 @@ using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;

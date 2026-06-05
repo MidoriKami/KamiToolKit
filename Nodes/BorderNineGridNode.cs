@@ -1,12 +1,14 @@
 ﻿using System.Numerics;
 using KamiToolKit.Classes;
-using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Premade.Node;
+namespace KamiToolKit.Nodes;
 
 /// <summary>
-///     A node that shows a border loaded from the party list textures
+/// A ready to use <see cref="NineGridNode"/> with the border used for the party list members.
 /// </summary>
+/// <remarks>
+/// Some modders have decided this texture isn't worth of existing, and replace it with a blank texture.
+/// </remarks>
 public unsafe class BorderNineGridNode : NineGridNode {
     public BorderNineGridNode() {
         PartsList.Add(new Part {

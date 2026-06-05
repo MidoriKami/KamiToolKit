@@ -9,6 +9,7 @@ using KamiToolKit.Premade.Node.ListItem;
 
 namespace KamiToolKit.Premade.Addon.Search;
 
+[Obsolete("Pending Removal")]
 public unsafe class AddonSearchAddon : BaseSearchAddon<Pointer<AtkUnitBase>, AddonListItemNode> {
     public bool AllowNameplateResult { get; init; } = false;
 

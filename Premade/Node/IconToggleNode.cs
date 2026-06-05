@@ -2,10 +2,11 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Premade.Node;
 
+// todo: test this
 public unsafe class IconToggleNode : SimpleComponentNode {
     private readonly IconImageNode iconNode;
     private readonly ClippingMaskNode clipNode;

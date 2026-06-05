@@ -5,6 +5,9 @@ using KamiToolKit.Classes.Internal;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// Managed adaptor to the native structs. Not intended for external use.
+/// </summary>
 public unsafe class TimelineLabelSet : IDisposable {
 
     private List<TimelineKeyFrame> internalKeyFrames = [];
