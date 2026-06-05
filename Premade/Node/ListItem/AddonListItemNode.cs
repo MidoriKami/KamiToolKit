@@ -3,6 +3,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Premade.Node.ListItem;

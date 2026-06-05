@@ -6,9 +6,12 @@ namespace KamiToolKit.Nodes;
 
 public class HorizontalListNode : LayoutListNode {
 
-    public int NavUp { get; set; }
-    public int NavDown { get; set; }
-
+    /// <summary>
+    /// Gets or sets the alignment used when calculating layout.
+    /// </summary>
+    /// <remarks>
+    /// Setting triggers layout recalculation.
+    /// </remarks>
     public HorizontalListAnchor Alignment {
         get;
         set {
@@ -17,6 +20,7 @@ public class HorizontalListNode : LayoutListNode {
         }
     }
 
+    /// <inheritdoc/>
     public override float Width {
         get => base.Width;
         set {
@@ -34,6 +38,22 @@ public class HorizontalListNode : LayoutListNode {
     /// Resizes the horizontal list node to fit all contents
     /// </summary>
     public bool FitToContentHeight { get; set; }
+
+    /// <summary>
+    /// Gets the amount of space remaining in this node.
+    /// </summary>
+    public float AreaRemaining
+        => Width - NodeList.Sum(node => node.Width + ItemSpacing) - ItemSpacing;
+
+    /// <summary>
+    /// Gets or sets the up nav index.
+    /// </summary>
+    public int NavUp { get; set; }
+
+    /// <summary>
+    /// Gets or sets the down nav index.
+    /// </summary>
+    public int NavDown { get; set; }
 
     protected override void OnRecalculateLayout() {
         var startX = Alignment switch {
@@ -96,6 +116,4 @@ public class HorizontalListNode : LayoutListNode {
             }
         }
     }
-
-    public float AreaRemaining => Width - NodeList.Sum(node => node.Width + ItemSpacing) - ItemSpacing;
 }

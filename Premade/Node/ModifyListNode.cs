@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Utility;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
 

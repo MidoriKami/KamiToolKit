@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.Internal;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 using Lumina.Text.ReadOnly;
 

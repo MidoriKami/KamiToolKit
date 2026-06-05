@@ -2,29 +2,33 @@
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.BaseTypes;
+using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Enums;
-using KamiToolKit.Premade.Node;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
-/// Node that manages the layout of other nodes
-public class ListBoxNode : LayoutListNode {
+/// <summary>
+/// A list layout node that allows anchoring from any corner, and allows setting a border or background color.
+/// </summary>
+public class ListBoxNode : LayoutListNode, IControllerNavigable {
 
-    public readonly ColorImageNode Color;
-    public readonly BorderNineGridNode Border;
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ColorImageNode ColorImageNode { get; }
 
-    public ListBoxNode() {
-        Color = new ColorImageNode {
-            IsVisible = false,
-        };
-        Color.AttachNode(this);
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public BorderNineGridNode Border { get; }
 
-        Border = new BorderNineGridNode {
-            IsVisible = false,
-        };
-        Border.AttachNode(this);
-    }
-
+    /// <summary>
+    /// Get or sets the layout anchor position.
+    /// </summary>
+    /// <remarks>
+    /// When set recalculates node layout.
+    /// </remarks>
     public LayoutAnchor LayoutAnchor {
         get;
         set {
@@ -33,6 +37,9 @@ public class ListBoxNode : LayoutListNode {
         }
     }
 
+    /// <summary>
+    /// Gets or sets whether the node should resize to fit its contents.
+    /// </summary>
     public bool FitContents {
         get;
         set {
@@ -42,6 +49,9 @@ public class ListBoxNode : LayoutListNode {
         }
     }
 
+    /// <summary>
+    /// Gets or sets which direction nodes will travel relative to the <see cref="LayoutAnchor"/>.
+    /// </summary>
     public LayoutOrientation LayoutOrientation {
         get;
         set {
@@ -50,35 +60,117 @@ public class ListBoxNode : LayoutListNode {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the background color.
+    /// </summary>
     public Vector4 BackgroundColor {
-        get => Color.Color;
-        set => Color.Color = value;
+        get => ColorImageNode.Color;
+        set => ColorImageNode.Color = value;
     }
 
+    /// <summary>
+    /// Gets or sets whether the background color is shown.
+    /// </summary>
     public bool ShowBackground {
-        get => Color.IsVisible;
-        set => Color.IsVisible = value;
+        get => ColorImageNode.IsVisible;
+        set => ColorImageNode.IsVisible = value;
     }
 
+    /// <summary>
+    /// Gets or sets whether the border is shown.
+    /// </summary>
     public bool ShowBorder {
         get => Border.IsVisible;
         set => Border.IsVisible = value;
     }
 
+    /// <inheritdoc/>
+    public int NavLeft { get; set; }
+
+    /// <inheritdoc/>
+    public int NavRight { get; set; }
+
+    /// <inheritdoc/>
+    public int NavUp { get; set; }
+
+    /// <inheritdoc/>
+    public int NavDown { get; set; }
+
+    /// <inheritdoc/>
     public override float Height {
         get => base.Height;
         set => base.Height = FitContents ? GetMinimumSize().Y : value;
     }
 
+    /// <inheritdoc/>
     public override float Width {
         get => base.Width;
         set => base.Width = FitContents ? GetMinimumSize().X : value;
     }
 
+    /// <inheritdoc/>
+    public override void AddNode(NodeBase? node) {
+        base.AddNode(node);
+
+        if (FitContents) {
+            Size = GetMinimumSize();
+        }
+    }
+
+    /// <inheritdoc/>
+    public override void RemoveNode(NodeBase node) {
+        base.RemoveNode(node);
+
+        if (FitContents) {
+            Size = GetMinimumSize();
+        }
+    }
+
+    /// <summary>
+    /// Get the current minimum size that would contain all the nodes including their margins.
+    /// </summary>
+    public Vector2 GetMinimumSize() {
+        var size = LayoutOrientation switch {
+            LayoutOrientation.Vertical => new Vector2(0.0f, FirstItemSpacing),
+            LayoutOrientation.Horizontal => new Vector2(FirstItemSpacing, 0.0f),
+            _ => Vector2.Zero,
+        };
+
+        foreach (var node in NodeList.Where(node => node.IsVisible)) {
+            switch (LayoutOrientation) {
+                // Horizontal we take max height, and add widths
+                case LayoutOrientation.Horizontal:
+                    size.Y = MathF.Max(size.Y, node.Height);
+                    size.X += node.Width + ItemSpacing;
+                    break;
+
+                // Vertical we take max width, and add heights
+                case LayoutOrientation.Vertical:
+                    size.X = MathF.Max(size.X, node.Width);
+                    size.Y += node.Height + ItemSpacing;
+                    break;
+            }
+        }
+
+        return size;
+    }
+
+    public ListBoxNode() {
+        ColorImageNode = new ColorImageNode {
+            IsVisible = false,
+        };
+        ColorImageNode.AttachNode(this);
+
+        Border = new BorderNineGridNode {
+            IsVisible = false,
+        };
+        Border.AttachNode(this);
+    }
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        Color.Size = Size;
+        ColorImageNode.Size = Size;
 
         Border.Size = Size + new Vector2(30.0f, 30.0f);
         Border.Position = -new Vector2(15.0f, 15.0f);
@@ -154,46 +246,63 @@ public class ListBoxNode : LayoutListNode {
     }
 
     protected override void OnRecalculateNavigation() {
-        // todo : this!
-    }
+        var componentNodes = NodeList.OfType<ComponentNode>().ToList();
+        if (componentNodes.Count is 0) return;
 
-    public override void AddNode(NodeBase? node) {
-        base.AddNode(node);
-        Size = GetMinimumSize();
-    }
+        if (LayoutOrientation is LayoutOrientation.Horizontal) {
+            if (LayoutAnchor is LayoutAnchor.BottomRight or LayoutAnchor.TopRight) {
+                componentNodes = componentNodes.AsEnumerable().Reverse().ToList();
+            }
 
-    public override void RemoveNode(NodeBase node) {
-        base.RemoveNode(node);
-        Size = GetMinimumSize();
-    }
+            foreach (var (index, node) in componentNodes.Index()) {
+                node.NavIndex = index + NavIndex;
+                node.NavUp = NavUp;
+                node.NavDown = NavDown;
 
-    /// <summary>
-    ///     Get the current minimum size that would contain all the nodes including their margins.
-    /// </summary>
-    public Vector2 GetMinimumSize() {
-        var size = LayoutOrientation switch {
-            LayoutOrientation.Vertical => new Vector2(0.0f, FirstItemSpacing),
-            LayoutOrientation.Horizontal => new Vector2(FirstItemSpacing, 0.0f),
-            _ => Vector2.Zero,
-        };
+                // First Element
+                if (index is 0) {
+                    node.NavLeft = componentNodes.Count - 1 + NavIndex;
+                }
+                else {
+                    node.NavLeft = index - 1 + NavIndex;
+                }
 
-        foreach (var node in NodeList.Where(node => node.IsVisible)) {
-            switch (LayoutOrientation) {
-                // Horizontal we take max height, and add widths
-                case LayoutOrientation.Horizontal:
-                    size.Y = MathF.Max(size.Y, node.Height);
-                    size.X += node.Width + ItemSpacing;
-                    break;
-
-                // Vertical we take max width, and add heights
-                case LayoutOrientation.Vertical:
-                    size.X = MathF.Max(size.X, node.Width);
-                    size.Y += node.Height + ItemSpacing;
-                    break;
+                // Last Element
+                if (index == componentNodes.Count - 1) {
+                    node.NavRight = NavIndex;
+                }
+                else {
+                    node.NavRight = index + 1 + NavIndex;
+                }
             }
         }
+        else if (LayoutOrientation is LayoutOrientation.Vertical) {
+            if (LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.BottomRight) {
+                componentNodes = componentNodes.AsEnumerable().Reverse().ToList();
+            }
 
-        return size;
+            foreach (var (index, node) in componentNodes.Index()) {
+                node.NavIndex = (byte) (index + NavIndex);
+                node.NavLeft = NavLeft;
+                node.NavRight = NavRight;
+
+                // First Element
+                if (index is 0) {
+                    node.NavUp = (byte) (componentNodes.Count - 1 + NavIndex);
+                }
+                else {
+                    node.NavUp = (byte) (index - 1 + NavIndex);
+                }
+
+                // Last Element
+                if (index == componentNodes.Count - 1) {
+                    node.NavDown = (byte) NavIndex;
+                }
+                else {
+                    node.NavDown = (byte) (index + 1 + NavIndex);
+                }
+            }
+        }
     }
 
     private Vector2 GetLayoutStartPosition() => LayoutAnchor switch {

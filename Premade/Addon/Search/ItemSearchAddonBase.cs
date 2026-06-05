@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
 using Lumina.Excel.Sheets;
 
