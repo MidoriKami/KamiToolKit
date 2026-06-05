@@ -7,18 +7,13 @@ using KamiToolKit.Enums;
 
 namespace KamiToolKit;
 
-internal class EventHandlerInfo {
-    public AtkEventListener.Delegates.ReceiveEvent? OnReceiveEventDelegate;
-    public Action? OnActionDelegate;
-}
-
+/// <summary>
+/// NodeBase partial responsible for handing events on this node.
+/// </summary>
 public abstract unsafe partial class NodeBase {
 
-    private CustomEventListener? nodeEventListener;
-    private readonly Dictionary<AtkEventType, EventHandlerInfo> eventHandlers = [];
-
     /// <summary>
-    /// When true, mousing over this node will show the finger cursor icon.
+    /// Gets or sets whether this node should show a clickable cursor when hovered.
     /// </summary>
     public bool ShowClickableCursor {
         get => DrawFlags.HasFlag(DrawFlags.ClickableCursor);
@@ -33,20 +28,8 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
-    /// When true, mousing over this node will show the text input cursor icon.
+    /// Adds a no-arg callback action for the specified event type.
     /// </summary>
-    public bool ShowTextInputCursor {
-        get => DrawFlags.HasFlag(DrawFlags.TextInputCursor);
-        set {
-            if (value) {
-                DrawFlags |= DrawFlags.TextInputCursor;
-            }
-            else {
-                DrawFlags &= ~DrawFlags.TextInputCursor;
-            }
-        }
-    }
-
     public void AddEvent(AtkEventType eventType, Action callback) {
         nodeEventListener ??= new CustomEventListener(HandleEvents);
 
@@ -61,6 +44,9 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
+    /// <summary>
+    /// Adds a ReceiveEvent styled callback for the specified event type.
+    /// </summary>
     public void AddEvent(AtkEventType eventType, AtkEventListener.Delegates.ReceiveEvent callback) {
         nodeEventListener ??= new CustomEventListener(HandleEvents);
 
@@ -75,6 +61,9 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
+    /// <summary>
+    /// Removes all event handlers for the specified event type.
+    /// </summary>
     public void RemoveEvent(AtkEventType eventType) {
         if (nodeEventListener is null) return;
 
@@ -90,6 +79,9 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
+    /// <summary>
+    /// Removes the provided callback from the list of listeners for the specified event type.
+    /// </summary>
     public void RemoveEvent(AtkEventType eventType, Action callback) {
         if (nodeEventListener is null) return;
 
@@ -102,6 +94,9 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
+    /// <summary>
+    /// Removes the provided callback from the list of listeners for the specified event type.
+    /// </summary>
     public void RemoveEvent(AtkEventType eventType, AtkEventListener.Delegates.ReceiveEvent callback) {
         if (nodeEventListener is null) return;
 
@@ -174,4 +169,7 @@ public abstract unsafe partial class NodeBase {
                 break;
         }
     }
+
+    private CustomEventListener? nodeEventListener;
+    private readonly Dictionary<AtkEventType, EventHandlerInfo> eventHandlers = [];
 }

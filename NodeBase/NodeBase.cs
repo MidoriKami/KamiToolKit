@@ -8,7 +8,21 @@ using KamiToolKit.Dalamud;
 
 namespace KamiToolKit;
 
+/// <summary>
+/// Typed abstract class for all Nodes.
+/// </summary>
 public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreatable<T> {
+
+    /// <summary>
+    /// Gets the typed inner node pointer for this instance.
+    /// </summary>
+    public T* Node { get; private set; }
+
+    /// <summary>
+    /// Implicit operator to seamlessly cast this instance with the contained node type pointer.
+    /// </summary>
+    public static implicit operator T*(NodeBase<T> node) => node.Node;
+
     protected NodeBase(NodeType nodeType) {
         ThreadSafety.AssertMainThread();
 
@@ -30,12 +44,6 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
         CreatedNodes.Add(this);
     }
 
-    public T* Node { get; private set; }
-
-    internal sealed override AtkResNode* ResNode => (AtkResNode*)Node;
-
-    public static implicit operator T*(NodeBase<T> node) => (T*)node.ResNode;
-
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             try {
@@ -54,4 +62,6 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
             }
         }
     }
+
+    internal sealed override AtkResNode* ResNode => (AtkResNode*)Node;
 }

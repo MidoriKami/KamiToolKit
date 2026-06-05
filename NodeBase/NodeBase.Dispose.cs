@@ -10,24 +10,27 @@ using KamiToolKit.Enums;
 
 namespace KamiToolKit;
 
+/// <summary>
+/// NodeBase partial for managing nodes disposal state.
+/// </summary>
 public abstract unsafe partial class NodeBase : IDisposable {
 
-    internal const uint NodeIdBase = 100_000_000;
-    protected static readonly List<NodeBase> CreatedNodes = [];
-    private static int logIndent = -1;
+    /// <summary>
+    /// Implicit operator to convert this instance to a AtkResNode* for cleaner interop.
+    /// </summary>
+    public static implicit operator AtkResNode*(NodeBase node) => node.ResNode;
 
-    internal static uint CurrentOffset;
+    /// <summary>
+    /// Implicit operator to convert this instance to a AtkEventTarget* for cleaner interop.
+    /// </summary>
+    public static implicit operator AtkEventTarget*(NodeBase node) => &node.ResNode->AtkEventTarget;
 
-    private bool isDisposed;
-
-    internal abstract AtkResNode* ResNode { get; }
-    internal bool IsAddonRootNode;
-
-    private AtkResNode.Delegates.Destroy destroyFunction = null!;
-
-    private AtkResNode.AtkResNodeVirtualTable* originalVirtualTable;
-    private AtkResNode.AtkResNodeVirtualTable* modifiedVirtualTable;
-
+    /// <summary>
+    /// Disposes this instance. Has double dispose guards.
+    /// </summary>
+    /// <remarks>
+    /// Must be invoked from the main game thread.
+    /// </remarks>
     public void Dispose() {
         try {
             logIndent++;
@@ -91,6 +94,23 @@ public abstract unsafe partial class NodeBase : IDisposable {
         }
     }
 
+    internal const uint NodeIdBase = 100_000_000;
+    internal static uint CurrentOffset;
+
+    internal abstract AtkResNode* ResNode { get; }
+    internal bool IsAddonRootNode;
+
+    protected static readonly List<NodeBase> CreatedNodes = [];
+
+    private static int logIndent = -1;
+
+    private bool isDisposed;
+
+    private AtkResNode.Delegates.Destroy destroyFunction = null!;
+
+    private AtkResNode.AtkResNodeVirtualTable* originalVirtualTable;
+    private AtkResNode.AtkResNodeVirtualTable* modifiedVirtualTable;
+
     private static void LogIndented(string message)
         => Services.Log.Verbose(new string(' ', logIndent * 2) + message);
 
@@ -152,9 +172,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         return true;
     }
-
-    public static implicit operator AtkResNode*(NodeBase node) => node.ResNode;
-    public static implicit operator AtkEventTarget*(NodeBase node) => &node.ResNode->AtkEventTarget;
 
     protected void BuildVirtualTable() {
         // Back up original destructor pointer

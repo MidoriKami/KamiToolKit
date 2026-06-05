@@ -13,12 +13,6 @@ namespace KamiToolKit;
 
 public abstract unsafe partial class NodeBase {
 
-    internal readonly List<NodeBase> ChildNodes = [];
-    private NodeBase? parentNode;
-
-    internal AtkUldManager* ParentUldManager { get; set; }
-    internal AtkUnitBase* ParentAddon { get; private set; }
-
     [OverloadResolutionPriority(1)]
     public void AttachNode(NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformManagedAttach(targetAddon, targetPosition);
@@ -53,6 +47,24 @@ public abstract unsafe partial class NodeBase {
 
     public void AttachNode(AtkComponentNode* targetNode, NodePosition targetPosition = NodePosition.AfterAllSiblings)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
+
+    /// <summary>
+    /// Detaches this node from the current tree, and removes native references to it.
+    /// This is only intended to be used for very specific use cases.
+    /// Generally speaking you probably want <see cref="Dispose"/> instead.
+    /// </summary>
+    /// <remarks>
+    /// <em>Do not call this immediately before calling dispose!</em>
+    /// </remarks>
+    public void DetachNode() {
+        ThreadSafety.AssertMainThread();
+        if (ResNode is null) return;
+
+        UnlinkFromNative();
+        RemoveUldManagerObjectReferences();
+        RemoveParentAddonReferences();
+        RemoveParentNodeReferences();
+    }
 
     private void PerformManagedAttach(NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild) {
         ThreadSafety.AssertMainThread();
@@ -115,16 +127,6 @@ public abstract unsafe partial class NodeBase {
 
         DetachNode();
         AttachNode(newTarget);
-    }
-
-    public void DetachNode() {
-        ThreadSafety.AssertMainThread();
-        if (ResNode is null) return;
-
-        UnlinkFromNative();
-        RemoveUldManagerObjectReferences();
-        RemoveParentAddonReferences();
-        RemoveParentNodeReferences();
     }
 
     private void UnlinkFromNative() {
@@ -254,4 +256,10 @@ public abstract unsafe partial class NodeBase {
             }
         }
     }
+
+    internal readonly List<NodeBase> ChildNodes = [];
+    private NodeBase? parentNode;
+
+    internal AtkUldManager* ParentUldManager { get; set; }
+    internal AtkUnitBase* ParentAddon { get; private set; }
 }

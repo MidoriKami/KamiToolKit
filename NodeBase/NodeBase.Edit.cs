@@ -9,24 +9,29 @@ using KamiToolKit.Nodes;
 
 namespace KamiToolKit;
 
+/// <summary>
+/// NodeBase partial for managing edit/resize mode.
+/// </summary>
 public abstract unsafe partial class NodeBase {
 
-    private Vector2 clickStartPosition = Vector2.Zero;
-    private NodeEditMode currentEditMode = 0;
-
-    private ViewportEventListener? editEventListener;
-
-    private bool isCursorSet;
-
-    private bool isMoving;
-    private bool isResizing;
-
-    private NodeEditOverlayNode? overlayNode;
-
+    /// <summary>
+    /// Action that is called once the cursor is released after resizing this node.
+    /// </summary>
     public Action<NodeBase>? OnResizeComplete { get; set; }
+
+    /// <summary>
+    /// Action that is called once the cursor is released after moving this node.
+    /// </summary>
     public Action<NodeBase>? OnMoveComplete { get; set; }
+
+    /// <summary>
+    /// Action that is called after a resize or a move is completed.
+    /// </summary>
     public Action<NodeBase>? OnEditComplete { get; set; }
 
+    /// <summary>
+    /// Gets or sets a whether this node is in moveable mode.
+    /// </summary>
     public bool EnableMoving {
         get;
         set {
@@ -40,6 +45,9 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
+    /// <summary>
+    /// Gets or sets a whether this node is in resizeable mode.
+    /// </summary>
     public bool EnableResizing {
         get;
         set {
@@ -53,6 +61,9 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
+    /// <summary>
+    /// Enable edit mode for this node, which will readjust itself and create a editable parent node.
+    /// </summary>
     public void EnableEditMode(NodeEditMode mode) {
 
         currentEditMode |= mode;
@@ -75,6 +86,9 @@ public abstract unsafe partial class NodeBase {
         }
     }
 
+    /// <summary>
+    /// Disables edit mode for this node, which will remove its parent edit container and restore the original node layout.
+    /// </summary>
     public void DisableEditMode(NodeEditMode mode) {
 
         currentEditMode &= ~mode;
@@ -203,4 +217,16 @@ public abstract unsafe partial class NodeBase {
 
     private static void ResetCursor()
         => Services.AddonEventManager.ResetCursor();
+
+    private Vector2 clickStartPosition = Vector2.Zero;
+    private NodeEditMode currentEditMode = 0;
+
+    private ViewportEventListener? editEventListener;
+
+    private bool isCursorSet;
+
+    private bool isMoving;
+    private bool isResizing;
+
+    private NodeEditOverlayNode? overlayNode;
 }
