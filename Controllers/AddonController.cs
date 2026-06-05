@@ -4,19 +4,23 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Dalamud;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Controllers;
 
+/// <inheritdoc/>
 public class AddonController : AddonController<AtkUnitBase>;
 
 /// <summary>
-///     This class provides functionality to add-and manage custom elements for any Addon
+/// Helper class intended to make interacting with native addons much easier.
+/// The primary feature is automatic unloading, and reloading when an addon loads/unloads/reloads.
 /// </summary>
 public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable where T : unmanaged {
-    private AtkUnitBase* AddonPointer => Services.GameGui.GetAddonByName<AtkUnitBase>(AddonName);
-    private bool IsEnabled { get; set; }
-    private bool isSetupComplete;
 
+    /// <summary>
+    /// The addon name to bind to.
+    /// </summary>
+    /// <exception cref="Exception">Exception when attempting to attach to NamePlate addon, use <see cref="KamiToolKit.Overlay.UiOverlay.OverlayController"/> instead.</exception>
     public required string AddonName {
         get;
         init {
@@ -27,6 +31,25 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
         }
     }
 
+    /// <inheritdoc/>
+    public IAddonEventController<T>.AddonControllerEvent? OnSetup { get; init; }
+
+    /// <inheritdoc/>
+    public IAddonEventController<T>.AddonControllerEvent? OnFinalize { get; init; }
+
+    /// <inheritdoc/>
+    public IAddonEventController<T>.AddonControllerEvent? OnPreRefresh { get; init; }
+
+    /// <inheritdoc/>
+    public IAddonEventController<T>.AddonControllerEvent? OnRefresh { get; init; }
+
+    /// <inheritdoc/>
+    public IAddonEventController<T>.AddonControllerEvent? OnUpdate { get; init; }
+
+    /// <inheritdoc/>
+    public IAddonEventController<T>.AddonControllerEvent? OnPreUpdate { get; init; }
+
+    /// <inheritdoc/>
     public void Enable() {
         ThreadSafety.AssertMainThread();
         if (IsEnabled) return;
@@ -57,9 +80,7 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
         IsEnabled = true;
     }
 
-    public virtual void Dispose()
-        => Disable();
-
+    /// <inheritdoc/>
     public void Disable() {
         ThreadSafety.AssertMainThread();
         if (!IsEnabled) return;
@@ -72,6 +93,9 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
 
         IsEnabled = false;
     }
+
+    public virtual void Dispose()
+        => Disable();
 
     private void OnAddonEvent(AddonEvent type, AddonArgs args) {
         var addon = (T*)args.Addon.Address;
@@ -105,10 +129,7 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
         }
     }
 
-    public IAddonEventController<T>.AddonControllerEvent? OnSetup { get; init; }
-    public IAddonEventController<T>.AddonControllerEvent? OnFinalize { get; init; }
-    public IAddonEventController<T>.AddonControllerEvent? OnPreRefresh { get; init; }
-    public IAddonEventController<T>.AddonControllerEvent? OnRefresh { get; init; }
-    public IAddonEventController<T>.AddonControllerEvent? OnUpdate { get; init; }
-    public IAddonEventController<T>.AddonControllerEvent? OnPreUpdate { get; init; }
+    private AtkUnitBase* AddonPointer => Services.GameGui.GetAddonByName<AtkUnitBase>(AddonName);
+    private bool IsEnabled { get; set; }
+    private bool isSetupComplete;
 }

@@ -11,17 +11,41 @@ using KamiToolKit.Dalamud;
 
 namespace KamiToolKit.Controllers;
 
+/// <inheritdoc/>
 public class NativeListController : NativeListController<AtkUnitBase, ListItemData>;
 
+/// <inheritdoc/>
 public class NativeListController<T> : NativeListController<T, ListItemData> where T : unmanaged;
 
 /// <summary>
-/// Controller for modifying native lists.
+/// Controller for modifying native AtkListComponents and their various parts and properties.
 /// </summary>
-/// <typeparam name="T">The concrete addon type.</typeparam>
-/// <typeparam name="TU">A data model for this addons list items.</typeparam>
 public unsafe class NativeListController<T, TU> : IDisposable where T : unmanaged where TU : ListItemData, new() {
+
+    /// <summary>
+    /// Addon name to bind to.
+    /// </summary>
     public required string AddonName { get; init; }
+
+    /// <summary>
+    /// Delegate that is called when the controller is trying to determine if an element should be modified.
+    /// </summary>
+    public delegate bool ShouldModifyElementHandler(T* unitBase, TU listItem);
+
+    /// <summary>
+    /// Delegate that is called when the list controller is setting up and trying to hook the games node populator.
+    /// </summary>
+    public delegate AtkComponentListItemRenderer* GetPopulatorNodeHandler(T* addon);
+
+    /// <summary>
+    /// Delegate that is called to apply a change to a list entry.
+    /// </summary>
+    public delegate void UpdateElementHandler(T* unitBase, TU listItem);
+
+    /// <summary>
+    /// Delegate that is called to undo a change from a list entry.
+    /// </summary>
+    public delegate void ResetElementHandler(T* unitBase, TU listItem);
 
     /// <summary>
     /// Define a function that will return true if the provided list item should be modified by this controller.
@@ -46,11 +70,18 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     /// </summary>
     public required GetPopulatorNodeHandler GetPopulatorNode { get; init; }
 
-    private Hook<AtkComponentListItemPopulator.PopulateDelegate>? onListPopulate;
-    private Hook<AtkComponentListItemPopulator.PopulateWithRendererDelegate>? onRendererPopulate;
+    /// <summary>
+    /// List of modified node indexes.
+    /// </summary>
+    protected readonly List<uint> ModifiedIndexes = [];
 
-    public readonly List<uint> ModifiedIndexes = [];
-
+    /// <summary>
+    /// Enables this native list controller.
+    /// </summary>
+    /// <remarks>
+    /// Warning, it can't properly track modified state if the list is already opened when the controller is enabled.
+    /// This must be invoked from the main game thread.
+    /// </remarks>
     public void Enable() {
         ThreadSafety.AssertMainThread();
 
@@ -64,6 +95,12 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         }
     }
 
+    /// <summary>
+    /// Disables this native list controller.
+    /// </summary>
+    /// <remarks>
+    /// This must be invoked from the main game thread.
+    /// </remarks>
     public void Disable() {
         ThreadSafety.AssertMainThread();
 
@@ -179,11 +216,6 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         }
     }
 
-    public delegate bool ShouldModifyElementHandler(T* unitBase, TU listItem);
-
-    public delegate AtkComponentListItemRenderer* GetPopulatorNodeHandler(T* addon);
-
-    public delegate void UpdateElementHandler(T* unitBase, TU listItem);
-
-    public delegate void ResetElementHandler(T* unitBase, TU listItem);
+    private Hook<AtkComponentListItemPopulator.PopulateDelegate>? onListPopulate;
+    private Hook<AtkComponentListItemPopulator.PopulateWithRendererDelegate>? onRendererPopulate;
 }
