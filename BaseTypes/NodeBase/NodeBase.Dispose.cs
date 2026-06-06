@@ -82,14 +82,13 @@ public abstract unsafe partial class NodeBase : IDisposable {
             Dispose(true, false);
             GC.SuppressFinalize(this);
             CreatedNodes.Remove(this);
-
-            logIndent--;
-            LogIndented("Dispose Complete");
-            logIndent--;
         }
         catch (Exception e) {
             Services.Log.Exception(e);
-            logIndent = 0;
+        } finally {
+            logIndent--;
+            LogIndented("Dispose Complete");
+            logIndent--;
         }
     }
 
