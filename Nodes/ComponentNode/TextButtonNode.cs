@@ -41,7 +41,7 @@ public unsafe class TextButtonNode : ButtonBase {
     /// <summary>
     /// Gets or sets which datasheet should be used to resolve <see cref="TextId"/>
     /// </summary>
-    public NodeData.SheetType SheetTyp {
+    public NodeData.SheetType SheetType {
         get => LabelNode.SheetType;
         set => LabelNode.SheetType = value;
     }
