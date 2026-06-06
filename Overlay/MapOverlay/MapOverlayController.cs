@@ -11,7 +11,6 @@ using KamiToolKit.Classes.Internal;
 using KamiToolKit.Controllers;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Nodes.Simplified;
 using MapMarkerInfo = KamiToolKit.Classes.MapMarkerInfo;
 
 namespace KamiToolKit.Overlay.MapOverlay;
