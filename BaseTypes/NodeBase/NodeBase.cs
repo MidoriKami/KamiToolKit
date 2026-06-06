@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Internal;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.BaseTypes;
 

@@ -6,8 +6,9 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Internal;
 using KamiToolKit.Interfaces;
+using KamiToolKit.Internal.Classes;
+using KamiToolKit.UiOverlay;
 
 namespace KamiToolKit.Controllers;
 
@@ -23,7 +24,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
     /// <summary>
     /// Addon names to bind to.
     /// </summary>
-    /// <exception cref="Exception">Throws when attempting to attach to NamePlate, use <see cref="KamiToolKit.Overlay.UiOverlay.OverlayController"/> instead.</exception>
+    /// <exception cref="Exception">Throws when attempting to attach to NamePlate, use <see cref="OverlayController"/> instead.</exception>
     public required List<string> AddonNames {
         init {
             if (value.Any(name => name is "NamePlate")) {

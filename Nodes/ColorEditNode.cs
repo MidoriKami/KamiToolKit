@@ -2,8 +2,8 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Addons;
 using KamiToolKit.Nodes.Simplified;
-using KamiToolKit.Premade.Addon;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;

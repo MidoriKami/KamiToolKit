@@ -1,6 +1,6 @@
 ﻿using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Internal;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.BaseTypes;
 

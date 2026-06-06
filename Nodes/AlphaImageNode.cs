@@ -1,5 +1,5 @@
-﻿using KamiToolKit.Classes.Internal;
-using KamiToolKit.Enums;
+﻿using KamiToolKit.Enums;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Nodes;
 

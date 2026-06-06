@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using KamiToolKit.Classes.Internal;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.BaseTypes;
 

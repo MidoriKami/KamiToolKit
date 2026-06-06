@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Dalamud.Interface.Textures.TextureWraps;
 using KamiToolKit.Classes;
-using KamiToolKit.Classes.Internal;
+using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Nodes;

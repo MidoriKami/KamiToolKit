@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Internal;
+using KamiToolKit.Internal.Classes;
 using static FFXIVClientStructs.FFXIV.Component.GUI.AtkModuleInterface;
 
 namespace KamiToolKit.Classes;

@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using KamiToolKit.Classes.Internal;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Extensions;
 

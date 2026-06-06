@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
-using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Nodes;
 

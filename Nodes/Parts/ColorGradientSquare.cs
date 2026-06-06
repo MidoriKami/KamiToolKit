@@ -1,12 +1,12 @@
 ﻿using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Internal;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Square texture node representing a triple color gradient for use in <see cref="Premade.Addon.ColorPickerAddon"/>.
+/// Square texture node representing a triple color gradient for use in <see cref="Addons.ColorPickerAddon"/>.
 /// Not intended for external use.
 /// </summary>
 public class ColorGradientSquare : ResNode {

@@ -3,8 +3,8 @@ using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
+using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Nodes;

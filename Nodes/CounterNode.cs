@@ -3,8 +3,8 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
-using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
+using KamiToolKit.Internal.Classes;
 using Lumina.Text.Payloads;
 using Lumina.Text.ReadOnly;
 

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Internal;
 using KamiToolKit.Interfaces;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Controllers;
 

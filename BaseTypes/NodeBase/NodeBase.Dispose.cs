@@ -4,8 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.BaseTypes;
 

@@ -3,9 +3,9 @@ using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
-using KamiToolKit.Nodes;
+using KamiToolKit.Internal.Classes;
+using KamiToolKit.Internal.Nodes;
 
 namespace KamiToolKit.BaseTypes;
 

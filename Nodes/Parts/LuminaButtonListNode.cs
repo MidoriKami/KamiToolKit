@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using KamiToolKit.Classes.Internal;
+using KamiToolKit.Internal.Classes;
 using Lumina.Excel;
 
 namespace KamiToolKit.Nodes;

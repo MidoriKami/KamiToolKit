@@ -5,7 +5,7 @@ using System.Resources;
 using Dalamud.Plugin;
 using Dalamud.Utility;
 using KamiToolKit.BaseTypes;
-using KamiToolKit.Classes.Internal;
+using KamiToolKit.Internal.Classes;
 using Serilog.Events;
 
 namespace KamiToolKit;
@@ -74,6 +74,9 @@ public static class KamiToolKitLibrary {
     /// <summary>
     /// Cleans up any potentially leaked resources that KamiToolKit has allocated.
     /// </summary>
+    /// <remarks>
+    /// Must be called from the main thread.
+    /// </remarks>
     public static void Cleanup() {
         NodeBase.WarnLeakedNodes();
         NativeAddon.WarnLeakedAddons();

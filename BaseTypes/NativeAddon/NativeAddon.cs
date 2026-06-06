@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Internal;
+using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.BaseTypes;

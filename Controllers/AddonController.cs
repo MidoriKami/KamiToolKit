@@ -3,8 +3,9 @@ using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Internal;
 using KamiToolKit.Interfaces;
+using KamiToolKit.Internal.Classes;
+using KamiToolKit.UiOverlay;
 
 namespace KamiToolKit.Controllers;
 
@@ -20,7 +21,7 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
     /// <summary>
     /// The addon name to bind to.
     /// </summary>
-    /// <exception cref="Exception">Exception when attempting to attach to NamePlate addon, use <see cref="KamiToolKit.Overlay.UiOverlay.OverlayController"/> instead.</exception>
+    /// <exception cref="Exception">Exception when attempting to attach to NamePlate addon, use <see cref="OverlayController"/> instead.</exception>
     public required string AddonName {
         get;
         init {

@@ -4,8 +4,8 @@ using System.Runtime.CompilerServices;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
+using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.BaseTypes;
