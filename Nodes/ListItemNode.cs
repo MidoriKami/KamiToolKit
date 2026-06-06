@@ -47,6 +47,11 @@ public abstract class ListItemNode<T> : SelectableNode {
     /// <param name="itemData">The new item data to show.</param>
     protected abstract void SetNodeData(T itemData);
 
+    /// <summary>
+    /// Processes building controller navigation.
+    /// </summary>
+    public virtual void ProcessNav(int index, int up, int down) { }
+
     protected void DisableInteractions() {
         EnableSelection = false;
         EnableHighlight = false;

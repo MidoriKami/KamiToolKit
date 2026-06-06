@@ -1,8 +1,7 @@
 ﻿using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
-using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Premade.Node.Color;
+namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// Specialization of image node to represent the black and white grid pattern that represents alpha transparency.

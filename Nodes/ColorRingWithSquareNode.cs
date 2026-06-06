@@ -5,20 +5,80 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
-using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
 
-namespace KamiToolKit.Premade.Node.Color;
+namespace KamiToolKit.Nodes;
 
+/// <summary>
+/// ColorGradiant Square with color ring around it. Not intended for external use.
+/// </summary>
 public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
-    public readonly ColorGradientSquare ColorGradientSquare;
-    public readonly ImGuiImageNode ColorRingNode;
-    public readonly ImGuiImageNode ColorRingSelectorNode;
 
-    private bool isRingDrag;
-    private bool isSquareDrag;
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ColorGradientSquare ColorGradientSquare { get; }
 
-    private readonly ViewportEventListener eventListener;
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ImGuiImageNode ColorRingNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ImGuiImageNode ColorRingSelectorNode { get; }
+
+    /// <summary>
+    /// Gets or sets an action that is called on hue change.
+    /// </summary>
+    public Action<float>? OnHueChanged { get; init; }
+
+    /// <summary>
+    /// Gets or sets an action that is called on saturation changed.
+    /// </summary>
+    public Action<float>? OnSaturationChanged { get; init; }
+
+    /// <summary>
+    /// Gets or sets an action that is called on value changed.
+    /// </summary>
+    public Action<float>? OnValueChanged { get; init; }
+
+    /// <inheritdoc/>
+    public override float RotationDegrees {
+        get => ColorGradientSquare.RotationDegrees;
+        set {
+            ColorGradientSquare.RotationDegrees = value + 45.0f;
+            ColorRingSelectorNode.RotationDegrees = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the rings selector color.
+    /// </summary>
+    public ColorHelpers.HsvaColor SelectorColor {
+        get => ColorRingSelectorNode.MultiplyColorHsva;
+        set => ColorRingSelectorNode.MultiplyColorHsva = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the gradiant squares color.
+    /// </summary>
+    public ColorHelpers.HsvaColor SquareColor {
+        get => ColorGradientSquare.MultiplyColorHsva;
+        set => ColorGradientSquare.MultiplyColorHsva = value with { S = 1.0f, V = 1.0f };
+    }
+
+    /// <summary>
+    /// Gets or sets the squares saturation color.
+    /// </summary>
+    /// <remarks>
+    /// Setting this moves the color dot.
+    /// </remarks>
+    public ColorHelpers.HsvaColor SquareSaturationValue {
+        get => ColorGradientSquare.MultiplyColorHsva;
+        set => ColorGradientSquare.ColorDotPosition = new Vector2(ColorGradientSquare.Width * value.S, ColorGradientSquare.Height - ColorGradientSquare.Height * value.V);
+    }
 
     public ColorRingWithSquareNode() {
         eventListener = new ViewportEventListener(SquareEventHandler);
@@ -48,13 +108,6 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         AddEvent(AtkEventType.MouseOut, OnMouseOut);
     }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing) {
-            base.Dispose(disposing, isNativeDestructor);
-            eventListener.Dispose();
-        }
-    }
-
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -66,6 +119,13 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
 
         ColorRingSelectorNode.Size = Size;
         ColorRingSelectorNode.Origin = Size / 2.0f;
+    }
+
+    protected override void Dispose(bool disposing, bool isNativeDestructor) {
+        if (disposing) {
+            base.Dispose(disposing, isNativeDestructor);
+            eventListener.Dispose();
+        }
     }
 
     private bool IsRingClicked(AtkEventData* data) {
@@ -174,30 +234,8 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         };
     }
 
-    public Action<float>? OnHueChanged { get; init; }
-    public Action<float>? OnSaturationChanged { get; init; }
-    public Action<float>? OnValueChanged { get; init; }
+    private bool isRingDrag;
+    private bool isSquareDrag;
 
-    public override float RotationDegrees {
-        get => ColorGradientSquare.RotationDegrees;
-        set {
-            ColorGradientSquare.RotationDegrees = value + 45.0f;
-            ColorRingSelectorNode.RotationDegrees = value;
-        }
-    }
-
-    public ColorHelpers.HsvaColor SelectorColor {
-        get => ColorRingSelectorNode.MultiplyColorHsva;
-        set => ColorRingSelectorNode.MultiplyColorHsva = value;
-    }
-
-    public ColorHelpers.HsvaColor SquareColor {
-        get => ColorGradientSquare.MultiplyColorHsva;
-        set => ColorGradientSquare.MultiplyColorHsva = value with { S = 1.0f, V = 1.0f };
-    }
-
-    public ColorHelpers.HsvaColor SquareSaturationValue {
-        get => ColorGradientSquare.MultiplyColorHsva;
-        set => ColorGradientSquare.ColorDotPosition = new Vector2(ColorGradientSquare.Width * value.S, ColorGradientSquare.Height - ColorGradientSquare.Height * value.V);
-    }
+    private readonly ViewportEventListener eventListener;
 }

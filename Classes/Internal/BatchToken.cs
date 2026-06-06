@@ -1,8 +1,8 @@
 using System;
-using KamiToolKit.Premade.Node.Color;
+using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Classes.Internal;
 
-internal readonly struct BatchToken(ColorPickerWidget owner) : IDisposable {
+internal readonly struct BatchToken(ColorPickerNode owner) : IDisposable {
     public void Dispose() => owner.EndBatchUpdate();
 }

@@ -5,7 +5,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Node;
-using KamiToolKit.Premade.Node.Color;
 
 namespace KamiToolKit.Premade.Addon;
 
@@ -76,7 +75,7 @@ public class ColorPickerAddon : NativeAddon {
         initialHsva = InitialHsvaColor;
         initialRgba = ColorHelpers.HsvToRgb(initialHsva);
 
-        ColorPicker = new ColorPickerWidget {
+        ColorPicker = new ColorPickerNode {
             Position = ContentStartPosition,
             Size = ContentSize,
         };
@@ -160,7 +159,7 @@ public class ColorPickerAddon : NativeAddon {
         Close();
     }
 
-    private ColorPickerWidget? ColorPicker { get; set; }
+    private ColorPickerNode? ColorPicker { get; set; }
     private HorizontalLineNode? HorizontalLine { get; set; }
     private TextButtonNode? ConfirmButton { get; set; }
     private ColorSquareTextButtonNode? DefaultColorPreview { get; set; }

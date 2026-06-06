@@ -2,9 +2,8 @@
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.Internal;
-using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Premade.Node.Color;
+namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// Square texture node representing a triple color gradient for use in <see cref="Premade.Addon.ColorPickerAddon"/>.

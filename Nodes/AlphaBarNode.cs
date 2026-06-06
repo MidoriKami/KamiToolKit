@@ -4,15 +4,13 @@ using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Classes.Internal;
-using KamiToolKit.Nodes;
-using KamiToolKit.Nodes.Simplified;
 
-namespace KamiToolKit.Premade.Node.Color;
+namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// A custom component node representing an alpha slider.
 /// </summary>
-public unsafe class AlphaBarNode : SimpleComponentNode {
+public unsafe class AlphaBarNode : ResNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.

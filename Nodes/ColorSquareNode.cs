@@ -3,9 +3,8 @@ using System.Numerics;
 using Dalamud.Interface;
 using KamiToolKit.Classes.Internal;
 using KamiToolKit.Enums;
-using KamiToolKit.Nodes;
 
-namespace KamiToolKit.Premade.Node.Color;
+namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// Square Image Node with Alpha background texture to represent a color.

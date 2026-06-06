@@ -2,10 +2,9 @@ using System;
 using System.Globalization;
 using System.Numerics;
 using Dalamud.Interface;
-using KamiToolKit.Nodes;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Premade.Node.Color;
+namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// Node representing a color preview and a hex string representation of the color.
