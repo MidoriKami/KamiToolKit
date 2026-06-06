@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
@@ -143,8 +142,15 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
         OptionListNode.ReattachNode(this);
 
+        DropDownFocusCollisionNode.IsVisible = false;
+        DropDownFocusCollisionNode.Size = new Vector2(0.0f, 0.0f);
+
         // Need to reset position after reattaching, so screen position is recalculated correctly
         OptionListNode.Position = Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
+
+        if (ParentAddon is not null) {
+            ParentAddon->CurrentDropDownOwnerNode = null;
+        }
 
         OnCollapsed?.Invoke();
     }
@@ -152,7 +158,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
     /// <summary>
     /// Uncollapses the button list.
     /// </summary>
-    /// <param name="playSoundEffect"></param>
     public void Uncollapse(bool playSoundEffect = true) {
         if (!IsEnabled) return;
         if (!IsCollapsed) return;
@@ -166,9 +171,12 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         }
 
         if (ParentAddon is not null) {
+            ParentAddon->CurrentDropDownOwnerNode = this;
+
             OptionListNode.Position = (ScreenPosition - ParentAddon->Position) / ParentAddon->Scale + Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
             MoveListOnScreen();
 
+            DropDownFocusCollisionNode.IsVisible = true;
             DropDownFocusCollisionNode.Position = -OptionListNode.Position;
             DropDownFocusCollisionNode.Size = ParentAddon->RootSize;
 
@@ -193,12 +201,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
         OnCollapseToggled?.Invoke(IsCollapsed);
     }
-
-    /// <summary>
-    /// Trigger a recalculation of the scroll params.
-    /// </summary>
-    public void RecalculateScrollParams()
-        => OptionListNode.RecalculateScrollParams();
 
     protected DropDownNode() {
         BackgroundNode = new SimpleNineGridNode {
@@ -235,7 +237,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         LabelNode.AttachNode(this);
 
         OptionListNode = new T {
-            NodeId = NodeIdBase,
             Position = new Vector2(4.0f, 21.0f),
             Size = new Vector2(242.0f, 243.0f),
             IsVisible = false,
@@ -264,7 +265,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        CollisionNode.Size = Size;
         BackgroundNode.Size = new Vector2(Width, Height - 1.0f);
         LabelNode.Size = new Vector2(Width - 32.0f, Height - 3.0f);
 
@@ -275,13 +275,11 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
     protected abstract void UpdateLabel(TU? option);
 
     private void MoveListOnScreen() {
-        var screenSize = AtkStage.Instance()->ScreenSize;
-        var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(ResNode);
-        if (parentAddon == null) {
-            return;
-        }
+        if (ParentAddon is null) return;
 
-        var scale = parentAddon->Scale;
+        var screenSize = AtkStage.Instance()->ScreenSize;
+
+        var scale = ParentAddon->Scale;
         var scaledListSize = OptionListNode.Size * scale;
         if (ScreenPosition.X + scaledListSize.X > screenSize.Width) {
             OptionListNode.X += (screenSize.Width - OptionListNode.ScreenPosition.X - scaledListSize.X - 4f) / scale;
