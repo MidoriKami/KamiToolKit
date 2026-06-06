@@ -202,4 +202,17 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         isDisposed = true;
     }
+
+    // To be invoked from NodeBase.Dispose(bool, bool).
+    protected void OriginalDestroy(AtkResNode* thisPtr, bool free) {
+        originalVirtualTable->Destroy(thisPtr, free);
+
+        NativeMemoryHelper.Free(modifiedVirtualTable, 0x8 * 4);
+        modifiedVirtualTable = null;
+
+        GC.SuppressFinalize(this);
+        CreatedNodes.Remove(this);
+
+        isDisposed = true;
+    }
 }

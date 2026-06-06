@@ -52,7 +52,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
                 Services.Log.Exception(e);
             } finally {
                 if (!isNativeDestructor) {
-                    Destroy(ResNode, true);
+                    OriginalDestroy(this, true);
                 }
 
                 KamiToolKitLibrary.AllocatedNodes?.Remove((nint)Node, out _);
