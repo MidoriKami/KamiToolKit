@@ -22,6 +22,16 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
+    public ListNavNode? UpwardsNavNode { get; private set; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ListNavNode? DownwardsNavNode { get; private set; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
     public ScrollBarNode ScrollBarNode { get; }
 
     /// <summary>
@@ -133,6 +143,12 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     /// Use sparingly, this is an expensive operation.
     /// </remarks>
     public void FullRebuild() {
+        UpwardsNavNode?.Dispose();
+        UpwardsNavNode = null;
+
+        DownwardsNavNode?.Dispose();
+        DownwardsNavNode = null;
+
         foreach (var node in nodeList) {
             node.Dispose();
         }
@@ -141,7 +157,22 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         scrollPosition = Math.Clamp(scrollPosition, 0, Math.Max(OptionsList.Count - nodeCount, 0));
         selectedItem = default;
 
+        UpwardsNavNode = new ListNavNode {
+            Position = new Vector2(0.0f, 0.0f),
+            Size = new Vector2(Width, 4.0f),
+            OnUpNavReceived = OnUpNavReceived,
+        };
+        UpwardsNavNode.AttachNode(this);
+
         RebuildNodeList();
+
+        DownwardsNavNode = new ListNavNode {
+            Position = new Vector2(0.0f, Height - 4.0f),
+            Size = new Vector2(Width, 4.0f),
+            OnDownNavReceived = OnDownNavReceived,
+        };
+        DownwardsNavNode.AttachNode(this);
+
         PopulateNodes();
         RecalculateScroll();
     }
@@ -182,6 +213,9 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
             node.Width = ScrollBarNode.Bounds.Left - 8.0f;
         }
 
+        UpwardsNavNode?.Width = Width;
+        DownwardsNavNode?.Width = Width;
+
         RecalculateScroll();
     }
 
@@ -193,7 +227,6 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
             var node = new TU {
                 Size = new Vector2(ScrollBarNode.Bounds.Left - 8.0f, itemHeight),
                 Position = new Vector2(0.0f, index * (itemHeight + ItemSpacing)),
-                NodeId = (uint)index + 2,
                 OnClick = clickedNode => {
                     SelectItem(((TU)clickedNode).ItemData);
                     OnItemSelected?.Invoke(selectedItem);
@@ -244,19 +277,31 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         }
 
         // Recalculate Controller Nav
+        UpwardsNavNode?.NavIndex = NavIndex;
+        UpwardsNavNode?.NavUp = NavUp;
+        UpwardsNavNode?.NavLeft = NavLeft;
+        UpwardsNavNode?.NavRight = NavRight;
+        UpwardsNavNode?.NavDown = NavIndex + 1;
+
+        DownwardsNavNode?.NavIndex = nodeList.Count * 4 + NavIndex + 1;
+        DownwardsNavNode?.NavUp = (nodeList.Count - 1 ) * 4 + NavIndex + 1;
+        DownwardsNavNode?.NavLeft = NavLeft;
+        DownwardsNavNode?.NavRight = NavRight;
+        DownwardsNavNode?.NavDown = NavDown;
+
         foreach (var index in Enumerable.Range(0, nodeList.Count)) {
             if (NavIndex is not 0) {
                 var node = nodeList[index];
 
                 // We'll allocate 4 nav slots per list item to do sub-nav via left/right.
                 if (index is 0) {
-                    node.ProcessNav(index * 4 + NavIndex, NavUp, (index + 1) * 4 + NavIndex);
+                    node.ProcessNav(index * 4 + NavIndex + 1, NavIndex, (index + 1) * 4 + NavIndex + 1);
                 }
                 else if (index == nodeCount - 1) {
-                    node.ProcessNav(index * 4 + NavIndex, (index - 1) * 4 + NavIndex, nodeList.Count * 4 + NavIndex);
+                    node.ProcessNav(index * 4 + NavIndex + 1, (index - 1) * 4 + NavIndex + 1, nodeList.Count * 4 + NavIndex + 1);
                 }
                 else {
-                    node.ProcessNav(index * 4 + NavIndex, (index - 1) * 4 + NavIndex, (index + 1) * 4 + NavIndex);
+                    node.ProcessNav(index * 4 + NavIndex + 1, (index - 1) * 4 + NavIndex + 1, (index + 1) * 4 + NavIndex + 1);
                 }
             }
         }
@@ -279,6 +324,38 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         PopulateNodes();
 
         atkEvent->SetEventIsHandled();
+    }
+
+    private void OnUpNavReceived() {
+        if (scrollPosition > 0) {
+            UpwardsNavNode?.NavUp = 0;
+            scrollPosition--;
+            ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
+            PopulateNodes();
+
+            var node = nodeList[0];
+            node.OnClick?.Invoke(node);
+
+            if (scrollPosition is 0) {
+                UpwardsNavNode?.NavUp = NavUp;
+            }
+        }
+    }
+
+    private void OnDownNavReceived() {
+        if (scrollPosition < OptionsList.Count - nodeList.Count) {
+            DownwardsNavNode?.NavDown = 0;
+            scrollPosition++;
+            ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
+            PopulateNodes();
+
+            var node = nodeList[^1];
+            node.OnClick?.Invoke(node);
+
+            if (scrollPosition is 0) {
+                DownwardsNavNode?.NavDown = NavDown;
+            }
+        }
     }
 
     private readonly List<TU> nodeList = [];
