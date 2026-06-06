@@ -60,6 +60,10 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
     /// <summary>
     /// Gets or sets the combo level of the icon.
     /// </summary>
+    /// <remarks>
+    /// This shows the hexagon numbers with I, II, and III respectively.
+    /// Only seen with PvP abilities so far.
+    /// </remarks>
     public byte ComboLevel {
         get {
             if (Component->Flags.HasFlag(IconComponentFlags.ComboLevel3))
