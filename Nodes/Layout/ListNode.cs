@@ -65,6 +65,11 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     public Action<T?>? OnItemSelected { get; set; }
 
     /// <summary>
+    /// Gets the list of currently selected items.
+    /// </summary>
+    public List<T> SelectedItems { get; private set; } = [];
+
+    /// <summary>
     /// Gets or sets the item spacing.
     /// </summary>
     public float ItemSpacing {
@@ -103,6 +108,14 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     } = [];
 
     /// <summary>
+    /// Gets or sets whether multiselect will be allowed.
+    /// </summary>
+    /// <remarks>
+    /// When enabled, the list will not clear the
+    /// </remarks>
+    public bool AllowMultipleSelection { get; set; }
+
+    /// <summary>
     /// Resets scroll position back to the top.
     /// </summary>
     /// <remarks>
@@ -118,9 +131,8 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     /// Clears the currently selected item.
     /// </summary>
     public void ClearSelection() {
-        if (selectedItem is not null) {
-            selectedItem = default;
-        }
+        SelectedItems.Clear();
+        PopulateNodes();
     }
 
     /// <summary>
@@ -155,7 +167,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         nodeList.Clear();
 
         scrollPosition = Math.Clamp(scrollPosition, 0, Math.Max(OptionsList.Count - nodeCount, 0));
-        selectedItem = default;
+        SelectedItems.Clear();
 
         UpwardsNavNode = new ListNavNode {
             Position = new Vector2(0.0f, 0.0f),
@@ -229,7 +241,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
                 Position = new Vector2(0.0f, index * (itemHeight + ItemSpacing)),
                 OnClick = clickedNode => {
                     SelectItem(((TU)clickedNode).ItemData);
-                    OnItemSelected?.Invoke(selectedItem);
+                    OnItemSelected?.Invoke(((TU)clickedNode).ItemData);
                 },
                 IsVisible = false,
             };
@@ -247,7 +259,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
                 var item = OptionsList[dataIndex];
                 node.ItemData = item;
                 node.IsVisible = true;
-                node.IsSelected = GenericUtil.AreEqual(item, selectedItem);
+                node.IsSelected = SelectedItems.Any(selectedItem => GenericUtil.AreEqual(node.ItemData, selectedItem));
             }
             else {
                 node.IsVisible = false;
@@ -258,14 +270,20 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     private void SelectItem(T? item) {
         if (item is null) return;
 
-        selectedItem = item;
+        if (!AllowMultipleSelection) {
+            SelectedItems.Clear();
+        }
+
+        if (!SelectedItems.Remove(item)) {
+            SelectedItems.Add(item);
+        }
 
         foreach (var node in nodeList) {
-            if (node.ItemData is null) {
+            if (node.ItemData is null && !AllowMultipleSelection) {
                 node.IsSelected = false;
             }
             else {
-                node.IsSelected = GenericUtil.AreEqual(node.ItemData, selectedItem);
+                node.IsSelected = SelectedItems.Any(selectedItem => GenericUtil.AreEqual(node.ItemData, selectedItem));
             }
         }
     }
@@ -333,8 +351,10 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
             ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
             PopulateNodes();
 
-            var node = nodeList[0];
-            node.OnClick?.Invoke(node);
+            if (!AllowMultipleSelection) {
+                var node = nodeList[0];
+                node.OnClick?.Invoke(node);
+            }
 
             if (scrollPosition is 0) {
                 UpwardsNavNode?.NavUp = NavUp;
@@ -349,8 +369,10 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
             ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
             PopulateNodes();
 
-            var node = nodeList[^1];
-            node.OnClick?.Invoke(node);
+            if (!AllowMultipleSelection) {
+                var node = nodeList[^1];
+                node.OnClick?.Invoke(node);
+            }
 
             if (scrollPosition is 0) {
                 DownwardsNavNode?.NavDown = NavDown;
@@ -360,7 +382,6 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
 
     private readonly List<TU> nodeList = [];
     private readonly float itemHeight;
-    private T? selectedItem;
     private int scrollPosition;
     private int nodeCount;
 }
