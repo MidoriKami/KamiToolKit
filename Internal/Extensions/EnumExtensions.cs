@@ -7,7 +7,7 @@ using Dalamud.Utility;
 namespace KamiToolKit.Internal.Extensions;
 
 internal static class EnumExtensions {
-    extension(System.Enum enumValue) {
+    extension(Enum enumValue) {
         public string Description => enumValue.GetDescription();
 
         private string GetDescription() {
@@ -23,7 +23,7 @@ internal static class EnumExtensions {
         }
     }
 
-    extension<T>(ref T flagValue) where T : unmanaged, System.Enum {
+    extension<T>(ref T flagValue) where T : unmanaged, Enum {
         public void SetFlags(params T[] flags) {
             foreach (var flag in flags) {
                 flagValue.SetFlag(flag, true);
