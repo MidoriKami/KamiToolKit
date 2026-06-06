@@ -47,7 +47,7 @@ public unsafe partial class NativeAddon {
     /// This is the bottom left of the header node plus some <see cref="ContentPadding"/>.
     /// </remarks>
     public Vector2 ContentStartPosition
-        => (WindowNode?.ContentStartPosition ?? Vector2.Zero) + ContentPadding;
+        => (WindowNode?.ContentStartPosition ?? Vector2.Zero) + new Vector2(ContentPadding.X, 0.0f);
 
     /// <summary>
     /// Gets the size of the body of the window.
@@ -56,12 +56,12 @@ public unsafe partial class NativeAddon {
     /// This is the size of the window minus the size of the header, minus 2x <see cref="ContentPadding"/>
     /// </remarks>
     public Vector2 ContentSize
-        => (WindowNode?.ContentSize ?? Vector2.Zero) - ContentPadding * 2.0f - new Vector2(0.0f, 4.0f);
+        => (WindowNode?.ContentSize ?? Vector2.Zero) - new Vector2(ContentPadding.X * 2.0f, ContentPadding.Y);
 
     /// <summary>
     /// Gets or sets the padding used for the content area.
     /// </summary>
-    public Vector2 ContentPadding { get; set; } = new(8.0f, 0.0f);
+    public Vector2 ContentPadding { get; set; } = new(8.0f, 8.0f);
 
     /// <summary>
     /// Gets or sets the depth layer this window will open on.
