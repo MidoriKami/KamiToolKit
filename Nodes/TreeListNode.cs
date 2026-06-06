@@ -52,7 +52,6 @@ public class TreeListNode : ResNode {
 
             child.Y = childContainer.Height;
             childContainer.Height += child.Height + CategoryVerticalSpacing;
-            child.UpdateChildrenNodeId();
         }
 
         OnLayoutUpdate?.Invoke(childContainer.Height);
