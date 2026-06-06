@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
@@ -10,7 +9,7 @@ using KamiToolKit.Timelines;
 namespace KamiToolKit.Nodes;
 
 /// <inheritdoc/>
-public abstract class ListNode : ResNode;
+public abstract class ButtonListNode : SimpleComponentNode;
 
 /// <summary>
 /// Custom implementation of the games button lists used for <see cref="DropDownNode{T,TU}"/>, not intended for external use.
@@ -18,7 +17,7 @@ public abstract class ListNode : ResNode;
 /// <remarks>
 /// Automatically inserts buttons to fill the set height, please ensure option count is greater than button count.
 /// </remarks>
-public abstract unsafe class ButtonListNode<T> : ListNode {
+public abstract unsafe class ButtonListNode<T> : ButtonListNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -28,28 +27,12 @@ public abstract unsafe class ButtonListNode<T> : ListNode {
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
-    public ResNode ContainerNode { get; }
-
-    /// <summary>
-    /// Not intended for public use, but it's here if you absolutely need it.
-    /// </summary>
-    public ScrollBarNode ScrollBarNode { get; }
-
-    /// <summary>
-    /// Not intended for public use, but it's here if you absolutely need it.
-    /// </summary>
-    public IEnumerable<ListButtonNode> ButtonNodes => nodes.AsReadOnly();
+    public ScrollingNode<VerticalListNode> ScrollingListNode { get; }
 
     /// <summary>
     /// Gets or sets the node that will be highlighted as selected.
     /// </summary>
-    public T? SelectedOption {
-        get;
-        set {
-            field = value;
-            UpdateSelected();
-        }
-    }
+    public T? SelectedOption { get; set; }
 
     /// <summary>
     /// Gets or sets the list of button options.
@@ -66,6 +49,11 @@ public abstract unsafe class ButtonListNode<T> : ListNode {
     }
 
     /// <summary>
+    /// Gets or sets the action to be called when an option is clicked on.
+    /// </summary>
+    public Action<T>? OnOptionSelected { get; set; }
+
+    /// <summary>
     /// Gets or sets the maximum number of buttons to display at once.
     /// </summary>
     public int MaxButtons {
@@ -77,33 +65,11 @@ public abstract unsafe class ButtonListNode<T> : ListNode {
     } = 5;
 
     /// <summary>
-    /// Gets or sets the action to be called when an option is clicked on.
-    /// </summary>
-    public Action<T>? OnOptionSelected { get; set; }
-
-    /// <summary>
-    /// Forces the scrollbar to update its scrolling parameters.
-    /// </summary>
-    public void RecalculateScrollParams() {
-        if (Options is not null) {
-            ScrollBarNode.UpdateScrollParams((int)ScrollBarNode.Height, (int)(Options.Count * NodeHeight));
-        }
-    }
-
-    /// <summary>
-    /// Sets the first option as the selected option.
-    /// </summary>
-    public void SelectDefaultOption() {
-        if (Options is not null && Options.Count > 0) {
-            SelectedOption = Options.First();
-        }
-    }
-
-    /// <summary>
     /// Shows this node.
     /// </summary>
     public void Show() {
         IsVisible = true;
+
         AddDrawFlags(DrawFlags.RenderOnTop);
 
         if (ParentAddon is not null) {
@@ -116,6 +82,7 @@ public abstract unsafe class ButtonListNode<T> : ListNode {
     /// </summary>
     public void Hide() {
         IsVisible = false;
+
         RemoveDrawFlags(DrawFlags.RenderOnTop);
 
         if (ParentAddon is not null) {
@@ -126,7 +93,6 @@ public abstract unsafe class ButtonListNode<T> : ListNode {
     /// <summary>
     /// Toggles this nodes visibility.
     /// </summary>
-    /// <param name="newState"></param>
     public void Toggle(bool newState) {
         if (newState) {
             Show();
@@ -176,35 +142,29 @@ public abstract unsafe class ButtonListNode<T> : ListNode {
         };
         BackgroundNode.AttachNode(this);
 
-        ContainerNode = new ResNode {
-            NodeFlags = NodeFlags.Visible | NodeFlags.Clip,
+        ScrollingListNode = new ScrollingNode<VerticalListNode> {
+            ContentNode = {
+                FirstItemSpacing = 2.0f,
+                ItemSpacing = 3.0f,
+                FitContents = true,
+            },
+            AutoHideScrollBar = true,
         };
-        ContainerNode.AttachNode(this);
-
-        ScrollBarNode = new ScrollBarNode {
-            Position = new Vector2(0.0f, 9.0f),
-            Size = new Vector2(8.0f, 0.0f),
-            OnValueChanged = OnScrollUpdate,
-            HideWhenDisabled = true,
-        };
-        ScrollBarNode.AttachNode(this);
+        ScrollingListNode.AttachNode(this);
 
         BuildTimelines();
-
-        ContainerNode.AddEvent(AtkEventType.MouseWheel, OnMouseWheel);
     }
 
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
         BackgroundNode.Size = Size;
-        ContainerNode.Size = new Vector2(Width - 25.0f, Height);
 
-        foreach (var buttonNode in nodes) {
-            buttonNode.Width = Width - 25.0f;
-        }
+        ScrollingListNode.Size = new Vector2(Width - 8.0f, Height - 14.0f);
+        ScrollingListNode.Position = new Vector2(2.0f, 4.0f);
 
-        ScrollBarNode.X = Width - 17.0f;
+        ScrollingListNode.ContentNode.Position = new Vector2(4.0f, 0.0f);
+        ScrollingListNode.RecalculateSizes();
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
@@ -219,87 +179,35 @@ public abstract unsafe class ButtonListNode<T> : ListNode {
         }
     }
 
-    protected float NodeHeight { get; set; } = 22.0f;
-
-    protected int CurrentStartIndex { get; set; }
+    protected float ButtonNodeHeight { get; set; } = 22.0f;
 
     protected abstract string GetLabelForOption(T option);
 
-    protected virtual void OnOptionClick(int nodeId) {
+    protected virtual void OnOptionClick(ListButtonNode listButton, T option) {
         if (Options is null) return;
 
-        SelectedOption = Options[nodeId + CurrentStartIndex];
-        OnOptionSelected?.Invoke(Options[nodeId + CurrentStartIndex]);
+        selectedButtonNode?.Selected = false;
+        selectedButtonNode = listButton;
+        selectedButtonNode.Selected = true;
 
-        UpdateSelected();
-    }
-
-    private void UpdateNodes() {
-        if (Options is null) return;
-        var maxStartIndex = Options.Count - nodes.Count;
-
-        var max = Math.Max(0, maxStartIndex);
-        CurrentStartIndex = Math.Clamp(CurrentStartIndex, 0, max);
-        UpdateSelected();
-    }
-
-    private void OnScrollUpdate(int scrollPosition) {
-        var index = scrollPosition / 22.0f;
-
-        CurrentStartIndex = (int)index;
-        UpdateNodes();
-    }
-
-    private void OnMouseWheel(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        CurrentStartIndex -= atkEventData->MouseData.WheelDirection;
-        UpdateNodes();
-        ScrollBarNode.ScrollPosition = (int)(CurrentStartIndex * NodeHeight + 9.0f);
-
-        atkEvent->SetEventIsHandled();
+        SelectedOption = option;
+        OnOptionSelected?.Invoke(SelectedOption);
     }
 
     private void RebuildNodeList() {
-        foreach (var button in nodes) {
-            button.DetachNode();
-            button.Dispose();
-        }
-        nodes.Clear();
+        ScrollingListNode.ContentNode.Clear();
 
-        buttonCount = Math.Min(MaxButtons, Options?.Count ?? 0);
-
-        var height = buttonCount * NodeHeight + 24.0f;
-        Height = height;
-        BackgroundNode.Height = height;
-        ContainerNode.Height = height;
-        ScrollBarNode.Height = height - 23.0f;
-
-        foreach (var index in Enumerable.Range(0, buttonCount)) {
+        foreach (var option in Options ?? []) {
             var newButton = new ListButtonNode {
-                NodeId = (uint)index,
-                Size = new Vector2(Width - 25.0f, NodeHeight),
-                Position = new Vector2(8.0f, NodeHeight * index + 9.0f),
-
-                String = $"Button {index}",
-                OnClick = () => OnOptionClick(index),
+                Size = new Vector2(Width - 16.0f, ButtonNodeHeight),
+                String = GetLabelForOption(option),
             };
 
-            nodes.Add(newButton);
-            newButton.AttachNode(ContainerNode);
+            newButton.OnClick = () => OnOptionClick(newButton, option);
+            ScrollingListNode.ContentNode.AddNode(newButton);
         }
 
-        RecalculateScrollParams();
-        UpdateNodes();
-    }
-
-    private void UpdateSelected() {
-        if (Options is null) return;
-
-        foreach (var index in Enumerable.Range(0, buttonCount)) {
-            var option = Options[index + CurrentStartIndex];
-
-            nodes[index].Selected = SelectedOption?.Equals(option) ?? false;
-            nodes[index].String = GetLabelForOption(option);
-        }
+        ScrollingListNode.RecalculateSizes();
     }
 
     private void BuildTimelines() {
@@ -316,7 +224,6 @@ public abstract unsafe class ButtonListNode<T> : ListNode {
         );
     }
 
-    private readonly List<ListButtonNode> nodes = [];
+    private ListButtonNode? selectedButtonNode;
     private bool isFocusSet;
-    private int buttonCount;
 }
