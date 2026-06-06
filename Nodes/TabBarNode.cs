@@ -156,18 +156,20 @@ public class TabBarNode : ResNode, IControllerNavigable {
 
             button.NavIndex = NavIndex + index;
 
-            if (index is 0) {
-                button.NavLeft = radioButtons.Count - 1 + NavIndex;
-            }
-            else {
-                button.NavLeft = index - 1 + NavIndex;
-            }
+            if (NavIndex is not 0) {
+                if (index is 0) {
+                    button.NavLeft = radioButtons.Count - 1 + NavIndex;
+                }
+                else {
+                    button.NavLeft = index - 1 + NavIndex;
+                }
 
-            if (index == radioButtons.Count - 1) {
-                button.NavRight = NavIndex;
-            }
-            else {
-                button.NavRight = index + 1 + NavIndex;
+                if (index == radioButtons.Count - 1) {
+                    button.NavRight = NavIndex;
+                }
+                else {
+                    button.NavRight = index + 1 + NavIndex;
+                }
             }
 
             button.NavUp = NavUp;
