@@ -33,18 +33,18 @@ public abstract unsafe partial class ComponentNode {
         ComponentBase->VirtualTable = modifiedVirtualTable;
 
         destructorFunction = Destructor;
-        receiveGlobalEventFunction = ReceiveGlobalEvent;
-        receiveEventFunction = ReceiveEvent;
-        initializeFunction = Initialize;
-        deinitializeFunction = Deinitialize;
-        updateFunction = Update;
-        drawFunction = Draw;
-        setupFunction = Setup;
-        setEnabledStateFunction = SetEnabledState;
-        playSoundEffectFunction = PlaySoundEffect;
-        getAtkResNodeFunction = GetAtkResNode;
-        getFocusNodeFunction = GetFocusNode;
-        initializeFromComponentData = InitializeFromComponentData;
+        receiveGlobalEventFunction = OnReceiveGlobalEvent;
+        receiveEventFunction = OnReceiveEvent;
+        initializeFunction = OnInitialize;
+        deinitializeFunction = OnDeinitialize;
+        updateFunction = OnUpdate;
+        drawFunction = OnDraw;
+        setupFunction = OnSetup;
+        setEnabledStateFunction = OnSetEnabledState;
+        playSoundEffectFunction = OnPlaySoundEffect;
+        getAtkResNodeFunction = OnGetAtkResNode;
+        getFocusNodeFunction = OnGetFocusNode;
+        initializeFromComponentData = OnInitializeFromComponentData;
 
         modifiedVirtualTable->Dtor = (delegate* unmanaged<AtkComponentBase*, byte, AtkEventListener*>) Marshal.GetFunctionPointerForDelegate(destructorFunction);
         modifiedVirtualTable->ReceiveGlobalEvent = (delegate* unmanaged<AtkComponentBase*, AtkEventType, int, AtkEvent*, AtkEventData*, void>) Marshal.GetFunctionPointerForDelegate(receiveGlobalEventFunction);

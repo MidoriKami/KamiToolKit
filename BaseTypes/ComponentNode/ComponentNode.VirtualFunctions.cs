@@ -4,11 +4,80 @@ using KamiToolKit.Classes.Internal;
 namespace KamiToolKit.BaseTypes.ComponentNode;
 
 public abstract unsafe partial class ComponentNode {
-    protected virtual void OnReceiveGlobalEvent(AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) { }
-    protected virtual void OnReceiveEvent(AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) { }
-    protected virtual void OnUpdate() { }
-    protected virtual void OnDraw() { }
-    protected virtual void OnSetup() { }
+
+    protected virtual void OnReceiveGlobalEvent(AtkComponentBase* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] Receive Global Event");
+
+        originalVirtualTable->ReceiveGlobalEvent(thisPtr, eventType, eventParam, atkEvent, atkEventData);
+    }
+
+    protected virtual void OnReceiveEvent(AtkComponentBase* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] [{eventType}] {eventParam}");
+
+        originalVirtualTable->ReceiveEvent(thisPtr, eventType, eventParam, atkEvent, atkEventData);
+    }
+
+    protected virtual void OnInitialize(AtkComponentBase* thisPtr) {
+        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] Initialize");
+
+        originalVirtualTable->Initialize(thisPtr);
+    }
+
+    protected virtual void OnDeinitialize(AtkComponentBase* thisPtr) {
+        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] Deinitialize");
+
+        originalVirtualTable->Deinitialize(thisPtr);
+    }
+
+    protected virtual void OnUpdate(AtkComponentBase* thisPtr, float delta) {
+        Services.Log.Excessive($"[{GetType().Name}][{ComponentBase->GetType().Name}] Update");
+
+        originalVirtualTable->Update(thisPtr, delta);
+    }
+
+    protected virtual void OnDraw(AtkComponentBase* thisPtr) {
+        Services.Log.Excessive($"[{GetType().Name}][{ComponentBase->GetType().Name}] Draw");
+
+        originalVirtualTable->Draw(thisPtr);
+    }
+
+    protected virtual void OnSetup(AtkComponentBase* thisPtr) {
+        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] Setup");
+
+        originalVirtualTable->Setup(thisPtr);
+    }
+
+    protected virtual void OnSetEnabledState(AtkComponentBase* thisPtr, bool enabled) {
+        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] SetEnabledState");
+
+        originalVirtualTable->SetEnabledState(thisPtr, enabled);
+    }
+
+    protected virtual void OnPlaySoundEffect(AtkComponentBase* thisPtr) {
+        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] PlaySoundEffect");
+
+        originalVirtualTable->PlaySoundEffect(thisPtr);
+    }
+
+    protected virtual AtkResNode* OnGetAtkResNode(AtkComponentBase* thisPtr) {
+        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] PlaySoundEffect");
+
+        var result = originalVirtualTable->GetAtkResNode(thisPtr);
+
+        return result;
+    }
+
+    protected virtual AtkResNode* OnGetFocusNode(AtkComponentBase* thisPtr) {
+        Services.Log.Excessive($"[{GetType().Name}][{ComponentBase->GetType().Name}] GetFocusNode");
+
+        return FocusNode;
+    }
+
+    protected virtual void OnInitializeFromComponentData(AtkComponentBase* thisPtr, void* data) {
+        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] InitializeFromComponentData");
+
+        originalVirtualTable->InitializeFromComponentData(thisPtr, data);
+    }
 
     private AtkEventListener* Destructor(AtkComponentBase* thisPtr, byte freeFlags) {
         Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] Destructor");
@@ -22,89 +91,5 @@ public abstract unsafe partial class ComponentNode {
         }
 
         return result;
-    }
-
-    private void ReceiveGlobalEvent(AtkComponentBase* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] Receive Global Event");
-
-        OnReceiveGlobalEvent(eventType, eventParam, atkEvent, atkEventData);
-
-        originalVirtualTable->ReceiveGlobalEvent(thisPtr, eventType, eventParam, atkEvent, atkEventData);
-    }
-
-    private void ReceiveEvent(AtkComponentBase* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] [{eventType}] {eventParam}");
-
-        OnReceiveEvent(eventType, eventParam, atkEvent, atkEventData);
-
-        originalVirtualTable->ReceiveEvent(thisPtr, eventType, eventParam, atkEvent, atkEventData);
-    }
-
-    private void Initialize(AtkComponentBase* thisPtr) {
-        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] Initialize");
-
-        originalVirtualTable->Initialize(thisPtr);
-    }
-
-    private void Deinitialize(AtkComponentBase* thisPtr) {
-        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] Deinitialize");
-
-        originalVirtualTable->Deinitialize(thisPtr);
-    }
-
-    private void Update(AtkComponentBase* thisPtr, float delta) {
-        Services.Log.Excessive($"[{GetType().Name}][{ComponentBase->GetType().Name}] Update");
-
-        OnUpdate();
-
-        originalVirtualTable->Update(thisPtr, delta);
-    }
-
-    private void Draw(AtkComponentBase* thisPtr) {
-        Services.Log.Excessive($"[{GetType().Name}][{ComponentBase->GetType().Name}] Draw");
-
-        OnDraw();
-
-        originalVirtualTable->Draw(thisPtr);
-    }
-
-    private void Setup(AtkComponentBase* thisPtr) {
-        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] Setup");
-
-        OnSetup();
-
-        originalVirtualTable->Setup(thisPtr);
-    }
-
-    private void SetEnabledState(AtkComponentBase* thisPtr, bool enabled) {
-        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] SetEnabledState");
-
-        originalVirtualTable->SetEnabledState(thisPtr, enabled);
-    }
-
-    private void PlaySoundEffect(AtkComponentBase* thisPtr) {
-        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] PlaySoundEffect");
-
-        originalVirtualTable->PlaySoundEffect(thisPtr);
-    }
-
-    private AtkResNode* GetAtkResNode(AtkComponentBase* thisPtr) {
-        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] PlaySoundEffect");
-
-        var result = originalVirtualTable->GetAtkResNode(thisPtr);
-
-        return result;
-    }
-
-    private AtkResNode* GetFocusNode(AtkComponentBase* thisPtr) {
-        Services.Log.Excessive($"[{GetType().Name}][{ComponentBase->GetType().Name}] GetFocusNode");
-
-        return FocusNode;
-    }
-
-    private void InitializeFromComponentData(AtkComponentBase* thisPtr, void* data) {
-        Services.Log.Verbose($"[{GetType().Name}][{ComponentBase->GetType().Name}] InitializeFromComponentData");
-
-        originalVirtualTable->InitializeFromComponentData(thisPtr, data);
     }
 }
