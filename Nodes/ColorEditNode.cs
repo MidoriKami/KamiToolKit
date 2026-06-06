@@ -2,6 +2,7 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Premade.Addon;
 using Lumina.Text.ReadOnly;
 
@@ -10,7 +11,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// A node representing a colored square, and a label, all of which are clickable to open a color picker window.
 /// </summary>
-public class ColorEditNode : ResNode {
+public class ColorEditNode : SimpleComponentNode {
 
     /// <summary>
     /// Gets or sets the current color.
@@ -67,9 +68,9 @@ public class ColorEditNode : ResNode {
         labelNode.ShowClickableCursor = true;
         labelNode.AddEvent(AtkEventType.MouseClick, OnClicked);
 
-        ShowClickableCursor = true;
-        AddEvent(AtkEventType.MouseClick, OnClicked);
-        AddEvent(AtkEventType.InputReceived, OnInputReceived);
+        CollisionNode.ShowClickableCursor = true;
+        CollisionNode.AddEvent(AtkEventType.MouseClick, OnClicked);
+        CollisionNode.AddEvent(AtkEventType.InputReceived, OnInputReceived);
     }
 
     protected override void OnSizeChanged() {
