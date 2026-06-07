@@ -15,6 +15,16 @@ public unsafe class NavFocusNode : SimpleComponentNode {
     /// </summary>
     public Action? OnSelected { get; set; }
 
+    /// <summary>
+    /// Action that is invoked when this node is hovered via vertical nav.
+    /// </summary>
+    public Action? OnHoverStart { get; set; }
+
+    /// <summary>
+    /// Action that is invoked when this node is no longer hovered.
+    /// </summary>
+    public Action? OnHoverEnd { get; set; }
+
     public NavFocusNode()
         => AddEvent(AtkEventType.InputReceived, Callback);
 
@@ -26,6 +36,14 @@ public unsafe class NavFocusNode : SimpleComponentNode {
         switch ((InputId)atkEventData->InputData.InputId) {
             case InputId.OK when inputState is InputState.Down:
                 OnSelected?.Invoke();
+                break;
+
+            case InputId.DOWN or InputId.UP when inputState is InputState.Down:
+                OnHoverEnd?.Invoke();
+                break;
+
+            case InputId.DOWN or InputId.UP when inputState is InputState.Up:
+                OnHoverStart?.Invoke();
                 break;
         }
     }
