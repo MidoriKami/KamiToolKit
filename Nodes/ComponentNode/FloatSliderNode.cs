@@ -110,7 +110,7 @@ public unsafe class FloatSliderNode : ComponentNode<AtkComponentSlider, AtkUldCo
 
         Data->Nodes[0] = ProgressTextureNode.NodeId;
         Data->Nodes[1] = SliderForegroundButtonNode.NodeId;
-        Data->Nodes[2] = FloatValueNode.NodeId;
+        Data->Nodes[2] = 0;
         Data->Nodes[3] = SliderBackgroundButtonNode.NodeId;
 
         BuildTimelines();
