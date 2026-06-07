@@ -233,7 +233,6 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         }
     }
 
-
     private void UpdateText() {
         using var builder = new RentedSeStringBuilder();
         Node->SetText(builder.Builder.Append(String).GetViewAsSpan());
