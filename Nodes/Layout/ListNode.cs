@@ -155,6 +155,8 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     /// Updates the data being displayed. This is done efficiently.
     /// </summary>
     public void Update() {
+        NoResultsTextNodeContainer.IsVisible = !NoResultsTextNode.String.IsEmpty && OptionsList.Count is 0;
+
         PopulateNodes();
 
         foreach (var node in nodeList) {
