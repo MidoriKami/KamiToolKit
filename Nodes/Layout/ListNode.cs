@@ -108,6 +108,11 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     } = [];
 
     /// <summary>
+    /// Gets a read-only enumerable for the available option nodes.
+    /// </summary>
+    public IReadOnlyList<TU> OptionNodes => nodeList;
+
+    /// <summary>
     /// Gets or sets whether multiselect will be allowed.
     /// </summary>
     /// <remarks>
