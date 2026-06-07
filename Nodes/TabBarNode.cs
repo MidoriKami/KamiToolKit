@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
@@ -28,6 +29,14 @@ public class TabBarNode : ResNode, IControllerNavigable {
 
     /// <inheritdoc/>
     public int NavDown { get; set; }
+
+    public ICollection<TabBarEntry> InitialEntries {
+        init {
+            foreach (var tabBarEntry in value) {
+                AddTab(tabBarEntry);
+            }
+        }
+    }
 
     /// <summary>
     /// Selects the tab matching the given label.
@@ -109,6 +118,30 @@ public class TabBarNode : ResNode, IControllerNavigable {
 
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
+        RecalculateLayout();
+    }
+
+    public void AddTab(TabBarEntry entry) {
+        var newButton = new TabBarRadioButtonNode {
+            Height = Height,
+            String = entry.Label,
+            TextId = entry.TextId,
+            SheetType = entry.SheetType,
+            OnClick = entry.OnClick,
+            IsEnabled = true,
+            TextTooltip = entry.Tooltip ?? string.Empty,
+            MultiplyColor = Vector3.One,
+        };
+
+        newButton.AddEvent(AtkEventType.ButtonClick, () => ClickHandler(newButton));
+
+        radioButtons.Add(newButton);
+        newButton.AttachNode(this);
+
+        if (radioButtons.Count is 1) {
+            newButton.IsSelected = true;
+        }
+
         RecalculateLayout();
     }
 

@@ -5,6 +5,7 @@ using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
+using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
@@ -40,6 +41,22 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
     public ReadOnlySeString String {
         get => LabelNode.String;
         set => Component->SetText(value);
+    }
+
+    /// <summary>
+    /// Gets or sets the text id to load the label automatically using <see cref="SheetType"/>.
+    /// </summary>
+    public uint TextId {
+        get => LabelNode.TextId;
+        set => LabelNode.TextId = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the sheet type used with <see cref="TextId"/>.
+    /// </summary>
+    public NodeData.SheetType SheetType {
+        get => LabelNode.SheetType;
+        set => LabelNode.SheetType = value;
     }
 
     /// <summary>
