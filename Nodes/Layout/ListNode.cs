@@ -5,6 +5,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
+using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
@@ -37,6 +38,11 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
+    public ResNode NoResultsTextNodeContainer { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
     public TextNode NoResultsTextNode { get; }
 
     /// <inheritdoc/>
@@ -57,7 +63,18 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     /// <summary>
     /// Gets or sets the string to show when there are no items in the list.
     /// </summary>
-    public ReadOnlySeString? NoResultsString { get; set; }
+    public ReadOnlySeString? NoResultsString {
+        get;
+        set {
+            field = value;
+            if (value is { } stringValue) {
+                NoResultsTextNode.String = stringValue;
+            }
+            else {
+                NoResultsTextNode.String = string.Empty;
+            }
+        }
+    }
 
     /// <summary>
     /// Gets or sets the action to be invoked when an item is selected.
@@ -97,13 +114,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
                 RecalculateScroll();
             }
 
-            if (NoResultsString is { } warningString && value.Count is 0) {
-                NoResultsTextNode.String = warningString;
-                NoResultsTextNode.IsVisible = true;
-            }
-            else {
-                NoResultsTextNode.IsVisible = false;
-            }
+            NoResultsTextNodeContainer.IsVisible = !NoResultsTextNode.String.IsEmpty && value.Count is 0;
         }
     } = [];
 
@@ -204,10 +215,17 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         };
         ScrollBarNode.AttachNode(this);
 
+        NoResultsTextNodeContainer = new ResNode {
+            IsVisible = false,
+        };
+        NoResultsTextNodeContainer.AttachNode(this);
+
         NoResultsTextNode = new TextNode {
             AlignmentType = AlignmentType.Center,
+            TextId = 5494, // "No results found."
+            SheetType = NodeData.SheetType.Addon,
         };
-        NoResultsTextNode.AttachNode(this);
+        NoResultsTextNode.AttachNode(NoResultsTextNodeContainer);
 
         AddEvent(AtkEventType.MouseWheel, OnMouseWheel);
     }
@@ -218,7 +236,10 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         ScrollBarNode.Size = new Vector2(8.0f, Height);
         ScrollBarNode.Position = new Vector2(Width - 8.0f, 0.0f);
 
-        NoResultsTextNode.Size = new Vector2(Width - 8.0f, Height);
+        NoResultsTextNodeContainer.Size = new Vector2(Width - 8.0f, Height);
+        NoResultsTextNodeContainer.Position = Vector2.Zero;
+
+        NoResultsTextNode.Size = NoResultsTextNodeContainer.Size;
         NoResultsTextNode.Position = Vector2.Zero;
 
         var newNodeCount = (int)(Height / (itemHeight + ItemSpacing));
@@ -264,10 +285,12 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
                 var item = OptionsList[dataIndex];
                 node.ItemData = item;
                 node.IsVisible = true;
+                node.ShowClickableCursor = true;
                 node.IsSelected = SelectedItems.Any(selectedItem => GenericUtil.AreEqual(node.ItemData, selectedItem));
             }
             else {
                 node.IsVisible = false;
+                node.ShowClickableCursor = false;
             }
         }
     }
