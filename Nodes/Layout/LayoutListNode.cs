@@ -26,7 +26,7 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
     /// </summary>
     /// <typeparam name="T">The NodeType to search for.</typeparam>
     /// <returns>An IEnumerable of Nodes.</returns>
-    public IEnumerable<T> GetNodes<T>() where T : NodeBase => NodeList.AsReadOnly().OfType<T>();
+    public IEnumerable<T> GetNodes<T>() where T : NodeBase => NodeList.OfType<T>();
 
     /// <summary>
     /// Get a readonly list of the contained nodes.

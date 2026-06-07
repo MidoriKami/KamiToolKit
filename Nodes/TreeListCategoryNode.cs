@@ -57,9 +57,7 @@ public unsafe class TreeListCategoryNode : ResNode {
     /// <summary>
     /// Gets a readonly enumerable of all contained nodes of the specified type.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public IEnumerable<T> GetNodes<T>() where T : NodeBase => children.AsReadOnly().OfType<T>();
+    public IEnumerable<T> GetNodes<T>() where T : NodeBase => children.OfType<T>();
 
     /// <summary>
     /// Event that is called when the category is collapsed or uncollapsed.
