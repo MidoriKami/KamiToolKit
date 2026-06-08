@@ -13,7 +13,7 @@ namespace KamiToolKit;
 public static class KamiToolKitLibrary {
     private const string NodeDataShareKey = "TypeMappedCustomNodes";
 
-    internal static IDalamudPluginInterface? PluginInterface { get; private set; }
+    public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
 
     internal static ConcurrentDictionary<nint, Type>? AllocatedNodes;
 
