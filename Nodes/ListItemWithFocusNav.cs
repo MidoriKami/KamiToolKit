@@ -47,11 +47,13 @@ public abstract class ListItemWithFocusNav<T> : ListItemNode<T> {
         NavFocusNode.Position = new Vector2(2.0f, Height / 2.0f);
     }
 
-    public override void ProcessNav(int index, int up, int down) {
-        base.ProcessNav(index, up, down);
+    public override void ProcessNav(int index, int up, int down, int left, int right) {
+        base.ProcessNav(index, up, down, left, right);
 
         NavFocusNode.NavIndex = index;
         NavFocusNode.NavUp = up;
         NavFocusNode.NavDown = down;
+        NavFocusNode.NavLeft = left;
+        NavFocusNode.NavRight = right;
     }
 }

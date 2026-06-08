@@ -50,7 +50,7 @@ public abstract class ListItemNode<T> : SelectableNode {
     /// <summary>
     /// Processes building controller navigation.
     /// </summary>
-    public virtual void ProcessNav(int index, int up, int down) { }
+    public virtual void ProcessNav(int index, int up, int down, int left, int right) { }
 
     protected void DisableInteractions() {
         EnableSelection = false;

@@ -325,17 +325,19 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         }
 
         // Recalculate Controller Nav
-        UpwardsNavNode?.NavIndex = NavIndex;
-        UpwardsNavNode?.NavUp = NavUp;
-        UpwardsNavNode?.NavLeft = NavLeft;
-        UpwardsNavNode?.NavRight = NavRight;
-        UpwardsNavNode?.NavDown = NavIndex + 1;
+        if (NavIndex is not 0) {
+            UpwardsNavNode?.NavIndex = NavIndex;
+            UpwardsNavNode?.NavUp = NavUp;
+            UpwardsNavNode?.NavLeft = NavLeft;
+            UpwardsNavNode?.NavRight = NavRight;
+            UpwardsNavNode?.NavDown = NavIndex + 1;
 
-        DownwardsNavNode?.NavIndex = nodeList.Count * 4 + NavIndex + 1;
-        DownwardsNavNode?.NavUp = (nodeList.Count - 1 ) * 4 + NavIndex + 1;
-        DownwardsNavNode?.NavLeft = NavLeft;
-        DownwardsNavNode?.NavRight = NavRight;
-        DownwardsNavNode?.NavDown = NavDown;
+            DownwardsNavNode?.NavIndex = nodeList.Count * 4 + NavIndex + 1;
+            DownwardsNavNode?.NavUp = (nodeList.Count - 1 ) * 4 + NavIndex + 1;
+            DownwardsNavNode?.NavLeft = NavLeft;
+            DownwardsNavNode?.NavRight = NavRight;
+            DownwardsNavNode?.NavDown = NavDown;
+        }
 
         foreach (var index in Enumerable.Range(0, nodeList.Count)) {
             if (NavIndex is not 0) {
@@ -343,13 +345,13 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
 
                 // We'll allocate 4 nav slots per list item to do sub-nav via left/right.
                 if (index is 0) {
-                    node.ProcessNav(index * 4 + NavIndex + 1, NavIndex, (index + 1) * 4 + NavIndex + 1);
+                    node.ProcessNav(index * 4 + NavIndex + 1, NavIndex, (index + 1) * 4 + NavIndex + 1, NavLeft, NavRight);
                 }
                 else if (index == nodeCount - 1) {
-                    node.ProcessNav(index * 4 + NavIndex + 1, (index - 1) * 4 + NavIndex + 1, nodeList.Count * 4 + NavIndex + 1);
+                    node.ProcessNav(index * 4 + NavIndex + 1, (index - 1) * 4 + NavIndex + 1, nodeList.Count * 4 + NavIndex + 1, NavLeft, NavRight);
                 }
                 else {
-                    node.ProcessNav(index * 4 + NavIndex + 1, (index - 1) * 4 + NavIndex + 1, (index + 1) * 4 + NavIndex + 1);
+                    node.ProcessNav(index * 4 + NavIndex + 1, (index - 1) * 4 + NavIndex + 1, (index + 1) * 4 + NavIndex + 1, NavLeft, NavRight);
                 }
             }
         }
