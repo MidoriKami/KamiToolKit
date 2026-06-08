@@ -10,7 +10,7 @@ namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// Implementation of the games SliderNode and associated component.
-/// </summary> // todo: make a separate node for floating point numbers.
+/// </summary>
 public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldComponentDataSlider> {
 
     /// <summary>
@@ -166,6 +166,8 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         Component->OffsetL = 4;
 
         AddEvent(AtkEventType.SliderValueUpdate, ValueChangedHandler);
+
+        FocusNode = SliderForegroundButtonNode;
     }
 
     protected override void OnSizeChanged() {

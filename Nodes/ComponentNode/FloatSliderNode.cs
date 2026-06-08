@@ -122,6 +122,8 @@ public unsafe class FloatSliderNode : ComponentNode<AtkComponentSlider, AtkUldCo
         Component->OffsetL = 4;
 
         AddEvent(AtkEventType.SliderValueUpdate, ValueChangedHandler);
+
+        FocusNode = SliderForegroundButtonNode;
     }
 
     protected override void OnSizeChanged() {
