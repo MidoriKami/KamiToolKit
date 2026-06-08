@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using KamiToolKit.Internal.Classes;
+using Serilog;
 
 namespace KamiToolKit.BaseTypes;
 
@@ -66,7 +67,10 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
         isDisposed = true;
     }
 
-    ~NativeAddon() => Dispose();
+    ~NativeAddon() {
+        Log.Warning("{GetType} - Is disposing via GC... this is not good.", GetType());
+        Task.Run(DisposeAsync);
+    }
 
     internal static void WarnLeakedAddons() {
         foreach (var addon in CreatedAddons.ToArray()) {
