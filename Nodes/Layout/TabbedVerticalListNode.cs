@@ -43,6 +43,17 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         set => AddNode(value);
     }
 
+    /// <summary>
+    /// Special implementation for allowing initial tabbed node entries.
+    /// </summary>
+    public ICollection<TabbedListEntry> InitialTabbedNodes {
+        set {
+            foreach (var entry in value) {
+                AddNode(entry.TabIndex, entry.Node);
+            }
+        }
+    }
+
     // <inheritdoc/>
     public IEnumerable<T> GetNodes<T>() where T : NodeBase
         => Nodes.OfType<T>();
