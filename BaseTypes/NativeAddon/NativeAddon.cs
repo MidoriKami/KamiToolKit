@@ -87,7 +87,7 @@ public unsafe partial class NativeAddon {
 
         UpdateFlags();
 
-        disposeHandle = GCHandle.Alloc(this);
+        disposeHandle = new PinnedGCHandle<NativeAddon>(this);
 
         var localRef = InternalAddon;
         using var nameString = new Utf8String(InternalName);
@@ -130,5 +130,5 @@ public unsafe partial class NativeAddon {
         }
     }
 
-    private GCHandle? disposeHandle;
+    private PinnedGCHandle<NativeAddon>? disposeHandle;
 }

@@ -157,7 +157,7 @@ public unsafe partial class NativeAddon {
 
         if ((flags & 1) == 1) {
             InternalAddon = null;
-            disposeHandle?.Free();
+            disposeHandle?.Dispose();
             disposeHandle = null;
             CreatedAddons.Remove(this);
 
