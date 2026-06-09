@@ -244,7 +244,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         OptionListNode.AttachNode(this);
 
         DropDownFocusCollisionNode = new CollisionNode();
-        DropDownFocusCollisionNode.AttachNode(OptionListNode, NodePosition.AfterTarget); // todo make sure I didn't break this
+        DropDownFocusCollisionNode.AttachNode(OptionListNode, NodePosition.AfterTarget);
 
         DropDownFocusCollisionNode.AddEvent(AtkEventType.MouseDown, () => Toggle());
         DropDownFocusCollisionNode.AddEvent(AtkEventType.MouseWheel, () => Toggle());
