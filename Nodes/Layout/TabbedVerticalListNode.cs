@@ -49,7 +49,15 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     public ICollection<TabbedListEntry> InitialTabbedNodes {
         set {
             foreach (var entry in value) {
-                AddNode(entry.TabIndex, entry.Node);
+                if (entry.Node is { } singleNode) {
+                    AddNode(entry.TabIndex, singleNode);
+                }
+
+                if (entry.Nodes.Count is not 0) {
+                    foreach (var node in entry.Nodes) {
+                        AddNode(entry.TabIndex, node);
+                    }
+                }
             }
         }
     }
