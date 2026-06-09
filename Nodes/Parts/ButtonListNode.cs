@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
@@ -63,6 +64,11 @@ public abstract unsafe class ButtonListNode<T> : ButtonListNode {
             RebuildNodeList();
         }
     } = 5;
+
+    /// <summary>
+    /// Gets or sets whether this node should resize its height to fix the <see cref="MaxButtons"/> property.
+    /// </summary>
+    public bool AutoResizeHeight { get; set; }
 
     /// <summary>
     /// Shows this node.
@@ -207,7 +213,12 @@ public abstract unsafe class ButtonListNode<T> : ButtonListNode {
             ScrollingListNode.ContentNode.AddNode(newButton);
         }
 
-        ScrollingListNode.RecalculateSizes();
+        if (AutoResizeHeight) {
+            Height = ScrollingListNode.ContentNode.Nodes.Sum(nodes => nodes.Height) + 24.0f;
+        }
+        else {
+            ScrollingListNode.RecalculateSizes();
+        }
     }
 
     private void BuildTimelines() {

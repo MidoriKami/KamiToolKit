@@ -177,7 +177,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
             MoveListOnScreen();
 
             DropDownFocusCollisionNode.IsVisible = true;
-            DropDownFocusCollisionNode.Position = -OptionListNode.Position;
+            DropDownFocusCollisionNode.Position = -(ScreenPosition - ParentAddon->Position) / ParentAddon->Scale;
             DropDownFocusCollisionNode.Size = ParentAddon->RootSize;
 
             OptionListNode.ReattachNode(ParentAddon->RootNode);
@@ -201,6 +201,12 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
         OnCollapseToggled?.Invoke(IsCollapsed);
     }
+
+    /// <summary>
+    /// Function that is called to trigger a update of the displayed label
+    /// when something is selected or the placeholder needs to be shown.
+    /// </summary>
+    protected abstract void UpdateLabel(TU? option);
 
     protected DropDownNode() {
         BackgroundNode = new SimpleNineGridNode {
@@ -240,6 +246,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
             Position = new Vector2(4.0f, 21.0f),
             Size = new Vector2(242.0f, 243.0f),
             IsVisible = false,
+            AutoResizeHeight = true,
         };
         OptionListNode.AttachNode(this);
 
@@ -272,7 +279,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         OptionListNode.Position = new Vector2(4.0f, Height - 3.0f);
     }
 
-    protected abstract void UpdateLabel(TU? option);
 
     private void MoveListOnScreen() {
         if (ParentAddon is null) return;
