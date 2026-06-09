@@ -94,6 +94,10 @@ public unsafe partial class NativeAddon {
         originalVirtualTable->OnSetup(addon, valueCount, values);
 
         OnSetup(addon, new Span<AtkValue>(values, (int)valueCount));
+
+        // Initialize all TextId fields that were attached in OnSetup
+        addon->UldManager.SetupTextRecursive();
+
         isSetup = true;
     }
 
