@@ -305,28 +305,19 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
         InitializeComponentEvents();
 
-        CollisionNode.AddEvent(AtkEventType.FocusStart, () => {
-            PlaceholderTextNode.IsVisible = false;
-            OnFocused?.Invoke();
+        CollisionNode.AddEvent(AtkEventType.FocusStart, OnInputFocusStarted);
+        CollisionNode.AddEvent(AtkEventType.FocusStop, OnInputFocusEnded);
+    }
 
-            if (AutoSelectAll && Component->EvaluatedString.Length > 0) {
-                Services.Framework.RunOnTick(() => {
-                    var keyModifiers = new AtkTextInput.KeyModifiers {
-                        IsControlDown = true,
-                    };
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
 
-                    AtkStage.Instance()->AtkInputManager->TextInput->ProcessKeyShortcut(SeVirtualKey.A, &keyModifiers);
-                }, delayTicks: 1);
-            }
-        });
-
-        CollisionNode.AddEvent(AtkEventType.FocusStop, () => {
-            OnUnfocused?.Invoke();
-            if (!PlaceholderString.IsNullOrEmpty() && String.IsEmpty) {
-                PlaceholderTextNode.IsVisible = true;
-                PlaceholderTextNode.String = PlaceholderString;
-            }
-        });
+        BackgroundNode.Size = Size;
+        FocusBorderNode.Size = Size;
+        PlaceholderTextNode.Size = Size - new Vector2(0.0f, 2.0f);
+        PlaceholderTextNode.Position = new Vector2(8.0f, 2.0f);
+        TextLimitsNode.Size = new Vector2(Width + 18.0f, Height - 9.0f);
+        CurrentTextNode.Size = new Vector2(Width - 20.0f, Height - 10.0f);
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
@@ -371,20 +362,37 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
+    private void OnInputFocusStarted() {
+        PlaceholderTextNode.IsVisible = false;
+        OnFocused?.Invoke();
+
+        if (AutoSelectAll && Component->EvaluatedString.Length > 0) {
+            Services.Framework.RunOnTick(() => {
+                var keyModifiers = new AtkTextInput.KeyModifiers {
+                    IsControlDown = true,
+                };
+
+                AtkStage.Instance()->AtkInputManager->TextInput->ProcessKeyShortcut(SeVirtualKey.A, &keyModifiers);
+            }, delayTicks: 1);
+        }
+    }
+
+    private void OnInputFocusEnded() {
+        OnUnfocused?.Invoke();
+
+        if (!PlaceholderString.IsNullOrEmpty() && String.IsEmpty) {
+            PlaceholderTextNode.IsVisible = true;
+            PlaceholderTextNode.String = PlaceholderString;
+        }
+
+        if (PlaceholderStringId is not 0 & String.IsEmpty) {
+            PlaceholderTextNode.IsVisible = true;
+        }
+    }
+
     private void UpdatePlaceholderVisibility() {
         PlaceholderTextNode.String = PlaceholderString ?? string.Empty;
         PlaceholderTextNode.IsVisible = String.IsEmpty && !PlaceholderString.IsNullOrEmpty();
-    }
-
-    protected override void OnSizeChanged() {
-        base.OnSizeChanged();
-
-        BackgroundNode.Size = Size;
-        FocusBorderNode.Size = Size;
-        PlaceholderTextNode.Size = Size - new Vector2(0.0f, 2.0f);
-        PlaceholderTextNode.Position = new Vector2(8.0f, 2.0f);
-        TextLimitsNode.Size = new Vector2(Width + 18.0f, Height - 9.0f);
-        CurrentTextNode.Size = new Vector2(Width - 20.0f, Height - 10.0f);
     }
 
     private void LoadTimelines() {
