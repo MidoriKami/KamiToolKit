@@ -115,6 +115,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
             }
 
             NoResultsTextNodeContainer.IsVisible = value.Count is 0;
+            ResetScroll();
         }
     } = [];
 
