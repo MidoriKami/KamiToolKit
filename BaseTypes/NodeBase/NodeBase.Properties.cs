@@ -74,7 +74,9 @@ public abstract unsafe partial class NodeBase {
         get => ResNode->GetWidth();
         set {
             ResNode->SetWidth((ushort)value);
-            OnSizeChanged();
+            if (value >= 0) {
+                OnSizeChanged();
+            }
         }
     }
 
@@ -88,7 +90,10 @@ public abstract unsafe partial class NodeBase {
         get => ResNode->GetHeight();
         set {
             ResNode->SetHeight((ushort)value);
-            OnSizeChanged();
+
+            if (value >= 0) {
+                OnSizeChanged();
+            }
         }
     }
 
@@ -103,7 +108,10 @@ public abstract unsafe partial class NodeBase {
         set {
             ResNode->SetWidth((ushort)value.X);
             ResNode->SetHeight((ushort)value.Y);
-            OnSizeChanged();
+
+            if (value is { X: >= 0, Y: >= 0}) {
+                OnSizeChanged();
+            }
         }
     }
 
@@ -410,7 +418,7 @@ public abstract unsafe partial class NodeBase {
     /// <summary>
     /// Overridable function that is called whenever this node's size is changed.
     /// </summary>
-    protected virtual void OnSizeChanged() { }
+    protected virtual void OnSizeChanged() {}
 
     private Action<bool>? OnVisibilityToggled { get; set; }
 
