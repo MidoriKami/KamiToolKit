@@ -2,8 +2,18 @@
 
 namespace KamiToolKit.Extensions;
 
+/// <summary>
+/// Extension methods for AtkImageNode.
+/// </summary>
 public static unsafe class AtkImageNodeExtensions {
     extension(ref AtkImageNode node) {
+
+        /// <summary>
+        /// Gets the currently used IconId for this node.
+        /// </summary>
+        /// <remarks>
+        /// Zero if unset or invalid.
+        /// </remarks>
         public uint IconId => node.GetIconId();
 
         private uint GetIconId() {

@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// Managed adaptor for native data. Not intended for external use.
+/// </summary>
 public unsafe class TimelineLabelSetArray : IDisposable {
 
     internal AtkTimelineLabelSet* InternalLabelSetArray = null;

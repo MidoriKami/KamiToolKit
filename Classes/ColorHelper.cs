@@ -3,7 +3,16 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Classes;
 
+/// <summary>
+/// Helper class for getting the current themed color from the AtkUIColorHolder.
+/// </summary>
 public static unsafe class ColorHelper {
+
+    /// <summary>
+    /// Gets a color by UIColorId
+    /// </summary>
+    /// <param name="colorId">The UIColor Row Id.</param>
+    /// <returns>Vector4 RGBA color.</returns>
     public static Vector4 GetColor(uint colorId)
         => ConvertToVector4(AtkStage.Instance()->AtkUIColorHolder->GetColor(true, colorId));
 

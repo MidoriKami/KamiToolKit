@@ -4,7 +4,8 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using InteropGenerator.Runtime;
-using KamiToolKit.Dalamud;
+using KamiToolKit.BaseTypes;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Controllers;
 
@@ -13,11 +14,11 @@ namespace KamiToolKit.Controllers;
 /// to fully replace a built-in game addon with a custom <see cref="NativeAddon"/>.
 /// </summary>
 public class AddonFactoryController : IDisposable {
-    public required string AddonName { get; init; }
 
-    private nint? originalFactoryCreateAddress;
-    private RaptureAtkModule.AddonFactoryInfo.CreateDelegate? pinnedFactoryCreateMethod;
-    private NativeAddon? nativeAddon;
+    /// <summary>
+    /// Addon name to bind to.
+    /// </summary>
+    public required string AddonName { get; init; }
 
     /// <summary>
     /// Function to allocate the <see cref="NativeAddon"/> that will replace the named addon.
@@ -30,6 +31,9 @@ public class AddonFactoryController : IDisposable {
     /// <summary>
     /// Enables the addon factory replacement.
     /// </summary>
+    /// <remarks>
+    /// Must be invoked from the main game thread.
+    /// </remarks>
     public unsafe void Enable() {
         ThreadSafety.AssertMainThread();
 
@@ -44,6 +48,9 @@ public class AddonFactoryController : IDisposable {
     /// <summary>
     /// Disables addon factory replacement and disposes any open replaced addons.
     /// </summary>
+    /// <remarks>
+    /// Must be invoked from the main game thread.
+    /// </remarks>
     public unsafe void Disable() {
         ThreadSafety.AssertMainThread();
 
@@ -65,9 +72,15 @@ public class AddonFactoryController : IDisposable {
         originalFactoryCreateAddress = null;
     }
 
+    public void Dispose()
+        => Disable();
+
     private unsafe AtkUnitBase* CreateCustomAddon(RaptureAtkModule* raptureAtkModule, CStringPointer addonName, uint valueCount, AtkValue* values) {
         try {
+
+            // We have no reasonable way to reuse the current instance, so dispose the previous and make a new one.
             nativeAddon?.Dispose();
+
             nativeAddon = CreateNativeAddonFunction();
             nativeAddon.InitializeForAddonFactory(valueCount, values);
 
@@ -80,6 +93,7 @@ public class AddonFactoryController : IDisposable {
         return null;
     }
 
-    public void Dispose()
-        => Disable();
+    private nint? originalFactoryCreateAddress;
+    private RaptureAtkModule.AddonFactoryInfo.CreateDelegate? pinnedFactoryCreateMethod;
+    private NativeAddon? nativeAddon;
 }

@@ -1,33 +1,23 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
-using KamiToolKit.Classes;
-using KamiToolKit.Dalamud;
+using KamiToolKit.BaseTypes;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Extensions;
 
+/// <summary>
+/// Extension methods for AtkUldManager's.
+/// </summary>
 public static unsafe class AtkUldManagerExtensions {
     extension(ref AtkUldManager manager) {
-        private bool IsNodeInObjectList(AtkResNode* node) {
-            foreach (var objectNode in manager.ObjectNodeSpan) {
-                if (objectNode.Value == node) return true;
-            }
-
-            return false;
-        }
-
-        public bool IsNodeInDrawList(AtkResNode* node) {
-            foreach (var drawNode in manager.Nodes) {
-                if (drawNode.Value == node) return true;
-            }
-
-            return false;
-        }
 
         /// <summary>
         /// Adds node and all children nodes to this UldManager's Object List
         /// </summary>
+        [OverloadResolutionPriority(1)]
         public void AddNodeToObjectList(NodeBase node) {
             if (!manager.ResourceFlags.HasFlag(AtkUldManagerResourceFlag.Initialized)) return;
 
@@ -40,6 +30,10 @@ public static unsafe class AtkUldManagerExtensions {
             manager.UpdateDrawNodeList();
         }
 
+        /// <summary>
+        /// Adds just this node to the UldManagers Object List.
+        /// </summary>
+        [OverloadResolutionPriority(0)]
         public void AddNodeToObjectList(AtkResNode* newNode) {
             if (!manager.ResourceFlags.HasFlag(AtkUldManagerResourceFlag.Initialized)) return;
             if (newNode is null) return;
@@ -71,6 +65,9 @@ public static unsafe class AtkUldManagerExtensions {
             manager.UpdateDrawNodeList();
         }
 
+        /// <summary>
+        /// Removes just this node from the UldManagers Object List.
+        /// </summary>
         public void RemoveNodeFromObjectList(AtkResNode* node) {
             if (!manager.ResourceFlags.HasFlag(AtkUldManagerResourceFlag.Initialized)) return;
             if (node is null) return;
@@ -95,6 +92,9 @@ public static unsafe class AtkUldManagerExtensions {
             manager.Objects->NodeCount = newSize;
         }
 
+        /// <summary>
+        /// Debug helper for printing a UldManagers entire object list.
+        /// </summary>
         public void PrintObjectList() {
             Services.Log.Debug("Beginning NodeList");
 
@@ -104,20 +104,9 @@ public static unsafe class AtkUldManagerExtensions {
             }
         }
 
-        public uint GetMaxNodeId() {
-            uint max = 1;
-            foreach (var child in manager.Nodes) {
-                if (child.Value is null) continue;
-
-                max = Math.Max(child.Value->NodeId, max);
-            }
-
-            return max;
-        }
-
-        public Span<Pointer<AtkResNode>> ObjectNodeSpan
-            => new(manager.Objects->NodeList, manager.Objects->NodeCount);
-
+        /// <summary>
+        /// Helper to search for a node by id, helpful for AtkLists as the GetNodeById doesn't return duplicated nodes.
+        /// </summary>
         public T* SearchNodeById<T>(uint nodeId) where T : unmanaged {
             foreach (var node in manager.Nodes) {
                 if (node.Value is not null) {
@@ -129,7 +118,21 @@ public static unsafe class AtkUldManagerExtensions {
             return null;
         }
 
+        /// <summary>
+        /// Default typed SearchNodeById helper.
+        /// </summary>
         public AtkResNode* SearchNodeById(uint nodeId)
             => manager.SearchNodeById<AtkResNode>(nodeId);
+
+        private bool IsNodeInObjectList(AtkResNode* node) {
+            foreach (var objectNode in manager.ObjectNodeSpan) {
+                if (objectNode.Value == node) return true;
+            }
+
+            return false;
+        }
+
+        private Span<Pointer<AtkResNode>> ObjectNodeSpan
+            => new(manager.Objects->NodeList, manager.Objects->NodeCount);
     }
 }

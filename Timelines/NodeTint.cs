@@ -4,11 +4,17 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// Conversion class used to convert between a managed object and <see cref="AtkTimelineNodeTint"/>
+/// </summary>
+/// <remarks>
+/// There's some nonsense with how the conversion has to happen that this just solves.
+/// </remarks>
 public class NodeTint {
 
-    public Vector3 AddColor;
+    public Vector3 AddColor { get; set; }
 
-    public Vector3 MultiplyColor;
+    public Vector3 MultiplyColor { get; set; }
 
     public static implicit operator AtkTimelineNodeTint(NodeTint tint) => new() {
         MultiplyRGB = new ByteColor {

@@ -1,0 +1,140 @@
+﻿using System;
+using System.Numerics;
+using Dalamud.Interface;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
+using KamiToolKit.Internal.Classes;
+
+namespace KamiToolKit.Nodes;
+
+/// <summary>
+/// A custom component node representing an alpha slider.
+/// </summary>
+public unsafe class AlphaBarNode : ResNode {
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ImGuiImageNode AlphaBarBackgroundNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ImGuiImageNode AlphaBarGradientNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ImGuiImageNode AlphaBarSelectorNode { get; }
+
+    /// <summary>
+    /// Action to be invoked when the alpha value is changed. Provides the new value.
+    /// </summary>
+    /// <remarks>
+    /// Alpha value is in the range of 0.0f to 1.0f.
+    /// </remarks>
+    public Action<float>? OnAlphaChanged { get; init; }
+
+    /// <inheritdoc/>
+    public override Vector4 Color {
+        get => AlphaBarGradientNode.Color;
+        set {
+            AlphaBarGradientNode.MultiplyColor = value.AsVector3();
+            AlphaBarSelectorNode.Y = Height - Height * value.W - 5.0f;
+        }
+    }
+
+    /// <inheritdoc/>
+    public override ColorHelpers.HsvaColor ColorHsva {
+        get => AlphaBarGradientNode.MultiplyColorHsva;
+        set {
+            AlphaBarGradientNode.MultiplyColorHsva = value with { A = 1.0f };
+            AlphaBarSelectorNode.Y = Height - Height * value.A - 5.0f;
+        }
+    }
+
+    public AlphaBarNode() {
+        alphaEventListener = new ViewportEventListener(AlphaSliderEvent);
+
+        AlphaBarBackgroundNode = new AlphaImageNode();
+        AlphaBarBackgroundNode.AttachNode(this);
+
+        AlphaBarGradientNode = new ImGuiImageNode {
+            TexturePath = Services.GetAssetPath("VerticalGradient_WhiteToAlpha.png"),
+            FitTexture = true,
+        };
+        AlphaBarGradientNode.AttachNode(this);
+        AlphaBarGradientNode.AddEvent(AtkEventType.MouseDown, OnAlphaBarMouseDown);
+
+        AlphaBarSelectorNode = new ImGuiImageNode {
+            TexturePath = Services.GetAssetPath("alpha_selector.png"),
+            FitTexture = true,
+        };
+        AlphaBarSelectorNode.AttachNode(this);
+        AlphaBarSelectorNode.AddEvent(AtkEventType.MouseDown, OnAlphaBarMouseDown);
+    }
+
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
+
+        AlphaBarBackgroundNode.Size = Size;
+        AlphaBarGradientNode.Size = Size;
+
+        AlphaBarSelectorNode.Size = new Vector2(Width + 4.0f, 10.0f);
+        AlphaBarSelectorNode.Position = new Vector2(-2.0f, 0.0f);
+    }
+
+    protected override void Dispose(bool disposing, bool isNativeDestructor) {
+        if (disposing) {
+            base.Dispose(disposing, isNativeDestructor);
+
+            alphaEventListener.Dispose();
+        }
+    }
+
+    private void OnAlphaBarMouseDown() {
+        if (!isAlphaDragging) {
+            alphaEventListener.AddEvent(AtkEventType.MouseMove, AlphaBarGradientNode);
+            alphaEventListener.AddEvent(AtkEventType.MouseUp, AlphaBarGradientNode);
+            isAlphaDragging = true;
+        }
+    }
+
+    private void AlphaSliderEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        switch (eventType) {
+            case AtkEventType.MouseUp:
+                alphaEventListener.RemoveEvent(AtkEventType.MouseMove);
+                alphaEventListener.RemoveEvent(AtkEventType.MouseUp);
+                isAlphaDragging = false;
+                break;
+
+            case AtkEventType.MouseMove: {
+                var mousePosition = new Vector2(atkEventData->MouseData.PosX, atkEventData->MouseData.PosY);
+                var scale = ParentAddon is not null ? ParentAddon->Scale : 1.0f;
+                var scaledHeight = AlphaBarGradientNode.Height * scale;
+                var minY = AlphaBarGradientNode.ScreenY;
+                var maxY = AlphaBarGradientNode.ScreenY + scaledHeight;
+
+                if (mousePosition.Y >= minY && mousePosition.Y <= maxY) {
+                    var alphaRatio = 1.0f - (mousePosition.Y - AlphaBarGradientNode.ScreenY) / scaledHeight;
+
+                    AlphaBarSelectorNode.Y = Height - Height * alphaRatio - 5.0f;
+                    OnAlphaChanged?.Invoke(alphaRatio);
+                }
+                else if (mousePosition.Y < minY) {
+                    AlphaBarSelectorNode.Y = -4.0f;
+                    OnAlphaChanged?.Invoke(1.0f);
+                }
+                else if (mousePosition.Y > maxY) {
+                    AlphaBarSelectorNode.Y = Height - 4.0f;
+                    OnAlphaChanged?.Invoke(0.0f);
+                }
+
+                break;
+            }
+        }
+    }
+
+    private readonly ViewportEventListener alphaEventListener;
+    private bool isAlphaDragging;
+}

@@ -1,10 +1,17 @@
 ﻿using System.Linq;
+using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Enums;
 
 namespace KamiToolKit.Nodes;
 
 public class HorizontalListNode : LayoutListNode {
 
+    /// <summary>
+    /// Gets or sets the alignment used when calculating layout.
+    /// </summary>
+    /// <remarks>
+    /// Setting triggers layout recalculation.
+    /// </remarks>
     public HorizontalListAnchor Alignment {
         get;
         set {
@@ -13,6 +20,7 @@ public class HorizontalListNode : LayoutListNode {
         }
     }
 
+    /// <inheritdoc/>
     public override float Width {
         get => base.Width;
         set {
@@ -30,6 +38,22 @@ public class HorizontalListNode : LayoutListNode {
     /// Resizes the horizontal list node to fit all contents
     /// </summary>
     public bool FitToContentHeight { get; set; }
+
+    /// <summary>
+    /// Gets the amount of space remaining in this node.
+    /// </summary>
+    public float AreaRemaining
+        => Width - NodeList.Sum(node => node.Width + ItemSpacing) - ItemSpacing;
+
+    /// <summary>
+    /// Gets or sets the up nav index.
+    /// </summary>
+    public int NavUp { get; set; }
+
+    /// <summary>
+    /// Gets or sets the down nav index.
+    /// </summary>
+    public int NavDown { get; set; }
 
     protected override void OnRecalculateLayout() {
         var startX = Alignment switch {
@@ -62,5 +86,34 @@ public class HorizontalListNode : LayoutListNode {
         }
     }
 
-    public float AreaRemaining => Width - NodeList.Sum(node => node.Width + ItemSpacing) - ItemSpacing;
+    protected override void OnRecalculateNavigation() {
+        var componentNodes = NodeList.OfType<ComponentNode>().ToList();
+        if (componentNodes.Count is 0) return;
+
+        if (Alignment is HorizontalListAnchor.Right) {
+            componentNodes = componentNodes.AsEnumerable().Reverse().ToList();
+        }
+
+        foreach (var (index, node) in componentNodes.Index()) {
+            node.NavIndex = index + NavIndex;
+            node.NavUp = NavUp;
+            node.NavDown = NavDown;
+
+            // First Element
+            if (index is 0) {
+                node.NavLeft = componentNodes.Count - 1 + NavIndex;
+            }
+            else {
+                node.NavLeft = index - 1 + NavIndex;
+            }
+
+            // Last Element
+            if (index == componentNodes.Count - 1) {
+                node.NavRight = NavIndex;
+            }
+            else {
+                node.NavRight = index + 1 + NavIndex;
+            }
+        }
+    }
 }

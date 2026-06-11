@@ -6,7 +6,9 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Dalamud;
+using KamiToolKit.Interfaces;
+using KamiToolKit.Internal.Classes;
+using KamiToolKit.UiOverlay;
 
 namespace KamiToolKit.Controllers;
 
@@ -19,6 +21,10 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
     private readonly HashSet<string> trackedAddons = [];
     private bool isEnabled;
 
+    /// <summary>
+    /// Addon names to bind to.
+    /// </summary>
+    /// <exception cref="Exception">Throws when attempting to attach to NamePlate, use <see cref="OverlayController"/> instead.</exception>
     public required List<string> AddonNames {
         init {
             if (value.Any(name => name is "NamePlate")) {
@@ -31,6 +37,25 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
         }
     }
 
+    /// <inheritdoc/>>
+    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnSetup { get; init; }
+
+    /// <inheritdoc/>>
+    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnFinalize { get; init; }
+
+    /// <inheritdoc/>>
+    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnPreRefresh { get; init; }
+
+    /// <inheritdoc/>>
+    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnRefresh { get; init; }
+
+    /// <inheritdoc/>>
+    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnUpdate { get; init; }
+
+    /// <inheritdoc/>>
+    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnPreUpdate { get; init; }
+
+    /// <inheritdoc/>>
     public void Enable() {
         foreach (var name in trackedAddons) {
             AddListeners(name);
@@ -39,6 +64,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
         isEnabled = true;
     }
 
+    /// <inheritdoc/>>
     public void Disable() {
         isEnabled = false;
 
@@ -47,6 +73,9 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
         }
     }
 
+    /// <summary>
+    /// Adds an addon to the tracked addons list.
+    /// </summary>
     public void AddAddon(string name) {
         if (name is "NamePlate") {
             Services.Log.Error("Attaching to NamePlate is not supported. Use OverlayController instead.");
@@ -60,12 +89,21 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
         }
     }
 
+    /// <summary>
+    /// Removes an addon from the tracked addons list.
+    /// </summary>
+    /// <param name="name"></param>
     public void RemoveAddon(string name) {
         trackedAddons.Remove(name);
 
         if (isEnabled) {
             RemoveListeners(name);
         }
+    }
+
+    public void Dispose() {
+        Services.AddonLifecycle.UnregisterListener(OnAddonEvent);
+        Disable();
     }
 
     private void OnAddonEvent(AddonEvent type, AddonArgs args) {
@@ -133,16 +171,4 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
             OnFinalize?.Invoke(addon);
         }
     }
-
-    public void Dispose() {
-        Services.AddonLifecycle.UnregisterListener(OnAddonEvent);
-        Disable();
-    }
-
-    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnSetup { get; init; }
-    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnFinalize { get; init; }
-    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnPreRefresh { get; init; }
-    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnRefresh { get; init; }
-    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnUpdate { get; init; }
-    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnPreUpdate { get; init; }
 }

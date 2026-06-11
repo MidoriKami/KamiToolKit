@@ -5,11 +5,19 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// A sub part in the <see cref="TimelineBuilder"/> system.
+/// This specific builder will build framesets, these are sets of keyframe animations or sets of animation labels.
+/// </summary>
+/// <remarks>
+/// A single node can have both labels and keyframes, however, the labels will only control children animations.
+/// Animations can only be run and defined by parent nodes, it's not possible to self contain everything you need to animation.
+/// </remarks>
 public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFrameId) {
 
-    private readonly List<TimelineKeyFrame> animationKeyFrames = [];
-    private readonly List<TimelineKeyFrame> labelKeyFrames = [];
-
+    /// <summary>
+    /// Adds a prebuilt set of keyframes to this builder.
+    /// </summary>
     public FrameSetBuilder AddFrame(params TimelineKeyFrame[] keyFrame) {
         foreach (var frame in keyFrame) {
 
@@ -35,6 +43,9 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
         return this;
     }
 
+    /// <summary>
+    /// Adds an empty keyframe.
+    /// </summary>
     public FrameSetBuilder AddEmptyFrame(int frameId) {
         animationKeyFrames.Add(new TimelineAnimationKeyFrame {
             FrameIndex = frameId, GroupType = AtkTimelineKeyGroupType.None,
@@ -43,6 +54,21 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
         return this;
     }
 
+    /// <summary>
+    /// Adds a keyframe with the specified properties.
+    /// </summary>
+    /// <param name="frameId">Frame index</param>
+    /// <param name="position">Position Offset from nodes original position.</param>
+    /// <param name="alpha">Transparency, range from 0 to 255, if 0 the node will not be visible.</param>
+    /// <param name="addColor">RGB Color to add, range from 0 to 255</param>
+    /// <param name="multiplyColor">RGB Multiply color, range from 0 to 100, 0 will make the node fully black.</param>
+    /// <param name="rotation">Rotation in radians.</param>
+    /// <param name="scale">Scale</param>
+    /// <param name="textColor">Text Color</param>
+    /// <param name="textOutlineColor">Outline Color</param>
+    /// <param name="partId">PartId, this is smoothly transitioned to change which part an image node shows over time.</param>
+    /// <param name="interpolation">What kind of interpolation to use.</param>
+    /// <param name="rotationDegrees">Rotation in degrees.</param>
     public FrameSetBuilder AddFrame(
         int frameId, Vector2? position = null, byte? alpha = null, Vector3? addColor = null, Vector3? multiplyColor = null,
         float? rotation = null, Vector2? scale = null, Vector3? textColor = null, Vector3? textOutlineColor = null, uint? partId = null, AtkTimelineInterpolation? interpolation = null,
@@ -104,6 +130,12 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
         return this;
     }
 
+    /// <summary>
+    /// Adds an animation label
+    /// </summary>
+    /// <remarks>
+    /// Labels define ranges of keyframes and their behavior when at the end of the range.
+    /// </remarks>
     public FrameSetBuilder AddLabel(int frameId, int labelId, AtkTimelineJumpBehavior jumpBehavior, int labelTarget) {
         labelKeyFrames.Add(new TimelineLabelSetKeyFrame {
             FrameIndex = frameId,
@@ -116,6 +148,9 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
         return this;
     }
 
+    /// <summary>
+    /// Adds a standardized label pair that will run to completion and stop when played.
+    /// </summary>
     public FrameSetBuilder AddLabelPair(int frameStart, int frameStop, int labelId) {
         labelKeyFrames.Add(new TimelineLabelSetKeyFrame {
             FrameIndex = frameStart,
@@ -135,9 +170,16 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
         return this;
     }
 
+    /// <summary>
+    /// Begins am individual keyframe builder.
+    /// </summary>
     public KeyFrameBuilder BeginFrameBuilder(int frame)
         => new(this, frame);
 
+    /// <summary>
+    /// Ends this frame sets building, and populates the parents labels and keyframes.
+    /// </summary>
+    /// <returns></returns>
     public TimelineBuilder EndFrameSet() {
         if (labelKeyFrames.Count != 0) {
             parent.LabelSets.Add(new TimelineLabelSet {
@@ -153,4 +195,7 @@ public class FrameSetBuilder(TimelineBuilder parent, int startFrameId, int endFr
 
         return parent;
     }
+
+    private readonly List<TimelineKeyFrame> animationKeyFrames = [];
+    private readonly List<TimelineKeyFrame> labelKeyFrames = [];
 }

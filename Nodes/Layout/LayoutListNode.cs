@@ -3,19 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.BaseTypes;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
-public abstract class LayoutListNode : SimpleComponentNode {
+/// <summary>
+/// Abstract base class for nodes that are intended to help with laying out other nodes.
+/// </summary>
+public abstract class LayoutListNode : ResNode, ILayoutListNode {
 
-    protected readonly List<NodeBase> NodeList = [];
-    private bool suppressRecalculateLayout;
+    /// <summary>
+    /// Nav index for use with setting contained nodes controller nav values.
+    /// </summary>
+    /// <remarks>
+    /// Must be non-zero to apply nav to contained nodes.
+    /// </remarks>
+    public int NavIndex { get; set; }
 
+    /// <summary>
+    /// Get a readonly enumerable of the contained nodes of the specified type.
+    /// </summary>
+    /// <typeparam name="T">The NodeType to search for.</typeparam>
+    /// <returns>An IEnumerable of Nodes.</returns>
     public IEnumerable<T> GetNodes<T>() where T : NodeBase => NodeList.OfType<T>();
 
+    /// <summary>
+    /// Get a readonly list of the contained nodes.
+    /// </summary>
     public IReadOnlyList<NodeBase> Nodes => NodeList;
 
+    /// <summary>
+    /// When true, will clip the nodes contents, preventing any contained nodes
+    /// outside the area of this node from being visible.
+    /// </summary>
+    /// <remarks>
+    /// If a node is being partially clipped, it will be un-interactable.
+    /// </remarks>
     public bool ClipListContents {
         get => NodeFlags.HasFlag(NodeFlags.Clip);
         set {
@@ -28,14 +52,27 @@ public abstract class LayoutListNode : SimpleComponentNode {
         }
     }
 
+    /// <summary>
+    /// Spacing between items, does not apply to the first item.
+    /// </summary>
     public float ItemSpacing { get; set; }
 
+    /// <summary>
+    /// Spacing to apply before the first item.
+    /// </summary>
     public float FirstItemSpacing { get; set; }
 
+    /// <summary>
+    /// Recalculates the contained layout, and controller navigation values if applicable.
+    /// </summary>
     public void RecalculateLayout() {
         if (suppressRecalculateLayout) return;
 
         OnRecalculateLayout();
+
+        if (NavIndex is not 0) {
+            OnRecalculateNavigation();
+        }
 
         foreach (var node in NodeList) {
             if (node is LayoutListNode subNode) {
@@ -44,15 +81,19 @@ public abstract class LayoutListNode : SimpleComponentNode {
         }
     }
 
-    protected abstract void OnRecalculateLayout();
-
-    protected virtual void AdjustNode(NodeBase node) { }
-
+    /// <summary>
+    /// An init only collection of nodes, to add a predefined amount of nodes to the list.
+    /// This is the preferred way of adding nodes.
+    /// </summary>
     public ICollection<NodeBase> InitialNodes {
-        init => AddNode(value);
+        set => AddNode(value);
     }
 
-    public void AddNode(IEnumerable<NodeBase> nodes) {
+    /// <summary>
+    /// Adds multiple nodes to the list. Added nodes are considered to be owned by the list.
+    /// </summary>
+    /// <param name="nodes">The nodes to add.</param>
+    public virtual void AddNode(IEnumerable<NodeBase> nodes) {
         suppressRecalculateLayout = true;
         try {
             foreach (var node in nodes) {
@@ -64,6 +105,13 @@ public abstract class LayoutListNode : SimpleComponentNode {
         RecalculateLayout();
     }
 
+    /// <summary>
+    /// Adds a single node to the list.
+    /// </summary>
+    /// <param name="node">Node to add.</param>
+    /// <remarks>
+    /// While this function accepts a nullable node, that's just for convenience, if the node is null it will not be added.
+    /// </remarks>
     public virtual void AddNode(NodeBase? node) {
         if (node is null) return;
 
@@ -74,7 +122,11 @@ public abstract class LayoutListNode : SimpleComponentNode {
         RecalculateLayout();
     }
 
-    public void RemoveNode(params NodeBase[] items) {
+    /// <summary>
+    /// Removes multiple nodes from the list. Removed nodes are disposed by the list.
+    /// </summary>
+    /// <param name="items">Nodes to remove.</param>
+    public void RemoveNode(IEnumerable<NodeBase> items) {
         suppressRecalculateLayout = true;
         try {
             foreach (var node in items) {
@@ -86,6 +138,10 @@ public abstract class LayoutListNode : SimpleComponentNode {
         RecalculateLayout();
     }
 
+    /// <summary>
+    /// Remove a single node from the list. Removed nodes are disposed by the list.
+    /// </summary>
+    /// <param name="node">Node to remove.</param>
     public virtual void RemoveNode(NodeBase node) {
         if (!NodeList.Contains(node)) return;
 
@@ -95,6 +151,10 @@ public abstract class LayoutListNode : SimpleComponentNode {
         RecalculateLayout();
     }
 
+    /// <summary>
+    /// Adds a dummy node to the list, a standard ResNode with no contents for spacing/positioning.
+    /// </summary>
+    /// <param name="size">The size of the dummy to add.</param>
     public void AddDummy(float size = 0.0f) {
         var dummyNode = new ResNode {
             Size = new Vector2(size, size),
@@ -103,6 +163,9 @@ public abstract class LayoutListNode : SimpleComponentNode {
         AddNode(dummyNode);
     }
 
+    /// <summary>
+    /// Removes all nodes from the list. All nodes are disposed.
+    /// </summary>
     public virtual void Clear() {
         suppressRecalculateLayout = true;
         try {
@@ -115,161 +178,19 @@ public abstract class LayoutListNode : SimpleComponentNode {
         RecalculateLayout();
     }
 
-    public delegate TU CreateNewNode<in T, out TU>(T data) where TU : NodeBase;
-
-    public delegate T GetDataFromNode<out T, in TU>(TU node) where TU : NodeBase;
-
-    public bool SyncWithListData<T, TU>(IEnumerable<T> dataList, GetDataFromNode<T?, TU> getDataFromNode, CreateNewNode<T, TU> createNodeMethod) where TU : NodeBase {
-        suppressRecalculateLayout = true;
-        var anythingChanged = false;
-        try {
-            var nodesOfType = GetNodes<TU>().ToList();
-            var dataSet = dataList.ToHashSet(EqualityComparer<T>.Default);
-            var represented = new HashSet<T>(EqualityComparer<T>.Default);
-
-            foreach (var node in nodesOfType) {
-                var nodeData = getDataFromNode(node);
-
-                if (nodeData is null || !dataSet.Contains(nodeData)) {
-                    RemoveNode(node);
-                    anythingChanged = true;
-                    continue;
-                }
-
-                represented.Add(nodeData);
-            }
-
-            foreach (var data in dataSet) {
-                if (represented.Contains(data))
-                    continue;
-
-                var newNode = createNodeMethod(data);
-                AddNode(newNode);
-                anythingChanged = true;
-            }
-        } finally {
-            suppressRecalculateLayout = false;
-        }
-        RecalculateLayout();
-
-        return anythingChanged;
-    }
-
-    public bool SyncWithListDataByKey<T, TU, TKey>(
-        IReadOnlyList<T> dataList,
-        Func<T, TKey> getKeyFromData,
-        Func<TU, TKey> getKeyFromNode,
-        Action<TU, T> updateNode,
-        CreateNewNode<T, TU> createNodeMethod,
-        IEqualityComparer<TKey>? keyComparer = null) where TU : NodeBase where TKey : notnull {
-        suppressRecalculateLayout = true;
-        var anythingChanged = false;
-        try {
-            keyComparer ??= EqualityComparer<TKey>.Default;
-
-            var existing = new List<TU>(capacity: NodeList.Count);
-            foreach (var t in NodeList) {
-                if (t is TU tu)
-                    existing.Add(tu);
-            }
-
-            var byKey = new Dictionary<TKey, TU>(existing.Count, keyComparer);
-            List<TU>? duplicates = null;
-
-            foreach (var node in existing) {
-                var key = getKeyFromNode(node);
-
-                if (!byKey.TryAdd(key, node))
-                    (duplicates ??= new List<TU>(4)).Add(node);
-            }
-
-            var desired = new List<TU>(dataList.Count);
-
-            foreach (var data in dataList) {
-                var key = getKeyFromData(data);
-
-                if (byKey.TryGetValue(key, out var existingNode)) {
-                    updateNode(existingNode, data);
-                    desired.Add(existingNode);
-                    byKey.Remove(key);
-                }
-                else {
-                    var newNode = createNodeMethod(data);
-                    AddNode(newNode);
-                    updateNode(newNode, data);
-
-                    desired.Add(newNode);
-                    anythingChanged = true;
-                }
-            }
-
-            if (byKey.Count != 0) {
-                foreach (var kv in byKey) {
-                    RemoveNode(kv.Value);
-                    anythingChanged = true;
-                }
-            }
-
-            if (duplicates is not null) {
-                for (var i = 0; i < duplicates.Count; i++) {
-                    RemoveNode(duplicates[i]);
-                    anythingChanged = true;
-                }
-            }
-
-            var desiredCount = desired.Count;
-            var j = 0;
-            var mismatch = false;
-
-            for (var i = 0; i < NodeList.Count; i++) {
-                if (NodeList[i] is TU) {
-                    if (j >= desiredCount) {
-                        mismatch = true;
-                        break;
-                    }
-
-                    NodeBase desiredNode = desired[j++];
-                    if (!ReferenceEquals(NodeList[i], desiredNode)) {
-                        NodeList[i] = desiredNode;
-                        anythingChanged = true;
-                    }
-                }
-            }
-
-            if (!mismatch && j != desiredCount)
-                mismatch = true;
-
-            if (mismatch) {
-                var firstTuIndex = -1;
-
-                for (var i = 0; i < NodeList.Count; i++) {
-                    if (NodeList[i] is TU) {
-                        firstTuIndex = i;
-                        break;
-                    }
-                }
-
-                if (firstTuIndex < 0)
-                    firstTuIndex = NodeList.Count;
-
-                for (var i = NodeList.Count - 1; i >= 0; i--) {
-                    if (NodeList[i] is TU)
-                        NodeList.RemoveAt(i);
-                }
-
-                NodeList.InsertRange(firstTuIndex, desired);
-                anythingChanged = true;
-            }
-        } finally {
-            suppressRecalculateLayout = false;
-        }
-        RecalculateLayout();
-
-        return anythingChanged;
-    }
-
+    /// <summary>
+    /// Sorts the contained nodes using the provided comparison.
+    /// </summary>
+    /// <param name="comparison"></param>
     public void ReorderNodes(Comparison<NodeBase> comparison) {
         NodeList.Sort(comparison);
         RecalculateLayout();
     }
+
+    protected readonly List<NodeBase> NodeList = [];
+    protected abstract void OnRecalculateLayout();
+    protected abstract void OnRecalculateNavigation();
+    protected virtual void AdjustNode(NodeBase node) { }
+
+    private bool suppressRecalculateLayout;
 }

@@ -2,8 +2,16 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Extensions;
 
+/// <summary>
+/// Extension methods for AtkStage.
+/// </summary>
 public static unsafe class AtkStageExtensions {
     extension(ref AtkStage atkStage) {
+
+        /// <summary>
+        /// Clears the target node from any focus entry in the AtkStage.FocusList.
+        /// </summary>
+        /// <param name="targetNode">The node address to search for.</param>
         public void ClearNodeFocus(AtkResNode* targetNode) {
             if (targetNode is null) return;
 

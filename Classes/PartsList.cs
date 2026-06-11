@@ -1,18 +1,55 @@
 ﻿﻿using System;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Classes;
 
 /// <summary>
-///     Wrapper around a AtkUldPartsList, manages adding multiple parts more easily.
+/// Managed AtkUldPartsList. For storing and managing multiple AtkUldParts'
 /// </summary>
 public unsafe class PartsList : IDisposable {
 
-    internal AtkUldPartsList* InternalPartsList;
+    /// <summary>
+    /// Gets or sets an individual part by index.
+    /// </summary>
+    /// <param name="index"></param>
+    public AtkUldPart* this[int index] {
+        get {
+            if (InternalPartsList is null) return null;
+            if (PartCount <= index) return null;
 
-    private bool isDisposed;
-    private uint partCapacity;
+            return &InternalPartsList->Parts[index];
+        }
+    }
+
+    /// <summary>
+    /// Add multiple parts to this PartsList.
+    /// </summary>
+    /// <param name="items">The parts to add.</param>
+    public void Add(params Part[] items) {
+        EnsureCapacity(PartCount + (uint)items.Length);
+
+        foreach (var part in items) {
+            AddPart(part);
+        }
+    }
+
+    /// <summary>
+    /// Add a single part to this PartsList.
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    public AtkUldPart* Add(Part item) {
+        EnsureCapacity(PartCount + 1);
+
+        return AddPart(item);
+    }
+
+    /// <summary>
+    /// Internally exposed pointer to the contained PartsList.
+    /// </summary>
+    internal AtkUldPartsList* InternalPartsList;
 
     public PartsList() {
         InternalPartsList = NativeMemoryHelper.UiAlloc<AtkUldPartsList>();
@@ -53,20 +90,6 @@ public unsafe class PartsList : IDisposable {
     private uint PartCount {
         get => InternalPartsList->PartCount;
         set => InternalPartsList->PartCount = value;
-    }
-
-    public void Add(params Part[] items) {
-        EnsureCapacity(PartCount + (uint)items.Length);
-
-        foreach (var part in items) {
-            AddPart(part);
-        }
-    }
-
-    public AtkUldPart* Add(Part item) {
-        EnsureCapacity(PartCount + 1);
-
-        return AddPart(item);
     }
 
     private void EnsureCapacity(uint capacity) {
@@ -111,12 +134,6 @@ public unsafe class PartsList : IDisposable {
         return &InternalPartsList->Parts[PartCount++];
     }
 
-    public AtkUldPart* this[int index] {
-        get {
-            if (InternalPartsList is null) return null;
-            if (PartCount <= index) return null;
-
-            return &InternalPartsList->Parts[index];
-        }
-    }
+    private bool isDisposed;
+    private uint partCapacity;
 }

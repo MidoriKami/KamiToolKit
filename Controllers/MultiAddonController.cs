@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Dalamud;
+using KamiToolKit.Interfaces;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Controllers;
 
@@ -17,8 +18,9 @@ public class MultiAddonController : MultiAddonController<AtkUnitBase>;
 /// </summary>
 public unsafe class MultiAddonController<T> : IAddonEventController<T>, IDisposable where T : unmanaged {
 
-    private readonly List<AddonController<T>> addonControllers = [];
-
+    /// <summary>
+    /// Addon names to bind to.
+    /// </summary>
     public required List<string> AddonNames {
         init {
             foreach (var addonName in value) {
@@ -45,11 +47,38 @@ public unsafe class MultiAddonController<T> : IAddonEventController<T>, IDisposa
         }
     }
 
+    /// <inheritdoc/>
+    public IAddonEventController<T>.AddonControllerEvent? OnSetup { get; init; }
+
+    /// <inheritdoc/>
+    public IAddonEventController<T>.AddonControllerEvent? OnFinalize { get; init; }
+
+    /// <inheritdoc/>
+    public IAddonEventController<T>.AddonControllerEvent? OnPreRefresh { get; init; }
+
+    /// <inheritdoc/>
+    public IAddonEventController<T>.AddonControllerEvent? OnRefresh { get; init; }
+
+    /// <inheritdoc/>
+    public IAddonEventController<T>.AddonControllerEvent? OnUpdate { get; init; }
+
+    /// <inheritdoc/>
+    public IAddonEventController<T>.AddonControllerEvent? OnPreUpdate { get; init; }
+
+    /// <inheritdoc/>
     public void Enable()
         => addonControllers.ForEach(controller => controller.Enable());
 
+    /// <inheritdoc/>
     public void Disable()
         => addonControllers.ForEach(controller => controller.Disable());
+
+    public void Dispose() {
+        ThreadSafety.AssertMainThread();
+
+        addonControllers.ForEach(controller => controller.Dispose());
+        addonControllers.Clear();
+    }
 
     private void ControllerOnAttach(T* addon)
         => OnSetup?.Invoke(addon);
@@ -69,17 +98,5 @@ public unsafe class MultiAddonController<T> : IAddonEventController<T>, IDisposa
     private void ControllerOnPreUpdate(T* addon)
         => OnPreUpdate?.Invoke(addon);
 
-    public void Dispose() {
-        ThreadSafety.AssertMainThread();
-
-        addonControllers.ForEach(controller => controller.Dispose());
-        addonControllers.Clear();
-    }
-
-    public IAddonEventController<T>.AddonControllerEvent? OnSetup { get; init; }
-    public IAddonEventController<T>.AddonControllerEvent? OnFinalize { get; init; }
-    public IAddonEventController<T>.AddonControllerEvent? OnPreRefresh { get; init; }
-    public IAddonEventController<T>.AddonControllerEvent? OnRefresh { get; init; }
-    public IAddonEventController<T>.AddonControllerEvent? OnUpdate { get; init; }
-    public IAddonEventController<T>.AddonControllerEvent? OnPreUpdate { get; init; }
+    private readonly List<AddonController<T>> addonControllers = [];
 }

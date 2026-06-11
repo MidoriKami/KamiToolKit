@@ -2,15 +2,50 @@
 using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// Managed class representing a AtkTimelineAnimation
+/// </summary>
 public unsafe class TimelineAnimation : IDisposable {
 
-    internal AtkTimelineAnimation* InternalAnimation;
+    /// <summary>
+    /// The starting frame index for this animation.
+    /// </summary>
+    /// <remarks>
+    /// Must be less than <see cref="EndFrameId"/>
+    /// </remarks>
+    public int StartFrameId {
+        get => InternalAnimation->StartFrameIdx;
+        set => InternalAnimation->StartFrameIdx = (ushort)value;
+    }
 
-    private List<TimelineKeyFrame> internalKeyFrames = [];
+    /// <summary>
+    /// The ending frame index for this animation.
+    /// </summary>
+    /// <remarks>
+    /// Must be greater than <see cref="StartFrameId"/>
+    /// </remarks>
+    public int EndFrameId {
+        get => InternalAnimation->EndFrameIdx;
+        set => InternalAnimation->EndFrameIdx = (ushort)value;
+    }
+
+    /// <summary>
+    /// Gets or sets the keyframes used.
+    /// </summary>
+    /// <remarks>
+    /// Use <see cref="TimelineBuilder"/> to more easily edit keyframes.
+    /// </remarks>
+    public List<TimelineKeyFrame> KeyFrames {
+        get => internalKeyFrames;
+        set {
+            internalKeyFrames = value;
+            Resync();
+        }
+    }
 
     public TimelineAnimation() {
         InternalAnimation = NativeMemoryHelper.UiAlloc<AtkTimelineAnimation>();
@@ -20,24 +55,6 @@ public unsafe class TimelineAnimation : IDisposable {
 
         foreach (ref var value in InternalAnimation->KeyGroups) {
             value.Type = AtkTimelineKeyGroupType.None;
-        }
-    }
-
-    public int StartFrameId {
-        get => InternalAnimation->StartFrameIdx;
-        set => InternalAnimation->StartFrameIdx = (ushort)value;
-    }
-
-    public int EndFrameId {
-        get => InternalAnimation->EndFrameIdx;
-        set => InternalAnimation->EndFrameIdx = (ushort)value;
-    }
-
-    public List<TimelineKeyFrame> KeyFrames {
-        get => internalKeyFrames;
-        set {
-            internalKeyFrames = value;
-            Resync();
         }
     }
 
@@ -75,18 +92,8 @@ public unsafe class TimelineAnimation : IDisposable {
             keyFrameGroup.KeyFrameCount = (ushort)keyFrameSet.Count();
         }
     }
-}
 
-public enum KeyFrameGroupType {
-    Position = 0,
-    Rotation = 1,
-    Scale = 2,
-    Alpha = 3,
-    Tint = 4,
+    internal AtkTimelineAnimation* InternalAnimation;
 
-    PartId = 5,
-    TextColor = 5,
-
-    TextEdge = 6,
-    TextLabel = 7,
+    private List<TimelineKeyFrame> internalKeyFrames = [];
 }

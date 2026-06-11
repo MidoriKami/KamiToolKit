@@ -3,89 +3,41 @@ using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
-using KamiToolKit.Classes;
+using KamiToolKit.Enums;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// Managed representation of a built timeline.
+/// </summary>
 public unsafe class Timeline : IDisposable {
 
-    private readonly TimelineResource internalTimelineResource;
-
-    internal AtkTimeline* InternalTimeline;
-
-    public Timeline() {
-        InternalTimeline = NativeMemoryHelper.UiAlloc<AtkTimeline>();
-
-        internalTimelineResource = new TimelineResource();
-        InternalTimeline->Resource = internalTimelineResource.InternalResource;
-        InternalTimeline->LabelResource = null;
-        InternalTimeline->ActiveAnimation = null;
-        InternalTimeline->OwnerNode = null;
-    }
-
-    internal AtkResNode* OwnerNode {
-        get => InternalTimeline->OwnerNode;
-        set => InternalTimeline->OwnerNode = value;
-    }
-
-    public float FrameTime {
-        get => InternalTimeline->FrameTime;
-        set => InternalTimeline->FrameTime = value;
-    }
-
-    public float ParentFrameTime {
-        get => InternalTimeline->ParentFrameTime;
-        set => InternalTimeline->ParentFrameTime = value;
-    }
-
-    public int LabelFrameIdxDuration {
-        get => InternalTimeline->LabelFrameIdxDuration;
-        set => InternalTimeline->LabelFrameIdxDuration = (ushort)value;
-    }
-
-    public int LabelEndFrameIdx {
-        get => InternalTimeline->LabelEndFrameIdx;
-        set => InternalTimeline->LabelEndFrameIdx = (ushort)value;
-    }
-
-    public int ActiveLabelId {
-        get => InternalTimeline->ActiveLabelId;
-        set => InternalTimeline->ActiveLabelId = (ushort)value;
-    }
-
-    public AtkTimelineMask Mask {
-        get => InternalTimeline->Mask;
-        set => InternalTimeline->Mask = value;
-    }
-
-    public AtkTimelineFlags Flags {
-        get => InternalTimeline->Flags;
-        set => InternalTimeline->Flags = value;
-    }
-
+    /// <summary>
+    /// Sets the timeline animations used for this Timeline.
+    /// </summary>
     public List<TimelineAnimation> Animations {
         set => internalTimelineResource.Animations = value;
     }
 
+    /// <summary>
+    /// Sets the label sets used for this Timeline.
+    /// </summary>
     public List<TimelineLabelSet> LabelSets {
         set => internalTimelineResource.LabelSets = value;
     }
 
-    public void Dispose() {
-        internalTimelineResource.Dispose();
-
-        NativeMemoryHelper.UiFree(InternalTimeline);
-        InternalTimeline = null;
-    }
-
     /// <summary>
-    ///     Plays the specified animation via label ID
+    /// Plays the specified animation via label ID
     /// </summary>
     /// <param name="labelId">The label ID to play</param>
     /// <param name="force">Force the animation to restart even if it was already playing</param>
     public void PlayAnimation(int labelId, bool force = false)
         => PlayAnimation(AtkTimelineJumpBehavior.Start, labelId, force);
 
+    /// <summary>
+    /// Plays the specified animation via label ID, with option to force it to restart if its already running.
+    /// </summary>
     public void PlayAnimation(AtkTimelineJumpBehavior behavior, int labelId, bool force = false) {
         if (InternalTimeline is null) return;
 
@@ -94,12 +46,18 @@ public unsafe class Timeline : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Stops any active animation by invoking labelId 0.
+    /// </summary>
     public void StopAnimation() {
         if (InternalTimeline is null) return;
 
         InternalTimeline->PlayAnimation(AtkTimelineJumpBehavior.Start, 0);
     }
 
+    /// <summary>
+    /// Helper for updating a specific keyframes values.
+    /// </summary>
     public void UpdateKeyFrame(
         int frameId, KeyFrameGroupType groupType, Vector2? position = null, byte? alpha = null, Vector3? addColor = null, Vector3? multiplyColor = null,
         float? rotation = null, Vector2? scale = null, Vector3? textColor = null, Vector3? textOutlineColor = null, uint? partId = null, AtkTimelineInterpolation? interpolation = null) {
@@ -156,6 +114,23 @@ public unsafe class Timeline : IDisposable {
         }
     }
 
+    public Timeline() {
+        InternalTimeline = NativeMemoryHelper.UiAlloc<AtkTimeline>();
+
+        internalTimelineResource = new TimelineResource();
+        InternalTimeline->Resource = internalTimelineResource.InternalResource;
+        InternalTimeline->LabelResource = null;
+        InternalTimeline->ActiveAnimation = null;
+        InternalTimeline->OwnerNode = null;
+    }
+
+    public void Dispose() {
+        internalTimelineResource.Dispose();
+
+        NativeMemoryHelper.UiFree(InternalTimeline);
+        InternalTimeline = null;
+    }
+
     private AtkTimelineKeyFrame* GetKeyFrame(KeyFrameGroupType type, int frameIndex) {
         var animation = GetAnimationForFrameId(frameIndex);
         if (animation is null) return null;
@@ -184,5 +159,48 @@ public unsafe class Timeline : IDisposable {
         }
 
         return null;
+    }
+
+    private readonly TimelineResource internalTimelineResource;
+    internal AtkTimeline* InternalTimeline;
+
+    internal AtkResNode* OwnerNode {
+        get => InternalTimeline->OwnerNode;
+        set => InternalTimeline->OwnerNode = value;
+    }
+
+    internal float FrameTime {
+        get => InternalTimeline->FrameTime;
+        set => InternalTimeline->FrameTime = value;
+    }
+
+    internal float ParentFrameTime {
+        get => InternalTimeline->ParentFrameTime;
+        set => InternalTimeline->ParentFrameTime = value;
+    }
+
+    internal int LabelFrameIdxDuration {
+        get => InternalTimeline->LabelFrameIdxDuration;
+        set => InternalTimeline->LabelFrameIdxDuration = (ushort)value;
+    }
+
+    internal int LabelEndFrameIdx {
+        get => InternalTimeline->LabelEndFrameIdx;
+        set => InternalTimeline->LabelEndFrameIdx = (ushort)value;
+    }
+
+    internal int ActiveLabelId {
+        get => InternalTimeline->ActiveLabelId;
+        set => InternalTimeline->ActiveLabelId = (ushort)value;
+    }
+
+    internal AtkTimelineMask Mask {
+        get => InternalTimeline->Mask;
+        set => InternalTimeline->Mask = value;
+    }
+
+    internal AtkTimelineFlags Flags {
+        get => InternalTimeline->Flags;
+        set => InternalTimeline->Flags = value;
     }
 }

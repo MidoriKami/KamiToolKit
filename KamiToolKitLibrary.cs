@@ -4,7 +4,8 @@ using System.Globalization;
 using System.Resources;
 using Dalamud.Plugin;
 using Dalamud.Utility;
-using KamiToolKit.Dalamud;
+using KamiToolKit.BaseTypes;
+using KamiToolKit.Internal.Classes;
 using Serilog.Events;
 
 namespace KamiToolKit;
@@ -12,7 +13,7 @@ namespace KamiToolKit;
 public static class KamiToolKitLibrary {
     private const string NodeDataShareKey = "TypeMappedCustomNodes";
 
-    internal static IDalamudPluginInterface? PluginInterface { get; private set; }
+    public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
 
     internal static ConcurrentDictionary<nint, Type>? AllocatedNodes;
 
@@ -73,6 +74,9 @@ public static class KamiToolKitLibrary {
     /// <summary>
     /// Cleans up any potentially leaked resources that KamiToolKit has allocated.
     /// </summary>
+    /// <remarks>
+    /// Must be called from the main thread.
+    /// </remarks>
     public static void Cleanup() {
         NodeBase.WarnLeakedNodes();
         NativeAddon.WarnLeakedAddons();

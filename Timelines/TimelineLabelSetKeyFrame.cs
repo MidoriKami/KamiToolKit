@@ -1,7 +1,11 @@
 ﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Enums;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// Managed adaptor for native structs. Not intended for external use.
+/// </summary>
 public class TimelineLabelSetKeyFrame : TimelineKeyFrame {
 
     private AtkTimelineLabel data;

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Timelines;
 
+/// <summary>
+/// Managed adaptor for native structs. Not intended for external use.
+/// </summary>
 public unsafe class TimelineResource : IDisposable {
 
     private readonly TimelineAnimationArray animationArray;
