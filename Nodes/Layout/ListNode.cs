@@ -98,6 +98,14 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     }
 
     /// <summary>
+    /// When updating <see cref="OptionsList"/>, automatically resets scroll to the top.
+    /// </summary>
+    /// <remarks>
+    /// This may be undesirable if the list is being constantly updated.
+    /// </remarks>
+    public bool AutoResetScroll { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets the options list that is used for rendering.
     /// </summary>
     public required List<T> OptionsList {
@@ -115,7 +123,10 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
             }
 
             NoResultsTextNodeContainer.IsVisible = value.Count is 0;
-            ResetScroll();
+
+            if (AutoResetScroll) {
+                ResetScroll();
+            }
         }
     } = [];
 
