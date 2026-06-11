@@ -15,9 +15,7 @@ public abstract class ListItemNode<T> : SelectableNode {
         set {
             if (value is not null) {
                 if (!GenericUtil.AreEqual(field, value)) {
-                    IsSettingNodeData = true;
                     SetNodeData(value);
-                    IsSettingNodeData = false;
                 }
             }
 
@@ -34,12 +32,6 @@ public abstract class ListItemNode<T> : SelectableNode {
     /// This can be useful for displaying list data that changes as the player moves for example.
     /// </remarks>
     public virtual void Update() { }
-
-    /// <summary>
-    /// Bool that indicates if SetNodeData when different is being called.
-    /// Used to prevent things like checkboxes from trigger a file save due to the value being changed.
-    /// </summary>
-    protected bool IsSettingNodeData { get; private set; }
 
     /// <summary>
     /// Function that is called when this list item entry needs to update what data is being displayed.
