@@ -26,6 +26,28 @@ public unsafe class MapOverlayController : IDisposable {
     public bool IsVisible { get; set; } = true;
 
     /// <summary>
+    /// Enables the map controller.
+    /// </summary>
+    /// <remarks>
+    /// Must be called from the main thread.
+    /// </remarks>
+    public void Enable() {
+        ThreadSafety.AssertMainThread();
+        mapController.Enable();
+    }
+
+    /// <summary>
+    /// Disables the map controller.
+    /// </summary>
+    /// <remarks>
+    /// Must be called from the main thread.
+    /// </remarks>
+    public void Disable() {
+        ThreadSafety.AssertMainThread();
+        mapController.Disable();
+    }
+
+    /// <summary>
     /// Adds a single marker to the map with the provided info.
     /// </summary>
     public void AddMarker(MapMarkerInfo markerInfo)
@@ -70,24 +92,25 @@ public unsafe class MapOverlayController : IDisposable {
         queuedMarkers.Clear();
     }
 
-    /// <remarks>
-    /// Must be constructed on the main thread. // todo: consider .Enable pattern
-    /// </remarks>
     public MapOverlayController() {
-        ThreadSafety.AssertMainThread();
-
         mapController = new AddonController<AddonAreaMap> {
             AddonName = "AreaMap",
             OnSetup = OnAttach,
             OnPreUpdate = OnUpdate,
             OnFinalize = OnDetach,
         };
-
-        mapController.Enable();
     }
 
+    /// <summary>
+    /// Disposes controller and all nodes in this controller.
+    /// </summary>
+    /// <remarks>
+    /// Must be called from the main thread.
+    /// </remarks>
     public void Dispose() {
         ThreadSafety.AssertMainThread();
+
+        Disable();
 
         viewportEventListener?.Dispose();
         viewportEventListener = null;
