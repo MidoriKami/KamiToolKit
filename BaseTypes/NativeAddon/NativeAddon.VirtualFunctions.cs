@@ -93,7 +93,12 @@ public unsafe partial class NativeAddon {
 
         originalVirtualTable->OnSetup(addon, valueCount, values);
 
-        OnSetup(addon, new Span<AtkValue>(values, (int)valueCount));
+        try {
+            OnSetup(addon, new Span<AtkValue>(values, (int)valueCount));
+        }
+        catch (Exception e) {
+            Services.Log.Exception(e);
+        }
 
         // Initialize all TextId fields that were attached in OnSetup
         addon->UldManager.SetupTextRecursive();
@@ -104,7 +109,12 @@ public unsafe partial class NativeAddon {
     private void Show(AtkUnitBase* addon, bool silenceOpenSoundEffect, uint unsetShowHideFlags) {
         Services.Log.Verbose($"[{InternalName}] Show");
 
-        OnShow(addon);
+        try {
+            OnShow(addon);
+        }
+        catch (Exception e) {
+            Services.Log.Exception(e);
+        }
 
         originalVirtualTable->Show(addon, silenceOpenSoundEffect, unsetShowHideFlags);
     }
@@ -112,7 +122,12 @@ public unsafe partial class NativeAddon {
     private void Update(AtkUnitBase* addon, float delta) {
         Services.Log.Excessive($"[{InternalName}] Update");
 
-        OnUpdate(addon);
+        try {
+            OnUpdate(addon);
+        }
+        catch (Exception e) {
+            Services.Log.Exception(e);
+        }
 
         originalVirtualTable->Update(addon, delta);
     }
@@ -120,7 +135,12 @@ public unsafe partial class NativeAddon {
     private void Draw(AtkUnitBase* addon) {
         Services.Log.Excessive($"[{InternalName}] Draw");
 
-        OnDraw(addon);
+        try {
+            OnDraw(addon);
+        }
+        catch (Exception e) {
+            Services.Log.Exception(e);
+        }
 
         originalVirtualTable->Draw(addon);
     }
@@ -128,7 +148,13 @@ public unsafe partial class NativeAddon {
     private void Hide(AtkUnitBase* addon, bool unkBool, bool callHideCallback, uint setShowHideFlags) {
         Services.Log.Verbose($"[{InternalName}] Hide");
 
-        OnHide(addon);
+        try {
+            OnHide(addon);
+        }
+        catch (Exception e) {
+            Services.Log.Exception(e);
+        }
+
         SaveAddonConfig();
 
         originalVirtualTable->Hide(addon, unkBool, callHideCallback, setShowHideFlags);
@@ -144,7 +170,12 @@ public unsafe partial class NativeAddon {
     private void Finalizer(AtkUnitBase* addon) {
         Services.Log.Verbose($"[{InternalName}] Finalize");
 
-        OnFinalize(addon);
+        try {
+            OnFinalize(addon);
+        }
+        catch (Exception e) {
+            Services.Log.Exception(e);
+        }
 
         if (RememberClosePosition) {
             LastClosePosition = new Vector2(InternalAddon->X, InternalAddon->Y);
@@ -177,7 +208,13 @@ public unsafe partial class NativeAddon {
 
         // Prevent calls to OnRequestedUpdate before Setup is completed. The game will try to call this after Show but before Setup
         if (isSetup) {
-            OnRequestedUpdate(thisPtr, numberArrayData, stringArrayData);
+            try {
+                OnRequestedUpdate(thisPtr, numberArrayData, stringArrayData);
+
+            }
+            catch (Exception e) {
+                Services.Log.Exception(e);
+            }
         }
 
         originalVirtualTable->OnRequestedUpdate(thisPtr, numberArrayData, stringArrayData);
@@ -186,7 +223,12 @@ public unsafe partial class NativeAddon {
     private bool Refresh(AtkUnitBase* thisPtr, uint valueCount, AtkValue* values) {
         Services.Log.Verbose($"[{InternalName}] Refresh");
 
-        OnRefresh(thisPtr, new Span<AtkValue>(values, (int)valueCount));
+        try {
+            OnRefresh(thisPtr, new Span<AtkValue>(values, (int)valueCount));
+        }
+        catch (Exception e) {
+            Services.Log.Exception(e);
+        }
 
         return originalVirtualTable->OnRefresh(thisPtr,valueCount, values);
     }
