@@ -84,10 +84,14 @@ public class ColorEditNode : SimpleComponentNode {
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        base.Dispose(disposing, isNativeDestructor);
+        OnColorCancelled = null;
+        OnColorPreviewed = null;
+        OnColorConfirmed = null;
 
         colorPicker?.Dispose();
         colorPicker = null;
+
+        base.Dispose(disposing, isNativeDestructor);
     }
 
     private unsafe void OnInputReceived(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
