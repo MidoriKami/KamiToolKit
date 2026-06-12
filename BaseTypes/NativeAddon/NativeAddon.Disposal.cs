@@ -68,7 +68,7 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
     }
 
     ~NativeAddon() {
-        Log.Warning("{GetType} - Is disposing via GC... this is not good.", GetType());
+        Log.Warning("KamiToolKit Addon Title: '{title}' InternalName: '{internalName}' was disposed via GC, this shouldn't happen.", Title, InternalName);
         Task.Run(DisposeAsync);
     }
 
