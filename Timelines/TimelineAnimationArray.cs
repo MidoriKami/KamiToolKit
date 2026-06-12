@@ -43,7 +43,7 @@ public unsafe class TimelineAnimationArray : IDisposable {
             InternalTimelineArray = null;
         }
 
-        // Allocate new array todo: consider realloc?
+        // Allocate new array
         InternalTimelineArray = NativeMemoryHelper.UiAlloc<AtkTimelineAnimation>(timelineAnimations.Count);
 
         // Copy all Animations into it
