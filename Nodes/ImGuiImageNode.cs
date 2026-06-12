@@ -9,79 +9,88 @@ namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// A simple image node that allows you to load an IDalamudTextureWrap texture into a native image node.
-/// This node creates a single <see cref="Part" /> todo: make this class suck less.
+/// This node creates a single <see cref="Part" />.
 /// </summary>
 /// <remarks>This node is not intended to be used with multiple <see cref="Part"/>'s.</remarks>
 public class ImGuiImageNode : SimpleImageNode {
 
     /// <summary>
-    /// Gets or sets the dalamud texture wrap used for displaying this image.
-    /// </summary>
-    public unsafe IDalamudTextureWrap? LoadedTexture {
-        get;
-        set {
-            field = value;
-
-            if (value is not null) {
-                PartsList[0]->LoadTexture(value);
-            }
-            // else { todo: this
-            //     PartsList[0]->UldAsset->AtkTexture.ReleaseTexture();
-            // }
-        }
-    }
-
-    /// <summary>
     /// When set loads the texture from either the game or from disk.
     /// </summary>
-    public override unsafe string TexturePath {
+    public override string TexturePath {
         get => base.TexturePath;
         set {
+
+            // If path represents a file system path, we need to load via ImGui.
             if (Path.IsPathRooted(value)) {
-                LoadTextureFromFile(value);
+
+                // Start by hiding the node.
+                Alpha = 0.0f;
+
+                // Load the texture as a task
+                Task.Run(async () => {
+                    var newTexture = await Services.TextureProvider.GetFromFile(value).RentAsync();
+                    Services.Log.Verbose($"Loaded texture from file system: {value}");
+
+                    // Once it's ready, load it into the node on the next frame.
+                    await Services.Framework.Run(() => {
+                        unsafe {
+                            if (Node is not null) {
+                                LoadTexture(newTexture);
+                                TextureSize = newTexture.Size;
+                                Alpha = 1.0f;
+                                MarkDirty();
+                            }
+                        }
+                    });
+                });
             }
+
+            // else, the path is a game file, and the game itself can do its loading magic.
             else if (Services.DataManager.FileExists(value)) {
-                PartsList[0]->LoadTexture(value);
+                unsafe {
+                    PartsList[0]->LoadTexture(value);
+                }
             }
         }
     }
 
     /// <summary>
-    /// Takes ownership of passed in IDalamudTextureWrap, disposes texture when node is disposed.
+    /// Takes ownership of passed in IDalamudTextureWrap, node automatically disposes texture when node is disposed.
     /// </summary>
+    /// <remarks>
+    /// Don't try to share this texture across nodes.
+    /// If you need to have the same texture for multiple nodes use <see cref="TexturePath"/>,
+    /// or load one independent instance of <see cref="IDalamudTextureWrap"/> per node.
+    /// </remarks>
     public unsafe void LoadTexture(IDalamudTextureWrap texture) {
-        var previouslyLoadedTexture = LoadedTexture;
 
+        // Load new texture
         PartsList[0]->LoadTexture(texture);
 
-        // Delay unloading texture until new texture is loaded.
-        previouslyLoadedTexture?.Dispose();
+        if (LoadedTexture is not null) {
+            Services.Log.Verbose($"Disposing texture: {LoadedTexture} to load {texture}");
+        }
+
+        // Dispose any previously used texture
+        LoadedTexture?.Dispose();
+
+        // Track currently used texture
         LoadedTexture = texture;
-    }
-
-    /// <summary>
-    /// Loads texture from filesystem.
-    /// </summary>
-    public void LoadTextureFromFile(string fileSystemPath) {
-        Task.Run(async () => {
-            Alpha = 0.0f;
-
-            var newTexture = await Services.TextureProvider.GetFromFile(fileSystemPath).RentAsync();
-
-            LoadTexture(newTexture);
-            TextureSize = newTexture.Size;
-
-            Alpha = 1.0f;
-            MarkDirty();
-        });
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             base.Dispose(disposing, isNativeDestructor);
 
+            if (LoadedTexture is not null) {
+                Services.Log.Verbose($"Disposing texture: {LoadedTexture}");
+            }
+
             LoadedTexture?.Dispose();
             LoadedTexture = null;
         }
     }
+
+    private IDalamudTextureWrap? LoadedTexture { get; set; }
 }

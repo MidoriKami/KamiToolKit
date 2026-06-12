@@ -50,7 +50,7 @@ public class ImGuiIconButtonNode : ButtonBase {
     /// Else the texture will be loaded from disk.
     /// </summary>
     public void LoadTextureFromFile(string path)
-        => ImageNode.LoadTextureFromFile(path);
+        => ImageNode.TexturePath = path;
 
     public ImGuiIconButtonNode() {
         BackgroundNode = new SimpleNineGridNode {

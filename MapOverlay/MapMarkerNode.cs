@@ -112,9 +112,9 @@ public unsafe class MapMarkerNode : ResNode {
             imGuiImageNode = null;
 
             imGuiImageNode = new ImGuiImageNode {
-                LoadedTexture = value,
                 FitTexture = true,
             };
+            imGuiImageNode.LoadTexture(value);
             imGuiImageNode.AttachNode(this);
         }
     } = null;
