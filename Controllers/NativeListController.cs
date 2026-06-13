@@ -73,7 +73,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     /// <summary>
     /// List of modified node indexes.
     /// </summary>
-    protected readonly List<uint> ModifiedIndexes = [];
+    public List<uint> ModifiedIndexes { get; } = [];
 
     /// <summary>
     /// Enables this native list controller.
