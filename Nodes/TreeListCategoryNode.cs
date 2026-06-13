@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -17,6 +18,10 @@ namespace KamiToolKit.Nodes;
 /// <remarks>
 /// This implementation is meant to mimic the native games list category nodes, but it's not great.
 /// </remarks>
+/// <remarks>
+/// Needs reworking, it sorta works but is buggy at the moment.
+/// </remarks>
+[Experimental("KamiToolKit_Experimental")]
 public unsafe class TreeListCategoryNode : ResNode {
 
     /// <summary>
@@ -27,7 +32,7 @@ public unsafe class TreeListCategoryNode : ResNode {
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
-    public SimpleComponentNode ChildContainer { get; }
+    public ResNode ChildContainer { get; }
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -190,7 +195,7 @@ public unsafe class TreeListCategoryNode : ResNode {
         };
         LabelNode.AttachNode(this);
 
-        ChildContainer = new SimpleComponentNode {
+        ChildContainer = new ResNode {
             Position = new Vector2(0.0f, 24.0f + VerticalPadding),
         };
         ChildContainer.AttachNode(this);

@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// Custom implementation of a tree list node. Kinda ghetto.
-/// </summary> todo: reimplement this
+/// </summary>
+/// <remarks>
+/// Needs reworking, it sorta works but is buggy at the moment.
+/// </remarks>
+[Experimental("KamiToolKit_Experimental")]
 public class TreeListNode : ResNode {
 
     /// <summary>
@@ -32,7 +37,6 @@ public class TreeListNode : ResNode {
 
         children.Add(node);
 
-        node.NodeId = (uint)children.Count + 1;
         node.Width = childContainer.Width;
         node.Y = childContainer.Height;
         node.AttachNode(childContainer);
@@ -42,7 +46,7 @@ public class TreeListNode : ResNode {
     }
 
     /// <summary>
-    /// Recalculates the trees layout.
+    /// Recalculates the tree's layout.
     /// </summary>
     public void RefreshLayout() {
         childContainer.Height = 0.0f;
