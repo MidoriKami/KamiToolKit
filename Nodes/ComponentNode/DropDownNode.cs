@@ -140,6 +140,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
             Component->PlaySoundEffect();
         }
 
+        DropDownFocusCollisionNode.ReattachNode(this);
         OptionListNode.ReattachNode(this);
 
         DropDownFocusCollisionNode.IsVisible = false;
@@ -147,10 +148,6 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
 
         // Need to reset position after reattaching, so screen position is recalculated correctly
         OptionListNode.Position = Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
-
-        if (ParentAddon is not null) {
-            ParentAddon->CurrentDropDownOwnerNode = null;
-        }
 
         OnCollapsed?.Invoke();
     }
@@ -171,15 +168,14 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         }
 
         if (ParentAddon is not null) {
-            ParentAddon->CurrentDropDownOwnerNode = this;
-
             OptionListNode.Position = (ScreenPosition - ParentAddon->Position) / ParentAddon->Scale + Size with { X = 0.0f } + new Vector2(4.0f, -4.0f);
             MoveListOnScreen();
 
             DropDownFocusCollisionNode.IsVisible = true;
-            DropDownFocusCollisionNode.Position = -(ScreenPosition - ParentAddon->Position) / ParentAddon->Scale;
+            DropDownFocusCollisionNode.Position = new Vector2(0.0f);
             DropDownFocusCollisionNode.Size = ParentAddon->RootSize;
 
+            DropDownFocusCollisionNode.ReattachNode(ParentAddon->RootNode);
             OptionListNode.ReattachNode(ParentAddon->RootNode);
         }
 
