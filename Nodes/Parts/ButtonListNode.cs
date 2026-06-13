@@ -171,6 +171,10 @@ public abstract unsafe class ButtonListNode<T> : ButtonListNode {
 
         ScrollingListNode.ContentNode.Position = new Vector2(4.0f, 0.0f);
         ScrollingListNode.RecalculateSizes();
+
+        foreach (var node in ScrollingListNode.ContentNode.Nodes) {
+            node.Width = Width - 16.0f;
+        }
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
