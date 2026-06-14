@@ -38,7 +38,16 @@ public unsafe partial class NativeAddon {
     /// <summary>
     /// Gets or sets this addons size, defaults to 400px by 400px.
     /// </summary>
-    public Vector2 Size { get; set; } = new(400.0f, 400.0f);
+    public Vector2 Size {
+        get;
+        set {
+            field = value;
+
+            if (value == Vector2.Zero) {
+                field = new Vector2(400.0f, 400.0f);
+            }
+        }
+    } = new(400.0f, 400.0f);
 
     /// <summary>
     /// Gets the position of the content body start.
