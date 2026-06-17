@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Interfaces;
@@ -137,7 +136,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
     }
 
     private void AddListeners(string name) {
-        ThreadSafety.AssertMainThread();
+        if (Threading.AssertMainThreadOrUnloading()) return;
 
         Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, name, OnAddonEvent);
         Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, name, OnAddonEvent);
@@ -155,7 +154,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
     }
 
     private void RemoveListeners(string name) {
-        ThreadSafety.AssertMainThread();
+        if (Threading.AssertMainThreadOrUnloading()) return;
 
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, name, OnAddonEvent);
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, name, OnAddonEvent);

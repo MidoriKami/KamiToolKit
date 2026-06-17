@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -83,7 +82,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     /// This must be invoked from the main game thread.
     /// </remarks>
     public void Enable() {
-        ThreadSafety.AssertMainThread();
+        if (Threading.AssertMainThreadOrUnloading()) return;
 
         Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonSetup);
         Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, AddonName, OnAddonFinalize);
@@ -102,7 +101,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     /// This must be invoked from the main game thread.
     /// </remarks>
     public void Disable() {
-        ThreadSafety.AssertMainThread();
+        if (Threading.AssertMainThreadOrUnloading()) return;
 
         Services.AddonLifecycle.UnregisterListener(OnAddonSetup, OnAddonFinalize);
 

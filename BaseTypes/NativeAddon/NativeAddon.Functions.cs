@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 
@@ -18,7 +17,7 @@ public partial class NativeAddon {
     /// Must be invoked from the games main thread.
     /// </remarks>
     public unsafe void Open() {
-        ThreadSafety.AssertMainThread();
+        if (Threading.AssertMainThreadOrUnloading()) return;
 
         Services.Log.Verbose($"[{InternalName}] Open Called");
 
@@ -42,7 +41,7 @@ public partial class NativeAddon {
     /// Must be called from the games main thread.
     /// </remarks>
     public unsafe void Close() {
-        ThreadSafety.AssertMainThread();
+        if (Threading.AssertMainThreadOrUnloading()) return;
         if (InternalAddon is null) return;
 
         Services.Log.Verbose($"[{InternalName}] Close");
@@ -62,7 +61,7 @@ public partial class NativeAddon {
     /// <em>Must not be called from the main thread</em>
     /// </remarks>
     public async Task CloseAsync() {
-        ThreadSafety.AssertNotMainThread();
+        if (Threading.AssertNotMainThreadOrUnloading()) return;
 
         unsafe {
             if (InternalAddon is null) {

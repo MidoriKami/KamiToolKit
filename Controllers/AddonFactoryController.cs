@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using InteropGenerator.Runtime;
@@ -35,7 +34,7 @@ public class AddonFactoryController : IDisposable {
     /// Must be invoked from the main game thread.
     /// </remarks>
     public unsafe void Enable() {
-        ThreadSafety.AssertMainThread();
+        if (Threading.AssertMainThreadOrUnloading()) return;
 
         var factoryInfo = RaptureAtkModule.Instance()->GetAddonFactoryInfo(AddonName);
         if (factoryInfo is null) return;
@@ -52,7 +51,7 @@ public class AddonFactoryController : IDisposable {
     /// Must be invoked from the main game thread.
     /// </remarks>
     public unsafe void Disable() {
-        ThreadSafety.AssertMainThread();
+        if (Threading.AssertMainThreadOrUnloading()) return;
 
         nativeAddon?.Dispose();
         nativeAddon = null;
