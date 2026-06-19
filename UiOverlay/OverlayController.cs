@@ -4,6 +4,7 @@ using System.Linq;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
@@ -27,7 +28,7 @@ public unsafe class OverlayController : IDisposable {
     /// The added node is then owned by the overlay.
     /// </remarks>
     public void AddNode(OverlayNode node) {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
 
         overlayNodes.TryAdd(node.OverlayLayer, []);
 
@@ -50,7 +51,7 @@ public unsafe class OverlayController : IDisposable {
     /// This must be done from the main game thread.
     /// </remarks>
     public void RemoveNode(OverlayNode node) {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
 
         if (!overlayNodes.TryGetValue(node.OverlayLayer, out var list)) return;
 
@@ -66,7 +67,7 @@ public unsafe class OverlayController : IDisposable {
     /// Must be done from the main game thread.
     /// </remarks>
     public void RemoveAllNodes() {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
 
         foreach (var node in overlayNodes.SelectMany(set => set.Value).ToList()) {
             RemoveNode(node);
@@ -77,7 +78,7 @@ public unsafe class OverlayController : IDisposable {
     /// Must be constructed from the main game thread
     /// </remarks>
     public OverlayController() {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
 
         ClearState();
 
@@ -94,7 +95,7 @@ public unsafe class OverlayController : IDisposable {
     }
 
     public void Dispose() {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
 
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "NamePlate");
         Services.AddonLifecycle.UnregisterListener(OnOverlayAddonFinalize, OnOverlayAddonUpdate);

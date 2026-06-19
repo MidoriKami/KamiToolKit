@@ -64,17 +64,11 @@ public static class KamiToolKitLibrary {
     /// <summary>
     /// Alias for Cleanup
     /// </summary>
-    /// <remarks>
-    /// Must be called from the main thread.
-    /// </remarks>
     public static void Dispose() => Cleanup();
 
     /// <summary>
     /// Alias for Cleanup
     /// </summary>
-    /// <remarks>
-    /// Must be called from the main thread.
-    /// </remarks>
     public static void Shutdown() => Cleanup();
 
     /// <summary>
@@ -89,10 +83,7 @@ public static class KamiToolKitLibrary {
 
         NativeAddon.DisposeCloseCallback();
 
-        if (Services.Framework.IsFrameworkUnloading) {
-            Services.Log.Info("Game is unloading, aborting KamiToolKit dispose.");
-            return;
-        }
+        if (Services.Framework.IsFrameworkUnloading) return;
 
         try {
             if (!ThreadSafety.IsMainThread) return;

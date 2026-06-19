@@ -1,6 +1,7 @@
 ﻿using System;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
@@ -51,7 +52,7 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
 
     /// <inheritdoc/>
     public void Enable() {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
         if (IsEnabled) return;
 
         Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonEvent);
@@ -82,7 +83,7 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
 
     /// <inheritdoc/>
     public void Disable() {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
         if (!IsEnabled) return;
 
         Services.AddonLifecycle.UnregisterListener(OnAddonEvent);

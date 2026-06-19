@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -31,7 +32,7 @@ public unsafe class MapOverlayController : IDisposable {
     /// Must be called from the main thread.
     /// </remarks>
     public void Enable() {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
         mapController.Enable();
     }
 
@@ -42,7 +43,7 @@ public unsafe class MapOverlayController : IDisposable {
     /// Must be called from the main thread.
     /// </remarks>
     public void Disable() {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
         mapController.Disable();
     }
 
@@ -107,7 +108,7 @@ public unsafe class MapOverlayController : IDisposable {
     /// Must be called from the main thread.
     /// </remarks>
     public void Dispose() {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
 
         Disable();
 

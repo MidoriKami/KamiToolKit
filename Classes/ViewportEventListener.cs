@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Classes;
@@ -18,7 +19,7 @@ public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEven
     /// <param name="eventType">Event Type to listen for.</param>
     /// <param name="node">Node to pass when the callback is triggered.</param>
     public void AddEvent(AtkEventType eventType, AtkResNode* node) {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
 
         Services.Log.Verbose($"Registering ViewportEvent: {eventType}");
         AtkStage.Instance()->ViewportEventManager.RegisterEvent(eventType, 0, node, &node->AtkEventTarget, this, false);
@@ -32,7 +33,7 @@ public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEven
     /// </remarks>
     /// <param name="eventType">Event Type to no longer listen for.</param>
     public void RemoveEvent(AtkEventType eventType) {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
 
         Services.Log.Verbose($"Unregistering ViewportEvent: {eventType}");
         AtkStage.Instance()->ViewportEventManager.UnregisterEvent(eventType, 0, this, false);
@@ -45,7 +46,7 @@ public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEven
     /// This can only be called from the games main thread.
     /// </remarks>
     public override void Dispose() {
-        if (Threading.AssertMainThreadOrUnloading()) return;
+        ThreadSafety.AssertMainThread();
 
         Services.Log.Verbose("Disposing ViewportEventListener");
 
