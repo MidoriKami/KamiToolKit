@@ -62,6 +62,7 @@ public partial class NativeAddon {
     /// <em>Must not be called from the main thread</em>
     /// </remarks>
     public async Task CloseAsync() {
+        if (Services.Framework.IsFrameworkUnloading) return;
         ThreadSafety.AssertNotMainThread();
 
         unsafe {
