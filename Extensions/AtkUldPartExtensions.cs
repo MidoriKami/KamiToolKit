@@ -48,6 +48,10 @@ public static unsafe class AtkUldPartExtensions {
 
                 part.TryUnloadTexture();
 
+                // Check for empty path after unloading, as setting empty
+                // path may indicate intention to unload the texture.
+                if (path is "") return;
+
                 var texturePath = path.Replace("_hr1", string.Empty);
 
                 var themedPath = texturePath.Replace("uld", GetThemePathModifier());
