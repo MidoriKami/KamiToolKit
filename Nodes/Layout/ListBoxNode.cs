@@ -155,6 +155,9 @@ public class ListBoxNode : LayoutListNode, IControllerNavigable {
         return size;
     }
 
+    /// <summary>
+    /// Constructs a new instance of <see cref="ListBoxNode"/>
+    /// </summary>
     public ListBoxNode() {
         ColorImageNode = new ColorImageNode {
             IsVisible = false,
@@ -167,6 +170,7 @@ public class ListBoxNode : LayoutListNode, IControllerNavigable {
         Border.AttachNode(this);
     }
 
+    /// <inheritdoc/>
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -178,6 +182,7 @@ public class ListBoxNode : LayoutListNode, IControllerNavigable {
         RecalculateLayout();
     }
 
+    /// <inheritdoc/>
     protected override void OnRecalculateLayout() {
         var runningPosition = LayoutOrientation switch {
             LayoutOrientation.Vertical when LayoutAnchor is LayoutAnchor.TopLeft or LayoutAnchor.TopRight
@@ -245,6 +250,7 @@ public class ListBoxNode : LayoutListNode, IControllerNavigable {
         }
     }
 
+    /// <inheritdoc/>
     protected override void OnRecalculateNavigation() {
         var componentNodes = NodeList.OfType<ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;

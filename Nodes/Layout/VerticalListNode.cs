@@ -4,9 +4,22 @@ using KamiToolKit.Enums;
 
 namespace KamiToolKit.Nodes;
 
+/// <summary>
+/// A <see cref="LayoutListNode"/> that represents a vertical list of elements.
+/// </summary>
+/// <remarks>
+/// If you are needing to represent the same element multiple times use a <see cref="ListNode{T,TU}"/> instead for performance reasons.
+/// </remarks>
 public class VerticalListNode : LayoutListNode {
 
+    /// <summary>
+    /// Nav index to move to when left is pressed while focusing any list element.
+    /// </summary>
     public int NavLeft { get; set; }
+
+    /// <summary>
+    /// Nav index to move to when right is pressed while focusing any list element.
+    /// </summary>
     public int NavRight { get; set; }
 
     /// <summary>
@@ -41,6 +54,7 @@ public class VerticalListNode : LayoutListNode {
     /// </summary>
     public bool FitWidth { get; set; }
 
+    /// <inheritdoc />
     protected override void OnRecalculateLayout() {
         var startY = Anchor switch {
             VerticalListAnchor.Top => 0.0f + FirstItemSpacing,
@@ -84,6 +98,7 @@ public class VerticalListNode : LayoutListNode {
         }
     }
 
+    /// <inheritdoc />
     protected override void OnRecalculateNavigation() {
         var componentNodes = NodeList.OfType<ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;

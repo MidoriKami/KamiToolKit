@@ -33,6 +33,7 @@ public class HorizontalFlexNode : LayoutListNode {
     /// </summary>
     public int NavDown { get; set; }
 
+    /// <inheritdoc />
     protected override void OnRecalculateLayout() {
         var step = Width / NodeList.Count;
 
@@ -63,6 +64,7 @@ public class HorizontalFlexNode : LayoutListNode {
         }
     }
 
+    /// <inheritdoc />
     protected override void OnRecalculateNavigation() {
         var componentNodes = NodeList.OfType<ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
