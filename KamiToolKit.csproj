@@ -3,6 +3,7 @@
     <PropertyGroup>
         <LangVersion>preview</LangVersion>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <!-- Dalamud.NET.Sdk settings -->
