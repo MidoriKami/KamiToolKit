@@ -191,7 +191,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         originalVirtualTable = ResNode->VirtualTable;
 
         // Overwrite virtual table with a custom copy,
-        // Note: Currently there are only 2 vfuncs, but there's no harm in copying more for if they ever add more vfuncs to the game.
+        // Note: Currently there are only 2 virtual functions, but there's no harm in copying more for if they ever add more vfuncs to the game.
         modifiedVirtualTable = (AtkResNode.AtkResNodeVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 4);
         NativeMemory.Copy(ResNode->VirtualTable, modifiedVirtualTable, 0x8 * 4);
         ResNode->VirtualTable = modifiedVirtualTable;
