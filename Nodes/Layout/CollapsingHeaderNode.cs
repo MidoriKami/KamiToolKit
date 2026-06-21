@@ -39,6 +39,9 @@ public class CollapsingHeaderNode : LayoutListNode {
     /// </summary>
     public ImageNode ToggleArrowImageNode { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="CollapsingHeaderNode"/>
+    /// </summary>
     public CollapsingHeaderNode() {
         ButtonTextureNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/img05/ListItemB.tex",
@@ -68,10 +71,12 @@ public class CollapsingHeaderNode : LayoutListNode {
         ToggleArrowImageNode.AttachNode(this);
     }
 
+    /// <inheritdoc />
     protected override void OnRecalculateLayout() {
 
     }
 
+    /// <inheritdoc />
     protected override void OnRecalculateNavigation() {
 
     }
