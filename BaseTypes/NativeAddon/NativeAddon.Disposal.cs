@@ -98,6 +98,5 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
     }
 
     private static readonly List<NativeAddon> CreatedAddons = [];
-
     private bool isDisposed;
 }
