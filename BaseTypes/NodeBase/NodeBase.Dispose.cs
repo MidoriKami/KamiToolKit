@@ -38,21 +38,21 @@ public abstract unsafe partial class NodeBase : IDisposable {
     public void Dispose() {
         try {
             logIndent++;
-            LogIndented($"Beginning Dispose for {GetType()}");
+            LogIndented($"Beginning Dispose for {GetType()}", true);
             logIndent++;
 
             if (isDisposed) {
-                LogIndented("Node was already disposed, skipping.");
+                LogIndented("Node was already disposed, skipping.", EnableFullLogging);
                 return;
             }
 
             if (Services.Framework.IsFrameworkUnloading) {
-                LogIndented("Game is shutting down, aborting manual dispose.");
+                LogIndented("Game is shutting down, aborting manual dispose.", EnableFullLogging);
                 return;
             }
 
             if (!ThreadSafety.IsMainThread) {
-                LogIndented($"{GetType()}'s Dispose must be called from the main thread.");
+                LogIndented($"{GetType()}'s Dispose must be called from the main thread.", EnableFullLogging);
                 return;
             }
 
@@ -63,27 +63,27 @@ public abstract unsafe partial class NodeBase : IDisposable {
                 return;
             }
 
-            LogIndented("Disposing Children");
+            LogIndented("Disposing Children", EnableFullLogging);
             foreach (var child in ChildNodes.ToList()) {
                 child.Dispose();
             }
-            LogIndented("Children Disposed");
+            LogIndented("Children Disposed", EnableFullLogging);
             ChildNodes.Clear();
 
-            LogIndented("Disposing Tooltip Events");
+            LogIndented("Disposing Tooltip Events", EnableFullLogging);
             UnregisterTooltipEvents();
 
-            LogIndented("Clearing Native Focus");
+            LogIndented("Clearing Native Focus", EnableFullLogging);
             AtkStage.Instance()->ClearNodeFocus(ResNode);
 
-            LogIndented("Detaching From UI");
+            LogIndented("Detaching From UI", EnableFullLogging);
             DetachNode();
 
-            LogIndented("Disposing Timeline");
+            LogIndented("Disposing Timeline", EnableFullLogging);
             Timeline?.Dispose();
             ResNode->Timeline = null;
 
-            LogIndented("Invoking Native Dispose");
+            LogIndented("Invoking Native Dispose", EnableFullLogging);
             Dispose(true, false);
             GC.SuppressFinalize(this);
             CreatedNodes.Remove(this);
@@ -92,7 +92,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             Services.Log.Exception(e);
         } finally {
             logIndent--;
-            LogIndented("Dispose Complete");
+            LogIndented("Dispose Complete", true);
             logIndent--;
         }
     }
@@ -112,8 +112,11 @@ public abstract unsafe partial class NodeBase : IDisposable {
     private AtkResNode.AtkResNodeVirtualTable* originalVirtualTable;
     private AtkResNode.AtkResNodeVirtualTable* modifiedVirtualTable;
 
-    private static void LogIndented(string message)
-        => Services.Log.Verbose(new string(' ', logIndent * 2) + message);
+    private static void LogIndented(string message, bool enableLogging) {
+        if (!enableLogging) return;
+
+        Services.Log.Verbose(new string(' ', logIndent * 2) + message);
+    }
 
     internal static void WarnLeakedNodes() {
         var leakedNodeCount = CreatedNodes.Count(node => !node.IsAddonRootNode && node.ResNode is not null && node.ResNode->ParentNode is null);
@@ -236,4 +239,9 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         isDisposed = true;
     }
+
+    /// <summary>
+    /// When true, enables hyper verbose node disposal logging.
+    /// </summary>
+    private static bool EnableFullLogging => true;
 }
