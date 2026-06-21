@@ -53,7 +53,7 @@ public static class AtkEventDataExtensions {
         /// Gets if this was a scroll up.
         /// </summary>
         /// <remarks>
-        /// <see cref="ScrollValue"/> to get the intensity of the scroll signed. Negative is down.
+        /// ScrollValue to get the intensity of the scroll signed. Negative is down.
         /// </remarks>
         public bool IsScrollUp => data.MouseData.WheelDirection >= 1;
 
@@ -61,7 +61,7 @@ public static class AtkEventDataExtensions {
         /// Gets if this was a scroll down.
         /// </summary>
         /// <remarks>
-        /// <see cref="ScrollValue"/> to get the intensity of the scroll signed. Negative is down.
+        /// ScrollValue to get the intensity of the scroll signed. Negative is down.
         /// </remarks>
         public bool IsScrollDown => data.MouseData.WheelDirection <= -1;
 

@@ -67,6 +67,10 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
         isDisposed = true;
     }
 
+    /// <summary>
+    /// Finalizes a NativeAddon Instance.
+    /// This can only be called by the GC, and shouldn't happen except for OverlayAddons, which gets promptly ignored.
+    /// </summary>
     ~NativeAddon() {
         if (IsOverlayAddon) return; // Intentionally leak overlay addons.
 

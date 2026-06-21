@@ -145,7 +145,13 @@ public abstract unsafe partial class NodeBase : IDisposable {
         }
     }
 
-    ~NodeBase() => Dispose(false, false);
+    /// <summary>
+    /// Finalizer invocation from GC, this shouldn't be called unless a node was leaked and then not cleaned up by <see cref="KamiToolKitLibrary.Dispose"/>
+    /// </summary>
+    ~NodeBase() {
+        Services.Log.Warning($"Finalizer attempted to dispose of {GetType()}, this shouldn't happen.");
+        Dispose(false, false);
+    }
 
     /// <summary>
     /// Dispose associated resources. If a resource modifies native state directly guard it with isNativeDestructor

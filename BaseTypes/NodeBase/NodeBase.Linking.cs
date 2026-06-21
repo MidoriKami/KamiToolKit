@@ -13,7 +13,7 @@ namespace KamiToolKit.BaseTypes;
 public abstract unsafe partial class NodeBase {
 
     /// <summary>
-    /// Attaches this node to <see cref="targetAddon"/>'s root node using <see cref="targetPosition"/> as the relative positioning.
+    /// Attaches this node to targetAddon's root node using targetPosition as the relative positioning.
     /// </summary>
     [OverloadResolutionPriority(1)]
     public void AttachNode(NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild)
@@ -24,7 +24,7 @@ public abstract unsafe partial class NodeBase {
         => PerformNativeAttach(targetAddon is not null ? targetAddon->RootNode : null, targetPosition);
 
     /// <summary>
-    /// Attaches this node to the <see cref="targetNode"/> node using <see cref="targetPosition"/> to detmine where to insert the node relatively.
+    /// Attaches this node to the targetNode node using targetPosition to determine where to insert the node relatively.
     /// </summary>
     [OverloadResolutionPriority(1)]
     public void AttachNode(NodeBase? targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
@@ -65,7 +65,7 @@ public abstract unsafe partial class NodeBase {
     /// <summary>
     /// Detaches this node from the current tree, and removes native references to it.
     /// This is only intended to be used for very specific use cases.
-    /// Generally speaking you probably want <see cref="Dispose"/> instead.
+    /// Generally speaking you probably want "Dispose" instead.
     /// </summary>
     /// <remarks>
     /// <em>Do not call this immediately before calling dispose!</em>

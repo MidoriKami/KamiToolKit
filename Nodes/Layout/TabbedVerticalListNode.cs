@@ -121,28 +121,24 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     public int TabStep { get; set; }
 
     /// <summary>
-    /// Adds <see cref="tabAmount"/> to <see cref="TabStep"/> causing all
+    /// Adds tabAmount to TabStep causing all
     /// following nodes tab to be increased by the specified amount.
     /// </summary>
-    /// <param name="tabAmount">Tab value to increase.</param>
     public void AddTab(int tabAmount)
         => TabStep += tabAmount;
 
     /// <summary>
-    /// Adds <see cref="tabAmount"/> to <see cref="TabStep"/> causing all
+    /// Adds tabAmount to TabStep causing all
     /// following nodes tab to be decreased by the specified amount.
     /// </summary>
-    /// <param name="tabAmount">Tab value to decrease.</param>
     public void SubtractTab(int tabAmount)
         => TabStep -= tabAmount;
 
     /// <summary>
     /// Adds several nodes with the specified tab index to the list.
     /// </summary>
-    /// <param name="tabIndex">Tab index to use</param>
-    /// <param name="nodes">Nodes to add</param>
     /// <remarks>
-    /// Tab index provided will be <em>added</em> to the current accumulated <see cref="TabStep"/>.
+    /// Tab index provided will be <em>added</em> to the current accumulated TabStep.
     /// </remarks>
     public void AddNode(int tabIndex, IEnumerable<NodeBase> nodes) {
         suppressRecalculateLayout = true;
@@ -155,8 +151,6 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     /// <summary>
     /// Adds a single node with the specified tab index to the list.
     /// </summary>
-    /// <param name="tabIndex">Tab index to use</param>
-    /// <param name="node">Node to add</param>
     /// <remarks>
     /// Tab index provided will be <em>added</em> to the current accumulated <see cref="TabStep"/>
     /// </remarks>
