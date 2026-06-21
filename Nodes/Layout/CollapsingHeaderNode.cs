@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes.Simplified;
@@ -9,6 +10,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Layout node representing a collapsing header that will collapse/hide its contained nodes.
 /// </summary>
+[Experimental("KTK_WIP")]
 public class CollapsingHeaderNode : LayoutListNode {
 
     /// <summary>
