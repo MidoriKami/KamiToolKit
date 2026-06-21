@@ -75,7 +75,7 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
         }
 
         foreach (var node in NodeList) {
-            if (node is LayoutListNode subNode) {
+            if (node is ILayoutListNode subNode) {
                 subNode.RecalculateLayout();
             }
         }

@@ -93,7 +93,7 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         }
 
         foreach (var node in Nodes) {
-            if (node is LayoutListNode subNode) {
+            if (node is ILayoutListNode subNode) {
                 subNode.RecalculateLayout();
             }
         }
