@@ -18,6 +18,7 @@ public abstract class ButtonListNode : SimpleComponentNode;
 /// <remarks>
 /// Automatically inserts buttons to fill the set height, please ensure option count is greater than button count.
 /// </remarks>
+[Obsolete("Pending Reimplementation Internally.")]
 public abstract unsafe class ButtonListNode<T> : ButtonListNode {
 
     /// <summary>
@@ -136,6 +137,9 @@ public abstract unsafe class ButtonListNode<T> : ButtonListNode {
         }
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="ButtonListNode"/>
+    /// </summary>
     protected ButtonListNode() {
         BackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/ListB.tex",
@@ -161,6 +165,7 @@ public abstract unsafe class ButtonListNode<T> : ButtonListNode {
         BuildTimelines();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -177,6 +182,7 @@ public abstract unsafe class ButtonListNode<T> : ButtonListNode {
         }
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             if (isFocusSet && !isNativeDestructor) {
@@ -189,10 +195,19 @@ public abstract unsafe class ButtonListNode<T> : ButtonListNode {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the height of each button that this node populates.
+    /// </summary>
     protected float ButtonNodeHeight { get; set; } = 22.0f;
 
+    /// <summary>
+    /// Function that is called to resolve the generic type to a string for display purposes.
+    /// </summary>
     protected abstract string GetLabelForOption(T option);
 
+    /// <summary>
+    /// Function that is called when a button in the list is clicked on.
+    /// </summary>
     protected virtual void OnOptionClick(ListButtonNode listButton, T option) {
         if (Options is null) return;
 

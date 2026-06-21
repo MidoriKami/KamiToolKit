@@ -24,6 +24,9 @@ public sealed class CategoryTextNode : TextNode {
     /// </summary>
     public float HeightPadding { get; set; } = 8.0f;
 
+    /// <summary>
+    /// Constructs a <see cref="CategoryTextNode"/> instance.
+    /// </summary>
     public CategoryTextNode() {
         Height = 16.0f;
         TextFlags = TextFlags.AutoAdjustNodeSize;

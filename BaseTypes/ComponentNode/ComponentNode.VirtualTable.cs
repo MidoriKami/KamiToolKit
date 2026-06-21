@@ -25,6 +25,9 @@ public abstract unsafe partial class ComponentNode {
     private AtkComponentBase.AtkComponentBaseVirtualTable* modifiedVirtualTable;
     private AtkComponentBase.AtkComponentBaseVirtualTable* originalVirtualTable;
 
+    /// <summary>
+    /// Replaces components original virtual table with a fully managed custom virtual table.
+    /// </summary>
     protected void RegisterVirtualTable() {
         originalVirtualTable = ComponentBase->VirtualTable;
 

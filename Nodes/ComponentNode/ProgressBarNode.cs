@@ -37,6 +37,10 @@ public class ProgressBarNode : ProgressNode {
         set => ForegroundNode.Width = Width * value;
     }
 
+
+    /// <summary>
+    /// Constructs a new <see cref="ProgressBarNode"/>.
+    /// </summary>
     public ProgressBarNode() {
         BackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/ToDoList.tex",
@@ -58,6 +62,7 @@ public class ProgressBarNode : ProgressNode {
     }
 
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

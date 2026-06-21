@@ -1,11 +1,18 @@
-﻿using System.ComponentModel;
+﻿using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Enums;
 
+/// <summary>
+/// Which side to anchor node within a <see cref="VerticalListNode"/>.
+/// </summary>
 public enum VerticalListAnchor {
-    [Description("Top")]
+    /// <summary>
+    /// Top
+    /// </summary>
     Top,
 
-    [Description("Bottom")]
+    /// <summary>
+    /// Bottom
+    /// </summary>
     Bottom,
 }

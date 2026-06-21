@@ -113,6 +113,9 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         }
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="ScrollBarNode"/>.
+    /// </summary>
     public ScrollBarNode() {
         SetInternalComponentType(ComponentType.ScrollBar);
 
@@ -142,6 +145,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         AddEvent(AtkEventType.ValueUpdate, UpdateHandler);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

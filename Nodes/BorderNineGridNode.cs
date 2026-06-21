@@ -10,6 +10,10 @@ namespace KamiToolKit.Nodes;
 /// Some modders have decided this texture isn't worth of existing, and replace it with a blank texture.
 /// </remarks>
 public unsafe class BorderNineGridNode : NineGridNode {
+
+    /// <summary>
+    /// Constructs a <see cref="BorderNineGridNode"/> instance.
+    /// </summary>
     public BorderNineGridNode() {
         PartsList.Add(new Part {
             TextureCoordinates = new Vector2(0.0f, 0.0f),

@@ -53,6 +53,9 @@ public class ColorEditNode : SimpleComponentNode {
     /// </summary>
     public Action<Vector4>? OnColorConfirmed { get; set; }
 
+    /// <summary>
+    /// Constructs a <see cref="ColorEditNode"/> instance.
+    /// </summary>
     public unsafe ColorEditNode() {
         squareNode = new ColorSquareNode();
         squareNode.AttachNode(this);
@@ -73,6 +76,7 @@ public class ColorEditNode : SimpleComponentNode {
         CollisionNode.AddEvent(AtkEventType.InputReceived, OnInputReceived);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -83,6 +87,7 @@ public class ColorEditNode : SimpleComponentNode {
         labelNode.Position = new Vector2(squareNode.Bounds.Right + 12.0f, 0.0f);
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         OnColorCancelled = null;
         OnColorPreviewed = null;

@@ -12,10 +12,19 @@ namespace KamiToolKit.Timelines;
 /// </remarks>
 public class NodeTint {
 
+    /// <summary>
+    /// Intended for internal use, this class is magic, don't question it, or you'll dispell the magic.
+    /// </summary>
     public Vector3 AddColor { get; set; }
 
+    /// <summary>
+    /// Intended for internal use, this class is magic, don't question it, or you'll dispell the magic.
+    /// </summary>
     public Vector3 MultiplyColor { get; set; }
 
+    /// <summary>
+    /// Intended for internal use, this class is magic, don't question it, or you'll dispell the magic.
+    /// </summary>
     public static implicit operator AtkTimelineNodeTint(NodeTint tint) => new() {
         MultiplyRGB = new ByteColor {
             R = (byte)tint.MultiplyColor.X, G = (byte)tint.MultiplyColor.Y, B = (byte)tint.MultiplyColor.Z,
@@ -23,6 +32,9 @@ public class NodeTint {
         AddRGBBitfield = Convert(tint.AddColor),
     };
 
+    /// <summary>
+    /// Intended for internal use, this class is magic, don't question it, or you'll dispell the magic.
+    /// </summary>
     public static implicit operator NodeTint(AtkTimelineNodeTint tint) => new() {
         AddColor = new Vector3(tint.AddR, tint.AddG, tint.AddB), MultiplyColor = tint.MultiplyRGB.ToVector4().AsVector3(),
     };

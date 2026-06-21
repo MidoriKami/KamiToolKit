@@ -16,6 +16,9 @@ public class AntsNode : ResNode {
     /// </summary>
     public ImageNode AntsImageNode { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="AntsNode"/>
+    /// </summary>
     public AntsNode() {
         AntsImageNode = new ImageNode {
             NodeId = 13,

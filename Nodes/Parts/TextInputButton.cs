@@ -23,6 +23,9 @@ public unsafe class TextInputButtonNode : ButtonBase {
     /// </summary>
     public TextNode LabelNode { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="TextInputButtonNode"/>
+    /// </summary>
     public TextInputButtonNode() {
         BackgroundNode = new SimpleNineGridNode {
             Size = new Vector2(160.0f, 24.0f),

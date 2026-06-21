@@ -68,6 +68,8 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
     }
 
     ~NativeAddon() {
+        if (IsOverlayAddon) return; // Intentionally leak overlay addons.
+
         Log.Warning("KamiToolKit Addon Title: '{title}' InternalName: '{internalName}' was disposed via GC, this shouldn't happen.", Title.ToString(), InternalName);
         Task.Run(DisposeAsync);
     }

@@ -88,6 +88,10 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
         set => Component->SetChecked(value);
     }
 
+
+    /// <summary>
+    /// Constructs a new <see cref="TabBarRadioButtonNode"/>.
+    /// </summary>
     public TabBarRadioButtonNode() {
         SetInternalComponentType(ComponentType.RadioButton);
 
@@ -134,6 +138,7 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
     private void ClickHandler()
         => OnClick?.Invoke();
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

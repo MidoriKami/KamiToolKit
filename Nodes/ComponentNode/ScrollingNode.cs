@@ -59,6 +59,9 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         OnSizeChanged();
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="ScrollingNode{T}"/>.
+    /// </summary>
     public unsafe ScrollingNode() {
         ClippingContentNode = new ResNode {
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft |
@@ -113,6 +116,7 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         );
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

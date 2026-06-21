@@ -47,6 +47,9 @@ public class ColorGradientSquare : ResNode {
         set => ColorDotNode.Position = value - ColorDotNode.Origin;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="ColorGradientSquare"/>
+    /// </summary>
     public ColorGradientSquare() {
         WhiteGradientNode = new ImGuiImageNode {
             TexturePath = Services.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
@@ -74,6 +77,7 @@ public class ColorGradientSquare : ResNode {
         ColorDotNode.AttachNode(this);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

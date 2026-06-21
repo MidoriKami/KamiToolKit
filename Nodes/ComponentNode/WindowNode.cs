@@ -159,6 +159,9 @@ public unsafe class WindowNode : WindowNodeBase {
         SubtitleNode.Position = new Vector2(TitleNode.Bounds.Right + 4.0f, SubtitleNode.Y);
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="WindowNode"/>
+    /// </summary>
     public WindowNode() {
         NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents;
 
@@ -315,6 +318,7 @@ public unsafe class WindowNode : WindowNodeBase {
         InitializeComponentEvents();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

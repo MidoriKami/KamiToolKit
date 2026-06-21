@@ -7,6 +7,10 @@ namespace KamiToolKit.Nodes;
 /// Specialized implementation for use with <see cref="ScrollBarNode"/>. Not intended for external use.
 /// </summary>
 public unsafe class ScrollBarBackgroundButtonNode : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
+
+    /// <summary>
+    /// Constructs a new <see cref="ScrollBarBackgroundButtonNode"/>
+    /// </summary>
     public ScrollBarBackgroundButtonNode() {
         SetInternalComponentType(ComponentType.Button);
 

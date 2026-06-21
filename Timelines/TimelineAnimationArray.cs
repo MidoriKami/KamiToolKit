@@ -27,6 +27,7 @@ public unsafe class TimelineAnimationArray : IDisposable {
         }
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         foreach (var animation in timelineAnimations) {
             animation.Dispose();

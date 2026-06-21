@@ -11,12 +11,14 @@ namespace KamiToolKit.Timelines;
 /// </summary>
 public unsafe class TimelineLabelSetArray : IDisposable {
 
-    internal AtkTimelineLabelSet* InternalLabelSetArray = null;
-
-    private List<TimelineLabelSet> labelSets = [];
-
+    /// <summary>
+    /// Gets the number of label sets that exist.
+    /// </summary>
     public uint Count { get; private set; }
 
+    /// <summary>
+    /// Gets or sets the label sets.
+    /// </summary>
     public List<TimelineLabelSet> LabelSets {
         get => labelSets;
         set {
@@ -25,6 +27,7 @@ public unsafe class TimelineLabelSetArray : IDisposable {
         }
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         foreach (var labelSet in labelSets) {
             labelSet.Dispose();
@@ -51,4 +54,7 @@ public unsafe class TimelineLabelSetArray : IDisposable {
 
         Count = (uint)labelSets.Count;
     }
+
+    internal AtkTimelineLabelSet* InternalLabelSetArray = null;
+    private List<TimelineLabelSet> labelSets = [];
 }

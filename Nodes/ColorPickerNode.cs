@@ -40,7 +40,11 @@ public class ColorPickerNode : ResNode {
     /// </summary>
     public Action<Vector4>? RgbaColorPreviewed { get; set; }
 
-        public void SetAlpha(float alpha) {
+    /// <summary>
+    /// Sets the current color's alpha.
+    /// </summary>
+    /// <param name="alpha"></param>
+    public void SetAlpha(float alpha) {
         CurrentColor = CurrentColor with { A = alpha };
 
         ColorPreviewWithInput.ColorHsva = CurrentColor;
@@ -126,6 +130,9 @@ public class ColorPickerNode : ResNode {
         }
     }
 
+    /// <summary>
+    /// Constructs a <see cref="ColorPickerNode"/> instance.
+    /// </summary>
     public ColorPickerNode() {
         ColorRingNode = new ColorRingWithSquareNode {
             OnHueChanged = SetHue,
@@ -161,6 +168,7 @@ public class ColorPickerNode : ResNode {
         }
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

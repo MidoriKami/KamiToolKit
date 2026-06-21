@@ -93,10 +93,14 @@ public unsafe class ContextMenu : IDisposable {
         ClearAll();
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="ContextMenu"/>
+    /// </summary>
     public ContextMenu() {
         contextMenuEventInterface = new CustomEventInterface(ContextMenuEventHandler);
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         ClearAll();
 

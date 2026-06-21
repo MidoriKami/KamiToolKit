@@ -113,6 +113,9 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         }
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="CounterNode"/>
+    /// </summary>
     public CounterNode() : base(NodeType.Counter) {
         PartsList = new PartsList();
         PartsList.Add(new Part());
@@ -127,6 +130,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         Font = CounterFont.MoneyFont;
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             if (!isNativeDestructor) {
@@ -138,11 +142,17 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the texture path for the font used by this counter node.
+    /// </summary>
     protected string TexturePath {
         get => PartsList[0]->LoadedPath;
         set => PartsList[0]->LoadTexture(value);
     }
 
+    /// <summary>
+    /// Gets or sets the texture coordinates used for the font used by this counter node.
+    /// </summary>
     protected Vector2 TextureCoordinates {
         get => new(PartsList[0]->U, PartsList[0]->V);
         set {
@@ -151,6 +161,9 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the texture size of the font texture used by this counter node.
+    /// </summary>
     protected Vector2 TextureSize {
         get => new(PartsList[0]->Width, PartsList[0]->Height);
         set {

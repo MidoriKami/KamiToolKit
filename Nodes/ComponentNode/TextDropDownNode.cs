@@ -12,6 +12,9 @@ public class TextDropDownNode : DropDownNode<TextButtonListNode, string> {
     /// </summary>
     public Action<string>? OnOptionSelected { get; set; }
 
+    /// <summary>
+    /// Constructs a new <see cref="TextDropDownNode"/>
+    /// </summary>
     public TextDropDownNode()
         => OptionListNode.OnOptionSelected += OptionSelectedHandler;
 
@@ -21,6 +24,7 @@ public class TextDropDownNode : DropDownNode<TextButtonListNode, string> {
         Toggle(false);
     }
 
+    /// <inheritdoc />
     protected override void UpdateLabel(string? option)
         => LabelNode.String = option ?? "ERROR: Invalid Default Option";
 }

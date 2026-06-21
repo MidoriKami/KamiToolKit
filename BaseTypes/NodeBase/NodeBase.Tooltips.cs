@@ -90,6 +90,14 @@ public unsafe partial class NodeBase {
     }
 
     /// <summary>
+    /// Property that indicates if a tooltip is already registered.
+    /// </summary>
+    /// <remarks>
+    /// Used by inherited nodes if they want to override the tooltip behavior.
+    /// </remarks>
+    protected bool TooltipRegistered { get; set; }
+
+    /// <summary>
     /// Triggers this nodes tooltip to show, prioritizing Text -> Action -> Item tooltips in that order, only one tooltip will show.
     /// </summary>
     public virtual void ShowTooltip() {
@@ -183,8 +191,6 @@ public unsafe partial class NodeBase {
             RemoveNodeFlags(NodeFlags.HasCollision);
         }
     }
-
-    protected bool TooltipRegistered { get; set; }
 
     private AtkTooltipType tooltipType = AtkTooltipType.None;
     private bool tooltipEventsRegistered;

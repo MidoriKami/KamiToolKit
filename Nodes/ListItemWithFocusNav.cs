@@ -31,6 +31,9 @@ public abstract class ListItemWithFocusNav<T> : ListItemNode<T> {
     /// </summary>
     protected virtual void OnNavHoverEnd() { }
 
+    /// <summary>
+    /// Constructs a new <see cref="ListItemWithFocusNav{T}"/>
+    /// </summary>
     protected ListItemWithFocusNav() {
         NavFocusNode = new NavFocusNode {
             OnSelected = OnNavSelected,
@@ -40,6 +43,7 @@ public abstract class ListItemWithFocusNav<T> : ListItemNode<T> {
         NavFocusNode.AttachNode(this);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -47,6 +51,7 @@ public abstract class ListItemWithFocusNav<T> : ListItemNode<T> {
         NavFocusNode.Position = new Vector2(2.0f, Height / 2.0f);
     }
 
+    /// <inheritdoc />
     public override void ProcessNav(int index, int up, int down, int left, int right) {
         base.ProcessNav(index, up, down, left, right);
 

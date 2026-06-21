@@ -73,6 +73,7 @@ public unsafe class MultiAddonController<T> : IAddonEventController<T>, IDisposa
     public void Disable()
         => addonControllers.ForEach(controller => controller.Disable());
 
+    /// <inheritdoc />
     public void Dispose() {
         ThreadSafety.AssertMainThread();
 

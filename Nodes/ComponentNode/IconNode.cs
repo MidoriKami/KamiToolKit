@@ -99,6 +99,9 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
     public bool IsBeingDragged
         => Component->Flags.HasFlag(IconComponentFlags.IsBeingDragged);
 
+    /// <summary>
+    /// Constructs a new <see cref="IconNode"/>.
+    /// </summary>
     public IconNode() {
         SetInternalComponentType(ComponentType.Icon);
 

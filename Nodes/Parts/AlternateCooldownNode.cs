@@ -16,6 +16,9 @@ public class AlternateCooldownNode : ResNode {
     /// </summary>
     public ImageNode CooldownImage { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="AlternateCooldownNode"/>
+    /// </summary>
     public AlternateCooldownNode() {
         CooldownImage = new ImageNode {
             NodeId = 15,

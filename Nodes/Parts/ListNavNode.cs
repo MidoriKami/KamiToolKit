@@ -21,12 +21,16 @@ public sealed unsafe class ListNavNode : SimpleComponentNode {
     /// </summary>
     public Action? OnDownNavReceived { get; set; }
 
+    /// <summary>
+    /// Constructs a new <see cref="ListNavNode"/>
+    /// </summary>
     public ListNavNode() {
         Height = 4.0f;
 
         AddEvent(AtkEventType.InputReceived, OnInputReceived);
     }
 
+    /// <inheritdoc />
     public override float Height {
         get => base.Height;
         set {

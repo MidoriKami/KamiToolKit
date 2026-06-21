@@ -16,6 +16,9 @@ public unsafe class SliderBackgroundButtonNode : ComponentNode<AtkComponentButto
     /// </summary>
     public NineGridNode BackgroundTexture { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="SliderBackgroundButtonNode"/>
+    /// </summary>
     public SliderBackgroundButtonNode() {
         SetInternalComponentType(ComponentType.Button);
 
@@ -38,6 +41,7 @@ public unsafe class SliderBackgroundButtonNode : ComponentNode<AtkComponentButto
         InitializeComponentEvents();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

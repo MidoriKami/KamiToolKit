@@ -10,9 +10,16 @@ using Serilog.Events;
 
 namespace KamiToolKit;
 
+/// <summary>
+/// Primary entry point for KamiToolKit, contains initialization and disposal code.
+/// </summary>
 public static class KamiToolKitLibrary {
     private const string NodeDataShareKey = "TypeMappedCustomNodes";
 
+    /// <summary>
+    /// Gets the <see cref="IDalamudPluginInterface"/> used for KamiToolKit.
+    /// This can be accessed anytime after <see cref="Initialize"/> has been called.
+    /// </summary>
     public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
 
     internal static ConcurrentDictionary<nint, Type>? AllocatedNodes;

@@ -105,12 +105,16 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
     public void AddPart(params Part[] parts)
         => PartsList.Add(parts);
 
+    /// <summary>
+    /// Constructs a new <see cref="NineGridNode"/>
+    /// </summary>
     public NineGridNode() : base(NodeType.NineGrid) {
         PartsList = new PartsList();
 
         Node->PartsList = PartsList.InternalPartsList;
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             if (!isNativeDestructor) {

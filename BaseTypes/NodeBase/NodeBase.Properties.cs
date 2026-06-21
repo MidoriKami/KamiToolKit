@@ -218,7 +218,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
-    /// Gets or sets this nodes flags.
+    /// Gets or sets the nodes flags.
     /// </summary>
     public NodeFlags NodeFlags {
         get => ResNode->NodeFlags;

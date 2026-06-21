@@ -92,6 +92,9 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
         set => TextNode.AlignmentType = value;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="TextNineGridNode"/>
+    /// </summary>
     public TextNineGridNode() {
         SetInternalComponentType(ComponentType.TextNineGrid);
 
@@ -126,6 +129,7 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
         Component->ParentNode = null;
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

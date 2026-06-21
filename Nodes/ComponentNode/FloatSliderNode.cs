@@ -70,6 +70,9 @@ public unsafe class FloatSliderNode : ComponentNode<AtkComponentSlider, AtkUldCo
         set => Component->SetValue((int) (value * 100.0f));
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="FloatSliderNode"/>.
+    /// </summary>
     public FloatSliderNode() {
         SetInternalComponentType(ComponentType.Slider);
 
@@ -126,6 +129,7 @@ public unsafe class FloatSliderNode : ComponentNode<AtkComponentSlider, AtkUldCo
         FocusNode = SliderForegroundButtonNode;
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -153,6 +157,7 @@ public unsafe class FloatSliderNode : ComponentNode<AtkComponentSlider, AtkUldCo
         FloatValueNode.String = string.Format(DecimalFormatInfo, "{0:F}", Value);
     }
 
+    /// <inheritdoc />
     protected override void OnReceiveEvent(AtkComponentBase* component, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
         base.OnReceiveEvent(component, eventType, eventParam, atkEvent, atkEventData);
 

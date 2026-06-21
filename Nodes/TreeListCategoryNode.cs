@@ -145,6 +145,9 @@ public unsafe class TreeListCategoryNode : ResNode {
         UpdateCollapsed();
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="TreeListCategoryNode"/>
+    /// </summary>
     public TreeListCategoryNode() {
         CollisionNode = new CollisionNode {
             Height = 28.0f,
@@ -212,6 +215,7 @@ public unsafe class TreeListCategoryNode : ResNode {
         });
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

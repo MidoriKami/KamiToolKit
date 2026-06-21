@@ -12,6 +12,12 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
 
     private readonly NodeTint nodeTint = new();
 
+    /// <summary>
+    /// X/Y position that the node will be set to.
+    /// </summary>
+    /// <remarks>
+    /// This is not an offset from original position.
+    /// </remarks>
     public Vector2 Position {
         get => new(Value.Float2.Item1, Value.Float2.Item2);
         set {
@@ -24,6 +30,9 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
         }
     }
 
+    /// <summary>
+    /// Alpha transparency, expects 0 to 255
+    /// </summary>
     public byte Alpha {
         get => Value.Byte;
         set {
@@ -36,6 +45,9 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
         }
     }
 
+    /// <summary>
+    /// Add Color
+    /// </summary>
     public Vector3 AddColor {
         set {
             nodeTint.AddColor = value;
@@ -43,6 +55,9 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
         }
     }
 
+    /// <summary>
+    /// Multiply Color
+    /// </summary>
     public Vector3 MultiplyColor {
         set {
             nodeTint.MultiplyColor = value;
@@ -50,6 +65,9 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
         }
     }
 
+    /// <summary>
+    /// Rotation in radians.
+    /// </summary>
     public float Rotation {
         get => Value.Float;
         set {
@@ -62,6 +80,9 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
         }
     }
 
+    /// <summary>
+    /// Scale.
+    /// </summary>
     public Vector2 Scale {
         get => new(Value.Float2.Item1, Value.Float2.Item2);
         set {
@@ -74,6 +95,9 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
         }
     }
 
+    /// <summary>
+    /// Text Color.
+    /// </summary>
     public Vector3 TextColor {
         get => new Vector3(Value.RGB.R, Value.RGB.G, Value.RGB.B) * 255.0f;
         set {
@@ -86,6 +110,9 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
         }
     }
 
+    /// <summary>
+    /// Text outline color.
+    /// </summary>
     public Vector3 TextEdgeColor {
         get => new Vector3(Value.RGB.R, Value.RGB.G, Value.RGB.B) * 255.0f;
         set {
@@ -98,6 +125,9 @@ public class TimelineAnimationKeyFrame : TimelineKeyFrame {
         }
     }
 
+    /// <summary>
+    /// Part id to use.
+    /// </summary>
     public uint PartId {
         set {
             Value = new AtkTimelineKeyValue {

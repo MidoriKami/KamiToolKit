@@ -25,6 +25,11 @@ public abstract unsafe partial class NodeBase : IDisposable {
     public static implicit operator AtkEventTarget*(NodeBase node) => &node.ResNode->AtkEventTarget;
 
     /// <summary>
+    /// Gets the list of all allocated nodes for this KamiToolKit instance.
+    /// </summary>
+    protected static List<NodeBase> CreatedNodes { get; } = [];
+
+    /// <summary>
     /// Disposes this instance. Has double dispose guards.
     /// </summary>
     /// <remarks>
@@ -98,8 +103,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
     internal abstract AtkResNode* ResNode { get; }
     internal bool IsAddonRootNode;
 
-    protected static readonly List<NodeBase> CreatedNodes = [];
-
     private static int logIndent = -1;
 
     private bool isDisposed;
@@ -171,6 +174,9 @@ public abstract unsafe partial class NodeBase : IDisposable {
         return true;
     }
 
+    /// <summary>
+    /// Replaces the nodes entire virtual table to ensure that C#'s managed space gets notified of the games unmanaged node dtor.
+    /// </summary>
     protected void BuildVirtualTable() {
         // Back up original destructor pointer
         originalVirtualTable = ResNode->VirtualTable;
@@ -188,6 +194,9 @@ public abstract unsafe partial class NodeBase : IDisposable {
         modifiedVirtualTable->Destroy = (delegate* unmanaged<AtkResNode*, bool, void>)Marshal.GetFunctionPointerForDelegate(destroyFunction);
     }
 
+    /// <summary>
+    /// Pinned managed function that is used to replace the native virtual tables dtor function pointer.
+    /// </summary>
     protected void Destroy(AtkResNode* thisPtr, bool free) {
         Dispose(true, true);
 
@@ -204,6 +213,12 @@ public abstract unsafe partial class NodeBase : IDisposable {
     }
 
     // To be invoked from NodeBase.Dispose(bool, bool).
+    /// <summary>
+    /// Invokes the original games destroy function without calling back to the native disposal method.
+    /// </summary>
+    /// <remarks>
+    /// This is intended to be used from <see cref="NodeBase"/> after the managed disposal functions have been invoked.
+    /// </remarks>
     protected void OriginalDestroy(AtkResNode* thisPtr, bool free) {
         originalVirtualTable->Destroy(thisPtr, free);
 

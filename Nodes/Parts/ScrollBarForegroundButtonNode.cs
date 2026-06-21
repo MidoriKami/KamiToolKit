@@ -16,6 +16,9 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
     /// </summary>
     public NineGridNode ButtonTexture { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="ScrollBarForegroundButtonNode"/>
+    /// </summary>
     public ScrollBarForegroundButtonNode() {
         SetInternalComponentType(ComponentType.Button);
 
@@ -36,6 +39,7 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
         InitializeComponentEvents();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

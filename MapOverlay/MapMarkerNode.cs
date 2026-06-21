@@ -174,6 +174,9 @@ public unsafe class MapMarkerNode : ResNode {
         base.IsVisible = IsVisible && (AllowAnyMap || AgentMap.Instance()->SelectedMapId == MapId);
     }
 
+    /// <summary>
+    /// Overridable Update Function that is called every frame to update the state of the node.
+    /// </summary>
     protected virtual void OnUpdate() { }
 
     private IconImageNode? iconNode;

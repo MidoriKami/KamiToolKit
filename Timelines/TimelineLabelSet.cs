@@ -14,6 +14,9 @@ public unsafe class TimelineLabelSet : IDisposable {
 
     internal AtkTimelineLabelSet* InternalLabelSet;
 
+    /// <summary>
+    /// Constructs a new <see cref="TimelineLabelSet"/>
+    /// </summary>
     public TimelineLabelSet() {
         InternalLabelSet = NativeMemoryHelper.UiAlloc<AtkTimelineLabelSet>();
 
@@ -22,16 +25,25 @@ public unsafe class TimelineLabelSet : IDisposable {
         InternalLabelSet->LabelKeyGroup.Type = AtkTimelineKeyGroupType.Label;
     }
 
+    /// <summary>
+    /// Gets or sets start frame id.
+    /// </summary>
     public int StartFrameId {
         get => InternalLabelSet->StartFrameIdx;
         set => InternalLabelSet->StartFrameIdx = (ushort)value;
     }
 
+    /// <summary>
+    /// Gets or sets end frame id.
+    /// </summary>
     public int EndFrameId {
         get => InternalLabelSet->EndFrameIdx;
         set => InternalLabelSet->EndFrameIdx = (ushort)value;
     }
 
+    /// <summary>
+    /// Gets or sets the keyframe label sets.
+    /// </summary>
     public List<TimelineKeyFrame> Labels {
         get => internalKeyFrames;
         set {
@@ -40,6 +52,7 @@ public unsafe class TimelineLabelSet : IDisposable {
         }
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         NativeMemoryHelper.UiFree(InternalLabelSet);
         InternalLabelSet = null;

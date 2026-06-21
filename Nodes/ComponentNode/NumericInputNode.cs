@@ -94,6 +94,9 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
     /// </summary>
     public Action<int>? OnValueUpdate { get; set; }
 
+    /// <summary>
+    /// Constructs a new <see cref="NumericInputNode"/>.
+    /// </summary>
     public NumericInputNode() {
         SetInternalComponentType(ComponentType.NumericInput);
 
@@ -171,6 +174,7 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
         AddEvent(AtkEventType.ValueUpdate, ValueUpdateHandler);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

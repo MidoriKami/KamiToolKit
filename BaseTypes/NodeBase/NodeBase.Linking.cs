@@ -12,38 +12,53 @@ namespace KamiToolKit.BaseTypes;
 
 public abstract unsafe partial class NodeBase {
 
+    /// <summary>
+    /// Attaches this node to <see cref="targetAddon"/>'s root node using <see cref="targetPosition"/> as the relative positioning.
+    /// </summary>
     [OverloadResolutionPriority(1)]
     public void AttachNode(NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformManagedAttach(targetAddon, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NativeAddon?, NodePosition)"/>
     public void AttachNode(AtkUnitBase* targetAddon, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach(targetAddon is not null ? targetAddon->RootNode : null, targetPosition);
 
+    /// <summary>
+    /// Attaches this node to the <see cref="targetNode"/> node using <see cref="targetPosition"/> to detmine where to insert the node relatively.
+    /// </summary>
     [OverloadResolutionPriority(1)]
     public void AttachNode(NodeBase? targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformManagedAttach(targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkResNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach(targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkImageNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkTextNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkNineGridNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkCounterNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkCollisionNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkClippingMaskNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkComponentNode* targetNode, NodePosition targetPosition = NodePosition.AfterAllSiblings)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 

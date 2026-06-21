@@ -29,6 +29,9 @@ public class UnderlinedTextNode : ResNode {
         }
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="UnderlinedTextNode"/>
+    /// </summary>
     public UnderlinedTextNode() {
         LabelTextNode = new CategoryTextNode();
         LabelTextNode.AttachNode(this);
@@ -39,6 +42,7 @@ public class UnderlinedTextNode : ResNode {
         LineNode.AttachNode(this);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

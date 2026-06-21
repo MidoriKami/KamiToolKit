@@ -78,18 +78,29 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         AtkStage.Instance()->AtkInputManager->SetFocus(FocusNode, addon, 0);
     }
 
+    /// <summary>
+    /// Sets the AtkUldComponent's internal type.
+    /// </summary>
+    /// <param name="type"></param>
     protected void SetInternalComponentType(ComponentType type) {
         var componentInfo = (AtkUldComponentInfo*)ComponentBase->UldManager.Objects;
 
         componentInfo->ComponentType = type;
     }
 
+    /// <summary>
+    /// Performs post-construction initialization of components based on their actual created type.
+    /// </summary>
+    /// <remarks>
+    /// The game does a bunch of its own magic here to wire things up for us.
+    /// </remarks>
     protected void InitializeComponentEvents() {
         ComponentBase->InitializeFromComponentData(DataBase);
         ComponentBase->Setup();
         ComponentBase->SetEnabledState(true);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -98,6 +109,9 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         ComponentBase->UldManager.RootNodeWidth = (ushort)Width;
     }
 
+    /// <summary>
+    /// Constructs a new instance of <see cref="ComponentNode"/>
+    /// </summary>
     protected ComponentNode() : base(NodeType.Component) {
         Node->Component = (AtkComponentBase*)NativeMemoryHelper.Create<T>();
         Node->Component->UldManager.ComponentData = (AtkUldComponentDataBase*)NativeMemoryHelper.UiAlloc<TU>();
@@ -146,6 +160,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         AddNodeFlags(NodeFlags.EmitsEvents);
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             try {

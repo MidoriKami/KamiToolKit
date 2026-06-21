@@ -70,6 +70,9 @@ public abstract class SelectableNode : ResNode {
         }
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="SelectableNode"/>
+    /// </summary>
     protected SelectableNode() {
         HoveredBackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/ListItemA.tex",
@@ -115,6 +118,7 @@ public abstract class SelectableNode : ResNode {
         AddDrawFlags(DrawFlags.ClickableCursor);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

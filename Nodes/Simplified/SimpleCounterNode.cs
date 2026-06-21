@@ -7,6 +7,10 @@ namespace KamiToolKit.Nodes.Simplified;
 /// A simplified implementation of a <see cref="CounterNode"/>, with default font set to Money font.
 /// </summary>
 public unsafe class SimpleCounterNode : CounterNode {
+
+    /// <summary>
+    /// Constructs a new <see cref="SimpleCounterNode"/>
+    /// </summary>
     public SimpleCounterNode() {
         PartsList.Add(new Part {
             TexturePath = "ui/uld/Money_Number.tex",

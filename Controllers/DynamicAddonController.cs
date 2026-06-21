@@ -101,6 +101,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
         }
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         Services.AddonLifecycle.UnregisterListener(OnAddonEvent);
         Disable();

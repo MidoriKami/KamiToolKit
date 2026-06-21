@@ -204,6 +204,9 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
     /// </summary>
     protected abstract void UpdateLabel(TU? option);
 
+    /// <summary>
+    /// Constructs a new <see cref="DropDownNode{T,TU}"/>.
+    /// </summary>
     protected DropDownNode() {
         BackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/DropDownA.tex",
@@ -265,6 +268,7 @@ public abstract unsafe class DropDownNode<T, TU> : SimpleComponentNode where T :
         Component->SetEnabledState(true);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

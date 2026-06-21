@@ -31,14 +31,26 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
         set => Component->SetChecked(value);
     }
 
+    /// <summary>
+    /// Constructs a <see cref="ButtonBase"/> instance.
+    /// </summary>
     protected ButtonBase() {
         SetInternalComponentType(ComponentType.Button);
         AddEvent(AtkEventType.ButtonClick, ClickHandler);
     }
 
+    /// <summary>
+    /// Function that is called when this button is clicked on.
+    /// </summary>
+    /// <remarks>
+    /// This will invoke<see cref="OnClick"/>.
+    /// </remarks>
     protected virtual void ClickHandler()
         => OnClick?.Invoke();
 
+    /// <summary>
+    /// Loads timelines for a button with two parts.
+    /// </summary>
     protected static void LoadTwoPartTimelines(NodeBase parent, NodeBase foreground) {
         parent.AddTimeline(new TimelineBuilder()
             .BeginFrameSet(1, 59)
@@ -70,6 +82,9 @@ public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkU
             .Build());
     }
 
+    /// <summary>
+    /// Loads a timeline for a button with three parts.
+    /// </summary>
     protected static void LoadThreePartTimelines(NodeBase parent, NodeBase background, NodeBase foreground, Vector2 foregroundPositionOffset) {
         parent.AddTimeline(new TimelineBuilder()
             .BeginFrameSet(1, 53)

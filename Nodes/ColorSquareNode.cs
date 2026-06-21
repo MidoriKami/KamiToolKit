@@ -45,6 +45,9 @@ public class ColorSquareNode : ResNode {
         set => SelectedColorPreviewNode.ColorHsva = value;
     }
 
+    /// <summary>
+    /// Constructs a <see cref="ColorSquareNode"/> instance.
+    /// </summary>
     public ColorSquareNode() {
         SelectedColorPreviewBorderNode = new ColorImageNode {
             Color = KnownColor.White.Vector(),
@@ -63,6 +66,7 @@ public class ColorSquareNode : ResNode {
         SelectedColorPreviewNode.AttachNode(this);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

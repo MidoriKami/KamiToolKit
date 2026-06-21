@@ -29,6 +29,9 @@ public class LuminaDropDownNode<T> : DropDownNode<LuminaButtonListNode<T>, T> wh
         set => OptionListNode.FilterFunction = value;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="LuminaDropDownNode{T}"/>.
+    /// </summary>
     public LuminaDropDownNode()
         => OptionListNode.OnOptionSelected += OptionSelectedHandler;
 
@@ -38,6 +41,7 @@ public class LuminaDropDownNode<T> : DropDownNode<LuminaButtonListNode<T>, T> wh
         Toggle(false);
     }
 
+    /// <inheritdoc />
     protected override void UpdateLabel(T option)
         => LabelNode.String = LabelFunction?.Invoke(option) ?? "ERROR: Label Function Not Set";
 }

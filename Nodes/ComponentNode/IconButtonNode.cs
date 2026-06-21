@@ -29,6 +29,9 @@ public class IconButtonNode : ButtonBase {
         set => ImageNode.IconId = value;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="IconButtonNode"/>.
+    /// </summary>
     public IconButtonNode() {
         BackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/BgParts.tex",
@@ -52,6 +55,7 @@ public class IconButtonNode : ButtonBase {
         InitializeComponentEvents();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

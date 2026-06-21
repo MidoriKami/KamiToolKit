@@ -9,13 +9,50 @@ namespace KamiToolKit.BaseTypes;
 
 public unsafe partial class NativeAddon {
 
+    /// <summary>
+    /// OnSetup Callback for an addon, this is called to attach and save references to created nodes.
+    /// </summary>
     protected virtual void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan) { }
+
+    /// <summary>
+    /// OnShow Callback for an addon, this is called when the window is opened.
+    /// </summary>
+    /// <remarks>
+    /// KamiToolKit intentionally does not allow hiding addons, so this is only called when it's opened.
+    /// </remarks>
     protected virtual void OnShow(AtkUnitBase* addon) { }
-    protected virtual void OnDraw(AtkUnitBase* addon) { }
-    protected virtual void OnUpdate(AtkUnitBase* addon) { }
+
+    /// <summary>
+    /// OnHide Callback for an addon, this is called when the window is opened.
+    /// </summary>
+    /// <remarks>
+    /// KamiToolKit intentionally does not allow hiding addons, so this will then trigger close and then subsequently <see cref="OnFinalize"/>.
+    /// </remarks>
     protected virtual void OnHide(AtkUnitBase* addon) { }
+
+    /// <summary>
+    /// OnDraw Callback for an addon, this is called every frame the addon is visible.
+    /// </summary>
+    protected virtual void OnDraw(AtkUnitBase* addon) { }
+
+    /// <summary>
+    /// OnUpdate Callback for an addon, this is called every frame the addon exists before its opened, and after it's closed but not finalized yet.
+    /// </summary>
+    protected virtual void OnUpdate(AtkUnitBase* addon) { }
+
+    /// <summary>
+    /// OnFinalize Callback for the addon, this is called immediately before it is deallocated/closed fully.
+    /// </summary>
     protected virtual void OnFinalize(AtkUnitBase* addon) { }
+
+    /// <summary>
+    /// OnRequestedUpdate Callback for the addon, this is only called if you subscribe to string/number array data entries.
+    /// </summary>
     protected virtual void OnRequestedUpdate(AtkUnitBase* addon, NumberArrayData** numberArrayData, StringArrayData** stringArrayData) { }
+
+    /// <summary>
+    /// OnRefresh Callback for the addon, the game calls this once on open, and may trigger it under other unknown conditions.
+    /// </summary>
     protected virtual void OnRefresh(AtkUnitBase* addon, Span<AtkValue> atkValues) { }
 
     private void Initialize(AtkUnitBase* thisPtr) {

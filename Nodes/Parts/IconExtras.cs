@@ -58,6 +58,9 @@ public unsafe class IconExtras : ResNode {
     /// </summary>
     public ImageNode TimelineImageNode { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="IconExtras"/>
+    /// </summary>
     public IconExtras() {
         TimelineImageNode = new SimpleImageNode {
             NodeId = 19,

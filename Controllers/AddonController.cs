@@ -95,6 +95,7 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
         IsEnabled = false;
     }
 
+    /// <inheritdoc/>
     public virtual void Dispose()
         => Disable();
 
