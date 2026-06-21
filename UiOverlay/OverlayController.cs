@@ -94,6 +94,7 @@ public unsafe class OverlayController : IDisposable {
         BeginStateCheck();
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         ThreadSafety.AssertMainThread();
 

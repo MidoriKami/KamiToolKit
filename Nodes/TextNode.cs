@@ -220,6 +220,13 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
         return new Vector2(sizeX, sizeY);
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="TextNode"/>
+    /// </summary>
+    /// <remarks>
+    /// This will default various properties to standard values
+    /// and colors for the theme that was active when this was constructed.
+    /// </remarks>
     public TextNode() : base(NodeType.Text) {
         TextColor = ColorHelper.GetColor(8);
         TextOutlineColor = ColorHelper.GetColor(7);

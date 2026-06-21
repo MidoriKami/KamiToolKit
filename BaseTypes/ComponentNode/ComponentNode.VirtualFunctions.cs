@@ -5,60 +5,90 @@ namespace KamiToolKit.BaseTypes.ComponentNode;
 
 public abstract unsafe partial class ComponentNode {
 
+    /// <summary>
+    /// Global event callback for events that the game wired up to this component.
+    /// </summary>
     protected virtual void OnReceiveGlobalEvent(AtkComponentBase* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
         Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] Receive Global Event");
 
         originalVirtualTable->ReceiveGlobalEvent(thisPtr, eventType, eventParam, atkEvent, atkEventData);
     }
 
+    /// <summary>
+    /// Event callback for events that the game wired up to this component.
+    /// </summary>
     protected virtual void OnReceiveEvent(AtkComponentBase* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
         Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] [{eventType}] {eventParam}");
 
         originalVirtualTable->ReceiveEvent(thisPtr, eventType, eventParam, atkEvent, atkEventData);
     }
 
+    /// <summary>
+    /// Initialize callback for this component.
+    /// </summary>
     protected virtual void OnInitialize(AtkComponentBase* thisPtr) {
         Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] Initialize");
 
         originalVirtualTable->Initialize(thisPtr);
     }
 
+    /// <summary>
+    /// Unloading callback for this component.
+    /// </summary>
     protected virtual void OnDeinitialize(AtkComponentBase* thisPtr) {
         Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] Deinitialize");
 
         originalVirtualTable->Deinitialize(thisPtr);
     }
 
+    /// <summary>
+    /// Per-frame update callback for this component.
+    /// </summary>
     protected virtual void OnUpdate(AtkComponentBase* thisPtr, float delta) {
         Services.Log.Excessive($"[{GetType().Name}][{GetComponentType()}] Update");
 
         originalVirtualTable->Update(thisPtr, delta);
     }
 
+    /// <summary>
+    /// Draw callback for this component.
+    /// </summary>
     protected virtual void OnDraw(AtkComponentBase* thisPtr) {
         Services.Log.Excessive($"[{GetType().Name}][{GetComponentType()}] Draw");
 
         originalVirtualTable->Draw(thisPtr);
     }
 
+    /// <summary>
+    /// Setup callback for this component.
+    /// </summary>
     protected virtual void OnSetup(AtkComponentBase* thisPtr) {
         Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] Setup");
 
         originalVirtualTable->Setup(thisPtr);
     }
 
+    /// <summary>
+    /// Enable state changed callback for this component.
+    /// </summary>
     protected virtual void OnSetEnabledState(AtkComponentBase* thisPtr, bool enabled) {
         Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] SetEnabledState");
 
         originalVirtualTable->SetEnabledState(thisPtr, enabled);
     }
 
+    /// <summary>
+    /// Play sound effect callback for this component.
+    /// </summary>
     protected virtual void OnPlaySoundEffect(AtkComponentBase* thisPtr) {
         Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] PlaySoundEffect");
 
         originalVirtualTable->PlaySoundEffect(thisPtr);
     }
 
+    /// <summary>
+    /// GetAtkResNode callback for this component.
+    /// </summary>
     protected virtual AtkResNode* OnGetAtkResNode(AtkComponentBase* thisPtr) {
         Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] PlaySoundEffect");
 
@@ -67,12 +97,23 @@ public abstract unsafe partial class ComponentNode {
         return result;
     }
 
+    /// <summary>
+    /// GetFocusNode callback for this component.
+    /// </summary>
+    /// <remarks>
+    /// Overriden to return <see cref="FocusNode"/>.
+    /// </remarks>
     protected virtual AtkResNode* OnGetFocusNode(AtkComponentBase* thisPtr) {
         Services.Log.Excessive($"[{GetType().Name}][{GetComponentType()}] GetFocusNode");
 
         return FocusNode;
     }
 
+    /// <summary>
+    /// Initialization from data callback for this component.
+    /// </summary>
+    /// <param name="thisPtr"></param>
+    /// <param name="data"></param>
     protected virtual void OnInitializeFromComponentData(AtkComponentBase* thisPtr, void* data) {
         Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] InitializeFromComponentData");
 

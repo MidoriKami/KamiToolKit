@@ -21,11 +21,15 @@ public class SelectableTextNode : SelectableNode {
         set => TextNode.String = value;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="SelectableTextNode"/>
+    /// </summary>
     public SelectableTextNode() {
         TextNode = new TextNode();
         TextNode.AttachNode(this);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

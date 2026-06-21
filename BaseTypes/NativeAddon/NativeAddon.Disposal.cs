@@ -67,7 +67,13 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
         isDisposed = true;
     }
 
+    /// <summary>
+    /// Finalizes a NativeAddon Instance.
+    /// This can only be called by the GC, and shouldn't happen except for OverlayAddons, which gets promptly ignored.
+    /// </summary>
     ~NativeAddon() {
+        if (IsOverlayAddon) return; // Intentionally leak overlay addons.
+
         Log.Warning("KamiToolKit Addon Title: '{title}' InternalName: '{internalName}' was disposed via GC, this shouldn't happen.", Title.ToString(), InternalName);
         Task.Run(DisposeAsync);
     }
@@ -92,6 +98,5 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
     }
 
     private static readonly List<NativeAddon> CreatedAddons = [];
-
     private bool isDisposed;
 }

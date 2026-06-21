@@ -67,6 +67,9 @@ public class ColorPreviewWithInput : ResNode {
         }
     }
 
+    /// <summary>
+    /// Constructs a <see cref="ColorPreviewWithInput"/> instance.
+    /// </summary>
     public ColorPreviewWithInput() {
         ColorSquareNode = new ColorSquareNode();
         ColorSquareNode.AttachNode(this);
@@ -78,6 +81,7 @@ public class ColorPreviewWithInput : ResNode {
         ColorInputNode.AttachNode(this);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

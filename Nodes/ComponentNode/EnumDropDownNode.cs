@@ -13,6 +13,9 @@ public class EnumDropDownNode<T> : DropDownNode<EnumButtonListNode<T>, T> where 
     /// </summary>
     public Action<T>? OnOptionSelected { get; set; }
 
+    /// <summary>
+    /// Constructs a new <see cref="EnumDropDownNode{T}"/>.
+    /// </summary>
     public EnumDropDownNode() {
         OptionListNode.OnOptionSelected += OptionSelectedHandler;
     }
@@ -23,6 +26,7 @@ public class EnumDropDownNode<T> : DropDownNode<EnumButtonListNode<T>, T> where 
         Toggle(false);
     }
 
+    /// <inheritdoc />
     protected override void UpdateLabel(T? option) {
         LabelNode.String = option?.Description;
     }

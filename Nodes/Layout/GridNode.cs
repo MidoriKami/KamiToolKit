@@ -51,6 +51,7 @@ public class GridNode : ResNode {
         }
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
         RecalculateLayout();

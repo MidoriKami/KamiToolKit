@@ -42,6 +42,9 @@ public abstract unsafe class OverlayNode : ResNode {
         base.IsVisible = IsVisible && showWithNativeUi && showWithUiToggled;
     }
 
+    /// <summary>
+    /// Overridable update function that is called each frame.
+    /// </summary>
     protected abstract void OnUpdate();
 
     private static bool IsNameplateVisible() {

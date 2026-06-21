@@ -38,6 +38,9 @@ public class TextureButtonNode : ButtonBase {
         set => ImageNode.TextureSize = value;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="TextureButtonNode"/>
+    /// </summary>
     public TextureButtonNode() {
         ImageNode = new ImGuiImageNode {
             WrapMode = WrapMode.Stretch,
@@ -49,6 +52,7 @@ public class TextureButtonNode : ButtonBase {
         InitializeComponentEvents();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
         ImageNode.Size = Size;

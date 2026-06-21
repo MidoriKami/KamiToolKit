@@ -1,11 +1,16 @@
-﻿using System.ComponentModel;
+﻿namespace KamiToolKit.Enums;
 
-namespace KamiToolKit.Enums;
-
+/// <summary>
+/// Which side a vertical list node should anchor nodes to.
+/// </summary>
 public enum VerticalListAlignment {
-    [Description("Left")]
+    /// <summary>
+    /// Left
+    /// </summary>
     Left,
 
-    [Description("Right")]
+    /// <summary>
+    /// Right
+    /// </summary>
     Right,
 }

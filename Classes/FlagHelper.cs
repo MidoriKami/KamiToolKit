@@ -8,25 +8,25 @@ namespace KamiToolKit.Classes;
 public static class FlagHelper {
 
     /// <summary>
-    /// Read the flag value of bit index <see cref="flag"/>.
+    /// Read the flag value of bit index.
     /// </summary>
     public static bool ReadFlag<T>(ref T flagsField, int flag) where T : struct, IBinaryInteger<T>
         => (flagsField & T.One << BitOperations.Log2((uint)flag)) != T.Zero;
 
     /// <summary>
-    /// Sets the flag value of bit index <see cref="flag"/>
+    /// Read the flag value of bit index.
     /// </summary>
     public static void SetFlag<T>(ref T flagsField, int flag) where T : struct, IBinaryInteger<T>
         => flagsField |= T.One << BitOperations.Log2((uint)flag);
 
     /// <summary>
-    /// Clears the flag value of bit index <see cref="flag"/>
+    /// Clears the flag value of bit index.
     /// </summary>
     public static void ClearFlag<T>(ref T flagsField, int flag) where T : struct, IBinaryInteger<T>
         => flagsField &= ~(T.One << BitOperations.Log2((uint)flag));
 
     /// <summary>
-    /// Sets of Clears the flag value of bit index <see cref="flag"/> with the value of <see cref="enable"/>
+    /// Sets of Clears the flag value of bit index with the value of enable.
     /// </summary>
     public static void UpdateFlag<T>(ref T flagsField, int flag, bool enable) where T : struct, IBinaryInteger<T> {
         if (enable) {

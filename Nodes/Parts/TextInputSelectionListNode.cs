@@ -26,6 +26,9 @@ public class TextInputSelectionListNode : ResNode {
     /// </summary>
     public TextNode LabelNode { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="TextInputSelectionListNode"/>
+    /// </summary>
     public TextInputSelectionListNode() {
         BackgroundNode = new SimpleNineGridNode {
             NodeId = 15,

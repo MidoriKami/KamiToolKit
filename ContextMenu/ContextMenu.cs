@@ -14,7 +14,7 @@ namespace KamiToolKit.ContextMenu;
 public unsafe class ContextMenu : IDisposable {
 
     /// <summary>
-    /// Adds a menu entry with the specific <see cref="name"/> and <see cref="callback"/> function.
+    /// Adds a menu entry with the specific name and callback function.
     /// </summary>
     public void AddItem(ReadOnlySeString name, Action callback) {
         AddItem(new ContextMenuItem {
@@ -93,10 +93,14 @@ public unsafe class ContextMenu : IDisposable {
         ClearAll();
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="ContextMenu"/>
+    /// </summary>
     public ContextMenu() {
         contextMenuEventInterface = new CustomEventInterface(ContextMenuEventHandler);
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         ClearAll();
 

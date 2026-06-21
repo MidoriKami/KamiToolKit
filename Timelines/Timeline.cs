@@ -114,6 +114,9 @@ public unsafe class Timeline : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Constructs a new instance of <see cref="Timeline"/>.
+    /// </summary>
     public Timeline() {
         InternalTimeline = NativeMemoryHelper.UiAlloc<AtkTimeline>();
 
@@ -124,6 +127,7 @@ public unsafe class Timeline : IDisposable {
         InternalTimeline->OwnerNode = null;
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         internalTimelineResource.Dispose();
 

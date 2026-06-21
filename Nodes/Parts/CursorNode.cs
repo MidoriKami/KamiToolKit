@@ -15,6 +15,9 @@ public class CursorNode : ResNode {
     /// </summary>
     public SimpleImageNode CursorImageNode { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="CursorNode"/>
+    /// </summary>
     public CursorNode() {
         CursorImageNode = new SimpleImageNode {
             NodeId = 3,

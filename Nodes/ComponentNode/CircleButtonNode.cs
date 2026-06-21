@@ -28,6 +28,9 @@ public class CircleButtonNode : ButtonBase {
         }
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="CircleButtonNode"/> instance.
+    /// </summary>
     public CircleButtonNode() {
         ImageNode = new SimpleImageNode {
             TexturePath = "ui/uld/CircleButtons.tex",
@@ -42,6 +45,7 @@ public class CircleButtonNode : ButtonBase {
         InitializeComponentEvents();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

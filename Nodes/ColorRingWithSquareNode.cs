@@ -80,6 +80,9 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         set => ColorGradientSquare.ColorDotPosition = new Vector2(ColorGradientSquare.Width * value.S, ColorGradientSquare.Height - ColorGradientSquare.Height * value.V);
     }
 
+    /// <summary>
+    /// Constructs a <see cref="ColorRingWithSquareNode"/> instance.
+    /// </summary>
     public ColorRingWithSquareNode() {
         eventListener = new ViewportEventListener(SquareEventHandler);
 
@@ -108,6 +111,7 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         AddEvent(AtkEventType.MouseOut, OnMouseOut);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -121,6 +125,7 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         ColorRingSelectorNode.Origin = Size / 2.0f;
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             base.Dispose(disposing, isNativeDestructor);

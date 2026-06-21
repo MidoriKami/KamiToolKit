@@ -43,6 +43,9 @@ public unsafe class ListButtonNode : ButtonBase {
         set => LabelNode.String = value;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="ListButtonNode"/>
+    /// </summary>
     public ListButtonNode() {
         HoverBackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/ListItemA.tex",
@@ -78,6 +81,7 @@ public unsafe class ListButtonNode : ButtonBase {
         InitializeComponentEvents();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

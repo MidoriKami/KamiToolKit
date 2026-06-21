@@ -105,6 +105,9 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         }
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="SliderNode"/>.
+    /// </summary>
     public SliderNode() {
         SetInternalComponentType(ComponentType.Slider);
 
@@ -170,6 +173,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         FocusNode = SliderForegroundButtonNode;
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

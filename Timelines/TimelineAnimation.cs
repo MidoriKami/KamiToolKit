@@ -47,6 +47,9 @@ public unsafe class TimelineAnimation : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Constructs a new instance of <see cref="TimelineAnimation"/>.
+    /// </summary>
     public TimelineAnimation() {
         InternalAnimation = NativeMemoryHelper.UiAlloc<AtkTimelineAnimation>();
 
@@ -58,6 +61,7 @@ public unsafe class TimelineAnimation : IDisposable {
         }
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         if (InternalAnimation is null) return;
 

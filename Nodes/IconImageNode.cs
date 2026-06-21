@@ -35,6 +35,9 @@ public unsafe class IconImageNode : SimpleImageNode {
     public uint? LoadedIconId
         => Node->IconId;
 
+    /// <summary>
+    /// Constructs a new <see cref="IconImageNode"/>
+    /// </summary>
     public IconImageNode() {
         TextureSize = new Vector2(32.0f, 32.0f);
     }

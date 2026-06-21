@@ -82,6 +82,9 @@ public class RadioButtonGroupNode : ResNode {
         radioButtons.Clear();
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="RadioButtonGroupNode"/>
+    /// </summary>
     public RadioButtonGroupNode()
         => BuildTimelines();
 

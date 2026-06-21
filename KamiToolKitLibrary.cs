@@ -10,9 +10,16 @@ using Serilog.Events;
 
 namespace KamiToolKit;
 
+/// <summary>
+/// Primary entry point for KamiToolKit, contains initialization and disposal code.
+/// </summary>
 public static class KamiToolKitLibrary {
     private const string NodeDataShareKey = "TypeMappedCustomNodes";
 
+    /// <summary>
+    /// Gets the <see cref="IDalamudPluginInterface"/> used for KamiToolKit.
+    /// This can be accessed anytime after <see cref="Initialize"/> has been called.
+    /// </summary>
     public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
 
     internal static ConcurrentDictionary<nint, Type>? AllocatedNodes;
@@ -78,12 +85,12 @@ public static class KamiToolKitLibrary {
     /// Must be called from the main thread.
     /// </remarks>
     public static void Cleanup() {
-        NodeBase.WarnLeakedNodes();
-        NativeAddon.WarnLeakedAddons();
-
         NativeAddon.DisposeCloseCallback();
 
         if (Services.Framework.IsFrameworkUnloading) return;
+
+        NodeBase.WarnLeakedNodes();
+        NativeAddon.WarnLeakedAddons();
 
         try {
             if (!ThreadSafety.IsMainThread) return;

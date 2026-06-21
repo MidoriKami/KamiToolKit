@@ -92,6 +92,9 @@ public unsafe class SimpleClippingMaskNode : ClippingMaskNode {
     public void LoadIcon(uint iconId)
         => PartsList[0]->LoadIcon(iconId);
 
+    /// <summary>
+    /// Constructs a new <see cref="SimpleClippingMaskNode"/>
+    /// </summary>
     public SimpleClippingMaskNode() {
         PartsList.Add(new Part());
     }

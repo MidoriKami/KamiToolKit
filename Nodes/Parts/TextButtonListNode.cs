@@ -5,5 +5,7 @@
 /// Not intended for external use.
 /// </summary>
 public class TextButtonListNode : ButtonListNode<string> {
+
+    /// <inheritdoc />
     protected override string GetLabelForOption(string option) => option;
 }

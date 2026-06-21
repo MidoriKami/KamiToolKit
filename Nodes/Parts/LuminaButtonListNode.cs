@@ -51,6 +51,7 @@ public class LuminaButtonListNode<T> : ButtonListNode<T> where T : struct, IExce
             .ToList();
     }
 
+    /// <inheritdoc />
     protected override string GetLabelForOption(T option)
         => LabelFunction?.Invoke(option) ?? "ERROR: Label Function Not Found";
 }

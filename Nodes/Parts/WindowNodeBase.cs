@@ -36,6 +36,9 @@ public abstract unsafe class WindowNodeBase : ComponentNode<AtkComponentWindow, 
     public virtual void SetTitle(string title, string? subtitle = null)
         => Component->SetTitle(title, subtitle ?? string.Empty);
 
+    /// <summary>
+    /// Constructs a new <see cref="WindowNodeBase"/>
+    /// </summary>
     protected WindowNodeBase()
         => SetInternalComponentType(ComponentType.Window);
 }

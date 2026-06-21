@@ -12,45 +12,60 @@ namespace KamiToolKit.BaseTypes;
 
 public abstract unsafe partial class NodeBase {
 
+    /// <summary>
+    /// Attaches this node to targetAddon's root node using targetPosition as the relative positioning.
+    /// </summary>
     [OverloadResolutionPriority(1)]
     public void AttachNode(NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformManagedAttach(targetAddon, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NativeAddon?, NodePosition)"/>
     public void AttachNode(AtkUnitBase* targetAddon, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach(targetAddon is not null ? targetAddon->RootNode : null, targetPosition);
 
+    /// <summary>
+    /// Attaches this node to the targetNode node using targetPosition to determine where to insert the node relatively.
+    /// </summary>
     [OverloadResolutionPriority(1)]
     public void AttachNode(NodeBase? targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformManagedAttach(targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkResNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach(targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkImageNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkTextNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkNineGridNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkCounterNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkCollisionNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkClippingMaskNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkComponentNode* targetNode, NodePosition targetPosition = NodePosition.AfterAllSiblings)
         => PerformNativeAttach((AtkResNode*)targetNode, targetPosition);
 
     /// <summary>
     /// Detaches this node from the current tree, and removes native references to it.
     /// This is only intended to be used for very specific use cases.
-    /// Generally speaking you probably want <see cref="Dispose"/> instead.
+    /// Generally speaking you probably want "Dispose" instead.
     /// </summary>
     /// <remarks>
     /// <em>Do not call this immediately before calling dispose!</em>

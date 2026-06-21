@@ -167,13 +167,17 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         }
     }
 
+    /// <summary>
     /// Clear the payload data and set iconId to zero
+    /// </summary>
     public void Clear() {
         Payload.Clear();
         IconId = 0;
     }
 
-    // Show fancy tooltip for the currently stored data
+    /// <summary>
+    /// Shows the tooltip for action in the currently stored payload.
+    /// </summary>
     public override void ShowTooltip() {
         if (AtkStage.Instance()->DragDropManager.IsDragging) return;
         ActionTooltip = (uint)Payload.Int2;
@@ -181,6 +185,9 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         base.ShowTooltip();
     }
 
+    /// <summary>
+    /// constructs a new instance of <see cref="DragDropNode"/>.
+    /// </summary>
     public DragDropNode() {
         SetInternalComponentType(ComponentType.DragDrop);
 

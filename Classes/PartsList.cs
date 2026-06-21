@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
@@ -51,6 +51,9 @@ public unsafe class PartsList : IDisposable {
     /// </summary>
     internal AtkUldPartsList* InternalPartsList;
 
+    /// <summary>
+    /// Constructs a new <see cref="PartsList"/> instance.
+    /// </summary>
     public PartsList() {
         InternalPartsList = NativeMemoryHelper.UiAlloc<AtkUldPartsList>();
 
@@ -59,6 +62,7 @@ public unsafe class PartsList : IDisposable {
         InternalPartsList->Id = 0;
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         if (!isDisposed) {
             foreach (var partIndex in Enumerable.Range(0, (int)PartCount)) {

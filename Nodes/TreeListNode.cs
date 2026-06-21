@@ -61,17 +61,20 @@ public class TreeListNode : ResNode {
         OnLayoutUpdate?.Invoke(childContainer.Height);
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="TreeListNode"/>
+    /// </summary>
     public TreeListNode() {
         childContainer = new ResNode();
         childContainer.AttachNode(this);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
         childContainer.Width = Width;
     }
 
     private readonly ResNode childContainer;
-
     private readonly List<TreeListCategoryNode> children = [];
 }

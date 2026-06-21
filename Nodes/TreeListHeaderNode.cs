@@ -32,6 +32,9 @@ public class TreeListHeaderNode : ResNode {
         set => LabelNode.String = value;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="TreeListHeaderNode"/>
+    /// </summary>
     public TreeListHeaderNode() {
         DecorationNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/journal_Separator.tex",
@@ -53,6 +56,7 @@ public class TreeListHeaderNode : ResNode {
         LabelNode.AttachNode(this);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

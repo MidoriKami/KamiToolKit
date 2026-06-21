@@ -16,7 +16,7 @@ public class ContextMenuSubItem : ContextMenuItem {
     public List<ContextMenuItem> SubItems { get; set; } = [];
 
     /// <summary>
-    /// Add a new item with specified <see cref="name"/> and <see cref="callback"/>
+    /// Add a new item with specified name and callback.
     /// </summary>
     public void AddItem(ReadOnlySeString name, Action callback) => SubItems.Add(new ContextMenuItem {
         Name = name,

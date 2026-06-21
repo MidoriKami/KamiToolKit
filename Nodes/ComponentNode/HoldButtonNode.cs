@@ -64,6 +64,9 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
         Component->Progress.EndValue = 0;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="HoldButtonNode"/>.
+    /// </summary>
     public HoldButtonNode() {
         SetInternalComponentType(ComponentType.HoldButton);
 

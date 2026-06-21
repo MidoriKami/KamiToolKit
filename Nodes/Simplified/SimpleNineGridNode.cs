@@ -73,6 +73,9 @@ public unsafe class SimpleNineGridNode : NineGridNode {
         set => PartsList[0]->LoadTexture(value);
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="SimpleNineGridNode"/>
+    /// </summary>
     public SimpleNineGridNode() {
         PartsList.Add(new Part());
     }

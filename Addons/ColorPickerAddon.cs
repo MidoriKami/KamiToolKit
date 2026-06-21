@@ -67,6 +67,7 @@ public class ColorPickerAddon : NativeAddon {
     public ColorHelpers.HsvaColor InitialHsvaColor { get; set; } =
         ColorHelpers.RgbaToHsv(new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 
+    /// <inheritdoc />
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan) {
         SetWindowSize(new Vector2(400.0f, 425.0f));
 
@@ -118,6 +119,7 @@ public class ColorPickerAddon : NativeAddon {
         CancelButton.AttachNode(this);
     }
 
+    /// <inheritdoc />
     protected override unsafe void OnFinalize(AtkUnitBase* addon) {
         base.OnFinalize(addon);
 
@@ -128,6 +130,7 @@ public class ColorPickerAddon : NativeAddon {
         CancelButton = null;
     }
 
+    /// <inheritdoc />
     protected override unsafe void OnHide(AtkUnitBase* addon) {
         if (!isCancelClicked) {
             OnHsvaColorPreviewed?.Invoke(initialHsva);

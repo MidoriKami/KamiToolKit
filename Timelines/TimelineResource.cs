@@ -15,6 +15,9 @@ public unsafe class TimelineResource : IDisposable {
 
     internal AtkTimelineResource* InternalResource;
 
+    /// <summary>
+    /// Constructs a new <see cref="TimelineResource"/>
+    /// </summary>
     public TimelineResource() {
         InternalResource = NativeMemoryHelper.UiAlloc<AtkTimelineResource>();
 
@@ -29,6 +32,9 @@ public unsafe class TimelineResource : IDisposable {
         InternalResource->LabelSets = labelsArray.InternalLabelSetArray;
     }
 
+    /// <summary>
+    /// Gets or sets the animation keyframes.
+    /// </summary>
     public List<TimelineAnimation> Animations {
         get => animationArray.Animations;
         set {
@@ -38,6 +44,9 @@ public unsafe class TimelineResource : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the animation label sets.
+    /// </summary>
     public List<TimelineLabelSet> LabelSets {
         get => labelsArray.LabelSets;
         set {
@@ -47,11 +56,15 @@ public unsafe class TimelineResource : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the internal resource id.
+    /// </summary>
     public int Id {
         get => (int)InternalResource->Id;
         set => InternalResource->Id = (uint)value;
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         animationArray.Dispose();
         labelsArray.Dispose();

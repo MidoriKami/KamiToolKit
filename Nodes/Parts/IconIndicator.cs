@@ -16,6 +16,9 @@ public class IconIndicator : ResNode {
     /// </summary>
     public ImageNode IconNode { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="IconIndicator"/>
+    /// </summary>
     public IconIndicator(uint innerNodeId) {
         IconNode = new ImageNode {
             NodeId = innerNodeId,

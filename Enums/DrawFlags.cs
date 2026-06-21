@@ -17,12 +17,39 @@ public enum DrawFlags : uint {
     /// </summary>
     IsDirty = 0x1,
 
+    /// <summary>
+    /// IsAnimating
+    /// </summary>
     IsAnimating = 0x2,
+
+    /// <summary>
+    /// CalculateTransformation
+    /// </summary>
     CalculateTransformation = 0x4,
+
+    /// <summary>
+    /// DisableRapidUp
+    /// </summary>
     DisableRapidUp = 0x10,
+
+    /// <summary>
+    /// DisableRapidDown
+    /// </summary>
     DisableRapidDown = 0x20,
+
+    /// <summary>
+    /// DisableRapidLeft
+    /// </summary>
     DisableRapidLeft = 0x40,
+
+    /// <summary>
+    /// DisableRapidRight
+    /// </summary>
     DisableRapidRight = 0x80,
+
+    /// <summary>
+    /// DisableTimelineLabel
+    /// </summary>
     DisableTimelineLabel = 0x100,
 
     /// <summary>

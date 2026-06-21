@@ -13,7 +13,9 @@ namespace KamiToolKit.Nodes;
 /// </summary>
 public class TabbedVerticalListNode : ResNode, ILayoutListNode {
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Gets or sets the base nav index used for this node.
+    /// </summary>
     public int NavIndex { get; set; }
 
     /// <summary>
@@ -26,19 +28,29 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     /// </summary>
     public int NavRight { get; set; }
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Gets a readonly list of the nodes managed by this node.
+    /// </summary>
     public IReadOnlyList<NodeBase> Nodes => nodeList.Select(node => node.Node).ToList();
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Gets or sets whether the contents of this list should be clipped out.
+    /// </summary>
     public bool ClipListContents { get; set; }
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Gets or sets the spacing used between items, excluding the first item.
+    /// </summary>
     public float ItemSpacing { get; set; }
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Gets or sets the first items spacing from the start of this node.
+    /// </summary>
     public float FirstItemSpacing { get; set; }
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Sets the initial nodes used by this layout node.
+    /// </summary>
     public ICollection<NodeBase> InitialNodes {
         set => AddNode(value);
     }
@@ -62,11 +74,15 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         }
     }
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Gets the contained nodes of the provided type.
+    /// </summary>
     public IEnumerable<T> GetNodes<T>() where T : NodeBase
         => Nodes.OfType<T>();
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Trigger recalculating layout for this node and any sub contained layout list nodes.
+    /// </summary>
     public void RecalculateLayout() {
         if (suppressRecalculateLayout) return;
 
@@ -105,28 +121,24 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     public int TabStep { get; set; }
 
     /// <summary>
-    /// Adds <see cref="tabAmount"/> to <see cref="TabStep"/> causing all
+    /// Adds tabAmount to TabStep causing all
     /// following nodes tab to be increased by the specified amount.
     /// </summary>
-    /// <param name="tabAmount">Tab value to increase.</param>
     public void AddTab(int tabAmount)
         => TabStep += tabAmount;
 
     /// <summary>
-    /// Adds <see cref="tabAmount"/> to <see cref="TabStep"/> causing all
+    /// Adds tabAmount to TabStep causing all
     /// following nodes tab to be decreased by the specified amount.
     /// </summary>
-    /// <param name="tabAmount">Tab value to decrease.</param>
     public void SubtractTab(int tabAmount)
         => TabStep -= tabAmount;
 
     /// <summary>
     /// Adds several nodes with the specified tab index to the list.
     /// </summary>
-    /// <param name="tabIndex">Tab index to use</param>
-    /// <param name="nodes">Nodes to add</param>
     /// <remarks>
-    /// Tab index provided will be <em>added</em> to the current accumulated <see cref="TabStep"/>.
+    /// Tab index provided will be <em>added</em> to the current accumulated TabStep.
     /// </remarks>
     public void AddNode(int tabIndex, IEnumerable<NodeBase> nodes) {
         suppressRecalculateLayout = true;
@@ -139,8 +151,6 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     /// <summary>
     /// Adds a single node with the specified tab index to the list.
     /// </summary>
-    /// <param name="tabIndex">Tab index to use</param>
-    /// <param name="node">Node to add</param>
     /// <remarks>
     /// Tab index provided will be <em>added</em> to the current accumulated <see cref="TabStep"/>
     /// </remarks>
@@ -153,14 +163,18 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         }
     }
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Add a node to this layout node.
+    /// </summary>
     public void AddNode(NodeBase? node) {
         if (node is null) return;
 
         AddNode(0, node);
     }
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Add a node to this layout node.
+    /// </summary>
     public void AddNode(IEnumerable<NodeBase> nodes) {
         suppressRecalculateLayout = true;
         AddNode(0, nodes);
@@ -168,7 +182,9 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         RecalculateLayout();
     }
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Removes a node from this layout node.
+    /// </summary>
     public void RemoveNode(IEnumerable<NodeBase> items) {
         suppressRecalculateLayout = true;
         foreach (var node in items) {
@@ -178,7 +194,9 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         RecalculateLayout();
     }
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Removes a node from this layout node.
+    /// </summary>
     public void RemoveNode(NodeBase node) {
         if (nodeList.All(entry => entry.Node != node)) return;
 
@@ -188,11 +206,15 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         RecalculateLayout();
     }
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Adds a dummy node used for spacing things out even more.
+    /// </summary>
     public void AddDummy(float size = 0)
         => AddNode(new ResNode{ Width = size, Height = size });
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Removes and disposes all contained nodes.
+    /// </summary>
     public void Clear() {
         foreach (var nodeEntry in nodeList) {
             nodeEntry.Node.Dispose();
@@ -202,7 +224,12 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         RecalculateLayout();
     }
 
-    // <inheritdoc/>
+    /// <summary>
+    /// Sorts the contained node list to reorder the nodes into the specified order.
+    /// </summary>
+    /// <remarks>
+    /// This sorting will not apply to any nodes added afterwards.
+    /// </remarks>
     public void ReorderNodes(Comparison<NodeBase> comparison)
         => nodeList.Sort((left, right) => comparison(left.Node, right.Node));
 

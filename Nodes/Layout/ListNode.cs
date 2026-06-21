@@ -219,6 +219,9 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         RecalculateScroll();
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="ListNode{T, TU}"/>
+    /// </summary>
     public ListNode() {
         itemHeight = TU.ItemHeight;
 
@@ -244,6 +247,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         AddEvent(AtkEventType.MouseWheel, OnMouseWheel);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

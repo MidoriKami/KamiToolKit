@@ -20,6 +20,9 @@ public unsafe class CustomEventInterface : IDisposable {
     /// </summary>
     public static implicit operator AtkEventInterface*(CustomEventInterface listener) => listener.eventInterface;
 
+    /// <summary>
+    /// Constructs a new <see cref="CustomEventInterface"/> instance.
+    /// </summary>
     public CustomEventInterface(AtkEventInterface.Delegates.ReceiveEvent eventHandler, AtkEventInterface.Delegates.ReceiveEventWithResult? receiveEventWithResult = null) {
         receiveEventDelegate = eventHandler;
         receiveEventWithResultDelegate = receiveEventWithResult;
@@ -33,6 +36,7 @@ public unsafe class CustomEventInterface : IDisposable {
         eventInterface->VirtualTable->ReceiveEventWithResult = (delegate* unmanaged<AtkEventInterface*, AtkValue*, AtkValue*, uint, ulong, AtkValue*>)Marshal.GetFunctionPointerForDelegate(receiveWithResultWrapper);
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         if (eventInterface is null) return;
 

@@ -8,6 +8,7 @@ namespace KamiToolKit.Nodes;
 /// </summary>
 public class EnumButtonListNode<T> : ButtonListNode<T> where T : Enum {
 
+    /// <inheritdoc />
     protected override string GetLabelForOption(T option)
         => option.Description;
 }

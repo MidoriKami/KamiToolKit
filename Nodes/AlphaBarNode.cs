@@ -53,6 +53,9 @@ public unsafe class AlphaBarNode : ResNode {
         }
     }
 
+    /// <summary>
+    /// Constructs a <see cref="AlphaBarNode"/> instance.
+    /// </summary>
     public AlphaBarNode() {
         alphaEventListener = new ViewportEventListener(AlphaSliderEvent);
 
@@ -74,6 +77,7 @@ public unsafe class AlphaBarNode : ResNode {
         AlphaBarSelectorNode.AddEvent(AtkEventType.MouseDown, OnAlphaBarMouseDown);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
@@ -84,6 +88,7 @@ public unsafe class AlphaBarNode : ResNode {
         AlphaBarSelectorNode.Position = new Vector2(-2.0f, 0.0f);
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         if (disposing) {
             base.Dispose(disposing, isNativeDestructor);

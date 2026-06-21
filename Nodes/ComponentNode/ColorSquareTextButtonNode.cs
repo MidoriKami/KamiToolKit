@@ -51,6 +51,9 @@ public unsafe class ColorSquareTextButtonNode : ButtonBase {
         set => ColorNode.Color = value ?? default;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="ColorSquareTextButtonNode"/> instance.
+    /// </summary>
     public ColorSquareTextButtonNode() {
         BackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/ButtonA.tex",
@@ -78,6 +81,7 @@ public unsafe class ColorSquareTextButtonNode : ButtonBase {
         InitializeComponentEvents();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

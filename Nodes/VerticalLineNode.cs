@@ -30,6 +30,9 @@ public sealed unsafe class VerticalLineNode : HorizontalLineNode {
         set => ResNode->SetHeight((ushort)value);
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="VerticalLineNode"/>
+    /// </summary>
     public VerticalLineNode()
         => RotationDegrees = 90.0f;
 }

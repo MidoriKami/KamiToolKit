@@ -21,6 +21,9 @@ public class CooldownNode : ResNode {
     /// </summary>
     public ImageNode GlossyImageFrame { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="CooldownNode"/>
+    /// </summary>
     public CooldownNode() {
         GlossyImageFrame = new ImageNode {
             NodeId = 18,

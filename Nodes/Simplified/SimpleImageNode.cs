@@ -97,6 +97,9 @@ public unsafe class SimpleImageNode : ImageNode {
     public void LoadIcon(uint iconId)
         => PartsList[0]->LoadIcon(iconId);
 
+    /// <summary>
+    /// Constructs a new <see cref="SimpleImageNode"/>
+    /// </summary>
     public SimpleImageNode() {
         PartsList.Add(new Part());
     }

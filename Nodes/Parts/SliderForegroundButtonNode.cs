@@ -17,6 +17,9 @@ public class SliderForegroundButtonNode : ComponentNode<AtkComponentButton, AtkU
     /// </summary>
     public ImageNode HandleNode { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="SliderForegroundButtonNode"/>
+    /// </summary>
     public SliderForegroundButtonNode() {
         SetInternalComponentType(ComponentType.Button);
 
@@ -34,6 +37,7 @@ public class SliderForegroundButtonNode : ComponentNode<AtkComponentButton, AtkU
         InitializeComponentEvents();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

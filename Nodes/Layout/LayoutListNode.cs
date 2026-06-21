@@ -187,9 +187,24 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
         RecalculateLayout();
     }
 
-    protected readonly List<NodeBase> NodeList = [];
+    /// <summary>
+    /// Gets the list of nodes that this <see cref="LayoutListNode"/> is managing.
+    /// </summary>
+    protected List<NodeBase> NodeList { get; }= [];
+
+    /// <summary>
+    /// Function that is invoked when this node needs to rebuild its layout.
+    /// </summary>
     protected abstract void OnRecalculateLayout();
+
+    /// <summary>
+    /// Function that is invoked when this node needs to rebuild its controller navigation layout.
+    /// </summary>
     protected abstract void OnRecalculateNavigation();
+
+    /// <summary>
+    /// Adjusts the nodes properties when <see cref="RecalculateLayout"/> is invoked.
+    /// </summary>
     protected virtual void AdjustNode(NodeBase node) { }
 
     private bool suppressRecalculateLayout;

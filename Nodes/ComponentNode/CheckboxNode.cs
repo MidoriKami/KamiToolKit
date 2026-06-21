@@ -74,6 +74,9 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
         }
     }
 
+    /// <summary>
+    /// Constructs a <see cref="CheckboxNode"/> instance.
+    /// </summary>
     public CheckboxNode() {
         SetInternalComponentType(ComponentType.CheckBox);
 
@@ -130,6 +133,7 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
         BoxForeground.DrawFlags = 0;
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

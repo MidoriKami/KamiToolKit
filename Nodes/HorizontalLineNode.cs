@@ -7,6 +7,10 @@ namespace KamiToolKit.Nodes;
 /// Specialization of a NineGridNode to represent a 4px thick horizontal line.
 /// </summary>
 public class HorizontalLineNode : SimpleNineGridNode {
+
+    /// <summary>
+    /// Constructs a new <see cref="HorizontalLineNode"/>
+    /// </summary>
     public HorizontalLineNode() {
         TexturePath = "ui/uld/WindowA_Line.tex";
         TextureCoordinates = Vector2.Zero;

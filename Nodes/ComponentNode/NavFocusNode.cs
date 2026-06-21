@@ -25,6 +25,9 @@ public unsafe class NavFocusNode : SimpleComponentNode {
     /// </summary>
     public Action? OnHoverEnd { get; set; }
 
+    /// <summary>
+    /// Constructs a new <see cref="NavFocusNode"/>.
+    /// </summary>
     public NavFocusNode()
         => AddEvent(AtkEventType.InputReceived, Callback);
 

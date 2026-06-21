@@ -8,16 +8,25 @@ namespace KamiToolKit.Classes;
 /// </summary>
 public class TabbedListEntry {
 
+    /// <summary>
+    /// Constructs a new <see cref="TabbedListEntry"/>
+    /// </summary>
     public TabbedListEntry(int index, NodeBase node) {
         TabIndex = index;
         Node = node;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="TabbedListEntry"/>
+    /// </summary>
     public TabbedListEntry(int index, ICollection<NodeBase> nodes) {
         TabIndex = index;
         Nodes = nodes;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="TabbedListEntry"/>
+    /// </summary>
     public TabbedListEntry() { }
 
     /// <summary>

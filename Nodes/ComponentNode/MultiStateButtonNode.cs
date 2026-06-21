@@ -33,6 +33,9 @@ public class MultiStateButtonNode<T> : TextButtonNode where T : notnull {
         set => SelectedIndex = States.IndexOf(value);
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="MultiStateButtonNode{T}"/>.
+    /// </summary>
     public MultiStateButtonNode()
         => OnClick = CycleState;
 

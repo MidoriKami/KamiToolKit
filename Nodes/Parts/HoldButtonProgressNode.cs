@@ -16,6 +16,9 @@ public class HoldButtonProgressNode : ResNode {
     /// </summary>
     public ImageNode ImageNode { get; }
 
+    /// <summary>
+    /// Constructs a new <see cref="HoldButtonProgressNode"/>
+    /// </summary>
     public HoldButtonProgressNode() {
         ImageNode = new SimpleImageNode {
             NodeId = 4,

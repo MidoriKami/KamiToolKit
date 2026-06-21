@@ -4,6 +4,10 @@ using KamiToolKit.Enums;
 
 namespace KamiToolKit.Nodes;
 
+/// <summary>
+/// A <see cref="LayoutListNode"/> that represents a horizontally growing list of nodes.
+/// Can be anchored on left side or right side.
+/// </summary>
 public class HorizontalListNode : LayoutListNode {
 
     /// <summary>
@@ -55,6 +59,7 @@ public class HorizontalListNode : LayoutListNode {
     /// </summary>
     public int NavDown { get; set; }
 
+    /// <inheritdoc />
     protected override void OnRecalculateLayout() {
         var startX = Alignment switch {
             HorizontalListAnchor.Left => 0.0f + FirstItemSpacing,
@@ -86,6 +91,7 @@ public class HorizontalListNode : LayoutListNode {
         }
     }
 
+    /// <inheritdoc />
     protected override void OnRecalculateNavigation() {
         var componentNodes = NodeList.OfType<ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;

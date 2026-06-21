@@ -19,6 +19,9 @@ public unsafe class CustomEventListener : IDisposable {
     /// </summary>
     public static implicit operator AtkEventListener*(CustomEventListener listener) => listener.eventListener;
 
+    /// <summary>
+    /// Constructs a new <see cref="CustomEventListener"/> instance.
+    /// </summary>
     public CustomEventListener(AtkEventListener.Delegates.ReceiveEvent eventHandler) {
         receiveEventDelegate = eventHandler;
 
@@ -31,6 +34,7 @@ public unsafe class CustomEventListener : IDisposable {
         eventListener->VirtualTable->ReceiveEvent = (delegate* unmanaged<AtkEventListener*, AtkEventType, int, AtkEvent*, AtkEventData*, void>)Marshal.GetFunctionPointerForDelegate(receiveEventWrapper);
     }
 
+    /// <inheritdoc />
     public virtual void Dispose() {
         if (eventListener is null) return;
 

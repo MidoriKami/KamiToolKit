@@ -87,6 +87,9 @@ public unsafe class ProgressBarCastNode : ProgressNode {
         }
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="ProgressBarCastNode"/>.
+    /// </summary>
     public ProgressBarCastNode() {
         BackgroundImageNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/Parameter_Gauge.tex",
@@ -118,6 +121,7 @@ public unsafe class ProgressBarCastNode : ProgressNode {
         BorderImageNode.AttachNode(this);
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

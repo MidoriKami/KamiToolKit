@@ -30,6 +30,9 @@ public class TabBarNode : ResNode, IControllerNavigable {
     /// <inheritdoc/>
     public int NavDown { get; set; }
 
+    /// <summary>
+    /// Sets the initial nodes that this list will use.
+    /// </summary>
     public ICollection<TabBarEntry> InitialEntries {
         init {
             foreach (var tabBarEntry in value) {
@@ -112,15 +115,22 @@ public class TabBarNode : ResNode, IControllerNavigable {
         radioButtons.Clear();
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="TabBarNode"/>
+    /// </summary>
     public TabBarNode() {
         BuildTimelines();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
         RecalculateLayout();
     }
 
+    /// <summary>
+    /// Add a new tab via <see cref="TabBarEntry"/>.
+    /// </summary>
     public void AddTab(TabBarEntry entry) {
         var newButton = new TabBarRadioButtonNode {
             Height = Height,
@@ -145,6 +155,9 @@ public class TabBarNode : ResNode, IControllerNavigable {
         RecalculateLayout();
     }
 
+    /// <summary>
+    /// Add a new tab with the provided callback and option tooltip.
+    /// </summary>
     public void AddTab(ReadOnlySeString label, Action callback, ReadOnlySeString? tooltip = null, bool isEnabled = true) {
         var newButton = new TabBarRadioButtonNode {
             Height = Height,

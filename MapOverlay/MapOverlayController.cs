@@ -92,6 +92,9 @@ public unsafe class MapOverlayController : IDisposable {
         queuedMarkers.Clear();
     }
 
+    /// <summary>
+    /// Constructs a <see cref="MapOverlayController"/> instance.
+    /// </summary>
     public MapOverlayController() {
         mapController = new AddonController<AddonAreaMap> {
             AddonName = "AreaMap",

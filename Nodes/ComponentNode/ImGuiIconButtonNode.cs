@@ -52,6 +52,10 @@ public class ImGuiIconButtonNode : ButtonBase {
     public void LoadTextureFromFile(string path)
         => ImageNode.TexturePath = path;
 
+
+    /// <summary>
+    /// Constructs a new <see cref="ImGuiIconButtonNode"/>.
+    /// </summary>
     public ImGuiIconButtonNode() {
         BackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/BgParts.tex",
@@ -74,6 +78,7 @@ public class ImGuiIconButtonNode : ButtonBase {
         InitializeComponentEvents();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

@@ -34,6 +34,9 @@ public unsafe class ColorImageNode : SimpleImageNode {
         set => Color = ColorHelpers.HsvToRgb(value);
     }
 
+    /// <summary>
+    /// Constructs a <see cref="ColorImageNode"/> instance.
+    /// </summary>
     public ColorImageNode() {
         FitTexture = true;
     }

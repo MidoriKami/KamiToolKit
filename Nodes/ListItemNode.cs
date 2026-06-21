@@ -44,6 +44,10 @@ public abstract class ListItemNode<T> : SelectableNode {
     /// </summary>
     public virtual void ProcessNav(int index, int up, int down, int left, int right) { }
 
+    /// <summary>
+    /// Prevents this selectable node from being highlightable or clickable.
+    /// <see cref="SelectableNode.OnClick"/> will no longer be invoked.
+    /// </summary>
     protected void DisableInteractions() {
         EnableSelection = false;
         EnableHighlight = false;

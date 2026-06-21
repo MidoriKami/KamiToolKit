@@ -7,6 +7,10 @@ namespace KamiToolKit.Nodes;
 /// to the localized "Search" text input id.
 /// </summary>
 public class SearchInputNode : TextInputNode {
+
+    /// <summary>
+    /// Constructs a new <see cref="SearchInputNode"/>.
+    /// </summary>
     public SearchInputNode() {
         PlaceholderStringId = 325; // "Search"
         SheetType = NodeData.SheetType.Addon;

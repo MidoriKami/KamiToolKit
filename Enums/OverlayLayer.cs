@@ -1,8 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
+using KamiToolKit.UiOverlay;
 
 namespace KamiToolKit.Enums;
 
+/// <summary>
+/// Enumeration for which specific addon to attach an <see cref="OverlayNode"/> to.
+/// </summary>
 public enum OverlayLayer {
     /// <summary>
     /// Layer that is the back most, but above the world itself. Some UI Elements may still render under this layer.
@@ -29,8 +33,16 @@ public enum OverlayLayer {
     Foreground,
 }
 
+/// <summary>
+/// Helper extensions to convert a DepthLayer to a OverlayLayer,
+/// as the game is zero indexed for one use, and 1 indexed for another use.
+/// </summary>
 public static class OverlayLayerExtensions {
     extension(OverlayLayer layer) {
+
+        /// <summary>
+        /// Gets the numeric depth layer for this OverlayLayer.
+        /// </summary>
         public int DepthLayer => layer switch {
             OverlayLayer.Background => 1,
             OverlayLayer.BehindUserInterface => 3,
@@ -40,7 +52,12 @@ public static class OverlayLayerExtensions {
         };
     }
 
-    // Note: The game does not have a layer zero, but offsets the desired layer by one.
+    /// <summary>
+    /// Gets the OverlayLayer for the specified depth layer.
+    /// </summary>
+    /// <remarks>
+    /// The game does not have a layer zero, but offsets the desired layer by one.
+    /// </remarks>
     public static OverlayLayer GetOverlayLayer(this uint layer) => (layer + 1) switch {
         1 => OverlayLayer.Background,
         3 => OverlayLayer.BehindUserInterface,

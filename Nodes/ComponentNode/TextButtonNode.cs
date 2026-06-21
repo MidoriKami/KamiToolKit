@@ -46,6 +46,9 @@ public unsafe class TextButtonNode : ButtonBase {
         set => LabelNode.SheetType = value;
     }
 
+    /// <summary>
+    /// Constructs a new <see cref="TextButtonNode"/>
+    /// </summary>
     public TextButtonNode() {
         BackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/ButtonA.tex",
@@ -70,6 +73,7 @@ public unsafe class TextButtonNode : ButtonBase {
         InitializeComponentEvents();
     }
 
+    /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
