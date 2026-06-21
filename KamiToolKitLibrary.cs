@@ -85,12 +85,12 @@ public static class KamiToolKitLibrary {
     /// Must be called from the main thread.
     /// </remarks>
     public static void Cleanup() {
-        NodeBase.WarnLeakedNodes();
-        NativeAddon.WarnLeakedAddons();
-
         NativeAddon.DisposeCloseCallback();
 
         if (Services.Framework.IsFrameworkUnloading) return;
+
+        NodeBase.WarnLeakedNodes();
+        NativeAddon.WarnLeakedAddons();
 
         try {
             if (!ThreadSafety.IsMainThread) return;
