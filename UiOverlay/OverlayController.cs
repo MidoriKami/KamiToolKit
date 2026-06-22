@@ -38,10 +38,12 @@ public unsafe class OverlayController : IDisposable {
 
         if (addonState[node.OverlayLayer] is not OverlayAddonState.Ready) return;
 
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(node.OverlayLayer.Description);
-        if (addon is null) return;
+        var overlayAddon = RaptureAtkUnitManager.Instance()->GetAddonByName(node.OverlayLayer.Description);
+        if (overlayAddon is not null) {
+            node.AttachNode(overlayAddon);
+        }
 
-        AttachNode(addon, node);
+        UpdateNodeListsForOverlay(node.OverlayLayer);
     }
 
     /// <summary>
@@ -58,6 +60,8 @@ public unsafe class OverlayController : IDisposable {
         if (list.Remove(node)) {
             node.Dispose();
         }
+
+        UpdateNodeListsForOverlay(node.OverlayLayer);
     }
 
     /// <summary>
@@ -101,8 +105,13 @@ public unsafe class OverlayController : IDisposable {
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "NamePlate");
         Services.AddonLifecycle.UnregisterListener(OnOverlayAddonFinalize, OnOverlayAddonUpdate);
 
-        foreach (var node in overlayNodes.SelectMany(nodeList => nodeList.Value)) {
-            node.Dispose();
+        foreach (var (overlayLayer, nodes) in overlayNodes) {
+            Services.Log.Debug($"Disposing overlay nodes for layer {overlayLayer}");
+            foreach (var node in nodes) {
+                node.Dispose();
+            }
+
+            UpdateNodeListsForOverlay(overlayLayer);
         }
 
         overlayNodes.Clear();
@@ -187,12 +196,14 @@ public unsafe class OverlayController : IDisposable {
     private void AttachAllNodes(OverlayLayer layer) {
         if (!overlayNodes.TryGetValue(layer, out var list)) return;
 
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(layer.Description);
-        if (addon is null) return;
-
-        foreach (var node in list) {
-            AttachNode(addon, node);
+        var overlayAddon = RaptureAtkUnitManager.Instance()->GetAddonByName(layer.Description);
+        if (overlayAddon is not null) {
+            foreach (var node in list) {
+                node.AttachNode(overlayAddon);
+            }
         }
+
+        UpdateNodeListsForOverlay(layer);
     }
 
     //
@@ -208,6 +219,8 @@ public unsafe class OverlayController : IDisposable {
             foreach (var node in list) {
                 node.DetachNode();
             }
+
+            UpdateNodeListsForOverlay(overlayLayer);
         }
 
         BeginStateCheck();
@@ -222,6 +235,8 @@ public unsafe class OverlayController : IDisposable {
                 node.DetachNode();
             }
         }
+
+        UpdateNodeListsForOverlay(overlayLayer);
 
         addonState[overlayLayer] = OverlayAddonState.None;
     }
@@ -249,9 +264,12 @@ public unsafe class OverlayController : IDisposable {
         IsOverlayAddon = true,
     };
 
-    private static void AttachNode(AtkUnitBase* addon, OverlayNode node) {
-        node.NodeId = (uint)addon->UldManager.NodeListCount + 1;
-        node.AttachNode(addon);
+    private void UpdateNodeListsForOverlay(OverlayLayer layer) {
+        var overlayAddon = RaptureAtkUnitManager.Instance()->GetAddonByName(layer.Description);
+        if (overlayAddon is not null) {
+            overlayAddon->UldManager.UpdateDrawNodeList();
+            overlayAddon->UpdateCollisionNodeList(false);
+        }
     }
 
     private readonly Dictionary<OverlayLayer, List<OverlayNode>> overlayNodes = [];
