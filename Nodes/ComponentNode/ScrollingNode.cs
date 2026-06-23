@@ -54,9 +54,6 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
     /// Recalculates sizes to update scroll params correctly.
     /// </summary>
     public void RecalculateSizes() {
-        if (ContentNode is ILayoutListNode layoutNode) {
-            layoutNode.RecalculateLayout();
-        }
         OnSizeChanged();
     }
 
@@ -129,8 +126,11 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
             layoutNode.RecalculateLayout();
         }
 
+        var oldPosition = ScrollBarNode.ScrollPosition;
+        ScrollBarNode.ScrollPosition = 0;
         ScrollBarNode.Size = new Vector2(8.0f, Height);
         ScrollBarNode.Position = new Vector2(Width - 8.0f, 0.0f);
         ScrollBarNode.SetContentNodes(ContentNode, ScrollingCollisionNode);
+        ScrollBarNode.ScrollPosition = oldPosition;
     }
 }
