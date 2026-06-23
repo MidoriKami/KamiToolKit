@@ -125,6 +125,10 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         ClippingContentNode.Size = Size;
         ScrollingCollisionNode.Size = Size;
 
+        if (ContentNode is ILayoutListNode layoutNode) {
+            layoutNode.RecalculateLayout();
+        }
+
         ScrollBarNode.Size = new Vector2(8.0f, Height);
         ScrollBarNode.Position = new Vector2(Width - 8.0f, 0.0f);
         ScrollBarNode.SetContentNodes(ContentNode, ScrollingCollisionNode);
