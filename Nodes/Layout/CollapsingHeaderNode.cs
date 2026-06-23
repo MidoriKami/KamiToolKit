@@ -70,20 +70,29 @@ public class CollapsingHeaderNode : LayoutListNode {
 
     /// <inheritdoc />
     protected override void OnRecalculateLayout() {
-        var yPosition = ToggleableHeaderNode.Height + FirstItemSpacing;
-
-        foreach (var node in Nodes) {
-            node.IsVisible = !IsCollapsed;
-            node.Y = yPosition;
-
-            yPosition += node.Height + ItemSpacing;
-
-            if (FitWidth) {
-                node.Width = Width;
+        if (IsCollapsed) {
+            foreach (var node in Nodes) {
+                node.IsVisible = false;
             }
-        }
 
-        Height = yPosition;
+            Height = 28.0f;
+        }
+        else {
+            var yPosition = ToggleableHeaderNode.Height + FirstItemSpacing;
+
+            foreach (var node in Nodes) {
+                node.IsVisible = !IsCollapsed;
+                node.Y = yPosition;
+
+                yPosition += node.Height + ItemSpacing;
+
+                if (FitWidth) {
+                    node.Width = Width;
+                }
+            }
+
+            Height = yPosition;
+        }
     }
 
     /// <inheritdoc />
