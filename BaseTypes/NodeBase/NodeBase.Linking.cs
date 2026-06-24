@@ -74,10 +74,10 @@ public abstract unsafe partial class NodeBase {
         ThreadSafety.AssertMainThread();
         if (ResNode is null) return;
 
-        RemoveUldManagerObjectReferences();
-        RemoveParentNodeReferences();
         UnlinkFromNative();
+        RemoveUldManagerObjectReferences();
         RemoveParentAddonReferences();
+        RemoveParentNodeReferences();
     }
 
     private void PerformManagedAttach(NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild) {
