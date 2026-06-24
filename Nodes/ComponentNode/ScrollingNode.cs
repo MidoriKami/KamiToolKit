@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Interfaces;
@@ -131,6 +132,6 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         ScrollBarNode.Size = new Vector2(8.0f, Height);
         ScrollBarNode.Position = new Vector2(Width - 8.0f, 0.0f);
         ScrollBarNode.SetContentNodes(ContentNode, ScrollingCollisionNode);
-        ScrollBarNode.ScrollPosition = oldPosition;
+        ScrollBarNode.ScrollPosition = Math.Clamp(oldPosition, 0, ScrollBarNode.ScrollMaxPosition);
     }
 }
