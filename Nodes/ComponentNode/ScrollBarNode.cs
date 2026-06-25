@@ -26,7 +26,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
     /// </summary>
     public Action<int>? OnValueChanged { get; set; }
 
-     /// <summary>
+    /// <summary>
     /// Gets the maximum valid scroll position for the current content.
     /// </summary>
     public int ScrollMaxPosition
