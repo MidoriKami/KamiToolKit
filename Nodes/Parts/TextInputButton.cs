@@ -8,7 +8,7 @@ using KamiToolKit.Timelines;
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Specialization of a button for use in <see cref="TextButtonListNode"/>.
+/// Specialization of a button for use in <see cref="TextInputSelectionListNode"/>.
 /// Not intended for external use.
 /// </summary>
 public unsafe class TextInputButtonNode : ButtonBase {
