@@ -8,7 +8,7 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Node part used for <see cref="ButtonListNode{T}"/>, not intended for external use.
+/// A button node styled to match that of the games dropdown list buttons.
 /// </summary>
 public unsafe class ListButtonNode : ButtonBase {
 
@@ -144,32 +144,24 @@ public unsafe class ListButtonNode : ButtonBase {
 
         SelectedBackgroundNode.AddTimeline(new TimelineBuilder()
             .BeginFrameSet(60, 69)
-            .AddFrame(60, alpha: 214)
-            .AddFrame(60, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+            .AddFrame(60, alpha: 214, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
             .EndFrameSet()
             .BeginFrameSet(70, 79)
-            .AddFrame(70, alpha: 214)
-            .AddFrame(72, alpha: 255)
-            .AddFrame(70, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
-            .AddFrame(72, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+            .AddFrame(70, alpha: 214, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+            .AddFrame(72, alpha: 255, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
             .EndFrameSet()
             .BeginFrameSet(80, 89)
-            .AddFrame(80, alpha: 255)
-            .AddFrame(80, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+            .AddFrame(80, alpha: 255, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
             .EndFrameSet()
             .BeginFrameSet(90, 99)
-            .AddFrame(90, alpha: 178)
-            .AddFrame(90, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(50, 50, 50))
+            .AddFrame(90, alpha: 178, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(50, 50, 50))
             .EndFrameSet()
             .BeginFrameSet(100, 109)
-            .AddFrame(100, alpha: 255)
-            .AddFrame(100, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+            .AddFrame(100, alpha: 255, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
             .EndFrameSet()
             .BeginFrameSet(110, 120)
-            .AddFrame(110, alpha: 255)
-            .AddFrame(112, alpha: 214)
-            .AddFrame(110, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
-            .AddFrame(112, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+            .AddFrame(110, alpha: 255, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
+            .AddFrame(112, alpha: 214, addColor: new Vector3(0, 0, 0), multiplyColor: new Vector3(100, 100, 100))
             .EndFrameSet()
             .Build()
         );
