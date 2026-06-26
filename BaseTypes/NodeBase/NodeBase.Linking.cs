@@ -91,6 +91,11 @@ public abstract unsafe partial class NodeBase {
     }
 
     private void PerformManagedAttach(NodeBase? targetNode, NodePosition targetPosition) {
+        if (this == targetNode) {
+            Services.Log.Warning("Attempted to attach self to self, attach was aborted.");
+            return;
+        }
+
         ThreadSafety.AssertMainThread();
         if (targetNode is null) return;
 
@@ -101,6 +106,11 @@ public abstract unsafe partial class NodeBase {
     }
 
     private void PerformNativeAttach(AtkResNode* targetNode, NodePosition targetPosition) {
+        if (ResNode == targetNode) {
+            Services.Log.Warning("Attempted to attach self to self, attach was aborted.");
+            return;
+        }
+
         ThreadSafety.AssertMainThread();
         if (targetNode is null) return;
 
@@ -137,6 +147,11 @@ public abstract unsafe partial class NodeBase {
     }
 
     internal void ReattachNode(AtkResNode* newTarget) {
+        if (ResNode == newTarget) {
+            Services.Log.Warning("Attempted to attach self to self, attach was aborted.");
+            return;
+        }
+
         if (newTarget is null) return;
 
         DetachNode();
