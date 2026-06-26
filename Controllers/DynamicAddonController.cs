@@ -53,6 +53,9 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
     public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnUpdate { get; init; }
 
     /// <inheritdoc/>>
+    public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnDraw { get; init; }
+
+    /// <inheritdoc/>>
     public IAddonEventController<AtkUnitBase>.AddonControllerEvent? OnPreUpdate { get; init; }
 
     /// <inheritdoc/>>
@@ -134,6 +137,10 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
             case AddonEvent.PostUpdate:
                 OnUpdate?.Invoke(addon);
                 return;
+
+            case AddonEvent.PreDraw:
+                OnDraw?.Invoke(addon);
+                return;
         }
     }
 
@@ -148,6 +155,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
         Services.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, name, OnAddonEvent);
         Services.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, name, OnAddonEvent);
         Services.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, name, OnAddonEvent);
+        Services.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, name, OnAddonEvent);
 
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(name);
         if (addon is not null) {
@@ -166,6 +174,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PostRefresh, name, OnAddonEvent);
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PostRequestedUpdate, name, OnAddonEvent);
         Services.AddonLifecycle.UnregisterListener(AddonEvent.PostUpdate, name, OnAddonEvent);
+        Services.AddonLifecycle.UnregisterListener(AddonEvent.PreDraw, name, OnAddonEvent);
 
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(name);
         if (addon is not null) {
