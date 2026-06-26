@@ -350,6 +350,20 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         BackgroundNode.Size = new Vector2(Width, Height - 1.0f);
         LabelNode.Size = new Vector2(Width - 32.0f, Height - 3.0f);
 
+        PopupContainerNode.Size = new Vector2(Width - 8.0f, GetPopupListHeight());
+        PopupContainerNode.Position = new Vector2(4.0f, Height - 3.0f);
+
+        PopupBackgroundNode.Size = PopupContainerNode.Size;
+        PopupContainerNode.Position = new Vector2(0.0f, 0.0f);
+
+        PopupScrollbarNode.Size = new Vector2(8.0f, PopupContainerNode.Height - 18.0f);
+        PopupScrollbarNode.Position = new Vector2(PopupContainerNode.Width - 14.0f, 4.5f);
+        PopupScrollbarNode.UpdateScrollParams(PopupScrollbarNode.Height, Options.Count * 22.0f);
+
+        PopupButtonListNode.Size = new Vector2(PopupBackgroundNode.Width - 24.0f, PopupBackgroundNode.Height - 18.0f);
+        PopupButtonListNode.Position = new Vector2(8.0f, 6.0f);
+        PopupButtonListNode.RecalculateLayout();
+
         RebuildPopupList();
     }
 
@@ -373,21 +387,10 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
     }
 
     private void RebuildPopupList() {
-        var buttonCount = Math.Min(MaxListOptions, Options.Count);
-        var popupHeight = buttonCount * 22.0f + 18.0f;
+        var popupHeight = GetPopupListHeight();
+
         if (Math.Abs(PopupContainerNode.Height - popupHeight) > 0.1f) {
-            PopupContainerNode.Size = new Vector2(Width - 8.0f, popupHeight);
-            PopupContainerNode.Position = new Vector2(4.0f, Height - 3.0f);
-
-            PopupBackgroundNode.Size = PopupContainerNode.Size;
-            PopupContainerNode.Position = new Vector2(0.0f, 0.0f);
-
-            PopupScrollbarNode.Size = new Vector2(8.0f, PopupContainerNode.Height - 18.0f);
-            PopupScrollbarNode.Position = new Vector2(PopupContainerNode.Width - 14.0f, 4.5f);
-            PopupScrollbarNode.UpdateScrollParams(PopupScrollbarNode.Height, Options.Count * 22.0f);
-
-            PopupButtonListNode.Size = new Vector2(PopupBackgroundNode.Width - 24.0f, PopupBackgroundNode.Height - 18.0f);
-            PopupButtonListNode.Position = new Vector2(8.0f, 6.0f);
+            var buttonCount = Math.Min(MaxListOptions, Options.Count);
 
             PopupButtonListNode.Clear();
             foreach (var _ in Enumerable.Range(0, buttonCount)) {
@@ -447,6 +450,11 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         else {
             LabelNode.String = GetLabelFunction?.Invoke(entry) ?? "DropDownNode.GetLabelFunction was not set.";
         }
+    }
+
+    private float GetPopupListHeight() {
+        var buttonCount = Math.Min(MaxListOptions, Options.Count);
+        return buttonCount * 22.0f + 18.0f;
     }
 
     /// <summary>
