@@ -83,6 +83,12 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
     }
 
     /// <summary>
+    /// <inheritdoc cref="UpdateScrollParams(int, int)"/>
+    /// </summary>
+    public void UpdateScrollParams(float barHeight, float offscreenHeight)
+        => UpdateScrollParams((int) barHeight, (int) offscreenHeight);
+
+    /// <summary>
     /// Update the scroll bars size and positioning based on manually input values.
     /// It's recommend to use <see cref="UpdateScrollParams()"/> instead, if the content node is sized correctly.
     /// </summary>
