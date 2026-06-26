@@ -110,7 +110,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
                 }
             }
 
-            RecalculateParams();
+            RebuildPopupList();
         }
     } = [];
 
@@ -350,7 +350,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         BackgroundNode.Size = new Vector2(Width, Height - 1.0f);
         LabelNode.Size = new Vector2(Width - 32.0f, Height - 3.0f);
 
-        RecalculateParams();
+        RebuildPopupList();
     }
 
     private void MoveListOnScreen() {
@@ -372,7 +372,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         }
     }
 
-    private void RecalculateParams() {
+    private void RebuildPopupList() {
         var buttonCount = Math.Min(MaxListOptions, Options.Count);
         var popupHeight = buttonCount * 22.0f + 18.0f;
         if (Math.Abs(PopupContainerNode.Height - popupHeight) > 0.1f) {
@@ -420,6 +420,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
 
     private void OnPopupButtonClicked(T entry) {
         SelectedOption = entry;
+        OnOptionSelected?.Invoke(SelectedOption);
         UpdateLabel(entry);
         Collapse();
     }
