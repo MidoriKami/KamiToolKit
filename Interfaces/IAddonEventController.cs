@@ -49,4 +49,9 @@ public unsafe interface IAddonEventController<T> where T : unmanaged {
     /// Called after addon Update.
     /// </summary>
     AddonControllerEvent? OnUpdate { get; init; }
+
+    /// <summary>
+    /// Called before addon draw.
+    /// </summary>
+    AddonControllerEvent? OnDraw {get; init; }
 }

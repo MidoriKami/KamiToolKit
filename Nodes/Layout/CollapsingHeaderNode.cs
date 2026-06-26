@@ -1,8 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
 using System.Numerics;
-using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
-using KamiToolKit.Nodes.Simplified;
+using KamiToolKit.Internal.Nodes;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
@@ -10,76 +8,119 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Layout node representing a collapsing header that will collapse/hide its contained nodes.
 /// </summary>
-[Experimental("KTK_WIP")]
 public class CollapsingHeaderNode : LayoutListNode {
 
     /// <summary>
     /// Gets or sets the nodes collapsed state.
     /// </summary>
-    public bool IsCollapsed { get; set; }
+    public bool IsCollapsed {
+        get => ToggleableHeaderNode.IsCollapsed;
+        set => ToggleableHeaderNode.IsCollapsed = value;
+    }
+
+    /// <summary>
+    /// Gets or sets whether contained nodes will be resized to fit this node's width.
+    /// </summary>
+    public bool FitWidth { get; set; }
 
     /// <summary>
     /// Gets or sets the displayed string.
     /// </summary>
     public ReadOnlySeString String {
-        get => LabelTextNode.String;
-        set => LabelTextNode.String = value;
+        get => ToggleableHeaderNode.String;
+        set => ToggleableHeaderNode.String = value;
     }
 
     /// <summary>
-    /// Gets the node used to display the body texture of this node.
+    /// Action that is invoked when the header node is collapsed.
     /// </summary>
-    public SimpleNineGridNode ButtonTextureNode { get; }
+    public Action? OnCollapse { get; set; }
 
     /// <summary>
-    /// Gets the text node used to display this buttons label.
+    /// Action that is invoked when the header node is uncollapsed.
     /// </summary>
-    public TextNode LabelTextNode { get; }
+    public Action? OnUncollapse { get; set; }
 
     /// <summary>
-    /// Gets the image node used to display the collapsed/uncollapsed arrow node.
+    /// Action that is invoked when the header is either collapsed or uncollapsed.
     /// </summary>
-    public ImageNode ToggleArrowImageNode { get; }
+    /// <remarks>
+    /// Boolean indicates if the node contents are visible (the node is in the uncollapsed state)
+    /// </remarks>
+    public Action<bool>? OnToggle { get; set; }
 
     /// <summary>
     /// Constructs a new <see cref="CollapsingHeaderNode"/>
     /// </summary>
     public CollapsingHeaderNode() {
-        ButtonTextureNode = new SimpleNineGridNode {
-            TexturePath = "ui/uld/img05/ListItemB.tex",
-            TextureSize = new Vector2(48.0f, 28.0f),
-            TextureCoordinates = new Vector2(0.0f, 24.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.HasCollision | NodeFlags.RespondToMouse | NodeFlags.Focusable,
-            TopOffset = 10,
-            BottomOffset = 12,
-            LeftOffset = 12,
-            RightOffset = 12,
+        ToggleableHeaderNode = new ToggleableHeaderNode {
+            OnCollapse = Collapse,
+            OnUncollapse = Uncollapse,
         };
-        ButtonTextureNode.AttachNode(this);
+        ToggleableHeaderNode.AttachNode(this);
+    }
 
-        LabelTextNode = new TextNode {
-            NodeFlags = NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled,
-        };
-        LabelTextNode.AttachNode(this);
+    /// <inheritdoc />
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
 
-        ToggleArrowImageNode = new ImageNode {
-            FitTexture = true,
-            PartId = 1,
-        };
-        ToggleArrowImageNode.AddPart([
-            new Part { Id = 1, TexturePath = "ui/uld/img05/ListItemB.tex", TextureCoordinates = new Vector2(24.0f, 0.0f), Size = new Vector2(24.0f, 24.0f) },
-            new Part { Id = 2, TexturePath = "ui/uld/img05/ListItemB.tex", TextureCoordinates = new Vector2(0.0f, 0.0f), Size = new Vector2(24.0f, 24.0f) },
-        ]);
-        ToggleArrowImageNode.AttachNode(this);
+        ToggleableHeaderNode.Size = new Vector2(Width, 28.0f);
+        ToggleableHeaderNode.Position = new Vector2(0.0f, 0.0f);
     }
 
     /// <inheritdoc />
     protected override void OnRecalculateLayout() {
+        if (IsCollapsed) {
+            foreach (var node in Nodes) {
+                node.IsVisible = false;
+            }
 
+            Height = 28.0f;
+        }
+        else {
+            var yPosition = ToggleableHeaderNode.Height + FirstItemSpacing;
+
+            foreach (var node in Nodes) {
+                node.IsVisible = !IsCollapsed;
+                node.Y = yPosition;
+
+                yPosition += node.Height + ItemSpacing;
+
+                if (FitWidth) {
+                    node.Width = Width;
+                }
+            }
+
+            Height = yPosition;
+        }
     }
 
     /// <inheritdoc />
     protected override void OnRecalculateNavigation() {
-
+        // Not implemented yet.
     }
+
+    private void Collapse() {
+        foreach (var node in Nodes) {
+            node.IsVisible = false;
+        }
+
+        Height = 28.0f;
+
+        OnCollapse?.Invoke();
+        OnToggle?.Invoke(false);
+    }
+
+    private void Uncollapse() {
+        foreach (var node in Nodes) {
+            node.IsVisible = true;
+        }
+
+        RecalculateLayout();
+
+        OnUncollapse?.Invoke();
+        OnToggle?.Invoke(true);
+    }
+
+    private ToggleableHeaderNode ToggleableHeaderNode { get; }
 }
