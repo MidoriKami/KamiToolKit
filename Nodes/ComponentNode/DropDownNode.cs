@@ -457,7 +457,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
     public void SetFocusable(AtkUnitBase* addon) {
         foreach (ref var focusableNode in addon->AdditionalFocusableNodes) {
             if (focusableNode.Value is null) {
-                focusableNode = ResNode;
+                focusableNode = PopupContainerNode.ResNode;
                 isFocusSet = true;
             }
         }
@@ -469,7 +469,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
     /// <param name="addon"></param>
     public void ClearFocusable(AtkUnitBase* addon) {
         foreach (ref var focusableNode in addon->AdditionalFocusableNodes) {
-            if (focusableNode.Value == ResNode) {
+            if (focusableNode.Value == PopupContainerNode.ResNode) {
                 focusableNode = null;
                 isFocusSet = false;
             }
