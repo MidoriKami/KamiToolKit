@@ -275,10 +275,11 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
             AlignmentType = AlignmentType.Left,
             TextColor = ColorHelper.GetColor(50),
             TextOutlineColor = ColorHelper.GetColor(7),
-            TextId = 1818,
-            SheetType = NodeData.SheetType.Addon,
         };
         LabelNode.AttachNode(this);
+
+        // Manually set the placeholder text string, as using textId will overwrite our placeholder on attach.
+        LabelNode.String = Services.DataManager.GetExcelSheet<Addon>().GetRow(1818).Text;
 
         PopupContainerNode = new SimpleComponentNode {
             Position = new Vector2(4.0f, 21.0f),
