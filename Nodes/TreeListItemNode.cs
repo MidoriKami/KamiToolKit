@@ -1,6 +1,4 @@
-﻿using KamiToolKit.Internal.Classes;
-
-namespace KamiToolKit.Nodes;
+﻿namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// Abstract class for use with <see cref="TreeListNode{T,TU}"/>
@@ -13,9 +11,7 @@ public abstract class TreeListItemNode<T> : SelectableNode {
         get;
         set {
             if (value is not null) {
-                if (!GenericUtil.AreEqual(field, value)) {
-                    SetNodeData(value);
-                }
+                SetNodeData(value);
             }
 
             field = value;
