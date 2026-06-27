@@ -70,7 +70,13 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
     /// <remarks>
     /// Defaults to 5 entries, adjust this if your list is long.
     /// </remarks>
-    public int MaxListOptions { get; set; } = 5;
+    public int MaxListOptions {
+        get;
+        set {
+            field = value;
+            RebuildPopupList();
+        }
+    } = 5;
 
     /// <summary>
     /// Gets or sets the action that is invoked when an option is selected.
