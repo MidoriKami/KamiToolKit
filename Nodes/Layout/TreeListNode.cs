@@ -138,8 +138,8 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         }
 
         scrollPosition += atkEventData->IsScrollUp ? -1 : 1;
-        scrollPosition = Math.Clamp(scrollPosition, 0, numValidOptions - Math.Max(HeaderNodes.Count, EntryNodes.Count) + 1);
-        ScrollBarNode.ScrollPosition = (int) ( (float) scrollPosition / numValidOptions * GetTotalOffscreenHeight());
+        scrollPosition = Math.Clamp(scrollPosition, 0, numValidOptions - Math.Min(HeaderNodes.Count, EntryNodes.Count));
+        ScrollBarNode.ScrollPosition = (float) scrollPosition / numValidOptions * GetTotalOffscreenHeight();
 
         PopulateNodes();
 
@@ -252,10 +252,18 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
             }
 
             if (isCollapsed) continue;
+            var isBreaking = false;
 
             foreach (var entry in entries) {
-                if (entryIndex > EntryNodes.Count) break;
-                if (position + itemHeight + ItemSpacing > Height) break;
+                if (entryIndex > EntryNodes.Count) {
+                    isBreaking = true;
+                    break;
+                }
+
+                if (position + itemHeight + ItemSpacing > Height) {
+                    isBreaking = true;
+                    break;
+                }
 
                 if (scrollSkips is 0 || scrollSkips-- <= 0) {
                     var entryNode = EntryNodes[entryIndex];
@@ -269,6 +277,10 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
                     entryNode.Y = position;
                     position += entryNode.Height + ItemSpacing;
                 }
+            }
+
+            if (isBreaking) {
+                break;
             }
         }
 
