@@ -380,6 +380,10 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     private void OnScrollUpdate(int newPosition) {
         scrollPosition = (int)(newPosition / (itemHeight + ItemSpacing));
         PopulateNodes();
+
+        if (ParentAddon is not null) {
+            ParentAddon->UpdateCollisionNodeList(false);
+        }
     }
 
     private void OnMouseWheel(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
@@ -388,6 +392,10 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
 
         ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
         PopulateNodes();
+
+        if (ParentAddon is not null) {
+            ParentAddon->UpdateCollisionNodeList(false);
+        }
 
         atkEvent->SetEventIsHandled();
     }

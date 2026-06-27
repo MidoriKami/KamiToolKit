@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
@@ -87,7 +88,7 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
     /// <summary>
     /// Function is called on any click-drag of the scrollbar, or direct mousewheel on the scrollbar.
     /// </summary>
-    private void OnScrollUpdate(int newPosition) {
+    private unsafe void OnScrollUpdate(int newPosition) {
         var remainingPosition = (float) newPosition;
         var scrollOffset = 0;
 
@@ -113,6 +114,10 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
 
                 scrollOffset++;
             }
+        }
+
+        if (ParentAddon is not null) {
+            ParentAddon->UpdateCollisionNodeList(false);
         }
     }
 
@@ -142,6 +147,10 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         ScrollBarNode.ScrollPosition = (float) scrollPosition / numValidOptions * GetTotalOffscreenHeight();
 
         PopulateNodes();
+
+        if (ParentAddon is not null) {
+            ParentAddon->UpdateCollisionNodeList(false);
+        }
 
         atkEvent->SetEventIsHandled();
     }
@@ -217,11 +226,13 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         var entryIndex = 0;
 
         HeaderNodes.ForEach(node => {
+            node.Y = 0.0f;
             node.IsVisible = false;
             node.Height = 0.0f;
         });
 
         EntryNodes.ForEach(node => {
+            node.Y = 0.0f;
             node.IsVisible = false;
             node.Height = 0.0f;
         });
