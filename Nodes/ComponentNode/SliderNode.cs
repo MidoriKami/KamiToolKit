@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
@@ -85,24 +84,7 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
     /// </summary>
     public int Value {
         get => Component->Value;
-        set {
-            Component->SetValue(value);
-            UpdateFormattedText();
-        }
-    }
-
-    /// <summary>
-    /// Gets pr sets the number of decimal places used.
-    /// </summary>
-    /// <remarks>
-    /// This is pending rework into a specialization of the name named FloatSliderNode or smth.
-    /// </remarks>
-    public int DecimalPlaces {
-        get;
-        set {
-            field = value;
-            UpdateFormattedText();
-        }
+        set => Component->SetValue(value);
     }
 
     /// <summary>
@@ -197,19 +179,6 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
 
     private void ValueChangedHandler() {
         OnValueChanged?.Invoke(Value);
-        UpdateFormattedText();
-    }
-
-    private void UpdateFormattedText() {
-        if (DecimalPlaces is not 0) {
-            var formatInfo = new NumberFormatInfo {
-                NumberDecimalDigits = DecimalPlaces,
-            };
-
-            FloatValueNode.IsVisible = true;
-            FloatValueNode.String = string.Format(formatInfo, "{0:F}", Value / MathF.Pow(10, DecimalPlaces));
-            ValueNode.FontSize = 0;
-        }
     }
 
     private void BuildTimelines() {
