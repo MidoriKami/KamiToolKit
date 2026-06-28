@@ -9,6 +9,12 @@ namespace KamiToolKit.Nodes.Simplified;
 /// </summary>
 public class SimpleComponentNode : ComponentNode<AtkComponentBase, AtkUldComponentDataBase> {
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="SimpleComponentNode"/>
+    /// </summary>
+    public SimpleComponentNode()
+        => InitializeComponentEvents();
+
     /// <inheritdoc/>
     public override ReadOnlySeString TextTooltip {
         get => CollisionNode.TextTooltip;
