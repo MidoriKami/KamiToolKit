@@ -52,6 +52,20 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
     }
 
     /// <summary>
+    /// Sets the scroll position to the top.
+    /// </summary>
+    public void ScrollToTop() {
+        ScrollBarNode.ScrollPosition = 0;
+    }
+
+    /// <summary>
+    /// Sets the scroll position to the bottom.
+    /// </summary>
+    public void ScrollToBottom() {
+        ScrollBarNode.ScrollPosition = ScrollBarNode.ScrollMaxPosition;
+    }
+
+    /// <summary>
     /// Recalculates sizes to update scroll params correctly.
     /// </summary>
     public void RecalculateSizes() {
