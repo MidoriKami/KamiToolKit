@@ -73,6 +73,7 @@ public unsafe class ListButtonNode : ButtonBase {
             FontSize = 14,
             AlignmentType = AlignmentType.Left,
             String = "Label Not Set",
+            TextFlags = TextFlags.Ellipsis,
         };
         LabelNode.AttachNode(this);
 

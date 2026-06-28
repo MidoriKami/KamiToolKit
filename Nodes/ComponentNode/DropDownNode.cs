@@ -356,20 +356,6 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         BackgroundNode.Size = new Vector2(Width, Height - 1.0f);
         LabelNode.Size = new Vector2(Width - 32.0f, Height - 3.0f);
 
-        PopupContainerNode.Size = new Vector2(Width - 8.0f, GetPopupListHeight());
-        PopupContainerNode.Position = new Vector2(4.0f, Height - 3.0f);
-
-        PopupBackgroundNode.Size = PopupContainerNode.Size;
-        PopupContainerNode.Position = new Vector2(0.0f, 0.0f);
-
-        PopupScrollbarNode.Size = new Vector2(8.0f, PopupContainerNode.Height - 18.0f);
-        PopupScrollbarNode.Position = new Vector2(PopupContainerNode.Width - 14.0f, 4.5f);
-        PopupScrollbarNode.UpdateScrollParams(PopupScrollbarNode.Height, Options.Count * 22.0f);
-
-        PopupButtonListNode.Size = new Vector2(PopupBackgroundNode.Width - 24.0f, PopupBackgroundNode.Height - 18.0f);
-        PopupButtonListNode.Position = new Vector2(8.0f, 6.0f);
-        PopupButtonListNode.RecalculateLayout();
-
         RebuildPopupList();
     }
 
@@ -407,6 +393,20 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
 
                 PopupButtonListNode.AddNode(buttonNode);
             }
+
+            PopupContainerNode.Size = new Vector2(Width - 8.0f, GetPopupListHeight());
+            PopupContainerNode.Position = new Vector2(4.0f, Height - 3.0f);
+
+            PopupBackgroundNode.Size = PopupContainerNode.Size;
+            PopupContainerNode.Position = new Vector2(0.0f, 0.0f);
+
+            PopupScrollbarNode.Size = new Vector2(8.0f, PopupContainerNode.Height - 18.0f);
+            PopupScrollbarNode.Position = new Vector2(PopupContainerNode.Width - 14.0f, 4.5f);
+            PopupScrollbarNode.UpdateScrollParams(PopupScrollbarNode.Height, Options.Count * 22.0f);
+
+            PopupButtonListNode.Size = new Vector2(PopupBackgroundNode.Width - 24.0f, PopupBackgroundNode.Height - 18.0f);
+            PopupButtonListNode.Position = new Vector2(8.0f, 6.0f);
+            PopupButtonListNode.RecalculateLayout();
         }
 
         PopulatePopupList();
