@@ -280,6 +280,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
             AlignmentType = AlignmentType.Left,
             TextColor = ColorHelper.GetColor(50),
             TextOutlineColor = ColorHelper.GetColor(7),
+            TextFlags = TextFlags.Ellipsis,
         };
         LabelNode.AttachNode(this);
 
