@@ -49,7 +49,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
 
     /// <inheritdoc />
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing) {
+        if (disposing && !IsDisposed) {
             try {
                 base.Dispose(disposing, isNativeDestructor);
             }

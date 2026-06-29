@@ -116,7 +116,7 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
 
     /// <inheritdoc />
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing) {
+        if (disposing && !IsDisposed) {
             if (!isNativeDestructor) {
                 PartsList.Dispose();
                 Node->PartsList = null;

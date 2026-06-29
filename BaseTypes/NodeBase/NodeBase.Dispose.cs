@@ -30,6 +30,11 @@ public abstract unsafe partial class NodeBase : IDisposable {
     protected static List<NodeBase> CreatedNodes { get; } = [];
 
     /// <summary>
+    /// Indicates whether this instance has already been disposed.
+    /// </summary>
+    protected bool IsDisposed { get; private set; }
+
+    /// <summary>
     /// Disposes this instance. Has double dispose guards.
     /// </summary>
     /// <remarks>
@@ -41,7 +46,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             LogIndented($"Beginning Dispose for {GetType()}", true);
             logIndent++;
 
-            if (isDisposed) {
+            if (IsDisposed) {
                 LogIndented("Node was already disposed, skipping.", EnableFullLogging);
                 return;
             }
@@ -56,7 +61,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
                 return;
             }
 
-            isDisposed = true;
+            IsDisposed = true;
 
             if (!IsNodeValid()) {
                 Services.Log.Warning("Invalid node, dispose aborted.");
@@ -104,8 +109,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
     internal bool IsAddonRootNode;
 
     private static int logIndent = -1;
-
-    private bool isDisposed;
 
     private AtkResNode.Delegates.Destroy destroyFunction = null!;
 
@@ -218,7 +221,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         GC.SuppressFinalize(this);
         CreatedNodes.Remove(this);
 
-        isDisposed = true;
+        IsDisposed = true;
     }
 
     // To be invoked from NodeBase.Dispose(bool, bool).
@@ -237,7 +240,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
         GC.SuppressFinalize(this);
         CreatedNodes.Remove(this);
 
-        isDisposed = true;
+        IsDisposed = true;
     }
 
     /// <summary>

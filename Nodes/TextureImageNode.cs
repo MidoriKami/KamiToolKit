@@ -29,7 +29,7 @@ public unsafe class TextureImageNode : SimpleImageNode {
 
     /// <inheritdoc />
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing) {
+        if (disposing && !IsDisposed) {
             if (!isNativeDestructor) {
                 var asset = PartsList[0]->UldAsset;
                 asset->AtkTexture.KernelTexture = null;
