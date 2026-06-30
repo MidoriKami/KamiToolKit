@@ -155,8 +155,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// Finalizer invocation from GC, this shouldn't be called unless a node was leaked and then not cleaned up by <see cref="KamiToolKitLibrary.Dispose"/>
     /// </summary>
     ~NodeBase() {
-        Services.Log.Warning($"Finalizer attempted to dispose of {GetType()}, this shouldn't happen.");
-        Dispose(false, false);
+        Services.Log.Warning($"Leaked node detected via finalizer, disposing {GetType()}");
+        Dispose();
     }
 
     /// <summary>
