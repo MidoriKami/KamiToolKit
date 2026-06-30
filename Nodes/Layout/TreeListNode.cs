@@ -6,6 +6,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Internal.Nodes;
+using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
@@ -21,6 +22,16 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
     public ScrollBarNode ScrollBarNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ResNode NoResultsTextNodeContainer { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public TextNode NoResultsTextNode { get; }
 
     /// <summary>
     /// Action that is invoked when an option is clicked on.
@@ -45,6 +56,9 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         get;
         set {
             field = value;
+
+            NoResultsTextNodeContainer.IsVisible = value.Count is 0;
+
             RebuildNodes();
             PopulateNodes();
         }
@@ -59,6 +73,22 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
     }
 
     /// <summary>
+    /// Gets or sets the string to show when there are no items in the list.
+    /// </summary>
+    public ReadOnlySeString? NoResultsString {
+        get;
+        set {
+            field = value;
+            if (value is { } stringValue) {
+                NoResultsTextNode.String = stringValue;
+            }
+            else {
+                NoResultsTextNode.String = string.Empty;
+            }
+        }
+    }
+
+    /// <summary>
     /// Constructs a new instance of <see cref="TreeListNode{T,TU}"/>
     /// </summary>
     public unsafe TreeListNode() {
@@ -70,6 +100,18 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         };
         ScrollBarNode.AttachNode(this);
 
+        NoResultsTextNodeContainer = new ResNode {
+            IsVisible = false,
+        };
+        NoResultsTextNodeContainer.AttachNode(this);
+
+        NoResultsTextNode = new TextNode {
+            AlignmentType = AlignmentType.Center,
+            TextId = 5494, // "No results found."
+            SheetType = NodeData.SheetType.Addon,
+        };
+        NoResultsTextNode.AttachNode(NoResultsTextNodeContainer);
+
         AddEvent(AtkEventType.MouseWheel, OnMouseWheel);
     }
 
@@ -79,6 +121,12 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
 
         ScrollBarNode.Size = new Vector2(8.0f, Height);
         ScrollBarNode.Position = new Vector2(Width - 8.0f, 0.0f);
+
+        NoResultsTextNodeContainer.Size = new Vector2(Width - 8.0f, Height);
+        NoResultsTextNodeContainer.Position = Vector2.Zero;
+
+        NoResultsTextNode.Size = NoResultsTextNodeContainer.Size;
+        NoResultsTextNode.Position = Vector2.Zero;
 
         RebuildNodes();
         PopulateNodes();

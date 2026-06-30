@@ -164,7 +164,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     }
 
     /// <summary>
-    /// Updates the data being displayed. This is done efficiently.
+    /// Updates the data being displayed.
     /// </summary>
     public void Update() {
         NoResultsTextNodeContainer.IsVisible = !NoResultsTextNode.String.IsEmpty && OptionsList.Count is 0;
