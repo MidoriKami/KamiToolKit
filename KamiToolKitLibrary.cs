@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Globalization;
 using System.Resources;
+using Dalamud.Game.Command;
+using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Utility;
 using KamiToolKit.BaseTypes;
+using KamiToolKit.Debug;
 using KamiToolKit.Internal.Classes;
 using Serilog.Events;
 
@@ -31,6 +35,10 @@ public static class KamiToolKitLibrary {
     internal static ResourceManager? ResourceManager;
     internal static CultureInfo? CurrentCulture;
 
+    private static bool debugMode;
+    private static WindowSystem? debugWindowSystem;
+    private static DebugWindow? debugWindow;
+
     /// <summary>
     /// Main initialization method for KamiToolKit. This method is required to be invoked before any KamiToolKit features are used.
     /// Failure to do so will not result in any direct warnings, but will result in undefined behavior.
@@ -52,6 +60,8 @@ public static class KamiToolKitLibrary {
         Services.Log.Info($"KamiToolKit initialized for {PluginInterface.InternalName} Default SubTitle: '{defaultWindowSubtitle}'");
 
         NativeAddon.InitializeCloseCallback();
+
+        RegisterDebugHelpers();
     }
 
     /// <summary>
@@ -66,6 +76,29 @@ public static class KamiToolKitLibrary {
     /// </summary>
     public static void SetCurrentCulture(CultureInfo culture) {
         CurrentCulture = culture;
+    }
+
+    [Conditional("DEBUG")]
+    private static void RegisterDebugHelpers() {
+        debugMode = true;
+
+        debugWindowSystem = new WindowSystem($"KamiToolKit - {PluginInterface.InternalName}");
+
+        Services.CommandManager.AddHandler($"/ktkdebug_{PluginInterface.InternalName}", new CommandInfo(CommandHandler) {
+            HelpMessage = "Plugin was built in debug mode, enabling debug command.",
+        });
+
+        Services.PluginInterface.UiBuilder.Draw += debugWindowSystem.Draw;
+
+        debugWindow = new DebugWindow();
+        debugWindowSystem.AddWindow(debugWindow);
+    }
+
+    private static void CommandHandler(string command, string arguments) {
+        if (command != $"/ktkdebug_{PluginInterface.InternalName}") return;
+
+        Services.Log.Debug($"Command Received, opening KTK Debug Window for {PluginInterface.InternalName}");
+        debugWindow?.IsOpen = !debugWindow.IsOpen;
     }
 
     /// <summary>
@@ -85,6 +118,12 @@ public static class KamiToolKitLibrary {
     /// Must be called from the main thread.
     /// </remarks>
     public static void Cleanup() {
+        if (debugMode) {
+            Services.PluginInterface.UiBuilder.Draw -= debugWindowSystem!.Draw;
+            Services.CommandManager.RemoveHandler($"/ktkdebug_{PluginInterface.InternalName}");
+            debugWindowSystem.RemoveAllWindows();
+        }
+
         NativeAddon.DisposeCloseCallback();
 
         if (Services.Framework.IsFrameworkUnloading) return;

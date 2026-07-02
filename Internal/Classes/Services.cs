@@ -18,6 +18,7 @@ internal class Services {
     [PluginService] public static IGameInteropProvider GameInteropProvider { get; set; } = null!;
     [PluginService] public static ISeStringEvaluator SeStringEvaluator { get; set; } = null!;
     [PluginService] public static IClientState ClientState { get; set; } = null!;
+    [PluginService] public static ICommandManager CommandManager { get; set; } = null!;
 
     public static string GetAssetPath(string assetName)
         => Path.Combine(GetAssetDirectoryPath(), assetName);

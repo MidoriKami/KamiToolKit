@@ -27,7 +27,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// <summary>
     /// Gets the list of all allocated nodes for this KamiToolKit instance.
     /// </summary>
-    protected static List<NodeBase> CreatedNodes { get; } = [];
+    internal static List<NodeBase> CreatedNodes { get; } = [];
 
     /// <summary>
     /// Indicates whether this instance has already been disposed.
@@ -246,5 +246,5 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// <summary>
     /// When true, enables hyper verbose node disposal logging.
     /// </summary>
-    private static bool EnableFullLogging => true;
+    private static bool EnableFullLogging => false;
 }
