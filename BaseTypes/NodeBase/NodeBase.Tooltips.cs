@@ -18,6 +18,10 @@ public unsafe partial class NodeBase {
     public virtual ReadOnlySeString TextTooltip {
         get;
         set {
+            if (field != value && ParentAddon is not null) {
+                ParentAddon->UpdateCollisionNodeList(false);
+            }
+
             field = value;
             if (!value.IsEmpty) {
                 TryRegisterTooltipEvents();
@@ -38,6 +42,10 @@ public unsafe partial class NodeBase {
     public virtual uint ActionTooltip {
         get;
         set {
+            if (field != value && ParentAddon is not null) {
+                ParentAddon->UpdateCollisionNodeList(false);
+            }
+
             field = value;
             if (value is not 0) {
                 TryRegisterTooltipEvents();
@@ -58,6 +66,10 @@ public unsafe partial class NodeBase {
     public virtual uint ItemTooltip {
         get;
         set {
+            if (field != value && ParentAddon is not null) {
+                ParentAddon->UpdateCollisionNodeList(false);
+            }
+
             field = value;
             if (value is not 0) {
                 TryRegisterTooltipEvents();
@@ -78,6 +90,10 @@ public unsafe partial class NodeBase {
     public virtual InventoryItemTooltip? InventoryItemTooltip {
         get;
         set {
+            if (field != value && ParentAddon is not null) {
+                ParentAddon->UpdateCollisionNodeList(false);
+            }
+
             field = value;
             if (value is not null) {
                 TryRegisterTooltipEvents();
