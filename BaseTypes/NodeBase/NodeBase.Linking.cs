@@ -76,8 +76,8 @@ public abstract unsafe partial class NodeBase {
 
         UnlinkFromNative();
         RemoveUldManagerObjectReferences();
-        RemoveParentAddonReferences();
         RemoveParentNodeReferences();
+        RemoveParentAddonReferences();
     }
 
     private void PerformManagedAttach(NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild) {
@@ -166,34 +166,14 @@ public abstract unsafe partial class NodeBase {
     }
 
     private void RemoveUldManagerObjectReferences() {
-        // If UldManager is null, try again to get the UldManager.
-        if (ParentUldManager is null) {
-            ParentUldManager = GetUldManagerForNode(this);
-        }
-
-        // If we still can't get it, it doesn't exist.
         if (ParentUldManager is null) return;
 
-        // Remove this node and all children from the UldManager's Objects List
         ParentUldManager->RemoveNodeFromObjectList(this);
         ParentUldManager = null;
     }
 
     private void RemoveParentAddonReferences() {
-        // If ParentAddon is null, try again to get it from RaptureAtkUnitManager
-        if (ParentAddon is null) {
-            ParentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(this);
-        }
-
-        // If it's still null, then it doesn't exist.
-        if (ParentAddon is null) {
-
-            // Ensure the children also know that they have no parents.
-            foreach (var child in GetAllChildren(this)) {
-                child.ParentAddon = null;
-            }
-            return;
-        }
+        if (ParentAddon is null) return;
 
         ParentAddon->UldManager.UpdateDrawNodeList();
         ParentAddon->UpdateCollisionNodeList(false);
@@ -225,6 +205,10 @@ public abstract unsafe partial class NodeBase {
 
         if (ParentUldManager is not null) {
             ParentUldManager->AddNodeToObjectList(this);
+
+            foreach (var child in GetAllChildren(this)) {
+                child.ParentUldManager = ParentUldManager;
+            }
 
             if (this is TextNode { TextId: not 0 }) {
                 ParentUldManager->SetupText();
@@ -279,10 +263,6 @@ public abstract unsafe partial class NodeBase {
         }
 
         // We failed to find a parent component, try to get a parent addon instead
-        if (ParentAddon is null) {
-            ParentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode(node);
-        }
-
         if (ParentAddon is not null) {
             return &ParentAddon->UldManager;
         }
