@@ -127,6 +127,15 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
             ScrollBarNode,
             false
         );
+
+        mouseWheelEventsRegistered = true;
+    }
+
+    /// <inheritdoc />
+    protected override void OnBeforeDisposeChildren() {
+        UnregisterMouseWheelEvents();
+
+        base.OnBeforeDisposeChildren();
     }
 
     /// <inheritdoc />
@@ -148,4 +157,33 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         ScrollBarNode.SetContentNodes(ContentNode, ScrollingCollisionNode);
         ScrollBarNode.ScrollPosition = Math.Clamp(oldPosition, 0, ScrollBarNode.ScrollMaxPosition);
     }
+
+    private unsafe void UnregisterMouseWheelEvents() {
+        if (!mouseWheelEventsRegistered) return;
+
+        mouseWheelEventsRegistered = false;
+
+        ClippingContentNode.ResNode->AtkEventManager.UnregisterEvent(
+            AtkEventType.MouseWheel,
+            5,
+            ScrollBarNode,
+            false
+        );
+
+        ScrollingCollisionNode.ResNode->AtkEventManager.UnregisterEvent(
+            AtkEventType.MouseWheel,
+            5,
+            ScrollBarNode,
+            false
+        );
+
+        ContentNode.ResNode->AtkEventManager.UnregisterEvent(
+            AtkEventType.MouseWheel,
+            5,
+            ScrollBarNode,
+            false
+        );
+    }
+
+    private bool mouseWheelEventsRegistered;
 }

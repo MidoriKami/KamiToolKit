@@ -34,6 +34,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// </summary>
     protected bool IsDisposed { get; private set; }
 
+    private bool isDisposing;
+
     /// <summary>
     /// Disposes this instance. Has double dispose guards.
     /// </summary>
@@ -46,7 +48,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             LogIndented($"Beginning Dispose for {GetType()}", true);
             logIndent++;
 
-            if (IsDisposed) {
+            if (IsDisposed || isDisposing) {
                 LogIndented("Node was already disposed, skipping.", EnableFullLogging);
                 return;
             }
@@ -61,12 +63,16 @@ public abstract unsafe partial class NodeBase : IDisposable {
                 return;
             }
 
-            IsDisposed = true;
+            isDisposing = true;
 
             if (!IsNodeValid()) {
                 Services.Log.Warning("Invalid node, dispose aborted.");
+                IsDisposed = true;
                 return;
             }
+
+            LogIndented("Running Pre-Child Dispose", EnableFullLogging);
+            OnBeforeDisposeChildren();
 
             LogIndented("Disposing Children", EnableFullLogging);
             foreach (var child in ChildNodes.ToList()) {
@@ -92,10 +98,12 @@ public abstract unsafe partial class NodeBase : IDisposable {
             Dispose(true, false);
             GC.SuppressFinalize(this);
             CreatedNodes.Remove(this);
+            IsDisposed = true;
         }
         catch (Exception e) {
             Services.Log.Exception(e);
         } finally {
+            isDisposing = false;
             logIndent--;
             LogIndented("Dispose Complete", true);
             logIndent--;
@@ -177,6 +185,11 @@ public abstract unsafe partial class NodeBase : IDisposable {
         DisposeEvents();
         DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
     }
+
+    /// <summary>
+    /// Runs before child nodes are disposed during manual disposal.
+    /// </summary>
+    protected virtual void OnBeforeDisposeChildren() { }
 
     private bool IsNodeValid() {
         if (ResNode is null) return false;
