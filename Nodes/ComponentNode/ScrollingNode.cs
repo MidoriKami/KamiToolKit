@@ -36,6 +36,11 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
     public T ContentNode { get; }
 
     /// <summary>
+    /// If true, recalculates contained layout nodes before recalculating the scroll content layout.
+    /// </summary>
+    public bool ReverseContentLayoutUpdate { get; set; }
+
+    /// <summary>
     /// Hides the Scroll Bar Node when its disabled due to the content being larger than the scroll.
     /// </summary>
     public bool AutoHideScrollBar {
@@ -138,7 +143,15 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         ScrollingCollisionNode.Size = Size;
 
         if (ContentNode is ILayoutListNode layoutNode) {
-            layoutNode.RecalculateLayout();
+            var originalReverseLayoutUpdate = layoutNode.ReverseLayoutUpdate;
+            layoutNode.ReverseLayoutUpdate |= ReverseContentLayoutUpdate;
+
+            try {
+                layoutNode.RecalculateLayout();
+            }
+            finally {
+                layoutNode.ReverseLayoutUpdate = originalReverseLayoutUpdate;
+            }
         }
 
         var oldPosition = ScrollBarNode.ScrollPosition;

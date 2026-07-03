@@ -49,6 +49,11 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     public float FirstItemSpacing { get; set; }
 
     /// <summary>
+    /// If true, contained layout nodes are recalculated before this layout node.
+    /// </summary>
+    public bool ReverseLayoutUpdate { get; set; }
+
+    /// <summary>
     /// Sets the initial nodes used by this layout node.
     /// </summary>
     public ICollection<NodeBase> InitialNodes {
@@ -86,16 +91,39 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     public void RecalculateLayout() {
         if (suppressRecalculateLayout) return;
 
+        if (ReverseLayoutUpdate) {
+            OnRecalculateLayout();
+            RecalculateSubLayouts(ReverseLayoutUpdate);
+        }
+
         OnRecalculateLayout();
 
         if (NavIndex is not 0) {
             OnRecalculateNavigation();
         }
 
+        if (!ReverseLayoutUpdate) {
+            RecalculateSubLayouts(ReverseLayoutUpdate);
+        }
+    }
+
+    private void RecalculateSubLayouts(bool reverseUpdate) {
         foreach (var node in Nodes) {
             if (node is ILayoutListNode subNode) {
-                subNode.RecalculateLayout();
+                RecalculateSubLayout(subNode, reverseUpdate);
             }
+        }
+    }
+
+    private static void RecalculateSubLayout(ILayoutListNode subNode, bool reverseUpdate) {
+        var originalReverseLayoutUpdate = subNode.ReverseLayoutUpdate;
+        subNode.ReverseLayoutUpdate |= reverseUpdate;
+
+        try {
+            subNode.RecalculateLayout();
+        }
+        finally {
+            subNode.ReverseLayoutUpdate = originalReverseLayoutUpdate;
         }
     }
 
