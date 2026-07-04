@@ -250,7 +250,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
     /// <summary>
     /// Constructs a new <see cref="DropDownNode{T}"/>.
     /// </summary>
-    protected DropDownNode() {
+    public DropDownNode() {
         BackgroundNode = new SimpleNineGridNode {
             TexturePath = "ui/uld/DropDownA.tex",
             TextureSize = new Vector2(44.0f, 23.0f),
