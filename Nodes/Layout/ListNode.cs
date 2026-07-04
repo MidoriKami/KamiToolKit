@@ -203,6 +203,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
             Position = new Vector2(0.0f, 0.0f),
             Size = new Vector2(Width, 4.0f),
             OnUpNavReceived = OnUpNavReceived,
+            IsVisible = NavIndex is not 0,
         };
         UpwardsNavNode.AttachNode(this);
 
@@ -212,6 +213,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
             Position = new Vector2(0.0f, Height - 4.0f),
             Size = new Vector2(Width, 4.0f),
             OnDownNavReceived = OnDownNavReceived,
+            IsVisible = NavIndex is not 0,
         };
         DownwardsNavNode.AttachNode(this);
 
