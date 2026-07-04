@@ -150,6 +150,6 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         ScrollBarNode.SetContentNodes(ContentNode, ScrollingCollisionNode);
         ScrollBarNode.ScrollPosition = Math.Clamp(oldPosition, 0, ScrollBarNode.ScrollMaxPosition);
     }
-    
+
     private bool reverseLayout;
 }

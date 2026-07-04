@@ -63,20 +63,15 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
     public float FirstItemSpacing { get; set; }
 
     /// <summary>
-    /// If true, contained layout nodes are recalculated before this layout node.
-    /// </summary>
-    public bool ReverseLayoutUpdate { get; set; }
-
-    /// <summary>
     /// Recalculates the contained layout, and controller navigation values if applicable.
     /// </summary>
     /// <param name="reverseUpdate">If set to true, contained layout nodes are recalculated before this layout node.</param>
     public void RecalculateLayout(bool reverseUpdate = false) {
         if (suppressRecalculateLayout) return;
 
-        if (ReverseLayoutUpdate) {
+        if (reverseUpdate) {
             OnRecalculateLayout();
-            RecalculateSubLayouts(ReverseLayoutUpdate);
+            RecalculateSubLayouts(reverseUpdate);
         }
 
         OnRecalculateLayout();
@@ -85,8 +80,8 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
             OnRecalculateNavigation();
         }
 
-        if (!ReverseLayoutUpdate) {
-            RecalculateSubLayouts(ReverseLayoutUpdate);
+        if (!reverseUpdate) {
+            RecalculateSubLayouts(reverseUpdate);
         }
     }
 
