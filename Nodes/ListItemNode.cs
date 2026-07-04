@@ -1,4 +1,6 @@
-﻿using KamiToolKit.Internal.Classes;
+﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Enums;
+using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Nodes;
 
@@ -49,7 +51,21 @@ public abstract class ListItemNode<T> : SelectableNode {
     /// <see cref="SelectableNode.OnClick"/> will no longer be invoked.
     /// </summary>
     protected void DisableInteractions() {
+        InteractionsDisabled = true;
+
         EnableSelection = false;
         EnableHighlight = false;
+
+        RemoveEvent(AtkEventType.MouseOver);
+        RemoveEvent(AtkEventType.MouseOut);
+        RemoveEvent(AtkEventType.MouseDown);
+
+        RemoveNodeFlags(NodeFlags.HasCollision);
+        RemoveDrawFlags(DrawFlags.ClickableCursor);
     }
+
+    /// <summary>
+    /// Gets a value indicating whether internations with this node should be allowed.
+    /// </summary>
+    public bool InteractionsDisabled { get; private set; }
 }

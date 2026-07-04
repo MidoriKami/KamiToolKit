@@ -305,7 +305,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
                 var item = OptionsList[dataIndex];
                 node.ItemData = item;
                 node.IsVisible = true;
-                node.ShowClickableCursor = true;
+                node.ShowClickableCursor = !node.InteractionsDisabled;
                 node.IsSelected = SelectedItems.Any(selectedItem => GenericUtil.AreEqual(node.ItemData, selectedItem));
             }
             else {
