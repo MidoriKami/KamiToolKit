@@ -70,7 +70,7 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
     /// </summary>
     /// <param name="reverseUpdate">If set to true, contained layout nodes are recalculated before this layout node.</param>
     public void RecalculateSizes(bool reverseUpdate = false) {
-        // Reversible not compatible with ScrollingNode for now
+        reverseLayout = reverseUpdate;
         OnSizeChanged();
     }
 
@@ -140,8 +140,7 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         ScrollingCollisionNode.Size = Size;
 
         if (ContentNode is ILayoutListNode layoutNode) {
-            // Reversible not compatible with ScrollingNode for now
-            layoutNode.RecalculateLayout();
+            layoutNode.RecalculateLayout(reverseLayout);
         }
 
         var oldPosition = ScrollBarNode.ScrollPosition;
@@ -151,4 +150,6 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         ScrollBarNode.SetContentNodes(ContentNode, ScrollingCollisionNode);
         ScrollBarNode.ScrollPosition = Math.Clamp(oldPosition, 0, ScrollBarNode.ScrollMaxPosition);
     }
+    
+    private bool reverseLayout;
 }
