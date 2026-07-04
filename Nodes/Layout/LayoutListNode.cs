@@ -70,7 +70,8 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
     /// <summary>
     /// Recalculates the contained layout, and controller navigation values if applicable.
     /// </summary>
-    public void RecalculateLayout() {
+    /// <param name="reverseUpdate">If set to true, contained layout nodes are recalculated before this layout node.</param>
+    public void RecalculateLayout(bool reverseUpdate = false) {
         if (suppressRecalculateLayout) return;
 
         if (ReverseLayoutUpdate) {
@@ -92,20 +93,8 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
     private void RecalculateSubLayouts(bool reverseUpdate) {
         foreach (var node in NodeList) {
             if (node is ILayoutListNode subNode) {
-                RecalculateSubLayout(subNode, reverseUpdate);
+                subNode.RecalculateLayout(reverseUpdate);
             }
-        }
-    }
-
-    private static void RecalculateSubLayout(ILayoutListNode subNode, bool reverseUpdate) {
-        var originalReverseLayoutUpdate = subNode.ReverseLayoutUpdate;
-        subNode.ReverseLayoutUpdate |= reverseUpdate;
-
-        try {
-            subNode.RecalculateLayout();
-        }
-        finally {
-            subNode.ReverseLayoutUpdate = originalReverseLayoutUpdate;
         }
     }
 

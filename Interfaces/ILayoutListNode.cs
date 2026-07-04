@@ -58,7 +58,7 @@ public interface ILayoutListNode {
     /// Recalculates the contained layout, and controller navigation values if applicable.
     /// </summary>
     /// <param name="reverseUpdate">If set to true, contained layout nodes are recalculated before this layout node.</param>
-    void RecalculateLayout(bool reverseUpdate);
+    void RecalculateLayout(bool reverseUpdate = false);
 
     /// <summary>
     /// Adds multiple nodes to the list. Added nodes are considered to be owned by the list.

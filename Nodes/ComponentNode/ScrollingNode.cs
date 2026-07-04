@@ -143,15 +143,7 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         ScrollingCollisionNode.Size = Size;
 
         if (ContentNode is ILayoutListNode layoutNode) {
-            var originalReverseLayoutUpdate = layoutNode.ReverseLayoutUpdate;
-            layoutNode.ReverseLayoutUpdate |= ReverseContentLayoutUpdate;
-
-            try {
-                layoutNode.RecalculateLayout();
-            }
-            finally {
-                layoutNode.ReverseLayoutUpdate = originalReverseLayoutUpdate;
-            }
+            layoutNode.RecalculateLayout(ReverseContentLayoutUpdate);
         }
 
         var oldPosition = ScrollBarNode.ScrollPosition;
