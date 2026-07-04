@@ -25,6 +25,11 @@ public abstract unsafe partial class NodeBase : IDisposable {
     public static implicit operator AtkEventTarget*(NodeBase node) => &node.ResNode->AtkEventTarget;
 
     /// <summary>
+    /// Implicit operator to convert this instance to a nint node pointer.
+    /// </summary>
+    public static implicit operator nint(NodeBase node) => (nint)node.ResNode;
+
+    /// <summary>
     /// Gets the list of all allocated nodes for this KamiToolKit instance.
     /// </summary>
     internal static List<NodeBase> CreatedNodes { get; } = [];
