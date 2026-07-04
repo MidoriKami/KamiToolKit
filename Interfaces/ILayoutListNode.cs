@@ -42,11 +42,6 @@ public interface ILayoutListNode {
     float FirstItemSpacing { get; set; }
 
     /// <summary>
-    /// If true, contained layout nodes are recalculated before this layout node.
-    /// </summary>
-    bool ReverseLayoutUpdate { get; set; }
-
-    /// <summary>
     /// An init only collection of nodes, to add a predefined amount of nodes to the list.
     /// This is the preferred way of adding nodes.
     /// </summary>
@@ -62,7 +57,8 @@ public interface ILayoutListNode {
     /// <summary>
     /// Recalculates the contained layout, and controller navigation values if applicable.
     /// </summary>
-    void RecalculateLayout();
+    /// <param name="reverseUpdate">If set to true, contained layout nodes are recalculated before this layout node.</param>
+    void RecalculateLayout(bool reverseUpdate);
 
     /// <summary>
     /// Adds multiple nodes to the list. Added nodes are considered to be owned by the list.

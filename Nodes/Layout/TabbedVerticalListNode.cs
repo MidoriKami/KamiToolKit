@@ -49,11 +49,6 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     public float FirstItemSpacing { get; set; }
 
     /// <summary>
-    /// If true, contained layout nodes are recalculated before this layout node.
-    /// </summary>
-    public bool ReverseLayoutUpdate { get; set; }
-
-    /// <summary>
     /// Sets the initial nodes used by this layout node.
     /// </summary>
     public ICollection<NodeBase> InitialNodes {
@@ -88,12 +83,12 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     /// <summary>
     /// Trigger recalculating layout for this node and any sub contained layout list nodes.
     /// </summary>
-    public void RecalculateLayout() {
+    public void RecalculateLayout(bool reverseLayoutUpdate = false) {
         if (suppressRecalculateLayout) return;
 
-        if (ReverseLayoutUpdate) {
+        if (reverseLayoutUpdate) {
             OnRecalculateLayout();
-            RecalculateSubLayouts(ReverseLayoutUpdate);
+            RecalculateSubLayouts(reverseLayoutUpdate);
         }
 
         OnRecalculateLayout();
@@ -102,28 +97,16 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
             OnRecalculateNavigation();
         }
 
-        if (!ReverseLayoutUpdate) {
-            RecalculateSubLayouts(ReverseLayoutUpdate);
+        if (!reverseLayoutUpdate) {
+            RecalculateSubLayouts(reverseLayoutUpdate);
         }
     }
 
     private void RecalculateSubLayouts(bool reverseUpdate) {
         foreach (var node in Nodes) {
             if (node is ILayoutListNode subNode) {
-                RecalculateSubLayout(subNode, reverseUpdate);
+                subNode.RecalculateLayout(reverseUpdate);
             }
-        }
-    }
-
-    private static void RecalculateSubLayout(ILayoutListNode subNode, bool reverseUpdate) {
-        var originalReverseLayoutUpdate = subNode.ReverseLayoutUpdate;
-        subNode.ReverseLayoutUpdate |= reverseUpdate;
-
-        try {
-            subNode.RecalculateLayout();
-        }
-        finally {
-            subNode.ReverseLayoutUpdate = originalReverseLayoutUpdate;
         }
     }
 
