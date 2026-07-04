@@ -68,6 +68,12 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
     public void RecalculateLayout() {
         if (suppressRecalculateLayout) return;
 
+        foreach (var node in NodeList) {
+            if (node is ILayoutListNode subNode) {
+                subNode.RecalculateLayout();
+            }
+        }
+
         OnRecalculateLayout();
 
         if (NavIndex is not 0) {

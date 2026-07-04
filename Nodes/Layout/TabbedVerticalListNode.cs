@@ -86,6 +86,12 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     public void RecalculateLayout() {
         if (suppressRecalculateLayout) return;
 
+        foreach (var node in Nodes) {
+            if (node is ILayoutListNode subNode) {
+                subNode.RecalculateLayout();
+            }
+        }
+
         OnRecalculateLayout();
 
         if (NavIndex is not 0) {
