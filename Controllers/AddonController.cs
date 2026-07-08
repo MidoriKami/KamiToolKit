@@ -128,15 +128,15 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
                 OnRefresh?.Invoke(addon);
                 return;
 
-            case AddonEvent.PreUpdate:
+            case AddonEvent.PreUpdate when isSetupComplete:
                 OnPreUpdate?.Invoke(addon);
                 break;
 
-            case AddonEvent.PostUpdate:
+            case AddonEvent.PostUpdate when isSetupComplete:
                 OnUpdate?.Invoke(addon);
                 return;
 
-            case AddonEvent.PreDraw:
+            case AddonEvent.PreDraw when isSetupComplete:
                 OnDraw?.Invoke(addon);
                 return;
         }
