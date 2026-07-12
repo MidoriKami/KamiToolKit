@@ -126,11 +126,12 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing && !IsDisposed) {
-            base.Dispose(disposing, isNativeDestructor);
-            eventListener.Dispose();
-        }
+    protected override void Dispose(bool isNativeDestructor) {
+        if (IsDisposed) return;
+
+        eventListener.Dispose();
+
+        base.Dispose(isNativeDestructor);
     }
 
     private bool IsRingClicked(AtkEventData* data) {

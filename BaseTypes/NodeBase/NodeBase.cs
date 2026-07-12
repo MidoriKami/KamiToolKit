@@ -48,22 +48,22 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing && !IsDisposed) {
-            try {
-                base.Dispose(disposing, isNativeDestructor);
-            }
-            catch (Exception e) {
-                Services.Log.Exception(e);
-            } finally {
-                if (!isNativeDestructor) {
-                    OriginalDestroy(this, true);
-                }
+    protected override void Dispose(bool isNativeDestructor) {
+        if (IsDisposed) return;
 
-                KamiToolKitLibrary.AllocatedNodes?.Remove((nint)Node, out _);
-
-                Node = null;
+        try {
+            base.Dispose(isNativeDestructor);
+        }
+        catch (Exception e) {
+            Services.Log.Exception(e);
+        } finally {
+            if (!isNativeDestructor) {
+                OriginalDestroy(this, true);
             }
+
+            KamiToolKitLibrary.AllocatedNodes?.Remove((nint)Node, out _);
+
+            Node = null;
         }
     }
 

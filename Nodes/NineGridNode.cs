@@ -115,14 +115,14 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing && !IsDisposed) {
-            if (!isNativeDestructor) {
-                PartsList.Dispose();
-                Node->PartsList = null;
-            }
+    protected override void Dispose(bool isNativeDestructor) {
+        if (IsDisposed) return;
 
-            base.Dispose(disposing, isNativeDestructor);
+        if (!isNativeDestructor) {
+            PartsList.Dispose();
+            Node->PartsList = null;
         }
+
+        base.Dispose(isNativeDestructor);
     }
 }

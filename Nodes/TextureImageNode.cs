@@ -28,15 +28,15 @@ public unsafe class TextureImageNode : SimpleImageNode {
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing && !IsDisposed) {
-            if (!isNativeDestructor) {
-                var asset = PartsList[0]->UldAsset;
-                asset->AtkTexture.KernelTexture = null;
-                asset->AtkTexture.TextureType = 0;
-            }
+    protected override void Dispose(bool isNativeDestructor) {
+        if (IsDisposed) return;
 
-            base.Dispose(disposing, isNativeDestructor);
+        if (!isNativeDestructor) {
+            var asset = PartsList[0]->UldAsset;
+            asset->AtkTexture.KernelTexture = null;
+            asset->AtkTexture.TextureType = 0;
         }
+
+        base.Dispose(isNativeDestructor);
     }
 }
