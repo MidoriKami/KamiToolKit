@@ -89,12 +89,12 @@ public unsafe class AlphaBarNode : ResNode {
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing && !IsDisposed) {
-            base.Dispose(disposing, isNativeDestructor);
+    protected override void Dispose(bool isNativeDestructor) {
+        if (IsDisposed) return;
 
-            alphaEventListener.Dispose();
-        }
+        alphaEventListener.Dispose();
+
+        base.Dispose(isNativeDestructor);
     }
 
     private void OnAlphaBarMouseDown() {

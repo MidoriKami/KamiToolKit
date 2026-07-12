@@ -80,17 +80,17 @@ public class ImGuiImageNode : SimpleImageNode {
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing && !IsDisposed) {
-            base.Dispose(disposing, isNativeDestructor);
+    protected override void Dispose(bool isNativeDestructor) {
+        if (IsDisposed) return;
 
-            if (LoadedTexture is not null) {
-                Services.Log.Verbose($"Disposing texture: {LoadedTexture}");
-            }
-
-            LoadedTexture?.Dispose();
-            LoadedTexture = null;
+        if (LoadedTexture is not null) {
+            Services.Log.Verbose($"Disposing texture: {LoadedTexture}");
         }
+
+        LoadedTexture?.Dispose();
+        LoadedTexture = null;
+
+        base.Dispose(isNativeDestructor);
     }
 
     private IDalamudTextureWrap? LoadedTexture { get; set; }

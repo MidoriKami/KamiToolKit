@@ -325,13 +325,13 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing && !IsDisposed) {
-            Component->Callback = null;
-            pinnedCallbackFunction = null;
+    protected override void Dispose(bool isNativeDestructor) {
+        if (IsDisposed) return;
 
-            base.Dispose(disposing, isNativeDestructor);
-        }
+        Component->Callback = null;
+        pinnedCallbackFunction = null;
+
+        base.Dispose(isNativeDestructor);
     }
 
     private InputCallbackResult OnCallback(AtkUnitBase* addon, InputCallbackType type, CStringPointer rawString, CStringPointer evaluatedString, int eventKind) {

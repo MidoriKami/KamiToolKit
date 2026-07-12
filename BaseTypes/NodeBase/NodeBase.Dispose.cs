@@ -93,9 +93,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             ResNode->Timeline = null;
 
             LogIndented("Invoking Native Dispose", EnableFullLogging);
-            Dispose(true, false);
-            GC.SuppressFinalize(this);
-            CreatedNodes.Remove(this);
+            Dispose(false);
         }
         catch (Exception e) {
             Services.Log.Exception(e);
@@ -103,8 +101,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
             logIndent--;
             LogIndented("Dispose Complete", true);
             logIndent--;
-
-            IsDisposed = true;
         }
     }
 
@@ -168,16 +164,12 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// <summary>
     /// Dispose associated resources. If a resource modifies native state directly guard it with isNativeDestructor
     /// </summary>
-    /// <param name="disposing">
-    /// Indicates if this specific call should dispose resources or not. This protects against double dispose,
-    /// or incorrectly manipulating native state too many times.
-    /// </param>
     /// <param name="isNativeDestructor">
     /// Indicates if the dispose call should try to completely clean up all resources,
     /// or if it should only clean up managed resources. When false, be sure to only dispose
     /// resources that exist in managed spaces, as the game has already cleaned up everything else.
     /// </param>
-    protected virtual void Dispose(bool disposing, bool isNativeDestructor) {
+    protected virtual void Dispose(bool isNativeDestructor) {
 
         // Dispose of managed resources that must be disposed regardless of how dispose is invoked
         DisposeEvents();
@@ -216,7 +208,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// Pinned managed function that is used to replace the native virtual tables dtor function pointer.
     /// </summary>
     protected void Destroy(AtkResNode* thisPtr, bool free) {
-        Dispose(true, true);
+        Dispose(true);
 
         originalVirtualTable->Destroy(thisPtr, free);
 

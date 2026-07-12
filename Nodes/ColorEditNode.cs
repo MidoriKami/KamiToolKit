@@ -88,7 +88,9 @@ public class ColorEditNode : SimpleComponentNode {
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
+    protected override void Dispose(bool isNativeDestructor) {
+        if (IsDisposed) return;
+
         OnColorCancelled = null;
         OnColorPreviewed = null;
         OnColorConfirmed = null;
@@ -96,7 +98,7 @@ public class ColorEditNode : SimpleComponentNode {
         colorPicker?.Dispose();
         colorPicker = null;
 
-        base.Dispose(disposing, isNativeDestructor);
+        base.Dispose(isNativeDestructor);
     }
 
     private unsafe void OnInputReceived(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {

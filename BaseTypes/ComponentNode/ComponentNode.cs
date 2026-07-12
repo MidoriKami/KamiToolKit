@@ -161,20 +161,20 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        if (disposing && !IsDisposed) {
-            try {
-                if (!isNativeDestructor && Node is not null && Node->Component is not null) {
-                    Node->Component->Deinitialize();
-                    Node->Component->Dtor(1);
-                    Node->Component = null;
-                }
+    protected override void Dispose(bool isNativeDestructor) {
+        if (IsDisposed) return;
+
+        try {
+            if (!isNativeDestructor && Node is not null && Node->Component is not null) {
+                Node->Component->Deinitialize();
+                Node->Component->Dtor(1);
+                Node->Component = null;
             }
-            catch (Exception e) {
-                Services.Log.Exception(e);
-            } finally {
-                base.Dispose(disposing, isNativeDestructor);
-            }
+        }
+        catch (Exception e) {
+            Services.Log.Exception(e);
+        } finally {
+            base.Dispose(isNativeDestructor);
         }
     }
 }
