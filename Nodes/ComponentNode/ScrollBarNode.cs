@@ -116,8 +116,9 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         }
 
         var enabledState = Component->EmptyLength is not 0;
-
-        Component->SetEnabledState(enabledState);
+        if (IsEnabled != enabledState) {
+            Component->SetEnabledState(enabledState);
+        }
 
         if (HideWhenDisabled) {
             BackgroundButtonNode.IsVisible = enabledState;
