@@ -66,7 +66,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
                 return;
             }
 
-            IsDisposed = true;
 
             if (!IsNodeValid()) {
                 Services.Log.Warning("Invalid node, dispose aborted.");
@@ -104,6 +103,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
             logIndent--;
             LogIndented("Dispose Complete", true);
             logIndent--;
+
+            IsDisposed = true;
         }
     }
 
