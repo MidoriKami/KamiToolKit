@@ -4,7 +4,7 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// A collapsible section for <see cref="TreeListNode{T,TU}"/>, optionally containing nested child sections.
+/// A collapsible section for <see cref="NestableTreeListNode{T,TU}"/>, optionally containing nested child sections.
 /// </summary>
 /// <typeparam name="T">The entry data model.</typeparam>
 public class TreeListSection<T> {

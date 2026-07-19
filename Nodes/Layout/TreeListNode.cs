@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -47,42 +47,26 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
     public T? SelectedItem { get; set; }
 
     /// <summary>
-    /// When updating <see cref="Sections"/> or <see cref="Options"/>, automatically resets scroll to the top.
+    /// When updating <see cref="Options"/>, automatically resets scroll to the top.
     /// </summary>
+    /// <remarks>
+    /// This may be undesirable if the list is being constantly updated.
+    /// </remarks>
     public bool AutoResetScroll { get; set; } = true;
-
-    /// <summary>
-    /// Gets or sets the nested section tree used to populate this list.
-    /// </summary>
-    public List<TreeListSection<T>> Sections {
-        get;
-        set {
-            field = value;
-            NoResultsTextNodeContainer.IsVisible = value.Count is 0;
-            RebuildNodes();
-            if (AutoResetScroll) {
-                ResetScroll();
-            }
-            else {
-                PopulateNodes();
-            }
-        }
-    } = [];
 
     /// <summary>
     /// Gets or sets the dictionary of options used to populate this <see cref="TreeListNode{T,TU}"/>
     /// </summary>
     /// <remarks>
     /// Keys represent collapsing headers, where values are the entries shown per header.
-    /// Equivalent to top-level <see cref="Sections"/> with no children.
     /// </remarks>
     public Dictionary<ReadOnlySeString, List<T>> Options {
-        get => Sections.ToDictionary(static s => s.Header, static s => s.Entries);
-        set => Sections = value.Select(static kv => new TreeListSection<T> {
-            Header = kv.Key,
-            Entries = kv.Value,
-        }).ToList();
-    }
+        get;
+        set {
+            field = value;
+            OnDataChanged(value.Count is 0);
+        }
+    } = [];
 
     /// <summary>
     /// Gets a read-only list of the pooled entry nodes.
@@ -143,6 +127,9 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
     /// <summary>
     /// Resets scroll position back to the top.
     /// </summary>
+    /// <remarks>
+    /// When changing the list data, you will probably need to invoke this manually if <see cref="AutoResetScroll"/> is disabled.
+    /// </remarks>
     public void ResetScroll() {
         scrollPosition = 0;
         ScrollBarNode.ScrollPosition = 0;
@@ -153,7 +140,7 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
     /// Updates the data being displayed.
     /// </summary>
     public void Update() {
-        NoResultsTextNodeContainer.IsVisible = !NoResultsTextNode.String.IsEmpty && Sections.Count is 0;
+        NoResultsTextNodeContainer.IsVisible = !NoResultsTextNode.String.IsEmpty && IsEmpty;
 
         PopulateNodes();
 
@@ -179,6 +166,50 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
 
         RebuildNodes();
         PopulateNodes();
+    }
+
+    /// <summary>
+    /// Get whether this list has nothing to display
+    /// </summary>
+    /// <remarks>
+    /// Override when the subclass uses a different data source than <see cref="Options"/>.
+    /// </remarks>
+    protected virtual bool IsEmpty => Options.Count is 0;
+
+    /// <summary>
+    /// Applies a data change, optionally resetting scroll.
+    /// </summary>
+    protected void OnDataChanged(bool isEmpty) {
+        NoResultsTextNodeContainer.IsVisible = isEmpty;
+
+        RebuildNodes();
+
+        if (AutoResetScroll) {
+            ResetScroll();
+        }
+        else {
+            PopulateNodes();
+        }
+    }
+
+    /// <summary>
+    /// Enumerates the currently visible header and entry rows, respecting collapse state.
+    /// </summary>
+    /// <remarks>
+    /// Override to supply a different row sequence (for example nested sections).
+    /// </remarks>
+    protected virtual IEnumerable<VisibleRow> EnumerateVisibleRows() {
+        foreach (var (header, entries) in Options) {
+            yield return VisibleRow.ForHeader(header, header);
+
+            if (CollapsedEntries.Contains(header)) {
+                continue;
+            }
+
+            foreach (var entry in entries) {
+                yield return VisibleRow.ForEntry(entry);
+            }
+        }
     }
 
     /// <summary>
@@ -378,47 +409,51 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         return calculatedOffscreenHeight;
     }
 
-    private IEnumerable<VisibleRow> EnumerateVisibleRows() {
-        foreach (var section in Sections) {
-            foreach (var row in EnumerateSectionRows(section, parentPath: default)) {
-                yield return row;
-            }
-        }
-    }
-
-    private IEnumerable<VisibleRow> EnumerateSectionRows(TreeListSection<T> section, ReadOnlySeString parentPath) {
-        var path = parentPath.IsEmpty ? section.Header : $"{parentPath}/{section.Header}";
-        yield return VisibleRow.ForHeader(section.Header, path);
-
-        if (CollapsedEntries.Contains(path)) {
-            yield break;
-        }
-
-        foreach (var entry in section.Entries) {
-            yield return VisibleRow.ForEntry(entry);
-        }
-
-        foreach (var child in section.Children) {
-            foreach (var row in EnumerateSectionRows(child, path)) {
-                yield return row;
-            }
-        }
-    }
-
     private float RowHeight(VisibleRow row)
         => row.Kind is VisibleRowKind.Header ? 28.0f : itemHeight;
 
-    private enum VisibleRowKind {
+    /// <summary>
+    /// Row kinds produced by <see cref="EnumerateVisibleRows"/>.
+    /// </summary>
+    protected enum VisibleRowKind {
+        /// <summary>
+        /// A collapsing section header.
+        /// </summary>
         Header,
+
+        /// <summary>
+        /// An entry under a section header.
+        /// </summary>
         Entry,
     }
 
-    private readonly struct VisibleRow {
+    /// <summary>
+    /// A single visible header or entry row.
+    /// </summary>
+    protected readonly struct VisibleRow {
+        /// <summary>
+        /// Gets the kind of row this represents.
+        /// </summary>
         public required VisibleRowKind Kind { get; init; }
+
+        /// <summary>
+        /// Gets the header label when <see cref="Kind"/> is <see cref="VisibleRowKind.Header"/>.
+        /// </summary>
         public ReadOnlySeString Header { get; init; }
+
+        /// <summary>
+        /// Gets the collapse key for this header
+        /// </summary>
         public ReadOnlySeString Path { get; init; }
+
+        /// <summary>
+        /// Gets the entry data when <see cref="Kind"/> is <see cref="VisibleRowKind.Entry"/>.
+        /// </summary>
         public T? Entry { get; init; }
 
+        /// <summary>
+        /// Creates a header row.
+        /// </summary>
         public static VisibleRow ForHeader(ReadOnlySeString header, ReadOnlySeString path)
             => new() {
                 Kind = VisibleRowKind.Header,
@@ -426,6 +461,9 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
                 Path = path,
             };
 
+        /// <summary>
+        /// Creates an entry row.
+        /// </summary>
         public static VisibleRow ForEntry(T entry)
             => new() {
                 Kind = VisibleRowKind.Entry,
@@ -435,7 +473,11 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
 
     private List<ToggleableHeaderNode> HeaderNodes { get; } = [];
     private List<ReadOnlySeString> HeaderCollapsePaths { get; } = [];
-    private List<ReadOnlySeString> CollapsedEntries { get; } = [];
+
+    /// <summary>
+    /// Collapsed header keys
+    /// </summary>
+    protected List<ReadOnlySeString> CollapsedEntries { get; } = [];
 
     private readonly List<TU> entryNodes = [];
     private readonly float itemHeight;
