@@ -21,6 +21,14 @@ public abstract class TreeListItemNode<T> : SelectableNode {
     }
 
     /// <summary>
+    /// Update function that is called each frame the list is called to be updated.
+    /// </summary>
+    /// <remarks>
+    /// This can be useful for displaying list data that changes as the player moves for example.
+    /// </remarks>
+    public virtual void Update() { }
+
+    /// <summary>
     /// Function that is called when this list item entry needs to update what data is being displayed.
     /// </summary>
     /// <param name="itemData">The new item data to show.</param>
