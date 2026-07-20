@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Dalamud.Game.Addon.Events;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Internal.Enums;
@@ -151,5 +152,5 @@ internal unsafe class NodeEditOverlayNode : SimpleComponentNode {
     }
 
     private static void SetCursor(AddonCursorType cursor)
-        => Services.AddonEventManager.SetCursor(cursor);
+        => IAddonEventManager.Get().SetCursor(cursor);
 }

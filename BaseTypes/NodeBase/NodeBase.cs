@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -29,7 +30,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
     protected NodeBase(NodeType nodeType) {
         ThreadSafety.AssertMainThread();
 
-        Services.Log.Verbose($"Creating new node {GetType()}");
+        IPluginLog.Get().Verbose($"Creating new node {GetType()}");
         Node = NativeMemoryHelper.Create<T>();
 
         if (ResNode is null) {
@@ -55,7 +56,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
             base.Dispose(isNativeDestructor);
         }
         catch (Exception e) {
-            Services.Log.Exception(e);
+            IPluginLog.Get().Exception(e);
         } finally {
             if (!isNativeDestructor) {
                 OriginalDestroy(this, true);

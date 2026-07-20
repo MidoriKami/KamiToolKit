@@ -1,4 +1,5 @@
 using System;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -172,7 +173,7 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
             }
         }
         catch (Exception e) {
-            Services.Log.Exception(e);
+            IPluginLog.Get().Exception(e);
         } finally {
             base.Dispose(isNativeDestructor);
         }

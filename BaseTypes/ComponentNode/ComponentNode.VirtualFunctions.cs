@@ -1,3 +1,4 @@
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 
@@ -9,7 +10,7 @@ public abstract unsafe partial class ComponentNode {
     /// Global event callback for events that the game wired up to this component.
     /// </summary>
     protected virtual void OnReceiveGlobalEvent(AtkComponentBase* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] Receive Global Event");
+        IPluginLog.Get().Verbose($"[{GetType().Name}][{GetComponentType()}] Receive Global Event");
 
         originalVirtualTable->ReceiveGlobalEvent(thisPtr, eventType, eventParam, atkEvent, atkEventData);
     }
@@ -18,7 +19,7 @@ public abstract unsafe partial class ComponentNode {
     /// Event callback for events that the game wired up to this component.
     /// </summary>
     protected virtual void OnReceiveEvent(AtkComponentBase* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
-        Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] [{eventType}] {eventParam}");
+        IPluginLog.Get().Verbose($"[{GetType().Name}][{GetComponentType()}] [{eventType}] {eventParam}");
 
         originalVirtualTable->ReceiveEvent(thisPtr, eventType, eventParam, atkEvent, atkEventData);
     }
@@ -27,7 +28,7 @@ public abstract unsafe partial class ComponentNode {
     /// Initialize callback for this component.
     /// </summary>
     protected virtual void OnInitialize(AtkComponentBase* thisPtr) {
-        Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] Initialize");
+        IPluginLog.Get().Verbose($"[{GetType().Name}][{GetComponentType()}] Initialize");
 
         originalVirtualTable->Initialize(thisPtr);
     }
@@ -36,7 +37,7 @@ public abstract unsafe partial class ComponentNode {
     /// Unloading callback for this component.
     /// </summary>
     protected virtual void OnDeinitialize(AtkComponentBase* thisPtr) {
-        Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] Deinitialize");
+        IPluginLog.Get().Verbose($"[{GetType().Name}][{GetComponentType()}] Deinitialize");
 
         originalVirtualTable->Deinitialize(thisPtr);
     }
@@ -45,7 +46,7 @@ public abstract unsafe partial class ComponentNode {
     /// Per-frame update callback for this component.
     /// </summary>
     protected virtual void OnUpdate(AtkComponentBase* thisPtr, float delta) {
-        Services.Log.Excessive($"[{GetType().Name}][{GetComponentType()}] Update");
+        IPluginLog.Get().Excessive($"[{GetType().Name}][{GetComponentType()}] Update");
 
         originalVirtualTable->Update(thisPtr, delta);
     }
@@ -54,7 +55,7 @@ public abstract unsafe partial class ComponentNode {
     /// Draw callback for this component.
     /// </summary>
     protected virtual void OnDraw(AtkComponentBase* thisPtr) {
-        Services.Log.Excessive($"[{GetType().Name}][{GetComponentType()}] Draw");
+        IPluginLog.Get().Excessive($"[{GetType().Name}][{GetComponentType()}] Draw");
 
         originalVirtualTable->Draw(thisPtr);
     }
@@ -63,7 +64,7 @@ public abstract unsafe partial class ComponentNode {
     /// Setup callback for this component.
     /// </summary>
     protected virtual void OnSetup(AtkComponentBase* thisPtr) {
-        Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] Setup");
+        IPluginLog.Get().Verbose($"[{GetType().Name}][{GetComponentType()}] Setup");
 
         originalVirtualTable->Setup(thisPtr);
     }
@@ -72,7 +73,7 @@ public abstract unsafe partial class ComponentNode {
     /// Enable state changed callback for this component.
     /// </summary>
     protected virtual void OnSetEnabledState(AtkComponentBase* thisPtr, bool enabled) {
-        Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] SetEnabledState");
+        IPluginLog.Get().Verbose($"[{GetType().Name}][{GetComponentType()}] SetEnabledState");
 
         originalVirtualTable->SetEnabledState(thisPtr, enabled);
     }
@@ -81,7 +82,7 @@ public abstract unsafe partial class ComponentNode {
     /// Play sound effect callback for this component.
     /// </summary>
     protected virtual void OnPlaySoundEffect(AtkComponentBase* thisPtr) {
-        Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] PlaySoundEffect");
+        IPluginLog.Get().Verbose($"[{GetType().Name}][{GetComponentType()}] PlaySoundEffect");
 
         originalVirtualTable->PlaySoundEffect(thisPtr);
     }
@@ -90,7 +91,7 @@ public abstract unsafe partial class ComponentNode {
     /// GetAtkResNode callback for this component.
     /// </summary>
     protected virtual AtkResNode* OnGetAtkResNode(AtkComponentBase* thisPtr) {
-        Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] PlaySoundEffect");
+        IPluginLog.Get().Verbose($"[{GetType().Name}][{GetComponentType()}] PlaySoundEffect");
 
         var result = originalVirtualTable->GetAtkResNode(thisPtr);
 
@@ -104,7 +105,7 @@ public abstract unsafe partial class ComponentNode {
     /// Overriden to return <see cref="FocusNode"/>.
     /// </remarks>
     protected virtual AtkResNode* OnGetFocusNode(AtkComponentBase* thisPtr) {
-        Services.Log.Excessive($"[{GetType().Name}][{GetComponentType()}] GetFocusNode");
+        IPluginLog.Get().Excessive($"[{GetType().Name}][{GetComponentType()}] GetFocusNode");
 
         return FocusNode;
     }
@@ -115,13 +116,13 @@ public abstract unsafe partial class ComponentNode {
     /// <param name="thisPtr"></param>
     /// <param name="data"></param>
     protected virtual void OnInitializeFromComponentData(AtkComponentBase* thisPtr, void* data) {
-        Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] InitializeFromComponentData");
+        IPluginLog.Get().Verbose($"[{GetType().Name}][{GetComponentType()}] InitializeFromComponentData");
 
         originalVirtualTable->InitializeFromComponentData(thisPtr, data);
     }
 
     private AtkEventListener* Destructor(AtkComponentBase* thisPtr, byte freeFlags) {
-        Services.Log.Verbose($"[{GetType().Name}][{GetComponentType()}] Destructor");
+        IPluginLog.Get().Verbose($"[{GetType().Name}][{GetComponentType()}] Destructor");
 
         var result = originalVirtualTable->Dtor(thisPtr, freeFlags);
 

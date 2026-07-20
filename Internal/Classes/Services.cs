@@ -1,28 +1,35 @@
 ﻿using System;
 using System.IO;
-using Dalamud.IoC;
-using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
 namespace KamiToolKit.Internal.Classes;
 
-internal class Services {
-    [PluginService] public static IPluginLog Log { get; set; } = null!;
-    [PluginService] public static IAddonLifecycle AddonLifecycle { get; set; } = null!;
-    [PluginService] public static IDataManager DataManager { get; set; } = null!;
-    [PluginService] public static ITextureProvider TextureProvider { get; set; } = null!;
-    [PluginService] public static IFramework Framework { get; set; } = null!;
-    [PluginService] public static IAddonEventManager AddonEventManager { get; set; } = null!;
-    [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; } = null!;
-    [PluginService] public static IGameGui GameGui { get; set; } = null!;
-    [PluginService] public static IGameInteropProvider GameInteropProvider { get; set; } = null!;
-    [PluginService] public static ISeStringEvaluator SeStringEvaluator { get; set; } = null!;
-    [PluginService] public static IClientState ClientState { get; set; } = null!;
-    [PluginService] public static ICommandManager CommandManager { get; set; } = null!;
+/// <summary>
+/// Extension provider for IDalamudService, to add a .Get() method to get an instance of any dalamud service directly from typename.
+/// </summary>
+/// <code>
+/// IPluginLog.Get().Debug(...);
+/// </code>
+internal static class ServiceExtension {
+    /// <summary>
+    /// Static class to hold the instance reference.
+    /// </summary>
+    private static class ServiceInstance<T> where T : class, IDalamudService {
+        public static T? Instance => field ??= KamiToolKitLibrary.PluginInterface.GetService(typeof(T)) as T;
+    }
 
+    /// <summary>
+    /// Extension provider to allow you to .Get() from the interface type.
+    /// </summary>
+    extension<T>(T) where T : class, IDalamudService {
+        public static T Get() => ServiceInstance<T>.Instance ?? throw new InvalidOperationException($"Service {typeof(T).Name} not found.");
+    }
+}
+
+internal class Services {
     public static string GetAssetPath(string assetName)
         => Path.Combine(GetAssetDirectoryPath(), assetName);
 
     private static string GetAssetDirectoryPath()
-        => Path.Combine(PluginInterface.AssemblyLocation.DirectoryName ?? throw new Exception("Directory from Dalamud is Invalid Somehow"), "Assets");
+        => Path.Combine(KamiToolKitLibrary.PluginInterface.AssemblyLocation.DirectoryName ?? throw new Exception("Directory from Dalamud is Invalid Somehow"), "Assets");
 }

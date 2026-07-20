@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 
@@ -57,7 +58,7 @@ public unsafe class CustomEventListener : IDisposable {
             receiveEventDelegate?.Invoke(thisPtr, eventType, param, eventObject, data);
         }
         catch (Exception e) {
-            Services.Log.Exception(e);
+            IPluginLog.Get().Exception(e);
         }
     }
 }

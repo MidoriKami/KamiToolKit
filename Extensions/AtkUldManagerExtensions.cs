@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using KamiToolKit.BaseTypes;
@@ -96,11 +97,11 @@ public static unsafe class AtkUldManagerExtensions {
         /// Debug helper for printing a UldManagers entire object list.
         /// </summary>
         public void PrintObjectList() {
-            Services.Log.Debug("Beginning NodeList");
+            IPluginLog.Get().Debug("Beginning NodeList");
 
             foreach (var index in Enumerable.Range(0, manager.Objects->NodeCount)) {
                 var nodePointer = manager.Objects->NodeList[index];
-                Services.Log.Debug($"[{index}]: {(nint)nodePointer:X}");
+                IPluginLog.Get().Debug($"[{index}]: {(nint)nodePointer:X}");
             }
         }
 

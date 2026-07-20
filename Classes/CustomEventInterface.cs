@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 using static FFXIVClientStructs.FFXIV.Component.GUI.AtkModuleInterface;
@@ -67,7 +68,7 @@ public unsafe class CustomEventInterface : IDisposable {
             }
         }
         catch (Exception e) {
-            Services.Log.Exception(e);
+            IPluginLog.Get().Exception(e);
         }
 
         return returnValue;
@@ -80,7 +81,7 @@ public unsafe class CustomEventInterface : IDisposable {
             }
         }
         catch (Exception e) {
-            Services.Log.Exception(e);
+            IPluginLog.Get().Exception(e);
         }
 
         return returnValue;

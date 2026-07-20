@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -81,7 +82,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
     /// </summary>
     public void AddAddon(string name) {
         if (name is "NamePlate") {
-            Services.Log.Error("Attaching to NamePlate is not supported. Use OverlayController instead.");
+            IPluginLog.Get().Error("Attaching to NamePlate is not supported. Use OverlayController instead.");
             return;
         }
 
@@ -106,7 +107,7 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
 
     /// <inheritdoc />
     public void Dispose() {
-        Services.AddonLifecycle.UnregisterListener(OnAddonEvent);
+        IAddonLifecycle.Get().UnregisterListener(OnAddonEvent);
         Disable();
     }
 
@@ -147,15 +148,15 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
     private void AddListeners(string name) {
         ThreadSafety.AssertMainThread();
 
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, name, OnAddonEvent);
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, name, OnAddonEvent);
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PreRefresh, name, OnAddonEvent);
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PreRequestedUpdate, name, OnAddonEvent);
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PreUpdate, name, OnAddonEvent);
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, name, OnAddonEvent);
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, name, OnAddonEvent);
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, name, OnAddonEvent);
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, name, OnAddonEvent);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PostSetup, name, OnAddonEvent);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PreFinalize, name, OnAddonEvent);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PreRefresh, name, OnAddonEvent);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PreRequestedUpdate, name, OnAddonEvent);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PreUpdate, name, OnAddonEvent);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PostRefresh, name, OnAddonEvent);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PostRequestedUpdate, name, OnAddonEvent);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PostUpdate, name, OnAddonEvent);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PreDraw, name, OnAddonEvent);
 
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(name);
         if (addon is not null) {
@@ -166,15 +167,15 @@ public unsafe class DynamicAddonController : IAddonEventController<AtkUnitBase>,
     private void RemoveListeners(string name) {
         ThreadSafety.AssertMainThread();
 
-        Services.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, name, OnAddonEvent);
-        Services.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, name, OnAddonEvent);
-        Services.AddonLifecycle.UnregisterListener(AddonEvent.PreRefresh, name, OnAddonEvent);
-        Services.AddonLifecycle.UnregisterListener(AddonEvent.PreRequestedUpdate, name, OnAddonEvent);
-        Services.AddonLifecycle.UnregisterListener(AddonEvent.PreUpdate, name, OnAddonEvent);
-        Services.AddonLifecycle.UnregisterListener(AddonEvent.PostRefresh, name, OnAddonEvent);
-        Services.AddonLifecycle.UnregisterListener(AddonEvent.PostRequestedUpdate, name, OnAddonEvent);
-        Services.AddonLifecycle.UnregisterListener(AddonEvent.PostUpdate, name, OnAddonEvent);
-        Services.AddonLifecycle.UnregisterListener(AddonEvent.PreDraw, name, OnAddonEvent);
+        IAddonLifecycle.Get().UnregisterListener(AddonEvent.PostSetup, name, OnAddonEvent);
+        IAddonLifecycle.Get().UnregisterListener(AddonEvent.PreFinalize, name, OnAddonEvent);
+        IAddonLifecycle.Get().UnregisterListener(AddonEvent.PreRefresh, name, OnAddonEvent);
+        IAddonLifecycle.Get().UnregisterListener(AddonEvent.PreRequestedUpdate, name, OnAddonEvent);
+        IAddonLifecycle.Get().UnregisterListener(AddonEvent.PreUpdate, name, OnAddonEvent);
+        IAddonLifecycle.Get().UnregisterListener(AddonEvent.PostRefresh, name, OnAddonEvent);
+        IAddonLifecycle.Get().UnregisterListener(AddonEvent.PostRequestedUpdate, name, OnAddonEvent);
+        IAddonLifecycle.Get().UnregisterListener(AddonEvent.PostUpdate, name, OnAddonEvent);
+        IAddonLifecycle.Get().UnregisterListener(AddonEvent.PreDraw, name, OnAddonEvent);
 
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(name);
         if (addon is not null) {

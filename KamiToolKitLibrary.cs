@@ -6,6 +6,7 @@ using System.Resources;
 using Dalamud.Game.Command;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Debug;
@@ -49,15 +50,15 @@ public static class KamiToolKitLibrary {
 
         // Inject non-Experimental Properties
         PluginInterface.Create<Services>();
-        Services.GameInteropProvider.InitializeFromAttributes(Experimental);
+        IGameInteropProvider.Get().InitializeFromAttributes(Experimental);
 
         // Create node data share
         AllocatedNodes = PluginInterface.GetOrCreateData(NodeDataShareKey, () => new ConcurrentDictionary<nint, Type>());
 
         // Force enable Verbose so that users are able to get advanced logging information on request.
-        Services.Log.MinimumLogLevel = LogEventLevel.Verbose;
+        IPluginLog.Get().MinimumLogLevel = LogEventLevel.Verbose;
 
-        Services.Log.Info($"KamiToolKit initialized for {PluginInterface.InternalName} Default SubTitle: '{defaultWindowSubtitle}'");
+        IPluginLog.Get().Info($"KamiToolKit initialized for {PluginInterface.InternalName} Default SubTitle: '{defaultWindowSubtitle}'");
 
         NativeAddon.InitializeCloseCallback();
 
@@ -84,11 +85,11 @@ public static class KamiToolKitLibrary {
 
         debugWindowSystem = new WindowSystem($"KamiToolKit - {PluginInterface.InternalName}");
 
-        Services.CommandManager.AddHandler($"/ktkdebug_{PluginInterface.InternalName}", new CommandInfo(CommandHandler) {
+        ICommandManager.Get().AddHandler($"/ktkdebug_{PluginInterface.InternalName}", new CommandInfo(CommandHandler) {
             HelpMessage = "Plugin was built in debug mode, enabling debug command.",
         });
 
-        Services.PluginInterface.UiBuilder.Draw += debugWindowSystem.Draw;
+        PluginInterface.UiBuilder.Draw += debugWindowSystem.Draw;
 
         debugWindow = new DebugWindow();
         debugWindowSystem.AddWindow(debugWindow);
@@ -97,7 +98,7 @@ public static class KamiToolKitLibrary {
     private static void CommandHandler(string command, string arguments) {
         if (command != $"/ktkdebug_{PluginInterface.InternalName}") return;
 
-        Services.Log.Debug($"Command Received, opening KTK Debug Window for {PluginInterface.InternalName}");
+        IPluginLog.Get().Debug($"Command Received, opening KTK Debug Window for {PluginInterface.InternalName}");
         debugWindow?.IsOpen = !debugWindow.IsOpen;
     }
 
@@ -119,14 +120,14 @@ public static class KamiToolKitLibrary {
     /// </remarks>
     public static void Cleanup() {
         if (debugMode) {
-            Services.PluginInterface.UiBuilder.Draw -= debugWindowSystem!.Draw;
-            Services.CommandManager.RemoveHandler($"/ktkdebug_{PluginInterface.InternalName}");
+            PluginInterface.UiBuilder.Draw -= debugWindowSystem!.Draw;
+            ICommandManager.Get().RemoveHandler($"/ktkdebug_{PluginInterface.InternalName}");
             debugWindowSystem.RemoveAllWindows();
         }
 
         NativeAddon.DisposeCloseCallback();
 
-        if (Services.Framework.IsFrameworkUnloading) return;
+        if (IFramework.Get().IsFrameworkUnloading) return;
 
         NodeBase.WarnLeakedNodes();
         NativeAddon.WarnLeakedAddons();
@@ -137,7 +138,7 @@ public static class KamiToolKitLibrary {
             NativeAddon.DisposeAddons();
             NodeBase.DisposeNodes();
         } finally {
-            Services.PluginInterface.RelinquishData(NodeDataShareKey);
+            PluginInterface.RelinquishData(NodeDataShareKey);
         }
     }
 }

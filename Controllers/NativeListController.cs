@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -85,12 +86,12 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     public void Enable() {
         ThreadSafety.AssertMainThread();
 
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonSetup);
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, AddonName, OnAddonFinalize);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonSetup);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PreFinalize, AddonName, OnAddonFinalize);
 
         var addon = (T*)RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
         if (addon is not null) {
-            Services.Log.Warning("Caution: ListController was loaded after list was initialized, data may be stale.");
+            IPluginLog.Get().Warning("Caution: ListController was loaded after list was initialized, data may be stale.");
             LoadPopulators(addon);
         }
     }
@@ -104,7 +105,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     public void Disable() {
         ThreadSafety.AssertMainThread();
 
-        Services.AddonLifecycle.UnregisterListener(OnAddonSetup, OnAddonFinalize);
+        IAddonLifecycle.Get().UnregisterListener(OnAddonSetup, OnAddonFinalize);
 
         onListPopulate?.Dispose();
         onListPopulate = null;
@@ -131,12 +132,12 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         var populateMethod = GetPopulatorNode(addon)->Populator;
 
         if (populateMethod.Populate is not null) {
-            onListPopulate ??= Services.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateDelegate>(populateMethod.Populate, OnPopulateDetour);
+            onListPopulate ??= IGameInteropProvider.Get().HookFromAddress<AtkComponentListItemPopulator.PopulateDelegate>(populateMethod.Populate, OnPopulateDetour);
             onListPopulate?.Enable();
         }
 
         if (populateMethod.PopulateWithRenderer is not null) {
-            onRendererPopulate ??= Services.GameInteropProvider.HookFromAddress<AtkComponentListItemPopulator.PopulateWithRendererDelegate>(populateMethod.PopulateWithRenderer, OnRendererPopulateDetour);
+            onRendererPopulate ??= IGameInteropProvider.Get().HookFromAddress<AtkComponentListItemPopulator.PopulateWithRendererDelegate>(populateMethod.PopulateWithRenderer, OnRendererPopulateDetour);
             onRendererPopulate?.Enable();
         }
     }
@@ -175,7 +176,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
             }
         }
         catch (Exception e) {
-            Services.Log.Exception(e);
+            IPluginLog.Get().Exception(e);
         }
     }
 
@@ -213,7 +214,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
             }
         }
         catch (Exception e) {
-            Services.Log.Exception(e);
+            IPluginLog.Get().Exception(e);
         }
     }
 

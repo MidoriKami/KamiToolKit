@@ -1,4 +1,5 @@
 ﻿using Dalamud.Hooking;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 
@@ -8,12 +9,12 @@ public unsafe partial class NativeAddon {
     private static Hook<AtkUnitBase.Delegates.FireCallback>? fireCallbackHook;
 
     internal static void InitializeCloseCallback() {
-        fireCallbackHook = Services.GameInteropProvider.HookFromAddress<AtkUnitBase.Delegates.FireCallback>(AtkUnitBase.Addresses.FireCallback.Value, OnFireCallback);
+        fireCallbackHook = IGameInteropProvider.Get().HookFromAddress<AtkUnitBase.Delegates.FireCallback>(AtkUnitBase.Addresses.FireCallback.Value, OnFireCallback);
         fireCallbackHook.Enable();
     }
 
     private static bool OnFireCallback(AtkUnitBase* thisPtr, uint valueCount, AtkValue* values, bool close) {
-        Services.Log.Excessive($"[{thisPtr->NameString}] OnFireCallback");
+        IPluginLog.Get().Excessive($"[{thisPtr->NameString}] OnFireCallback");
 
         foreach (var addon in CreatedAddons) {
             if (addon == thisPtr && close && addon is { RespectCloseAll: true, IsOverlayAddon: false }) {

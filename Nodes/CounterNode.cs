@@ -1,4 +1,5 @@
 using System.Numerics;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
@@ -181,7 +182,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         using var rentedBuilder = new RentedSeStringBuilder();
 
         // <kilo(lnum1,\,)>
-        var evaluatedString = Services.SeStringEvaluator.EvaluateFromAddon(18, [value]);
+        var evaluatedString = ISeStringEvaluator.Get().EvaluateFromAddon(18, [value]);
 
         foreach (var payload in evaluatedString) {
             switch (payload.Type) {

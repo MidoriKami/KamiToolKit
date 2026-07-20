@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dalamud.Plugin.Services;
 using KamiToolKit.Internal.Classes;
 using Serilog;
 
@@ -24,7 +25,7 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
         }
 
         if (!isDisposed) {
-            Services.Log.Debug($"Disposing addon {GetType()}");
+            IPluginLog.Get().Debug($"Disposing addon {GetType()}");
 
             Close();
 
@@ -55,7 +56,7 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
         }
 
         if (!isDisposed) {
-            Services.Log.Debug($"Disposing addon {GetType()}");
+            IPluginLog.Get().Debug($"Disposing addon {GetType()}");
 
             await CloseAsync();
 
@@ -82,8 +83,8 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
         foreach (var addon in CreatedAddons.ToArray()) {
             if (addon.IsOverlayAddon) continue;
 
-            Services.Log.Warning($"Addon {addon.GetType()} was not disposed properly please ensure you call dispose at an appropriate time.");
-            Services.Log.Debug($"Automatically disposing addon {addon.GetType()} as a safety measure.");
+            IPluginLog.Get().Warning($"Addon {addon.GetType()} was not disposed properly please ensure you call dispose at an appropriate time.");
+            IPluginLog.Get().Debug($"Automatically disposing addon {addon.GetType()} as a safety measure.");
         }
     }
 

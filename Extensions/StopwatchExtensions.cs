@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Dalamud.Plugin.Services;
 using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Extensions;
@@ -14,7 +15,7 @@ public static class StopwatchExtensions {
         /// </summary>
         /// <param name="logMessage">Label to print to the log for this time period.</param>
         public void LogTime(string logMessage) {
-            Services.Log.Debug($"{logMessage,-15}: {stopwatch,15} :: {stopwatch.ElapsedMilliseconds} ms");
+            IPluginLog.Get().Debug($"{logMessage,-15}: {stopwatch,15} :: {stopwatch.ElapsedMilliseconds} ms");
             stopwatch.Restart();
         }
     }

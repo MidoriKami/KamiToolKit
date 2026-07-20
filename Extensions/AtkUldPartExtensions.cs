@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Dalamud.Interface.Textures.TextureWraps;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
@@ -64,7 +65,7 @@ public static unsafe class AtkUldPartExtensions {
                 }
             }
             catch (Exception e) {
-                Services.Log.Error(e, "Error in AtkUldPartExtensions LoadTexture");
+                IPluginLog.Get().Error(e, "Error in AtkUldPartExtensions LoadTexture");
             }
         }
 
@@ -102,7 +103,7 @@ public static unsafe class AtkUldPartExtensions {
         /// </remarks>
         /// <param name="textureWrap">Texture wrap to load.</param>
         public void LoadTexture(IDalamudTextureWrap textureWrap) {
-            var texturePointer = (Texture*)Services.TextureProvider.ConvertToKernelTexture(textureWrap, true);
+            var texturePointer = (Texture*)ITextureProvider.Get().ConvertToKernelTexture(textureWrap, true);
             if (texturePointer is null) return;
 
             part.LoadTexture(texturePointer);
@@ -166,7 +167,7 @@ public static unsafe class AtkUldPartExtensions {
     private static bool FileExists(string path) {
         if (FileExistsCache.TryGetValue(path, out var result)) return result;
 
-        var fileExists = Services.DataManager.FileExists(path);
+        var fileExists = IDataManager.Get().FileExists(path);
         FileExistsCache.TryAdd(path, fileExists);
 
         return fileExists;

@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -47,17 +48,17 @@ public unsafe partial class NativeAddon {
 
     private void AllocateAddon(uint atkValueCount = 0, AtkValue* atkValues = null) {
         if (InternalAddon is not null) {
-            Services.Log.Warning("Tried to allocate addon that was already allocated.");
+            IPluginLog.Get().Warning("Tried to allocate addon that was already allocated.");
             return;
         }
 
         var currentAddonCount = RaptureAtkUnitManager.Instance()->AllLoadedUnitsList.Count;
         if (currentAddonCount >= 200) {
-            Services.Log.Warning($"WARNING: Current Addon Count is approaching hard limits ({currentAddonCount}/250). Please ensure custom Addons are not being used as overlays.");
+            IPluginLog.Get().Warning($"WARNING: Current Addon Count is approaching hard limits ({currentAddonCount}/250). Please ensure custom Addons are not being used as overlays.");
         }
 
         if (currentAddonCount >= 225) {
-            Services.Log.Error($"ERROR: Current Addon Count is too high. Aborting allocation ({currentAddonCount}/250).");
+            IPluginLog.Get().Error($"ERROR: Current Addon Count is too high. Aborting allocation ({currentAddonCount}/250).");
             return;
         }
 
@@ -65,7 +66,7 @@ public unsafe partial class NativeAddon {
             throw new NullReferenceException("InternalName is empty, this is not allowed.");
         }
 
-        Services.Log.Verbose($"[{InternalName}] Allocating NativeAddon");
+        IPluginLog.Get().Verbose($"[{InternalName}] Allocating NativeAddon");
 
         InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
 
