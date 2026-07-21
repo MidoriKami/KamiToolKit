@@ -3,6 +3,7 @@ using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
@@ -82,7 +83,7 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
         }
 
         if (AddonPointer is not null) {
-            OnSetup?.Invoke((T*)AddonPointer);
+            OnSetup?.Invoke(AddonPointer);
             isSetupComplete = true;
         }
 
@@ -97,7 +98,7 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
         IAddonLifecycle.Get().UnregisterListener(OnAddonEvent);
 
         if (AddonPointer is not null) {
-            OnFinalize?.Invoke((T*)AddonPointer);
+            OnFinalize?.Invoke(AddonPointer);
         }
 
         IsEnabled = false;
@@ -143,7 +144,8 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
         }
     }
 
-    private AtkUnitBase* AddonPointer => IGameGui.Get().GetAddonByName<AtkUnitBase>(AddonName);
+    private T* AddonPointer => (T*)RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
+
     private bool IsEnabled { get; set; }
     private bool isSetupComplete;
 }
