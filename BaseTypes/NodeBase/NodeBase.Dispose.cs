@@ -67,7 +67,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
                 return;
             }
 
-
             if (!IsNodeValid()) {
                 IPluginLog.Get().Warning("Invalid node, dispose aborted.");
                 return;
