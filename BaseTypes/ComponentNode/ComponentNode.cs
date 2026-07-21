@@ -1,5 +1,3 @@
-using System;
-using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -165,17 +163,25 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     protected override void Dispose(bool isNativeDestructor) {
         if (IsDisposed) return;
 
-        try {
-            if (!isNativeDestructor && Node is not null && Node->Component is not null) {
-                Node->Component->Deinitialize();
-                Node->Component->Dtor(1);
-                Node->Component = null;
-            }
+        if (!isNativeDestructor) {
+            ref var uldManager = ref Node->Component->UldManager;
+
+            NativeMemoryHelper.Free(uldManager.Objects->NodeList, (ulong) (8 * uldManager.Objects->NodeCount));
+            uldManager.Objects->NodeList = null;
+            uldManager.Objects->NodeCount = 0;
+
+            NativeMemoryHelper.UiFree(uldManager.Objects);
+            uldManager.Objects = null;
+            uldManager.ObjectCount = 0;
+
+            NativeMemoryHelper.UiFree(uldManager.ComponentData);
+            uldManager.ComponentData = null;
+
+            Node->Component->Deinitialize();
+            Node->Component->Dtor(1);
+            Node->Component = null;
         }
-        catch (Exception e) {
-            IPluginLog.Get().Exception(e);
-        } finally {
-            base.Dispose(isNativeDestructor);
-        }
+
+        base.Dispose(isNativeDestructor);
     }
 }
