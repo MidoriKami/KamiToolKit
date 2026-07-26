@@ -31,7 +31,7 @@ public abstract unsafe class NodeBase<T> : NodeBase where T : unmanaged, ICreata
         ThreadSafety.AssertMainThread();
 
         IPluginLog.Get().Verbose($"Creating new node {GetType()}");
-        Node = NativeMemoryHelper.Create<T>();
+        Node = IMemorySpace.GetUISpace()->Create<T>();
 
         if (ResNode is null) {
             throw new Exception($"Unable to allocate memory for {typeof(T)}");

@@ -1,5 +1,5 @@
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.BaseTypes.ComponentNode;
 
@@ -100,7 +100,7 @@ public abstract unsafe partial class ComponentNode {
 
         if ((freeFlags & 1) != 0) {
             // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
-            NativeMemoryHelper.Free(modifiedVirtualTable, 0x8 * VirtualTableEntryCount);
+            IMemorySpace.Free(modifiedVirtualTable);
             modifiedVirtualTable = null;
         }
 

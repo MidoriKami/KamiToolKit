@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 
@@ -28,8 +29,8 @@ public unsafe class CustomEventListener : IDisposable {
 
         receiveEventWrapper = ReceiveEventWrapper;
 
-        eventListener = NativeMemoryHelper.UiAlloc<AtkEventListener>();
-        eventListener->VirtualTable = (AtkEventListener.AtkEventListenerVirtualTable*)NativeMemoryHelper.Malloc((ulong)sizeof(void*) * 3);
+        eventListener = IMemorySpace.GetUISpace()->MallocZeroed<AtkEventListener>();
+        eventListener->VirtualTable = IMemorySpace.GetUISpace()->AllocateZeroedArray<AtkEventListener.AtkEventListenerVirtualTable>(3);
         eventListener->VirtualTable->Dtor = (delegate* unmanaged<AtkEventListener*, byte, AtkEventListener*>)(delegate* unmanaged<void>)&NullSub;
         eventListener->VirtualTable->ReceiveGlobalEvent = (delegate* unmanaged<AtkEventListener*, AtkEventType, int, AtkEvent*, AtkEventData*, void>)(delegate* unmanaged<void>)&NullSub;
         eventListener->VirtualTable->ReceiveEvent = (delegate* unmanaged<AtkEventListener*, AtkEventType, int, AtkEvent*, AtkEventData*, void>)Marshal.GetFunctionPointerForDelegate(receiveEventWrapper);
@@ -39,8 +40,8 @@ public unsafe class CustomEventListener : IDisposable {
     public virtual void Dispose() {
         if (eventListener is null) return;
 
-        NativeMemoryHelper.Free(eventListener->VirtualTable, (ulong)sizeof(void*) * 3);
-        NativeMemoryHelper.UiFree(eventListener);
+        IMemorySpace.Free(eventListener->VirtualTable);
+        IMemorySpace.Free(eventListener);
 
         receiveEventDelegate = null;
         receiveEventWrapper = null;

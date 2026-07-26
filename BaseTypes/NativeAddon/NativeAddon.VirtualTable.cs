@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.BaseTypes;
 
@@ -30,7 +30,7 @@ public unsafe partial class NativeAddon {
 
         // Overwrite virtual table with a custom copy,
         // Note: currently there are 73 vfuncs, but there's no harm in copying more for when they add new vfuncs to the game
-        modifiedVirtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*)NativeMemoryHelper.Malloc(0x8 * VirtualTableEntryCount);
+        modifiedVirtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) IMemorySpace.GetUISpace()->AllocateZeroedArray<nint>(VirtualTableEntryCount);
         NativeMemory.Copy(InternalAddon->VirtualTable, modifiedVirtualTable, 0x8 * VirtualTableEntryCount);
         InternalAddon->VirtualTable = modifiedVirtualTable;
 

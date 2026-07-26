@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
 using KamiToolKit.Internal.Classes;
@@ -61,7 +62,7 @@ public unsafe partial class NativeAddon {
 
         originalVirtualTable->Initialize(thisPtr);
 
-        var widgetInfo = NativeMemoryHelper.UiAlloc<AtkUldWidgetInfo>(1, 16);
+        var widgetInfo = IMemorySpace.GetUISpace()->MallocZeroed<AtkUldWidgetInfo>();
         widgetInfo->Id = 1;
         widgetInfo->NodeCount = 0;
         widgetInfo->NodeList = null;
@@ -235,7 +236,7 @@ public unsafe partial class NativeAddon {
             CreatedAddons.Remove(this);
 
             // Free our custom virtual table, the game doesn't know this exists and won't clear it on its own.
-            NativeMemoryHelper.Free(modifiedVirtualTable, 0x8 * VirtualTableEntryCount);
+            IMemorySpace.Free(modifiedVirtualTable);
         }
 
         return result;

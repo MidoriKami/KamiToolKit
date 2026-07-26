@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
 using KamiToolKit.Internal.Classes;
@@ -193,7 +194,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         // Overwrite virtual table with a custom copy,
         // Note: Currently there are only 2 virtual functions, but there's no harm in copying more for if they ever add more vfuncs to the game.
-        modifiedVirtualTable = (AtkResNode.AtkResNodeVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 4);
+        modifiedVirtualTable = (AtkResNode.AtkResNodeVirtualTable*) IMemorySpace.GetUISpace()->AllocateZeroedArray<nint>(4);
         NativeMemory.Copy(ResNode->VirtualTable, modifiedVirtualTable, 0x8 * 4);
         ResNode->VirtualTable = modifiedVirtualTable;
 
@@ -212,7 +213,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         originalVirtualTable->Destroy(thisPtr, free);
 
-        NativeMemoryHelper.Free(modifiedVirtualTable, 0x8 * 4);
+        IMemorySpace.Free(modifiedVirtualTable);
         modifiedVirtualTable = null;
 
         IPluginLog.Get().Verbose($"Native has disposed node {GetType()}");
@@ -232,7 +233,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     protected void OriginalDestroy(AtkResNode* thisPtr, bool free) {
         originalVirtualTable->Destroy(thisPtr, free);
 
-        NativeMemoryHelper.Free(modifiedVirtualTable, 0x8 * 4);
+        IMemorySpace.Free(modifiedVirtualTable);
         modifiedVirtualTable = null;
 
         GC.SuppressFinalize(this);

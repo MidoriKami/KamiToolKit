@@ -7,7 +7,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Internal.Classes;
-using KamiToolKit.Internal.Extensions;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 using Lumina.Excel.Sheets;
