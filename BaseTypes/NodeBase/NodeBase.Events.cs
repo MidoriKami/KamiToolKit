@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
@@ -33,7 +34,7 @@ public abstract unsafe partial class NodeBase {
         SetNodeEventFlags(eventType);
 
         if (eventHandlers.TryAdd(eventType, new EventHandlerInfo { OnActionDelegate = callback })) {
-            Services.Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)ResNode:X}]");
+            IPluginLog.Get().Verbose($"[{eventType}] Registered for {GetType()} [{(nint)ResNode:X}]");
             ResNode->AtkEventManager.RegisterEvent(eventType, 0, this, this, nodeEventListener, false);
         }
         else {
@@ -50,7 +51,7 @@ public abstract unsafe partial class NodeBase {
         SetNodeEventFlags(eventType);
 
         if (eventHandlers.TryAdd(eventType, new EventHandlerInfo { OnReceiveEventDelegate = callback })) {
-            Services.Log.Verbose($"[{eventType}] Registered for {GetType()} [{(nint)ResNode:X}]");
+            IPluginLog.Get().Verbose($"[{eventType}] Registered for {GetType()} [{(nint)ResNode:X}]");
             ResNode->AtkEventManager.RegisterEvent(eventType, 0, this, this, nodeEventListener, false);
         }
         else {
@@ -65,7 +66,7 @@ public abstract unsafe partial class NodeBase {
         if (nodeEventListener is null) return;
 
         if (eventHandlers.Remove(eventType)) {
-            Services.Log.Verbose($"[{eventType}] Unregistered from {GetType()} [{(nint)ResNode:X}]");
+            IPluginLog.Get().Verbose($"[{eventType}] Unregistered from {GetType()} [{(nint)ResNode:X}]");
             ResNode->AtkEventManager.UnregisterEvent(eventType, 0, nodeEventListener, false);
         }
 
@@ -127,7 +128,7 @@ public abstract unsafe partial class NodeBase {
                     noArgHandler();
                 }
                 catch (Exception e) {
-                    Services.Log.Exception(e);
+                    IPluginLog.Get().Exception(e);
                 }
             }
 
@@ -136,7 +137,7 @@ public abstract unsafe partial class NodeBase {
                     argHandler(thisPtr, eventType, eventParam, atkEvent, atkEventData);
                 }
                 catch (Exception e) {
-                    Services.Log.Exception(e);
+                    IPluginLog.Get().Exception(e);
                 }
             }
         }

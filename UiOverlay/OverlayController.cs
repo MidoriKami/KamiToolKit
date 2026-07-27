@@ -11,7 +11,6 @@ using KamiToolKit.BaseTypes;
 using KamiToolKit.Enums;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Internal.Enums;
-using KamiToolKit.Internal.Extensions;
 
 namespace KamiToolKit.UiOverlay;
 
@@ -86,13 +85,13 @@ public unsafe class OverlayController : IDisposable {
 
         ClearState();
 
-        Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "NamePlate", OnNamePlatePreFinalize);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PreFinalize, "NamePlate", OnNamePlatePreFinalize);
 
         foreach (var overlayLayer in Enum.GetValues<OverlayLayer>()) {
             var addonName = overlayLayer.Description;
 
-            Services.AddonLifecycle.RegisterListener(AddonEvent.PreUpdate, addonName, OnOverlayAddonUpdate);
-            Services.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, addonName, OnOverlayAddonFinalize);
+            IAddonLifecycle.Get().RegisterListener(AddonEvent.PreUpdate, addonName, OnOverlayAddonUpdate);
+            IAddonLifecycle.Get().RegisterListener(AddonEvent.PreFinalize, addonName, OnOverlayAddonFinalize);
         }
 
         BeginStateCheck();
@@ -102,11 +101,11 @@ public unsafe class OverlayController : IDisposable {
     public void Dispose() {
         ThreadSafety.AssertMainThread();
 
-        Services.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "NamePlate");
-        Services.AddonLifecycle.UnregisterListener(OnOverlayAddonFinalize, OnOverlayAddonUpdate);
+        IAddonLifecycle.Get().UnregisterListener(AddonEvent.PreFinalize, "NamePlate");
+        IAddonLifecycle.Get().UnregisterListener(OnOverlayAddonFinalize, OnOverlayAddonUpdate);
 
         foreach (var (overlayLayer, nodes) in overlayNodes) {
-            Services.Log.Debug($"Disposing overlay nodes for layer {overlayLayer}");
+            IPluginLog.Get().Debug($"Disposing overlay nodes for layer {overlayLayer}");
             foreach (var node in nodes) {
                 node.Dispose();
             }
@@ -130,8 +129,8 @@ public unsafe class OverlayController : IDisposable {
     }
 
     private void BeginStateCheck() {
-        Services.Framework.Update -= CheckOverlayState;
-        Services.Framework.Update += CheckOverlayState;
+        IFramework.Get().Update -= CheckOverlayState;
+        IFramework.Get().Update += CheckOverlayState;
     }
 
     private void CheckOverlayState(IFramework framework) {
@@ -145,7 +144,7 @@ public unsafe class OverlayController : IDisposable {
                 break;
 
             case ControllerState.Ready:
-                Services.Framework.Update -= CheckOverlayState;
+                IFramework.Get().Update -= CheckOverlayState;
                 break;
         }
     }

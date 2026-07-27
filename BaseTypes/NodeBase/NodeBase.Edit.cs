@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
@@ -209,10 +210,10 @@ public abstract unsafe partial class NodeBase {
     }
 
     private static void SetCursor(AddonCursorType cursor)
-        => Services.AddonEventManager.SetCursor(cursor);
+        => IAddonEventManager.Get().SetCursor(cursor);
 
     private static void ResetCursor()
-        => Services.AddonEventManager.ResetCursor();
+        => IAddonEventManager.Get().ResetCursor();
 
     private Vector2 clickStartPosition = Vector2.Zero;
     private NodeEditMode currentEditMode = 0;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
@@ -20,7 +21,7 @@ public partial class NativeAddon {
     public unsafe void Open() {
         ThreadSafety.AssertMainThread();
 
-        Services.Log.Verbose($"[{InternalName}] Open Called");
+        IPluginLog.Get().Verbose($"[{InternalName}] Open Called");
 
         if (InternalAddon is null) {
             AllocateAddon();
@@ -30,7 +31,7 @@ public partial class NativeAddon {
             }
         }
         else {
-            Services.Log.Verbose($"[{InternalName}] Already open, skipping call.");
+            IPluginLog.Get().Verbose($"[{InternalName}] Already open, skipping call.");
         }
     }
 
@@ -45,10 +46,10 @@ public partial class NativeAddon {
         ThreadSafety.AssertMainThread();
         if (InternalAddon is null) return;
 
-        Services.Log.Verbose($"[{InternalName}] Close");
+        IPluginLog.Get().Verbose($"[{InternalName}] Close");
 
         if (InternalAddon is null) {
-            Services.Log.Verbose($"[{InternalName}] Already closed, skipping call.");
+            IPluginLog.Get().Verbose($"[{InternalName}] Already closed, skipping call.");
             return;
         }
 
@@ -62,19 +63,19 @@ public partial class NativeAddon {
     /// <em>Must not be called from the main thread</em>
     /// </remarks>
     public async Task CloseAsync() {
-        if (Services.Framework.IsFrameworkUnloading) return;
+        if (IFramework.Get().IsFrameworkUnloading) return;
         ThreadSafety.AssertNotMainThread();
 
         unsafe {
             if (InternalAddon is null) {
-                Services.Log.Verbose($"[{InternalName}] Already closed, skipping call.");
+                IPluginLog.Get().Verbose($"[{InternalName}] Already closed, skipping call.");
                 return;
             }
         }
 
-        await Services.Framework.Run(Close);
+        await IFramework.Get().Run(Close);
 
-        while (!Services.GameGui.GetAddonByName(InternalName).IsNull) {
+        while (!IGameGui.Get().GetAddonByName(InternalName).IsNull) {
             await Task.Delay(16);
         }
     }

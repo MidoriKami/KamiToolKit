@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Internal.Classes;
-using KamiToolKit.Internal.Extensions;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 using Lumina.Excel.Sheets;
@@ -285,7 +285,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         LabelNode.AttachNode(this);
 
         // Manually set the placeholder text string, as using textId will overwrite our placeholder on attach.
-        LabelNode.String = Services.DataManager.GetExcelSheet<Addon>().GetRow(1818).Text;
+        LabelNode.String = IDataManager.Get().GetExcelSheet<Addon>().GetRow(1818).Text;
 
         PopupContainerNode = new SimpleComponentNode {
             Position = new Vector2(4.0f, 21.0f),
@@ -456,7 +456,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
 
     private void UpdateLabel(T? entry) {
         if (entry is null) {
-            LabelNode.String = PlaceholderString ?? Services.DataManager.GetExcelSheet<Addon>().GetRow(1818).Text;
+            LabelNode.String = PlaceholderString ?? IDataManager.Get().GetExcelSheet<Addon>().GetRow(1818).Text;
         }
         else {
             LabelNode.String = GetLabelFunction?.Invoke(entry) ?? "DropDownNode.GetLabelFunction was not set.";

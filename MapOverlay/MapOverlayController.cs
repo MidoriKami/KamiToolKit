@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -163,7 +164,7 @@ public unsafe class MapOverlayController : IDisposable {
             showingTooltip = false;
         }
 
-        if (Services.ClientState.IsPvP) {
+        if (IClientState.Get().IsPvP) {
             clippingContainerNode.IsVisible = false;
             return;
         }
@@ -295,7 +296,7 @@ public unsafe class MapOverlayController : IDisposable {
                 }
 
                 if (node.OnClick is not null) {
-                    Services.AddonEventManager.SetCursor(AddonCursorType.Clickable);
+                    IAddonEventManager.Get().SetCursor(AddonCursorType.Clickable);
                     showingInteractCursor = true;
                 }
             }
@@ -307,7 +308,7 @@ public unsafe class MapOverlayController : IDisposable {
         }
 
         if (!anyCollisions && showingInteractCursor) {
-            Services.AddonEventManager.ResetCursor();
+            IAddonEventManager.Get().ResetCursor();
             showingInteractCursor = false;
         }
     }

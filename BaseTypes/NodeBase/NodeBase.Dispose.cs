@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
 using KamiToolKit.Internal.Classes;
@@ -56,7 +58,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
                 return;
             }
 
-            if (Services.Framework.IsFrameworkUnloading) {
+            if (IFramework.Get().IsFrameworkUnloading) {
                 LogIndented("Game is shutting down, aborting manual dispose.", EnableFullLogging);
                 return;
             }
@@ -66,9 +68,8 @@ public abstract unsafe partial class NodeBase : IDisposable {
                 return;
             }
 
-
             if (!IsNodeValid()) {
-                Services.Log.Warning("Invalid node, dispose aborted.");
+                IPluginLog.Get().Warning("Invalid node, dispose aborted.");
                 return;
             }
 
@@ -96,7 +97,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             Dispose(false);
         }
         catch (Exception e) {
-            Services.Log.Exception(e);
+            IPluginLog.Get().Exception(e);
         } finally {
             logIndent--;
             LogIndented("Dispose Complete", true);
@@ -120,14 +121,14 @@ public abstract unsafe partial class NodeBase : IDisposable {
     private static void LogIndented(string message, bool enableLogging) {
         if (!enableLogging) return;
 
-        Services.Log.Verbose(new string(' ', logIndent * 2) + message);
+        IPluginLog.Get().Verbose(new string(' ', logIndent * 2) + message);
     }
 
     internal static void WarnLeakedNodes() {
         var leakedNodeCount = CreatedNodes.Count(node => !node.IsAddonRootNode && node.ResNode is not null && node.ResNode->ParentNode is null);
 
         if (leakedNodeCount is not 0) {
-            Services.Log.Warning($"There were {leakedNodeCount} node(s) that were not disposed safely.");
+            IPluginLog.Get().Warning($"There were {leakedNodeCount} node(s) that were not disposed safely.");
         }
 
         foreach (var node in CreatedNodes.ToArray()) {
@@ -135,7 +136,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
             if (node.ResNode->ParentNode is not null) continue;
             if (node.IsAddonRootNode) continue;
 
-            Services.Log.Warning($"Forcing disposal of: {node.GetType()}");
+            IPluginLog.Get().Warning($"Forcing disposal of: {node.GetType()}");
         }
     }
 
@@ -157,7 +158,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// Finalizer invocation from GC, this shouldn't be called unless a node was leaked and then not cleaned up by <see cref="KamiToolKitLibrary.Dispose"/>
     /// </summary>
     ~NodeBase() {
-        Services.Log.Warning($"Leaked node detected via finalizer, disposing {GetType()}");
+        IPluginLog.Get().Warning($"Leaked node detected via finalizer, disposing {GetType()}");
         Dispose();
     }
 
@@ -193,7 +194,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         // Overwrite virtual table with a custom copy,
         // Note: Currently there are only 2 virtual functions, but there's no harm in copying more for if they ever add more vfuncs to the game.
-        modifiedVirtualTable = (AtkResNode.AtkResNodeVirtualTable*)NativeMemoryHelper.Malloc(0x8 * 4);
+        modifiedVirtualTable = (AtkResNode.AtkResNodeVirtualTable*) IMemorySpace.GetUISpace()->AllocateZeroedArray<nint>(4);
         NativeMemory.Copy(ResNode->VirtualTable, modifiedVirtualTable, 0x8 * 4);
         ResNode->VirtualTable = modifiedVirtualTable;
 
@@ -212,10 +213,10 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
         originalVirtualTable->Destroy(thisPtr, free);
 
-        NativeMemoryHelper.Free(modifiedVirtualTable, 0x8 * 4);
+        IMemorySpace.Free(modifiedVirtualTable);
         modifiedVirtualTable = null;
 
-        Services.Log.Verbose($"Native has disposed node {GetType()}");
+        IPluginLog.Get().Verbose($"Native has disposed node {GetType()}");
         GC.SuppressFinalize(this);
         CreatedNodes.Remove(this);
 
@@ -232,7 +233,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     protected void OriginalDestroy(AtkResNode* thisPtr, bool free) {
         originalVirtualTable->Destroy(thisPtr, free);
 
-        NativeMemoryHelper.Free(modifiedVirtualTable, 0x8 * 4);
+        IMemorySpace.Free(modifiedVirtualTable);
         modifiedVirtualTable = null;
 
         GC.SuppressFinalize(this);

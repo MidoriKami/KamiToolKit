@@ -1,5 +1,6 @@
 using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes;
@@ -152,7 +153,7 @@ public unsafe class MapMarkerNode : ResNode {
     public void Update() {
         OnUpdate();
 
-        if (!Services.DataManager.GetExcelSheet<Map>().TryGetRow(MapId, out var mapRow)) {
+        if (!IDataManager.Get().GetExcelSheet<Map>().TryGetRow(MapId, out var mapRow)) {
             IsVisible = false;
             return;
         }

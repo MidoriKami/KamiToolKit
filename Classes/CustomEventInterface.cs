@@ -1,5 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
+using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 using static FFXIVClientStructs.FFXIV.Component.GUI.AtkModuleInterface;
@@ -30,8 +32,8 @@ public unsafe class CustomEventInterface : IDisposable {
         receiveWrapper = ReceiveEventWrapper;
         receiveWithResultWrapper = ReceiveWithResultWrapper;
 
-        eventInterface = NativeMemoryHelper.UiAlloc<AtkEventInterface>();
-        eventInterface->VirtualTable = (AtkEventInterface.AtkEventInterfaceVirtualTable*)NativeMemoryHelper.Malloc((ulong)sizeof(void*) * 2);
+        eventInterface = IMemorySpace.GetUISpace()->MallocZeroed<AtkEventInterface>();
+        eventInterface->VirtualTable = IMemorySpace.GetUISpace()->AllocateZeroedArray<AtkEventInterface.AtkEventInterfaceVirtualTable>(2);
         eventInterface->VirtualTable->ReceiveEvent = (delegate* unmanaged<AtkEventInterface*, AtkValue*, AtkValue*, uint, ulong, AtkValue*>)Marshal.GetFunctionPointerForDelegate(receiveWrapper);
         eventInterface->VirtualTable->ReceiveEventWithResult = (delegate* unmanaged<AtkEventInterface*, AtkValue*, AtkValue*, uint, ulong, AtkValue*>)Marshal.GetFunctionPointerForDelegate(receiveWithResultWrapper);
     }
@@ -40,8 +42,8 @@ public unsafe class CustomEventInterface : IDisposable {
     public void Dispose() {
         if (eventInterface is null) return;
 
-        NativeMemoryHelper.Free(eventInterface->VirtualTable, (ulong)sizeof(void*) * 2);
-        NativeMemoryHelper.UiFree(eventInterface);
+        IMemorySpace.Free(eventInterface->VirtualTable);
+        IMemorySpace.Free(eventInterface);
 
         receiveEventDelegate = null;
         receiveEventWithResultDelegate = null;
@@ -67,7 +69,7 @@ public unsafe class CustomEventInterface : IDisposable {
             }
         }
         catch (Exception e) {
-            Services.Log.Exception(e);
+            IPluginLog.Get().Exception(e);
         }
 
         return returnValue;
@@ -80,7 +82,7 @@ public unsafe class CustomEventInterface : IDisposable {
             }
         }
         catch (Exception e) {
-            Services.Log.Exception(e);
+            IPluginLog.Get().Exception(e);
         }
 
         return returnValue;

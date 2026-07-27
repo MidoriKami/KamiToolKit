@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using KamiToolKit.BaseTypes;
@@ -44,7 +46,7 @@ public static unsafe class AtkUldManagerExtensions {
             var oldSize = manager.Objects->NodeCount;
             var newSize = oldSize + 1;
 
-            var newBuffer = (AtkResNode**)NativeMemoryHelper.Realloc(manager.Objects->NodeList, (ulong)(newSize * 8));
+            var newBuffer = (AtkResNode**)IMemorySpace.GetUISpace()->Realloc<nint>(manager.Objects->NodeList, newSize);
             newBuffer[newSize - 1] = newNode;
 
             manager.Objects->NodeList = newBuffer;
@@ -77,7 +79,7 @@ public static unsafe class AtkUldManagerExtensions {
 
             var oldSize = manager.Objects->NodeCount;
             var newSize = oldSize - 1;
-            var newBuffer = (AtkResNode**)NativeMemoryHelper.Malloc((ulong)(newSize * 8));
+            var newBuffer = (AtkResNode**)IMemorySpace.GetUISpace()->AllocateZeroedArray<nint>(newSize);
 
             var newIndex = 0;
             foreach (var index in Enumerable.Range(0, oldSize)) {
@@ -87,7 +89,8 @@ public static unsafe class AtkUldManagerExtensions {
                 }
             }
 
-            NativeMemoryHelper.Free(manager.Objects->NodeList, (ulong)(oldSize * 8));
+            // Size Parameter is unused by the allocator, pending removal in CS
+            IMemorySpace.Free(manager.Objects->NodeList, 0);
             manager.Objects->NodeList = newBuffer;
             manager.Objects->NodeCount = newSize;
         }
@@ -96,11 +99,11 @@ public static unsafe class AtkUldManagerExtensions {
         /// Debug helper for printing a UldManagers entire object list.
         /// </summary>
         public void PrintObjectList() {
-            Services.Log.Debug("Beginning NodeList");
+            IPluginLog.Get().Debug("Beginning NodeList");
 
             foreach (var index in Enumerable.Range(0, manager.Objects->NodeCount)) {
                 var nodePointer = manager.Objects->NodeList[index];
-                Services.Log.Debug($"[{index}]: {(nint)nodePointer:X}");
+                IPluginLog.Get().Debug($"[{index}]: {(nint)nodePointer:X}");
             }
         }
 

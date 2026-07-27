@@ -1,8 +1,6 @@
-using System;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.BaseTypes.ComponentNode;
@@ -113,8 +111,8 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     /// Constructs a new instance of <see cref="ComponentNode"/>
     /// </summary>
     protected ComponentNode() : base(NodeType.Component) {
-        Node->Component = (AtkComponentBase*)NativeMemoryHelper.Create<T>();
-        Node->Component->UldManager.ComponentData = (AtkUldComponentDataBase*)NativeMemoryHelper.UiAlloc<TU>();
+        Node->Component = (AtkComponentBase*)IMemorySpace.GetUISpace()->Create<T>();
+        Node->Component->UldManager.ComponentData = (AtkUldComponentDataBase*)IMemorySpace.GetUISpace()->MallocZeroed<TU>();
 
         RegisterVirtualTable();
 
@@ -139,13 +137,13 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
 
         ref var uldManager = ref ComponentBase->UldManager;
 
-        uldManager.Objects = (AtkUldObjectInfo*)NativeMemoryHelper.UiAlloc<AtkUldComponentInfo>();
+        uldManager.Objects = (AtkUldObjectInfo*)IMemorySpace.GetUISpace()->MallocZeroed<AtkUldComponentInfo>();
         ref var objects = ref uldManager.Objects;
         uldManager.ObjectCount = 1;
 
         SetInternalComponentType(ComponentType.Base);
 
-        objects->NodeList = (AtkResNode**)NativeMemoryHelper.Malloc(8);
+        objects->NodeList = (AtkResNode**)IMemorySpace.GetUISpace()->MallocZeroed<nint>();
         objects->NodeList[0] = CollisionNode;
         objects->NodeCount = 1;
         objects->Id = 1000;
@@ -164,17 +162,26 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     protected override void Dispose(bool isNativeDestructor) {
         if (IsDisposed) return;
 
-        try {
-            if (!isNativeDestructor && Node is not null && Node->Component is not null) {
-                Node->Component->Deinitialize();
-                Node->Component->Dtor(1);
-                Node->Component = null;
-            }
+        if (!isNativeDestructor) {
+            ref var uldManager = ref Node->Component->UldManager;
+
+            // Size is not actually used by the allocator, pending removal in CS
+            IMemorySpace.Free(uldManager.Objects->NodeList, 0);
+            uldManager.Objects->NodeList = null;
+            uldManager.Objects->NodeCount = 0;
+
+            IMemorySpace.Free(uldManager.Objects);
+            uldManager.Objects = null;
+            uldManager.ObjectCount = 0;
+
+            IMemorySpace.Free(uldManager.ComponentData);
+            uldManager.ComponentData = null;
+
+            Node->Component->Deinitialize();
+            Node->Component->Dtor(1);
+            Node->Component = null;
         }
-        catch (Exception e) {
-            Services.Log.Exception(e);
-        } finally {
-            base.Dispose(isNativeDestructor);
-        }
+
+        base.Dispose(isNativeDestructor);
     }
 }

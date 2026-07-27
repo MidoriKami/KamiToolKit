@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using Dalamud.Interface.Textures.TextureWraps;
+using Dalamud.Plugin.Services;
 using KamiToolKit.Classes;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
@@ -29,11 +30,11 @@ public class ImGuiImageNode : SimpleImageNode {
 
                 // Load the texture as a task
                 Task.Run(async () => {
-                    var newTexture = await Services.TextureProvider.GetFromFile(value).RentAsync();
-                    Services.Log.Verbose($"Loaded texture from file system: {value}");
+                    var newTexture = await ITextureProvider.Get().GetFromFile(value).RentAsync();
+                    IPluginLog.Get().Verbose($"Loaded texture from file system: {value}");
 
                     // Once it's ready, load it into the node on the next frame.
-                    await Services.Framework.Run(() => {
+                    await IFramework.Get().Run(() => {
                         unsafe {
                             if (Node is not null) {
                                 LoadTexture(newTexture);
@@ -47,7 +48,7 @@ public class ImGuiImageNode : SimpleImageNode {
             }
 
             // else, the path is a game file, and the game itself can do its loading magic.
-            else if (Services.DataManager.FileExists(value)) {
+            else if (IDataManager.Get().FileExists(value)) {
                 unsafe {
                     PartsList[0]->LoadTexture(value);
                 }
@@ -69,7 +70,7 @@ public class ImGuiImageNode : SimpleImageNode {
         PartsList[0]->LoadTexture(texture);
 
         if (LoadedTexture is not null) {
-            Services.Log.Verbose($"Disposing texture: {LoadedTexture} to load {texture}");
+            IPluginLog.Get().Verbose($"Disposing texture: {LoadedTexture} to load {texture}");
         }
 
         // Dispose any previously used texture
@@ -84,7 +85,7 @@ public class ImGuiImageNode : SimpleImageNode {
         if (IsDisposed) return;
 
         if (LoadedTexture is not null) {
-            Services.Log.Verbose($"Disposing texture: {LoadedTexture}");
+            IPluginLog.Get().Verbose($"Disposing texture: {LoadedTexture}");
         }
 
         LoadedTexture?.Dispose();

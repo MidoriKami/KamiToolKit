@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -92,7 +93,7 @@ public abstract unsafe partial class NodeBase {
 
     private void PerformManagedAttach(NodeBase? targetNode, NodePosition targetPosition) {
         if (this == targetNode) {
-            Services.Log.Warning("Attempted to attach self to self, attach was aborted.");
+            IPluginLog.Get().Warning("Attempted to attach self to self, attach was aborted.");
             return;
         }
 
@@ -107,7 +108,7 @@ public abstract unsafe partial class NodeBase {
 
     private void PerformNativeAttach(AtkResNode* targetNode, NodePosition targetPosition) {
         if (ResNode == targetNode) {
-            Services.Log.Warning("Attempted to attach self to self, attach was aborted.");
+            IPluginLog.Get().Warning("Attempted to attach self to self, attach was aborted.");
             return;
         }
 
@@ -148,7 +149,7 @@ public abstract unsafe partial class NodeBase {
 
     internal void ReattachNode(AtkResNode* newTarget) {
         if (ResNode == newTarget) {
-            Services.Log.Warning("Attempted to attach self to self, attach was aborted.");
+            IPluginLog.Get().Warning("Attempted to attach self to self, attach was aborted.");
             return;
         }
 
@@ -217,7 +218,7 @@ public abstract unsafe partial class NodeBase {
 
         if (ParentAddon is not null) {
             if (ParentAddon->NameString is "NamePlate") {
-                Services.Log.Warning("Warning, attaching to AddonNamePlate is not supported. Use OverlayController instead.");
+                IPluginLog.Get().Warning("Warning, attaching to AddonNamePlate is not supported. Use OverlayController instead.");
             }
 
             ParentAddon->UldManager.UpdateDrawNodeList();

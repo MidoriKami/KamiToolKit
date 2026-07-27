@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Timelines;
 
@@ -51,7 +51,7 @@ public unsafe class TimelineAnimation : IDisposable {
     /// Constructs a new instance of <see cref="TimelineAnimation"/>.
     /// </summary>
     public TimelineAnimation() {
-        InternalAnimation = NativeMemoryHelper.UiAlloc<AtkTimelineAnimation>();
+        InternalAnimation = IMemorySpace.GetUISpace()->MallocZeroed<AtkTimelineAnimation>();
 
         InternalAnimation->StartFrameIdx = 0;
         InternalAnimation->EndFrameIdx = 0;
@@ -66,12 +66,12 @@ public unsafe class TimelineAnimation : IDisposable {
         if (InternalAnimation is null) return;
 
         foreach (ref var spanGroup in InternalAnimation->KeyGroups) {
-            NativeMemoryHelper.UiFree(spanGroup.KeyFrames);
+            IMemorySpace.Free(spanGroup.KeyFrames);
             spanGroup.KeyFrames = null;
             spanGroup.KeyFrameCount = 0;
         }
 
-        NativeMemoryHelper.UiFree(InternalAnimation);
+        IMemorySpace.Free(InternalAnimation);
         InternalAnimation = null;
     }
 
@@ -81,11 +81,11 @@ public unsafe class TimelineAnimation : IDisposable {
             keyFrameGroup.Type = keyFrameSet.First().GroupType;
 
             if (keyFrameGroup.KeyFrames is not null) {
-                NativeMemoryHelper.UiFree(keyFrameGroup.KeyFrames, keyFrameGroup.KeyFrameCount);
+                IMemorySpace.Free(keyFrameGroup.KeyFrames);
                 keyFrameGroup.KeyFrames = null;
             }
 
-            keyFrameGroup.KeyFrames = NativeMemoryHelper.UiAlloc<AtkTimelineKeyFrame>(keyFrameSet.Count());
+            keyFrameGroup.KeyFrames = IMemorySpace.GetUISpace()->AllocateZeroedArray<AtkTimelineKeyFrame>(keyFrameSet.Count());
 
             var index = 0;
             foreach (var keyframe in keyFrameSet) {
