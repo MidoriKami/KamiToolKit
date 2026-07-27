@@ -89,6 +89,21 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
     }
 
     /// <summary>
+    /// Updates the data being displayed.
+    /// </summary>
+    public void Update() {
+        NoResultsTextNodeContainer.IsVisible = !NoResultsTextNode.String.IsEmpty;
+
+        PopulateNodes();
+
+        foreach (var node in EntryNodes) {
+            if (node.IsVisible) {
+                node.Update();
+            }
+        }
+    }
+
+    /// <summary>
     /// Constructs a new instance of <see cref="TreeListNode{T,TU}"/>
     /// </summary>
     public unsafe TreeListNode() {

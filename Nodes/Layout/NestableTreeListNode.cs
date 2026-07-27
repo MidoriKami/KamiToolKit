@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
@@ -97,33 +98,6 @@ public class NestableTreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T
     }
 
     /// <summary>
-    /// Constructs a new instance of <see cref="NestableTreeListNode{T,TU}"/>
-    /// </summary>
-    public unsafe NestableTreeListNode() {
-        itemHeight = TU.ItemHeight;
-
-        ScrollBarNode = new ScrollBarNode {
-            OnValueChanged = OnScrollUpdate,
-            ScrollSpeed = (int)itemHeight,
-        };
-        ScrollBarNode.AttachNode(this);
-
-        NoResultsTextNodeContainer = new ResNode {
-            IsVisible = false,
-        };
-        NoResultsTextNodeContainer.AttachNode(this);
-
-        NoResultsTextNode = new TextNode {
-            AlignmentType = AlignmentType.Center,
-            TextId = 5494, // "No results found."
-            SheetType = NodeData.SheetType.Addon,
-        };
-        NoResultsTextNode.AttachNode(NoResultsTextNodeContainer);
-
-        AddEvent(AtkEventType.MouseWheel, OnMouseWheel);
-    }
-
-    /// <summary>
     /// Resets scroll position back to the top.
     /// </summary>
     /// <remarks>
@@ -148,6 +122,33 @@ public class NestableTreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T
                 node.Update();
             }
         }
+    }
+
+    /// <summary>
+    /// Constructs a new instance of <see cref="NestableTreeListNode{T,TU}"/>
+    /// </summary>
+    public unsafe NestableTreeListNode() {
+        itemHeight = TU.ItemHeight;
+
+        ScrollBarNode = new ScrollBarNode {
+            OnValueChanged = OnScrollUpdate,
+            ScrollSpeed = (int)itemHeight,
+        };
+        ScrollBarNode.AttachNode(this);
+
+        NoResultsTextNodeContainer = new ResNode {
+            IsVisible = false,
+        };
+        NoResultsTextNodeContainer.AttachNode(this);
+
+        NoResultsTextNode = new TextNode {
+            AlignmentType = AlignmentType.Center,
+            TextId = 5494, // "No results found."
+            SheetType = NodeData.SheetType.Addon,
+        };
+        NoResultsTextNode.AttachNode(NoResultsTextNodeContainer);
+
+        AddEvent(AtkEventType.MouseWheel, OnMouseWheel);
     }
 
     /// <inheritdoc />

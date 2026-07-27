@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using KamiToolKit.Nodes;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.Classes;
 
 /// <summary>
 /// A collapsible section for <see cref="NestableTreeListNode{T,TU}"/>, optionally containing nested child sections.

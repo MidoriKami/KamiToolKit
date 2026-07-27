@@ -1,7 +1,8 @@
 using KamiToolKit.Enums;
+using KamiToolKit.Nodes;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Nodes;
+namespace KamiToolKit.Classes;
 
 /// <summary>
 /// A single visible group or entry row for <see cref="NestableTreeListNode{T,TU}"/>.
@@ -32,19 +33,17 @@ public readonly struct NestableTreeListRow<T> {
     /// <summary>
     /// Creates a group row.
     /// </summary>
-    public static NestableTreeListRow<T> ForGroup(ReadOnlySeString header, ReadOnlySeString path)
-        => new() {
-            Kind = NestableTreeListRowKind.Group,
-            Header = header,
-            Path = path,
-        };
+    public static NestableTreeListRow<T> ForGroup(ReadOnlySeString header, ReadOnlySeString path) => new() {
+        Kind = NestableTreeListRowKind.Group,
+        Header = header,
+        Path = path,
+    };
 
     /// <summary>
     /// Creates an entry row.
     /// </summary>
-    public static NestableTreeListRow<T> ForEntry(T entry)
-        => new() {
-            Kind = NestableTreeListRowKind.Entry,
-            Entry = entry,
-        };
+    public static NestableTreeListRow<T> ForEntry(T entry) => new() {
+        Kind = NestableTreeListRowKind.Entry,
+        Entry = entry,
+    };
 }
