@@ -55,12 +55,19 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         get => !Component->IsVertical;
         set {
             Data->Vertical = (byte)(value ? 0 : 1);
+
             Component->IsVertical = !value;
             Component->IsInputVertical = !value;
+            // TODO: Swap when merged into Dalamud main (was UnkIsVertical)
+            // This controls whether auto-resizing changes thumb height vs width.
+            //Component->IsThumbVertical = !value;
+            ((byte*)Component)[0x136] = (byte)(value ? 0 : 1);
+
             ForegroundButtonNode.IsHorizontalMode = value;
             UpdateScrollParams();
         }
     }
+
 
     /// <summary>
     /// Hides this node entirely, if the scrollbar is disabled due to content area being bigger than the scrollbar.
@@ -209,6 +216,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
     private void UpdateChildVisibility(bool enabledState) {
         var isVisible = !HideWhenDisabled || enabledState;
 
+        IsVisible = isVisible;
         BackgroundButtonNode.IsVisible = isVisible;
         ForegroundButtonNode.IsVisible = isVisible;
         ForegroundButtonNode.ButtonTexture.IsVisible = isVisible;
