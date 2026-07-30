@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.BaseTypes.ComponentNode;
@@ -61,7 +62,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
             // TODO: Swap when merged into Dalamud main (was UnkIsVertical)
             // This controls whether auto-resizing changes thumb height vs width.
             //Component->IsThumbVertical = !value;
-            ((byte*)Component)[0x136] = (byte)(value ? 0 : 1);
+            Marshal.WriteByte((nint)Component, 0x136, (byte)(value ? 0 : 1));
 
             ForegroundButtonNode.IsHorizontalMode = value;
             UpdateScrollParams();
