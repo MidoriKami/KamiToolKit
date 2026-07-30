@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Timelines;
 
@@ -33,19 +33,19 @@ public unsafe class TimelineLabelSetArray : IDisposable {
             labelSet.Dispose();
         }
 
-        NativeMemoryHelper.UiFree(InternalLabelSetArray, Count);
+        IMemorySpace.Free(InternalLabelSetArray);
         InternalLabelSetArray = null;
     }
 
     private void Resync() {
         // Free existing array, we will completely rebuild it
         if (InternalLabelSetArray is not null) {
-            NativeMemoryHelper.UiFree(InternalLabelSetArray, Count);
+            IMemorySpace.Free(InternalLabelSetArray);
             InternalLabelSetArray = null;
         }
 
         // Allocate new array
-        InternalLabelSetArray = NativeMemoryHelper.UiAlloc<AtkTimelineLabelSet>(labelSets.Count);
+        InternalLabelSetArray = IMemorySpace.GetUISpace()->AllocateZeroedArray<AtkTimelineLabelSet>(labelSets.Count);
 
         // Copy all Animations into it
         foreach (var index in Enumerable.Range(0, labelSets.Count)) {

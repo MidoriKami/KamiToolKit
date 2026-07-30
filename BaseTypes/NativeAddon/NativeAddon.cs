@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -68,7 +69,7 @@ public unsafe partial class NativeAddon {
 
         IPluginLog.Get().Verbose($"[{InternalName}] Allocating NativeAddon");
 
-        InternalAddon = NativeMemoryHelper.Create<AtkUnitBase>();
+        InternalAddon = IMemorySpace.GetUISpace()->Create<AtkUnitBase>();
 
         RegisterVirtualTable();
 

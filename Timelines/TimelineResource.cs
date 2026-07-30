@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Timelines;
 
@@ -19,7 +19,7 @@ public unsafe class TimelineResource : IDisposable {
     /// Constructs a new <see cref="TimelineResource"/>
     /// </summary>
     public TimelineResource() {
-        InternalResource = NativeMemoryHelper.UiAlloc<AtkTimelineResource>();
+        InternalResource = IMemorySpace.GetUISpace()->MallocZeroed<AtkTimelineResource>();
 
         InternalResource->Id = 2;
         InternalResource->AnimationCount = 0;
@@ -69,7 +69,7 @@ public unsafe class TimelineResource : IDisposable {
         animationArray.Dispose();
         labelsArray.Dispose();
 
-        NativeMemoryHelper.UiFree(InternalResource);
+        IMemorySpace.Free(InternalResource);
         InternalResource = null;
     }
 }

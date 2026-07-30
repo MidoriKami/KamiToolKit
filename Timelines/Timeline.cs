@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using KamiToolKit.Enums;
-using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Timelines;
 
@@ -118,7 +118,7 @@ public unsafe class Timeline : IDisposable {
     /// Constructs a new instance of <see cref="Timeline"/>.
     /// </summary>
     public Timeline() {
-        InternalTimeline = NativeMemoryHelper.UiAlloc<AtkTimeline>();
+        InternalTimeline = IMemorySpace.GetUISpace()->MallocZeroed<AtkTimeline>();
 
         internalTimelineResource = new TimelineResource();
         InternalTimeline->Resource = internalTimelineResource.InternalResource;
@@ -131,7 +131,7 @@ public unsafe class Timeline : IDisposable {
     public void Dispose() {
         internalTimelineResource.Dispose();
 
-        NativeMemoryHelper.UiFree(InternalTimeline);
+        IMemorySpace.Free(InternalTimeline);
         InternalTimeline = null;
     }
 

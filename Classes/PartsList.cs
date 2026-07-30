@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Classes;
 
@@ -55,7 +55,7 @@ public unsafe class PartsList : IDisposable {
     /// Constructs a new <see cref="PartsList"/> instance.
     /// </summary>
     public PartsList() {
-        InternalPartsList = NativeMemoryHelper.UiAlloc<AtkUldPartsList>();
+        InternalPartsList = IMemorySpace.GetUISpace()->MallocZeroed<AtkUldPartsList>();
 
         InternalPartsList->Parts = null;
         InternalPartsList->PartCount = 0;
@@ -74,16 +74,16 @@ public unsafe class PartsList : IDisposable {
                     part.UldAsset->AtkTexture.TextureType = 0;
                 }
 
-                NativeMemoryHelper.UiFree(part.UldAsset);
+                IMemorySpace.Free(part.UldAsset);
                 part.UldAsset = null;
             }
 
             if (InternalPartsList->Parts is not null) {
-                NativeMemoryHelper.UiFree(InternalPartsList->Parts, partCapacity);
+                IMemorySpace.Free(InternalPartsList->Parts);
                 InternalPartsList->Parts = null;
             }
 
-            NativeMemoryHelper.UiFree(InternalPartsList);
+            IMemorySpace.Free(InternalPartsList);
             InternalPartsList = null;
             partCapacity = 0;
         }
@@ -110,11 +110,11 @@ public unsafe class PartsList : IDisposable {
             newCapacity *= 2;
         }
 
-        var newBuffer = NativeMemoryHelper.UiAlloc<AtkUldPart>(newCapacity);
+        var newBuffer = IMemorySpace.GetUISpace()->AllocateZeroedArray<AtkUldPart>(newCapacity);
 
         if (InternalPartsList->Parts is not null) {
-            NativeMemoryHelper.Copy(InternalPartsList->Parts, newBuffer, PartCount);
-            NativeMemoryHelper.UiFree(InternalPartsList->Parts, partCapacity);
+            IMemorySpace.Copy(InternalPartsList->Parts, newBuffer, PartCount);
+            IMemorySpace.Free(InternalPartsList->Parts);
         }
 
         InternalPartsList->Parts = newBuffer;
@@ -130,7 +130,7 @@ public unsafe class PartsList : IDisposable {
         newPart.U = (ushort)item.U;
         newPart.V = (ushort)item.V;
 
-        newPart.UldAsset = NativeMemoryHelper.UiAlloc<AtkUldAsset>();
+        newPart.UldAsset = IMemorySpace.GetUISpace()->MallocZeroed<AtkUldAsset>();
         newPart.UldAsset->Id = item.Id;
         newPart.UldAsset->AtkTexture.Ctor();
         newPart.LoadTexture(item.TexturePath);

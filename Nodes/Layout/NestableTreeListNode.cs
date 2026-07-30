@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Internal.Nodes;
@@ -12,11 +14,12 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Virtualized node representing a scrollable tree list, categories can be collapsed or uncollapsed as needed.
+/// Virtualized scrollable tree list with nested collapsible sections via <see cref="Sections"/>.
 /// </summary>
-/// /// <typeparam name="T">The data model to use.</typeparam>
+/// <typeparam name="T">The data model to use.</typeparam>
 /// <typeparam name="TU">The view to render the data models data.</typeparam>
-public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITreeListItemNode, new()  {
+/// <remarks>Overall more inline with ListNode than TreeListNode.</remarks>
+public class NestableTreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITreeListItemNode, new() {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -47,22 +50,28 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
     public T? SelectedItem { get; set; }
 
     /// <summary>
-    /// Gets or sets the dictionary of options used to populate this <see cref="TreeListNode{T,TU}"/>
+    /// When updating <see cref="Sections"/>, automatically resets scroll to the top.
     /// </summary>
     /// <remarks>
-    /// Keys represent collapsing headers, where values are the entries shown per header.
+    /// This may be undesirable if the list is being constantly updated.
     /// </remarks>
-    public Dictionary<ReadOnlySeString, List<T>> Options {
+    public bool AutoResetScroll { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the nested section tree used to populate this list.
+    /// </summary>
+    public List<TreeListSection<T>> Sections {
         get;
         set {
             field = value;
-
-            NoResultsTextNodeContainer.IsVisible = value.Count is 0;
-
-            RebuildNodes();
-            PopulateNodes();
+            OnDataChanged(value.Count is 0);
         }
     } = [];
+
+    /// <summary>
+    /// Gets a read-only list of the pooled entry nodes.
+    /// </summary>
+    public IReadOnlyList<TU> EntryNodes => entryNodes;
 
     /// <summary>
     /// Gets or sets the item spacing.
@@ -89,14 +98,26 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
     }
 
     /// <summary>
+    /// Resets scroll position back to the top.
+    /// </summary>
+    /// <remarks>
+    /// When changing the list data, you will probably need to invoke this manually if <see cref="AutoResetScroll"/> is disabled.
+    /// </remarks>
+    public void ResetScroll() {
+        scrollPosition = 0;
+        ScrollBarNode.ScrollPosition = 0;
+        PopulateNodes();
+    }
+
+    /// <summary>
     /// Updates the data being displayed.
     /// </summary>
     public void Update() {
-        NoResultsTextNodeContainer.IsVisible = !NoResultsTextNode.String.IsEmpty;
+        NoResultsTextNodeContainer.IsVisible = !NoResultsTextNode.String.IsEmpty && Sections.Count is 0;
 
         PopulateNodes();
 
-        foreach (var node in EntryNodes) {
+        foreach (var node in entryNodes) {
             if (node.IsVisible) {
                 node.Update();
             }
@@ -104,9 +125,9 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
     }
 
     /// <summary>
-    /// Constructs a new instance of <see cref="TreeListNode{T,TU}"/>
+    /// Constructs a new instance of <see cref="NestableTreeListNode{T,TU}"/>
     /// </summary>
-    public unsafe TreeListNode() {
+    public unsafe NestableTreeListNode() {
         itemHeight = TU.ItemHeight;
 
         ScrollBarNode = new ScrollBarNode {
@@ -147,6 +168,46 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         PopulateNodes();
     }
 
+    private void OnDataChanged(bool isEmpty) {
+        NoResultsTextNodeContainer.IsVisible = isEmpty;
+
+        RebuildNodes();
+
+        if (AutoResetScroll) {
+            ResetScroll();
+        }
+        else {
+            PopulateNodes();
+        }
+    }
+
+    private IEnumerable<NestableTreeListRow<T>> EnumerateVisibleRows() {
+        foreach (var section in Sections) {
+            foreach (var row in EnumerateSectionRows(section, parentPath: default)) {
+                yield return row;
+            }
+        }
+    }
+
+    private IEnumerable<NestableTreeListRow<T>> EnumerateSectionRows(TreeListSection<T> section, ReadOnlySeString parentPath) {
+        var path = parentPath.IsEmpty ? section.Header : $"{parentPath}/{section.Header}";
+        yield return NestableTreeListRow<T>.ForGroup(section.Header, path);
+
+        if (CollapsedEntries.Contains(path)) {
+            yield break;
+        }
+
+        foreach (var entry in section.Entries) {
+            yield return NestableTreeListRow<T>.ForEntry(entry);
+        }
+
+        foreach (var child in section.Children) {
+            foreach (var row in EnumerateSectionRows(child, path)) {
+                yield return row;
+            }
+        }
+    }
+
     /// <summary>
     /// Function is called on any click-drag of the scrollbar, or direct mousewheel on the scrollbar.
     /// </summary>
@@ -154,8 +215,8 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         var remainingPosition = (float) newPosition;
         var scrollOffset = 0;
 
-        foreach (var (_, entryList) in Options) {
-            remainingPosition -= 28.0f + ItemSpacing;
+        foreach (var row in EnumerateVisibleRows()) {
+            remainingPosition -= RowHeight(row) + ItemSpacing;
 
             if (remainingPosition <= 0) {
                 scrollPosition = scrollOffset;
@@ -164,18 +225,6 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
             }
 
             scrollOffset++;
-
-            foreach (var _ in entryList) {
-                remainingPosition -= itemHeight + ItemSpacing;
-
-                if (remainingPosition <= 0) {
-                    scrollPosition = scrollOffset;
-                    PopulateNodes();
-                    return;
-                }
-
-                scrollOffset++;
-            }
         }
 
         if (ParentAddon is not null) {
@@ -192,20 +241,10 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
             return;
         }
 
-        var numValidOptions = 0;
-
-        foreach (var (header, entryList) in Options) {
-            numValidOptions++;
-
-            if (!CollapsedEntries.Contains(header)) {
-                foreach (var _ in entryList) {
-                    numValidOptions++;
-                }
-            }
-        }
+        var numValidOptions = EnumerateVisibleRows().Count();
 
         scrollPosition += atkEventData->IsScrollUp ? -1 : 1;
-        scrollPosition = Math.Clamp(scrollPosition, 0, numValidOptions - Math.Min(HeaderNodes.Count, EntryNodes.Count));
+        scrollPosition = Math.Clamp(scrollPosition, 0, numValidOptions - Math.Min(HeaderNodes.Count, entryNodes.Count));
         ScrollBarNode.ScrollPosition = (float) scrollPosition / numValidOptions * GetTotalOffscreenHeight();
 
         PopulateNodes();
@@ -227,6 +266,7 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
                 node.Dispose();
             }
             HeaderNodes.Clear();
+            HeaderCollapsePaths.Clear();
 
             foreach (var _ in Enumerable.Range(0, headerNodeCount)) {
                 var headerNode = new ToggleableHeaderNode {
@@ -235,14 +275,18 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
                     IsVisible = false,
                 };
 
+                HeaderCollapsePaths.Add(default);
+                var capturedIndex = HeaderNodes.Count;
+
                 headerNode.OnToggle = isVisible => {
+                    var path = HeaderCollapsePaths[capturedIndex];
+                    if (path.IsEmpty) return;
+
                     if (isVisible) {
-                        CollapsedEntries.Remove(headerNode.String);
+                        CollapsedEntries.Remove(path);
                     }
-                    else {
-                        if (!CollapsedEntries.Contains(headerNode.String)) {
-                            CollapsedEntries.Add(headerNode.String);
-                        }
+                    else if (!CollapsedEntries.Contains(path)) {
+                        CollapsedEntries.Add(path);
                     }
 
                     PopulateNodes();
@@ -254,17 +298,17 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         }
 
         var entryNodeCount = (int) (Height / (itemHeight + ItemSpacing));
-        if (entryNodeCount != EntryNodes.Count) {
-            foreach (var node in EntryNodes) {
+        if (entryNodeCount != entryNodes.Count) {
+            foreach (var node in entryNodes) {
                 node.Dispose();
             }
-            EntryNodes.Clear();
+            entryNodes.Clear();
 
             foreach (var _ in Enumerable.Range(0, entryNodeCount)) {
                 var node = new TU {
                     Size = new Vector2(ScrollBarNode.Bounds.Left - 8.0f, itemHeight),
                     OnClick = clickedNode => {
-                        EntryNodes.ForEach(node => node.IsSelected = false);
+                        entryNodes.ForEach(entry => entry.IsSelected = false);
 
                         clickedNode.IsSelected = true;
 
@@ -275,7 +319,7 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
                 };
 
                 node.AttachNode(this);
-                EntryNodes.Add(node);
+                entryNodes.Add(node);
             }
         }
     }
@@ -293,7 +337,7 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
             node.Height = 0.0f;
         });
 
-        EntryNodes.ForEach(node => {
+        entryNodes.ForEach(node => {
             node.Y = 0.0f;
             node.IsVisible = false;
             node.Height = 0.0f;
@@ -305,81 +349,70 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         // sub entries according to the collapsed state of each header.
         var scrollSkips = scrollPosition;
 
-        foreach (var (header, entries) in Options) {
-            if (headerIndex > HeaderNodes.Count) break;
-            if (position + 28.0f + ItemSpacing > Height) break;
-
-            var isCollapsed = CollapsedEntries.Contains(header);
+        foreach (var row in EnumerateVisibleRows()) {
+            var rowHeight = RowHeight(row);
+            if (position + rowHeight + ItemSpacing > Height) break;
 
             if (scrollSkips is 0 || scrollSkips-- <= 0) {
-                var headerNode = HeaderNodes[headerIndex];
-                headerIndex++;
+                switch (row.Kind) {
+                    case NestableTreeListRowKind.Group:
+                        if (headerIndex >= HeaderNodes.Count) {
+                            goto done;
+                        }
 
-                headerNode.Height = 28.0f;
-                headerNode.String = header;
-                headerNode.IsVisible = true;
-                headerNode.IsCollapsed = isCollapsed;
+                        var headerNode = HeaderNodes[headerIndex];
+                        HeaderCollapsePaths[headerIndex] = row.Path;
+                        headerIndex++;
 
-                headerNode.Y = position;
-                position += headerNode.Height + ItemSpacing;
-            }
+                        headerNode.Height = 28.0f;
+                        headerNode.String = row.Header;
+                        headerNode.IsVisible = true;
+                        headerNode.IsCollapsed = CollapsedEntries.Contains(row.Path);
+                        headerNode.Y = position;
+                        break;
 
-            if (isCollapsed) continue;
-            var isBreaking = false;
+                    case NestableTreeListRowKind.Entry:
+                        if (entryIndex >= entryNodes.Count) {
+                            goto done;
+                        }
 
-            foreach (var entry in entries) {
-                if (entryIndex > EntryNodes.Count) {
-                    isBreaking = true;
-                    break;
+                        var entryNode = entryNodes[entryIndex];
+                        entryIndex++;
+
+                        entryNode.Height = itemHeight;
+                        entryNode.ItemData = row.Entry!;
+                        entryNode.IsVisible = true;
+                        entryNode.IsSelected = GenericUtil.AreEqual(entryNode.ItemData, SelectedItem);
+                        entryNode.Y = position;
+                        break;
                 }
 
-                if (position + itemHeight + ItemSpacing > Height) {
-                    isBreaking = true;
-                    break;
-                }
-
-                if (scrollSkips is 0 || scrollSkips-- <= 0) {
-                    var entryNode = EntryNodes[entryIndex];
-                    entryIndex++;
-
-                    entryNode.Height = itemHeight;
-                    entryNode.ItemData = entry;
-                    entryNode.IsVisible = true;
-                    entryNode.IsSelected = GenericUtil.AreEqual(entryNode.ItemData, SelectedItem);
-
-                    entryNode.Y = position;
-                    position += entryNode.Height + ItemSpacing;
-                }
-            }
-
-            if (isBreaking) {
-                break;
+                position += rowHeight + ItemSpacing;
             }
         }
 
+        done:
         ScrollBarNode.UpdateScrollParams((int) ScrollBarNode.Height, (int) GetTotalOffscreenHeight());
     }
 
     private float GetTotalOffscreenHeight() {
         var calculatedOffscreenHeight = itemHeight + ItemSpacing;
 
-        foreach (var (header, entryList) in Options) {
-            calculatedOffscreenHeight += 28.0f + ItemSpacing;
-
-            if (!CollapsedEntries.Contains(header)) {
-                foreach (var _ in entryList) {
-                    calculatedOffscreenHeight += itemHeight + ItemSpacing;
-                }
-            }
+        foreach (var row in EnumerateVisibleRows()) {
+            calculatedOffscreenHeight += RowHeight(row) + ItemSpacing;
         }
 
         return calculatedOffscreenHeight;
     }
 
+    private float RowHeight(NestableTreeListRow<T> row)
+        => row.Kind is NestableTreeListRowKind.Group ? 28.0f : itemHeight;
+
     private List<ToggleableHeaderNode> HeaderNodes { get; } = [];
-    private List<TU> EntryNodes { get; } = [];
+    private List<ReadOnlySeString> HeaderCollapsePaths { get; } = [];
     private List<ReadOnlySeString> CollapsedEntries { get; } = [];
 
+    private readonly List<TU> entryNodes = [];
     private readonly float itemHeight;
 
     private int scrollPosition;

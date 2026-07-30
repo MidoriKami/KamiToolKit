@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.BaseTypes.ComponentNode;
 
@@ -31,7 +31,7 @@ public abstract unsafe partial class ComponentNode {
     protected void RegisterVirtualTable() {
         originalVirtualTable = ComponentBase->VirtualTable;
 
-        modifiedVirtualTable = (AtkComponentBase.AtkComponentBaseVirtualTable*) NativeMemoryHelper.Malloc(0x8 * VirtualTableEntryCount);
+        modifiedVirtualTable = (AtkComponentBase.AtkComponentBaseVirtualTable*) IMemorySpace.GetUISpace()->AllocateZeroedArray<nint>(VirtualTableEntryCount);
         NativeMemory.Copy(ComponentBase->VirtualTable, modifiedVirtualTable, 0x8 * VirtualTableEntryCount);
         ComponentBase->VirtualTable = modifiedVirtualTable;
 
