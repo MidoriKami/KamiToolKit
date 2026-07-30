@@ -15,6 +15,8 @@ namespace KamiToolKit.Nodes;
 /// </remarks>
 public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
 
+    private const float ScrollBarThickness = 8.0f;
+
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
@@ -52,18 +54,43 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
     }
 
     /// <summary>
-    /// Sets the scroll position to the top.
+    /// Gets or sets whether this scrolling node scrolls horizontally.
     /// </summary>
-    public void ScrollToTop() {
+    public bool IsHorizontalMode {
+        get => ScrollBarNode.IsHorizontalMode;
+        set {
+            if (ScrollBarNode.IsHorizontalMode == value) return;
+
+            ScrollBarNode.IsHorizontalMode = value;
+            OnSizeChanged();
+        }
+    }
+
+    /// <summary>
+    /// Sets the scroll position to the start.
+    /// </summary>
+    public void ScrollToStart() {
         ScrollBarNode.ScrollPosition = 0;
     }
 
     /// <summary>
-    /// Sets the scroll position to the bottom.
+    /// Sets the scroll position to the end.
     /// </summary>
-    public void ScrollToBottom() {
+    public void ScrollToEnd() {
         ScrollBarNode.ScrollPosition = ScrollBarNode.ScrollMaxPosition;
     }
+
+    /// <summary>
+    /// Sets the scroll position to the top.
+    /// </summary>
+    public void ScrollToTop()
+        => ScrollToStart();
+
+    /// <summary>
+    /// Sets the scroll position to the bottom.
+    /// </summary>
+    public void ScrollToBottom()
+        => ScrollToEnd();
 
     /// <summary>
     /// Recalculates sizes to update scroll params correctly.
@@ -133,7 +160,13 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        ContentNode.Width = Width;
+        if (IsHorizontalMode) {
+            ContentNode.Height = Height;
+        }
+        else {
+            ContentNode.Width = Width;
+        }
+
         ClippingContentNode.Size = Size;
         ScrollingCollisionNode.Size = Size;
 
@@ -143,8 +176,15 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
 
         var oldPosition = ScrollBarNode.ScrollPosition;
         ScrollBarNode.ScrollPosition = 0;
-        ScrollBarNode.Size = new Vector2(8.0f, Height);
-        ScrollBarNode.Position = new Vector2(Width - 8.0f, 0.0f);
+        if (IsHorizontalMode) {
+            ScrollBarNode.Size = new Vector2(Width, ScrollBarThickness);
+            ScrollBarNode.Position = new Vector2(0.0f, Height - ScrollBarThickness);
+        }
+        else {
+            ScrollBarNode.Size = new Vector2(ScrollBarThickness, Height);
+            ScrollBarNode.Position = new Vector2(Width - ScrollBarThickness, 0.0f);
+        }
+
         ScrollBarNode.SetContentNodes(ContentNode, ScrollingCollisionNode);
         ScrollBarNode.ScrollPosition = Math.Clamp(oldPosition, 0, ScrollBarNode.ScrollMaxPosition);
     }

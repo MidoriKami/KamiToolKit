@@ -49,6 +49,20 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
     }
 
     /// <summary>
+    /// Gets or sets whether this scrollbar scrolls horizontally.
+    /// </summary>
+    public bool IsHorizontalMode {
+        get => !Component->IsVertical;
+        set {
+            Data->Vertical = (byte)(value ? 0 : 1);
+            Component->IsVertical = !value;
+            Component->IsInputVertical = !value;
+            ForegroundButtonNode.IsHorizontalMode = value;
+            UpdateScrollParams();
+        }
+    }
+
+    /// <summary>
     /// Hides this node entirely, if the scrollbar is disabled due to content area being bigger than the scrollbar.
     /// </summary>
     public bool HideWhenDisabled { get; set; }
@@ -77,41 +91,66 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         if (Component->ContentCollisionNode is null) return;
 
         UpdateScrollParams(
-            Component->ContentCollisionNode->Height,
-            Component->ContentNode->Height
+            IsHorizontalMode ? Component->ContentCollisionNode->Width : Component->ContentCollisionNode->Height,
+            IsHorizontalMode ? Component->ContentNode->Width : Component->ContentNode->Height
         );
     }
 
     /// <summary>
     /// <inheritdoc cref="UpdateScrollParams(int, int)"/>
     /// </summary>
-    public void UpdateScrollParams(float barHeight, float offscreenHeight)
-        => UpdateScrollParams((int) barHeight, (int) offscreenHeight);
+    public void UpdateScrollParams(float barLength, float offScreenLength)
+        => UpdateScrollParams((int) barLength, (int) offScreenLength);
 
     /// <summary>
     /// Update the scroll bars size and positioning based on manually input values.
     /// It's recommend to use <see cref="UpdateScrollParams()"/> instead, if the content node is sized correctly.
     /// </summary>
-    /// <param name="barHeight">The actual displayed height of the scrollbar</param>
-    /// <param name="offScreenHeight">The actual size of the content area, this should be larger than the scrollbar.</param>
-    public void UpdateScrollParams(int barHeight, int offScreenHeight) {
-        var distance = offScreenHeight - barHeight;
+    /// <param name="barLength">The actual displayed length of the scrollbar</param>
+    /// <param name="offScreenLength">The actual size of the content area, this should be larger than the scrollbar.</param>
+    public void UpdateScrollParams(int barLength, int offScreenLength) {
+        if (barLength <= 0 || offScreenLength <= 0) {
+            Component->ScrollbarLength = (short)Math.Max(barLength, 0);
+            Component->ScrollMaxPosition = 0;
+            Component->ContentNodeOffScreenLength = 0;
+            Component->EmptyLength = 0;
+            ForegroundButtonNode.Position = Vector2.Zero;
+            UpdateChildVisibility(false);
+            return;
+        }
 
-        Component->ScrollbarLength = (short)barHeight;
+        var distance = offScreenLength - barLength;
+
+        Component->ScrollbarLength = (short)barLength;
         Component->ScrollMaxPosition = Math.Max(distance, 0);
         Component->ContentNodeOffScreenLength = Math.Max((short)distance, (short)0);
-        Component->EmptyLength = Math.Max(barHeight - (int)((float)barHeight / offScreenHeight * barHeight), 0);
-        ForegroundButtonNode.Height = barHeight - Component->EmptyLength;
+        Component->EmptyLength = Math.Max(barLength - (int)((float)barLength / offScreenLength * barLength), 0);
+
+        if (IsHorizontalMode) {
+            ForegroundButtonNode.Width = barLength - Component->EmptyLength;
+        }
+        else {
+            ForegroundButtonNode.Height = barLength - Component->EmptyLength;
+        }
 
         if (Component->ScrollPosition > Component->ScrollMaxPosition) {
             Component->SetScrollPosition(Component->ScrollMaxPosition);
         }
 
         if (Component->EmptyLength is 0) {
-            ForegroundButtonNode.Y = 0.0f;
+            if (IsHorizontalMode) {
+                ForegroundButtonNode.X = 0.0f;
 
-            if (Component->ContentNode is not null) {
-                Component->ContentNode->Y = 0;
+                if (Component->ContentNode is not null) {
+                    Component->ContentNode->X = 0;
+                }
+            }
+            else {
+                ForegroundButtonNode.Y = 0.0f;
+
+                if (Component->ContentNode is not null) {
+                    Component->ContentNode->Y = 0;
+                }
             }
         }
 
@@ -120,10 +159,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
             Component->SetEnabledState(enabledState);
         }
 
-        if (HideWhenDisabled) {
-            BackgroundButtonNode.IsVisible = enabledState;
-            ForegroundButtonNode.IsVisible = enabledState;
-        }
+        UpdateChildVisibility(enabledState);
     }
 
     /// <summary>
@@ -163,9 +199,18 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         base.OnSizeChanged();
 
         BackgroundButtonNode.Size = Size;
+        ForegroundButtonNode.IsHorizontalMode = IsHorizontalMode;
         ForegroundButtonNode.Size = Size;
     }
 
     private void UpdateHandler()
         => OnValueChanged?.Invoke(Component->PendingScrollPosition);
+
+    private void UpdateChildVisibility(bool enabledState) {
+        var isVisible = !HideWhenDisabled || enabledState;
+
+        BackgroundButtonNode.IsVisible = isVisible;
+        ForegroundButtonNode.IsVisible = isVisible;
+        ForegroundButtonNode.ButtonTexture.IsVisible = isVisible;
+    }
 }
