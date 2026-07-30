@@ -39,9 +39,14 @@ public class HorizontalListNode : LayoutListNode {
     public bool FitHeight { get; set; }
 
     /// <summary>
-    /// Resizes the horizontal list node to fit all contents
+    /// Resizes the horizontal list node to fit the height of all contents
     /// </summary>
     public bool FitToContentHeight { get; set; }
+
+    /// <summary>
+    /// Resizes the horizontal list node to fit the width of all contents
+    /// </summary>
+    public bool FitToContentWidth { get; set; }
 
     /// <summary>
     /// Gets the amount of space remaining in this node.
@@ -61,6 +66,10 @@ public class HorizontalListNode : LayoutListNode {
 
     /// <inheritdoc />
     protected override void OnRecalculateLayout() {
+        if (FitToContentWidth) {
+            base.Width = NodeList.Sum(node => node.IsVisible ? node.Width + ItemSpacing : 0.0f) + FirstItemSpacing - ItemSpacing;
+        }
+
         var startX = Alignment switch {
             HorizontalListAnchor.Left => 0.0f + FirstItemSpacing,
             HorizontalListAnchor.Right => Width - FirstItemSpacing,

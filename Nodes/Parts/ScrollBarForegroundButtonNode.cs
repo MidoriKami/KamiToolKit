@@ -14,7 +14,29 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
-    public NineGridNode ButtonTexture { get; }
+    public SimpleNineGridNode ButtonTexture { get; }
+
+    /// <summary>
+    /// Gets or sets whether this scroll bar thumb is displayed horizontally.
+    /// </summary>
+    public bool IsHorizontalMode {
+        get;
+        set {
+            if (field == value) return;
+
+            field = value;
+            ButtonTexture.RotationDegrees = value ? 90.0f : 0.0f;
+
+            if (value) {
+                ButtonTexture.Size = new Vector2(Height, Width);
+                ButtonTexture.Position = new Vector2(Width, 0.0f);
+            }
+            else {
+                ButtonTexture.Size = Size;
+                ButtonTexture.Position = Vector2.Zero;
+            }
+        }
+    }
 
     /// <summary>
     /// Constructs a new <see cref="ScrollBarForegroundButtonNode"/>
@@ -28,6 +50,8 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
             TextureSize = new Vector2(8.0f, 16.0f),
             TopOffset = 4,
             BottomOffset = 4,
+            LeftOffset = 0,
+            RightOffset = 0,
         };
         ButtonTexture.AttachNode(this);
 
@@ -43,7 +67,14 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        ButtonTexture.Size = Size;
+        if (IsHorizontalMode) {
+            ButtonTexture.Size = new Vector2(Height, Width);
+            ButtonTexture.Position = new Vector2(Width, 0.0f);
+        }
+        else {
+            ButtonTexture.Size = Size;
+            ButtonTexture.Position = Vector2.Zero;
+        }
     }
 
     private void BuildTimelines() {
