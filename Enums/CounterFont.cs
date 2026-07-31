@@ -14,4 +14,9 @@ public enum CounterFont {
     /// Font used for Chocobo Racing.
     /// </summary>
     ChocoboRace,
+
+    /// <summary>
+    /// Island Sanctuary font.
+    /// </summary>
+    Emj,
 }

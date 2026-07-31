@@ -104,6 +104,11 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
                     fontPath = "ui/uld/RaceChocoboNum.tex";
                     partSize = new Vector2(30.0f, 60.0f);
                     break;
+
+                case CounterFont.Emj:
+                    fontPath = "ui/uld/Emj_Number.tex";
+                    partSize = new Vector2(15.0f, 30.0f);
+                    break;
             }
 
             if (fontPath != string.Empty && partSize != Vector2.Zero) {
