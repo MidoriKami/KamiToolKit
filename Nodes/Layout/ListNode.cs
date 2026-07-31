@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
@@ -235,6 +236,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         NoResultsTextNode.AttachNode(NoResultsTextNodeContainer);
 
         AddEvent(AtkEventType.MouseWheel, OnMouseWheel);
+        AddNodeFlags(NodeFlags.HasCollision);
     }
 
     /// <inheritdoc />
