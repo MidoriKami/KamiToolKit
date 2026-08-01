@@ -75,6 +75,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
             LogIndented("Disposing Children", EnableFullLogging);
             foreach (var child in ChildNodes.ToList()) {
+                child.suppressAddonUpdate = true;
                 child.Dispose();
             }
             LogIndented("Children Disposed", EnableFullLogging);

@@ -176,8 +176,10 @@ public abstract unsafe partial class NodeBase {
     private void RemoveParentAddonReferences() {
         if (ParentAddon is null) return;
 
-        ParentAddon->UldManager.UpdateDrawNodeList();
-        ParentAddon->UpdateCollisionNodeList(false);
+        if (!suppressAddonUpdate) {
+            ParentAddon->UldManager.UpdateDrawNodeList();
+            ParentAddon->UpdateCollisionNodeList(false);
+        }
 
         ParentAddon = null;
 
@@ -295,6 +297,7 @@ public abstract unsafe partial class NodeBase {
 
     internal readonly List<NodeBase> ChildNodes = [];
     private NodeBase? parentNode;
+    private bool suppressAddonUpdate;
 
     internal AtkUldManager* ParentUldManager { get; set; }
     internal AtkUnitBase* ParentAddon { get; private set; }
