@@ -11,8 +11,9 @@ public class SearchInputNode : TextInputNode {
     /// <summary>
     /// Constructs a new <see cref="SearchInputNode"/>.
     /// </summary>
-    public SearchInputNode() {
+    public unsafe SearchInputNode() {
         PlaceholderStringId = 325; // "Search"
         SheetType = NodeData.SheetType.Addon;
+        Component->UldManager.SetupText();
     }
 }
