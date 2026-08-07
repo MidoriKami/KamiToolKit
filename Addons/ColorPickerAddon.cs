@@ -4,6 +4,7 @@ using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
+using Lumina.Data.Parsing.Uld;
 
 namespace KamiToolKit.Addons;
 
@@ -64,8 +65,8 @@ public class ColorPickerAddon : NativeAddon {
     /// <summary>
     /// Gets or sets the initial color as HSVA when this window is opened.
     /// </summary>
-    public ColorHelpers.HsvaColor InitialHsvaColor { get; set; } =
-        ColorHelpers.RgbaToHsv(new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+    public ColorHelpers.HsvaColor InitialHsvaColor { get; set; }
+        = ColorHelpers.RgbaToHsv(new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 
     /// <inheritdoc />
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan) {
@@ -94,7 +95,8 @@ public class ColorPickerAddon : NativeAddon {
         ConfirmButton = new TextButtonNode {
             Position = ContentStartPosition + new Vector2(0.0f, ContentSize.Y - 24.0f),
             Size = new Vector2(100.0f, 24.0f),
-            String = "Confirm",
+            TextId = 572, // "Confirm"
+            SheetType = NodeData.SheetType.Addon,
             OnClick = OnConfirmClicked,
         };
         ConfirmButton.AttachNode(this);
@@ -103,7 +105,8 @@ public class ColorPickerAddon : NativeAddon {
             DefaultColorPreview = new ColorSquareTextButtonNode {
                 Size = new Vector2(100.0f, 24.0f),
                 Position = ContentStartPosition + new Vector2(ContentSize.X / 2.0f - 50.0f, ContentSize.Y - 24.0f),
-                String = "Default",
+                TextId = 1311, // "Default"
+                SheetType = NodeData.SheetType.Addon,
                 OnClick = OnDefaultClicked,
                 DefaultHsvaColor = defaultColor,
             };
@@ -113,7 +116,8 @@ public class ColorPickerAddon : NativeAddon {
         CancelButton = new TextButtonNode {
             Position = ContentStartPosition + new Vector2(ContentSize.X - 100.0f, ContentSize.Y - 24.0f),
             Size = new Vector2(100.0f, 24.0f),
-            String = "Cancel",
+            TextId = 2, // "Cancel"
+            SheetType = NodeData.SheetType.Addon,
             OnClick = OnCancelClicked,
         };
         CancelButton.AttachNode(this);

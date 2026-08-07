@@ -4,6 +4,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
+using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
@@ -97,7 +98,8 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
             Position = new Vector2(16.0f, 8.0f),
             Size = new Vector2(68.0f, 20.0f),
             AlignmentType = AlignmentType.Center,
-            String = "OK",
+            TextId = 1,
+            SheetType = NodeData.SheetType.Addon,
         };
         TextNode.AttachNode(this);
 

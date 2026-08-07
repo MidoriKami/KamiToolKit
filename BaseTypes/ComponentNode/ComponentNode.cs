@@ -79,7 +79,6 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     /// <summary>
     /// Sets the AtkUldComponent's internal type.
     /// </summary>
-    /// <param name="type"></param>
     protected void SetInternalComponentType(ComponentType type) {
         var componentInfo = (AtkUldComponentInfo*)ComponentBase->UldManager.Objects;
 

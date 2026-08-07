@@ -3,6 +3,7 @@ using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
+using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
@@ -52,6 +53,22 @@ public unsafe class ColorSquareTextButtonNode : ButtonBase {
     }
 
     /// <summary>
+    /// Gets or sets the label nodes TextId.
+    /// </summary>
+    public uint TextId {
+        get => LabelNode.TextId;
+        set => LabelNode.TextId = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the label nodes SheetType for use with <see cref="TextId"/>.
+    /// </summary>
+    public NodeData.SheetType SheetType {
+        get => LabelNode.SheetType;
+        set => LabelNode.SheetType = value;
+    }
+
+    /// <summary>
     /// Constructs a new <see cref="ColorSquareTextButtonNode"/> instance.
     /// </summary>
     public ColorSquareTextButtonNode() {
@@ -70,7 +87,6 @@ public unsafe class ColorSquareTextButtonNode : ButtonBase {
             AlignmentType = AlignmentType.Center,
             Position = new Vector2(16.0f, 3.0f),
         };
-
         LabelNode.AttachNode(this);
 
         LoadTimelines();
