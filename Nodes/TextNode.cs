@@ -151,7 +151,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode> {
     /// Gets or sets the displayed string.
     /// </summary>
     public ReadOnlySeString String {
-        get => [ with(Node->GetText().AsSpan()) ];
+        get => new(Node->GetText().AsSpan());
         set {
             using var builder = new RentedSeStringBuilder();
             Node->SetText(builder.Builder.Append(value).GetViewAsSpan());
