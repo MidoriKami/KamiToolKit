@@ -144,8 +144,8 @@ public unsafe class IconExtras : ResNode {
             Size = new Vector2(48.0f, 12.0f),
             Position = new Vector2(3.0f, 37.0f),
             NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            Color = ColorHelper.GetColor(50),
-            TextOutlineColor = ColorHelper.GetColor(51),
+            Color = new Vector4(255, 217, 250, 255) / 255.0f,
+            TextOutlineColor = new Vector4(152, 80, 144, 255) / 255.0f,
             AlignmentType = AlignmentType.Left,
         };
         ResourceCostTextNode.AttachNode(this);
