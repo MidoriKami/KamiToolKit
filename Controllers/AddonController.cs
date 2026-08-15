@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Plugin.Services;
@@ -18,7 +19,7 @@ public class AddonController : AddonController<AtkUnitBase>;
 /// Helper class intended to make interacting with native addons much easier.
 /// The primary feature is automatic unloading, and reloading when an addon loads/unloads/reloads.
 /// </summary>
-public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable where T : unmanaged {
+public class AddonController<T> : IAddonEventController<T>, IAsyncDisposable, IDisposable where T : unmanaged {
 
     /// <summary>
     /// The addon name to bind to.
@@ -56,7 +57,7 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
     public IAddonEventController<T>.AddonControllerEvent? OnDraw { get; init; }
 
     /// <inheritdoc/>
-    public void Enable() {
+    public unsafe void Enable() {
         ThreadSafety.AssertMainThread();
         if (IsEnabled) return;
 
@@ -90,24 +91,80 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
     }
 
     /// <inheritdoc/>
-    public void Disable() {
+    public async Task EnableAsync() {
+        if (IsEnabled) return;
+
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonEvent);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PreFinalize, AddonName, OnAddonEvent);
+
+        if (OnRefresh is not null || OnPreRefresh is not null) {
+            IAddonLifecycle.Get().RegisterListener(AddonEvent.PreRefresh, AddonName, OnAddonEvent);
+            IAddonLifecycle.Get().RegisterListener(AddonEvent.PreRequestedUpdate, AddonName, OnAddonEvent);
+            IAddonLifecycle.Get().RegisterListener(AddonEvent.PostRefresh, AddonName, OnAddonEvent);
+            IAddonLifecycle.Get().RegisterListener(AddonEvent.PostRequestedUpdate, AddonName, OnAddonEvent);
+        }
+
+        if (OnUpdate is not null) {
+            IAddonLifecycle.Get().RegisterListener(AddonEvent.PostUpdate, AddonName, OnAddonEvent);
+        }
+
+        if (OnPreUpdate is not null) {
+            IAddonLifecycle.Get().RegisterListener(AddonEvent.PreUpdate, AddonName, OnAddonEvent);
+        }
+
+        if (OnDraw is not null) {
+            IAddonLifecycle.Get().RegisterListener(AddonEvent.PreDraw, AddonName, OnAddonEvent);
+        }
+
+        await IFramework.Get().Run(() => {
+            unsafe {
+                if (AddonPointer is not null) {
+                    OnSetup?.Invoke(AddonPointer);
+                }
+            }
+        });
+
+        IsEnabled = true;
+    }
+
+    /// <inheritdoc/>
+    public unsafe void Disable() {
         ThreadSafety.AssertMainThread();
         if (!IsEnabled) return;
+        IsEnabled = false;
 
         IAddonLifecycle.Get().UnregisterListener(OnAddonEvent);
 
         if (AddonPointer is not null) {
             OnFinalize?.Invoke(AddonPointer);
         }
+    }
 
+    /// <inheritdoc/>
+    public async Task DisableAsync() {
+        if (!IsEnabled) return;
         IsEnabled = false;
+
+        IAddonLifecycle.Get().UnregisterListener(OnAddonEvent);
+
+        await IFramework.Get().Run(() => {
+            unsafe {
+                if (AddonPointer is not null) {
+                    OnFinalize?.Invoke(AddonPointer);
+                }
+            }
+        });
     }
 
     /// <inheritdoc/>
     public virtual void Dispose()
         => Disable();
 
-    private void OnAddonEvent(AddonEvent type, AddonArgs args) {
+    /// <inheritdoc/>
+    public async ValueTask DisposeAsync()
+        => await DisableAsync();
+
+    private unsafe void OnAddonEvent(AddonEvent type, AddonArgs args) {
         var addon = (T*)args.Addon.Address;
 
         switch (type) {
@@ -141,7 +198,7 @@ public unsafe class AddonController<T> : IAddonEventController<T>, IDisposable w
         }
     }
 
-    private T* AddonPointer => (T*)RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
+    private unsafe T* AddonPointer => (T*)RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
 
     private bool IsEnabled { get; set; }
 }

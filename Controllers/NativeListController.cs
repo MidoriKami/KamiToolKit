@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
@@ -21,7 +22,7 @@ public class NativeListController<T> : NativeListController<T, ListItemData> whe
 /// <summary>
 /// Controller for modifying native AtkListComponents and their various parts and properties.
 /// </summary>
-public unsafe class NativeListController<T, TU> : IDisposable where T : unmanaged where TU : ListItemData, new() {
+public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T : unmanaged where TU : ListItemData, new() {
 
     /// <summary>
     /// Addon name to bind to.
@@ -31,22 +32,22 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     /// <summary>
     /// Delegate that is called when the controller is trying to determine if an element should be modified.
     /// </summary>
-    public delegate bool ShouldModifyElementHandler(T* unitBase, TU listItem);
+    public unsafe delegate bool ShouldModifyElementHandler(T* unitBase, TU listItem);
 
     /// <summary>
     /// Delegate that is called when the list controller is setting up and trying to hook the games node populator.
     /// </summary>
-    public delegate AtkComponentListItemRenderer* GetPopulatorNodeHandler(T* addon);
+    public unsafe delegate AtkComponentListItemRenderer* GetPopulatorNodeHandler(T* addon);
 
     /// <summary>
     /// Delegate that is called to apply a change to a list entry.
     /// </summary>
-    public delegate void UpdateElementHandler(T* unitBase, TU listItem);
+    public unsafe delegate void UpdateElementHandler(T* unitBase, TU listItem);
 
     /// <summary>
     /// Delegate that is called to undo a change from a list entry.
     /// </summary>
-    public delegate void ResetElementHandler(T* unitBase, TU listItem);
+    public unsafe delegate void ResetElementHandler(T* unitBase, TU listItem);
 
     /// <summary>
     /// Define a function that will return true if the provided list item should be modified by this controller.
@@ -83,7 +84,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
     /// Warning, it can't properly track modified state if the list is already opened when the controller is enabled.
     /// This must be invoked from the main game thread.
     /// </remarks>
-    public void Enable() {
+    public unsafe void Enable() {
         ThreadSafety.AssertMainThread();
 
         IAddonLifecycle.Get().RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonSetup);
@@ -94,6 +95,24 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
             IPluginLog.Get().Warning("Caution: ListController was loaded after list was initialized, data may be stale.");
             LoadPopulators(addon);
         }
+    }
+
+    /// <summary>
+    /// Enables this native list controller.
+    /// </summary>
+    public async Task EnableAsync() {
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PostSetup, AddonName, OnAddonSetup);
+        IAddonLifecycle.Get().RegisterListener(AddonEvent.PreFinalize, AddonName, OnAddonFinalize);
+
+        await IFramework.Get().Run(() => {
+            unsafe {
+                var addon = (T*)RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
+                if (addon is not null) {
+                    IPluginLog.Get().Warning("Caution: ListController was loaded after list was initialized, data may be stale.");
+                    LoadPopulators(addon);
+                }
+            }
+        });
     }
 
     /// <summary>
@@ -114,11 +133,28 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         onRendererPopulate = null;
     }
 
+    /// <summary>
+    /// Disables this native list controller.
+    /// </summary>
+    public async Task DisableAsync() {
+        IAddonLifecycle.Get().UnregisterListener(OnAddonSetup, OnAddonFinalize);
+
+        await onListPopulate.DisposeAsync();
+        onListPopulate = null;
+
+        await onRendererPopulate.DisposeAsync();
+        onRendererPopulate = null;
+    }
+
     /// <inheritdoc />
     public void Dispose()
         => Disable();
 
-    private void OnAddonSetup(AddonEvent type, AddonArgs args)
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+        => await DisableAsync();
+
+    private unsafe void OnAddonSetup(AddonEvent type, AddonArgs args)
         => LoadPopulators((T*)args.Addon.Address);
 
     private void OnAddonFinalize(AddonEvent type, AddonArgs args) {
@@ -128,7 +164,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         ModifiedIndexes.Clear();
     }
 
-    private void LoadPopulators(T* addon) {
+    private unsafe void LoadPopulators(T* addon) {
         var populateMethod = GetPopulatorNode(addon)->Populator;
 
         if (populateMethod.Populate is not null) {
@@ -142,7 +178,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         }
     }
 
-    private void OnPopulateDetour(AtkEventListener* unitBase, AtkComponentListItemPopulator.ListItemInfo* itemInfo, AtkResNode** nodeList) {
+    private unsafe void OnPopulateDetour(AtkEventListener* unitBase, AtkComponentListItemPopulator.ListItemInfo* itemInfo, AtkResNode** nodeList) {
         try {
             var listItemNode = itemInfo->ListItem->Renderer->OwnerNode;
 
@@ -180,7 +216,7 @@ public unsafe class NativeListController<T, TU> : IDisposable where T : unmanage
         }
     }
 
-    private void OnRendererPopulateDetour(AtkEventListener* unitBase, int listItemIndex, AtkResNode** nodeList, AtkComponentListItemRenderer* listItemRenderer) {
+    private unsafe void OnRendererPopulateDetour(AtkEventListener* unitBase, int listItemIndex, AtkResNode** nodeList, AtkComponentListItemRenderer* listItemRenderer) {
         try {
             var listItemNode = listItemRenderer->OwnerNode;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -14,7 +15,7 @@ namespace KamiToolKit.Controllers;
 /// Controller intended to interact with the games native Addon Factory system
 /// to fully replace a built-in game addon with a custom <see cref="NativeAddon"/>.
 /// </summary>
-public class AddonFactoryController : IDisposable {
+public class AddonFactoryController : IDisposable, IAsyncDisposable {
 
     /// <summary>
     /// Addon name to bind to.
@@ -47,6 +48,18 @@ public class AddonFactoryController : IDisposable {
     }
 
     /// <summary>
+    /// Enables the addon factory replacement.
+    /// </summary>
+    /// <remarks>
+    /// Activation will be delayed until the next game tick.
+    /// </remarks>
+    public async Task EnableAsync() {
+
+        // Just run enable, there's not really any optimizing that we can do here.
+        await IFramework.Get().Run(Enable);
+    }
+
+    /// <summary>
     /// Disables addon factory replacement and disposes any open replaced addons.
     /// </summary>
     /// <remarks>
@@ -73,9 +86,26 @@ public class AddonFactoryController : IDisposable {
         originalFactoryCreateAddress = null;
     }
 
+    /// <summary>
+    /// Disable the addon factory replacement.
+    /// </summary>
+    /// <remarks>
+    /// Applies after the next game tick.
+    /// </remarks>
+    public async Task DisableAsync() {
+
+        // Just run disable, there's not really any optimizing that we can do here.
+        await IFramework.Get().Run(Disable);
+    }
+
     /// <inheritdoc />
     public void Dispose()
         => Disable();
+
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync() {
+        await DisableAsync();
+    }
 
     private unsafe AtkUnitBase* CreateCustomAddon(RaptureAtkModule* raptureAtkModule, CStringPointer addonName, uint valueCount, AtkValue* values) {
         try {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -14,17 +15,17 @@ namespace KamiToolKit.Classes;
 /// <remarks>
 /// This version is specifically to be used for ATK/UI events.
 /// </remarks>
-public unsafe class CustomEventListener : IDisposable {
+public class CustomEventListener : IDisposable, IAsyncDisposable {
 
     /// <summary>
     /// Public implicit operator to be able to use this instance as a AtkEventListener* directly.
     /// </summary>
-    public static implicit operator AtkEventListener*(CustomEventListener listener) => listener.eventListener;
+    public static unsafe implicit operator AtkEventListener*(CustomEventListener listener) => listener.eventListener;
 
     /// <summary>
     /// Constructs a new <see cref="CustomEventListener"/> instance.
     /// </summary>
-    public CustomEventListener(AtkEventListener.Delegates.ReceiveEvent eventHandler) {
+    public unsafe CustomEventListener(AtkEventListener.Delegates.ReceiveEvent eventHandler) {
         receiveEventDelegate = eventHandler;
 
         receiveEventWrapper = ReceiveEventWrapper;
@@ -37,7 +38,7 @@ public unsafe class CustomEventListener : IDisposable {
     }
 
     /// <inheritdoc />
-    public virtual void Dispose() {
+    public virtual unsafe void Dispose() {
         if (eventListener is null) return;
 
         IMemorySpace.Free(eventListener->VirtualTable);
@@ -47,14 +48,18 @@ public unsafe class CustomEventListener : IDisposable {
         receiveEventWrapper = null;
     }
 
-    private readonly AtkEventListener* eventListener;
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+        => await IFramework.Get().Run(Dispose);
+
+    private readonly unsafe AtkEventListener* eventListener;
 
     private AtkEventListener.Delegates.ReceiveEvent? receiveEventDelegate;
     private AtkEventListener.Delegates.ReceiveEvent? receiveEventWrapper;
 
     [UnmanagedCallersOnly] private static void NullSub() { }
 
-    private void ReceiveEventWrapper(AtkEventListener* thisPtr, AtkEventType eventType, int param, AtkEvent* eventObject, AtkEventData* data) {
+    private unsafe void ReceiveEventWrapper(AtkEventListener* thisPtr, AtkEventType eventType, int param, AtkEvent* eventObject, AtkEventData* data) {
         try {
             receiveEventDelegate?.Invoke(thisPtr, eventType, param, eventObject, data);
         }

@@ -1,4 +1,6 @@
-﻿namespace KamiToolKit.Interfaces;
+﻿using System.Threading.Tasks;
+
+namespace KamiToolKit.Interfaces;
 
 /// <summary>
 /// Interface representing the functions expected of various AddonEvent Controllers.
@@ -11,9 +13,25 @@ public unsafe interface IAddonEventController<T> where T : unmanaged {
     void Enable();
 
     /// <summary>
+    /// Enable the events for this AddonEvent Controller asynchronously.
+    /// </summary>
+    /// <remarks>
+    /// The actual enable will be delayed by one game tick.
+    /// </remarks>
+    Task EnableAsync();
+
+    /// <summary>
     /// Disable/Disposes the events for this AddonEvent Controller.
     /// </summary>
     void Disable();
+
+    /// <summary>
+    /// Disable the events for this AddonEvent Controller asynchronously.
+    /// </summary>
+    /// <remarks>
+    /// The actual disable will be delayed by one game tick.
+    /// </remarks>
+    Task DisableAsync();
 
     /// <summary>
     /// Standard delegate method used for all AddonController Events.
