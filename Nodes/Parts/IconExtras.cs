@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Drawing;
+using System.Linq;
 using System.Numerics;
+using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
@@ -52,6 +54,11 @@ public unsafe class IconExtras : ResNode {
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
     public TextNode ResourceCostTextNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public TextNode CooldownTextNode { get; }
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -152,6 +159,20 @@ public unsafe class IconExtras : ResNode {
             TextFlags = TextFlags.Edge,
         };
         ResourceCostTextNode.AttachNode(this);
+
+        CooldownTextNode = new TextNode {
+            NodeId = 22,
+            Size = new Vector2(40.0f, 35.0f),
+            Position = new Vector2(4.0f, 7.0f),
+            NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
+            TextColor = KnownColor.White.Vector(),
+            TextOutlineColor = KnownColor.Black.Vector(),
+            AlignmentType = AlignmentType.Center,
+            TextFlags = TextFlags.Edge,
+            FontSize = 24,
+            FontType = FontType.TrumpGothic,
+        };
+        CooldownTextNode.AttachNode(this);
 
         ClickFlashImageNode = new ImageNode {
             NodeId = 7,
