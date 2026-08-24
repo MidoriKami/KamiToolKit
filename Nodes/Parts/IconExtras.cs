@@ -145,7 +145,6 @@ public unsafe class IconExtras : ResNode {
         };
         QuantityTextNode.AttachNode(this);
 
-        // Also cooldown time text for non-globals
         ResourceCostTextNode = new TextNode {
             NodeId = 8,
             Size = new Vector2(48.0f, 12.0f),
