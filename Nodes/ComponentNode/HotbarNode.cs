@@ -43,7 +43,7 @@ public class HotbarNode : DragDropNode {
             ResourceCost = HotbarState.CostValue;
             CostTextColor = HotbarState.CostType switch {
                 2 => CostTextColor.Mana,
-                5 => CostTextColor.DoH,
+                5 => CostTextColor.DoL,
                 _ => CostTextColor.Mana,
             };
 

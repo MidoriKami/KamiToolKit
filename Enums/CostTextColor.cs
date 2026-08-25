@@ -18,7 +18,7 @@ public enum CostTextColor {
     /// <summary>
     /// Brown-ish Color representing CP.
     /// </summary>
-    DoH,
+    DoL,
 }
 
 /// <summary>
@@ -32,7 +32,7 @@ public static class CostTextColorExtensions {
         /// </summary>
         public Vector4 TextColor => color switch {
             CostTextColor.Mana => new Vector4(1.000f, 0.851f, 0.980f, 1.000f), // Slight Purple
-            CostTextColor.DoH => new Vector4(1.000f, 0.945f, 0.831f, 1.000f), // Slight brown
+            CostTextColor.DoL => new Vector4(1.000f, 0.945f, 0.831f, 1.000f), // Slight brown
             _ => KnownColor.White.Vector(),
         };
 
@@ -41,7 +41,7 @@ public static class CostTextColorExtensions {
         /// </summary>
         public Vector4 TextOutlineColor => color switch {
             CostTextColor.Mana => new Vector4(0.596f, 0.314f, 0.565f, 1.000f),
-            CostTextColor.DoH => new Vector4(0.498f, 0.486f, 0.114f, 1.000f),
+            CostTextColor.DoL => new Vector4(0.498f, 0.486f, 0.114f, 1.000f),
             _ => KnownColor.Black.Vector(),
         };
     }
