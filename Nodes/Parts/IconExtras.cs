@@ -66,6 +66,18 @@ public unsafe class IconExtras : ResNode {
     public ImageNode TimelineImageNode { get; }
 
     /// <summary>
+    /// Gets or sets the current cost text color.
+    /// </summary>
+    public CostTextColor CostTextColor {
+        get;
+        set {
+            field = value;
+            ResourceCostTextNode.TextColor = value.TextColor;
+            ResourceCostTextNode.TextOutlineColor = value.TextOutlineColor;
+        }
+    } = CostTextColor.Mana;
+
+    /// <summary>
     /// Constructs a new <see cref="IconExtras"/>
     /// </summary>
     public IconExtras() {
@@ -150,8 +162,8 @@ public unsafe class IconExtras : ResNode {
             Size = new Vector2(48.0f, 12.0f),
             Position = new Vector2(3.0f, 37.0f),
             NodeFlags = NodeFlags.Enabled | NodeFlags.EmitsEvents,
-            Color = new Vector4(1.000f, 0.851f, 0.980f, 1.000f), // Slight Purple
-            TextOutlineColor = new Vector4(0.596f, 0.314f, 0.565f, 1.000f),
+            Color = CostTextColor.Mana.TextColor,
+            TextOutlineColor = CostTextColor.Mana.TextOutlineColor,
             AlignmentType = AlignmentType.Left,
             FontType = FontType.Axis,
             FontSize = 12,

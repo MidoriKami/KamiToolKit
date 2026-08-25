@@ -1,8 +1,10 @@
 ﻿
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 
 namespace KamiToolKit.Nodes;
 
@@ -17,6 +19,8 @@ public class HotbarNode : DragDropNode {
     public unsafe void Update() {
         var hotbarModule = RaptureHotbarModule.Instance();
         if (hotbarModule is null) return;
+
+        HotbarState = new Experimental.HotbarUiIntermediate();
 
         fixed (RaptureHotbarModule.HotbarSlot* data = &hotbarData)
         fixed (Experimental.HotbarUiIntermediate* state = &HotbarState)
@@ -33,10 +37,17 @@ public class HotbarNode : DragDropNode {
 
             IconId = HotbarState.IconId;
 
-            ShowResourceCost = HotbarState.CostType is 2;
-            ResourceCost = HotbarState.CostValue;
+            IsAvailable = HotbarState.ActionAvailable1 || HotbarState.ActionAvailable2;
 
-            ShowChargeCount = HotbarState.CostType is 0;
+            ShowResourceCost = HotbarState.CostType is 2 or 5; // Mana or GP
+            ResourceCost = HotbarState.CostValue;
+            CostTextColor = HotbarState.CostType switch {
+                2 => CostTextColor.Mana,
+                5 => CostTextColor.DoH,
+                _ => CostTextColor.Mana,
+            };
+
+            ShowChargeCount = HotbarState.CooldownMode is 3;
             ChargeCount = HotbarState.CurrentCharges;
             ChargePercent = HotbarState.ChargePercent / 100.0f;
 
@@ -45,6 +56,17 @@ public class HotbarNode : DragDropNode {
 
             ShowCooldownPercent = HotbarState.CooldownPercent is not 0;
             CooldownPercent = HotbarState.CooldownPercent / 100.0f;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets whether this action is available for use.
+    /// </summary>
+    public bool IsAvailable {
+        get;
+        set {
+            field = value;
+            IconNode.IconImage.MultiplyColor = value ? new Vector3(1.0f, 1.0f, 1.0f) : new Vector3(0.5f, 0.5f, 0.5f);
         }
     }
 
@@ -147,6 +169,14 @@ public class HotbarNode : DragDropNode {
     }
 
     /// <summary>
+    /// Gets or sets the color used for the cost text.
+    /// </summary>
+    public CostTextColor CostTextColor {
+        get => IconNode.IconExtras.CostTextColor;
+        set => IconNode.IconExtras.CostTextColor = value;
+    }
+
+    /// <summary>
     /// Sets this hotbar slot to the specified action.
     /// </summary>
     /// <param name="actionId"></param>
@@ -166,7 +196,6 @@ public class HotbarNode : DragDropNode {
         OnDiscard = OnHotbarNodeDiscard;
     }
 
-    // todo: figure out how to make this behave better
     private void OnHotbarNodeRollOver(DragDropNode thisNode) {
         switch (Payload.Type) {
             case DragDropType.Action:
@@ -198,7 +227,9 @@ public class HotbarNode : DragDropNode {
     }
 
     private void OnHotbarNodeDiscard(DragDropNode thisNode) {
-        // todo: this
+        Payload.Clear();
+        HotbarState = new Experimental.HotbarUiIntermediate();
+        hotbarData.Set(RaptureHotbarModule.HotbarSlotType.Empty, 0);
     }
 
     private RaptureHotbarModule.HotbarSlot hotbarData;
@@ -207,5 +238,5 @@ public class HotbarNode : DragDropNode {
     /// <summary>
     /// Gets the current hotbars state values. Not intended for external use.
     /// </summary>
-    public readonly Experimental.HotbarUiIntermediate HotbarState;
+    public Experimental.HotbarUiIntermediate HotbarState;
 }
