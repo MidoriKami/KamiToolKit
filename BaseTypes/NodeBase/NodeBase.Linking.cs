@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
@@ -99,6 +100,22 @@ public abstract unsafe partial class NodeBase {
 
         ThreadSafety.AssertMainThread();
         if (targetNode is null) return;
+
+        // Guard against double-attach, double attaching will deadlock the game.
+        var childNodeList = targetPosition switch {
+            NodePosition.AsFirstChild or NodePosition.AsLastChild
+                => targetNode.ChildNodes,
+
+            NodePosition.BeforeAllSiblings or NodePosition.AfterAllSiblings or NodePosition.BeforeTarget or NodePosition.AfterTarget
+                => targetNode.parentNode?.ChildNodes,
+
+            _ => null,
+        };
+
+        if (childNodeList?.Any(childNode => childNode == this) ?? false) {
+            IPluginLog.Get().Warning("Attempted to double-attach node to parent, attach was aborted.");
+            return;
+        }
 
         PerformNativeAttach(targetNode, targetPosition);
 
