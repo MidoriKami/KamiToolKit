@@ -36,6 +36,20 @@ public partial class NativeAddon {
     }
 
     /// <summary>
+    /// Initializes and Opens this instance of Addon on the games main thread.
+    /// </summary>
+    /// <remarks>
+    /// This function will wait for the window to fully open before completing.
+    /// </remarks>
+    public async Task OpenAsync() {
+        await IFramework.Get().Run(Open);
+
+        while (IGameGui.Get().GetAddonByName(InternalName).IsNull) {
+            await Task.Delay(16);
+        }
+    }
+
+    /// <summary>
     /// Closes addon, this will cause it to fully close and deallocate.
     /// This NativeAddon object will remain valid, you can call Open to re-allocate this addon.
     /// </summary>
