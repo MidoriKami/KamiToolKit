@@ -4,7 +4,7 @@ using KamiToolKit.Timelines;
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Alias for <see cref="TimelineNode{T}"/> to make it easier to fine and use this node.
+/// Alias for <see cref="TimelineNode{T}"/> to make it easier to find and use this node.
 /// </summary>
 /// <typeparam name="T">The node type to be contained within this node.</typeparam>
 public class AnimationNode<T> : TimelineNode<T> where T : NodeBase, new();
