@@ -177,6 +177,16 @@ public class HotbarNode : DragDropNode {
     }
 
     /// <summary>
+    /// Gets this hotbar slot to the specific type and id.
+    /// </summary>
+    public void SetSlot(DragDropType type, uint id) {
+        Payload.Type = type;
+        Payload.Int2 = (int) id;
+
+        hotbarData.Set(UIGlobals.GetHotbarSlotTypeFromDragDropType(Payload.Type), (uint) Payload.Int2);
+    }
+
+    /// <summary>
     /// Sets this hotbar slot to the specified action.
     /// </summary>
     /// <param name="actionId"></param>
