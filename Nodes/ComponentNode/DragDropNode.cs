@@ -150,6 +150,14 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
     }
 
     /// <summary>
+    /// Gets or sets the visibility of the background frame.
+    /// </summary>
+    public bool IsBackgroundShown {
+        get => DragDropBackgroundNode.IsVisible;
+        set => DragDropBackgroundNode.IsVisible = value;
+    }
+
+    /// <summary>
     /// Gets or sets the text tooltip for this node.
     /// </summary>
     public override ReadOnlySeString TextTooltip {
