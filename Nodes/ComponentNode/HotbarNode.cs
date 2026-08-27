@@ -189,7 +189,6 @@ public class HotbarNode : DragDropNode {
     /// <summary>
     /// Sets this hotbar slot to the specified action.
     /// </summary>
-    /// <param name="actionId"></param>
     public void SetAction(uint actionId) {
         Payload.Type = DragDropType.Action;
         Payload.Int2 = (int) actionId;
