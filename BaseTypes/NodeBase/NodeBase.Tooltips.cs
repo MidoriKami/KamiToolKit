@@ -18,6 +18,8 @@ public unsafe partial class NodeBase {
     public virtual ReadOnlySeString TextTooltip {
         get;
         set {
+            if (field == value) return;
+
             if (!value.IsEmpty) {
                 TryRegisterTooltipEvents();
                 tooltipType |= AtkTooltipType.Text;
@@ -43,6 +45,8 @@ public unsafe partial class NodeBase {
     public virtual uint ActionTooltip {
         get;
         set {
+            if (field == value) return;
+
             if (value is not 0) {
                 TryRegisterTooltipEvents();
                 tooltipType |= AtkTooltipType.Action;
@@ -68,6 +72,8 @@ public unsafe partial class NodeBase {
     public virtual uint ItemTooltip {
         get;
         set {
+            if (field == value) return;
+
             if (value is not 0) {
                 TryRegisterTooltipEvents();
                 tooltipType |= AtkTooltipType.Item;
@@ -93,6 +99,8 @@ public unsafe partial class NodeBase {
     public virtual InventoryItemTooltip? InventoryItemTooltip {
         get;
         set {
+            if (field == value) return;
+
             if (value is not null) {
                 TryRegisterTooltipEvents();
                 tooltipType |= AtkTooltipType.Item;
