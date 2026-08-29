@@ -170,6 +170,7 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
                     AddEvent(AtkEventType.DragDropRollOut, HideTooltip);
 
                     TooltipRegistered = true;
+                    base.TextTooltip = value;
                     break;
             }
         }
@@ -188,7 +189,6 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
     /// </summary>
     public override void ShowTooltip() {
         if (AtkStage.Instance()->DragDropManager.IsDragging) return;
-        ActionTooltip = (uint)Payload.Int2;
 
         base.ShowTooltip();
     }

@@ -1,5 +1,6 @@
 ﻿
 using System.Numerics;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -20,10 +21,11 @@ public class HotbarNode : DragDropNode {
         var hotbarModule = RaptureHotbarModule.Instance();
         if (hotbarModule is null) return;
 
-        HotbarState = new Experimental.HotbarUiIntermediate();
+        hotbarState = new Experimental.HotbarUiIntermediate();
+        var isMacro = hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Macro;
 
         fixed (RaptureHotbarModule.HotbarSlot* data = &hotbarData)
-        fixed (Experimental.HotbarUiIntermediate* state = &HotbarState)
+        fixed (Experimental.HotbarUiIntermediate* state = &hotbarState)
         {
             RaptureHotbarModule.HotbarSlotType outType;
             uint outActionId;
@@ -35,27 +37,30 @@ public class HotbarNode : DragDropNode {
 
             Experimental.UpdateHotbarSlotIntermediateData?.Invoke(RaptureHotbarModule.Instance(), data, state);
 
-            IconId = HotbarState.IconId;
+            IconId = hotbarState.IconId;
 
-            IsAvailable = HotbarState.ActionAvailable1 || HotbarState.ActionAvailable2;
+            var isAvailable = hotbarState.ActionAvailable1 || hotbarState.ActionAvailable2;
 
-            ShowResourceCost = HotbarState.CostType is 2 or 5; // Mana or GP
-            ResourceCost = HotbarState.CostValue;
-            CostTextColor = HotbarState.CostType switch {
+            IsAvailable = isAvailable || isMacro;
+            ShowMacroIcon = isMacro;
+
+            ShowResourceCost = hotbarState.CostType is 2 or 5; // Mana or GP
+            ResourceCost = hotbarState.CostValue;
+            CostTextColor = hotbarState.CostType switch {
                 2 => CostTextColor.Mana,
                 5 => CostTextColor.DoL,
                 _ => CostTextColor.Mana,
             };
 
-            ShowChargeCount = HotbarState.CooldownMode is 3;
-            ChargeCount = HotbarState.CurrentCharges;
-            ChargePercent = HotbarState.ChargePercent / 100.0f;
+            ShowChargeCount = hotbarState.CooldownMode is 3;
+            ChargeCount = hotbarState.CurrentCharges;
+            ChargePercent = hotbarState.ChargePercent / 100.0f;
 
-            ShowCooldownSeconds = HotbarState.CooldownSeconds is not 0;
-            CooldownSeconds = HotbarState.CooldownSeconds;
+            ShowCooldownSeconds = hotbarState.CooldownSeconds is not 0;
+            CooldownSeconds = hotbarState.CooldownSeconds;
 
-            ShowCooldownPercent = HotbarState.CooldownPercent is not 0;
-            CooldownPercent = HotbarState.CooldownPercent / 100.0f;
+            ShowCooldownPercent = hotbarState.CooldownPercent is not 0;
+            CooldownPercent = hotbarState.CooldownPercent / 100.0f;
         }
     }
 
@@ -67,6 +72,21 @@ public class HotbarNode : DragDropNode {
         set {
             field = value;
             IconNode.IconImage.MultiplyColor = value ? new Vector3(1.0f, 1.0f, 1.0f) : new Vector3(0.5f, 0.5f, 0.5f);
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets whether the gear icon representing a macro is shown.
+    /// </summary>
+    public bool ShowMacroIcon {
+        get;
+        set {
+            field = value;
+
+            if (value) {
+                IconNode.IconIndicator2.IconNode.PartId = 14;
+            }
+            IconNode.IconIndicator2.IconNode.IsVisible = value;
         }
     }
 
@@ -206,13 +226,25 @@ public class HotbarNode : DragDropNode {
     }
 
     private void OnHotbarNodeRollOver(DragDropNode thisNode) {
-        switch (Payload.Type) {
-            case DragDropType.Action:
-                HideTooltip();
-                ActionTooltip = (uint) Payload.Int2;
-                ShowTooltip();
+        HideTooltip();
+
+        switch (hotbarData.ApparentSlotType) {
+            case RaptureHotbarModule.HotbarSlotType.Action:
+                ActionTooltip = hotbarData.ApparentActionId;
+
+                // Slot looks like an action, but is actually a macro, show macro name too!
+                if (hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Macro) {
+                    TextTooltip = hotbarData.PopUpHelp.AsReadOnlySeString();
+                }
+                break;
+
+            case RaptureHotbarModule.HotbarSlotType.Macro:
+                TextTooltip = hotbarData.PopUpHelp.AsReadOnlySeString();
+                ActionTooltip = 0;
                 break;
         }
+
+        ShowTooltip();
     }
 
     private void OnHotbarNodeRollOut(DragDropNode thisNode) {
@@ -237,15 +269,10 @@ public class HotbarNode : DragDropNode {
 
     private void OnHotbarNodeDiscard(DragDropNode thisNode) {
         Payload.Clear();
-        HotbarState = new Experimental.HotbarUiIntermediate();
+        hotbarState = new Experimental.HotbarUiIntermediate();
         hotbarData.Set(RaptureHotbarModule.HotbarSlotType.Empty, 0);
     }
 
     private RaptureHotbarModule.HotbarSlot hotbarData;
-
-    // todo: only available temporarily for debugging.
-    /// <summary>
-    /// Gets the current hotbars state values. Not intended for external use.
-    /// </summary>
-    public Experimental.HotbarUiIntermediate HotbarState;
+    private Experimental.HotbarUiIntermediate hotbarState;
 }
