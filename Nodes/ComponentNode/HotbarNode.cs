@@ -231,19 +231,18 @@ public class HotbarNode : DragDropNode {
     private void OnHotbarNodeRollOver(DragDropNode thisNode) {
         HideTooltip();
 
-        switch (hotbarData.ApparentSlotType) {
+        switch (hotbarData.CommandType) {
             case RaptureHotbarModule.HotbarSlotType.Action:
-                ActionTooltip = hotbarData.ApparentActionId;
-
-                // Slot looks like an action, but is actually a macro, show macro name too!
-                if (hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Macro) {
-                    TextTooltip = hotbarData.PopUpHelp.AsReadOnlySeString();
-                }
+                ActionTooltip = hotbarData.CommandId;
+                TextTooltip = string.Empty;
                 break;
 
             case RaptureHotbarModule.HotbarSlotType.Macro:
                 TextTooltip = hotbarData.PopUpHelp.AsReadOnlySeString();
-                ActionTooltip = 0;
+
+                if (hotbarData.ApparentSlotType is RaptureHotbarModule.HotbarSlotType.Action) {
+                    ActionTooltip = hotbarData.ApparentActionId;
+                }
                 break;
         }
 
