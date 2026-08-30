@@ -1,11 +1,16 @@
 ﻿
 using System.Numerics;
+using Dalamud.Game.ClientState.Keys;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Internal.Classes;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -13,6 +18,11 @@ namespace KamiToolKit.Nodes;
 /// Specialization of <see cref="DragDropNode"/> that has handy accessors for things used to represent a hotbar slot.
 /// </summary>
 public class HotbarNode : DragDropNode {
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public TextNode KeybindTextNode { get; }
 
     /// <summary>
     /// Updates the hotbar slots current state, cost, icon, and various other fields.
@@ -26,6 +36,7 @@ public class HotbarNode : DragDropNode {
         };
 
         var isMacro = hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Macro;
+        var isEmpty = hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Empty;
 
         fixed (RaptureHotbarModule.HotbarSlot* data = &hotbarData)
         fixed (Experimental.HotbarUiIntermediate* state = &hotbarState)
@@ -64,7 +75,15 @@ public class HotbarNode : DragDropNode {
 
             ShowCooldownPercent = hotbarState.CooldownPercent is not 0;
             CooldownPercent = hotbarState.CooldownPercent / 100.0f;
+
+            if (KeyBind is not null) {
+                KeybindTextNode.String = GetKeybindText(KeyBind);
+            }
+
+            KeybindTextNode.IsVisible = KeyBind is not null && !isEmpty;
         }
+
+        TryProcessKeybind();
     }
 
     /// <summary>
@@ -200,6 +219,11 @@ public class HotbarNode : DragDropNode {
     }
 
     /// <summary>
+    /// Gets or sets the keybind that will activate this slot.
+    /// </summary>
+    public KeySetting? KeyBind { get; set; }
+
+    /// <summary>
     /// Gets this hotbar slot to the specific type and id.
     /// </summary>
     public void SetSlot(DragDropType type, uint id) {
@@ -208,6 +232,12 @@ public class HotbarNode : DragDropNode {
 
         hotbarData.Set(UIGlobals.GetHotbarSlotTypeFromDragDropType(Payload.Type), (uint) Payload.Int2);
     }
+
+    /// <summary>
+    /// Function that is called when the associated <see cref="KeyBind"/> is pressed.
+    /// </summary>
+    protected virtual void OnKeybindPressed()
+        => OnHotbarNodeClicked(this);
 
     /// <summary>
     /// Sets this hotbar slot to the specified action.
@@ -221,6 +251,16 @@ public class HotbarNode : DragDropNode {
 
     /// <inheritdoc />
     public HotbarNode() {
+        KeybindTextNode = new TextNode {
+            NodeId = 4,
+            Position = new Vector2(1.0f, -6.0f),
+            Size = new Vector2(50.0f, 20.0f),
+            FontType = FontType.MiedingerMed,
+            TextOutlineColor = new Vector4(0.200f, 0.200f, 0.200f, 1.000f),
+            TextFlags = TextFlags.Edge | TextFlags.Ellipsis | (TextFlags) 0x8000,
+        };
+        KeybindTextNode.AttachNode(this);
+
         OnRollOver = OnHotbarNodeRollOver;
         OnRollOut = OnHotbarNodeRollOut;
         OnPayloadAccepted = OnHotbarNodePayloadAccepted;
@@ -273,6 +313,62 @@ public class HotbarNode : DragDropNode {
         Payload.Clear();
         hotbarState = new Experimental.HotbarUiIntermediate();
         hotbarData.Set(RaptureHotbarModule.HotbarSlotType.Empty, 0);
+    }
+
+    private unsafe void TryProcessKeybind() {
+        if (KeyBind is not { Key: not SeVirtualKey.NO_KEY } keyBind) return;
+        if (RaptureAtkModule.Instance()->IsTextInputActive()) return;
+
+        var keyStateService = IKeyState.Get();
+        if (!keyStateService.IsVirtualKeyValid((int)keyBind.Key)) return;
+
+        // Main key isn't pressed
+        if (!keyStateService[(int)keyBind.Key]) return;
+
+        // Only allow one modifier key, with priority Ctrl -> Alt -> Shift
+        VirtualKey? modifierKey = keyBind.KeyModifier switch {
+            _ when keyBind.KeyModifier.HasFlag(KeyModifierFlag.Ctrl) => VirtualKey.CONTROL,
+            _ when keyBind.KeyModifier.HasFlag(KeyModifierFlag.Alt) => VirtualKey.MENU,
+            _ when keyBind.KeyModifier.HasFlag(KeyModifierFlag.Shift) => VirtualKey.SHIFT,
+            _ => null,
+        };
+
+        // If modifier is required
+        if (modifierKey is { } modifier) {
+
+            // But isn't valid, return.
+            if (!keyStateService.IsVirtualKeyValid(modifier)) {
+                return;
+            }
+
+            // Or isn't pressed, return.
+            if (!keyStateService[modifier]) {
+                return;
+            }
+        }
+
+        // Modifier (if any), and main key is pressed here.
+
+        // Clear the pressed key, leave modifiers pressed.
+        keyStateService[(int)keyBind.Key] = false;
+
+        OnKeybindPressed();
+    }
+
+    /// <summary>
+    /// Gets the displayed string used to represent a keybind.
+    /// </summary>
+    public static ReadOnlySeString GetKeybindText(KeySetting? keybind) {
+        if (keybind is not {} keyBind) return string.Empty;
+
+        ReadOnlySeString? modifierKey = keyBind.KeyModifier switch {
+            _ when keyBind.KeyModifier.HasFlag(KeyModifierFlag.Ctrl) => "¢",
+            _ when keyBind.KeyModifier.HasFlag(KeyModifierFlag.Alt) => "ª",
+            _ when keyBind.KeyModifier.HasFlag(KeyModifierFlag.Shift) => "§",
+            _ => null,
+        };
+
+        return $"{modifierKey}{(int)keyBind.Key - '0'}";
     }
 
     private RaptureHotbarModule.HotbarSlot hotbarData;
