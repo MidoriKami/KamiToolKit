@@ -1,6 +1,8 @@
 ﻿
+using System.Drawing;
 using System.Numerics;
 using Dalamud.Game.ClientState.Keys;
+using Dalamud.Interface;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
@@ -256,6 +258,7 @@ public class HotbarNode : DragDropNode {
             Position = new Vector2(1.0f, -6.0f),
             Size = new Vector2(50.0f, 20.0f),
             FontType = FontType.MiedingerMed,
+            TextColor = KnownColor.White.Vector(),
             TextOutlineColor = new Vector4(0.200f, 0.200f, 0.200f, 1.000f),
             TextFlags = TextFlags.Edge | TextFlags.Ellipsis | (TextFlags) 0x8000,
         };
