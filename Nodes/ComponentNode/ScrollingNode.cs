@@ -148,19 +148,8 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        if (IsHorizontalMode) {
-            ContentNode.Height = Height;
-        }
-        else {
-            ContentNode.Width = Width;
-        }
-
         ClippingContentNode.Size = Size;
         ScrollingCollisionNode.Size = Size;
-
-        if (ContentNode is ILayoutListNode layoutNode) {
-            layoutNode.RecalculateLayout();
-        }
 
         var oldPosition = ScrollBarNode.ScrollPosition;
         ScrollBarNode.ScrollPosition = 0;
@@ -175,5 +164,21 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
 
         ScrollBarNode.SetContentNodes(ContentNode, ScrollingCollisionNode);
         ScrollBarNode.ScrollPosition = Math.Clamp(oldPosition, 0, ScrollBarNode.ScrollMaxPosition);
+
+        if (IsHorizontalMode) {
+            ContentNode.Height = Height;
+        }
+        else {
+            if (ScrollBarNode.IsVisible) {
+                ContentNode.Width = Width - ScrollBarNode.Width - 2.0f;
+            }
+            else {
+                ContentNode.Width = Width;
+            }
+        }
+
+        if (ContentNode is ILayoutListNode layoutNode) {
+            layoutNode.RecalculateLayout();
+        }
     }
 }
