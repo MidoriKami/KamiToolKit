@@ -21,7 +21,10 @@ public class HotbarNode : DragDropNode {
         var hotbarModule = RaptureHotbarModule.Instance();
         if (hotbarModule is null) return;
 
-        hotbarState = new Experimental.HotbarUiIntermediate();
+        hotbarState = new Experimental.HotbarUiIntermediate {
+            PopUpHelpText = null,
+        };
+
         var isMacro = hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Macro;
 
         fixed (RaptureHotbarModule.HotbarSlot* data = &hotbarData)
