@@ -273,6 +273,8 @@ public class HotbarNode : DragDropNode {
     private void OnHotbarNodeRollOver(DragDropNode thisNode) {
         HideTooltip();
 
+        if (hotbarData.IsEmpty) return;
+
         switch (hotbarData.CommandType) {
             case RaptureHotbarModule.HotbarSlotType.Action:
                 ActionTooltip = hotbarData.CommandId;
