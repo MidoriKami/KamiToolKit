@@ -37,6 +37,10 @@ public class HotbarNode : DragDropNode {
             PopUpHelpText = null,
         };
 
+        // Update hotbar data each frame, this is probably wasteful,
+        // but we're still triggering like 1/10th the updates native does, so sue me.
+        hotbarData.Set(UIGlobals.GetHotbarSlotTypeFromDragDropType(Payload.Type), (uint) Payload.Int2);
+
         var isMacro = hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Macro;
 
         fixed (RaptureHotbarModule.HotbarSlot* data = &hotbarData)
