@@ -1,6 +1,8 @@
 ﻿
+using System;
 using System.Drawing;
 using System.Numerics;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface;
 using Dalamud.Plugin.Services;
@@ -89,6 +91,11 @@ public class HotbarNode : DragDropNode {
         }
 
         TryProcessKeybind();
+
+        if (lastClickTime is not null && DateTime.UtcNow - lastClickTime > TimeSpan.FromMilliseconds(250)) {
+            IconNode.IconExtras.Timeline?.PlayAnimation(4);
+            lastClickTime = null;
+        }
     }
 
     /// <summary>
@@ -322,6 +329,8 @@ public class HotbarNode : DragDropNode {
 
         fixed (RaptureHotbarModule.HotbarSlot* hotbarSlotData = &hotbarData) {
             hotbarModule->ExecuteSlot(hotbarSlotData);
+            IconNode.IconExtras.Timeline?.PlayAnimation(3, true);
+            lastClickTime = DateTime.UtcNow;
         }
     }
 
@@ -342,6 +351,7 @@ public class HotbarNode : DragDropNode {
     }
 
     private unsafe void TryProcessKeybind() {
+        if (ICondition.Get().Any(ConditionFlag.OccupiedInQuestEvent)) return;
         if (KeyBind is not { Key: not SeVirtualKey.NO_KEY } keyBind) return;
         if (RaptureAtkModule.Instance()->IsTextInputActive()) return;
 
@@ -399,6 +409,7 @@ public class HotbarNode : DragDropNode {
 
     private RaptureHotbarModule.HotbarSlot hotbarData;
     private Experimental.HotbarUiIntermediate hotbarState;
+    private DateTime? lastClickTime;
 
     private static HotbarNode? dragSourceNode;
 }
