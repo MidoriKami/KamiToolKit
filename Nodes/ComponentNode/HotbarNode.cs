@@ -268,6 +268,8 @@ public class HotbarNode : DragDropNode {
         OnPayloadAccepted = OnHotbarNodePayloadAccepted;
         OnClicked = OnHotbarNodeClicked;
         OnDiscard = OnHotbarNodeDiscard;
+        OnBegin = OnDragDropBegin;
+        OnEnd = OnDragDropEnd;
     }
 
     private void OnHotbarNodeRollOver(DragDropNode thisNode) {
@@ -302,6 +304,12 @@ public class HotbarNode : DragDropNode {
         Payload.Int2 = payload.Int2;
 
         hotbarData.Set(UIGlobals.GetHotbarSlotTypeFromDragDropType(payload.Type), (uint) payload.Int2);
+
+        // Discard the source nod eif it's known.
+        if (dragSourceNode is not null) {
+            dragSourceNode.OnDiscard?.Invoke(dragSourceNode);
+            dragSourceNode.Update();
+        }
     }
 
     private unsafe void OnHotbarNodeClicked(DragDropNode thisNode) {
@@ -317,6 +325,16 @@ public class HotbarNode : DragDropNode {
         Payload.Clear();
         hotbarState = new Experimental.HotbarUiIntermediate();
         hotbarData.Set(RaptureHotbarModule.HotbarSlotType.Empty, 0);
+    }
+
+    private void OnDragDropBegin(DragDropNode node) {
+        if (node is not HotbarNode hotbarNode) return;
+
+        dragSourceNode = hotbarNode;
+    }
+
+    private void OnDragDropEnd(DragDropNode node) {
+        dragSourceNode = null;
     }
 
     private unsafe void TryProcessKeybind() {
@@ -377,4 +395,6 @@ public class HotbarNode : DragDropNode {
 
     private RaptureHotbarModule.HotbarSlot hotbarData;
     private Experimental.HotbarUiIntermediate hotbarState;
+
+    private static HotbarNode? dragSourceNode;
 }
