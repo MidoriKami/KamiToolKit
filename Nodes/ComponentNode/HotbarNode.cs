@@ -38,7 +38,6 @@ public class HotbarNode : DragDropNode {
         };
 
         var isMacro = hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Macro;
-        var isEmpty = hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Empty;
 
         fixed (RaptureHotbarModule.HotbarSlot* data = &hotbarData)
         fixed (Experimental.HotbarUiIntermediate* state = &hotbarState)
@@ -82,7 +81,7 @@ public class HotbarNode : DragDropNode {
                 KeybindTextNode.String = GetKeybindText(KeyBind);
             }
 
-            KeybindTextNode.IsVisible = KeyBind is not null && !isEmpty;
+            KeybindTextNode.IsVisible = KeyBind is not null && !hotbarData.IsEmpty || IsBackgroundShown;
         }
 
         TryProcessKeybind();
