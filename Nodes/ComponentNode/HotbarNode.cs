@@ -92,7 +92,7 @@ public class HotbarNode : DragDropNode {
 
         TryProcessKeybind();
 
-        if (lastClickTime is not null && DateTime.UtcNow - lastClickTime > TimeSpan.FromMilliseconds(250)) {
+        if (lastClickTime is not null && DateTime.UtcNow - lastClickTime > TimeSpan.FromMilliseconds(330)) {
             IconNode.IconExtras.Timeline?.PlayAnimation(4);
             lastClickTime = null;
         }
