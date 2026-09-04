@@ -75,7 +75,10 @@ public abstract unsafe partial class NodeBase {
         set {
             ResNode->SetWidth((ushort)value);
             if (value >= 0) {
+                if (isInsideSizeChanged) return;
+                isInsideSizeChanged = true;
                 OnSizeChanged();
+                isInsideSizeChanged = false;
             }
         }
     }
@@ -92,7 +95,10 @@ public abstract unsafe partial class NodeBase {
             ResNode->SetHeight((ushort)value);
 
             if (value >= 0) {
+                if (isInsideSizeChanged) return;
+                isInsideSizeChanged = true;
                 OnSizeChanged();
+                isInsideSizeChanged = false;
             }
         }
     }
@@ -110,7 +116,10 @@ public abstract unsafe partial class NodeBase {
             ResNode->SetHeight((ushort)value.Y);
 
             if (value is { X: >= 0, Y: >= 0}) {
+                if (isInsideSizeChanged) return;
+                isInsideSizeChanged = true;
                 OnSizeChanged();
+                isInsideSizeChanged = false;
             }
         }
     }
@@ -423,4 +432,5 @@ public abstract unsafe partial class NodeBase {
     private Action<bool>? OnVisibilityToggled { get; set; }
 
     private bool? lastIsVisible;
+    private bool isInsideSizeChanged;
 }
