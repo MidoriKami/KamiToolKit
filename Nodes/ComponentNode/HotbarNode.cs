@@ -83,10 +83,7 @@ public class HotbarNode : DragDropNode {
             ShowCooldownPercent = hotbarState.CooldownPercent is not 0;
             CooldownPercent = hotbarState.CooldownPercent / 100.0f;
 
-            if (KeyBind is not null) {
-                KeybindTextNode.String = GetKeybindText(KeyBind);
-            }
-
+            KeybindTextNode.String = KeyBind is null ? string.Empty : GetKeybindText(KeyBind);
             KeybindTextNode.IsVisible = KeyBind is not null && !hotbarData.IsEmpty || IsBackgroundShown;
         }
 
@@ -404,7 +401,7 @@ public class HotbarNode : DragDropNode {
             _ => null,
         };
 
-        return $"{modifierKey}{(int)keyBind.Key - '0'}";
+        return $"{modifierKey}{(char)keyBind.Key}";
     }
 
     private RaptureHotbarModule.HotbarSlot hotbarData;
