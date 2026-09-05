@@ -38,6 +38,8 @@ public static class KamiToolKitLibrary {
     internal static ResourceManager? ResourceManager;
     internal static CultureInfo? CurrentCulture;
 
+    internal static AddonConfigFile? AddonConfigFile;
+
     private static bool debugMode;
     private static WindowSystem? debugWindowSystem;
     private static DebugWindow? debugWindow;
@@ -62,7 +64,9 @@ public static class KamiToolKitLibrary {
 
         IPluginLog.Get().Info($"KamiToolKit initialized for {PluginInterface.InternalName} Default SubTitle: '{defaultWindowSubtitle}'");
 
-        NativeAddon.InitializeCloseCallback();
+        AddonConfigFile = await LoadAddonConfigFileAsync();
+
+        await IFramework.Get().Run(NativeAddon.InitializeCloseCallback);
 
         RegisterDebugHelpers();
     }
@@ -79,6 +83,16 @@ public static class KamiToolKitLibrary {
     /// </summary>
     public static void SetCurrentCulture(CultureInfo culture) {
         CurrentCulture = culture;
+    }
+
+    /// <summary>
+    /// Loads or creates AddonConfigFile, and then tries to migrate any {internalName}.addon.json files to new version.
+    /// </summary>
+    private static async Task<AddonConfigFile> LoadAddonConfigFileAsync() {
+        var configFile = await AddonConfigFile.LoadAsync();
+        await configFile.TryMigrateOldConfigs();
+
+        return configFile;
     }
 
     [Conditional("DEBUG")]

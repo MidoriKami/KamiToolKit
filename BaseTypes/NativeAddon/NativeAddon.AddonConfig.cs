@@ -1,62 +1,31 @@
-﻿using System;
-using System.IO;
-using System.Numerics;
-using System.Text.Json;
+﻿using System.Numerics;
+using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.BaseTypes;
 
 public unsafe partial class NativeAddon {
-    private readonly JsonSerializerOptions serializerOptions = new() {
-        WriteIndented = true,
-        IncludeFields = true,
-    };
-
     private AddonConfig LoadAddonConfig() {
-        var directory = KamiToolKitLibrary.PluginInterface.ConfigDirectory;
-        var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
-        if (!file.Exists) {
-            file.Create().Close();
-
-            var newConfig = new AddonConfig();
-            SaveAddonConfig(newConfig);
-            return newConfig;
+        if (KamiToolKitLibrary.AddonConfigFile is null) {
+            IPluginLog.Get().Error("Addon Config File failed to load. KamiToolKit.InitialzeAsync was not called or failed.");
+            return new AddonConfig();
         }
 
-        AddonConfig? addonConfig;
-
-        try {
-            var data = File.ReadAllText(file.FullName);
-            addonConfig = JsonSerializer.Deserialize<AddonConfig>(data, serializerOptions);
-            addonConfig ??= new AddonConfig();
-        }
-        catch (Exception e) {
-            IPluginLog.Get().Error(e, "Exception while deserializing AddonConfig, creating new config.");
-            addonConfig = new AddonConfig();
-            SaveAddonConfig(addonConfig);
-        }
-
-        return addonConfig;
-    }
-
-    private void SaveAddonConfig(AddonConfig addonConfig) {
-        var directory = KamiToolKitLibrary.PluginInterface.ConfigDirectory;
-        var file = new FileInfo(Path.Combine(directory.FullName, $"{InternalName}.addon.json"));
-
-        var data = JsonSerializer.Serialize(addonConfig, serializerOptions);
-
-        FilesystemUtil.WriteAllTextSafe(file.FullName, data);
+        return KamiToolKitLibrary.AddonConfigFile.GetAddonConfig(InternalName);
     }
 
     private void SaveAddonConfig() {
-        var configData = new AddonConfig {
-            Position = new Vector2(InternalAddon->X, InternalAddon->Y),
-            Scale = InternalAddon->Scale / AtkUnitBase.GetGlobalUIScale(),
-        };
+        if (KamiToolKitLibrary.AddonConfigFile is null) {
+            IPluginLog.Get().Error("Addon Config File failed to load. KamiToolKit.InitialzeAsync was not called or failed.");
+            return;
+        }
 
-        SaveAddonConfig(configData);
+        var addonConfig = LoadAddonConfig();
+        addonConfig.Position = new Vector2(InternalAddon->X, InternalAddon->Y);
+        addonConfig.Scale = InternalAddon->Scale / AtkUnitBase.GetGlobalUIScale();
+
+        Task.Run(KamiToolKitLibrary.AddonConfigFile.SaveAsync);
     }
 }
