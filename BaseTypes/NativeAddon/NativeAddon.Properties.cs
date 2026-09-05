@@ -23,7 +23,7 @@ public unsafe partial class NativeAddon {
     public required ReadOnlySeString Title { get; set; }
 
     /// <summary>
-    /// Gets or sets the addons subtitle string, defaults to <see cref="KamiToolKitLibrary.DefaultWindowSubtitle"/> set via <see cref="KamiToolKitLibrary.Initialize"/>.
+    /// Gets or sets the addons subtitle string, defaults to <see cref="KamiToolKitLibrary.DefaultWindowSubtitle"/> set via <see cref="KamiToolKitLibrary.InitializeAsync"/>.
     /// </summary>
     /// <remarks>
     /// It is recommended to only change this if your windows main title is already representative of your plugins name.
