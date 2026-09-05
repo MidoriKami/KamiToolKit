@@ -58,11 +58,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
                 return;
             }
 
-            if (IFramework.Get().IsFrameworkUnloading) {
-                LogIndented("Game is shutting down, aborting manual dispose.", EnableFullLogging);
-                return;
-            }
-
             if (!ThreadSafety.IsMainThread) {
                 LogIndented($"{GetType()}'s Dispose must be called from the main thread.", EnableFullLogging);
                 return;
