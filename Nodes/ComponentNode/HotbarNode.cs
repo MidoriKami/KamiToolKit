@@ -59,7 +59,9 @@ public class HotbarNode : DragDropNode {
             Experimental.UpdateHotbarSlotIntermediateData?.Invoke(RaptureHotbarModule.Instance(), data, state);
 
             IconId = hotbarState.IconId;
-            IsVisible = !hotbarData.IsEmpty;
+
+            // IsBackgroundShow tells us we wanna force this slot to be visible.
+            IsVisible = !hotbarData.IsEmpty || IsBackgroundShown;
 
             var isAvailable = hotbarState.ActionAvailable1 || hotbarState.ActionAvailable2;
 
