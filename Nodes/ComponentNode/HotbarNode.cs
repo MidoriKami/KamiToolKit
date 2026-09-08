@@ -35,9 +35,8 @@ public class HotbarNode : DragDropNode {
         var hotbarModule = RaptureHotbarModule.Instance();
         if (hotbarModule is null) return;
 
-        hotbarState = new Experimental.HotbarUiIntermediate {
-            PopUpHelpText = null,
-        };
+        hotbarState = new RaptureHotbarModule.HotbarUIIntermediate();
+        hotbarState.Ctor();
 
         // Update hotbar data each frame, this is probably wasteful,
         // but we're still triggering like 1/10th the updates native does, so sue me.
@@ -46,7 +45,7 @@ public class HotbarNode : DragDropNode {
         var isMacro = hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Macro;
 
         fixed (RaptureHotbarModule.HotbarSlot* data = &hotbarData)
-        fixed (Experimental.HotbarUiIntermediate* state = &hotbarState)
+        fixed (RaptureHotbarModule.HotbarUIIntermediate* state = &hotbarState)
         {
             RaptureHotbarModule.HotbarSlotType outType;
             uint outActionId;
@@ -56,7 +55,7 @@ public class HotbarNode : DragDropNode {
             hotbarData.ApparentActionId = outActionId;
             hotbarData.ApparentSlotType = outType;
 
-            Experimental.UpdateHotbarSlotIntermediateData?.Invoke(RaptureHotbarModule.Instance(), data, state);
+            RaptureHotbarModule.Instance()->PrepareSlotForRender(data, state);
 
             IconId = hotbarState.IconId;
 
@@ -334,9 +333,12 @@ public class HotbarNode : DragDropNode {
         }
     }
 
-    private void OnHotbarNodeDiscard(DragDropNode thisNode) {
+    private unsafe void OnHotbarNodeDiscard(DragDropNode thisNode) {
         Payload.Clear();
-        hotbarState = new Experimental.HotbarUiIntermediate();
+
+        hotbarState = new RaptureHotbarModule.HotbarUIIntermediate();
+        hotbarState.Ctor();
+
         hotbarData.Set(RaptureHotbarModule.HotbarSlotType.Empty, 0);
     }
 
@@ -408,7 +410,7 @@ public class HotbarNode : DragDropNode {
     }
 
     private RaptureHotbarModule.HotbarSlot hotbarData;
-    private Experimental.HotbarUiIntermediate hotbarState;
+    private RaptureHotbarModule.HotbarUIIntermediate hotbarState;
     private DateTime? lastClickTime;
 
     private static HotbarNode? dragSourceNode;
