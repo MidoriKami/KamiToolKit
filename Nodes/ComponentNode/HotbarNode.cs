@@ -35,7 +35,6 @@ public class HotbarNode : DragDropNode {
         var hotbarModule = RaptureHotbarModule.Instance();
         if (hotbarModule is null) return;
 
-        hotbarState = new RaptureHotbarModule.HotbarUIIntermediate();
         hotbarState.Ctor();
 
         // Update hotbar data each frame, this is probably wasteful,
