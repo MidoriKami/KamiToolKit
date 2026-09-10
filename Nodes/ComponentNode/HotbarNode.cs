@@ -384,6 +384,31 @@ public class HotbarNode : DragDropNode {
             }
         }
 
+        // Keybind doesn't use a modifier, check if any modifier is present and ignore if it is pressed.
+        else if (modifierKey is null) {
+
+            // If control is valid and is pressed, return
+            if (keyStateService.IsVirtualKeyValid(VirtualKey.CONTROL)) {
+                if (keyStateService[VirtualKey.CONTROL]) {
+                    return;
+                }
+            }
+
+            // If alt is valid and is pressed, return
+            if (keyStateService.IsVirtualKeyValid(VirtualKey.MENU)) {
+                if (keyStateService[VirtualKey.MENU]) {
+                    return;
+                }
+            }
+
+            // If shift is valid and is pressed, return
+            if (keyStateService.IsVirtualKeyValid(VirtualKey.SHIFT)) {
+                if (keyStateService[VirtualKey.SHIFT]) {
+                    return;
+                }
+            }
+        }
+
         // Modifier (if any), and main key is pressed here.
 
         // Clear the pressed key, leave modifiers pressed.
