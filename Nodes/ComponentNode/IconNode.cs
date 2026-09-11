@@ -3,6 +3,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Enums;
 using KamiToolKit.Timelines;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -98,6 +99,152 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
     /// </summary>
     public bool IsBeingDragged
         => Component->Flags.HasFlag(IconComponentFlags.IsBeingDragged);
+
+    /// <summary>
+    /// Gets or sets the displayed string where resource costs go.
+    /// </summary>
+    public ReadOnlySeString ResourceCostString {
+        get => IconExtras.ResourceCostString;
+        set => IconExtras.ResourceCostString = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the numeric value displayed as a resource cost.
+    /// </summary>
+    public uint ResourceCostValue {
+        get => IconExtras.ResourceCostValue;
+        set => IconExtras.ResourceCostValue = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the resource cost nodes visibility.
+    /// </summary>
+    public bool ResourceCostVisible {
+        get => IconExtras.ResourceCostVisible;
+        set => IconExtras.ResourceCostVisible = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the value used to indicate current charges.
+    /// </summary>
+    public uint ChargeCount {
+        get => IconExtras.ChargeCount;
+        set => IconExtras.ChargeCount = value;
+    }
+
+    /// <summary>
+    /// Gets or sets whether the charge count image should be shown.
+    /// </summary>
+    public bool ChargeCountVisible {
+        get => IconExtras.ChargeCountVisible;
+        set => IconExtras.ChargeCountVisible = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the radial fade used to indicate charge percentage.
+    /// </summary>
+    public float ChargePercent {
+        get => IconExtras.ChargePercent;
+        set => IconExtras.ChargePercent = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the string shown for the cooldown seconds.
+    /// </summary>
+    public ReadOnlySeString CooldownSecondsString {
+        get => IconExtras.CooldownSecondsString;
+        set => IconExtras.CooldownSecondsString = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the displayed cooldown time.
+    /// </summary>
+    public uint CooldownSeconds {
+        get => IconExtras.CooldownSeconds;
+        set => IconExtras.CooldownSeconds = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the visibility of the cooldown text node.
+    /// </summary>
+    public bool CooldownSecondsVisible {
+        get => IconExtras.CooldownSecondsVisible;
+        set => IconExtras.CooldownSecondsVisible = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the cooldown percent.
+    /// </summary>
+    public float CooldownPercent {
+        get => IconExtras.CooldownPercent;
+        set => IconExtras.CooldownPercent = value;
+    }
+
+    /// <summary>
+    /// Gets or sets whether the cooldown percent radial should be shown, and if so also hides the glossy border.
+    /// </summary>
+    public bool CooldownPercentVisible {
+        get => IconExtras.CooldownPercentVisible;
+        set => IconExtras.CooldownPercentVisible = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the current cost text color.
+    /// </summary>
+    public CostTextColor CostTextColor {
+        get => IconExtras.CostTextColor;
+        set => IconExtras.CostTextColor = value;
+    }
+
+    /// <summary>
+    /// Gets or sets if this icon needs to show as currently invalid.
+    /// Red Text, and a Red Tinted Glossy Border.
+    /// </summary>
+    public bool IsInvalid {
+        get => IconExtras.IsInvalid;
+        set => IconExtras.IsInvalid = value;
+    }
+
+    /// <summary>
+    /// Gets or sets if the macro icon should be visible.
+    /// </summary>
+    public bool ShowMacroIcon {
+        get;
+        set {
+            field = value;
+
+            if (value) {
+                IconIndicator2.IconNode.PartId = 14;
+            }
+
+            IconIndicator2.IconNode.IsVisible = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets whether this icon should be faded out.
+    /// </summary>
+    public bool IsFaded {
+        get;
+        set {
+            field = value;
+
+            if (value) {
+                IconImage.MultiplyColor = new Vector3(0.5f, 0.5f, 0.5f);
+            }
+            else {
+                IconImage.MultiplyColor = new Vector3(1.0f, 1.0f, 1.0f);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Enables or disables ants for this node.
+    /// </summary>
+    public bool IsAnts {
+        get => IconExtras.IsAnts;
+        set => IconExtras.IsAnts = value;
+    }
 
     /// <summary>
     /// Constructs a new <see cref="IconNode"/>.

@@ -7,6 +7,7 @@ using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -66,6 +67,108 @@ public unsafe class IconExtras : ResNode {
     public ImageNode TimelineImageNode { get; }
 
     /// <summary>
+    /// Gets or sets the displayed string where resource costs go.
+    /// </summary>
+    public ReadOnlySeString ResourceCostString {
+        get => ResourceCostTextNode.String;
+        set => ResourceCostTextNode.String = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the numeric value displayed as a resource cost.
+    /// </summary>
+    public uint ResourceCostValue {
+        get;
+        set {
+            field = value;
+            ResourceCostString = value.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the resource cost nodes visibility.
+    /// </summary>
+    public bool ResourceCostVisible {
+        get => ResourceCostTextNode.IsVisible;
+        set => ResourceCostTextNode.IsVisible = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the value used to indicate current charges.
+    /// </summary>
+    public uint ChargeCount {
+        get => ChargeCountImageNode.PartId;
+        set => ChargeCountImageNode.PartId = value;
+    }
+
+    /// <summary>
+    /// Gets or sets whether the charge count image should be shown.
+    /// </summary>
+    public bool ChargeCountVisible {
+        get;
+        set {
+            field = value;
+            ChargeCountImageNode.IsVisible = value;
+            AlternateCooldownNode.IsVisible = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the radial fade used to indicate charge percentage.
+    /// </summary>
+    public float ChargePercent {
+        get => AlternateCooldownNode.CooldownImage.PartId;
+        set => AlternateCooldownNode.CooldownImage.PartId = (uint)(value * 80 + 81);
+    }
+
+    /// <summary>
+    /// Gets or sets the string shown for the cooldown seconds.
+    /// </summary>
+    public ReadOnlySeString CooldownSecondsString {
+        get => CooldownTextNode.String;
+        set => CooldownTextNode.String = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the displayed cooldown time.
+    /// </summary>
+    public uint CooldownSeconds {
+        get;
+        set {
+            field = value;
+            CooldownSecondsString = value.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the visibility of the cooldown text node.
+    /// </summary>
+    public bool CooldownSecondsVisible {
+        get => CooldownTextNode.IsVisible;
+        set => CooldownTextNode.IsVisible = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the cooldown percent.
+    /// </summary>
+    public float CooldownPercent {
+        get => CooldownNode.CooldownImage.PartId;
+        set => CooldownNode.CooldownImage.PartId = (uint)(value * 80);
+    }
+
+    /// <summary>
+    /// Gets or sets whether the cooldown percent radial should be shown, and if so also hides the glossy border.
+    /// </summary>
+    public bool CooldownPercentVisible {
+        get;
+        set {
+            field = value;
+            CooldownNode.GlossyImageFrame.IsVisible = !value;
+            CooldownNode.CooldownImage.IsVisible = value;
+        }
+    }
+
+    /// <summary>
     /// Gets or sets the current cost text color.
     /// </summary>
     public CostTextColor CostTextColor {
@@ -76,6 +179,36 @@ public unsafe class IconExtras : ResNode {
             ResourceCostTextNode.TextOutlineColor = value.TextOutlineColor;
         }
     } = CostTextColor.Mana;
+
+    /// <summary>
+    /// Gets or sets if this icon needs to show as currently invalid.
+    /// Red Text, and a Red Tinted Glossy Border.
+    /// </summary>
+    public bool IsInvalid {
+        get;
+        set {
+            field = value;
+
+            if (value) {
+                CostTextColor = CostTextColor.Error;
+                CooldownNode.AddColor = new Vector3(0.188f, -0.188f, -0.188f);
+            }
+            else {
+                CooldownNode.AddColor = new Vector3(0.0f, 0.0f, 0.0f);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Enables or disables ants for this slot.
+    /// </summary>
+    public bool IsAnts {
+        get => AntsNode.Timeline?.ActiveLabelId is 26;
+        set {
+            AntsNode.Timeline?.PlayAnimation(value ? 26 : 0);
+            AntsNode.IsVisible = value;
+        }
+    }
 
     /// <summary>
     /// Constructs a new <see cref="IconExtras"/>

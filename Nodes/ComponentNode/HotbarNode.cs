@@ -61,28 +61,32 @@ public class HotbarNode : DragDropNode {
             // IsBackgroundShow tells us we wanna force this slot to be visible.
             IsVisible = !hotbarData.IsEmpty || IsBackgroundShown;
 
-            var isAvailable = hotbarState.ActionAvailable1 || hotbarState.ActionAvailable2;
+            var isAvailable = hotbarState is { ActionAvailable1: true, ActionAvailable2: true };
 
-            IsAvailable = isAvailable || isMacro;
-            ShowMacroIcon = isMacro;
+            IconNode.IsFaded = !isAvailable && !isMacro;
+            IconNode.ShowMacroIcon = isMacro;
 
-            ShowResourceCost = hotbarState.CostType is 2 or 5; // Mana or GP
-            ResourceCost = hotbarState.CostValue;
-            CostTextColor = hotbarState.CostType switch {
+            IconNode.ResourceCostVisible = hotbarState.CostType is 2 or 5; // Mana or GP
+            IconNode.ResourceCostValue = hotbarState.CostValue;
+
+            IconNode.CostTextColor = hotbarState.CostType switch {
                 2 => CostTextColor.Mana,
                 5 => CostTextColor.DoL,
                 _ => CostTextColor.Mana,
             };
+            IconNode.IsInvalid = !hotbarState.ActionTargetSatisfied;
 
-            ShowChargeCount = hotbarState.CooldownMode is 3;
-            ChargeCount = hotbarState.CurrentCharges;
-            ChargePercent = hotbarState.ChargePercent / 100.0f;
+            IconNode.ChargeCountVisible = hotbarState.CooldownMode is 3;
+            IconNode.ChargeCount = hotbarState.CurrentCharges;
+            IconNode.ChargePercent = hotbarState.ChargePercent / 100.0f;
 
-            ShowCooldownSeconds = hotbarState.CooldownSeconds is not 0;
-            CooldownSeconds = hotbarState.CooldownSeconds;
+            IconNode.CooldownSecondsVisible = hotbarState.CooldownSeconds is not 0;
+            IconNode.CooldownSeconds = hotbarState.CooldownSeconds;
 
-            ShowCooldownPercent = hotbarState.CooldownPercent is not 0;
-            CooldownPercent = hotbarState.CooldownPercent / 100.0f;
+            IconNode.CooldownPercentVisible = hotbarState.CooldownPercent is not 0;
+            IconNode.CooldownPercent = hotbarState.CooldownPercent / 100.0f;
+
+            IconNode.IsAnts = hotbarState.DrawAnts;
 
             KeybindTextNode.String = KeyBind is null ? string.Empty : GetKeybindText(KeyBind);
             KeybindTextNode.IsVisible = KeyBind is not null && !hotbarData.IsEmpty || IsBackgroundShown;
@@ -94,138 +98,6 @@ public class HotbarNode : DragDropNode {
             IconNode.IconExtras.Timeline?.PlayAnimation(4);
             lastClickTime = null;
         }
-    }
-
-    /// <summary>
-    /// Gets or sets whether this action is available for use.
-    /// </summary>
-    public bool IsAvailable {
-        get;
-        set {
-            field = value;
-            IconNode.IconImage.MultiplyColor = value ? new Vector3(1.0f, 1.0f, 1.0f) : new Vector3(0.5f, 0.5f, 0.5f);
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets whether the gear icon representing a macro is shown.
-    /// </summary>
-    public bool ShowMacroIcon {
-        get;
-        set {
-            field = value;
-
-            if (value) {
-                IconNode.IconIndicator2.IconNode.PartId = 14;
-            }
-            IconNode.IconIndicator2.IconNode.IsVisible = value;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the primary resource cost text.
-    /// </summary>
-    public uint ResourceCost {
-        get;
-        set {
-            field = value;
-            IconNode.IconExtras.ResourceCostTextNode.String = value.ToString();
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets whether the resource cost node should be visible.
-    /// </summary>
-    public bool ShowResourceCost {
-        get => IconNode.IconExtras.ResourceCostTextNode.IsVisible;
-        set => IconNode.IconExtras.ResourceCostTextNode.IsVisible = value;
-    }
-
-    /// <summary>
-    /// Gets or sets the charge count.
-    /// </summary>
-    public uint ChargeCount {
-        get;
-        set {
-            field = value;
-            IconNode.IconExtras.ChargeCountImageNode.PartId = value;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the charge cooldown percentage.
-    /// </summary>
-    public float ChargePercent {
-        get;
-        set {
-            field = value;
-            IconNode.IconExtras.AlternateCooldownNode.CooldownImage.PartId = (uint) (value * 80 + 81);
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the charge count node should be shown.
-    /// </summary>
-    public bool ShowChargeCount {
-        get;
-        set {
-            field = value;
-            IconNode.IconExtras.AlternateCooldownNode.IsVisible = value;
-            IconNode.IconExtras.ChargeCountImageNode.IsVisible = value;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the cooldown percent background.
-    /// </summary>
-    public uint CooldownSeconds {
-        get;
-        set {
-            field = value;
-            IconNode.IconExtras.CooldownTextNode.String = value.ToString();
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets whether the cooldown text should be shown.
-    /// </summary>
-    public bool ShowCooldownSeconds {
-        get;
-        set {
-            field = value;
-            IconNode.IconExtras.CooldownTextNode.IsVisible = value;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the cooldown percentage.
-    /// </summary>
-    public float CooldownPercent {
-        get;
-        set {
-            field = value;
-            IconNode.IconExtras.CooldownNode.CooldownImage.PartId = (uint) (value * 80);
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the cooldown progress should display.
-    /// </summary>
-    public bool ShowCooldownPercent {
-        get;
-        set {
-            field = value;
-            IconNode.IconExtras.CooldownNode.GlossyImageFrame.IsVisible = !value;
-            IconNode.IconExtras.CooldownNode.CooldownImage.IsVisible = value;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the color used for the cost text.
-    /// </summary>
-    public CostTextColor CostTextColor {
-        get => IconNode.IconExtras.CostTextColor;
-        set => IconNode.IconExtras.CostTextColor = value;
     }
 
     /// <summary>
