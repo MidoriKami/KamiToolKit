@@ -187,6 +187,8 @@ public class HotbarNode : DragDropNode {
     }
 
     private void OnHotbarNodePayloadAccepted(DragDropNode thisNode, DragDropPayload payload) {
+        if (settingSourceNodeData) return;
+
         // If source is another KTK Node
         if (dragSourceNode is not null) {
 
@@ -194,6 +196,17 @@ public class HotbarNode : DragDropNode {
             if (!hotbarData.IsEmpty) {
                 var sourceType = dragSourceNode.Payload.Type;
                 var sourceInt = dragSourceNode.Payload.Int2;
+
+                // Call OnPayloadAccepted to trigger any down-stream events that are listening for payload change.
+                try {
+                    settingSourceNodeData = true;
+                    dragSourceNode.OnPayloadAccepted?.Invoke(dragSourceNode, Payload);
+                }
+
+                // Ensure this gets cleared, or this'll prevent all HotbarNodes from accepting payloads.
+                finally {
+                    settingSourceNodeData = false;
+                }
 
                 dragSourceNode.Payload.Type = Payload.Type;
                 dragSourceNode.Payload.Int2 = Payload.Int2;
@@ -341,4 +354,5 @@ public class HotbarNode : DragDropNode {
     private DateTime? lastClickTime;
 
     private static HotbarNode? dragSourceNode;
+    private static bool settingSourceNodeData;
 }
