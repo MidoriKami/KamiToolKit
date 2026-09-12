@@ -106,7 +106,7 @@ public class HotbarNode : DragDropNode {
     public KeySetting? KeyBind { get; set; }
 
     /// <summary>
-    /// Gets this hotbar slot to the specific type and id.
+    /// Sets this hotbar slot to the specific type and id.
     /// </summary>
     public void SetSlot(DragDropType type, uint id) {
         Payload.Type = type;
@@ -114,6 +114,12 @@ public class HotbarNode : DragDropNode {
 
         hotbarData.Set(UIGlobals.GetHotbarSlotTypeFromDragDropType(Payload.Type), (uint) Payload.Int2);
     }
+
+    /// <summary>
+    /// Sets this hotbar slot to the specific type and id.
+    /// </summary>
+    public void SetSlot(DragDropType payloadType, int payloadInt)
+        => SetSlot(payloadType, (uint)payloadInt);
 
     /// <summary>
     /// Function that is called when the associated <see cref="KeyBind"/> is pressed.
@@ -181,16 +187,42 @@ public class HotbarNode : DragDropNode {
     }
 
     private void OnHotbarNodePayloadAccepted(DragDropNode thisNode, DragDropPayload payload) {
-        Payload.Type = payload.Type;
-        Payload.Int2 = payload.Int2;
-
-        hotbarData.Set(UIGlobals.GetHotbarSlotTypeFromDragDropType(payload.Type), (uint) payload.Int2);
-
-        // Discard the source nod eif it's known.
+        // If source is another KTK Node
         if (dragSourceNode is not null) {
-            dragSourceNode.OnDiscard?.Invoke(dragSourceNode);
+
+            // And we are not empty, we need to swap our slots.
+            if (!hotbarData.IsEmpty) {
+                var sourceType = dragSourceNode.Payload.Type;
+                var sourceInt = dragSourceNode.Payload.Int2;
+
+                dragSourceNode.Payload.Type = Payload.Type;
+                dragSourceNode.Payload.Int2 = Payload.Int2;
+
+                Payload.Type = sourceType;
+                Payload.Int2 = sourceInt;
+            }
+
+            // If we are empty, take the sources payload, and tell it to discard what it has
+            else {
+                Payload.Type = dragSourceNode.Payload.Type;
+                Payload.Int2 = dragSourceNode.Payload.Int2;
+                dragSourceNode.OnDiscard?.Invoke(dragSourceNode);
+            }
+
             dragSourceNode.Update();
         }
+
+        // Source is a vanilla node
+        else {
+
+            // If source is a native slot, eventually write this code to get the HotbarSlot* and clear it
+            // But too lazy for that right now.
+
+            Payload.Type = payload.Type;
+            Payload.Int2 = payload.Int2;
+        }
+
+        Update();
     }
 
     private unsafe void OnHotbarNodeClicked(DragDropNode thisNode) {
@@ -207,7 +239,6 @@ public class HotbarNode : DragDropNode {
     private unsafe void OnHotbarNodeDiscard(DragDropNode thisNode) {
         Payload.Clear();
 
-        hotbarState = new RaptureHotbarModule.HotbarUIIntermediate();
         hotbarState.Ctor();
 
         hotbarData.Set(RaptureHotbarModule.HotbarSlotType.Empty, 0);

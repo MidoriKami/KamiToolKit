@@ -256,9 +256,6 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
 
         var payload = DragDropPayload.FromDragDropInterface(atkEventData->DragDropData.DragDropInterface);
 
-        Payload.Clear();
-        IconId = 0;
-
         OnPayloadAccepted?.Invoke(this, payload);
     }
 
