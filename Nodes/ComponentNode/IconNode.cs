@@ -231,9 +231,11 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
 
             if (value) {
                 IconImage.MultiplyColor = new Vector3(0.5f, 0.5f, 0.5f);
+                IconExtras.ResourceCostTextNode.MultiplyColor = new Vector3(0.5f, 0.5f, 0.5f);
             }
             else {
                 IconImage.MultiplyColor = new Vector3(1.0f, 1.0f, 1.0f);
+                IconExtras.ResourceCostTextNode.MultiplyColor = new Vector3(1.0f, 1.0f, 1.0f);
             }
         }
     }
