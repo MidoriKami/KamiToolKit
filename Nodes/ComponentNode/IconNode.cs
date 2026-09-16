@@ -54,7 +54,7 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
     /// This doesn't affect the interactability of the component, just the display of the icon.
     /// </remarks>
     public bool IsIconDisabled {
-        get => Component->Flags.HasFlag(IconComponentFlags.IsDisabled);
+        get => Component->Flags.HasFlag(IconComponentFlags.Unk8192);
         set => Component->SetIconImageDisableState(value);
     }
 
