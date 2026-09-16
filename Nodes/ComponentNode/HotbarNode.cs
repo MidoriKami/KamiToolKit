@@ -106,6 +106,11 @@ public class HotbarNode : DragDropNode {
     public KeySetting? KeyBind { get; set; }
 
     /// <summary>
+    /// Gets whether this slot is empty.
+    /// </summary>
+    public bool IsEmpty => Payload.Type is 0 or DragDropType.Nothing;
+
+    /// <summary>
     /// Sets this hotbar slot to the specific type and id.
     /// </summary>
     public void SetSlot(DragDropType type, uint id) {
