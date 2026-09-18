@@ -49,7 +49,6 @@ public static unsafe class IconNodeTextureHelper {
     /// <summary>
     /// Loads the IconARecast2 Parts into the provided image node. Not intended for external use.
     /// </summary>
-    /// <param name="imageNode"></param>
     public static void LoadIconARecast2Texture(ImageNode imageNode) {
         foreach (var yIndex in Enumerable.Range(0, 9))
         foreach (var xIndex in Enumerable.Range(0, 9)) {
@@ -77,7 +76,6 @@ public static unsafe class IconNodeTextureHelper {
     /// <summary>
     /// Loads the IconARecast1 Parts into the provided image node. Not intended for external use.
     /// </summary>
-    /// <param name="imageNode"></param>
     public static void LoadIconARecastTexture(ImageNode imageNode) {
         foreach (var yIndex in Enumerable.Range(0, 9))
         foreach (var xIndex in Enumerable.Range(0, 9)) {
