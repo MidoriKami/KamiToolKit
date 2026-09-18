@@ -59,7 +59,7 @@ public class HotbarNode : DragDropNode {
             IconId = hotbarState.IconId;
 
             // IsBackgroundShow tells us we wanna force this slot to be visible.
-            IsVisible = !hotbarData.IsEmpty || IsBackgroundShown;
+            IsVisible = hotbarData.IsValid || IsBackgroundShown;
 
             var isAvailable = hotbarState is { ActionAvailable1: true, ActionAvailable2: true };
 
@@ -89,7 +89,7 @@ public class HotbarNode : DragDropNode {
             IconNode.IsAnts = hotbarState.DrawAnts;
 
             KeybindTextNode.String = KeyBind is null ? string.Empty : GetKeybindText(KeyBind);
-            KeybindTextNode.IsVisible = KeyBind is not null && !hotbarData.IsEmpty || IsBackgroundShown;
+            KeybindTextNode.IsVisible = KeyBind is not null && hotbarData.IsValid || IsBackgroundShown;
         }
 
         TryProcessKeybind();
@@ -167,7 +167,7 @@ public class HotbarNode : DragDropNode {
     private void OnHotbarNodeRollOver(DragDropNode thisNode) {
         HideTooltip();
 
-        if (hotbarData.IsEmpty) return;
+        if (!hotbarData.IsValid) return;
 
         switch (hotbarData.CommandType) {
             case RaptureHotbarModule.HotbarSlotType.Action:
@@ -198,7 +198,7 @@ public class HotbarNode : DragDropNode {
         if (dragSourceNode is not null) {
 
             // And we are not empty, we need to swap our slots.
-            if (!hotbarData.IsEmpty) {
+            if (hotbarData.IsValid) {
                 var sourceType = dragSourceNode.Payload.Type;
                 var sourceInt = dragSourceNode.Payload.Int2;
 
