@@ -189,12 +189,11 @@ public unsafe partial class NativeAddon {
 
         try {
             OnHide(addon);
+            SaveAddonConfig();
         }
         catch (Exception e) {
             IPluginLog.Get().Exception(e);
         }
-
-        SaveAddonConfig();
 
         originalVirtualTable->Hide(addon, unkBool, callHideCallback, setShowHideFlags);
         originalVirtualTable->Close(addon, false);
