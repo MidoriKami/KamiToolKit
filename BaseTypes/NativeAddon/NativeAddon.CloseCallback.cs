@@ -1,4 +1,5 @@
-﻿using Dalamud.Hooking;
+﻿using System;
+using Dalamud.Hooking;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
@@ -14,13 +15,18 @@ public unsafe partial class NativeAddon {
     }
 
     private static bool OnFireCallback(AtkUnitBase* thisPtr, uint valueCount, AtkValue* values, bool close) {
-        IPluginLog.Get().Excessive($"[{thisPtr->NameString}] OnFireCallback");
+        try {
+            IPluginLog.Get().Excessive($"[{thisPtr->NameString}] OnFireCallback");
 
-        foreach (var addon in CreatedAddons) {
-            if (addon == thisPtr && close && addon is { RespectCloseAll: true, IsOverlayAddon: false }) {
-                addon.Close();
-                return true;
+            foreach (var addon in CreatedAddons) {
+                if (addon == thisPtr && close && addon is { RespectCloseAll: true, IsOverlayAddon: false }) {
+                    addon.Close();
+                    return true;
+                }
             }
+        }
+        catch (Exception e) {
+            IPluginLog.Get().Exception(e);
         }
 
         return fireCallbackHook!.Original(thisPtr, valueCount, values, close);
