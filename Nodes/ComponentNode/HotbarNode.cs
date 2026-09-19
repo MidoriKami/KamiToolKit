@@ -182,6 +182,11 @@ public class HotbarNode : DragDropNode {
                     ActionTooltip = hotbarData.ApparentActionId;
                 }
                 break;
+
+            default:
+                ActionTooltip = 0;
+                TextTooltip = string.Empty;
+                break;
         }
 
         ShowTooltip();
