@@ -129,8 +129,11 @@ public class HotbarNode : DragDropNode {
     /// <summary>
     /// Function that is called when the associated <see cref="KeyBind"/> is pressed.
     /// </summary>
-    protected virtual void OnKeybindPressed()
-        => OnHotbarNodeClicked(this);
+    protected virtual void OnKeybindPressed() {
+        OnHotbarNodeClicked(this);
+        IconNode.IconExtras.Timeline?.PlayAnimation(3, true);
+        lastClickTime = DateTime.UtcNow;
+    }
 
     /// <summary>
     /// Sets this hotbar slot to the specified action.
@@ -254,8 +257,6 @@ public class HotbarNode : DragDropNode {
 
         fixed (RaptureHotbarModule.HotbarSlot* hotbarSlotData = &hotbarData) {
             hotbarModule->ExecuteSlot(hotbarSlotData);
-            IconNode.IconExtras.Timeline?.PlayAnimation(3, true);
-            lastClickTime = DateTime.UtcNow;
         }
     }
 
