@@ -207,8 +207,7 @@ public class HotbarNode : DragDropNode {
 
             // And we are not empty, we need to swap our slots.
             if (hotbarData.IsValid) {
-                var sourceType = dragSourceNode.Payload.Type;
-                var sourceInt = dragSourceNode.Payload.Int2;
+                var sourcePayload = dragSourceNode.Payload.Clone();
 
                 // Call OnPayloadAccepted to trigger any down-stream events that are listening for payload change.
                 try {
@@ -221,17 +220,13 @@ public class HotbarNode : DragDropNode {
                     settingSourceNodeData = false;
                 }
 
-                dragSourceNode.Payload.Type = Payload.Type;
-                dragSourceNode.Payload.Int2 = Payload.Int2;
-
-                Payload.Type = sourceType;
-                Payload.Int2 = sourceInt;
+                dragSourceNode.Payload = Payload.Clone();
+                Payload = sourcePayload;
             }
 
             // If we are empty, take the sources payload, and tell it to discard what it has
             else {
-                Payload.Type = dragSourceNode.Payload.Type;
-                Payload.Int2 = dragSourceNode.Payload.Int2;
+                Payload = dragSourceNode.Payload.Clone();
                 dragSourceNode.OnDiscard?.Invoke(dragSourceNode);
             }
 
@@ -244,8 +239,7 @@ public class HotbarNode : DragDropNode {
             // If source is a native slot, eventually write this code to get the HotbarSlot* and clear it
             // But too lazy for that right now.
 
-            Payload.Type = payload.Type;
-            Payload.Int2 = payload.Int2;
+            Payload = payload.Clone();
         }
 
         Update();
