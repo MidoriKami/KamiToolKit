@@ -163,6 +163,8 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
     public override ReadOnlySeString TextTooltip {
         get;
         set {
+            if (field == value) return;
+
             field = value;
             switch (value) {
                 case { IsEmpty: false } when !TooltipRegistered:
