@@ -1,9 +1,11 @@
 using System;
 using System.Numerics;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
@@ -237,6 +239,20 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         AddEvent(AtkEventType.DragDropClick, DragDropClickHandler);
         AddEvent(AtkEventType.DragDropRollOver, DragDropRollOverHandler);
         AddEvent(AtkEventType.DragDropRollOut, DragDropRollOutHandler);
+    }
+
+    /// <inheritdoc/>
+    protected override void OnReceiveEvent(AtkComponentBase* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        try {
+            if (!IsClickable && eventType is AtkEventType.MouseDown) {
+                return;
+            }
+        }
+        catch (Exception e) {
+            IPluginLog.Get().Exception(e);
+        }
+
+        base.OnReceiveEvent(thisPtr, eventType, eventParam, atkEvent, atkEventData);
     }
 
     private void DragDropBeginHandler(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
