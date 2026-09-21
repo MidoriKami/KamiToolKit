@@ -1,5 +1,6 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
-using Lumina.Text;
+﻿using System;
+using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Classes;
@@ -7,7 +8,7 @@ namespace KamiToolKit.Classes;
 /// <summary>
 /// Data wrapper for a native DragDropPayload.
 /// </summary>
-public unsafe class DragDropPayload {
+public unsafe class DragDropPayload : ICloneable {
 
     /// <summary>
     /// Gets or sets the Drag Drop Type.
@@ -83,7 +84,8 @@ public unsafe class DragDropPayload {
                 payloadContainer->Text.Clear();
             }
             else {
-                var stringBuilder = new SeStringBuilder().Append(Text);
+                using var rentedBuilder = new RentedSeStringBuilder();
+                var stringBuilder = rentedBuilder.Builder.Append(Text);
                 payloadContainer->Text.SetString(stringBuilder.GetViewAsSpan());
             }
         }
@@ -99,4 +101,32 @@ public unsafe class DragDropPayload {
         Int2 = -1;
         Text = default;
     }
+
+    /// <summary>
+    /// Default construct to construct an empty instance.
+    /// </summary>
+    public DragDropPayload() {
+        Clear();
+    }
+
+    /// <summary>
+    /// Copy constructor to instantiate a payload from an existing one.
+    /// </summary>
+    public DragDropPayload(DragDropPayload source) {
+        Type = source.Type;
+        ReferenceIndex = source.ReferenceIndex;
+        Int1 = source.Int1;
+        Int2 = source.Int2;
+        Text = source.Text;
+    }
+
+    /// <summary>
+    /// Returns a new reference to a copy of this payload.
+    /// </summary>
+    /// <returns></returns>
+    public DragDropPayload Clone()
+        => new(this);
+
+    object ICloneable.Clone()
+        => Clone();
 }
