@@ -20,7 +20,13 @@ public unsafe partial class NativeAddon {
     /// <summary>
     /// Gets or sets the addons main title string.
     /// </summary>
-    public required ReadOnlySeString Title { get; set; }
+    public required ReadOnlySeString Title {
+        get;
+        set {
+            field = value;
+            WindowNode?.SetTitle(value.ToString(), Subtitle?.ToString() ?? KamiToolKitLibrary.DefaultWindowSubtitle);
+        }
+    }
 
     /// <summary>
     /// Gets or sets the addons subtitle string, defaults to <see cref="KamiToolKitLibrary.DefaultWindowSubtitle"/> set via <see cref="KamiToolKitLibrary.InitializeAsync"/>.
@@ -28,12 +34,26 @@ public unsafe partial class NativeAddon {
     /// <remarks>
     /// It is recommended to only change this if your windows main title is already representative of your plugins name.
     /// </remarks>
-    public ReadOnlySeString? Subtitle { get; set; }
+    public ReadOnlySeString? Subtitle {
+        get;
+        set {
+            field = value;
+            WindowNode?.SetTitle(Title.ToString(), value?.ToString() ?? KamiToolKitLibrary.DefaultWindowSubtitle);
+        }
+    }
 
     /// <summary>
     /// Sound effect to play when opening or closing this addon.
     /// </summary>
-    public int OpenWindowSoundEffectId { get; set; } = 23;
+    public int OpenWindowSoundEffectId {
+        get;
+        set {
+            field = value;
+            if (InternalAddon is not null) {
+                InternalAddon->ShowSoundEffectId = (short) value;
+            }
+        }
+    } = 23;
 
     /// <summary>
     /// Gets or sets this addons size, defaults to 400px by 400px.
@@ -45,6 +65,10 @@ public unsafe partial class NativeAddon {
 
             if (value == Vector2.Zero) {
                 field = new Vector2(400.0f, 400.0f);
+            }
+
+            if (InternalAddon is not null) {
+                InternalAddon->SetSize((ushort) value.X, (ushort) value.Y);
             }
         }
     } = new(400.0f, 400.0f);
