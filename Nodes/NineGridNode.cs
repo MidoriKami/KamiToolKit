@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
@@ -21,7 +20,7 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
     /// Sets the collection of parts to use for this node.
     /// </summary>
     public ICollection<Part> Parts {
-        set => PartsList.Add(value.ToArray());
+        set => PartsList.Add([.. value]);
     }
 
     /// <summary>
@@ -104,6 +103,16 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
     /// </summary>
     public void AddPart(params Part[] parts)
         => PartsList.Add(parts);
+
+    /// <summary>
+    /// Adds a part from provided params.
+    /// </summary>
+    public void AddPart(string path, Vector2 position, Vector2 size)
+        => PartsList.Add(new Part {
+            TexturePath = path,
+            TextureCoordinates = position,
+            Size = size,
+        });
 
     /// <summary>
     /// Constructs a new <see cref="NineGridNode"/>
