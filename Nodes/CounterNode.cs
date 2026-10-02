@@ -163,7 +163,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         get => new(PartsList[0]->U, PartsList[0]->V);
         set {
             PartsList[0]->U = (ushort)value.X;
-            PartsList[0]->V = (ushort)value.X;
+            PartsList[0]->V = (ushort)value.Y;
         }
     }
 
@@ -174,7 +174,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
         get => new(PartsList[0]->Width, PartsList[0]->Height);
         set {
             PartsList[0]->Width = (ushort)value.X;
-            PartsList[0]->Height = (ushort)value.X;
+            PartsList[0]->Height = (ushort)value.Y;
         }
     }
 
