@@ -436,8 +436,10 @@ public class HotbarNode : DragDropNode {
                     return;
                 }
 
-                // Fallthrough intentionally.
-                goto case RaptureHotbarModule.HotbarSlotType.Crystal;
+                hotbarData.Clear();
+                hotbarData.Set(hotbarSlotType, (uint) payload.ReferenceIndex);
+                Payload = payload.Clone();
+                return;
 
             case RaptureHotbarModule.HotbarSlotType.Crystal:
                 if (payload.Int1 is not 9) {
