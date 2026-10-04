@@ -385,7 +385,7 @@ public class HotbarNode : DragDropNode {
             IconNode.IsInvalid = !hotbarState.ActionTargetSatisfied;
 
             IconNode.ChargeCountVisible = hotbarState.CooldownMode is 3;
-            IconNode.ChargeCount = hotbarState.CurrentChargeCount;
+            IconNode.ChargeCount = (int) hotbarState.CurrentCharges;
             IconNode.ChargePercent = hotbarState.ChargePercent / 100.0f;
 
             IconNode.CooldownSecondsVisible = hotbarState.CooldownSeconds is not 0;
