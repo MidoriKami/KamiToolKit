@@ -186,7 +186,7 @@ public static unsafe class AtkResNodeExtensions {
         /// </summary>
         public void RemoveDrawFlag(params DrawFlags[] flags) {
             foreach (var flag in flags) {
-                node.DrawFlags &= (uint)flag;
+                node.DrawFlags &= ~(uint)flag;
             }
         }
 

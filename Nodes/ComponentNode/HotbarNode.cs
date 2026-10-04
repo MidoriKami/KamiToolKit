@@ -29,6 +29,11 @@ public class HotbarNode : DragDropNode {
     public TextNode KeybindTextNode { get; }
 
     /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public TextNode ItemCountTextNode { get; }
+
+    /// <summary>
     /// Updates the hotbar slots current state, cost, icon, and various other fields.
     /// </summary>
     public void Update() {
@@ -53,13 +58,19 @@ public class HotbarNode : DragDropNode {
     public bool IsEmpty => Payload.Type is 0 or DragDropType.Nothing;
 
     /// <summary>
+    /// Sets this hotbar slot from the provided payload information.
+    /// </summary>
+    public void SetSlot(DragDropPayload payload)
+        => SetHotbarSlotFromPayload(payload);
+
+    /// <summary>
     /// Sets this hotbar slot to the specific type and id.
     /// </summary>
     public void SetSlot(DragDropType type, uint id) {
-        Payload.Type = type;
-        Payload.Int2 = (int) id;
-
-        hotbarData.Set(UIGlobals.GetHotbarSlotTypeFromDragDropType(Payload.Type), (uint) Payload.Int2);
+        SetHotbarSlotFromPayload(new DragDropPayload {
+            Type = type,
+            Int2 = (int) id,
+        });
     }
 
     /// <summary>
@@ -81,10 +92,10 @@ public class HotbarNode : DragDropNode {
     /// Sets this hotbar slot to the specified action.
     /// </summary>
     public void SetAction(uint actionId) {
-        Payload.Type = DragDropType.Action;
-        Payload.Int2 = (int) actionId;
-
-        hotbarData.Set(UIGlobals.GetHotbarSlotTypeFromDragDropType(Payload.Type), (uint) Payload.Int2);
+        SetHotbarSlotFromPayload(new DragDropPayload {
+            Type = DragDropType.Action,
+            Int2 = (int) actionId,
+        });
     }
 
     /// <inheritdoc />
@@ -100,6 +111,17 @@ public class HotbarNode : DragDropNode {
         };
         KeybindTextNode.AttachNode(this);
 
+        ItemCountTextNode = new TextNode {
+            NodeId = 5,
+            Position = new Vector2(4.0f, 34.0f),
+            Size = new Vector2(40.0f, 12.0f),
+            TextColor = KnownColor.White.Vector(),
+            TextOutlineColor = ColorHelper.GetColor(55),
+            AlignmentType = AlignmentType.Right,
+            TextFlags = TextFlags.Edge | (TextFlags) 0x8000,
+        };
+        ItemCountTextNode.AttachNode(this);
+
         OnRollOver = OnHotbarNodeRollOver;
         OnRollOut = OnHotbarNodeRollOut;
         OnPayloadAccepted = OnHotbarNodePayloadAccepted;
@@ -107,6 +129,11 @@ public class HotbarNode : DragDropNode {
         OnDiscard = OnHotbarNodeDiscard;
         OnBegin = OnDragDropBegin;
         OnEnd = OnDragDropEnd;
+
+        unsafe {
+            hotbarData.PopUpHelp.Ctor();
+            hotbarData.Clear();
+        }
 
         IGameGui.Get().AgentUpdate += OnAgentUpdate;
     }
@@ -123,7 +150,7 @@ public class HotbarNode : DragDropNode {
     private void OnAgentUpdate(AgentUpdateFlag agentFlags) {
         if (!agentFlags.HasFlag(AgentUpdateFlag.ActionBarUpdate)) return;
 
-        hotbarData.Set(UIGlobals.GetHotbarSlotTypeFromDragDropType(Payload.Type), (uint) Payload.Int2);
+        SetHotbarSlotFromPayload(Payload);
     }
 
     private void OnHotbarNodeRollOver(DragDropNode thisNode) {
@@ -201,7 +228,7 @@ public class HotbarNode : DragDropNode {
             Payload = payload.Clone();
         }
 
-        hotbarData.Set(UIGlobals.GetHotbarSlotTypeFromDragDropType(Payload.Type), (uint) Payload.Int2);
+        SetHotbarSlotFromPayload(Payload);
         Update();
     }
 
@@ -319,6 +346,7 @@ public class HotbarNode : DragDropNode {
         if (hotbarModule is null) return;
 
         var isMacro = hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Macro;
+        var isItem = hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Item;
 
         // Clear hotbar state to get fresh data.
         hotbarState.Ctor();
@@ -368,8 +396,67 @@ public class HotbarNode : DragDropNode {
 
             IconNode.IsAnts = hotbarState.DrawAnts;
 
+            ItemCountTextNode.IsVisible = !IconNode.CooldownSecondsVisible && isItem;
+            ItemCountTextNode.String = hotbarData.CostTextString;
+
             KeybindTextNode.String = KeyBind is null ? string.Empty : GetKeybindText(KeyBind);
             KeybindTextNode.IsVisible = KeyBind is not null && hotbarData.IsValid || IsBackgroundShown;
+        }
+    }
+
+    private unsafe void SetHotbarSlotFromPayload(DragDropPayload payload) {
+        var hotbarSlotType = UIGlobals.GetHotbarSlotTypeFromDragDropType(payload.Type);
+
+        IPluginLog.Get().Verbose("HotbarSlot received payload:\n" +
+                                 $"Type: {payload.Type}\n" +
+                                 $"Int1: {payload.Int1}\n" +
+                                 $"Int2: {payload.Int2}\n" +
+                                 $"ReferenceIndex: {payload.ReferenceIndex}");
+
+
+        switch (hotbarSlotType) {
+            case RaptureHotbarModule.HotbarSlotType.InventoryItem:
+
+                if (payload.Int1 is not (48 or 49 or 50 or 51)) {
+                    IPluginLog.Get().Verbose("Received item from invalid location, skipping setting hotbar.");
+                    return;
+                }
+
+                var sorterEntry = ItemOrderModule.Instance()->InventorySorter->Items[payload.ReferenceIndex].Value;
+                var id = (uint)sorterEntry->Page << 16 | (uint)sorterEntry->Slot & 0xFFFF;
+
+                hotbarData.Clear();
+                hotbarData.Set(hotbarSlotType, id);
+                Payload = payload.Clone();
+                return;
+
+            case RaptureHotbarModule.HotbarSlotType.KeyItem:
+                if (payload.Int1 is not 7) {
+                    IPluginLog.Get().Verbose("Received key item from invalid location, skipping setting hotbar.");
+                    return;
+                }
+
+                hotbarData.Clear();
+                hotbarData.Set(hotbarSlotType, (uint) payload.ReferenceIndex);
+                Payload = payload.Clone();
+                return;
+
+            case RaptureHotbarModule.HotbarSlotType.Crystal:
+                if (payload.Int1 is not 9) {
+                    IPluginLog.Get().Verbose("Received crystal item from invalid location, skipping setting hotbar.");
+                    return;
+                }
+
+                hotbarData.Clear();
+                hotbarData.Set(hotbarSlotType, (uint) payload.ReferenceIndex);
+                Payload = payload.Clone();
+                return;
+
+            default:
+                hotbarData.Clear();
+                hotbarData.Set(hotbarSlotType, (uint) Payload.Int2);
+                Payload = payload.Clone();
+                return;
         }
     }
 
