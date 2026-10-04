@@ -127,7 +127,7 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
     /// <summary>
     /// Gets or sets the value used to indicate current charges.
     /// </summary>
-    public uint ChargeCount {
+    public int ChargeCount {
         get => IconExtras.ChargeCount;
         set => IconExtras.ChargeCount = value;
     }
