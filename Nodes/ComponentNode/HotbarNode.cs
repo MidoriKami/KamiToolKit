@@ -74,6 +74,15 @@ public partial class HotbarNode : DragDropNode {
     }
 
     /// <summary>
+    /// Clears the data for this hotbar slot.
+    /// </summary>
+    public unsafe void ClearSlot() {
+        Payload.Clear();
+        hotbarState.Ctor();
+        hotbarData.Clear();
+    }
+
+    /// <summary>
     /// Sets this hotbar slot to the specific type and id.
     /// </summary>
     public void SetSlot(DragDropType payloadType, int payloadInt)
@@ -244,13 +253,8 @@ public partial class HotbarNode : DragDropNode {
         }
     }
 
-    private unsafe void OnHotbarNodeDiscard(DragDropNode thisNode) {
-        Payload.Clear();
-
-        hotbarState.Ctor();
-
-        hotbarData.Set(RaptureHotbarModule.HotbarSlotType.Empty, 0);
-    }
+    private void OnHotbarNodeDiscard(DragDropNode thisNode)
+        => ClearSlot();
 
     private void OnDragDropBegin(DragDropNode node) {
         if (node is not HotbarNode hotbarNode) return;
