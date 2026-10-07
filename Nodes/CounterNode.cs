@@ -180,7 +180,7 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
 
     private static ReadOnlySeString ParseString(ReadOnlySeString value) {
         using var builder = new RentedSeStringBuilder();
-        return builder.Builder.Append(value).GetViewAsSpan();
+        return builder.Append(value).GetViewAsSpan();
     }
 
     private static ReadOnlySeString ParseNumber(int value) {
@@ -195,15 +195,15 @@ public unsafe class CounterNode : NodeBase<AtkCounterNode> {
                 // Fix for French thousands separators.
                 // The game calls FormatAddonText2 that does this.
                 case ReadOnlySePayloadType.Macro when payload.MacroCode is MacroCode.NonBreakingSpace:
-                    rentedBuilder.Builder.Append(' ');
+                    rentedBuilder.Append(' ');
                     break;
 
                 default:
-                    rentedBuilder.Builder.Append(payload);
+                    rentedBuilder.Append(payload);
                     break;
             }
         }
 
-        return rentedBuilder.Builder.GetViewAsSpan();
+        return rentedBuilder.GetViewAsSpan();
     }
 }

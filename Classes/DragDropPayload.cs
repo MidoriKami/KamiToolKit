@@ -85,7 +85,7 @@ public unsafe class DragDropPayload : ICloneable {
             }
             else {
                 using var rentedBuilder = new RentedSeStringBuilder();
-                var stringBuilder = rentedBuilder.Builder.Append(Text);
+                var stringBuilder = rentedBuilder.Append(Text);
                 payloadContainer->Text.SetString(stringBuilder.GetViewAsSpan());
             }
         }
