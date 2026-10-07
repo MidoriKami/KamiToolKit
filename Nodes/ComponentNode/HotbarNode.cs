@@ -170,23 +170,21 @@ public partial class HotbarNode : DragDropNode {
 
         if (!hotbarData.IsValid) return;
 
+        TextTooltip = hotbarData
+            .GetDisplayNameForSlot(hotbarData.ApparentSlotType, hotbarData.ApparentActionId)
+            .ToString();
+
         switch (hotbarData.CommandType) {
             case RaptureHotbarModule.HotbarSlotType.Action:
                 ActionTooltip = hotbarData.CommandId;
-                TextTooltip = string.Empty;
                 break;
 
-            case RaptureHotbarModule.HotbarSlotType.Macro:
-                TextTooltip = hotbarData.PopUpHelp.AsReadOnlySeString();
-
-                if (hotbarData.ApparentSlotType is RaptureHotbarModule.HotbarSlotType.Action) {
-                    ActionTooltip = hotbarData.ApparentActionId;
-                }
+            case RaptureHotbarModule.HotbarSlotType.Macro when hotbarData.ApparentSlotType is RaptureHotbarModule.HotbarSlotType.Action:
+                ActionTooltip = hotbarData.ApparentActionId;
                 break;
 
             default:
                 ActionTooltip = 0;
-                TextTooltip = string.Empty;
                 break;
         }
 
