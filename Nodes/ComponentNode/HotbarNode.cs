@@ -21,7 +21,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Specialization of <see cref="DragDropNode"/> that has handy accessors for things used to represent a hotbar slot.
 /// </summary>
-public class HotbarNode : DragDropNode {
+public partial class HotbarNode : DragDropNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -136,6 +136,8 @@ public class HotbarNode : DragDropNode {
         }
 
         IGameGui.Get().AgentUpdate += OnAgentUpdate;
+
+        RegisterDebugWindow();
     }
 
     /// <inheritdoc />
@@ -145,6 +147,7 @@ public class HotbarNode : DragDropNode {
         base.Dispose(isNativeDestructor);
 
         IGameGui.Get().AgentUpdate -= OnAgentUpdate;
+        UnregisterDebugWindow();
     }
 
     private void OnAgentUpdate(AgentUpdateFlag agentFlags) {
