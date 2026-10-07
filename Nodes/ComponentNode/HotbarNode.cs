@@ -425,9 +425,9 @@ public class HotbarNode : DragDropNode {
                 var sorterEntry = ItemOrderModule.Instance()->InventorySorter->Items[payload.ReferenceIndex].Value;
                 var id = (uint)sorterEntry->Page << 16 | (uint)sorterEntry->Slot & 0xFFFF;
 
+                Payload = payload.Clone();
                 hotbarData.Clear();
                 hotbarData.Set(hotbarSlotType, id);
-                Payload = payload.Clone();
                 return;
 
             case RaptureHotbarModule.HotbarSlotType.KeyItem:
@@ -436,9 +436,9 @@ public class HotbarNode : DragDropNode {
                     return;
                 }
 
+                Payload = payload.Clone();
                 hotbarData.Clear();
                 hotbarData.Set(hotbarSlotType, (uint) payload.ReferenceIndex);
-                Payload = payload.Clone();
                 return;
 
             case RaptureHotbarModule.HotbarSlotType.Crystal:
@@ -447,15 +447,15 @@ public class HotbarNode : DragDropNode {
                     return;
                 }
 
+                Payload = payload.Clone();
                 hotbarData.Clear();
                 hotbarData.Set(hotbarSlotType, (uint) payload.ReferenceIndex);
-                Payload = payload.Clone();
                 return;
 
             default:
+                Payload = payload.Clone();
                 hotbarData.Clear();
                 hotbarData.Set(hotbarSlotType, (uint) Payload.Int2);
-                Payload = payload.Clone();
                 return;
         }
     }
