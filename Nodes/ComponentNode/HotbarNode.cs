@@ -380,11 +380,12 @@ public partial class HotbarNode : DragDropNode {
             IconNode.IsFaded = !isAvailable && !isMacro;
             IconNode.ShowMacroIcon = isMacro;
 
-            IconNode.ResourceCostVisible = hotbarState.CostType is 2 or 5; // Mana or GP
+            IconNode.ResourceCostVisible = hotbarState.CostType is 2 or 5 or 4; // Mana or GP or CP
             IconNode.ResourceCostValue = hotbarState.CostValue;
 
             IconNode.CostTextColor = hotbarState.CostType switch {
                 2 => CostTextColor.Mana,
+                4 => CostTextColor.DoH,
                 5 => CostTextColor.DoL,
                 _ => CostTextColor.Mana,
             };
