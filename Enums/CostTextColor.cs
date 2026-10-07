@@ -16,7 +16,7 @@ public enum CostTextColor {
     Mana,
 
     /// <summary>
-    /// Brown-ish Color representing CP.
+    /// Brown-ish Color representing GP.
     /// </summary>
     DoL,
 
@@ -24,6 +24,11 @@ public enum CostTextColor {
     /// Red color when the current target is invalid.
     /// </summary>
     Error,
+
+    /// <summary>
+    /// Pinkish color representing CP.
+    /// </summary>
+    DoH,
 }
 
 /// <summary>
@@ -39,6 +44,7 @@ public static class CostTextColorExtensions {
             CostTextColor.Mana => new Vector4(1.000f, 0.851f, 0.980f, 1.000f), // Slight Purple
             CostTextColor.DoL => new Vector4(1.000f, 0.945f, 0.831f, 1.000f), // Slight brown
             CostTextColor.Error => new Vector4(0.871f, 0.251f, 0.251f, 1.000f), // Red
+            CostTextColor.DoH => new Vector4(0.898f, 0.769f, 1.000f, 1.000f), // Slight pink
             _ => KnownColor.White.Vector(),
         };
 
@@ -49,6 +55,7 @@ public static class CostTextColorExtensions {
             CostTextColor.Mana => new Vector4(0.596f, 0.314f, 0.565f, 1.000f),
             CostTextColor.DoL => new Vector4(0.498f, 0.486f, 0.114f, 1.000f),
             CostTextColor.Error => new Vector4(0.392f, 0.000f, 0.000f, 1.000f),
+            CostTextColor.DoH => new Vector4(0.718f, 0.106f, 0.494f, 1.000f),
             _ => KnownColor.Black.Vector(),
         };
     }
