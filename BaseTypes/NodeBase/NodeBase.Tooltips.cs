@@ -28,7 +28,7 @@ public unsafe partial class NodeBase {
                 tooltipType &= ~AtkTooltipType.Text;
             }
 
-            if (field != value && ParentAddon is not null) {
+            if (ParentAddon is not null) {
                 ParentAddon->UpdateCollisionNodeList(false);
             }
 
@@ -55,7 +55,7 @@ public unsafe partial class NodeBase {
                 tooltipType &= ~AtkTooltipType.Action;
             }
 
-            if (field != value && ParentAddon is not null) {
+            if (ParentAddon is not null) {
                 ParentAddon->UpdateCollisionNodeList(false);
             }
 
@@ -82,7 +82,7 @@ public unsafe partial class NodeBase {
                 tooltipType &= ~AtkTooltipType.Item;
             }
 
-            if (field != value && ParentAddon is not null) {
+            if (ParentAddon is not null) {
                 ParentAddon->UpdateCollisionNodeList(false);
             }
 
@@ -109,7 +109,7 @@ public unsafe partial class NodeBase {
                 tooltipType &= ~AtkTooltipType.Item;
             }
 
-            if (field != value && ParentAddon is not null) {
+            if (ParentAddon is not null) {
                 ParentAddon->UpdateCollisionNodeList(false);
             }
 
