@@ -139,8 +139,7 @@ public partial class HotbarNode : DragDropNode {
         OnEnd = OnDragDropEnd;
 
         unsafe {
-            hotbarData.PopUpHelp.Ctor();
-            hotbarData.Clear();
+            hotbarData.Initialize();
         }
 
         IGameGui.Get().AgentUpdate += OnAgentUpdate;
