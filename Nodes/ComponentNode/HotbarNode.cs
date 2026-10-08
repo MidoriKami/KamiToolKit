@@ -144,7 +144,6 @@ public partial class HotbarNode : DragDropNode {
         }
 
         IGameGui.Get().AgentUpdate += OnAgentUpdate;
-
         RegisterDebugWindow();
     }
 
