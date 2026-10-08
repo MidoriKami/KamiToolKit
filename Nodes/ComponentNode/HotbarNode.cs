@@ -367,7 +367,6 @@ public partial class HotbarNode : DragDropNode {
             hotbarData.ApparentSlotType = outType;
 
             RaptureHotbarModule.Instance()->PrepareSlotForRender(data, state);
-            hotbarData.PopUpHelp.Clear();
 
             IconId = hotbarState.IconId;
 
