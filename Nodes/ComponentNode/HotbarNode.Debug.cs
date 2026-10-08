@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
@@ -11,6 +12,8 @@ namespace KamiToolKit.Nodes;
 /// This file should be considered temporary and may disappear at any time.
 /// </summary>
 public partial class HotbarNode {
+
+    private bool EnableHotbarDebug { get; set; } = false;
 
     private class SlotDebugWindow : Window {
         private readonly HotbarNode node;
@@ -98,6 +101,8 @@ public partial class HotbarNode {
 
     [Conditional("DEBUG")]
     internal void RegisterDebugWindow() {
+        if (!EnableHotbarDebug) return;
+
         if (windowSystem is null) {
             windowSystem = new WindowSystem("KTK-HotbarNodeDebug");
             KamiToolKitLibrary.PluginInterface.UiBuilder.Draw += windowSystem.Draw;
@@ -108,8 +113,11 @@ public partial class HotbarNode {
     }
 
     [Conditional("DEBUG")]
-    internal static void UnregisterDebugWindow() {
+    internal void UnregisterDebugWindow() {
+        if (!EnableHotbarDebug) return;
+
         refCount--;
+        refCount = Math.Clamp(refCount, 0, int.MaxValue);
 
         if (refCount is 0 && windowSystem is not null) {
             KamiToolKitLibrary.PluginInterface.UiBuilder.Draw -= windowSystem.Draw;
