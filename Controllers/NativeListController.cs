@@ -200,8 +200,20 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
     /// <summary>
     /// Disables this native list controller.
     /// </summary>
-    public Task DisableAsync()
-        => IFramework.Get().Run(Disable);
+    public async Task DisableAsync() {
+        await IFramework.Get().Run(() => {
+            IAddonLifecycle.Get().UnregisterListener(OnAddonSetup, OnAddonFinalize);
+            onListPopulate?.Disable();
+            onRendererPopulate?.Disable();
+            RemoveNodes();
+        });
+
+        await onListPopulate.DisposeAsync();
+        onListPopulate = null;
+
+        await onRendererPopulate.DisposeAsync();
+        onRendererPopulate = null;
+    }
 
     /// <inheritdoc />
     public void Dispose()
