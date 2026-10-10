@@ -35,7 +35,6 @@ public partial class HotbarNode {
                     if (!child) return;
 
                     ImGui.Text($"ApparentSlotType: {node.hotbarData.ApparentSlotType}");
-                    ImGui.Text($"PopUpHelp: {node.hotbarData.PopUpHelp}");
                     ImGui.Text($"ApparentActionId: {node.hotbarData.ApparentActionId}");
                     ImGui.Text($"CommandType: {node.hotbarData.CommandType}");
                     ImGui.Text($"ApparentActionMode: {node.hotbarData.ApparentActionMode}");
@@ -65,7 +64,6 @@ public partial class HotbarNode {
                     using var child = ImRaii.Child("child", ImGui.GetContentRegionAvail());
                     if (!child) return;
 
-                    ImGui.Text($"PopUpHelpText: {node.hotbarState.PopUpHelpText}");
                     ImGui.Text($"ActionAvailable1: {node.hotbarState.ActionAvailable1}");
                     ImGui.Text($"ActionAvailable2: {node.hotbarState.ActionAvailable2}");
                     ImGui.Text($"ActionId: {node.hotbarState.ActionId}");
