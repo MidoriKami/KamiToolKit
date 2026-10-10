@@ -7,10 +7,10 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
-using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Classes;
 using KamiToolKit.Internal.Classes;
 
@@ -88,39 +88,30 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
     /// <remarks>
     /// Configure the node's events before adding it. This must be invoked from the main game thread.
     /// </remarks>
-    public unsafe void AddNode(TU listItem, NodeBase node) {
+    public unsafe void AddNode(TU listItem, NodeBase? node) {
+        if (node is null) return;
+        if (attachedNodes.Any(entry => entry.Node == node)) return;
+
         ThreadSafety.AssertMainThread();
-        if (attachments.ContainsKey(node)) return;
 
         var renderer = listItem.ItemRenderer;
         if (renderer is null && listItem.ItemInfo is not null) {
             renderer = listItem.ItemInfo->ListItem->Renderer;
         }
 
-        if (renderer is null || renderer->UldManager.Objects is null) {
-            throw new ArgumentException("List item has no initialized renderer.", nameof(listItem));
-        }
+        var experimentalRenderer = (Experimental.ListItemRenderer*)renderer;
 
-        if (node.ResNode is null) {
-            throw new ObjectDisposedException(nameof(node));
-        }
+        // Resize Collision Node List
+        var count = experimentalRenderer->CollisionNodeListCount;
+        var buffer = (AtkResNode**)IMemorySpace.GetUISpace()->Realloc<nint>(experimentalRenderer->CollisionNodeList, count + 1);
 
-        if (node.ParentUldManager != &renderer->UldManager || node.ParentAddon is null || node.ParentAddon->NameString != AddonName) {
-            throw new ArgumentException("Node must be attached to a renderer owned by this controller.", nameof(node));
-        }
+        new Span<nint>(buffer, count).CopyTo(new Span<nint>(buffer + 1, count));
+        buffer[0] = node;
 
-        if (node is ComponentNode || NodeBase.GetLocalChildren(node).Any(child => child is ComponentNode || child.NodeFlags.HasFlag(NodeFlags.RespondToMouse))) {
-            throw new ArgumentException("Component nodes and interactive children are not supported.", nameof(node));
-        }
+        experimentalRenderer->CollisionNodeList = buffer;
+        experimentalRenderer->CollisionNodeListCount++;
 
-        var attachment = new NativeListAttachment(node, renderer, attachments);
-        try {
-            attachment.Attach();
-        }
-        catch {
-            attachment.Dispose();
-            throw;
-        }
+        attachedNodes.Add(new ListNodeEntry(node, experimentalRenderer));
     }
 
     /// <summary>
@@ -130,11 +121,36 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
     /// <remarks>
     /// This must be invoked from the main game thread.
     /// </remarks>
-    public void RemoveNode(NodeBase node) {
+    public unsafe void RemoveNode(NodeBase node) {
+        if (attachedNodes.FirstOrDefault(entry => entry.Node == node) is not { } listEntry) return;
+
         ThreadSafety.AssertMainThread();
-        if (attachments.TryGetValue(node, out var attachment)) {
-            attachment.Dispose();
+
+        var rendererData = listEntry.Renderer;
+
+        // Note this does not re-alloc the memory for the collision node list!
+        for (var index = 0; index < rendererData->CollisionNodeListCount; index++) {
+            if (rendererData->CollisionNodeList[index] != node.ResNode) {
+                continue;
+            }
+
+            rendererData->CollisionNodeListCount--;
+
+            for (var next = index; next < rendererData->CollisionNodeListCount; next++) {
+                rendererData->CollisionNodeList[next] = rendererData->CollisionNodeList[next + 1];
+            }
+
+            rendererData->CollisionNodeList[rendererData->CollisionNodeListCount] = null;
+            break;
         }
+
+        if (rendererData->EventNode == node.ResNode) {
+            rendererData->EventNode = null;
+        }
+
+        node.Dispose();
+
+        attachedNodes.Remove(listEntry);
     }
 
     /// <summary>
@@ -186,8 +202,6 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
 
         IAddonLifecycle.Get().UnregisterListener(OnAddonSetup, OnAddonFinalize);
 
-        onListPopulate?.Disable();
-        onRendererPopulate?.Disable();
         RemoveNodes();
 
         onListPopulate?.Dispose();
@@ -201,12 +215,9 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
     /// Disables this native list controller.
     /// </summary>
     public async Task DisableAsync() {
-        await IFramework.Get().Run(() => {
-            IAddonLifecycle.Get().UnregisterListener(OnAddonSetup, OnAddonFinalize);
-            onListPopulate?.Disable();
-            onRendererPopulate?.Disable();
-            RemoveNodes();
-        });
+        IAddonLifecycle.Get().UnregisterListener(OnAddonSetup, OnAddonFinalize);
+
+        await IFramework.Get().Run(RemoveNodes);
 
         await onListPopulate.DisposeAsync();
         onListPopulate = null;
@@ -253,6 +264,8 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
         try {
             var listItemNode = itemInfo->ListItem->Renderer->OwnerNode;
 
+            // Populate can be called for other lists that use the same data layout, we need to ensure we only invoke for the
+            // specific addon that the user of this API wants.
             var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode((AtkResNode*)listItemNode);
             if (parentAddon is null || parentAddon->NameString != AddonName) {
                 onListPopulate!.Original(unitBase, itemInfo, nodeList);
@@ -266,19 +279,44 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
                 NodeId = itemInfo->ListItem->Renderer->OwnerNode->NodeId,
             };
 
-            var shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
+            // Determine if this element needs to be reset, or needs to be modified.
+            // We want to allow people to reset their elements before the game modifies them again.
+            var shouldModifyElement = false;
 
+            try {
+                shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
+            }
+            catch (Exception e) {
+                IPluginLog.Get().Exception(e);
+            }
+
+            // Before Original is called, allow the user of the API to reset their changes.
             if (!shouldModifyElement) {
                 if (ModifiedIndexes.Contains(itemInfo->ListItem->Renderer->OwnerNode->NodeId)) {
-                    ResetElement?.Invoke((T*)unitBase, listItemData);
+
+                    try {
+                        ResetElement?.Invoke((T*)unitBase, listItemData);
+                    }
+                    catch (Exception e) {
+                        IPluginLog.Get().Exception(e);
+                    }
+
                     ModifiedIndexes.Remove(itemInfo->ListItem->Renderer->OwnerNode->NodeId);
                 }
             }
 
             onListPopulate!.Original(unitBase, itemInfo, nodeList);
 
+            // After original is called, apply new changes.
             if (shouldModifyElement) {
-                UpdateElement?.Invoke((T*)unitBase, listItemData);
+
+                try {
+                    UpdateElement?.Invoke((T*)unitBase, listItemData);
+                }
+                catch (Exception e) {
+                    IPluginLog.Get().Exception(e);
+                }
+
                 ModifiedIndexes.Add(itemInfo->ListItem->Renderer->OwnerNode->NodeId);
             }
         }
@@ -291,6 +329,8 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
         try {
             var listItemNode = listItemRenderer->OwnerNode;
 
+            // Populate can be called for other lists that use the same data layout, we need to ensure we only invoke for the
+            // specific addon that the user of this API wants.
             var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode((AtkResNode*)listItemNode);
             if (parentAddon is null || parentAddon->NameString != AddonName) {
                 onRendererPopulate!.Original(unitBase, listItemIndex, nodeList, listItemRenderer);
@@ -304,19 +344,42 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
                 NodeId = listItemRenderer->OwnerNode->NodeId,
             };
 
-            var shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
+            // Determine if this element needs to be reset, or needs to be modified.
+            // We want to allow people to reset their elements before the game modifies them again.
+            var shouldModifyElement = false;
 
+            try {
+                shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
+            }
+            catch (Exception e) {
+                IPluginLog.Get().Exception(e);
+            }
+
+            // Before Original is called, allow the user of the API to reset their changes.
             if (!shouldModifyElement) {
                 if (ModifiedIndexes.Contains(listItemRenderer->OwnerNode->NodeId)) {
-                    ResetElement?.Invoke((T*)unitBase, listItemData);
+                    try {
+                        ResetElement?.Invoke((T*)unitBase, listItemData);
+                    }
+                    catch (Exception e) {
+                        IPluginLog.Get().Exception(e);
+                    }
+
                     ModifiedIndexes.Remove(listItemRenderer->OwnerNode->NodeId);
                 }
             }
 
             onRendererPopulate!.Original(unitBase, listItemIndex, nodeList, listItemRenderer);
 
+            // After original is called, apply new changes.
             if (shouldModifyElement) {
-                UpdateElement?.Invoke((T*)unitBase, listItemData);
+                try {
+                    UpdateElement?.Invoke((T*)unitBase, listItemData);
+                }
+                catch (Exception e) {
+                    IPluginLog.Get().Exception(e);
+                }
+
                 ModifiedIndexes.Add(listItemRenderer->OwnerNode->NodeId);
             }
         }
@@ -325,13 +388,13 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
         }
     }
 
-    private Hook<AtkComponentListItemPopulator.PopulateDelegate>? onListPopulate;
-    private Hook<AtkComponentListItemPopulator.PopulateWithRendererDelegate>? onRendererPopulate;
-    private readonly Dictionary<NodeBase, NativeListAttachment> attachments = [];
-
     private void RemoveNodes() {
-        foreach (var attachment in attachments.Values.ToArray()) {
-            attachment.Dispose();
+        foreach (var entry in attachedNodes.ToList()) {
+            RemoveNode(entry.Node);
         }
     }
+
+    private Hook<AtkComponentListItemPopulator.PopulateDelegate>? onListPopulate;
+    private Hook<AtkComponentListItemPopulator.PopulateWithRendererDelegate>? onRendererPopulate;
+    private readonly List<ListNodeEntry> attachedNodes = [];
 }
