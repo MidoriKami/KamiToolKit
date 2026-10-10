@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
@@ -8,6 +9,8 @@ using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.BaseTypes;
+using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Classes;
 using KamiToolKit.Internal.Classes;
 
@@ -78,6 +81,63 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
     public List<uint> ModifiedIndexes { get; } = [];
 
     /// <summary>
+    /// Adds an attached node to the list item's collision list. Added nodes are owned by the controller.
+    /// </summary>
+    /// <param name="listItem">List item containing the node.</param>
+    /// <param name="node">Node to add.</param>
+    /// <remarks>
+    /// Configure the node's events before adding it. This must be invoked from the main game thread.
+    /// </remarks>
+    public unsafe void AddNode(TU listItem, NodeBase node) {
+        ThreadSafety.AssertMainThread();
+        if (attachments.ContainsKey(node)) return;
+
+        var renderer = listItem.ItemRenderer;
+        if (renderer is null && listItem.ItemInfo is not null) {
+            renderer = listItem.ItemInfo->ListItem->Renderer;
+        }
+
+        if (renderer is null || renderer->UldManager.Objects is null) {
+            throw new ArgumentException("List item has no initialized renderer.", nameof(listItem));
+        }
+
+        if (node.ResNode is null) {
+            throw new ObjectDisposedException(nameof(node));
+        }
+
+        if (node.ParentUldManager != &renderer->UldManager || node.ParentAddon is null || node.ParentAddon->NameString != AddonName) {
+            throw new ArgumentException("Node must be attached to a renderer owned by this controller.", nameof(node));
+        }
+
+        if (node is ComponentNode || NodeBase.GetLocalChildren(node).Any(child => child is ComponentNode || child.NodeFlags.HasFlag(NodeFlags.RespondToMouse))) {
+            throw new ArgumentException("Component nodes and interactive children are not supported.", nameof(node));
+        }
+
+        var attachment = new NativeListAttachment(node, renderer, attachments);
+        try {
+            attachment.Attach();
+        }
+        catch {
+            attachment.Dispose();
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Removes and disposes a node owned by this controller.
+    /// </summary>
+    /// <param name="node">Node to remove.</param>
+    /// <remarks>
+    /// This must be invoked from the main game thread.
+    /// </remarks>
+    public void RemoveNode(NodeBase node) {
+        ThreadSafety.AssertMainThread();
+        if (attachments.TryGetValue(node, out var attachment)) {
+            attachment.Dispose();
+        }
+    }
+
+    /// <summary>
     /// Enables this native list controller.
     /// </summary>
     /// <remarks>
@@ -126,6 +186,10 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
 
         IAddonLifecycle.Get().UnregisterListener(OnAddonSetup, OnAddonFinalize);
 
+        onListPopulate?.Disable();
+        onRendererPopulate?.Disable();
+        RemoveNodes();
+
         onListPopulate?.Dispose();
         onListPopulate = null;
 
@@ -137,7 +201,12 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
     /// Disables this native list controller.
     /// </summary>
     public async Task DisableAsync() {
-        IAddonLifecycle.Get().UnregisterListener(OnAddonSetup, OnAddonFinalize);
+        await IFramework.Get().Run(() => {
+            IAddonLifecycle.Get().UnregisterListener(OnAddonSetup, OnAddonFinalize);
+            onListPopulate?.Disable();
+            onRendererPopulate?.Disable();
+            RemoveNodes();
+        });
 
         await onListPopulate.DisposeAsync();
         onListPopulate = null;
@@ -160,6 +229,8 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
     private void OnAddonFinalize(AddonEvent type, AddonArgs args) {
         onListPopulate?.Disable();
         onRendererPopulate?.Disable();
+
+        RemoveNodes();
 
         ModifiedIndexes.Clear();
     }
@@ -256,4 +327,11 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
 
     private Hook<AtkComponentListItemPopulator.PopulateDelegate>? onListPopulate;
     private Hook<AtkComponentListItemPopulator.PopulateWithRendererDelegate>? onRendererPopulate;
+    private readonly Dictionary<NodeBase, NativeListAttachment> attachments = [];
+
+    private void RemoveNodes() {
+        foreach (var attachment in attachments.Values.ToArray()) {
+            attachment.Dispose();
+        }
+    }
 }
