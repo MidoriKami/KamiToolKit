@@ -116,9 +116,9 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         };
         ScrollBarNode.AttachNode(this);
 
-        ClippingContentNode.AddLinkedEvent(ScrollBarNode, AtkEventType.MouseWheel, 5);
-        ScrollingCollisionNode.AddLinkedEvent(ScrollBarNode, AtkEventType.MouseWheel, 5);
-        ContentNode.AddLinkedEvent(ScrollBarNode, AtkEventType.MouseWheel, 5);
+        ClippingContentNode.AddLinkedEvent(ScrollBarNode, 5, AtkEventType.MouseWheel);
+        ScrollingCollisionNode.AddLinkedEvent(ScrollBarNode, 5, AtkEventType.MouseWheel);
+        ContentNode.AddLinkedEvent(ScrollBarNode, 5, AtkEventType.MouseWheel);
     }
 
     /// <inheritdoc />

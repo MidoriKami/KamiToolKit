@@ -94,10 +94,8 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
 
         ThreadSafety.AssertMainThread();
 
-        var renderer = listItem.ItemRenderer;
-        if (renderer is null && listItem.ItemInfo is not null) {
-            renderer = listItem.ItemInfo->ListItem->Renderer;
-        }
+        var renderer = listItem.TryGetListItemRenderer();
+        if (renderer is null) return;
 
         var experimentalRenderer = (Experimental.ListItemRenderer*)renderer;
 
