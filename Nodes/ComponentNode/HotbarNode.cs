@@ -6,6 +6,7 @@ using Dalamud.Game.ClientState.Keys;
 using Dalamud.Game.Gui;
 using Dalamud.Interface;
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
@@ -157,9 +158,9 @@ public partial class HotbarNode : DragDropNode {
     }
 
     private void OnAgentUpdate(AgentUpdateFlag agentFlags) {
-        if (!agentFlags.HasFlag(AgentUpdateFlag.ActionBarUpdate)) return;
-
-        SetHotbarSlotFromPayload(Payload);
+        if (agentFlags.HasFlag(AgentUpdateFlag.InventoryUpdate) || agentFlags.HasFlag(AgentUpdateFlag.ActionBarUpdate)) {
+            SetHotbarSlotFromPayload(Payload);
+        }
     }
 
     private void OnHotbarNodeRollOver(DragDropNode thisNode) {
@@ -167,21 +168,33 @@ public partial class HotbarNode : DragDropNode {
 
         if (!hotbarData.IsValid) return;
 
-        TextTooltip = hotbarData
-            .GetDisplayNameForSlot(hotbarData.ApparentSlotType, hotbarData.ApparentActionId)
-            .ToString();
-
         switch (hotbarData.CommandType) {
             case RaptureHotbarModule.HotbarSlotType.Action:
+                TextTooltip = hotbarData
+                    .GetDisplayNameForSlot(hotbarData.ApparentSlotType, hotbarData.ApparentActionId)
+                    .ToString();
                 ActionTooltip = hotbarData.CommandId;
+                ItemTooltip = 0;
                 break;
 
             case RaptureHotbarModule.HotbarSlotType.Macro when hotbarData.ApparentSlotType is RaptureHotbarModule.HotbarSlotType.Action:
+                TextTooltip = hotbarData
+                    .GetDisplayNameForSlot(hotbarData.ApparentSlotType, hotbarData.ApparentActionId)
+                    .ToString();
                 ActionTooltip = hotbarData.ApparentActionId;
+                ItemTooltip = 0;
+                break;
+
+            case RaptureHotbarModule.HotbarSlotType.Item:
+                TextTooltip = ItemUtil.GetItemName(hotbarData.ApparentActionId);
+                ActionTooltip = 0;
+                ItemTooltip = hotbarData.ApparentActionId;
                 break;
 
             default:
+                TextTooltip = string.Empty;
                 ActionTooltip = 0;
+                ItemTooltip = 0;
                 break;
         }
 
