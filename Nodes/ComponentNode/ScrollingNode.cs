@@ -116,32 +116,9 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         };
         ScrollBarNode.AttachNode(this);
 
-        ClippingContentNode.ResNode->AtkEventManager.RegisterEvent(
-            AtkEventType.MouseWheel,
-            5,
-            null,
-            ScrollingCollisionNode,
-            ScrollBarNode,
-            false
-        );
-
-        ScrollingCollisionNode.ResNode->AtkEventManager.RegisterEvent(
-            AtkEventType.MouseWheel,
-            5,
-            null,
-            ScrollingCollisionNode,
-            ScrollBarNode,
-            false
-        );
-
-        ContentNode.ResNode->AtkEventManager.RegisterEvent(
-            AtkEventType.MouseWheel,
-            5,
-            null,
-            ScrollingCollisionNode,
-            ScrollBarNode,
-            false
-        );
+        ClippingContentNode.AddLinkedEvent(ScrollBarNode, 5, AtkEventType.MouseWheel);
+        ScrollingCollisionNode.AddLinkedEvent(ScrollBarNode, 5, AtkEventType.MouseWheel);
+        ContentNode.AddLinkedEvent(ScrollBarNode, 5, AtkEventType.MouseWheel);
     }
 
     /// <inheritdoc />

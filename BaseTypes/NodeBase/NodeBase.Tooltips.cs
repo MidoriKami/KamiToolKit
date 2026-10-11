@@ -18,12 +18,24 @@ public unsafe partial class NodeBase {
     public virtual ReadOnlySeString TextTooltip {
         get;
         set {
-            if (field == value) return;
+            // If they are both empty, do nothing.
+            if (field.IsEmpty && value.IsEmpty) return;
 
+            // As long as both aren't empty, we can compare them.
+            if (!field.IsEmpty && !value.IsEmpty) {
+                if (field == value) return;
+            }
+
+            // else if one is empty and the other isn't then they are different,
+            // and we need to set up tooltips.
+
+            // If we are setting a valid value, try to enable text tooltips.
             if (!value.IsEmpty) {
                 TryRegisterTooltipEvents();
                 tooltipType |= AtkTooltipType.Text;
             }
+
+            // If we are setting a empty value, disable text tooltips.
             else {
                 tooltipType &= ~AtkTooltipType.Text;
             }

@@ -26,6 +26,18 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
+    /// Adds an event forwarder for sending managed events back to native for handling.
+    /// </summary>
+    /// <example>
+    /// Forwarding mousewheel events from one node to an existing AtkComponentScrollbar, to make the game scroll as if the bar was being scrolled.
+    /// </example>
+    public void AddLinkedEvent(AtkEventListener* eventListener, uint eventParam, params AtkEventType[] eventTypes) {
+        foreach (var eventType in eventTypes) {
+            ResNode->AtkEventManager.RegisterEvent(eventType, eventParam, null, this, eventListener, false);
+        }
+    }
+
+    /// <summary>
     /// Adds a no-arg callback action for the specified event type.
     /// </summary>
     public void AddEvent(AtkEventType eventType, Action callback) {

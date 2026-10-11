@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
 using KamiToolKit.Internal.Classes;
 
@@ -78,6 +81,77 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
     public List<uint> ModifiedIndexes { get; } = [];
 
     /// <summary>
+    /// Adds an attached node to the list item's collision list. Added nodes are owned by the controller.
+    /// </summary>
+    /// <param name="listItem">List item containing the node.</param>
+    /// <param name="node">Node to add.</param>
+    /// <remarks>
+    /// Configure the node's events before adding it. This must be invoked from the main game thread.
+    /// </remarks>
+    public unsafe void AddNode(TU listItem, NodeBase? node) {
+        if (node is null) return;
+        if (attachedNodes.Any(entry => entry.Node == node)) return;
+
+        ThreadSafety.AssertMainThread();
+
+        var renderer = listItem.TryGetListItemRenderer();
+        if (renderer is null) return;
+
+        var experimentalRenderer = (Experimental.ListItemRenderer*)renderer;
+
+        // Resize Collision Node List
+        var count = experimentalRenderer->CollisionNodeListCount;
+        var buffer = (AtkResNode**)IMemorySpace.GetUISpace()->Realloc<nint>(experimentalRenderer->CollisionNodeList, count + 1);
+
+        new Span<nint>(buffer, count).CopyTo(new Span<nint>(buffer + 1, count));
+        buffer[0] = node;
+
+        experimentalRenderer->CollisionNodeList = buffer;
+        experimentalRenderer->CollisionNodeListCount++;
+
+        attachedNodes.Add(new ListNodeEntry(node, experimentalRenderer));
+    }
+
+    /// <summary>
+    /// Removes and disposes a node owned by this controller.
+    /// </summary>
+    /// <param name="node">Node to remove.</param>
+    /// <remarks>
+    /// This must be invoked from the main game thread.
+    /// </remarks>
+    public unsafe void RemoveNode(NodeBase node) {
+        if (attachedNodes.FirstOrDefault(entry => entry.Node == node) is not { } listEntry) return;
+
+        ThreadSafety.AssertMainThread();
+
+        var rendererData = listEntry.Renderer;
+
+        // Note this does not re-alloc the memory for the collision node list!
+        for (var index = 0; index < rendererData->CollisionNodeListCount; index++) {
+            if (rendererData->CollisionNodeList[index] != node.ResNode) {
+                continue;
+            }
+
+            rendererData->CollisionNodeListCount--;
+
+            for (var next = index; next < rendererData->CollisionNodeListCount; next++) {
+                rendererData->CollisionNodeList[next] = rendererData->CollisionNodeList[next + 1];
+            }
+
+            rendererData->CollisionNodeList[rendererData->CollisionNodeListCount] = null;
+            break;
+        }
+
+        if (rendererData->EventNode == node.ResNode) {
+            rendererData->EventNode = null;
+        }
+
+        node.Dispose();
+
+        attachedNodes.Remove(listEntry);
+    }
+
+    /// <summary>
     /// Enables this native list controller.
     /// </summary>
     /// <remarks>
@@ -126,6 +200,8 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
 
         IAddonLifecycle.Get().UnregisterListener(OnAddonSetup, OnAddonFinalize);
 
+        RemoveNodes();
+
         onListPopulate?.Dispose();
         onListPopulate = null;
 
@@ -138,6 +214,8 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
     /// </summary>
     public async Task DisableAsync() {
         IAddonLifecycle.Get().UnregisterListener(OnAddonSetup, OnAddonFinalize);
+
+        await IFramework.Get().Run(RemoveNodes);
 
         await onListPopulate.DisposeAsync();
         onListPopulate = null;
@@ -161,6 +239,8 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
         onListPopulate?.Disable();
         onRendererPopulate?.Disable();
 
+        RemoveNodes();
+
         ModifiedIndexes.Clear();
     }
 
@@ -182,6 +262,8 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
         try {
             var listItemNode = itemInfo->ListItem->Renderer->OwnerNode;
 
+            // Populate can be called for other lists that use the same data layout, we need to ensure we only invoke for the
+            // specific addon that the user of this API wants.
             var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode((AtkResNode*)listItemNode);
             if (parentAddon is null || parentAddon->NameString != AddonName) {
                 onListPopulate!.Original(unitBase, itemInfo, nodeList);
@@ -195,19 +277,44 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
                 NodeId = itemInfo->ListItem->Renderer->OwnerNode->NodeId,
             };
 
-            var shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
+            // Determine if this element needs to be reset, or needs to be modified.
+            // We want to allow people to reset their elements before the game modifies them again.
+            var shouldModifyElement = false;
 
+            try {
+                shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
+            }
+            catch (Exception e) {
+                IPluginLog.Get().Exception(e);
+            }
+
+            // Before Original is called, allow the user of the API to reset their changes.
             if (!shouldModifyElement) {
                 if (ModifiedIndexes.Contains(itemInfo->ListItem->Renderer->OwnerNode->NodeId)) {
-                    ResetElement?.Invoke((T*)unitBase, listItemData);
+
+                    try {
+                        ResetElement?.Invoke((T*)unitBase, listItemData);
+                    }
+                    catch (Exception e) {
+                        IPluginLog.Get().Exception(e);
+                    }
+
                     ModifiedIndexes.Remove(itemInfo->ListItem->Renderer->OwnerNode->NodeId);
                 }
             }
 
             onListPopulate!.Original(unitBase, itemInfo, nodeList);
 
+            // After original is called, apply new changes.
             if (shouldModifyElement) {
-                UpdateElement?.Invoke((T*)unitBase, listItemData);
+
+                try {
+                    UpdateElement?.Invoke((T*)unitBase, listItemData);
+                }
+                catch (Exception e) {
+                    IPluginLog.Get().Exception(e);
+                }
+
                 ModifiedIndexes.Add(itemInfo->ListItem->Renderer->OwnerNode->NodeId);
             }
         }
@@ -220,6 +327,8 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
         try {
             var listItemNode = listItemRenderer->OwnerNode;
 
+            // Populate can be called for other lists that use the same data layout, we need to ensure we only invoke for the
+            // specific addon that the user of this API wants.
             var parentAddon = RaptureAtkUnitManager.Instance()->GetAddonByNode((AtkResNode*)listItemNode);
             if (parentAddon is null || parentAddon->NameString != AddonName) {
                 onRendererPopulate!.Original(unitBase, listItemIndex, nodeList, listItemRenderer);
@@ -233,19 +342,42 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
                 NodeId = listItemRenderer->OwnerNode->NodeId,
             };
 
-            var shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
+            // Determine if this element needs to be reset, or needs to be modified.
+            // We want to allow people to reset their elements before the game modifies them again.
+            var shouldModifyElement = false;
 
+            try {
+                shouldModifyElement = ShouldModifyElement?.Invoke((T*)unitBase, listItemData) ?? true;
+            }
+            catch (Exception e) {
+                IPluginLog.Get().Exception(e);
+            }
+
+            // Before Original is called, allow the user of the API to reset their changes.
             if (!shouldModifyElement) {
                 if (ModifiedIndexes.Contains(listItemRenderer->OwnerNode->NodeId)) {
-                    ResetElement?.Invoke((T*)unitBase, listItemData);
+                    try {
+                        ResetElement?.Invoke((T*)unitBase, listItemData);
+                    }
+                    catch (Exception e) {
+                        IPluginLog.Get().Exception(e);
+                    }
+
                     ModifiedIndexes.Remove(listItemRenderer->OwnerNode->NodeId);
                 }
             }
 
             onRendererPopulate!.Original(unitBase, listItemIndex, nodeList, listItemRenderer);
 
+            // After original is called, apply new changes.
             if (shouldModifyElement) {
-                UpdateElement?.Invoke((T*)unitBase, listItemData);
+                try {
+                    UpdateElement?.Invoke((T*)unitBase, listItemData);
+                }
+                catch (Exception e) {
+                    IPluginLog.Get().Exception(e);
+                }
+
                 ModifiedIndexes.Add(listItemRenderer->OwnerNode->NodeId);
             }
         }
@@ -254,6 +386,13 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
         }
     }
 
+    private void RemoveNodes() {
+        foreach (var entry in attachedNodes.ToList()) {
+            RemoveNode(entry.Node);
+        }
+    }
+
     private Hook<AtkComponentListItemPopulator.PopulateDelegate>? onListPopulate;
     private Hook<AtkComponentListItemPopulator.PopulateWithRendererDelegate>? onRendererPopulate;
+    private readonly List<ListNodeEntry> attachedNodes = [];
 }
