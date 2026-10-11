@@ -8,6 +8,7 @@ using Dalamud.Interface;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -78,8 +79,8 @@ public partial class HotbarNode : DragDropNode {
     /// </summary>
     public unsafe void ClearSlot() {
         Payload.Clear();
-        hotbarState.Ctor();
-        hotbarData.Clear();
+        hotbarState->Ctor();
+        hotbarData->Clear();
     }
 
     /// <summary>
@@ -140,7 +141,11 @@ public partial class HotbarNode : DragDropNode {
         OnEnd = OnDragDropEnd;
 
         unsafe {
-            hotbarData.Initialize();
+            hotbarData = IMemorySpace.GetUISpace()->MallocZeroed<RaptureHotbarModule.HotbarSlot>();
+            hotbarData->Initialize();
+
+            hotbarState = IMemorySpace.GetUISpace()->MallocZeroed<RaptureHotbarModule.HotbarUIIntermediate>();
+            hotbarState->Ctor();
         }
 
         IGameGui.Get().AgentUpdate += OnAgentUpdate;
@@ -148,13 +153,17 @@ public partial class HotbarNode : DragDropNode {
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool isNativeDestructor) {
+    protected override unsafe void Dispose(bool isNativeDestructor) {
         if (IsDisposed) return;
 
         base.Dispose(isNativeDestructor);
 
         IGameGui.Get().AgentUpdate -= OnAgentUpdate;
         UnregisterDebugWindow();
+
+        hotbarData->PopUpHelp.Dtor();
+        IMemorySpace.Free(hotbarData, 0);
+        IMemorySpace.Free(hotbarState, 0);
     }
 
     private void OnAgentUpdate(AgentUpdateFlag agentFlags) {
@@ -163,36 +172,30 @@ public partial class HotbarNode : DragDropNode {
         }
     }
 
-    private void OnHotbarNodeRollOver(DragDropNode thisNode) {
+    private unsafe void OnHotbarNodeRollOver(DragDropNode thisNode) {
         HideTooltip();
 
-        if (!hotbarData.IsValid) return;
+        if (!hotbarData->IsValid) return;
 
-        switch (hotbarData.CommandType) {
+        TextTooltip = hotbarData->PopUpHelp.AsReadOnlySeString();
+
+        switch (hotbarData->CommandType) {
             case RaptureHotbarModule.HotbarSlotType.Action:
-                TextTooltip = hotbarData
-                    .GetDisplayNameForSlot(hotbarData.ApparentSlotType, hotbarData.ApparentActionId)
-                    .ToString();
-                ActionTooltip = hotbarData.CommandId;
+                ActionTooltip = hotbarData->CommandId;
                 ItemTooltip = 0;
                 break;
 
-            case RaptureHotbarModule.HotbarSlotType.Macro when hotbarData.ApparentSlotType is RaptureHotbarModule.HotbarSlotType.Action:
-                TextTooltip = hotbarData
-                    .GetDisplayNameForSlot(hotbarData.ApparentSlotType, hotbarData.ApparentActionId)
-                    .ToString();
-                ActionTooltip = hotbarData.ApparentActionId;
+            case RaptureHotbarModule.HotbarSlotType.Macro when hotbarData->ApparentSlotType is RaptureHotbarModule.HotbarSlotType.Action:
+                ActionTooltip = hotbarData->ApparentActionId;
                 ItemTooltip = 0;
                 break;
 
             case RaptureHotbarModule.HotbarSlotType.Item:
-                TextTooltip = ItemUtil.GetItemName(hotbarData.ApparentActionId);
                 ActionTooltip = 0;
-                ItemTooltip = hotbarData.ApparentActionId;
+                ItemTooltip = hotbarData->ApparentActionId;
                 break;
 
             default:
-                TextTooltip = string.Empty;
                 ActionTooltip = 0;
                 ItemTooltip = 0;
                 break;
@@ -205,14 +208,14 @@ public partial class HotbarNode : DragDropNode {
         HideTooltip();
     }
 
-    private void OnHotbarNodePayloadAccepted(DragDropNode thisNode, DragDropPayload payload) {
+    private unsafe void OnHotbarNodePayloadAccepted(DragDropNode thisNode, DragDropPayload payload) {
         if (settingSourceNodeData) return;
 
         // If source is another KTK Node
         if (dragSourceNode is not null) {
 
             // And we are not empty, we need to swap our slots.
-            if (hotbarData.IsValid) {
+            if (hotbarData->IsValid) {
                 var sourcePayload = dragSourceNode.Payload.Clone();
 
                 // Call OnPayloadAccepted to trigger any down-stream events that are listening for payload change.
@@ -256,9 +259,7 @@ public partial class HotbarNode : DragDropNode {
         var hotbarModule = RaptureHotbarModule.Instance();
         if (hotbarModule is null) return;
 
-        fixed (RaptureHotbarModule.HotbarSlot* hotbarSlotData = &hotbarData) {
-            hotbarModule->ExecuteSlot(hotbarSlotData);
-        }
+        hotbarModule->ExecuteSlot(hotbarData);
     }
 
     private void OnHotbarNodeDiscard(DragDropNode thisNode)
@@ -360,64 +361,65 @@ public partial class HotbarNode : DragDropNode {
         var hotbarModule = RaptureHotbarModule.Instance();
         if (hotbarModule is null) return;
 
-        var isMacro = hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Macro;
-        var isItem = hotbarData.CommandType is RaptureHotbarModule.HotbarSlotType.Item;
+        var isMacro = hotbarData->CommandType is RaptureHotbarModule.HotbarSlotType.Macro;
+        var isItem = hotbarData->CommandType is RaptureHotbarModule.HotbarSlotType.Item;
 
         // Clear hotbar state to get fresh data.
-        hotbarState.Ctor();
+        hotbarState->Ctor();
 
-        fixed (RaptureHotbarModule.HotbarSlot* data = &hotbarData)
-        fixed (RaptureHotbarModule.HotbarUIIntermediate* state = &hotbarState)
-        {
-            RaptureHotbarModule.HotbarSlotType outType;
-            uint outActionId;
-            ushort unkC4;
+        RaptureHotbarModule.HotbarSlotType outType;
+        uint outActionId;
+        ushort unkC4;
 
-            RaptureHotbarModule.GetSlotAppearance(&outType, &outActionId, &unkC4, hotbarModule, data);
-            hotbarData.ApparentActionId = outActionId;
-            hotbarData.ApparentSlotType = outType;
+        RaptureHotbarModule.GetSlotAppearance(&outType, &outActionId, &unkC4, hotbarModule, hotbarData);
+        hotbarData->ApparentActionId = outActionId;
+        hotbarData->ApparentSlotType = outType;
 
-            RaptureHotbarModule.Instance()->PrepareSlotForRender(data, state);
+        RaptureHotbarModule.Instance()->PrepareSlotForRender(hotbarData, hotbarState);
 
-            IconId = hotbarState.IconId;
+        IconId = hotbarState->IconId;
 
-            // IsBackgroundShow tells us we wanna force this slot to be visible.
-            IsVisible = hotbarData.IsValid || IsBackgroundShown;
+        // IsBackgroundShow tells us we wanna force this slot to be visible.
+        IsVisible = hotbarData->IsValid || IsBackgroundShown;
 
-            var isAvailable = hotbarState is { ActionAvailable1: true, ActionAvailable2: true };
+        var isAvailable = hotbarState->ActionAvailable1 && hotbarState->ActionAvailable2;
 
-            IconNode.IsFaded = !isAvailable && !isMacro;
-            IconNode.ShowMacroIcon = isMacro;
+        IconNode.IsFaded = !isAvailable && !isMacro;
+        IconNode.ShowMacroIcon = isMacro;
 
-            IconNode.ResourceCostVisible = hotbarState.CostType is 2 or 5 or 4; // Mana or GP or CP
-            IconNode.ResourceCostValue = hotbarState.CostValue;
+        IconNode.ResourceCostVisible = hotbarState->CostType is 2 or 5 or 4; // Mana or GP or CP
+        IconNode.ResourceCostValue = hotbarState->CostValue;
 
-            IconNode.CostTextColor = hotbarState.CostType switch {
-                2 => CostTextColor.Mana,
-                4 => CostTextColor.DoH,
-                5 => CostTextColor.DoL,
-                _ => CostTextColor.Mana,
-            };
-            IconNode.IsInvalid = !hotbarState.ActionTargetSatisfied;
+        IconNode.CostTextColor = hotbarState->CostType switch {
+            2 => CostTextColor.Mana,
+            4 => CostTextColor.DoH,
+            5 => CostTextColor.DoL,
+            _ => CostTextColor.Mana,
+        };
+        IconNode.IsInvalid = !hotbarState->ActionTargetSatisfied;
 
-            IconNode.ChargeCountVisible = hotbarState.CooldownMode is 3;
-            IconNode.ChargeCount = (int) hotbarState.CurrentCharges;
-            IconNode.ChargePercent = hotbarState.ChargePercent / 100.0f;
+        IconNode.ChargeCountVisible = hotbarState->CooldownMode is 3;
+        IconNode.ChargeCount = (int) hotbarState->CurrentCharges;
+        IconNode.ChargePercent = hotbarState->ChargePercent / 100.0f;
 
-            IconNode.CooldownSecondsVisible = hotbarState.CooldownSeconds is not 0;
-            IconNode.CooldownSeconds = hotbarState.CooldownSeconds;
+        IconNode.CooldownSecondsVisible = hotbarState->CooldownSeconds is not 0;
+        IconNode.CooldownSeconds = hotbarState->CooldownSeconds;
 
-            IconNode.CooldownPercentVisible = hotbarState.CooldownPercent is not 0;
-            IconNode.CooldownPercent = hotbarState.CooldownPercent / 100.0f;
+        IconNode.CooldownPercentVisible = hotbarState->CooldownPercent is not 0;
+        IconNode.CooldownPercent = hotbarState->CooldownPercent / 100.0f;
 
-            IconNode.IsAnts = hotbarState.DrawAnts;
+        IconNode.IsAnts = hotbarState->DrawAnts;
 
-            ItemCountTextNode.IsVisible = !IconNode.CooldownSecondsVisible && isItem;
-            ItemCountTextNode.String = hotbarData.CostTextString;
-
-            KeybindTextNode.String = KeyBind is null ? string.Empty : GetKeybindText(KeyBind);
-            KeybindTextNode.IsVisible = KeyBind is not null && hotbarData.IsValid || IsBackgroundShown;
+        ItemCountTextNode.IsVisible = !IconNode.CooldownSecondsVisible && isItem;
+        if (hotbarData->CostDisplayMode is 2 or 4) {
+            ItemCountTextNode.String = hotbarData->CostTextString;
         }
+        else {
+            ItemCountTextNode.String = string.Empty;
+        }
+
+        KeybindTextNode.String = KeyBind is null ? string.Empty : GetKeybindText(KeyBind);
+        KeybindTextNode.IsVisible = KeyBind is not null && hotbarData->IsValid || IsBackgroundShown;
     }
 
     private unsafe void SetHotbarSlotFromPayload(DragDropPayload payload) {
@@ -442,8 +444,8 @@ public partial class HotbarNode : DragDropNode {
                 var id = (uint)sorterEntry->Page << 16 | (uint)sorterEntry->Slot & 0xFFFF;
 
                 Payload = payload.Clone();
-                hotbarData.Clear();
-                hotbarData.Set(hotbarSlotType, id);
+                hotbarData->Clear();
+                hotbarData->Set(hotbarSlotType, id);
                 return;
 
             case RaptureHotbarModule.HotbarSlotType.KeyItem:
@@ -453,8 +455,8 @@ public partial class HotbarNode : DragDropNode {
                 }
 
                 Payload = payload.Clone();
-                hotbarData.Clear();
-                hotbarData.Set(hotbarSlotType, (uint) payload.ReferenceIndex);
+                hotbarData->Clear();
+                hotbarData->Set(hotbarSlotType, (uint) payload.ReferenceIndex);
                 return;
 
             case RaptureHotbarModule.HotbarSlotType.Crystal:
@@ -464,20 +466,20 @@ public partial class HotbarNode : DragDropNode {
                 }
 
                 Payload = payload.Clone();
-                hotbarData.Clear();
-                hotbarData.Set(hotbarSlotType, (uint) payload.ReferenceIndex);
+                hotbarData->Clear();
+                hotbarData->Set(hotbarSlotType, (uint) payload.ReferenceIndex);
                 return;
 
             default:
                 Payload = payload.Clone();
-                hotbarData.Clear();
-                hotbarData.Set(hotbarSlotType, (uint) Payload.Int2);
+                hotbarData->Clear();
+                hotbarData->Set(hotbarSlotType, (uint) Payload.Int2);
                 return;
         }
     }
 
-    private RaptureHotbarModule.HotbarSlot hotbarData;
-    private RaptureHotbarModule.HotbarUIIntermediate hotbarState;
+    private readonly unsafe RaptureHotbarModule.HotbarSlot* hotbarData;
+    private readonly unsafe RaptureHotbarModule.HotbarUIIntermediate* hotbarState;
     private DateTime? lastClickTime;
 
     private static HotbarNode? dragSourceNode;
