@@ -14,7 +14,7 @@ namespace KamiToolKit.Nodes;
 /// </summary>
 public partial class HotbarNode {
 
-    private bool EnableHotbarDebug { get; set; } = true;
+    private bool EnableHotbarDebug { get; set; } = false;
 
     private class SlotDebugWindow : Window {
         private readonly HotbarNode node;
