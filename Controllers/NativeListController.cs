@@ -97,19 +97,17 @@ public class NativeListController<T, TU> : IDisposable, IAsyncDisposable where T
         var renderer = listItem.TryGetListItemRenderer();
         if (renderer is null) return;
 
-        var experimentalRenderer = (Experimental.ListItemRenderer*)renderer;
-
         // Resize Collision Node List
-        var count = experimentalRenderer->CollisionNodeListCount;
-        var buffer = (AtkResNode**)IMemorySpace.GetUISpace()->Realloc<nint>(experimentalRenderer->CollisionNodeList, count + 1);
+        var count = renderer->CollisionNodeListCount;
+        var buffer = (AtkResNode**)IMemorySpace.GetUISpace()->Realloc<nint>(renderer->CollisionNodeList, count + 1);
 
         new Span<nint>(buffer, count).CopyTo(new Span<nint>(buffer + 1, count));
         buffer[0] = node;
 
-        experimentalRenderer->CollisionNodeList = buffer;
-        experimentalRenderer->CollisionNodeListCount++;
+        renderer->CollisionNodeList = buffer;
+        renderer->CollisionNodeListCount++;
 
-        attachedNodes.Add(new ListNodeEntry(node, experimentalRenderer));
+        attachedNodes.Add(new ListNodeEntry(node, renderer));
     }
 
     /// <summary>

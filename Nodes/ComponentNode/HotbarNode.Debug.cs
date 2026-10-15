@@ -79,7 +79,7 @@ public partial class HotbarNode {
                     ImGui.Text($"CostText: {node.hotbarState->CostText}");
                     ImGui.Text($"CostType: {node.hotbarState->CostType}");
                     ImGui.Text($"CostValue: {node.hotbarState->CostValue}");
-                    ImGui.Text($"CurrentCharges: {node.hotbarState->CurrentCharges}");
+                    ImGui.Text($"CurrentCharges: {node.hotbarState->CurrentChargeCount}");
                     ImGui.Text($"DrawAnts: {node.hotbarState->DrawAnts}");
                     ImGui.Text($"IconId: {node.hotbarState->IconId}");
                     ImGui.Text($"IsTransformationActionUsable: {node.hotbarState->IsTransformationActionUsable}");
