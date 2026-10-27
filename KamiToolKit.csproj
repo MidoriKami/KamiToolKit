@@ -6,6 +6,13 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
+    <!-- Temporary until Dalamud.NET.Sdk is updated to v16 -->
+    <ItemGroup>
+        <Reference Include="Dalamud.Common" Private="false" />
+        <Reference Include="Dalamud.Excel.Sheets" Private="false" />
+    </ItemGroup>
+    <!-- End Temporary Section -->
+
     <!-- Dalamud.NET.Sdk settings -->
     <PropertyGroup>
         <Use_DalamudPackager>false</Use_DalamudPackager>

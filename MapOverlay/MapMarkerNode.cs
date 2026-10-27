@@ -4,7 +4,7 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes;
-using Lumina.Excel.Sheets;
+using Dalamud.Excel.Sheets;
 using Lumina.Text.ReadOnly;
 using Action = System.Action;
 
