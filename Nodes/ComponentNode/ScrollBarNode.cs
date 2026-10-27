@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.BaseTypes.ComponentNode;
@@ -59,7 +58,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 
             Component->IsVertical = !value;
             Component->IsInputVertical = !value;
-            
+
             // This controls whether auto-resizing changes thumb height vs width.
             Component->IsThumbLengthVertical = !value;
 
