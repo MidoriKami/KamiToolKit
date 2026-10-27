@@ -59,10 +59,9 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
 
             Component->IsVertical = !value;
             Component->IsInputVertical = !value;
-            // TODO: Swap when merged into Dalamud main (was UnkIsVertical)
+            
             // This controls whether auto-resizing changes thumb height vs width.
-            //Component->IsThumbVertical = !value;
-            Marshal.WriteByte((nint)Component, 0x136, (byte)(value ? 0 : 1));
+            Component->IsThumbLengthVertical = !value;
 
             ForegroundButtonNode.IsHorizontalMode = value;
             UpdateScrollParams();
