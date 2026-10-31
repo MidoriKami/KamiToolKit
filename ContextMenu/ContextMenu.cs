@@ -136,6 +136,7 @@ public unsafe class ContextMenu : IDisposable {
     }
 
     private AtkValue* ContextMenuEventHandler(AtkModuleInterface.AtkEventInterface* thisPtr, AtkValue* returnValue, AtkValue* values, uint valueCount, ulong eventKind) {
+        *returnValue = new AtkValue { Type = AtkValueType.Bool, Bool = true };
         var handlerParam = (long)eventKind;
 
         if (handlerParam >= SubMenuIndexOffset) {
