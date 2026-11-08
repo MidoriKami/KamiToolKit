@@ -5,6 +5,7 @@ using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
 using KamiToolKit.Interfaces;
 using Lumina.Data.Parsing.Uld;
+using Lumina.Text.Payloads;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
@@ -189,8 +190,23 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
         }
     }
 
+    /// <inheritdoc />
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
+        UpdateText();
+    }
+
     private void UpdateText() {
         using var builder = new RentedSeStringBuilder();
-        Node->SetText(builder.Append(String).GetViewAsSpan());
+
+        // If we have these flags, the node will automatically re-add newlines if we strip them first.
+        if (TextFlags.HasFlag(TextFlags.MultiLine) && TextFlags.HasFlag(TextFlags.WordWrap)) {
+            foreach (var payload in String) {
+                if (payload.IsMacro(MacroCode.NewLine)) continue;
+                builder.Append(payload);
+            }
+        }
+
+        Node->SetText(builder.GetViewAsSpan());
     }
 }
