@@ -102,7 +102,7 @@ public static class KamiToolKitLibrary {
         debugWindowSystem = new WindowSystem($"KamiToolKit - {PluginInterface.InternalName}");
 
         ICommandManager.Get().AddHandler($"/ktkdebug_{PluginInterface.InternalName}", new CommandInfo(CommandHandler) {
-            HelpMessage = "Plugin was built in debug mode, enabling debug command.",
+            HelpMessage = "Plugin was built in debug mode, debug command is available.",
         });
 
         PluginInterface.UiBuilder.Draw += debugWindowSystem.Draw;
