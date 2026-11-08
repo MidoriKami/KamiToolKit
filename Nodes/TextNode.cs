@@ -49,6 +49,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public AlignmentType AlignmentType {
         get => Node->AlignmentType;
         set {
+            if (Node->AlignmentType == value) return;
+
             Node->SetAlignment(value);
             UpdateText();
         }
@@ -58,6 +60,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public FontType FontType {
         get => Node->FontType;
         set {
+            if (Node->FontType == value) return;
+
             Node->SetFont(value);
             UpdateText();
         }
@@ -67,6 +71,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public TextFlags TextFlags {
         get => Node->TextFlags;
         set {
+            if (Node->TextFlags == value) return;
+
             Node->TextFlags = value;
             UpdateText();
         }
@@ -76,6 +82,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public uint FontSize {
         get => Node->FontSize;
         set {
+            if (Node->FontSize == value) return;
+
             Node->FontSize = (byte)value;
             UpdateText();
         }
@@ -85,6 +93,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public uint LineSpacing {
         get => Node->LineSpacing;
         set {
+            if (Node->LineSpacing == value) return;
+
             Node->LineSpacing = (byte)value;
             UpdateText();
         }
@@ -94,6 +104,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public uint CharSpacing {
         get => Node->CharSpacing;
         set {
+            if (Node->CharSpacing == value) return;
+
             Node->CharSpacing = (byte)value;
             UpdateText();
         }
@@ -124,6 +136,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public override Vector2 Size {
         get => base.Size;
         set {
+            if (base.Size == value) return;
+
             base.Size = value;
             UpdateText();
         }
@@ -196,6 +210,9 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
         UpdateText();
     }
 
+    /// <summary>
+    /// Re-invokes SetText with the currently set <see cref="String"/> to trigger flag size and position updates.
+    /// </summary>
     private void UpdateText() {
         using var builder = new RentedSeStringBuilder();
 
