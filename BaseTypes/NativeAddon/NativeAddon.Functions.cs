@@ -16,7 +16,7 @@ public partial class NativeAddon {
     /// Initializes and Opens this instance of Addon
     /// </summary>
     /// <remarks>
-    /// Must be invoked from the games main thread.
+    /// Must be invoked from the game's main thread.
     /// </remarks>
     public unsafe void Open() {
         ThreadSafety.AssertMainThread();
@@ -36,7 +36,7 @@ public partial class NativeAddon {
     }
 
     /// <summary>
-    /// Initializes and Opens this instance of Addon on the games main thread.
+    /// Initializes and Opens this instance of Addon on the game's main thread.
     /// </summary>
     /// <remarks>
     /// This function will wait for the window to fully open before completing.
@@ -54,7 +54,7 @@ public partial class NativeAddon {
     /// This NativeAddon object will remain valid, you can call Open to re-allocate this addon.
     /// </summary>
     /// <remarks>
-    /// Must be called from the games main thread.
+    /// Must be called from the game's main thread.
     /// </remarks>
     public unsafe void Close() {
         ThreadSafety.AssertMainThread();

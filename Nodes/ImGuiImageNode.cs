@@ -1,8 +1,9 @@
-﻿using System.IO;
+using System.IO;
 using System.Threading.Tasks;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Plugin.Services;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
 
@@ -13,11 +14,9 @@ namespace KamiToolKit.Nodes;
 /// This node creates a single <see cref="Part" />.
 /// </summary>
 /// <remarks>This node is not intended to be used with multiple <see cref="Part"/>'s.</remarks>
-public class ImGuiImageNode : SimpleImageNode {
+public class ImGuiImageNode : SimpleImageNode, IImGuiImageNode {
 
-    /// <summary>
-    /// When set loads the texture from either the game or from disk.
-    /// </summary>
+    /// <inheritdoc />
     public override string TexturePath {
         get => base.TexturePath;
         set {
@@ -56,14 +55,7 @@ public class ImGuiImageNode : SimpleImageNode {
         }
     }
 
-    /// <summary>
-    /// Takes ownership of passed in IDalamudTextureWrap, node automatically disposes texture when node is disposed.
-    /// </summary>
-    /// <remarks>
-    /// Don't try to share this texture across nodes.
-    /// If you need to have the same texture for multiple nodes use <see cref="TexturePath"/>,
-    /// or load one independent instance of <see cref="IDalamudTextureWrap"/> per node.
-    /// </remarks>
+    /// <inheritdoc />
     public unsafe void LoadTexture(IDalamudTextureWrap texture) {
 
         // Load new texture

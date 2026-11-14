@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Nodes;
@@ -8,21 +9,15 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// A basic component node with callbacks for navigation events.
 /// </summary>
-public unsafe class NavFocusNode : SimpleComponentNode {
+public unsafe class NavFocusNode : SimpleComponentNode, INavFocusNode {
 
-    /// <summary>
-    /// Action that is invoked when this node is selected via Return.
-    /// </summary>
+    /// <inheritdoc />
     public Action? OnSelected { get; set; }
 
-    /// <summary>
-    /// Action that is invoked when this node is hovered via vertical nav.
-    /// </summary>
+    /// <inheritdoc />
     public Action? OnHoverStart { get; set; }
 
-    /// <summary>
-    /// Action that is invoked when this node is no longer hovered.
-    /// </summary>
+    /// <inheritdoc />
     public Action? OnHoverEnd { get; set; }
 
     /// <summary>

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Nodes;
 using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
@@ -11,11 +12,9 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Node representing a set of radio buttons.
 /// </summary>
-public class RadioButtonGroupNode : ResNode {
+public class RadioButtonGroupNode : ResNode, IRadioButtonGroupNode {
 
-    /// <summary>
-    /// Gets or sets the selection option via label.
-    /// </summary>
+    /// <inheritdoc />
     public ReadOnlySeString? SelectedOption {
         get => radioButtons.FirstOrDefault(button => button.IsSelected)?.String;
         set {
@@ -31,14 +30,10 @@ public class RadioButtonGroupNode : ResNode {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the vertical padding used between radio buttons.
-    /// </summary>
+    /// <inheritdoc />
     public float VerticalPadding { get; set; } = 2.0f;
 
-    /// <summary>
-    /// Adds a radio button by name, and registers the provided callback when the button is triggered.
-    /// </summary>
+    /// <inheritdoc />
     public void AddButton(ReadOnlySeString label, Action callback) {
         var newRadioButton = new RadioButtonNode {
             Height = 16.0f,
@@ -59,9 +54,7 @@ public class RadioButtonGroupNode : ResNode {
         RecalculateLayout();
     }
 
-    /// <summary>
-    /// Removes the button via the specified label.
-    /// </summary>
+    /// <inheritdoc />
     public void RemoveButton(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
@@ -71,9 +64,7 @@ public class RadioButtonGroupNode : ResNode {
         RecalculateLayout();
     }
 
-    /// <summary>
-    /// Removes all radio buttons from this node.
-    /// </summary>
+    /// <inheritdoc />
     public void Clear() {
         foreach (var node in radioButtons) {
             node.Dispose();

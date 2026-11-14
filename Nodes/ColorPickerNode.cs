@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Numerics;
 using Dalamud.Interface;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Nodes;
@@ -8,7 +9,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// A Color Picker Node, includes Color Ring, Alpha Slider, and text color input.
 /// </summary>
-public class ColorPickerNode : ResNode {
+public class ColorPickerNode : ResNode, IColorPickerNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -25,25 +26,16 @@ public class ColorPickerNode : ResNode {
     /// </summary>
     public ColorPreviewWithInput ColorPreviewWithInput { get; }
 
-    /// <summary>
-    /// Gets the current HSVA color.
-    /// </summary>
+    /// <inheritdoc />
     public ColorHelpers.HsvaColor CurrentColor { get; private set; }
 
-    /// <summary>
-    /// Gets or sets the action that is called when the color is changed.
-    /// </summary>
-    public Action<ColorHelpers.HsvaColor>? ColorPreviewed { get; set; }
+    /// <inheritdoc />
+    public Action<ColorHelpers.HsvaColor>? OnColorPreviewed { get; set; }
 
-    /// <summary>
-    /// Gets or sets the action that is called when the color is changed.
-    /// </summary>
-    public Action<Vector4>? RgbaColorPreviewed { get; set; }
+    /// <inheritdoc />
+    public Action<Vector4>? OnRgbaColorPreviewed { get; set; }
 
-    /// <summary>
-    /// Sets the current color's alpha.
-    /// </summary>
-    /// <param name="alpha"></param>
+    /// <inheritdoc />
     public void SetAlpha(float alpha) {
         CurrentColor = CurrentColor with { A = alpha };
 
@@ -53,9 +45,7 @@ public class ColorPickerNode : ResNode {
         RaisePreviewMaybe();
     }
 
-    /// <summary>
-    /// Set the current color's hue.
-    /// </summary>
+    /// <inheritdoc />
     public void SetHue(float hue) {
         CurrentColor = CurrentColor with { H = hue };
 
@@ -69,9 +59,7 @@ public class ColorPickerNode : ResNode {
         RaisePreviewMaybe();
     }
 
-    /// <summary>
-    /// Set the current color's saturation.
-    /// </summary>
+    /// <inheritdoc />
     public void SetSaturation(float saturation) {
         CurrentColor = CurrentColor with { S = saturation };
 
@@ -86,9 +74,7 @@ public class ColorPickerNode : ResNode {
         RaisePreviewMaybe();
     }
 
-    /// <summary>
-    /// Set the current color's value.
-    /// </summary>
+    /// <inheritdoc />
     public void SetValue(float value) {
         CurrentColor = CurrentColor with { V = value };
 
@@ -103,9 +89,7 @@ public class ColorPickerNode : ResNode {
         RaisePreviewMaybe();
     }
 
-    /// <summary>
-    /// Set the current color as RGBA.
-    /// </summary>
+    /// <inheritdoc />
     public void SetColor(Vector4 color) {
         var converted = ColorHelpers.RgbaToHsv(color);
 
@@ -211,8 +195,8 @@ public class ColorPickerNode : ResNode {
 
     private void RaisePreview() {
         var hsva = CurrentColor;
-        ColorPreviewed?.Invoke(hsva);
-        RgbaColorPreviewed?.Invoke(ColorHelpers.HsvToRgb(hsva));
+        OnColorPreviewed?.Invoke(hsva);
+        OnRgbaColorPreviewed?.Invoke(ColorHelpers.HsvToRgb(hsva));
     }
 
     private int batchDepth;

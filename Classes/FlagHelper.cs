@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 
 namespace KamiToolKit.Classes;
 
@@ -26,7 +26,7 @@ public static class FlagHelper {
         => flagsField &= ~(T.One << BitOperations.Log2((uint)flag));
 
     /// <summary>
-    /// Sets of Clears the flag value of bit index with the value of enable.
+    /// Sets or Clears the flag value of bit index with the value of enable.
     /// </summary>
     public static void UpdateFlag<T>(ref T flagsField, int flag, bool enable) where T : struct, IBinaryInteger<T> {
         if (enable) {

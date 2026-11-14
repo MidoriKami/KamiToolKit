@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -37,8 +37,8 @@ public static unsafe class AtkUldPartExtensions {
         /// </summary>
         /// <remarks>
         /// Omit '_hr1' from provided paths as they will be stripped.
-        /// The games own texture loading system will load the appropriate texture resolution according to the current in-game settings.
-        /// Additionally, ensure that you are not loading textures before login, as that will lock the loaded textures themes to the games default theme texture,
+        /// The game's own texture loading system will load the appropriate texture resolution according to the current in-game settings.
+        /// Additionally, ensure that you are not loading textures before login, as that will lock the loaded texture's themes to the game's default theme texture,
         /// even in places where native uses the texture.
         /// </remarks>
         /// <param name="path"></param>

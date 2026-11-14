@@ -33,7 +33,7 @@ public unsafe partial class NativeAddon {
     public static implicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
 
     /// <summary>
-    /// Window node for this NativeAddon. May be null if <see cref="CreateWindowNode"/> returns a null windowNode
+    /// Window node for this NativeAddon. May be null if <see cref="CreateWindowNode"/> returns a null windowNode.
     /// </summary>
     protected WindowNodeBase? WindowNode { get; private set; }
 

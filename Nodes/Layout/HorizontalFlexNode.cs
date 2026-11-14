@@ -1,18 +1,20 @@
-﻿using System.Linq;
+using System.Linq;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// A horizontal <see cref="LayoutListNode"/> that will evenly divide its area among its children nodes.
 /// </summary>
-public class HorizontalFlexNode : LayoutListNode {
+public class HorizontalFlexNode : LayoutListNode, IHorizontalFlexNode {
 
-    /// <summary>
-    /// Gets or sets the alignment flags for adjusting children.
-    /// </summary>
+    /// <inheritdoc />
     public FlexFlags AlignmentFlags { get; set; } = FlexFlags.FitContentHeight;
+
+    /// <inheritdoc />
+    public LayoutFill LayoutFill { get; set; } = LayoutFill.Horizontal;
 
     /// <inheritdoc/>
     public override float Width {
@@ -22,16 +24,6 @@ public class HorizontalFlexNode : LayoutListNode {
             RecalculateLayout();
         }
     }
-
-    /// <summary>
-    /// Gets or sets the up nav index.
-    /// </summary>
-    public int NavUp { get; set; }
-
-    /// <summary>
-    /// Gets or sets the down nav index.
-    /// </summary>
-    public int NavDown { get; set; }
 
     /// <inheritdoc />
     protected override void OnRecalculateLayout() {

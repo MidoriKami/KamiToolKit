@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Nodes;
@@ -9,7 +10,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Inheritable node that manages hovered and clicked states.
 /// </summary>
-public abstract class SelectableNode : ResNode {
+public abstract class SelectableNode : ResNode, ISelectable {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -56,9 +57,7 @@ public abstract class SelectableNode : ResNode {
         set => HoveredBackgroundNode.IsVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether this node is currently selected.
-    /// </summary>
+    /// <inheritdoc />
     public bool IsSelected {
         get => SelectedBackgroundNode.IsVisible;
         set {

@@ -182,7 +182,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     }
 
     /// <summary>
-    /// Replaces the nodes entire virtual table to ensure that C#'s managed space gets notified of the games unmanaged node dtor.
+    /// Replaces this node's entire virtual table to ensure that C#'s managed space gets notified of the game's unmanaged node dtor.
     /// </summary>
     protected void BuildVirtualTable() {
         // Back up original destructor pointer
@@ -221,7 +221,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     // To be invoked from NodeBase.Dispose(bool, bool).
     /// <summary>
-    /// Invokes the original games destroy function without calling back to the native disposal method.
+    /// Invokes the original game's destroy function without calling back to the native disposal method.
     /// </summary>
     /// <remarks>
     /// This is intended to be used from <see cref="NodeBase"/> after the managed disposal functions have been invoked.

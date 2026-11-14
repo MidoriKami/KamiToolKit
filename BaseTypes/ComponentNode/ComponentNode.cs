@@ -6,7 +6,7 @@ using KamiToolKit.Nodes;
 namespace KamiToolKit.BaseTypes.ComponentNode;
 
 /// <summary>
-/// Generic Implementation of the games ComponentNode as a base class for use in KTK.
+/// Generic Implementation of the game's ComponentNode as a base class for use in KTK.
 /// </summary>
 /// <typeparam name="T">The component type</typeparam>
 /// <typeparam name="TU">The component uld data type</typeparam>
@@ -41,13 +41,13 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         => &node.ComponentBase->AtkEventListener;
 
     /// <summary>
-    /// Implicit conversion to the components type for seamless game interop.
+    /// Implicit conversion to the component's type for seamless game interop.
     /// </summary>
     public static implicit operator T*(ComponentNode<T, TU> node)
         => node.Component;
 
     /// <summary>
-    /// Implicit conversion to the components uld data type for seamless game interop.
+    /// Implicit conversion to the component's uld data type for seamless game interop.
     /// </summary>
     /// <param name="node"></param>
     /// <returns></returns>

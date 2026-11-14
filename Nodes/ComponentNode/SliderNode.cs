@@ -2,15 +2,16 @@ using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games SliderNode and associated component.
+/// Implementation of the game's SliderNode and associated component.
 /// </summary>
-public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldComponentDataSlider> {
+public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldComponentDataSlider>, ISliderNode<int> {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -32,15 +33,8 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
     /// </summary>
     public TextNode ValueNode { get; }
 
-    /// <summary>
-    /// Not intended for public use, but it's here if you absolutely need it.
-    /// </summary>
-    public TextNode FloatValueNode { get; }
-
-    /// <summary>
-    /// Gets or sets the action to be invoked when the value is changed. Provides the new value.
-    /// </summary>
-    public Action<int>? OnValueChanged { get; set; }
+    /// <inheritdoc/>
+    public Action<int>? OnValueUpdate { get; set; }
 
     /// <summary>
     /// Gets or sets the range of values allowed for this node.
@@ -55,33 +49,25 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         }
     }
 
-    /// <summary>
-    /// Gets or sets the min value allowed.
-    /// </summary>
+    /// <inheritdoc/>
     public int Min {
-        get => Data->Min;
-        set => Data->Min = value;
+        get => Component->MinValue;
+        set => Component->SetMinValue(value);
     }
 
-    /// <summary>
-    /// Gets or sets the max value allowed.
-    /// </summary>
+    /// <inheritdoc/>
     public int Max {
-        get => Data->Max;
-        set => Data->Max = value;
+        get => Component->MaxValue;
+        set => Component->SetMaxValue(value);
     }
 
-    /// <summary>
-    /// Gets or sets the step value used when interacting with a controller.
-    /// </summary>
+    /// <inheritdoc/>
     public int Step {
         get => Component->Steps;
         set => Component->Steps = value;
     }
 
-    /// <summary>
-    /// Gets or sets the current value. When setting triggers <see cref="OnValueChanged"/>
-    /// </summary>
+    /// <inheritdoc/>
     public int Value {
         get => Component->Value;
         set => Component->SetValue(value);
@@ -120,16 +106,6 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
             TextFlags = TextFlags.AutoAdjustNodeSize,
         };
         ValueNode.AttachNode(this);
-
-        FloatValueNode = new TextNode {
-            Size = new Vector2(24.0f, 16.0f),
-            IsVisible = false,
-            FontType = FontType.Axis,
-            FontSize = 12,
-            AlignmentType = AlignmentType.TopLeft,
-            TextFlags = TextFlags.AutoAdjustNodeSize,
-        };
-        FloatValueNode.AttachNode(this);
 
         Data->Step = 1;
         Data->Min = 0;
@@ -171,15 +147,11 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         ValueNode.Size = new Vector2(0.0f, Height);
         ValueNode.Position = new Vector2(Width - 18.0f - 20.0f, 0.0f);
 
-        FloatValueNode.Size = new Vector2(0.0f, Height);
-        FloatValueNode.Position = new Vector2(Width - 18.0f - 20.0f, 0.0f);
-
         Component->SliderSize = (short)Width;
     }
 
-    private void ValueChangedHandler() {
-        OnValueChanged?.Invoke(Value);
-    }
+    private void ValueChangedHandler()
+        => OnValueUpdate?.Invoke(Value);
 
     private void BuildTimelines() {
         AddTimeline(new TimelineBuilder()

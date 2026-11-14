@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using KamiToolKit.UiOverlay;
 
@@ -8,6 +8,7 @@ namespace KamiToolKit.Enums;
 /// Enumeration for which specific addon to attach an <see cref="OverlayNode"/> to.
 /// </summary>
 public enum OverlayLayer {
+
     /// <summary>
     /// Layer that is the back most, but above the world itself. Some UI Elements may still render under this layer.
     /// </summary>
@@ -34,7 +35,7 @@ public enum OverlayLayer {
 }
 
 /// <summary>
-/// Helper extensions to convert a DepthLayer to a OverlayLayer,
+/// Helper extensions to convert a DepthLayer to an OverlayLayer,
 /// as the game is zero indexed for one use, and 1 indexed for another use.
 /// </summary>
 public static class OverlayLayerExtensions {

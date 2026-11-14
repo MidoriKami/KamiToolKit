@@ -1,23 +1,22 @@
-﻿using System.Numerics;
+using System.Numerics;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Custom implementation of the games Circle Button Node.
+/// Custom implementation of the game's Circle Button Node.
 /// </summary>
-public class CircleButtonNode : ButtonBase {
+public class CircleButtonNode : ButtonBase, ICircleButtonNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
     public SimpleImageNode ImageNode { get; }
 
-    /// <summary>
-    /// Gets or sets the icon displayed for this node.
-    /// </summary>
+    /// <inheritdoc/>
     public CircleButtonIcon Icon {
         get;
         set {

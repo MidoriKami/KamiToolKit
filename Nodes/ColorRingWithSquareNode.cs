@@ -4,6 +4,7 @@ using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
 
@@ -12,7 +13,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// ColorGradiant Square with color ring around it. Not intended for external use.
 /// </summary>
-public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
+public unsafe class ColorRingWithSquareNode : SimpleComponentNode, IColorRingWithSquareNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -29,19 +30,13 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
     /// </summary>
     public ImGuiImageNode ColorRingSelectorNode { get; }
 
-    /// <summary>
-    /// Gets or sets an action that is called on hue change.
-    /// </summary>
+    /// <inheritdoc />
     public Action<float>? OnHueChanged { get; init; }
 
-    /// <summary>
-    /// Gets or sets an action that is called on saturation changed.
-    /// </summary>
+    /// <inheritdoc />
     public Action<float>? OnSaturationChanged { get; init; }
 
-    /// <summary>
-    /// Gets or sets an action that is called on value changed.
-    /// </summary>
+    /// <inheritdoc />
     public Action<float>? OnValueChanged { get; init; }
 
     /// <inheritdoc/>
@@ -53,28 +48,19 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the rings selector color.
-    /// </summary>
+    /// <inheritdoc />
     public ColorHelpers.HsvaColor SelectorColor {
         get => ColorRingSelectorNode.MultiplyColorHsva;
         set => ColorRingSelectorNode.MultiplyColorHsva = value;
     }
 
-    /// <summary>
-    /// Gets or sets the gradiant squares color.
-    /// </summary>
+    /// <inheritdoc />
     public ColorHelpers.HsvaColor SquareColor {
         get => ColorGradientSquare.MultiplyColorHsva;
         set => ColorGradientSquare.MultiplyColorHsva = value with { S = 1.0f, V = 1.0f };
     }
 
-    /// <summary>
-    /// Gets or sets the squares saturation color.
-    /// </summary>
-    /// <remarks>
-    /// Setting this moves the color dot.
-    /// </remarks>
+    /// <inheritdoc />
     public ColorHelpers.HsvaColor SquareSaturationValue {
         get => ColorGradientSquare.MultiplyColorHsva;
         set => ColorGradientSquare.ColorDotPosition = new Vector2(ColorGradientSquare.Width * value.S, ColorGradientSquare.Height - ColorGradientSquare.Height * value.V);

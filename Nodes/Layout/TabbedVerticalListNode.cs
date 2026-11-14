@@ -11,46 +11,36 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// A specialized vertical list node with features for adding nodes with specified tab values.
 /// </summary>
-public class TabbedVerticalListNode : ResNode, ILayoutListNode {
+public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
 
-    /// <summary>
-    /// Gets or sets the base nav index used for this node.
-    /// </summary>
+    /// <inheritdoc/>
     public int NavIndex { get; set; }
 
-    /// <summary>
-    /// Gets or sets the left nav index for this list.
-    /// </summary>
+    /// <inheritdoc/>
     public int NavLeft { get; set; }
 
-    /// <summary>
-    /// Gets or sets the right nav index for this list.
-    /// </summary>
+    /// <inheritdoc/>
     public int NavRight { get; set; }
 
-    /// <summary>
-    /// Gets a readonly list of the nodes managed by this node.
-    /// </summary>
+    /// <inheritdoc/>
+    public int NavUp { get; set; }
+
+    /// <inheritdoc/>
+    public int NavDown { get; set; }
+
+    /// <inheritdoc/>
     public IReadOnlyList<NodeBase> Nodes => nodeList.Select(node => node.Node).ToList();
 
-    /// <summary>
-    /// Gets or sets whether the contents of this list should be clipped out.
-    /// </summary>
-    public bool ClipListContents { get; set; }
+    /// <inheritdoc/>
+    public bool ClipContents { get; set; }
 
-    /// <summary>
-    /// Gets or sets the spacing used between items, excluding the first item.
-    /// </summary>
+    /// <inheritdoc/>
     public float ItemSpacing { get; set; }
 
-    /// <summary>
-    /// Gets or sets the first items spacing from the start of this node.
-    /// </summary>
+    /// <inheritdoc/>
     public float FirstItemSpacing { get; set; }
 
-    /// <summary>
-    /// Sets the initial nodes used by this layout node.
-    /// </summary>
+    /// <inheritdoc/>
     public ICollection<NodeBase> InitialNodes {
         set => AddNode(value);
     }
@@ -74,20 +64,16 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         }
     }
 
-    /// <summary>
-    /// Gets the contained nodes of the provided type.
-    /// </summary>
+    /// <inheritdoc/>
     public IEnumerable<T> GetNodes<T>() where T : NodeBase
         => Nodes.OfType<T>();
 
-    /// <summary>
-    /// Trigger recalculating layout for this node and any sub contained layout list nodes.
-    /// </summary>
+    /// <inheritdoc/>
     public void RecalculateLayout() {
         if (suppressRecalculateLayout) return;
 
         foreach (var node in Nodes) {
-            if (node is ILayoutListNode subNode) {
+            if (node is ILayoutUpdatable subNode) {
                 subNode.RecalculateLayout();
             }
         }
@@ -99,8 +85,27 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         }
 
         foreach (var node in Nodes) {
-            if (node is ILayoutListNode subNode) {
+            if (node is ILayoutUpdatable subNode) {
                 subNode.RecalculateLayout();
+            }
+        }
+    }
+
+    /// <inheritdoc/>
+    public void RecalculateNavigation() {
+        if (suppressRecalculateLayout) return;
+
+        foreach (var node in Nodes) {
+            if (node is INavigationRecalculable subNode) {
+                subNode.RecalculateNavigation();
+            }
+        }
+
+        OnRecalculateNavigation();
+
+        foreach (var node in Nodes) {
+            if (node is INavigationRecalculable subNode) {
+                subNode.RecalculateNavigation();
             }
         }
     }
@@ -110,11 +115,8 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
     /// </summary>
     public float TabSize { get; set; } = 18.0f;
 
-    /// <summary>
-    /// If true, adjusts the width of all contained nodes
-    /// to match the width of this node when recalculating layout.
-    /// </summary>
-    public bool FitWidth { get; set; }
+    /// <inheritdoc />
+    public bool StretchWidth { get; set; }
 
     /// <summary>
     /// Resizes this layout node to fit the height of the contained nodes.
@@ -169,18 +171,14 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         }
     }
 
-    /// <summary>
-    /// Add a node to this layout node.
-    /// </summary>
+    /// <inheritdoc/>
     public void AddNode(NodeBase? node) {
         if (node is null) return;
 
         AddNode(0, node);
     }
 
-    /// <summary>
-    /// Add a node to this layout node.
-    /// </summary>
+    /// <inheritdoc/>
     public void AddNode(IEnumerable<NodeBase> nodes) {
         suppressRecalculateLayout = true;
         AddNode(0, nodes);
@@ -188,9 +186,7 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         RecalculateLayout();
     }
 
-    /// <summary>
-    /// Removes a node from this layout node.
-    /// </summary>
+    /// <inheritdoc/>
     public void RemoveNode(IEnumerable<NodeBase> items) {
         suppressRecalculateLayout = true;
         foreach (var node in items) {
@@ -200,9 +196,7 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         RecalculateLayout();
     }
 
-    /// <summary>
-    /// Removes a node from this layout node.
-    /// </summary>
+    /// <inheritdoc/>
     public void RemoveNode(NodeBase node) {
         if (nodeList.All(entry => entry.Node != node)) return;
 
@@ -212,15 +206,11 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         RecalculateLayout();
     }
 
-    /// <summary>
-    /// Adds a dummy node used for spacing things out even more.
-    /// </summary>
+    /// <inheritdoc/>
     public void AddDummy(float size = 0)
         => AddNode(new ResNode{ Width = size, Height = size });
 
-    /// <summary>
-    /// Removes and disposes all contained nodes.
-    /// </summary>
+    /// <inheritdoc/>
     public void Clear() {
         foreach (var nodeEntry in nodeList) {
             nodeEntry.Node.Dispose();
@@ -230,12 +220,7 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
         RecalculateLayout();
     }
 
-    /// <summary>
-    /// Sorts the contained node list to reorder the nodes into the specified order.
-    /// </summary>
-    /// <remarks>
-    /// This sorting will not apply to any nodes added afterwards.
-    /// </remarks>
+    /// <inheritdoc/>
     public void ReorderNodes(Comparison<NodeBase> comparison)
         => nodeList.Sort((left, right) => comparison(left.Node, right.Node));
 
@@ -248,7 +233,7 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode {
             node.Y = startY;
             node.X = tab * TabSize;
 
-            if (FitWidth) {
+            if (StretchWidth) {
                 node.Width = Width - node.X - ItemSpacing;
             }
 

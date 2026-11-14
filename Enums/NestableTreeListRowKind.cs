@@ -4,6 +4,7 @@ namespace KamiToolKit.Enums;
 /// Row kinds produced while laying out a <see cref="Nodes.NestableTreeListNode{T,TU}"/>.
 /// </summary>
 public enum NestableTreeListRowKind {
+
     /// <summary>
     /// A collapsible group.
     /// </summary>

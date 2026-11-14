@@ -1,16 +1,17 @@
-﻿using System.Numerics;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games TextNineGridNode and associated component.
+/// Implementation of the game's TextNineGridNode and associated component.
 /// </summary>
-public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, AtkUldComponentDataTextNineGrid> {
+public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, AtkUldComponentDataTextNineGrid>, IBackgroundTextNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -22,75 +23,76 @@ public unsafe class TextNineGridNode : ComponentNode<AtkComponentTextNineGrid, A
     /// </summary>
     public TextNode TextNode { get; }
 
-    /// <summary>
-    /// Gets or sets the displayed text.
-    /// </summary>
+    /// <inheritdoc />
     public ReadOnlySeString String {
         get => TextNode.String;
         set => Component->SetText(value);
     }
 
-    /// <summary>
-    /// Gets or sets the displayed number.
-    /// </summary>
+    /// <inheritdoc />
     public int Number {
         get => int.Parse(TextNode.String);
         set => TextNode.String = value.ToString();
     }
 
-    /// <summary>
-    /// Gets or sets the font size.
-    /// </summary>
-    public int FontSize {
-        get => (int)TextNode.FontSize;
-        set => TextNode.FontSize = (uint)value;
+    /// <inheritdoc />
+    public uint FontSize {
+        get => TextNode.FontSize;
+        set => TextNode.FontSize = value;
     }
 
-    /// <summary>
-    /// Gets or sets the used font.
-    /// </summary>
+    /// <inheritdoc />
     public FontType FontType {
         get => TextNode.FontType;
         set => TextNode.FontType = value;
     }
 
-    /// <summary>
-    /// Gets or sets outline color.
-    /// </summary>
-    /// <remarks>
-    /// Expects values between 0.0f and 1.0f.
-    /// </remarks>
+    /// <inheritdoc />
     public Vector4 TextOutlineColor {
         get => TextNode.TextOutlineColor;
         set => TextNode.TextOutlineColor = value;
     }
 
-    /// <summary>
-    /// Gets or sets text color.
-    /// </summary>
-    /// <remarks>
-    /// Expects values between 0.0f and 1.0f.
-    /// </remarks>
+    /// <inheritdoc />
     public Vector4 TextColor {
         get => TextNode.TextColor;
         set => TextNode.TextColor = value;
     }
 
-    /// <summary>
-    /// Gets or sets the text flags.
-    /// </summary>
+    /// <inheritdoc />
     public TextFlags TextFlags {
         get => TextNode.TextFlags;
         set => TextNode.TextFlags = value;
     }
 
-    /// <summary>
-    /// Gets or sets the text alignment.
-    /// </summary>
+    /// <inheritdoc />
     public AlignmentType AlignmentType {
         get => TextNode.AlignmentType;
         set => TextNode.AlignmentType = value;
     }
+
+    /// <inheritdoc />
+    public bool ShowBackground {
+        get => BackgroundNineGrid.IsVisible;
+        set => BackgroundNineGrid.IsVisible = value;
+    }
+
+    /// <inheritdoc />
+    public Vector4 BackgroundColor {
+        get => new(
+            BackgroundNineGrid.AddColor.X,
+            BackgroundNineGrid.AddColor.Y,
+            BackgroundNineGrid.AddColor.Z,
+            BackgroundNineGrid.Alpha
+        );
+        set {
+            BackgroundNineGrid.Color = new Vector4(0.0f, 0.0f, 0.0f, value.W);
+            BackgroundNineGrid.AddColor = value.AsVector3Color();
+        }
+    }
+
+    /// <inheritdoc />
+    public bool FitToString { get; set; }
 
     /// <summary>
     /// Constructs a new <see cref="TextNineGridNode"/>

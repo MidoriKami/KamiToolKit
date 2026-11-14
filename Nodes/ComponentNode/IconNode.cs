@@ -1,17 +1,18 @@
-﻿using System.Numerics;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games IconNode and associated component.
+/// Implementation of the game's IconNode and associated component.
 /// This is often used as a part in a <see cref="DragDropNode"/>, but is not required to be used as a part can be used by itself.
 /// </summary>
-public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDataIcon> {
+public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDataIcon>, IIconNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -33,38 +34,23 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
     /// </summary>
     public IconIndicator IconIndicator2 { get; }
 
-    /// <summary>
-    /// Gets or sets the displayed Icon via IconId.
-    /// </summary>
+    /// <inheritdoc/>
     public uint IconId {
         get => Component->IconId;
         set => Component->LoadIcon(value);
     }
 
-    /// <summary>
-    /// Gets whether the icon is in the process of loading.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsIconLoading
         => Component->Flags.HasFlag(IconComponentFlags.IsIconLoading);
 
-    /// <summary>
-    /// Gets or sets if the icon should be shown as disabled.
-    /// </summary>
-    /// <remarks>
-    /// This doesn't affect the interactability of the component, just the display of the icon.
-    /// </remarks>
+    /// <inheritdoc/>
     public bool IsIconDisabled {
         get => Component->Flags.HasFlag(IconComponentFlags.IsDisabled);
         set => Component->SetIconImageDisableState(value);
     }
 
-    /// <summary>
-    /// Gets or sets the combo level of the icon.
-    /// </summary>
-    /// <remarks>
-    /// This shows the hexagon numbers with I, II, and III respectively.
-    /// Only seen with PvP abilities so far.
-    /// </remarks>
+    /// <inheritdoc/>
     public byte ComboLevel {
         get {
             if (Component->Flags.HasFlag(IconComponentFlags.ComboLevel3))
@@ -78,136 +64,101 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
         set => Component->SetComboLevel(value is >= 1 and <= 3, (byte)(value - 1));
     }
 
-    /// <summary>
-    /// Gets or sets whether this icon represents a macro.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsMacro {
         get => Component->Flags.HasFlag(IconComponentFlags.IsMacro);
         set => Component->SetIsMacro(value);
     }
 
-    /// <summary>
-    /// Gets or sets whether this icon represents a recipe.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsRecipe {
         get => Component->Flags.HasFlag(IconComponentFlags.IsRecipe);
         set => Component->SetIsRecipe(value);
     }
 
-    /// <summary>
-    /// Gets whether this icon is being dragged.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsBeingDragged
         => Component->Flags.HasFlag(IconComponentFlags.IsBeingDragged);
 
-    /// <summary>
-    /// Gets or sets the displayed string where resource costs go.
-    /// </summary>
+    /// <inheritdoc/>
     public ReadOnlySeString ResourceCostString {
         get => IconExtras.ResourceCostString;
         set => IconExtras.ResourceCostString = value;
     }
 
-    /// <summary>
-    /// Gets or sets the numeric value displayed as a resource cost.
-    /// </summary>
+    /// <inheritdoc/>
     public uint ResourceCostValue {
         get => IconExtras.ResourceCostValue;
         set => IconExtras.ResourceCostValue = value;
     }
 
-    /// <summary>
-    /// Gets or sets the resource cost nodes visibility.
-    /// </summary>
+    /// <inheritdoc/>
     public bool ResourceCostVisible {
         get => IconExtras.ResourceCostVisible;
         set => IconExtras.ResourceCostVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets the value used to indicate current charges.
-    /// </summary>
+    /// <inheritdoc/>
     public int ChargeCount {
         get => IconExtras.ChargeCount;
         set => IconExtras.ChargeCount = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether the charge count image should be shown.
-    /// </summary>
+    /// <inheritdoc/>
     public bool ChargeCountVisible {
         get => IconExtras.ChargeCountVisible;
         set => IconExtras.ChargeCountVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets the radial fade used to indicate charge percentage.
-    /// </summary>
+    /// <inheritdoc/>
     public float ChargePercent {
         get => IconExtras.ChargePercent;
         set => IconExtras.ChargePercent = value;
     }
 
-    /// <summary>
-    /// Gets or sets the string shown for the cooldown seconds.
-    /// </summary>
+    /// <inheritdoc/>
     public ReadOnlySeString CooldownSecondsString {
         get => IconExtras.CooldownSecondsString;
         set => IconExtras.CooldownSecondsString = value;
     }
 
-    /// <summary>
-    /// Gets or sets the displayed cooldown time.
-    /// </summary>
+    /// <inheritdoc/>
     public uint CooldownSeconds {
         get => IconExtras.CooldownSeconds;
         set => IconExtras.CooldownSeconds = value;
     }
 
-    /// <summary>
-    /// Gets or sets the visibility of the cooldown text node.
-    /// </summary>
+    /// <inheritdoc/>
     public bool CooldownSecondsVisible {
         get => IconExtras.CooldownSecondsVisible;
         set => IconExtras.CooldownSecondsVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets the cooldown percent.
-    /// </summary>
+    /// <inheritdoc/>
     public float CooldownPercent {
         get => IconExtras.CooldownPercent;
         set => IconExtras.CooldownPercent = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether the cooldown percent radial should be shown, and if so also hides the glossy border.
-    /// </summary>
+    /// <inheritdoc/>
     public bool CooldownPercentVisible {
         get => IconExtras.CooldownPercentVisible;
         set => IconExtras.CooldownPercentVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets the current cost text color.
-    /// </summary>
+    /// <inheritdoc/>
     public CostTextColor CostTextColor {
         get => IconExtras.CostTextColor;
         set => IconExtras.CostTextColor = value;
     }
 
-    /// <summary>
-    /// Gets or sets if this icon needs to show as currently invalid.
-    /// Red Text, and a Red Tinted Glossy Border.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsInvalid {
         get => IconExtras.IsInvalid;
         set => IconExtras.IsInvalid = value;
     }
 
-    /// <summary>
-    /// Gets or sets if the macro icon should be visible.
-    /// </summary>
+    /// <inheritdoc/>
     public bool ShowMacroIcon {
         get;
         set {
@@ -221,9 +172,7 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
         }
     }
 
-    /// <summary>
-    /// Gets or sets whether this icon should be faded out.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsFaded {
         get;
         set {
@@ -240,9 +189,7 @@ public unsafe class IconNode : ComponentNode<AtkComponentIcon, AtkUldComponentDa
         }
     }
 
-    /// <summary>
-    /// Enables or disables ants for this node.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsAnts {
         get => IconExtras.IsAnts;
         set => IconExtras.IsAnts = value;

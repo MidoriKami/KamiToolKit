@@ -4,7 +4,6 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Dalamud.Interface;
 using Dalamud.Plugin.Services;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -12,6 +11,7 @@ using InteropGenerator.Runtime;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
@@ -21,9 +21,9 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games TextInputNode and its associated component.
+/// Implementation of the game's TextInputNode and its associated component.
 /// </summary>
-public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldComponentDataTextInput> {
+public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldComponentDataTextInput>, ITextInputNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -60,32 +60,24 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     /// </summary>
     public TextNode PlaceholderTextNode { get; }
 
-    /// <summary>
-    /// Gets whether this node is being focused.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsFocused
         => AtkStage.Instance()->AtkInputManager->FocusedNode == CollisionNode.Node;
 
-    /// <summary>
-    /// Gets or sets the maximum number of characters allowed.
-    /// </summary>
+    /// <inheritdoc/>
     public int MaxCharacters {
         get => (int)Component->ComponentTextData.MaxChar;
         set => Component->ComponentTextData.MaxChar = (uint)value;
     }
 
-    /// <summary>
-    /// Gets or sets whether the <see cref="MaxCharacters"/> limit should be shown.
-    /// </summary>
+    /// <inheritdoc/>
     public bool ShowLimitText {
         get => TextLimitsNode.IsVisible;
         set => TextLimitsNode.IsVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets the text input flags.
-    /// </summary>
-    public TextInputFlags Flags {
+    /// <inheritdoc/>
+    public TextInputFlags TextInputFlags {
         get => (TextInputFlags)((byte)Data->Flags1 | (byte)Data->Flags2 << 8);
         set {
             Data->Flags1 = (TextInputFlags1)((ushort)value & 0xFF);
@@ -93,25 +85,19 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    /// <summary>
-    /// Gets or sets if auto-translate/completion should be shown when pressing Tab.
-    /// </summary>
+    /// <inheritdoc/>
     public bool EnableCompletion {
         get => Component->EnableCompletion;
         set => Component->EnableCompletion = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether sound effects should be enabled when selecting or unselecting the node.
-    /// </summary>
+    /// <inheritdoc/>
     public bool EnableFocusSounds {
         get => Component->EnableFocusSounds;
         set => Component->EnableFocusSounds = value;
     }
 
-    /// <summary>
-    /// Gets or sets the current text input.
-    /// </summary>
+    /// <inheritdoc/>
     public ReadOnlySeString String {
         get => Component->EvaluatedString.AsSpan();
         set {
@@ -120,10 +106,14 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    /// <summary>
-    /// Gets or sets a string to be used as a placeholder when nothing has been input yet, or the input has been removed.
-    /// </summary>
-    public string? PlaceholderString {
+    /// <inheritdoc/>
+    public bool ShowPlaceholderString {
+        get => PlaceholderTextNode.IsVisible;
+        set => PlaceholderTextNode.IsVisible = value;
+    }
+
+    /// <inheritdoc/>
+    public ReadOnlySeString PlaceholderString {
         get;
         set {
             field = value;
@@ -131,78 +121,49 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         }
     }
 
-    /// <summary>
-    /// TextId of the placeholder string to load from <see cref="SheetType"/>.
-    /// </summary>
-    public uint PlaceholderStringId {
+    /// <inheritdoc/>
+    public uint PlaceholderStringTextId {
         get => PlaceholderTextNode.TextId;
         set => PlaceholderTextNode.TextId = value;
     }
 
-    /// <summary>
-    /// Gets or sets which data sheet to use to resolve <see cref="PlaceholderStringId"/>.
-    /// </summary>
-    public NodeData.SheetType SheetType {
+    /// <inheritdoc/>
+    public NodeData.SheetType PlaceHolderStringSheetType {
         get => PlaceholderTextNode.SheetType;
         set => PlaceholderTextNode.SheetType = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether the text input's border should be reddened to indicate an error.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsError {
         get => FocusBorderNode.MultiplyColor == new Vector3(1.0f, 0.6f, 0.6f);
         set => FocusBorderNode.MultiplyColor = value ? new Vector3(1.0f, 0.6f, 0.6f) : Vector3.One;
     }
 
-    /// <summary>
-    /// Gets or sets whether all text should be selected when this element becomes focused.
-    /// </summary>
+    /// <inheritdoc/>
     public bool AutoSelectAll { get; set; } = true;
 
-    /// <summary>
-    /// Gets or sets the action to be invoked when typing into the input, is triggered for each letter/symbol.
-    /// Includes a reference to the modified string.
-    /// </summary>
+    /// <inheritdoc/>
     public Action<ReadOnlySeString>? OnInputReceived { get; set; }
 
-    /// <summary>
-    /// Gets or sets the action to be invoked when input is completed via pressing return.
-    /// Includes a reference to the modified string.
-    /// </summary>
+    /// <inheritdoc/>
     public Action<ReadOnlySeString>? OnInputComplete { get; set; }
 
-    /// <summary>
-    /// Gets or sets the action to be called once the element has lost focus.
-    /// </summary>
-    public Action? OnFocusLost { get; set; }
-
-    /// <summary>
-    /// Gets or sets the action to be called when input is canceled via escape.
-    /// </summary>
+    /// <inheritdoc/>
     public Action? OnEscapeEntered { get; set; }
 
-    /// <summary>
-    /// Gets or sets the action to be called when tab is input.
-    /// </summary>
+    /// <inheritdoc/>
     public Action? OnTabEntered { get; set; }
 
-    /// <summary>
-    /// Gets or sets the action to be called when the input is focused.
-    /// </summary>
+    /// <inheritdoc/>
+    public Action? OnFocusLost { get; set; }
+
+    /// <inheritdoc/>
     public Action? OnFocused { get; set; }
 
-    /// <summary>
-    /// Gets or sets the action to be called when the node loses focus.
-    /// </summary>
-    /// <remarks>
-    /// May be redundant with <see cref="OnFocusLost"/>
-    /// </remarks>
+    /// <inheritdoc/>
     public Action? OnUnfocused { get; set; }
 
-    /// <summary>
-    /// Clears the focus from this node.
-    /// </summary>
+    /// <inheritdoc/>
     public void ClearFocus() {
         if (IsFocused) {
             AtkStage.Instance()->AtkInputManager->SetFocus(null, ParentAddon, 0);
@@ -296,7 +257,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         Data->IMEColor = new ByteColor { R = 67 };
         Data->FocusColor = KnownColor.Black.Vector().ToByteColor();
 
-        Flags = TextInputFlags.EnableIme | TextInputFlags.AllowUpperCase | TextInputFlags.AllowLowerCase |
+        TextInputFlags = TextInputFlags.EnableIme | TextInputFlags.AllowUpperCase | TextInputFlags.AllowLowerCase |
                 TextInputFlags.EnableDictionary | TextInputFlags.AllowNumberInput | TextInputFlags.AllowSymbolInput;
 
         EnableCompletion = false;
@@ -386,19 +347,19 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     private void OnInputFocusEnded() {
         OnUnfocused?.Invoke();
 
-        if (!PlaceholderString.IsNullOrEmpty() && String.IsEmpty) {
+        if (!PlaceholderString.IsEmpty && String.IsEmpty) {
             PlaceholderTextNode.IsVisible = true;
             PlaceholderTextNode.String = PlaceholderString;
         }
 
-        if (PlaceholderStringId is not 0 & String.IsEmpty) {
+        if (PlaceholderStringTextId is not 0 & String.IsEmpty) {
             PlaceholderTextNode.IsVisible = true;
         }
     }
 
     private void UpdatePlaceholderVisibility() {
-        PlaceholderTextNode.String = PlaceholderString ?? string.Empty;
-        PlaceholderTextNode.IsVisible = String.IsEmpty && !PlaceholderString.IsNullOrEmpty();
+        PlaceholderTextNode.String = PlaceholderString.IsEmpty ? string.Empty : PlaceholderString;
+        PlaceholderTextNode.IsVisible = String.IsEmpty && !PlaceholderString.IsEmpty;
     }
 
     private void LoadTimelines() {

@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
+using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
@@ -13,7 +14,7 @@ namespace KamiToolKit.Nodes;
 /// <remarks>
 /// Property initializers for ContentNode must be set before Size is set, or you'll have to invoke RecalculateSizes().
 /// </remarks>
-public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
+public class ScrollingNode<T> : ResNode, IScrollingNode<T> where T : NodeBase, new() {
 
     private const float ScrollBarThickness = 8.0f;
 
@@ -32,65 +33,64 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
     /// </summary>
     public ScrollBarNode ScrollBarNode { get; }
 
-    /// <summary>
-    /// The contained node for the ScrollingNode.
-    /// </summary>
+    /// <inheritdoc />
     public T ContentNode { get; }
 
-    /// <summary>
-    /// Hides the Scroll Bar Node when its disabled due to the content being larger than the scroll.
-    /// </summary>
+    /// <inheritdoc />
+    public LayoutFill LayoutFill { get; set; } = LayoutFill.Both;
+
+    /// <inheritdoc />
     public bool AutoHideScrollBar {
         get => ScrollBarNode.HideWhenDisabled;
         set => ScrollBarNode.HideWhenDisabled = value;
     }
 
-    /// <summary>
-    /// Set the scroll speed, default 24px per scroll.
-    /// </summary>
+    /// <inheritdoc />
     public int ScrollSpeed {
         get => ScrollBarNode.ScrollSpeed;
         set => ScrollBarNode.ScrollSpeed = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether this scrolling node scrolls horizontally.
-    /// </summary>
-    public bool IsHorizontalMode {
-        get => ScrollBarNode.IsHorizontalMode;
+    /// <inheritdoc />
+    public bool IsHorizontal {
+        get => ScrollBarNode.IsHorizontal;
         set {
-            if (ScrollBarNode.IsHorizontalMode == value) return;
+            if (ScrollBarNode.IsHorizontal == value) return;
 
-            ScrollBarNode.IsHorizontalMode = value;
+            ScrollBarNode.IsHorizontal = value;
             OnSizeChanged();
         }
     }
 
-    /// <summary>
-    /// Sets the scroll position to the start.
-    /// </summary>
+    /// <inheritdoc />
     public void ScrollToStart() {
         ScrollBarNode.ScrollPosition = 0;
     }
 
-    /// <summary>
-    /// Sets the scroll position to the end.
-    /// </summary>
+    /// <inheritdoc />
     public void ScrollToEnd() {
         ScrollBarNode.ScrollPosition = ScrollBarNode.ScrollMaxPosition;
     }
 
-    /// <summary>
-    /// Recalculates sizes to update scroll params correctly.
-    /// </summary>
-    public void RecalculateSizes() {
+    /// <inheritdoc />
+    public void RecalculateLayout() {
         OnSizeChanged();
     }
 
     /// <summary>
     /// Constructs a new <see cref="ScrollingNode{T}"/>.
     /// </summary>
-    public unsafe ScrollingNode() {
+    public ScrollingNode() : this(new T
+        {
+            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft |
+                        NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
+        })
+    { }
+
+    /// <summary>
+    /// Constructs a new <see cref="ScrollingNode{T}"/>, with provided prebuilt node.
+    /// </summary>
+    public unsafe ScrollingNode(T prebuiltContentNode) {
         ClippingContentNode = new ResNode {
             NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft |
                         NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Clip | NodeFlags.EmitsEvents,
@@ -103,10 +103,7 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         };
         ScrollingCollisionNode.AttachNode(ClippingContentNode);
 
-        ContentNode = new T {
-            NodeFlags = NodeFlags.AnchorTop | NodeFlags.AnchorLeft |
-                        NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
-        };
+        ContentNode = prebuiltContentNode;
         ContentNode.AttachNode(ClippingContentNode);
 
         ScrollBarNode = new ScrollBarNode {
@@ -130,7 +127,7 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
 
         var oldPosition = ScrollBarNode.ScrollPosition;
         ScrollBarNode.ScrollPosition = 0;
-        if (IsHorizontalMode) {
+        if (IsHorizontal) {
             ScrollBarNode.Size = new Vector2(Width, ScrollBarThickness);
             ScrollBarNode.Position = new Vector2(0.0f, Height - ScrollBarThickness);
         }
@@ -142,7 +139,7 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
         ScrollBarNode.SetContentNodes(ContentNode, ScrollingCollisionNode);
         ScrollBarNode.ScrollPosition = Math.Clamp(oldPosition, 0, ScrollBarNode.ScrollMaxPosition);
 
-        if (IsHorizontalMode) {
+        if (IsHorizontal) {
             ContentNode.Height = Height;
         }
         else {
@@ -154,7 +151,7 @@ public class ScrollingNode<T> : ResNode where T : NodeBase, new() {
             }
         }
 
-        if (ContentNode is ILayoutListNode layoutNode) {
+        if (ContentNode is ILayoutUpdatable layoutNode) {
             layoutNode.RecalculateLayout();
         }
     }

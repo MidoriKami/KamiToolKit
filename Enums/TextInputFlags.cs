@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Enums;
@@ -8,6 +8,7 @@ namespace KamiToolKit.Enums;
 /// </summary>
 [Flags]
 public enum TextInputFlags : ushort {
+
     /// <summary>
     /// Capitalize
     /// </summary>

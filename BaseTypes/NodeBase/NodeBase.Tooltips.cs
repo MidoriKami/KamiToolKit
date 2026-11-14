@@ -1,20 +1,16 @@
-﻿using Dalamud.Utility;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Enums;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.BaseTypes;
 
-public unsafe partial class NodeBase {
+public unsafe partial class NodeBase : ITextTooltip, IActionTooltip, IItemTooltip, IInventoryItemTooltip {
 
-    /// <summary>
-    /// Gets or sets the Text Tooltip for this node.
-    /// </summary>
-    /// <remarks>
-    /// If tooltip is set after the node is attached, a collision update will be required.
-    /// </remarks>
+    /// <inheritdoc/>
     public virtual ReadOnlySeString TextTooltip {
         get;
         set {
@@ -48,12 +44,16 @@ public unsafe partial class NodeBase {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the Action Tooltip for this node. Uses ActionId.
-    /// </summary>
-    /// <remarks>
-    /// If tooltip is set after the node is attached, a collision update will be required.
-    /// </remarks>
+    /// <inheritdoc/>
+    public void ShowTextTooltip()
+        => ShowTooltip();
+
+    /// <inheritdoc/>
+    public void HideTextTooltip()
+        => HideTooltip();
+
+
+    /// <inheritdoc/>
     public virtual uint ActionTooltip {
         get;
         set {
@@ -75,12 +75,15 @@ public unsafe partial class NodeBase {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the Action Tooltip for this node. Uses ItemId.
-    /// </summary>
-    /// <remarks>
-    /// If tooltip is set after the node is attached, a collision update will be required.
-    /// </remarks>
+    /// <inheritdoc/>
+    public void ShowActionTooltip()
+        => ShowTooltip();
+
+    /// <inheritdoc/>
+    public void HideActionTooltip()
+        => HideTooltip();
+
+    /// <inheritdoc/>
     public virtual uint ItemTooltip {
         get;
         set {
@@ -102,12 +105,15 @@ public unsafe partial class NodeBase {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the Action Tooltip for this node. Takes a InventoryType and a slot index to represent the item in that slot.
-    /// </summary>
-    /// <remarks>
-    /// If tooltip is set after the node is attached, a collision update will be required.
-    /// </remarks>
+    /// <inheritdoc/>
+    public void ShowItemTooltip()
+        => ShowTooltip();
+
+    /// <inheritdoc/>
+    public void HideItemTooltip()
+        => HideTooltip();
+
+    /// <inheritdoc/>
     public virtual InventoryItemTooltip? InventoryItemTooltip {
         get;
         set {
@@ -129,6 +135,14 @@ public unsafe partial class NodeBase {
         }
     }
 
+    /// <inheritdoc/>
+    public void ShowInventoryItemTooltip()
+        => ShowTooltip();
+
+    /// <inheritdoc/>
+    public void HideInventoryItemTooltip()
+        => HideTooltip();
+
     /// <summary>
     /// Property that indicates if a tooltip is already registered.
     /// </summary>
@@ -138,7 +152,7 @@ public unsafe partial class NodeBase {
     protected bool TooltipRegistered { get; set; }
 
     /// <summary>
-    /// Triggers this nodes tooltip to show, prioritizing Text -> Action -> Item tooltips in that order, only one tooltip will show.
+    /// Triggers this node's tooltip to show, prioritizing Text -> Action -> Item tooltips in that order, only one tooltip will show.
     /// </summary>
     public virtual void ShowTooltip() {
         if (ParentAddon is null) return; // Shouldn't be possible

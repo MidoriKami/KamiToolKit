@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -13,7 +13,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Custom implementation of a tab bar.
 /// </summary>
-public class TabBarNode : ResNode, IControllerNavigable {
+public class TabBarNode : ResNode, ITabBarNode {
 
     /// <inheritdoc/>
     public int NavIndex { get; set; }
@@ -30,9 +30,7 @@ public class TabBarNode : ResNode, IControllerNavigable {
     /// <inheritdoc/>
     public int NavDown { get; set; }
 
-    /// <summary>
-    /// Sets the initial nodes that this list will use.
-    /// </summary>
+    /// <inheritdoc />
     public ICollection<TabBarEntry> InitialEntries {
         init {
             foreach (var tabBarEntry in value) {
@@ -41,9 +39,7 @@ public class TabBarNode : ResNode, IControllerNavigable {
         }
     }
 
-    /// <summary>
-    /// Selects the tab matching the given label.
-    /// </summary>
+    /// <inheritdoc />
     public void SelectTab(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
@@ -51,9 +47,7 @@ public class TabBarNode : ResNode, IControllerNavigable {
         ClickHandler(button);
     }
 
-    /// <summary>
-    /// Disables a tab matching the given label, the tab won't be selectable or interactable.
-    /// </summary>
+    /// <inheritdoc />
     public void DisableTab(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
@@ -62,9 +56,7 @@ public class TabBarNode : ResNode, IControllerNavigable {
         button.MultiplyColor = new Vector3(0.6f, 0.6f, 0.6f);
     }
 
-    /// <summary>
-    /// Enables a tab matching the given label.
-    /// </summary>
+    /// <inheritdoc />
     public void EnableTab(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
@@ -73,10 +65,7 @@ public class TabBarNode : ResNode, IControllerNavigable {
         button.MultiplyColor = Vector3.One;
     }
 
-    /// <summary>
-    /// Toggles a tab matching the given label's enabled/disabled state.
-    /// </summary>
-    /// <param name="label"></param>
+    /// <inheritdoc />
     public void ToggleTab(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
@@ -91,10 +80,7 @@ public class TabBarNode : ResNode, IControllerNavigable {
         }
     }
 
-    /// <summary>
-    /// Removes a tab matching the given label.
-    /// </summary>
-    /// <param name="label"></param>
+    /// <inheritdoc />
     public void RemoveTab(ReadOnlySeString label) {
         var button = radioButtons.FirstOrDefault(button => button.String == label);
         if (button is null) return;
@@ -104,9 +90,7 @@ public class TabBarNode : ResNode, IControllerNavigable {
         RecalculateLayout();
     }
 
-    /// <summary>
-    /// Clear all tab nodes.
-    /// </summary>
+    /// <inheritdoc />
     public void Clear() {
         foreach (var node in radioButtons) {
             node.Dispose();
@@ -128,9 +112,7 @@ public class TabBarNode : ResNode, IControllerNavigable {
         RecalculateLayout();
     }
 
-    /// <summary>
-    /// Add a new tab via <see cref="TabBarEntry"/>.
-    /// </summary>
+    /// <inheritdoc />
     public void AddTab(TabBarEntry entry) {
         var newButton = new TabBarRadioButtonNode {
             Height = Height,
@@ -155,10 +137,8 @@ public class TabBarNode : ResNode, IControllerNavigable {
         RecalculateLayout();
     }
 
-    /// <summary>
-    /// Add a new tab with the provided callback and option tooltip.
-    /// </summary>
-    public void AddTab(ReadOnlySeString label, Action callback, ReadOnlySeString? tooltip = null, bool isEnabled = true) {
+    /// <inheritdoc />
+    public void AddTab(ReadOnlySeString label, Action? callback = null, ReadOnlySeString? tooltip = null, bool isEnabled = true) {
         var newButton = new TabBarRadioButtonNode {
             Height = Height,
             String = label,
@@ -191,14 +171,27 @@ public class TabBarNode : ResNode, IControllerNavigable {
     }
 
     private void RecalculateLayout() {
-        var step = Width / radioButtons.Count;
+        if (radioButtons.Count is 0) return;
+        if (Width is 0) return;
+        if (Height is 0) return;
 
+        var step = Width / radioButtons.Count;
         foreach (var index in Enumerable.Range(0, radioButtons.Count)) {
             var button = radioButtons[index];
 
+            // Offset value squishes them together because texture doesn't fill size.
             button.Width = step + 5.0f;
-            button.X = step * index - 5.0f;
+            button.X = step * index - 2.5f;
             button.Height = Height;
+
+            // But tweak first and last a little so it isn't weird.
+            if (index is 0) {
+                button.X = 0.0f;
+                button.Width = step + 2.5f;
+            }
+            else if (index == radioButtons.Count - 1) {
+                button.Width = step + 2.5f;
+            }
 
             button.NavIndex = NavIndex + index;
 

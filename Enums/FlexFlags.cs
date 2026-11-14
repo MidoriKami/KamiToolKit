@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace KamiToolKit.Enums;
 
@@ -7,6 +7,7 @@ namespace KamiToolKit.Enums;
 /// </summary>
 [Flags]
 public enum FlexFlags {
+
     /// <summary>
     /// Adjusts the height of the inserted node to be the same as the area generated
     /// </summary>

@@ -1,12 +1,13 @@
-﻿using System.Numerics;
+using System.Numerics;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Specialization of <see cref="ProgressNode"/> to represent the castbar that enemies use.
+/// Specialization of <see cref="IProgressNode"/> to represent the castbar that enemies use.
 /// </summary>
-public unsafe class ProgressBarEnemyCastNode : ProgressNode {
+public unsafe class ProgressBarEnemyCastNode : ResNode, IProgressNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -19,13 +20,13 @@ public unsafe class ProgressBarEnemyCastNode : ProgressNode {
     public NineGridNode ProgressNode { get; }
 
     /// <inheritdoc/>
-    public override float Progress {
+    public float Progress {
         get => ProgressNode.Width / Width;
         set => ProgressNode.Width = Width * value;
     }
 
     /// <inheritdoc/>
-    public override Vector4 BackgroundColor {
+    public Vector4 BackgroundColor {
         get => new(BackgroundImageNode.AddColor.X, BackgroundImageNode.AddColor.Y, BackgroundImageNode.AddColor.Z, BackgroundImageNode.ResNode->Color.A / 255.0f);
         set {
             BackgroundImageNode.ResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
@@ -34,7 +35,7 @@ public unsafe class ProgressBarEnemyCastNode : ProgressNode {
     }
 
     /// <inheritdoc/>
-    public override Vector4 BarColor {
+    public Vector4 BarColor {
         get => new(ProgressNode.AddColor.X, ProgressNode.AddColor.Y, ProgressNode.AddColor.Z, ProgressNode.ResNode->Color.A / 255.0f);
         set {
             ProgressNode.ResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();

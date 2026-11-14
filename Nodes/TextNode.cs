@@ -11,7 +11,7 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games TextNode.
+/// Implementation of the game's TextNode.
 /// </summary>
 public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
 
@@ -28,7 +28,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     }
 
     /// <inheritdoc />
-    public Vector4 BackgroundColor {
+    public Vector4 SelectionColor {
         get => Node->BackgroundColor.ToVector4();
         set => Node->BackgroundColor = value.ToByteColor();
     }
@@ -123,23 +123,16 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
         set => Node->TextId = value;
     }
 
+    private ReadOnlySeString OriginalString { get; set; }
+
     /// <inheritdoc />
     public ReadOnlySeString String {
         get => new(Node->GetText().AsSpan());
         set {
+            OriginalString = value;
+
             using var builder = new RentedSeStringBuilder();
             Node->SetText(builder.Append(value).GetViewAsSpan());
-        }
-    }
-
-    /// <inheritdoc />
-    public override Vector2 Size {
-        get => base.Size;
-        set {
-            if (base.Size == value) return;
-
-            base.Size = value;
-            UpdateText();
         }
     }
 
@@ -168,8 +161,9 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
         ushort sizeX = 0;
         ushort sizeY = 0;
 
-        fixed (byte* ptr = builder.Append(text).GetViewAsSpan())
+        fixed (byte* ptr = builder.Append(text).GetViewAsSpan()) {
             Node->GetTextDrawSize(&sizeX, &sizeY, ptr, considerScale: considerScale);
+        }
 
         return new Vector2(sizeX, sizeY);
     }
@@ -218,10 +212,13 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
 
         // If we have these flags, the node will automatically re-add newlines if we strip them first.
         if (TextFlags.HasFlag(TextFlags.MultiLine) && TextFlags.HasFlag(TextFlags.WordWrap)) {
-            foreach (var payload in String) {
+            foreach (var payload in OriginalString) {
                 if (payload.IsMacro(MacroCode.NewLine)) continue;
                 builder.Append(payload);
             }
+        }
+        else {
+            builder.Append(OriginalString);
         }
 
         Node->SetText(builder.GetViewAsSpan());

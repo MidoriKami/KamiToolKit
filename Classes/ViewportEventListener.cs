@@ -1,4 +1,4 @@
-﻿using Dalamud.Plugin.Services;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
@@ -15,7 +15,7 @@ public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEven
     /// Registers a viewport event for the specified node.
     /// </summary>
     /// <remarks>
-    /// This can only be called from the games main thread.
+    /// This can only be called from the game's main thread.
     /// </remarks>
     /// <param name="eventType">Event Type to listen for.</param>
     /// <param name="node">Node to pass when the callback is triggered.</param>
@@ -30,7 +30,7 @@ public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEven
     /// Removes a viewport event by type.
     /// </summary>
     /// <remarks>
-    /// This can only be called from the games main thread.
+    /// This can only be called from the game's main thread.
     /// </remarks>
     /// <param name="eventType">Event Type to no longer listen for.</param>
     public void RemoveEvent(AtkEventType eventType) {
@@ -44,7 +44,7 @@ public unsafe class ViewportEventListener(AtkEventListener.Delegates.ReceiveEven
     /// Unregisters all events and disposes this instance.
     /// </summary>
     /// <remarks>
-    /// This can only be called from the games main thread.
+    /// This can only be called from the game's main thread.
     /// </remarks>
     public override void Dispose() {
         ThreadSafety.AssertMainThread();

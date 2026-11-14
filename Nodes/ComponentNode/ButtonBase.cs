@@ -1,35 +1,23 @@
-﻿using System;
+using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.BaseTypes.ComponentNode;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Timelines;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games ButtonNode and associated component.
+/// Implementation of the game's ButtonNode and associated component.
 /// </summary>
 /// <remarks>
 /// This is implemented as an abstract base class to make the various button implementations simpler.
 /// </remarks>
-public abstract unsafe class ButtonBase : ComponentNode<AtkComponentButton, AtkUldComponentDataButton> {
+public abstract class ButtonBase : ComponentNode<AtkComponentButton, AtkUldComponentDataButton>, IButtonNode {
 
-    /// <summary>
-    /// Action that is invoked when the button is clicked.
-    /// </summary>
+    /// <inheritdoc/>
     public Action? OnClick { get; set; }
-
-    /// <summary>
-    /// Gets or sets whether the button is considered checked.
-    /// </summary>
-    /// <remarks>
-    /// Not quite sure what this is meant to do.
-    /// </remarks>
-    public bool IsChecked {
-        get => Component->IsChecked;
-        set => Component->SetChecked(value);
-    }
 
     /// <summary>
     /// Constructs a <see cref="ButtonBase"/> instance.

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
@@ -12,7 +12,7 @@ using KamiToolKit.Internal.Classes;
 namespace KamiToolKit.Controllers;
 
 /// <summary>
-/// Controller intended to interact with the games native Addon Factory system
+/// Controller intended to interact with the game's native Addon Factory system
 /// to fully replace a built-in game addon with a custom <see cref="NativeAddon"/>.
 /// </summary>
 public class AddonFactoryController : IDisposable, IAsyncDisposable {

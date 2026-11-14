@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
@@ -6,15 +6,16 @@ using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 using Dalamud.Excel.Sheets;
+using KamiToolKit.Interfaces;
 using Lumina.Text.ReadOnly;
 using Action = System.Action;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games HoldButton and associated component.
+/// Implementation of the game's HoldButton and associated component.
 /// </summary>
-public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUldComponentDataHoldButton> {
+public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUldComponentDataHoldButton>, IHoldButtonNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -36,28 +37,55 @@ public unsafe class HoldButtonNode : ComponentNode<AtkComponentHoldButton, AtkUl
     /// </summary>
     public TextNode TextNode { get; }
 
-    /// <summary>
-    /// Gets or sets whether this button should act as a one-time use.
-    /// If true, this button can be re-activated after clicking and holding again.
-    /// </summary>
+    /// <inheritdoc/>
     public bool UnlockAfterClick { get; set; }
 
-    /// <summary>
-    /// Action that is invoked after a hold has been completed.
-    /// </summary>
+    /// <inheritdoc/>
     public Action? OnClick { get; set; }
 
-    /// <summary>
-    /// Gets or sets the label displayed.
-    /// </summary>
+    /// <inheritdoc/>
+    public Vector4 TextColor {
+        get => TextNode.TextColor;
+        set => TextNode.TextColor = value;
+    }
+
+    /// <inheritdoc/>
+    public Vector4 TextOutlineColor {
+        get => TextNode.TextOutlineColor;
+        set => TextNode.TextOutlineColor = value;
+    }
+
+    /// <inheritdoc/>
     public ReadOnlySeString String {
         get => TextNode.String;
         set => TextNode.String = value;
     }
 
-    /// <summary>
-    /// Resets the button params allowing it to be re-activated.
-    /// </summary>
+    /// <inheritdoc/>
+    public AlignmentType AlignmentType {
+        get => TextNode.AlignmentType;
+        set => TextNode.AlignmentType = value;
+    }
+
+    /// <inheritdoc/>
+    public FontType FontType {
+        get => TextNode.FontType;
+        set => TextNode.FontType = value;
+    }
+
+    /// <inheritdoc/>
+    public TextFlags TextFlags {
+        get => TextNode.TextFlags;
+        set => TextNode.TextFlags = value;
+    }
+
+    /// <inheritdoc/>
+    public uint FontSize {
+        get => TextNode.FontSize;
+        set => TextNode.FontSize = value;
+    }
+
+    /// <inheritdoc/>
     public void Reset() {
         Component->IsTargetReached = false;
         Component->IsEventFired = false;

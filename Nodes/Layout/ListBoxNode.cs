@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.BaseTypes;
@@ -11,7 +11,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// A list layout node that allows anchoring from any corner, and allows setting a border or background color.
 /// </summary>
-public class ListBoxNode : LayoutListNode, IControllerNavigable {
+public class ListBoxNode : LayoutListNode, IListBoxNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -23,12 +23,7 @@ public class ListBoxNode : LayoutListNode, IControllerNavigable {
     /// </summary>
     public BorderNineGridNode Border { get; }
 
-    /// <summary>
-    /// Get or sets the layout anchor position.
-    /// </summary>
-    /// <remarks>
-    /// When set recalculates node layout.
-    /// </remarks>
+    /// <inheritdoc />
     public LayoutAnchor LayoutAnchor {
         get;
         set {
@@ -37,9 +32,7 @@ public class ListBoxNode : LayoutListNode, IControllerNavigable {
         }
     }
 
-    /// <summary>
-    /// Gets or sets whether the node should resize to fit its contents.
-    /// </summary>
+    /// <inheritdoc />
     public bool FitContents {
         get;
         set {
@@ -49,9 +42,7 @@ public class ListBoxNode : LayoutListNode, IControllerNavigable {
         }
     }
 
-    /// <summary>
-    /// Gets or sets which direction nodes will travel relative to the <see cref="LayoutAnchor"/>.
-    /// </summary>
+    /// <inheritdoc />
     public LayoutOrientation LayoutOrientation {
         get;
         set {
@@ -60,41 +51,23 @@ public class ListBoxNode : LayoutListNode, IControllerNavigable {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the background color.
-    /// </summary>
+    /// <inheritdoc />
     public Vector4 BackgroundColor {
         get => ColorImageNode.Color;
         set => ColorImageNode.Color = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether the background color is shown.
-    /// </summary>
+    /// <inheritdoc />
     public bool ShowBackground {
         get => ColorImageNode.IsVisible;
         set => ColorImageNode.IsVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether the border is shown.
-    /// </summary>
+    /// <inheritdoc />
     public bool ShowBorder {
         get => Border.IsVisible;
         set => Border.IsVisible = value;
     }
-
-    /// <inheritdoc/>
-    public int NavLeft { get; set; }
-
-    /// <inheritdoc/>
-    public int NavRight { get; set; }
-
-    /// <inheritdoc/>
-    public int NavUp { get; set; }
-
-    /// <inheritdoc/>
-    public int NavDown { get; set; }
 
     /// <inheritdoc/>
     public override float Height {

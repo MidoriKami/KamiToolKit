@@ -1,6 +1,7 @@
-﻿using System.Linq;
+using System.Linq;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
@@ -8,14 +9,12 @@ namespace KamiToolKit.Nodes;
 /// A <see cref="LayoutListNode"/> that represents a horizontally growing list of nodes.
 /// Can be anchored on left side or right side.
 /// </summary>
-public class HorizontalListNode : LayoutListNode {
+public class HorizontalListNode : LayoutListNode, IHorizontalListNode {
 
-    /// <summary>
-    /// Gets or sets the alignment used when calculating layout.
-    /// </summary>
-    /// <remarks>
-    /// Setting triggers layout recalculation.
-    /// </remarks>
+    /// <inheritdoc/>
+    public LayoutFill LayoutFill { get; set; } = LayoutFill.Horizontal;
+
+    /// <inheritdoc/>
     public HorizontalListAnchor Alignment {
         get;
         set {
@@ -33,36 +32,18 @@ public class HorizontalListNode : LayoutListNode {
         }
     }
 
-    /// <summary>
-    /// Adjusts contained nodes heights to match this nodes height
-    /// </summary>
+    /// <inheritdoc/>
     public bool FitHeight { get; set; }
 
-    /// <summary>
-    /// Resizes the horizontal list node to fit the height of all contents
-    /// </summary>
+    /// <inheritdoc/>
     public bool FitToContentHeight { get; set; }
 
-    /// <summary>
-    /// Resizes the horizontal list node to fit the width of all contents
-    /// </summary>
+    /// <inheritdoc/>
     public bool FitToContentWidth { get; set; }
 
-    /// <summary>
-    /// Gets the amount of space remaining in this node.
-    /// </summary>
+    /// <inheritdoc/>
     public float AreaRemaining
         => Width - NodeList.Sum(node => node.Width + ItemSpacing) - ItemSpacing;
-
-    /// <summary>
-    /// Gets or sets the up nav index.
-    /// </summary>
-    public int NavUp { get; set; }
-
-    /// <summary>
-    /// Gets or sets the down nav index.
-    /// </summary>
-    public int NavDown { get; set; }
 
     /// <inheritdoc />
     protected override void OnRecalculateLayout() {

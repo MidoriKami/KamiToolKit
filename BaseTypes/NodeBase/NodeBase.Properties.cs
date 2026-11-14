@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using Dalamud.Interface;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
+using KamiToolKit.Internal.Classes;
 using Bounds = KamiToolKit.Classes.Bounds;
 using Vector2 = System.Numerics.Vector2;
 using Vector3 = System.Numerics.Vector3;
@@ -11,6 +13,8 @@ using Vector4 = System.Numerics.Vector4;
 namespace KamiToolKit.BaseTypes;
 
 public abstract unsafe partial class NodeBase {
+
+    private static bool EnableSizingWarnings { get; set; } = false;
 
     /// <summary>
     /// Gets or sets the nodes X position relative to its parent node.
@@ -65,7 +69,7 @@ public abstract unsafe partial class NodeBase {
         => ResNode->ScreenPosition;
 
     /// <summary>
-    /// Gets or sets this nodes Width.
+    /// Gets or sets this node's Width.
     /// </summary>
     /// <remarks>
     /// Triggers <see cref="OnSizeChanged"/>.
@@ -73,9 +77,19 @@ public abstract unsafe partial class NodeBase {
     public virtual float Width {
         get => ResNode->GetWidth();
         set {
+            if (value < 0) {
+                if (EnableSizingWarnings) {
+                    var stackTrace = new System.Diagnostics.StackTrace(true);
+
+                    IPluginLog.Get().DebugWarning(
+                        $"Attempted to set negative width ({value}): {GetType().Name}\nStackTrace:\n{stackTrace}"
+                    );
+                }
+                return;
+            }
+
             ResNode->SetWidth((ushort)value);
-            if (value >= 0) {
-                if (isInsideSizeChanged) return;
+            if (value > 0 && Height > 0 && !isInsideSizeChanged) {
                 isInsideSizeChanged = true;
                 OnSizeChanged();
                 isInsideSizeChanged = false;
@@ -84,7 +98,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
-    /// Gets or sets this nodes Height.
+    /// Gets or sets this node's Height.
     /// </summary>
     /// <remarks>
     /// Triggers <see cref="OnSizeChanged"/>
@@ -92,10 +106,20 @@ public abstract unsafe partial class NodeBase {
     public virtual float Height {
         get => ResNode->GetHeight();
         set {
+            if (value < 0) {
+                if (EnableSizingWarnings) {
+                    var stackTrace = new System.Diagnostics.StackTrace(true);
+
+                    IPluginLog.Get().DebugWarning(
+                        $"Attempted to set negative height ({value}): {GetType().Name}\nStackTrace:\n{stackTrace}"
+                    );
+                }
+                return;
+            }
+
             ResNode->SetHeight((ushort)value);
 
-            if (value >= 0) {
-                if (isInsideSizeChanged) return;
+            if (value > 0 && Width > 0 && !isInsideSizeChanged) {
                 isInsideSizeChanged = true;
                 OnSizeChanged();
                 isInsideSizeChanged = false;
@@ -104,7 +128,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
-    /// Gets or sets this nodes Size.
+    /// Gets or sets this node's Size.
     /// </summary>
     /// <remarks>
     /// Triggers <see cref="OnSizeChanged"/>
@@ -112,11 +136,34 @@ public abstract unsafe partial class NodeBase {
     public virtual Vector2 Size {
         get => ResNode->Size;
         set {
+            if (value.X < 0) {
+                if (EnableSizingWarnings) {
+                    var stackTrace = new System.Diagnostics.StackTrace(true);
+
+                    IPluginLog.Get().DebugWarning(
+                        $"Attempted to set negative size.X ({value}): {GetType().Name}\nStackTrace:\n{stackTrace}"
+                    );
+                }
+                return;
+            }
+
+            if (value.Y < 0) {
+
+                if (EnableSizingWarnings) {
+                    var stackTrace = new System.Diagnostics.StackTrace(true);
+
+                    IPluginLog.Get().DebugWarning(
+                        $"Attempted to set negative size.Y ({value}): {GetType().Name}\nStackTrace:\n{stackTrace}"
+                    );
+                }
+
+                return;
+            }
+
             ResNode->SetWidth((ushort)value.X);
             ResNode->SetHeight((ushort)value.Y);
 
-            if (value is { X: >= 0, Y: >= 0}) {
-                if (isInsideSizeChanged) return;
+            if (value is { X: > 0, Y: > 0} && !isInsideSizeChanged) {
                 isInsideSizeChanged = true;
                 OnSizeChanged();
                 isInsideSizeChanged = false;
@@ -161,7 +208,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
-    /// Gets or sets this nodes rotation <em>in Radians</em>.
+    /// Gets or sets this node's rotation <em>in Radians</em>.
     /// </summary>
     public virtual float Rotation {
         get => ResNode->GetRotation();
@@ -169,7 +216,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
-    /// Gets or sets this nodes rotation in degrees.
+    /// Gets or sets this node's rotation in degrees.
     /// </summary>
     public virtual float RotationDegrees {
         get => ResNode->RotationDegrees;
@@ -235,7 +282,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
-    /// Gets or sets this nodes Color.
+    /// Gets or sets this node's Color.
     /// </summary>
     /// <remarks>
     /// Expected value ranges are from 0.0f to 1.0f.
@@ -246,7 +293,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
-    /// Gets or sets this nodes Color via HSVA.
+    /// Gets or sets this node's Color via HSVA.
     /// </summary>
     /// <remarks>
     /// Due to converting to and from HSVA there may be some error.
@@ -257,7 +304,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
-    /// Gets or sets this nodes Alpha value.
+    /// Gets or sets this node's Alpha value.
     /// </summary>
     /// <remarks>
     /// Expected value ranges are from 0.0f to 1.0f.
@@ -312,7 +359,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
-    /// Gets or sets this nodes id.
+    /// Gets or sets this node's id.
     /// </summary>
     public uint NodeId {
         get => ResNode->NodeId;
@@ -356,7 +403,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
-    /// Gets or sets this nodes Priority.
+    /// Gets or sets this node's Priority.
     /// </summary>
     public int Priority {
         get => ResNode->GetPriority();
@@ -364,7 +411,7 @@ public abstract unsafe partial class NodeBase {
     }
 
     /// <summary>
-    /// Gets this nodes child count.
+    /// Gets this node's child count.
     /// </summary>
     public virtual int ChildCount
         => ResNode->ChildCount;
@@ -417,7 +464,7 @@ public abstract unsafe partial class NodeBase {
         => ResNode->CheckCollision(eventData, inclusive);
 
     /// <summary>
-    /// Gets or sets this nodes transform value.
+    /// Gets or sets this node's transform value.
     /// </summary>
     public Matrix2x2 Transform {
         get => ResNode->Transform;
@@ -427,7 +474,7 @@ public abstract unsafe partial class NodeBase {
     /// <summary>
     /// Overridable function that is called whenever this node's size is changed.
     /// </summary>
-    protected virtual void OnSizeChanged() {}
+    protected virtual void OnSizeChanged() { }
 
     private Action<bool>? OnVisibilityToggled { get; set; }
 

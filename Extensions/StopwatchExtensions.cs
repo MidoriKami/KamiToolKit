@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Dalamud.Plugin.Services;
 using KamiToolKit.Internal.Classes;
 

@@ -1,14 +1,15 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Specialization of the <see cref="ProgressNode"/> that represents a player-spell cast.
+/// Specialization of the <see cref="IProgressNode"/> that represents a player-spell cast.
 /// </summary>
-public unsafe class ProgressBarCastNode : ProgressNode {
+public unsafe class ProgressBarCastNode : ResNode, IProgressBarCastNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -26,13 +27,13 @@ public unsafe class ProgressBarCastNode : ProgressNode {
     public NineGridNode BorderImageNode;
 
     /// <inheritdoc/>
-    public override float Progress {
+    public float Progress {
         get => ProgressNode.Width / Width;
         set => ProgressNode.Width = Width * value;
     }
 
     /// <inheritdoc/>
-    public override Vector4 BackgroundColor {
+    public Vector4 BackgroundColor {
         get => new(BackgroundImageNode.AddColor.X, BackgroundImageNode.AddColor.Y, BackgroundImageNode.AddColor.Z, BackgroundImageNode.ResNode->Color.A / 255.0f);
         set {
             BackgroundImageNode.ResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
@@ -41,7 +42,7 @@ public unsafe class ProgressBarCastNode : ProgressNode {
     }
 
     /// <inheritdoc/>
-    public override Vector4 BarColor {
+    public Vector4 BarColor {
         get => new(ProgressNode.AddColor.X, ProgressNode.AddColor.Y, ProgressNode.AddColor.Z, ProgressNode.ResNode->Color.A / 255.0f);
         set {
             ProgressNode.ResNode->Color = new Vector4(1.0f, 1.0f, 1.0f, value.W).ToByteColor();
@@ -49,12 +50,7 @@ public unsafe class ProgressBarCastNode : ProgressNode {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the border texture color.
-    /// </summary>
-    /// <remarks>
-    /// Expects values between 0.0f and 1.0f.
-    /// </remarks>
+    /// <inheritdoc />
     public Vector4 BorderColor {
         get => new(BorderImageNode.AddColor.X, BorderImageNode.AddColor.Y, BorderImageNode.AddColor.Z, BorderImageNode.ResNode->Color.A / 255.0f);
         set {
@@ -63,9 +59,7 @@ public unsafe class ProgressBarCastNode : ProgressNode {
         }
     }
 
-    /// <summary>
-    /// Gets or sets whether the border should be visible.
-    /// </summary>
+    /// <inheritdoc />
     public bool BorderVisible {
         get => BorderImageNode.IsVisible;
         set => BorderImageNode.IsVisible = value;

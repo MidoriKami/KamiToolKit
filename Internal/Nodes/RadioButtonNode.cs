@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
@@ -12,9 +13,9 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Internal.Nodes;
 
 /// <summary>
-/// Implementation of the games RadioButtonNode and its associated component.
+/// Implementation of the game's RadioButtonNode and its associated component.
 /// </summary>
-internal unsafe class RadioButtonNode : ComponentNode<AtkComponentRadioButton, AtkUldComponentDataRadioButton> {
+internal unsafe class RadioButtonNode : ComponentNode<AtkComponentRadioButton, AtkUldComponentDataRadioButton>, ISelectable {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -58,12 +59,7 @@ internal unsafe class RadioButtonNode : ComponentNode<AtkComponentRadioButton, A
         set => Component->SetChecked(value);
     }
 
-    /// <summary>
-    /// Gets or sets whether to show this radio button as selected.
-    /// </summary>
-    /// <remarks>
-    /// This does not set it as checked internally.
-    /// </remarks>
+    /// <inheritdoc />
     public bool IsSelected {
         get => Component->IsSelected;
         set {

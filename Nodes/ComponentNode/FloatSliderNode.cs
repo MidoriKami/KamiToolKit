@@ -3,15 +3,16 @@ using System.Globalization;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games SliderNode and associated component.
+/// Implementation of the game's SliderNode and associated component.
 /// </summary>
-public unsafe class FloatSliderNode : ComponentNode<AtkComponentSlider, AtkUldComponentDataSlider> {
+public unsafe class FloatSliderNode : ComponentNode<AtkComponentSlider, AtkUldComponentDataSlider>, ISliderNode<float> {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -33,38 +34,28 @@ public unsafe class FloatSliderNode : ComponentNode<AtkComponentSlider, AtkUldCo
     /// </summary>
     public TextNode FloatValueNode { get; }
 
-    /// <summary>
-    /// Gets or sets the action to be invoked when the value is changed. Provides the new value.
-    /// </summary>
-    public Action<float>? OnValueChanged { get; set; }
+    /// <inheritdoc/>
+    public Action<float>? OnValueUpdate { get; set; }
 
-    /// <summary>
-    /// Gets or sets the min value allowed.
-    /// </summary>
+    /// <inheritdoc/>
     public float Min {
         get => Component->MinValue / 100.0f;
         set => Component->SetMinValue((int) (value * 100.0f));
     }
 
-    /// <summary>
-    /// Gets or sets the max value allowed.
-    /// </summary>
+    /// <inheritdoc/>
     public float Max {
         get => Component->MaxValue / 100.0f;
         set => Component->SetMaxValue((int) (value * 100.0f));
     }
 
-    /// <summary>
-    /// Gets or sets the step value used when interacting with a controller.
-    /// </summary>
+    /// <inheritdoc/>
     public float Step {
         get => Component->Steps / 100.0f;
         set => Component->Steps = (int) (value * 100.0f);
     }
 
-    /// <summary>
-    /// Gets or sets the current value. When setting triggers <see cref="OnValueChanged"/>
-    /// </summary>
+    /// <inheritdoc/>
     public float Value {
         get => Component->Value / 100.0f;
         set => Component->SetValue((int) (value * 100.0f));
@@ -149,7 +140,7 @@ public unsafe class FloatSliderNode : ComponentNode<AtkComponentSlider, AtkUldCo
     }
 
     private void ValueChangedHandler() {
-        OnValueChanged?.Invoke(Value);
+        OnValueUpdate?.Invoke(Value);
         UpdateFormattedText();
     }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -16,7 +16,7 @@ namespace KamiToolKit.Nodes;
 /// </summary>
 /// /// <typeparam name="T">The data model to use.</typeparam>
 /// <typeparam name="TU">The view to render the data models data.</typeparam>
-public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITreeListItemNode, new()  {
+public class TreeListNode<T, TU> : ResNode, ITreeListNode<T, TU> where TU : TreeListItemNode<T>, IListItemNode, new()  {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -33,25 +33,13 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
     /// </summary>
     public TextNode NoResultsTextNode { get; }
 
-    /// <summary>
-    /// Action that is invoked when an option is clicked on.
-    /// </summary>
-    /// <remarks>
-    /// This only applies to the list item nodes, and will not trigger when a header is clicked on.
-    /// </remarks>
-    public Action<T?>? OnItemSelected { get; set; }
+    /// <inheritdoc />
+    public Action<T?>? OnOptionSelected { get; set; }
 
-    /// <summary>
-    /// Gets or sets the selected node.
-    /// </summary>
+    /// <inheritdoc />
     public T? SelectedItem { get; set; }
 
-    /// <summary>
-    /// Gets or sets the dictionary of options used to populate this <see cref="TreeListNode{T,TU}"/>
-    /// </summary>
-    /// <remarks>
-    /// Keys represent collapsing headers, where values are the entries shown per header.
-    /// </remarks>
+    /// <inheritdoc />
     public Dictionary<ReadOnlySeString, List<T>> Options {
         get;
         set {
@@ -64,17 +52,13 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         }
     } = [];
 
-    /// <summary>
-    /// Gets or sets the item spacing.
-    /// </summary>
+    /// <inheritdoc />
     public float ItemSpacing {
         get;
         set;
     }
 
-    /// <summary>
-    /// Gets or sets the string to show when there are no items in the list.
-    /// </summary>
+    /// <inheritdoc />
     public ReadOnlySeString? NoResultsString {
         get;
         set {
@@ -88,9 +72,7 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         }
     }
 
-    /// <summary>
-    /// Updates the data being displayed.
-    /// </summary>
+    /// <inheritdoc />
     public void Update() {
         NoResultsTextNodeContainer.IsVisible = !NoResultsTextNode.String.IsEmpty;
 
@@ -103,6 +85,10 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         }
     }
 
+    /// <inheritdoc />
+    public void RecalculateLayout()
+        => OnSizeChanged();
+
     /// <summary>
     /// Constructs a new instance of <see cref="TreeListNode{T,TU}"/>
     /// </summary>
@@ -110,7 +96,7 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
         itemHeight = TU.ItemHeight;
 
         ScrollBarNode = new ScrollBarNode {
-            OnValueChanged = OnScrollUpdate,
+            OnScrollChanged = OnScrollUpdate,
             ScrollSpeed = (int)itemHeight,
         };
         ScrollBarNode.AttachNode(this);
@@ -235,7 +221,7 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
                     IsVisible = false,
                 };
 
-                headerNode.OnToggle = isVisible => {
+                headerNode.OnCollapseToggled = isVisible => {
                     if (isVisible) {
                         CollapsedEntries.Remove(headerNode.String);
                     }
@@ -269,7 +255,7 @@ public class TreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITree
                         clickedNode.IsSelected = true;
 
                         SelectedItem = ((TU)clickedNode).ItemData;
-                        OnItemSelected?.Invoke(SelectedItem);
+                        OnOptionSelected?.Invoke(SelectedItem);
                     },
                     IsVisible = false,
                 };

@@ -1,6 +1,7 @@
-﻿using System.Numerics;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
@@ -10,7 +11,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Specialization of a button representing a standard text button.
 /// </summary>
-public unsafe class TextButtonNode : ButtonBase {
+public unsafe class TextButtonNode : ButtonBase, ITextButtonNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -22,25 +23,55 @@ public unsafe class TextButtonNode : ButtonBase {
     /// </summary>
     public TextNode LabelNode { get; }
 
-    /// <summary>
-    /// Gets or sets the label displayed for this button.
-    /// </summary>
+    /// <inheritdoc/>
+    public Vector4 TextColor {
+        get => LabelNode.TextColor;
+        set => LabelNode.TextColor = value;
+    }
+
+    /// <inheritdoc/>
+    public Vector4 TextOutlineColor {
+        get => LabelNode.TextOutlineColor;
+        set => LabelNode.TextOutlineColor = value;
+    }
+
+    /// <inheritdoc/>
     public ReadOnlySeString String {
         get => LabelNode.String;
         set => LabelNode.String = value;
     }
 
-    /// <summary>
-    /// Gets or sets the text id that reads a label from the datasheets instead.
-    /// </summary>
+    /// <inheritdoc/>
+    public AlignmentType AlignmentType {
+        get => LabelNode.AlignmentType;
+        set => LabelNode.AlignmentType = value;
+    }
+
+    /// <inheritdoc/>
+    public FontType FontType {
+        get => LabelNode.FontType;
+        set => LabelNode.FontType = value;
+    }
+
+    /// <inheritdoc/>
+    public TextFlags TextFlags {
+        get => LabelNode.TextFlags;
+        set => LabelNode.TextFlags = value;
+    }
+
+    /// <inheritdoc/>
+    public uint FontSize {
+        get => LabelNode.FontSize;
+        set => LabelNode.FontSize = value;
+    }
+
+    /// <inheritdoc/>
     public uint TextId {
         get => LabelNode.TextId;
         set => LabelNode.TextId = value;
     }
 
-    /// <summary>
-    /// Gets or sets which datasheet should be used to resolve <see cref="TextId"/>
-    /// </summary>
+    /// <inheritdoc/>
     public NodeData.SheetType SheetType {
         get => LabelNode.SheetType;
         set => LabelNode.SheetType = value;

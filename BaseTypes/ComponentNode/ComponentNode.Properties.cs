@@ -1,4 +1,5 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
 
 namespace KamiToolKit.BaseTypes.ComponentNode;
@@ -6,7 +7,7 @@ namespace KamiToolKit.BaseTypes.ComponentNode;
 /// <summary>
 /// Abstract implementation of the base class for all component nodes use in KamiToolKit.
 /// </summary>
-public abstract unsafe partial class ComponentNode(NodeType nodeType) : NodeBase<AtkComponentNode>(nodeType) {
+public abstract unsafe partial class ComponentNode(NodeType nodeType) : NodeBase<AtkComponentNode>(nodeType), IControllerNavigable {
 
     /// <summary>
     /// Gets the collision node used for this component node.
@@ -29,41 +30,31 @@ public abstract unsafe partial class ComponentNode(NodeType nodeType) : NodeBase
     public ref AtkCursorNavigationInfo CursorNavInfo
         => ref ComponentBase->CursorNavigationInfo;
 
-    /// <summary>
-    /// Gets or sets the index of this nodes controller nav.
-    /// </summary>
+    /// <inheritdoc/>
     public int NavIndex {
         get => CursorNavInfo.Index;
         set => CursorNavInfo.Index = (byte) value;
     }
 
-    /// <summary>
-    /// Gets or sets the index of the left direction nav.
-    /// </summary>
+    /// <inheritdoc/>
     public int NavLeft {
         get => CursorNavInfo.LeftIndex;
         set => CursorNavInfo.LeftIndex = (byte) value;
     }
 
-    /// <summary>
-    /// Gets or sets the index of the right direction nav.
-    /// </summary>
+    /// <inheritdoc/>
     public int NavRight {
         get => CursorNavInfo.RightIndex;
         set => CursorNavInfo.RightIndex = (byte) value;
     }
 
-    /// <summary>
-    /// Gets or sets the index of the up direction nav.
-    /// </summary>
+    /// <inheritdoc/>
     public int NavUp {
         get => CursorNavInfo.UpIndex;
         set => CursorNavInfo.UpIndex = (byte) value;
     }
 
-    /// <summary>
-    /// Gets or sets the index of the down direction nav.
-    /// </summary>
+    /// <inheritdoc/>
     public int NavDown {
         get => CursorNavInfo.DownIndex;
         set => CursorNavInfo.DownIndex = (byte) value;

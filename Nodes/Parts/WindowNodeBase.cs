@@ -1,6 +1,8 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
+using KamiToolKit.Interfaces;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -8,31 +10,39 @@ namespace KamiToolKit.Nodes;
 /// Abstract base class implementation of a WindowNode and its associated component.
 /// This one is intended for external use!
 /// </summary>
-public abstract unsafe class WindowNodeBase : ComponentNode<AtkComponentWindow, AtkUldComponentDataWindow> {
+public abstract unsafe class WindowNodeBase : ComponentNode<AtkComponentWindow, AtkUldComponentDataWindow>, IWindowNode {
 
-    /// <summary>
-    /// Gets the area of the node minus the header size.
-    /// </summary>
+    /// <inheritdoc />
+    public abstract ReadOnlySeString Title { get; set; }
+
+    /// <inheritdoc />
+    public abstract ReadOnlySeString Subtitle { get; set; }
+
+    /// <inheritdoc />
+    public abstract bool ShowCloseButton { get; set; }
+
+    /// <inheritdoc />
+    public abstract bool ShowConfigButton { get; set; }
+
+    /// <inheritdoc />
+    public abstract bool ShowHelpButton { get; set; }
+
+    /// <inheritdoc />
+    public abstract bool Focused { get; set; }
+
+    /// <inheritdoc />
     public abstract Vector2 ContentSize { get; }
 
-    /// <summary>
-    /// Gets the position where the content starts, below the header node.
-    /// </summary>
+    /// <inheritdoc />
     public abstract Vector2 ContentStartPosition { get; }
 
-    /// <summary>
-    /// Gets the height of the header.
-    /// </summary>
+    /// <inheritdoc />
     public abstract float HeaderHeight { get; }
 
-    /// <summary>
-    /// Gets the node that should be focused.
-    /// </summary>
+    /// <inheritdoc />
     public abstract ResNode WindowHeaderFocusNode { get; }
 
-    /// <summary>
-    /// Sets the nodes title and subtitle.
-    /// </summary>
+    /// <inheritdoc />
     public virtual void SetTitle(string title, string? subtitle = null)
         => Component->SetTitle(title, subtitle ?? string.Empty);
 

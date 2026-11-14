@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -46,7 +46,7 @@ public unsafe class TextInputButtonNode : ButtonBase {
             TextFlags = TextFlags.AutoAdjustNodeSize,
             TextColor = KnownColor.White.Vector(),
             TextOutlineColor = KnownColor.White.Vector(),
-            BackgroundColor = KnownColor.Black.Vector(),
+            SelectionColor = KnownColor.Black.Vector(),
         };
         LabelNode.AttachNode(this);
 

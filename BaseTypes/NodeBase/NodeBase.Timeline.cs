@@ -1,11 +1,11 @@
-﻿using KamiToolKit.Timelines;
+using KamiToolKit.Timelines;
 
 namespace KamiToolKit.BaseTypes;
 
 public abstract unsafe partial class NodeBase {
 
     /// <summary>
-    /// Gets this nodes timeline.
+    /// Gets this node's timeline.
     /// </summary>
     public Timeline? Timeline { get; private set; }
 

@@ -1,21 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// Specialization of <see cref="TextButtonNode"/> that has multiple label states.
 /// </summary>
-public class MultiStateButtonNode<T> : TextButtonNode where T : notnull {
+public class MultiStateButtonNode<T> : TextButtonNode, IMultiStateButtonNode<T> where T : notnull {
 
-    /// <summary>
-    /// Gets or sets the action that is invoked when the button is clicked, with the object of the new state.
-    /// </summary>
+    /// <inheritdoc />
     public Action<T>? OnStateChanged { get; set; }
 
-    /// <summary>
-    /// Gets or sets the list of available states.
-    /// </summary>
+    /// <inheritdoc />
     public required List<T> States {
         get;
         set {
@@ -24,9 +21,7 @@ public class MultiStateButtonNode<T> : TextButtonNode where T : notnull {
         }
     }
 
-    /// <summary>
-    /// Gets or set the currently selected state.
-    /// </summary>
+    /// <inheritdoc />
     public T SelectedState {
         get => States[SelectedIndex];
         set => SelectedIndex = States.IndexOf(value);

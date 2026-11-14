@@ -1,6 +1,7 @@
-﻿using System.Numerics;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
@@ -8,9 +9,9 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// A button node styled to match that of the games dropdown list buttons.
+/// A button node styled to match that of the game's dropdown list buttons.
 /// </summary>
-public unsafe class ListButtonNode : ButtonBase {
+public unsafe class ListButtonNode : ButtonBase, IListButtonNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -27,20 +28,52 @@ public unsafe class ListButtonNode : ButtonBase {
     /// </summary>
     public NineGridNode SelectedBackgroundNode { get; }
 
-    /// <summary>
-    /// Gets or sets whether this button should be shown as already selected.
-    /// </summary>
-    public bool Selected {
+    /// <inheritdoc />
+    public bool IsSelected {
         get => Component->IsChecked;
         set => Component->SetChecked(value);
     }
 
-    /// <summary>
-    /// Gets or sets the label displayed for this button.
-    /// </summary>
+    /// <inheritdoc />
     public ReadOnlySeString String {
         get => LabelNode.String;
         set => LabelNode.String = value;
+    }
+
+    /// <inheritdoc />
+    public Vector4 TextColor {
+        get => LabelNode.TextColor;
+        set => LabelNode.TextColor = value;
+    }
+
+    /// <inheritdoc />
+    public Vector4 TextOutlineColor {
+        get => LabelNode.TextOutlineColor;
+        set => LabelNode.TextOutlineColor = value;
+    }
+
+    /// <inheritdoc />
+    public AlignmentType AlignmentType {
+        get => LabelNode.AlignmentType;
+        set => LabelNode.AlignmentType = value;
+    }
+
+    /// <inheritdoc />
+    public FontType FontType {
+        get => LabelNode.FontType;
+        set => LabelNode.FontType = value;
+    }
+
+    /// <inheritdoc />
+    public TextFlags TextFlags {
+        get => LabelNode.TextFlags;
+        set => LabelNode.TextFlags = value;
+    }
+
+    /// <inheritdoc />
+    public uint FontSize {
+        get => LabelNode.FontSize;
+        set => LabelNode.FontSize = value;
     }
 
     /// <summary>

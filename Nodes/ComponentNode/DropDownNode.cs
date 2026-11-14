@@ -10,6 +10,8 @@ using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 using Dalamud.Excel.Sheets;
+using KamiToolKit.Interfaces;
+using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 using Action = System.Action;
 
@@ -19,6 +21,7 @@ namespace KamiToolKit.Nodes;
 /// Specialization of <see cref="DropDownNode{T}"/> for strings.
 /// </summary>
 public class StringDropDownNode : DropDownNode<string> {
+
     /// <inheritdoc />
     public StringDropDownNode()
         => GetLabelFunction = entry => entry;
@@ -28,6 +31,7 @@ public class StringDropDownNode : DropDownNode<string> {
 /// Specialization of <see cref="DropDownNode{T}"/> for enums.
 /// </summary>
 public class EnumDropDownNode<T> : DropDownNode<T> where T : Enum {
+
     /// <inheritdoc />
     public EnumDropDownNode()
         => GetLabelFunction = entry => entry.Description;
@@ -37,7 +41,7 @@ public class EnumDropDownNode<T> : DropDownNode<T> where T : Enum {
 /// Custom implementation of a native DropDownNode.
 /// </summary>
 /// <typeparam name="T">Data type this dropdown node is representing.</typeparam>
-public unsafe class DropDownNode<T> : SimpleComponentNode {
+public unsafe class DropDownNode<T> : SimpleComponentNode, IDropDownNode<T> {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -59,17 +63,13 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
     /// </summary>
     public TextNode LabelNode { get; }
 
-    /// <summary>
-    /// Gets whether this node is collapsed.
-    /// </summary>
-    public bool IsCollapsed { get; private set; } = true;
+    /// <inheritdoc/>
+    public LayoutFill LayoutFill { get; set; } = LayoutFill.Horizontal;
 
-    /// <summary>
-    /// Gets or sets the maximum number of buttons to generate.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to 5 entries, adjust this if your list is long.
-    /// </remarks>
+    /// <inheritdoc/>
+    public bool IsCollapsed { get; protected set; } = true;
+
+    /// <inheritdoc/>
     public int MaxListOptions {
         get;
         set {
@@ -78,36 +78,26 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         }
     } = 5;
 
-    /// <summary>
-    /// Gets or sets the action that is invoked when an option is selected.
-    /// </summary>
+    /// <inheritdoc/>
     public Action<T>? OnOptionSelected { get; set; }
 
-    /// <summary>
-    /// Gets or sets the action that is invoked when the collapse state changes.
-    /// </summary>
+    /// <inheritdoc/>
     public Action<bool>? OnCollapseToggled { get; set; }
 
-    /// <summary>
-    /// Gets or sets the action that is invoked when the button list is uncollapsed.
-    /// </summary>
+    /// <inheritdoc/>
     public Action? OnUncollapsed { get; set; }
 
-    /// <summary>
-    /// Gets or sets the action that is invoked when the button list is collapsed.
-    /// </summary>
+    /// <inheritdoc/>
     public Action? OnCollapsed { get; set; }
 
-    /// <summary>
-    /// Gets or sets the options represented by this node.
-    /// </summary>
+    /// <inheritdoc/>
     public List<T> Options {
         get;
         set {
             field = value;
 
             if (Options.Count is 0) {
-                LabelNode.String = PlaceholderString ?? "Empty Options, No Placeholder";
+                LabelNode.String = PlaceholderString.IsEmpty ? "Empty Options, No Placeholder" : PlaceholderString;
             }
             else {
                 if (PlaceholderString is { } placeholder) {
@@ -119,19 +109,23 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         }
     } = [];
 
-    /// <summary>
-    /// Gets or sets the placeholder string to be shown when there is no option selected.
-    /// </summary>
-    public ReadOnlySeString? PlaceholderString {
+    /// <inheritdoc/>
+    public bool ShowPlaceholderString {
+        get => LabelNode.IsVisible;
+        set => LabelNode.IsVisible = value;
+    }
+
+    /// <inheritdoc/>
+    public ReadOnlySeString PlaceholderString {
         get;
         set {
             field = value;
 
             if (Options.Count is 0) {
-                LabelNode.String = PlaceholderString ?? "Empty Options, No Placeholder";
+                LabelNode.String = PlaceholderString.IsEmpty ? "Empty Options, No Placeholder" : PlaceholderString;
             }
             else {
-                if (PlaceholderString is { } placeholder) {
+                if (PlaceholderString is { IsEmpty: false } placeholder) {
                     LabelNode.String = placeholder;
                 }
                 else {
@@ -141,9 +135,19 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the option that will be shown as the selected option.
-    /// </summary>
+    /// <inheritdoc/>
+    public uint PlaceholderStringTextId {
+        get => LabelNode.TextId;
+        set => LabelNode.TextId = value;
+    }
+
+    /// <inheritdoc/>
+    public NodeData.SheetType PlaceHolderStringSheetType {
+        get => LabelNode.SheetType;
+        set => LabelNode.SheetType = value;
+    }
+
+    /// <inheritdoc/>
     public T? SelectedOption {
         get;
         set {
@@ -152,9 +156,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         }
     }
 
-    /// <summary>
-    /// Collapses the button list.
-    /// </summary>
+    /// <inheritdoc/>
     public void Collapse(bool playSoundEffect = true) {
         if (!IsEnabled) return;
         if (IsCollapsed) return;
@@ -186,9 +188,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         OnCollapsed?.Invoke();
     }
 
-    /// <summary>
-    /// Uncollapses the button list.
-    /// </summary>
+    /// <inheritdoc/>
     public void Uncollapse(bool playSoundEffect = true) {
         if (!IsEnabled) return;
         if (!IsCollapsed) return;
@@ -226,9 +226,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         OnUncollapsed?.Invoke();
     }
 
-    /// <summary>
-    /// Toggles the visibility of the button list.
-    /// </summary>
+    /// <inheritdoc/>
     public void Toggle(bool playSoundEffect = true) {
         if (!IsEnabled) return;
 
@@ -242,9 +240,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         OnCollapseToggled?.Invoke(IsCollapsed);
     }
 
-    /// <summary>
-    /// Function that is called to resolve an entries displayed label.
-    /// </summary>
+    /// <inheritdoc/>
     public Func<T, ReadOnlySeString>? GetLabelFunction { get; set; }
 
     /// <summary>
@@ -307,14 +303,14 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
         PopupBackgroundNode.AttachNode(PopupContainerNode);
 
         PopupScrollbarNode = new ScrollBarNode {
-            OnValueChanged = OnScrollUpdate,
+            OnScrollChanged = OnScrollUpdate,
             ScrollSpeed = 22,
             HideWhenDisabled = true,
         };
         PopupScrollbarNode.AttachNode(PopupContainerNode);
 
         PopupButtonListNode = new VerticalListNode {
-            FitWidth = true,
+            StretchWidth = true,
         };
         PopupButtonListNode.AttachNode(PopupContainerNode);
 
@@ -427,7 +423,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
             var buttonNode = buttonNodes[populateIndex++];
 
             buttonNode.String = GetLabelFunction?.Invoke(entry) ?? "DropDownNode.GetLabelFunction was not set.";
-            buttonNode.Selected = SelectedOption?.Equals(entry) ?? false;
+            buttonNode.IsSelected = SelectedOption?.Equals(entry) ?? false;
             buttonNode.OnClick = () => OnPopupButtonClicked(entry);
         }
     }
@@ -456,7 +452,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode {
 
     private void UpdateLabel(T? entry) {
         if (entry is null) {
-            LabelNode.String = PlaceholderString ?? IDataManager.Get().GetExcelSheet<Addon>().GetRow(1818).Text;
+            LabelNode.String = PlaceholderString.IsEmpty ? IDataManager.Get().GetExcelSheet<Addon>().GetRow(1818).Text : PlaceholderString;
         }
         else {
             LabelNode.String = GetLabelFunction?.Invoke(entry) ?? "DropDownNode.GetLabelFunction was not set.";

@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Nodes;
@@ -9,7 +11,7 @@ namespace KamiToolKit.Nodes;
 /// <remarks>
 /// Uses a GameIconId to display that icon as the decorator for the button.
 /// </remarks>
-public class IconButtonNode : ButtonBase {
+public class IconButtonNode : ButtonBase, IIconButtonNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -21,12 +23,16 @@ public class IconButtonNode : ButtonBase {
     /// </summary>
     public IconImageNode ImageNode { get; }
 
-    /// <summary>
-    /// Gets or sets the iconId used for the displayed icon.
-    /// </summary>
+    /// <inheritdoc/>
     public uint IconId {
         get => ImageNode.IconId;
         set => ImageNode.IconId = value;
+    }
+
+    /// <inheritdoc/>
+    public bool IsIconDisabled {
+        get => !ImageNode.NodeFlags.HasFlag(NodeFlags.Enabled);
+        set => ImageNode.NodeFlags = value ? ImageNode.NodeFlags & ~NodeFlags.Enabled : ImageNode.NodeFlags | NodeFlags.Enabled;
     }
 
     /// <summary>

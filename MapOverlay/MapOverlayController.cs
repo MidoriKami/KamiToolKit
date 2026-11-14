@@ -17,7 +17,7 @@ using MapMarkerInfo = KamiToolKit.Classes.MapMarkerInfo;
 namespace KamiToolKit.MapOverlay;
 
 /// <summary>
-/// Controller for <see cref="MapMarkerNode"/>'s that are rendered over top of the games native map.
+/// Controller for <see cref="MapMarkerNode"/>'s that are rendered over top of the game's native map.
 /// </summary>
 public unsafe class MapOverlayController : IDisposable {
 

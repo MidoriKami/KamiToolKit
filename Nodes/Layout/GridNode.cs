@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// A layout node representing a grid.
 /// </summary>
-public class GridNode : ResNode {
+public class GridNode : ResNode, IGridNode {
 
     /// <summary>
     /// Gets the grid section at the specified X,Y coordinate.
@@ -22,12 +23,7 @@ public class GridNode : ResNode {
     public ResNode this[int index]
         => gridNodes[index];
 
-    /// <summary>
-    /// Gets or sets the grids size.
-    /// </summary>
-    /// <remarks>
-    /// Warning: Changing this value will dispose any existing layout nodes.
-    /// </remarks>
+    /// <inheritdoc />
     public required GridSize GridSize {
         get;
         set {
@@ -36,9 +32,7 @@ public class GridNode : ResNode {
         }
     } = new(0, 0);
 
-    /// <summary>
-    /// Recalculates all the nodes sizes and positions.
-    /// </summary>
+    /// <inheritdoc />
     public void RecalculateLayout() {
         var gridWidth = Width / GridSize.Columns;
         var gridHeight = Height / GridSize.Rows;

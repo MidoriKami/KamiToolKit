@@ -2,6 +2,8 @@ using System;
 using System.Globalization;
 using System.Numerics;
 using Dalamud.Interface;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Interfaces;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
@@ -9,7 +11,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Node representing a color preview and a hex string representation of the color.
 /// </summary>
-public class ColorPreviewWithInput : ResNode {
+public class ColorPreviewWithInput : ResNode, IColorPreviewWithInputNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -21,30 +23,19 @@ public class ColorPreviewWithInput : ResNode {
     /// </summary>
     public TextInputNode ColorInputNode { get; }
 
-    /// <summary>
-    /// Action that is invoked when the color is changed, provides the color as HSVA.
-    /// </summary>
+    /// <inheritdoc />
     public Action<ColorHelpers.HsvaColor>? OnHsvaColorChanged { get; set; }
 
-    /// <summary>
-    /// Action that is invoked when the color is changed, provides the color as RGBA.
-    /// </summary>
+    /// <inheritdoc />
     public Action<Vector4>? OnColorChanged { get; set; }
 
-    /// <summary>
-    /// Gets or sets the current color string.
-    /// </summary>
+    /// <inheritdoc />
     public ReadOnlySeString String {
         get => ColorInputNode.String;
         set => ColorInputNode.String = value;
     }
 
-    /// <summary>
-    /// Gets or sets the current color as RGBA.
-    /// </summary>
-    /// <remarks>
-    /// Also updates the text display.
-    /// </remarks>
+    /// <inheritdoc />
     public override Vector4 Color {
         get => ColorSquareNode.Color;
         set {
@@ -53,12 +44,7 @@ public class ColorPreviewWithInput : ResNode {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the current color as HSVA.
-    /// </summary>
-    /// <remarks>
-    /// Also updates the text display.
-    /// </remarks>
+    /// <inheritdoc />
     public override ColorHelpers.HsvaColor ColorHsva {
         get => ColorSquareNode.ColorHsva;
         set {

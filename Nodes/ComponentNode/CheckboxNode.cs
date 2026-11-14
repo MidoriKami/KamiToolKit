@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 using Lumina.Text.ReadOnly;
@@ -11,9 +12,9 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games CheckboxNode and associated component.
+/// Implementation of the game's CheckboxNode and associated component.
 /// </summary>
-public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldComponentDataCheckBox> {
+public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldComponentDataCheckBox>, ICheckboxNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -30,14 +31,22 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
     /// </summary>
     public TextNode Label { get; }
 
-    /// <summary>
-    /// Action called when this nodes text or box are clicked.
-    /// </summary>
-    public Action<bool>? OnClick { get; set; }
+    /// <inheritdoc/>
+    public Action<bool>? OnChecked { get; set; }
 
-    /// <summary>
-    /// Gets or sets the text label for this node.
-    /// </summary>
+    /// <inheritdoc />
+    public Vector4 TextColor {
+        get => Label.TextColor;
+        set => Label.TextColor = value;
+    }
+
+    /// <inheritdoc />
+    public Vector4 TextOutlineColor {
+        get => Label.TextOutlineColor;
+        set => Label.TextOutlineColor = value;
+    }
+
+    /// <inheritdoc/>
     public ReadOnlySeString String {
         get => Label.String;
         set {
@@ -46,21 +55,38 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
         }
     }
 
-    /// <summary>
-    /// Gets or sets if this node is checked.
-    /// </summary>
-    /// <remarks>
-    /// Writing to this value will trigger <see cref="OnClick"/>.
-    /// </remarks>
+    /// <inheritdoc />
+    public AlignmentType AlignmentType {
+        get => Label.AlignmentType;
+        set => Label.AlignmentType = value;
+    }
+
+    /// <inheritdoc />
+    public FontType FontType {
+        get => Label.FontType;
+        set => Label.FontType = value;
+    }
+
+    /// <inheritdoc />
+    public TextFlags TextFlags {
+        get => Label.TextFlags;
+        set => Label.TextFlags = value;
+    }
+
+    /// <inheritdoc />
+    public uint FontSize {
+        get => Label.FontSize;
+        set => Label.FontSize = value;
+    }
+
+    /// <inheritdoc/>
     public bool IsChecked {
         get => Component->IsChecked;
         set => Component->SetChecked(value);
     }
 
-    /// <summary>
-    /// Gets or sets whether this nodes text should auto resize.
-    /// </summary>
-    public bool DisableAutoResize {
+    /// <inheritdoc/>
+    public bool TruncateText {
         get => Label.TextFlags.HasFlag(TextFlags.AutoAdjustNodeSize);
         set {
             if (value) {
@@ -143,13 +169,13 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
         Label.Height = Height;
         Label.X = Height;
 
-        if (DisableAutoResize) {
+        if (TruncateText) {
             Label.Width = Width - Height;
         }
     }
 
     private void ClickHandler()
-        => OnClick?.Invoke(Component->IsChecked);
+        => OnChecked?.Invoke(Component->IsChecked);
 
     private void LoadTimelines() {
         AddTimeline(new TimelineBuilder()

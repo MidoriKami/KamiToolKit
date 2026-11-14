@@ -1,17 +1,18 @@
-﻿using System;
+using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games NumericInputNode and associated component.
+/// Implementation of the game's NumericInputNode and associated component.
 /// </summary>
-public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, AtkUldComponentDataNumericInput> {
+public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, AtkUldComponentDataNumericInput>, INumericInputNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -43,36 +44,25 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
     /// </summary>
     public TextNode ValueTextNode { get; }
 
-    /// <summary>
-    /// Gets or sets the current value of the input.
-    /// </summary>
-    /// <remarks>
-    /// Setting the value this way will still trigger <see cref="OnValueUpdate"/>, but will not trigger any sound effects.
-    /// </remarks>
+    /// <inheritdoc/>
     public int Value {
         get => Component->Value;
         set => Component->InnerSetValue(value, true, false);
     }
 
-    /// <summary>
-    /// Gets or sets the minimum value allowed.
-    /// </summary>
+    /// <inheritdoc/>
     public int Min {
         get => Component->Data.Min;
         set => Component->Data.Min = value;
     }
 
-    /// <summary>
-    /// Gets or sets the maximum value allowed.
-    /// </summary>
+    /// <inheritdoc/>
     public int Max {
         get => Component->Data.Max;
         set => Component->Data.Max = value;
     }
 
-    /// <summary>
-    /// Gets or sets the range of values allowed.
-    /// </summary>
+    /// <inheritdoc/>
     public Range Range {
         get => new(Min, Max);
         set {
@@ -81,17 +71,13 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
         }
     }
 
-    /// <summary>
-    /// Gets or sets how much the value will be increased for each scroll or button press.
-    /// </summary>
+    /// <inheritdoc/>
     public int Step {
         get => Component->Data.Add;
         set => Component->Data.Add = value;
     }
 
-    /// <summary>
-    /// Gets or sets the action that is invoked when the value changes. Contains the new value.
-    /// </summary>
+    /// <inheritdoc/>
     public Action<int>? OnValueUpdate { get; set; }
 
     /// <summary>
@@ -186,9 +172,8 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
         SubtractButton.X = Width - 28.0f;
     }
 
-    private void ValueUpdateHandler() {
-        OnValueUpdate?.Invoke(Value);
-    }
+    private void ValueUpdateHandler()
+        => OnValueUpdate?.Invoke(Value);
 
     private void BuildTimelines() {
         AddTimeline(new TimelineBuilder()

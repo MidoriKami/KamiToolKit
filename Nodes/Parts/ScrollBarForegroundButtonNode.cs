@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Nodes.Simplified;
@@ -19,7 +19,7 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
     /// <summary>
     /// Gets or sets whether this scroll bar thumb is displayed horizontally.
     /// </summary>
-    public bool IsHorizontalMode {
+    public bool IsHorizontal {
         get;
         set {
             if (field == value) return;
@@ -67,7 +67,7 @@ public unsafe class ScrollBarForegroundButtonNode : ComponentNode<AtkComponentBu
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        if (IsHorizontalMode) {
+        if (IsHorizontal) {
             ButtonTexture.Size = new Vector2(Height, Width);
             ButtonTexture.Position = new Vector2(Width, 0.0f);
         }

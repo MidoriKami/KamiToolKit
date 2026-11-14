@@ -19,7 +19,7 @@ namespace KamiToolKit.Nodes;
 /// <typeparam name="T">The data model to use.</typeparam>
 /// <typeparam name="TU">The view to render the data models data.</typeparam>
 /// <remarks>Overall more inline with ListNode than TreeListNode.</remarks>
-public class NestableTreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T>, ITreeListItemNode, new() {
+public class NestableTreeListNode<T, TU> : ResNode, INestableTreeListNode<T, TU> where TU : TreeListItemNode<T>, IListItemNode, new() {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -36,30 +36,16 @@ public class NestableTreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T
     /// </summary>
     public TextNode NoResultsTextNode { get; }
 
-    /// <summary>
-    /// Action that is invoked when an option is clicked on.
-    /// </summary>
-    /// <remarks>
-    /// This only applies to the list item nodes, and will not trigger when a header is clicked on.
-    /// </remarks>
-    public Action<T?>? OnItemSelected { get; set; }
+    /// <inheritdoc />
+    public Action<T?>? OnOptionSelected { get; set; }
 
-    /// <summary>
-    /// Gets or sets the selected node.
-    /// </summary>
+    /// <inheritdoc />
     public T? SelectedItem { get; set; }
 
-    /// <summary>
-    /// When updating <see cref="Sections"/>, automatically resets scroll to the top.
-    /// </summary>
-    /// <remarks>
-    /// This may be undesirable if the list is being constantly updated.
-    /// </remarks>
+    /// <inheritdoc />
     public bool AutoResetScroll { get; set; } = true;
 
-    /// <summary>
-    /// Gets or sets the nested section tree used to populate this list.
-    /// </summary>
+    /// <inheritdoc />
     public List<TreeListSection<T>> Sections {
         get;
         set {
@@ -73,17 +59,13 @@ public class NestableTreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T
     /// </summary>
     public IReadOnlyList<TU> EntryNodes => entryNodes;
 
-    /// <summary>
-    /// Gets or sets the item spacing.
-    /// </summary>
+    /// <inheritdoc />
     public float ItemSpacing {
         get;
         set;
     }
 
-    /// <summary>
-    /// Gets or sets the string to show when there are no items in the list.
-    /// </summary>
+    /// <inheritdoc />
     public ReadOnlySeString? NoResultsString {
         get;
         set {
@@ -97,12 +79,7 @@ public class NestableTreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T
         }
     }
 
-    /// <summary>
-    /// Resets scroll position back to the top.
-    /// </summary>
-    /// <remarks>
-    /// When changing the list data, you will probably need to invoke this manually if <see cref="AutoResetScroll"/> is disabled.
-    /// </remarks>
+    /// <inheritdoc />
     public void ResetScroll() {
         scrollPosition = 0;
         ScrollBarNode.ScrollPosition = 0;
@@ -124,6 +101,10 @@ public class NestableTreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T
         }
     }
 
+    /// <inheritdoc />
+    public void RecalculateLayout()
+        => OnSizeChanged();
+
     /// <summary>
     /// Constructs a new instance of <see cref="NestableTreeListNode{T,TU}"/>
     /// </summary>
@@ -131,7 +112,7 @@ public class NestableTreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T
         itemHeight = TU.ItemHeight;
 
         ScrollBarNode = new ScrollBarNode {
-            OnValueChanged = OnScrollUpdate,
+            OnScrollChanged = OnScrollUpdate,
             ScrollSpeed = (int)itemHeight,
         };
         ScrollBarNode.AttachNode(this);
@@ -278,7 +259,7 @@ public class NestableTreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T
                 HeaderCollapsePaths.Add(default);
                 var capturedIndex = HeaderNodes.Count;
 
-                headerNode.OnToggle = isVisible => {
+                headerNode.OnCollapseToggled = isVisible => {
                     var path = HeaderCollapsePaths[capturedIndex];
                     if (path.IsEmpty) return;
 
@@ -313,7 +294,7 @@ public class NestableTreeListNode<T, TU> : ResNode where TU : TreeListItemNode<T
                         clickedNode.IsSelected = true;
 
                         SelectedItem = ((TU)clickedNode).ItemData;
-                        OnItemSelected?.Invoke(SelectedItem);
+                        OnOptionSelected?.Invoke(SelectedItem);
                     },
                     IsVisible = false,
                 };

@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -7,7 +7,7 @@ using KamiToolKit.Enums;
 namespace KamiToolKit.Extensions;
 
 /// <summary>
-/// Extension methods for AtkResNode, these are very handy, highly recommend 10/10
+/// Extension methods for AtkResNode that provide convenient property accessors for common node operations.
 /// </summary>
 public static unsafe class AtkResNodeExtensions {
     extension(ref AtkResNode node) {

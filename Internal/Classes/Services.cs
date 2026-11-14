@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Dalamud.Plugin.Services;
 
@@ -11,6 +11,7 @@ namespace KamiToolKit.Internal.Classes;
 /// IPluginLog.Get().Debug(...);
 /// </code>
 internal static class ServiceExtension {
+
     /// <summary>
     /// Static class to hold the instance reference.
     /// </summary>

@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 
 namespace KamiToolKit.Internal.Extensions;

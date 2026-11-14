@@ -1,6 +1,7 @@
 using System.Linq;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
@@ -10,21 +11,12 @@ namespace KamiToolKit.Nodes;
 /// <remarks>
 /// If you are needing to represent the same element multiple times use a <see cref="ListNode{T,TU}"/> instead for performance reasons.
 /// </remarks>
-public class VerticalListNode : LayoutListNode {
+public class VerticalListNode : LayoutListNode, IVerticalListNode {
 
-    /// <summary>
-    /// Nav index to move to when left is pressed while focusing any list element.
-    /// </summary>
-    public int NavLeft { get; set; }
+    /// <inheritdoc/>
+    public LayoutFill LayoutFill { get; set; } = LayoutFill.Vertical;
 
-    /// <summary>
-    /// Nav index to move to when right is pressed while focusing any list element.
-    /// </summary>
-    public int NavRight { get; set; }
-
-    /// <summary>
-    /// Displays items starting from either the bottom or the top of the list
-    /// </summary>
+    /// <inheritdoc/>
     public VerticalListAnchor Anchor {
         get;
         set {
@@ -33,9 +25,7 @@ public class VerticalListNode : LayoutListNode {
         }
     }
 
-    /// <summary>
-    /// Displays items either left aligned or right aligned
-    /// </summary>
+    /// <inheritdoc/>
     public VerticalListAlignment Alignment {
         get;
         set {
@@ -44,15 +34,11 @@ public class VerticalListNode : LayoutListNode {
         }
     }
 
-    /// <summary>
-    /// Resizes this layout node to fit the height of the contained nodes.
-    /// </summary>
+    /// <inheritdoc/>
     public bool FitContents { get; set; }
 
-    /// <summary>
-    /// Resizes nodes that are inserted to be the same width as the content area
-    /// </summary>
-    public bool FitWidth { get; set; }
+    /// <inheritdoc/>
+    public bool StretchWidth { get; set; }
 
     /// <inheritdoc />
     protected override void OnRecalculateLayout() {
@@ -71,7 +57,7 @@ public class VerticalListNode : LayoutListNode {
 
             node.Y = startY;
 
-            if (FitWidth) {
+            if (StretchWidth) {
                 node.Width = Width;
             }
             else {
@@ -104,7 +90,9 @@ public class VerticalListNode : LayoutListNode {
         if (componentNodes.Count is 0) return;
 
         if (Anchor is VerticalListAnchor.Bottom) {
-            componentNodes = componentNodes.AsEnumerable().Reverse().ToList();
+            componentNodes = [
+                .. componentNodes.AsEnumerable().Reverse(),
+            ];
         }
 
         foreach (var (index, node) in componentNodes.Index()) {

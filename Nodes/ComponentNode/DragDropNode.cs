@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
@@ -13,9 +14,9 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games DragDropNode and associated component.
+/// Implementation of the game's DragDropNode and associated component.
 /// </summary>
-public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldComponentDataDragDrop> {
+public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldComponentDataDragDrop>, IDragDropNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -27,49 +28,31 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
     /// </summary>
     public IconNode IconNode { get; }
 
-    /// <summary>
-    /// Action that is triggered when a DragDrop is beginning
-    /// </summary>
+    /// <inheritdoc/>
     public Action<DragDropNode>? OnBegin { get; set; }
 
-    /// <summary>
-    /// Action that is triggered when a DragDrop has finished
-    /// </summary>
+    /// <inheritdoc/>
     public Action<DragDropNode>? OnEnd { get; set; }
 
-    /// <summary>
-    /// Action that is triggered when a compatible DragDrop is dropped onto this node
-    /// </summary>
+    /// <inheritdoc/>
     public Action<DragDropNode, DragDropPayload>? OnPayloadAccepted { get; set; }
 
-    /// <summary>
-    /// Action that is triggered when the item in this drag drop is being dropped onto the world
-    /// </summary>
+    /// <inheritdoc/>
     public Action<DragDropNode>? OnDiscard { get; set; }
 
-    /// <summary>
-    /// Action that is triggered when the item is clicked
-    /// </summary>
+    /// <inheritdoc/>
     public Action<DragDropNode>? OnClicked { get; set; }
 
-    /// <summary>
-    /// Action that is triggered when the item is being moused over
-    /// </summary>
+    /// <inheritdoc/>
     public Action<DragDropNode>? OnRollOver { get; set; }
 
-    /// <summary>
-    /// Action that is triggered when the item is no longer being moused over
-    /// </summary>
+    /// <inheritdoc/>
     public Action<DragDropNode>? OnRollOut { get; set; }
 
-    /// <summary>
-    /// Gets or sets the DragDrop Payload.
-    /// </summary>
+    /// <inheritdoc/>
     public DragDropPayload Payload { get; set; }
 
-    /// <summary>
-    /// Gets or sets the displayed IconId.
-    /// </summary>
+    /// <inheritdoc/>
     public uint IconId {
         get => IconNode.IconId;
         set {
@@ -78,52 +61,37 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         }
     }
 
-    /// <summary>
-    /// Gets or sets if the icon is disabled.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsIconDisabled {
         get => IconNode.IsIconDisabled;
         set => IconNode.IsIconDisabled = value;
     }
 
-    /// <summary>
-    /// Gets or sets the quantity value.
-    /// </summary>
-    /// <remarks>
-    /// Value is actually stores as a string, this incurs parsing costs.
-    /// </remarks>
+    /// <inheritdoc/>
     public int Quantity {
         get => int.Parse(Component->GetQuantityText().ToString());
         set => Component->SetQuantity(value);
     }
 
-    /// <summary>
-    /// Gets or sets the quantity text value.
-    /// </summary>
+    /// <inheritdoc/>
     public ReadOnlySeString QuantityString {
         get => Component->GetQuantityText().ToString();
         set => Component->SetQuantityText(value);
     }
 
-    /// <summary>
-    /// Gets or sets the accepted payload types for this node.
-    /// </summary>
+    /// <inheritdoc/>
     public DragDropType AcceptedType {
         get => Component->AcceptedType;
         set => Component->AcceptedType = value;
     }
 
-    /// <summary>
-    /// Gets or sets the sound effect suppression values for the DragDrop.
-    /// </summary>
+    /// <inheritdoc/>
     public AtkDragDropInterface.SoundEffectSuppression SoundEffectSuppression {
         get => Component->AtkDragDropInterface.DragDropSoundEffectSuppression;
         set => Component->AtkDragDropInterface.DragDropSoundEffectSuppression = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether the icon is draggable.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsDraggable {
         get => !Component->Flags.HasFlag(DragDropFlag.Locked);
         set {
@@ -136,9 +104,7 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         }
     }
 
-    /// <summary>
-    /// When true, allows left-clicking the item to trigger OnClicked
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsClickable {
         get => Component->Flags.HasFlag(DragDropFlag.Clickable);
         set {
@@ -151,17 +117,13 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         }
     }
 
-    /// <summary>
-    /// Gets or sets the visibility of the background frame.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsBackgroundShown {
         get => DragDropBackgroundNode.IsVisible;
         set => DragDropBackgroundNode.IsVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets the text tooltip for this node.
-    /// </summary>
+    /// <inheritdoc/>
     public override ReadOnlySeString TextTooltip {
         get;
         set {
@@ -180,17 +142,13 @@ public unsafe class DragDropNode : ComponentNode<AtkComponentDragDrop, AtkUldCom
         }
     }
 
-    /// <summary>
-    /// Clear the payload data and set iconId to zero
-    /// </summary>
+    /// <inheritdoc/>
     public void Clear() {
         Payload.Clear();
         IconId = 0;
     }
 
-    /// <summary>
-    /// Shows the tooltip for action in the currently stored payload.
-    /// </summary>
+    /// <inheritdoc/>
     public override void ShowTooltip() {
         if (AtkStage.Instance()->DragDropManager.IsDragging) return;
 

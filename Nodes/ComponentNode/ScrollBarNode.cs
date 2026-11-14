@@ -1,15 +1,16 @@
-﻿using System;
+using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.BaseTypes.ComponentNode;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games ScrollBarNode and associated component.
+/// Implementation of the game's ScrollBarNode and associated component.
 /// </summary>
-public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldComponentDataScrollBar> {
+public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldComponentDataScrollBar>, IScrollBarNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -21,37 +22,27 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
     /// </summary>
     public ScrollBarForegroundButtonNode ForegroundButtonNode { get; }
 
-    /// <summary>
-    /// Event that is called when the scroll bar's scroll position is changed.
-    /// </summary>
-    public Action<int>? OnValueChanged { get; set; }
+    /// <inheritdoc />
+    public Action<int>? OnScrollChanged { get; set; }
 
-    /// <summary>
-    /// Gets the maximum valid scroll position for the current content.
-    /// </summary>
+    /// <inheritdoc />
     public int ScrollMaxPosition
         => Component->ScrollMaxPosition;
 
-    /// <summary>
-    /// Gets or sets the current scroll position, triggering the component to update.
-    /// </summary>
+    /// <inheritdoc />
     public float ScrollPosition {
         get => Component->ScrollPosition;
         set => Component->SetScrollPosition((int) value);
     }
 
-    /// <summary>
-    /// Gets or sets the scroll speed, default is 24px per scroll.
-    /// </summary>
+    /// <inheritdoc />
     public int ScrollSpeed {
         get => Component->MouseWheelSpeed;
         set => Component->MouseWheelSpeed = (short)value;
     }
 
-    /// <summary>
-    /// Gets or sets whether this scrollbar scrolls horizontally.
-    /// </summary>
-    public bool IsHorizontalMode {
+    /// <inheritdoc />
+    public bool IsHorizontal {
         get => !Component->IsVertical;
         set {
             Data->Vertical = (byte)(value ? 0 : 1);
@@ -62,20 +53,16 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
             // This controls whether auto-resizing changes thumb height vs width.
             Component->IsThumbLengthVertical = !value;
 
-            ForegroundButtonNode.IsHorizontalMode = value;
+            ForegroundButtonNode.IsHorizontal = value;
             UpdateScrollParams();
         }
     }
 
 
-    /// <summary>
-    /// Hides this node entirely, if the scrollbar is disabled due to content area being bigger than the scrollbar.
-    /// </summary>
+    /// <inheritdoc />
     public bool HideWhenDisabled { get; set; }
 
-    /// <summary>
-    /// Gets or sets whether this scrollbar is accepting mouse events.
-    /// </summary>
+    /// <inheritdoc />
     public bool IsAcceptingMouseWheelEvents {
         get => Component->IsAcceptingMouseWheelEvents;
         set => Component->IsAcceptingMouseWheelEvents = value;
@@ -97,8 +84,8 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         if (Component->ContentCollisionNode is null) return;
 
         UpdateScrollParams(
-            IsHorizontalMode ? Component->ContentCollisionNode->Width : Component->ContentCollisionNode->Height,
-            IsHorizontalMode ? Component->ContentNode->Width : Component->ContentNode->Height
+            IsHorizontal ? Component->ContentCollisionNode->Width : Component->ContentCollisionNode->Height,
+            IsHorizontal ? Component->ContentNode->Width : Component->ContentNode->Height
         );
     }
 
@@ -132,7 +119,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         Component->ContentNodeOffScreenLength = Math.Max((short)distance, (short)0);
         Component->EmptyLength = Math.Max(barLength - (int)((float)barLength / offScreenLength * barLength), 0);
 
-        if (IsHorizontalMode) {
+        if (IsHorizontal) {
             ForegroundButtonNode.Width = barLength - Component->EmptyLength;
         }
         else {
@@ -144,7 +131,7 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         }
 
         if (Component->EmptyLength is 0) {
-            if (IsHorizontalMode) {
+            if (IsHorizontal) {
                 ForegroundButtonNode.X = 0.0f;
 
                 if (Component->ContentNode is not null) {
@@ -205,12 +192,12 @@ public unsafe class ScrollBarNode : ComponentNode<AtkComponentScrollBar, AtkUldC
         base.OnSizeChanged();
 
         BackgroundButtonNode.Size = Size;
-        ForegroundButtonNode.IsHorizontalMode = IsHorizontalMode;
+        ForegroundButtonNode.IsHorizontal = IsHorizontal;
         ForegroundButtonNode.Size = Size;
     }
 
     private void UpdateHandler()
-        => OnValueChanged?.Invoke(Component->PendingScrollPosition);
+        => OnScrollChanged?.Invoke(Component->PendingScrollPosition);
 
     private void UpdateChildVisibility(bool enabledState) {
         var isVisible = !HideWhenDisabled || enabledState;

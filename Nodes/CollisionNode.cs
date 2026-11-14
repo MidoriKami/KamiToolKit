@@ -1,35 +1,27 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games CollisionNode.
+/// Implementation of the game's CollisionNode.
 /// </summary>
-public unsafe class CollisionNode() : NodeBase<AtkCollisionNode>(NodeType.Collision) {
+public unsafe class CollisionNode() : NodeBase<AtkCollisionNode>(NodeType.Collision), ICollisionNode {
 
-    /// <summary>
-    /// Gets or sets the collision type.
-    /// </summary>
+    /// <inheritdoc />
     public CollisionType CollisionType {
         get => Node->CollisionType;
         set => Node->CollisionType = value;
     }
 
-    /// <summary>
-    /// Gets or sets the uses.
-    /// </summary>
-    /// <remarks>
-    /// Unknown what this is actually doing.
-    /// </remarks>
+    /// <inheritdoc />
     public uint Uses {
         get => Node->Uses;
         set => Node->Uses = (ushort)value;
     }
 
-    /// <summary>
-    /// Gets or sets the linked component.
-    /// </summary>
+    /// <inheritdoc />
     public AtkComponentBase* LinkedComponent {
         get => Node->LinkedComponent;
         set => Node->LinkedComponent = value;

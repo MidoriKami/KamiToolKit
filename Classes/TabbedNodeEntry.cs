@@ -1,4 +1,4 @@
-﻿using KamiToolKit.BaseTypes;
+using KamiToolKit.BaseTypes;
 
 namespace KamiToolKit.Classes;
 

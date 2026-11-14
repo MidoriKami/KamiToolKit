@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 using Lumina.Data.Parsing.Uld;
@@ -13,7 +14,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Specialization of a RadioButton for use with <see cref="TabBarNode"/>. Not intended for external use.
 /// </summary>
-public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButton, AtkUldComponentDataRadioButton> {
+public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButton, AtkUldComponentDataRadioButton>, ITabBarRadioButtonNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -30,41 +31,28 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
     /// </summary>
     public NineGridNode UnselectedNineGridNode { get; }
 
-    /// <summary>
-    /// Gets or sets the action to be called when this tab is selected.
-    /// </summary>
+    /// <inheritdoc />
     public Action? OnClick { get; set; }
 
-    /// <summary>
-    /// Gets or sets the label for this tab.
-    /// </summary>
+    /// <inheritdoc />
     public ReadOnlySeString String {
         get => LabelNode.String;
-        set => Component->SetText(value);
+        set => LabelNode.String = value;
     }
 
-    /// <summary>
-    /// Gets or sets the text id to load the label automatically using <see cref="SheetType"/>.
-    /// </summary>
+    /// <inheritdoc />
     public uint TextId {
         get => LabelNode.TextId;
         set => LabelNode.TextId = value;
     }
 
-    /// <summary>
-    /// Gets or sets the sheet type used with <see cref="TextId"/>.
-    /// </summary>
+    /// <inheritdoc />
     public NodeData.SheetType SheetType {
         get => LabelNode.SheetType;
         set => LabelNode.SheetType = value;
     }
 
-    /// <summary>
-    /// Gets or sets if this tab is currently selected.
-    /// </summary>
-    /// <remarks>
-    /// This will not unselect other tabs.
-    /// </remarks>
+    /// <inheritdoc />
     public bool IsSelected {
         get => Component->IsSelected;
         set {
@@ -80,14 +68,47 @@ public unsafe class TabBarRadioButtonNode : ComponentNode<AtkComponentRadioButto
         }
     }
 
-    /// <summary>
-    /// Gets or sets whether this tab is selected.
-    /// </summary>
+    /// <inheritdoc />
     public bool IsChecked {
         get => Component->IsChecked;
         set => Component->SetChecked(value);
     }
 
+    /// <inheritdoc />
+    public Vector4 TextColor {
+        get => LabelNode.TextColor;
+        set => LabelNode.TextColor = value;
+    }
+
+    /// <inheritdoc />
+    public Vector4 TextOutlineColor {
+        get => LabelNode.TextOutlineColor;
+        set => LabelNode.TextOutlineColor = value;
+    }
+
+    /// <inheritdoc />
+    public AlignmentType AlignmentType {
+        get => LabelNode.AlignmentType;
+        set => LabelNode.AlignmentType = value;
+    }
+
+    /// <inheritdoc />
+    public FontType FontType {
+        get => LabelNode.FontType;
+        set => LabelNode.FontType = value;
+    }
+
+    /// <inheritdoc />
+    public TextFlags TextFlags {
+        get => LabelNode.TextFlags;
+        set => LabelNode.TextFlags = value;
+    }
+
+    /// <inheritdoc />
+    public uint FontSize {
+        get => LabelNode.FontSize;
+        set => LabelNode.FontSize = value;
+    }
 
     /// <summary>
     /// Constructs a new <see cref="TabBarRadioButtonNode"/>.

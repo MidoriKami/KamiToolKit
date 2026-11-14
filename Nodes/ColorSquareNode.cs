@@ -1,7 +1,8 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Nodes;
@@ -9,7 +10,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Square Image Node with Alpha background texture to represent a color.
 /// </summary>
-public class ColorSquareNode : ResNode {
+public class ColorSquareNode : ResNode, IColorSquareNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -26,20 +27,13 @@ public class ColorSquareNode : ResNode {
     /// </summary>
     public ColorImageNode SelectedColorPreviewBorderNode { get; }
 
-    /// <summary>
-    /// Gets or sets the displayed color as RGBA.
-    /// </summary>
-    /// <remarks>
-    /// Expects values between 0.0f and 1.0f.
-    /// </remarks>
+    /// <inheritdoc />
     public override Vector4 Color {
         get => SelectedColorPreviewNode.Color;
         set => SelectedColorPreviewNode.Color = value;
     }
 
-    /// <summary>
-    /// Gets or sets the displayed color as HSVA.
-    /// </summary>
+    /// <inheritdoc />
     public override ColorHelpers.HsvaColor ColorHsva {
         get => SelectedColorPreviewNode.ColorHsva;
         set => SelectedColorPreviewNode.ColorHsva = value;

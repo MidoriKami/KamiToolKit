@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 using Lumina.Text.Payloads;
 using Lumina.Text.ReadOnly;
@@ -12,80 +13,58 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games CounterNode.
+/// Implementation of the game's CounterNode.
 /// </summary>
-public unsafe class CounterNode : NodeBase<AtkCounterNode> {
+public unsafe class CounterNode : NodeBase<AtkCounterNode>, ICounterNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
     public PartsList PartsList { get; }
 
-    /// <summary>
-    /// Gets or sets the width of each digit.
-    /// </summary>
+    /// <inheritdoc />
     public uint NumberWidth {
         get => Node->NumberWidth;
         set => Node->NumberWidth = (byte)value;
     }
 
-    /// <summary>
-    /// Gets or sets the width of the numeric separator.
-    /// </summary>
+    /// <inheritdoc />
     public uint CommaWidth {
         get => Node->CommaWidth;
         set => Node->CommaWidth = (byte)value;
     }
 
-    /// <summary>
-    /// Gets or sets the width of spaces.
-    /// </summary>
+    /// <inheritdoc />
     public uint SpaceWidth {
         get => Node->SpaceWidth;
         set => Node->SpaceWidth = (byte)value;
     }
 
-    /// <summary>
-    /// Gets or sets the text alignment.
-    /// </summary>
+    /// <inheritdoc />
     public AlignmentType TextAlignment {
         get => (AlignmentType)Node->TextAlign;
         set => Node->TextAlign = (ushort)value;
     }
 
-    /// <summary>
-    /// The width of the counter itself.
-    /// </summary>
+    /// <inheritdoc />
     public float CounterWidth {
         get => Node->CounterWidth;
         set => Node->CounterWidth = value;
     }
 
-    /// <summary>
-    /// Gets or sets the number displayed.
-    /// </summary>
-    /// <remarks>
-    /// The value is actually saved as a string, so this incurs parsing costs.
-    /// </remarks>
+    /// <inheritdoc />
     public int Number {
         get => int.Parse(Node->NodeText.ToString());
         set => Node->SetText(ParseNumber(value));
     }
 
-    /// <summary>
-    /// Gets or sets the string displayed.
-    /// </summary>
+    /// <inheritdoc />
     public ReadOnlySeString String {
         get => Node->NodeText.AsSpan();
         set => Node->SetText(ParseString(value));
     }
 
-    /// <summary>
-    /// Gets or sets the font used for the counter.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to MoneyFont.
-    /// </remarks>
+    /// <inheritdoc />
     public CounterFont Font {
         get;
         set {

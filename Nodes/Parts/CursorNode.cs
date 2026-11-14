@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;

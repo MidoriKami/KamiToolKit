@@ -1,6 +1,7 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 using Lumina.Data.Parsing.Uld;
@@ -11,7 +12,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Specialization of a <see cref="TextButtonNode"/> that displays a colored square with the currently set color.
 /// </summary>
-public unsafe class ColorSquareTextButtonNode : ButtonBase {
+public unsafe class ColorSquareTextButtonNode : ButtonBase, IColorSquareTextButtonNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -28,41 +29,67 @@ public unsafe class ColorSquareTextButtonNode : ButtonBase {
     /// </summary>
     public ColorSquareNode ColorNode { get; }
 
-    /// <summary>
-    /// Gets or sets the buttons label.
-    /// </summary>
+    /// <inheritdoc/>
+    public Vector4 TextColor {
+        get => LabelNode.TextColor;
+        set => LabelNode.TextColor = value;
+    }
+
+    /// <inheritdoc/>
+    public Vector4 TextOutlineColor {
+        get => LabelNode.TextOutlineColor;
+        set => LabelNode.TextOutlineColor = value;
+    }
+
+    /// <inheritdoc/>
     public ReadOnlySeString String {
         get => LabelNode.String;
         set => LabelNode.String = value;
     }
 
-    /// <summary>
-    /// Gets or sets the color to display in the square.
-    /// </summary>
+    /// <inheritdoc/>
+    public AlignmentType AlignmentType {
+        get => LabelNode.AlignmentType;
+        set => LabelNode.AlignmentType = value;
+    }
+
+    /// <inheritdoc/>
+    public FontType FontType {
+        get => LabelNode.FontType;
+        set => LabelNode.FontType = value;
+    }
+
+    /// <inheritdoc/>
+    public TextFlags TextFlags {
+        get => LabelNode.TextFlags;
+        set => LabelNode.TextFlags = value;
+    }
+
+    /// <inheritdoc/>
+    public uint FontSize {
+        get => LabelNode.FontSize;
+        set => LabelNode.FontSize = value;
+    }
+
+    /// <inheritdoc/>
     public ColorHelpers.HsvaColor? DefaultHsvaColor {
         get => ColorNode.ColorHsva;
         set => ColorNode.ColorHsva = value ?? default;
     }
 
-    /// <summary>
-    /// Gets or sets the color to display in the square.
-    /// </summary>
+    /// <inheritdoc/>
     public Vector4? DefaultColor {
         get => ColorNode.Color;
         set => ColorNode.Color = value ?? default;
     }
 
-    /// <summary>
-    /// Gets or sets the label nodes TextId.
-    /// </summary>
+    /// <inheritdoc/>
     public uint TextId {
         get => LabelNode.TextId;
         set => LabelNode.TextId = value;
     }
 
-    /// <summary>
-    /// Gets or sets the label nodes SheetType for use with <see cref="TextId"/>.
-    /// </summary>
+    /// <inheritdoc/>
     public NodeData.SheetType SheetType {
         get => LabelNode.SheetType;
         set => LabelNode.SheetType = value;

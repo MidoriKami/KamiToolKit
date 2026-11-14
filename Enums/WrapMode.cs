@@ -1,4 +1,4 @@
-﻿using KamiToolKit.Nodes;
+using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Enums;
 
@@ -9,6 +9,7 @@ namespace KamiToolKit.Enums;
 /// For most cases you likely just want to use <see cref="ImageNode.FitTexture"/>.
 /// </remarks>
 public enum WrapMode {
+
     /// <summary>
     /// None
     /// </summary>

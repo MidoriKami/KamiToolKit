@@ -1,13 +1,14 @@
-﻿using System.Numerics;
+using System.Numerics;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Specialization of <see cref="ProgressBarNode"/> representing a general purpose progress display.
+/// Specialization of <see cref="IProgressNode"/> representing a general purpose progress display.
 /// Modeled off the levequest progress display.
 /// </summary>
-public class ProgressBarNode : ProgressNode {
+public class ProgressBarNode : ResNode, IProgressNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -20,23 +21,22 @@ public class ProgressBarNode : ProgressNode {
     public NineGridNode ForegroundNode { get; }
 
     /// <inheritdoc/>
-    public override Vector4 BackgroundColor {
+    public Vector4 BackgroundColor {
         get => BackgroundNode.Color;
         set => BackgroundNode.Color = value;
     }
 
     /// <inheritdoc/>
-    public override Vector4 BarColor {
+    public Vector4 BarColor {
         get => ForegroundNode.Color;
         set => ForegroundNode.Color = value;
     }
 
     /// <inheritdoc/>
-    public override float Progress {
+    public float Progress {
         get => ForegroundNode.Width / Width;
         set => ForegroundNode.Width = Width * value;
     }
-
 
     /// <summary>
     /// Constructs a new <see cref="ProgressBarNode"/>.
