@@ -97,7 +97,7 @@ public unsafe class IconExtras : ResNode {
     /// Gets or sets the value used to indicate current charges.
     /// </summary>
     public int ChargeCount {
-        get => (int) ChargeCountImageNode.PartId;
+        get => ChargeCountImageNode.PartId;
         set => ChargeCountImageNode.PartId = (ushort) value;
     }
 

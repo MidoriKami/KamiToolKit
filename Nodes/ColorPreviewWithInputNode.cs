@@ -2,7 +2,6 @@ using System;
 using System.Globalization;
 using System.Numerics;
 using Dalamud.Interface;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Interfaces;
 using Lumina.Text.ReadOnly;
 

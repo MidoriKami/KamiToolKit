@@ -3,6 +3,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.Payloads;
@@ -14,6 +15,12 @@ namespace KamiToolKit.Nodes;
 /// Implementation of the game's TextNode.
 /// </summary>
 public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Useful for filling a region to display a centered error message.
+    /// </remarks>
+    public LayoutFill LayoutFill { get; set; } = LayoutFill.Disabled;
 
     /// <inheritdoc />
     public Vector4 TextColor {

@@ -7,7 +7,7 @@ namespace KamiToolKit.Interfaces;
 /// <summary>
 /// Interface representing the capabilities of a TextNode.
 /// </summary>
-public interface ITextNode : ITextLabel, IPredefinedText, ISelectableText {
+public interface ITextNode : ITextLabel, IPredefinedText, ISelectableText, ILayoutFiller {
 
     /// <summary>
     /// Gets or sets the vertical line spacing.
