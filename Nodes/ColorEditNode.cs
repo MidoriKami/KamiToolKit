@@ -11,13 +11,17 @@ namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// A node representing a colored square, and a label, all of which are clickable to open a color picker window.
+/// Properly separates preview state (UI-only) from confirmed state (persisted to config).
 /// </summary>
 public class ColorEditNode : SimpleComponentNode, IColorEditNode {
 
     /// <inheritdoc />
     public Vector4 CurrentColor {
-        get => squareNode.Color;
-        set => squareNode.Color = value;
+        get => committedColor;
+        set {
+            committedColor = value;
+            squareNode.Color = value;
+        }
     }
 
     /// <inheritdoc />
@@ -78,11 +82,14 @@ public class ColorEditNode : SimpleComponentNode, IColorEditNode {
     /// Constructs a <see cref="ColorEditNode"/> instance.
     /// </summary>
     public unsafe ColorEditNode() {
+        committedColor = Vector4.One;
+
         squareNode = new ColorSquareNode();
         squareNode.AttachNode(this);
 
         labelNode = new TextNode {
             AlignmentType = AlignmentType.Left,
+            FontSize = 14,
         };
         labelNode.AttachNode(this);
 
@@ -101,11 +108,11 @@ public class ColorEditNode : SimpleComponentNode, IColorEditNode {
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        squareNode.Size = new Vector2(Height - 6.0f, Height - 6.0f);
-        squareNode.Position = new Vector2(3.0f, 3.0f);
+        squareNode.Size = new Vector2(Height - 4.0f, Height - 4.0f);
+        squareNode.Position = new Vector2(0.0f, 2.0f);
 
-        labelNode.Size = new Vector2(Width - Height - 12.0f, Height);
-        labelNode.Position = new Vector2(squareNode.Bounds.Right + 12.0f, 0.0f);
+        labelNode.Size = new Vector2(Width - Height - 4.0f, Height);
+        labelNode.Position = new Vector2(Height, 0.0f);
     }
 
     /// <inheritdoc />
@@ -129,34 +136,47 @@ public class ColorEditNode : SimpleComponentNode, IColorEditNode {
     }
 
     private void OnClicked() {
-        var originalColor = CurrentColor;
-        colorPicker?.DefaultColor = DefaultColor;
-        colorPicker?.InitialColor = CurrentColor;
+        // Close any existing color picker instances.
+        colorPicker?.Dispose();
 
-        colorPicker?.OnColorPreviewed = color => {
+        // Create a fresh color picker instance for each click to avoid shared state conflicts.
+        var newColorPicker = CreateColorPicker();
+
+        // Preview: only update the visual square, NOT the committed color.
+        newColorPicker.OnColorPreviewed = color => {
             squareNode.Color = color;
-            CurrentColor = color;
             OnColorPreviewed?.Invoke(color);
         };
 
-        colorPicker?.OnColorCancelled = () => {
-            CurrentColor = originalColor;
+        // Cancel: restore the visual square to the committed color and fire cancel callback.
+        newColorPicker.OnColorCancelled = () => {
+            squareNode.Color = committedColor;
             OnColorCancelled?.Invoke();
         };
 
-        colorPicker?.OnColorConfirmed = color => {
-            CurrentColor = color;
+        // Confirm: update the committed color and fire confirm callback.
+        newColorPicker.OnColorConfirmed = color => {
+            committedColor = color;
+            squareNode.Color = color;
             OnColorConfirmed?.Invoke(color);
         };
 
-        colorPicker?.Toggle();
+        newColorPicker.Toggle();
     }
 
-    private ColorPickerAddon? colorPicker = new() {
+    private ColorPickerAddon CreateColorPicker() => colorPicker = new ColorPickerAddon {
         InternalName = "ColorPicker",
-        Title = "Color Picker",
+        Title = String.ToString(),
+        DefaultColor = DefaultColor,
+        InitialColor = committedColor,
     };
 
+    /// <summary>
+    /// The color value that is currently committed (confirmed). Preview changes do not affect this.
+    /// </summary>
+    private Vector4 committedColor;
+
+    private ColorPickerAddon? colorPicker;
     private readonly ColorSquareNode squareNode;
     private readonly TextNode labelNode;
 }
