@@ -13,13 +13,6 @@ using KamiToolKit.Nodes;
 namespace KamiToolKit.BaseTypes;
 
 public abstract unsafe partial class NodeBase {
-    // UldManager-chain based ID tracking: tracks used IDs per UldManager scope to prevent duplicates.
-    private static readonly Dictionary<List<uint>, HashSet<uint>> _uldManagerIdScopes = new();
-
-    /// <summary>
-    /// When true, preserves this node's ID during reassignment (for nodes with hardcoded game-style IDs).
-    /// </summary>
-    protected virtual bool PreserveNodeId => false;
 
     /// <summary>
     /// Attaches this node to targetAddon's root node using targetPosition as the relative positioning.
@@ -98,9 +91,9 @@ public abstract unsafe partial class NodeBase {
         parentNode = targetAddon.RootNode;
         parentNode.ChildNodes.Add(this);
 
-        // Reassign IDs: each direct child of addon root gets NodeIdBase + childIndex
-        int childIndex = targetAddon.RootNode.ChildNodes.IndexOf(this);
-        ReassignSubtreeIdsWithTracking(NodeIdBase + (uint)childIndex);
+        // Reassign IDs starting from NodeIdBase for the addon's UldManager scope
+        uint nextId = NodeIdBase;
+        ReassignSubtreeIds(ref nextId);
     }
 
     private void PerformManagedAttach(NodeBase? targetNode, NodePosition targetPosition) {
@@ -133,10 +126,9 @@ public abstract unsafe partial class NodeBase {
         parentNode = targetNode;
         parentNode.ChildNodes.Add(this);
 
-        // Reassign IDs relative to parent
-        int childIndex = targetNode.ChildNodes.IndexOf(this);
-        uint baseId = targetNode.NodeId + 1 + (uint)childIndex;
-        ReassignSubtreeIdsWithTracking(baseId);
+        // Reassign IDs for the attached subtree: find the next available ID in the parent's UldManager scope
+        // by scanning all siblings' IDs and their subtrees, then assign sequentially from there.
+        ReassignSubtreeIdsFromParent();
     }
 
     private void PerformNativeAttach(AtkResNode* targetNode, NodePosition targetPosition) {
@@ -180,12 +172,11 @@ public abstract unsafe partial class NodeBase {
         UpdateNative();
 
         // Reassign IDs for native attach: if target is a game-managed node (ID < NodeIdBase),
-        // use a unique base derived from the target pointer hash to avoid collisions between
-        // different game-managed parents.
+        // start a fresh counter at NodeIdBase for this UldManager scope.
         uint targetNodeId = targetNode->NodeId;
         if (targetNodeId < NodeIdBase) {
-            uint uniqueBase = NodeIdBase + (uint)(nint)targetNode % 10000;
-            ReassignSubtreeIdsWithTracking(uniqueBase);
+            uint nextId = NodeIdBase;
+            ReassignSubtreeIds(ref nextId);
         }
     }
 
@@ -347,141 +338,96 @@ public abstract unsafe partial class NodeBase {
     #region Deterministic ID Reassignment
 
     /// <summary>
-    /// Reassigns IDs for this node and all its descendants, with UldManager-chain based tracking.
+    /// Recursively assigns deterministic IDs for this node and all its descendants.
+    /// Runs only when attaching to the game (NativeAddon or game-managed AtkResNode).
+    /// Each UldManager scope gets its own incrementing counter.
+    /// ComponentNode boundaries start a new UldManager scope where counting starts from 1.
+    /// Nodes with IDs below NodeIdBase (game-managed) are preserved; all others get incremental IDs.
     /// </summary>
-    private void ReassignSubtreeIdsWithTracking(uint baseId, List<uint>? chain = null) {
-        if (chain == null) {
-            chain = BuildUldManagerChain();
-        }
+    private void ReassignSubtreeIds(ref uint nextId) {
+        // Skip nodes with hardcoded game-style IDs
+        if (NodeId < NodeIdBase) return;
 
-        // If chain is empty, node is not yet attached — skip tracking
-        bool hasScope = chain.Count > 0;
+        // Assign the next sequential ID from the parent's scope
+        this.NodeId = nextId++;
 
-        // Check if this node has a preserved ID (hardcoded game-style ID or manual override)
-        if (PreserveNodeId || NodeId < NodeIdBase) {
-            if (hasScope) {
-                RegisterPreservedId(this, chain);
-            }
-            return;
-        }
+        // Assign IDs to all children recursively
+        int count = ChildNodes.Count;
+        for (int i = 0; i < count; i++) {
+            var child = ChildNodes[i];
+            // Skip children with hardcoded game-style IDs
+            if (child.NodeId < NodeIdBase) continue;
 
-        // Get or create the scope for this chain
-        HashSet<uint>? scope = null;
-        if (hasScope && !_uldManagerIdScopes.TryGetValue(chain, out scope)) {
-            scope = _uldManagerIdScopes[chain] = new HashSet<uint>();
-        }
-
-        // Find an available ID starting from baseId
-        uint assignedId = baseId;
-        if (hasScope && scope != null) {
-            while (scope.Contains(assignedId)) {
-                assignedId++;
-            }
-            scope.Add(assignedId);
-        }
-
-        this.NodeId = assignedId;
-
-        // Reassign children
-        var children = this.ChildNodes.ToArray();
-        for (int i = 0; i < children.Length; i++) {
-            var child = children[i];
-
-            // Check if child has a preserved ID
-            if (child.NodeId < NodeIdBase) {
-                if (hasScope) {
-                    RegisterPreservedId(child, chain);
-                }
-                continue;
-            }
-
-            // Create child chain if child is a ComponentNode (has its own UldManager)
-            List<uint> childChain;
+            // ComponentNode creates a new UldManager scope: the ComponentNode itself gets
+            // an ID from the parent's counter, but its children start counting from 1.
             if (child is ComponentNode) {
-                childChain = new List<uint>(chain) { assignedId };
+                // Assign the ComponentNode's own ID from the parent's counter
+                child.NodeId = nextId++;
+                // Now assign its children starting from 1 (new UldManager scope)
+                uint childNextId = 1;
+                AssignChildIds(child, ref childNextId);
             }
             else {
-                childChain = chain;
+                child.ReassignSubtreeIds(ref nextId);
             }
-
-            uint childBaseId = assignedId + 1 + (uint)i;
-            child.ReassignSubtreeIdsWithTracking(childBaseId, childChain);
         }
     }
 
     /// <summary>
-    /// Builds the chain of node IDs from the root UldManager down to this node's UldManager.
-    /// Only collects IDs of nodes that have their own UldManager (ComponentNode roots and addon roots).
+    /// Recursively assigns IDs to a node's children within the same UldManager scope.
     /// </summary>
-    private List<uint> BuildUldManagerChain() {
-        var chain = new List<uint>();
-        NodeBase? node = this;
+    private static void AssignChildIds(NodeBase parent, ref uint nextId) {
+        int count = parent.ChildNodes.Count;
+        for (int i = 0; i < count; i++) {
+            var child = parent.ChildNodes[i];
+            // Skip children with hardcoded game-style IDs
+            if (child.NodeId < NodeIdBase) continue;
 
-        while (node != null) {
-            // Collect the ID of ancestors that are ComponentNodes (have their own UldManager)
-            if (node is ComponentNode) {
-                chain.Add(node.NodeId);
+            // Nested ComponentNode: assign its own ID, then its children from a new scope
+            if (child is ComponentNode) {
+                child.NodeId = nextId++;
+                uint nestedNextId = 1;
+                AssignChildIds(child, ref nestedNextId);
             }
-
-            // Stop at addon root
-            if (node.IsAddonRootNode) {
-                chain.Add(node.NodeId);
-                break;
+            else {
+                child.NodeId = nextId++;
+                AssignChildIds(child, ref nextId);
             }
-
-            // Walk up to parent
-            var parent = node.parentNode;
-            if (parent == null) {
-                // No parent means not yet attached — return empty chain
-                return new List<uint>();
-            }
-            node = parent;
         }
-
-        chain.Reverse();
-        return chain;
     }
 
     /// <summary>
-    /// Registers a preserved node and all its descendants in the UldManager scope tracking.
+    /// Reassigns IDs for this subtree when attaching to an already-attached parent.
+    /// Finds the maximum ID used by all siblings (including their subtrees) and assigns
+    /// IDs sequentially from there, ensuring no collisions with existing nodes.
     /// </summary>
-    private static void RegisterPreservedId(NodeBase node, List<uint> chain) {
-        if (!_uldManagerIdScopes.TryGetValue(chain, out var scope)) {
-            scope = _uldManagerIdScopes[chain] = new HashSet<uint>();
-        }
-        scope.Add(node.NodeId);
+    private void ReassignSubtreeIdsFromParent() {
+        if (parentNode is null) return;
 
+        // Collect all IDs used in the parent's UldManager scope (siblings and their subtrees)
+        uint maxId = 0;
+        foreach (var sibling in parentNode.ChildNodes) {
+            if (sibling == this) continue;
+            maxId = Math.Max(maxId, MaxIdInSubtree(sibling));
+        }
+
+        // Also check the parent's own ID
+        maxId = Math.Max(maxId, parentNode.NodeId);
+
+        // Start assigning from maxId + 1
+        uint nextId = maxId + 1;
+        ReassignSubtreeIds(ref nextId);
+    }
+
+    /// <summary>
+    /// Returns the maximum NodeId in the given node's subtree (including the node itself).
+    /// </summary>
+    private static uint MaxIdInSubtree(NodeBase node) {
+        uint max = node.NodeId;
         foreach (var child in node.ChildNodes) {
-            if (child is ComponentNode) {
-                // ComponentNode has its own scope, register it in parent's scope
-                scope.Add(child.NodeId);
-            }
-            else {
-                RegisterPreservedId(child, chain);
-            }
+            max = Math.Max(max, MaxIdInSubtree(child));
         }
-    }
-
-    /// <summary>
-    /// Removes an ID from the scope tracking.
-    /// </summary>
-    internal static void RemoveIdFromScope(uint nodeId, List<uint> chain) {
-        if (_uldManagerIdScopes.TryGetValue(chain, out var scope)) {
-            scope.Remove(nodeId);
-        }
-    }
-
-    /// <summary>
-    /// Clears the scope for a chain and all chains that start with it (descendant UldManagers).
-    /// </summary>
-    internal static void ClearScopeAndDescendants(List<uint> chain) {
-        var keysToRemove = _uldManagerIdScopes.Keys
-            .Where(k => k.Count >= chain.Count && k.SequenceEqual(chain.Take(k.Count)))
-            .ToList();
-
-        foreach (var key in keysToRemove) {
-            _uldManagerIdScopes.Remove(key);
-        }
+        return max;
     }
 
     #endregion

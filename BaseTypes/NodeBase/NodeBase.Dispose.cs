@@ -167,51 +167,9 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// resources that exist in managed spaces, as the game has already cleaned up everything else.
     /// </param>
     protected virtual void Dispose(bool isNativeDestructor) {
-        // Remove this node's ID from scope tracking
-        if (parentNode is not null && ResNode is not null) {
-            var chain = BuildUldManagerChainForDispose();
-            if (chain.Count > 0) {
-                RemoveIdFromScope(NodeId, chain);
-            }
-        }
-
         // Dispose of managed resources that must be disposed regardless of how dispose is invoked
         DisposeEvents();
         DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
-    }
-
-    /// <summary>
-    /// Builds the UldManager chain for dispose cleanup. Similar to BuildUldManagerChain but accessible from Dispose.
-    /// Skips nodes whose ResNode is already null (already disposed by the game).
-    /// </summary>
-    internal List<uint> BuildUldManagerChainForDispose() {
-        var chain = new List<uint>();
-        NodeBase? node = this;
-
-        while (node != null) {
-            // Skip nodes that have already been disposed by the game (ResNode is null)
-            if (node.ResNode is null) {
-                break;
-            }
-
-            if (node is ComponentNode) {
-                chain.Add(node.NodeId);
-            }
-
-            if (node.IsAddonRootNode) {
-                chain.Add(node.NodeId);
-                break;
-            }
-
-            var parent = node.parentNode;
-            if (parent == null) {
-                return new List<uint>();
-            }
-            node = parent;
-        }
-
-        chain.Reverse();
-        return chain;
     }
 
     private bool IsNodeValid() {

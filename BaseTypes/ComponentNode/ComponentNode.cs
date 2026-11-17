@@ -161,12 +161,6 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
     protected override void Dispose(bool isNativeDestructor) {
         if (IsDisposed) return;
 
-        // Clear the UldManager scope and all descendant scopes when this ComponentNode is disposed
-        var chain = BuildUldManagerChainForDispose();
-        if (chain.Count > 0) {
-            ClearScopeAndDescendants(chain);
-        }
-
         if (!isNativeDestructor) {
             ref var uldManager = ref Node->Component->UldManager;
 
