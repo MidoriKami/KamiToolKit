@@ -2,7 +2,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
 
-namespace KamiToolKit.BaseTypes.ComponentNode;
+namespace KamiToolKit.BaseTypes;
 
 /// <summary>
 /// Abstract implementation of the base class for all component nodes use in KamiToolKit.
