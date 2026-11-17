@@ -39,10 +39,9 @@ public sealed class TabbedContentNode : LayoutListNode, ITabbedContentNode {
         tabBarNode.Size = new Vector2(Width, 24.0f);
 
         var contentHeight = Math.Max(0.0f, Height - tabBarNode.Bounds.Bottom);
-        var contentSize = new Vector2(Width, contentHeight);
 
         foreach (var node in ContentNodes) {
-            node.Size = contentSize;
+            node.Size = new Vector2(Width, contentHeight);
         }
     }
 
