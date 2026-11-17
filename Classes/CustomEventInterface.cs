@@ -17,6 +17,14 @@ namespace KamiToolKit.Classes;
 /// </remarks>
 public unsafe class CustomEventInterface : IDisposable {
 
+    private readonly AtkEventInterface* eventInterface;
+
+    private AtkEventInterface.Delegates.ReceiveEvent? receiveEventDelegate;
+    private AtkEventInterface.Delegates.ReceiveEventWithResult? receiveEventWithResultDelegate;
+
+    private AtkEventInterface.Delegates.ReceiveEvent? receiveWrapper;
+    private AtkEventInterface.Delegates.ReceiveEventWithResult? receiveWithResultWrapper;
+
     /// <summary>
     /// Public implicit operator to be able to use this instance as a AtkEventInterface* directly.
     /// </summary>
@@ -51,14 +59,6 @@ public unsafe class CustomEventInterface : IDisposable {
         receiveWrapper = null;
         receiveWithResultWrapper = null;
     }
-
-    private readonly AtkEventInterface* eventInterface;
-
-    private AtkEventInterface.Delegates.ReceiveEvent? receiveEventDelegate;
-    private AtkEventInterface.Delegates.ReceiveEventWithResult? receiveEventWithResultDelegate;
-
-    private AtkEventInterface.Delegates.ReceiveEvent? receiveWrapper;
-    private AtkEventInterface.Delegates.ReceiveEventWithResult? receiveWithResultWrapper;
 
     [UnmanagedCallersOnly] private static void NullSub() { }
 

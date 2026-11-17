@@ -118,12 +118,12 @@ public unsafe partial class NativeAddon {
     /// </summary>
     public bool RememberClosePosition { get; set; } = true;
 
+    internal Vector2 LastClosePosition = Vector2.Zero;
+
+    internal bool IsOverlayAddon { get; init; }
+
     /// <summary>
     /// Gets or sets if this addon should be forced into the viewable area when opening.
     /// </summary>
     public bool OpenInBounds { get; init; } = true;
-
-    internal Vector2 LastClosePosition = Vector2.Zero;
-
-    internal bool IsOverlayAddon { get; init; }
 }

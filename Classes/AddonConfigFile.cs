@@ -14,6 +14,11 @@ namespace KamiToolKit.Classes;
 /// </summary>
 internal class AddonConfigFile {
 
+    private static readonly JsonSerializerOptions SerializerOptions = new() {
+        WriteIndented = true,
+        IncludeFields = true,
+    };
+
     public Dictionary<string, AddonConfig> AddonConfigs = [];
 
     /// <summary>
@@ -120,9 +125,4 @@ internal class AddonConfigFile {
             await SaveAsync();
         }
     }
-
-    private static readonly JsonSerializerOptions SerializerOptions = new() {
-        WriteIndented = true,
-        IncludeFields = true,
-    };
 }

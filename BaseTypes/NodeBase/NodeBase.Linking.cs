@@ -14,6 +14,13 @@ namespace KamiToolKit.BaseTypes;
 
 public abstract unsafe partial class NodeBase {
 
+    internal readonly List<NodeBase> ChildNodes = [];
+    private NodeBase? parentNode;
+    private bool suppressAddonUpdate;
+
+    internal AtkUldManager* ParentUldManager { get; set; }
+    internal AtkUnitBase* ParentAddon { get; private set; }
+
     /// <summary>
     /// Attaches this node to targetAddon's root node using targetPosition as the relative positioning.
     /// </summary>
@@ -326,13 +333,6 @@ public abstract unsafe partial class NodeBase {
             }
         }
     }
-
-    internal readonly List<NodeBase> ChildNodes = [];
-    private NodeBase? parentNode;
-    private bool suppressAddonUpdate;
-
-    internal AtkUldManager* ParentUldManager { get; set; }
-    internal AtkUnitBase* ParentAddon { get; private set; }
 
     private static void SetNodeIds(NodeBase node, ref uint nextId) {
         if (node.NodeId < NodeIdBase) return;
