@@ -300,12 +300,12 @@ public abstract unsafe partial class NodeBase {
     }
 
     internal static IEnumerable<NodeBase> GetLocalChildren(NodeBase parent) {
-        if (parent is ComponentNode.ComponentNode) yield break;
+        if (parent is ComponentNode) yield break;
 
         foreach (var child in parent.ChildNodes) {
             yield return child;
 
-            if (child is ComponentNode.ComponentNode) continue;
+            if (child is ComponentNode) continue;
             foreach (var childNode in GetLocalChildren(child)) {
                 yield return childNode;
             }
