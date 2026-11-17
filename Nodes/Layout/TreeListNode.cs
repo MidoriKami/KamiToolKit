@@ -86,7 +86,7 @@ public class TreeListNode<T, TU> : ResNode, ITreeListNode<T, TU> where TU : Tree
     }
 
     /// <inheritdoc />
-    public void RecalculateLayout()
+    public void UpdateLayout()
         => OnSizeChanged();
 
     /// <summary>

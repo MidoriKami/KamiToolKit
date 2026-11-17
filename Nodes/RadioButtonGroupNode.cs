@@ -26,7 +26,7 @@ public class RadioButtonGroupNode : ResNode, IRadioButtonGroupNode {
                 radioButton.IsSelected = radioButton.String == value;
             }
 
-            RecalculateLayout();
+            UpdateLayout();
         }
     }
 
@@ -51,7 +51,7 @@ public class RadioButtonGroupNode : ResNode, IRadioButtonGroupNode {
             newRadioButton.IsSelected = true;
         }
 
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc />
@@ -61,7 +61,7 @@ public class RadioButtonGroupNode : ResNode, IRadioButtonGroupNode {
 
         button.Dispose();
         radioButtons.Remove(button);
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc />
@@ -79,7 +79,7 @@ public class RadioButtonGroupNode : ResNode, IRadioButtonGroupNode {
     public RadioButtonGroupNode()
         => BuildTimelines();
 
-    private void RecalculateLayout() {
+    private void UpdateLayout() {
         var yPosition = 0.0f;
 
         foreach (var index in Enumerable.Range(0, radioButtons.Count)) {

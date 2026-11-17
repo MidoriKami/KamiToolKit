@@ -41,19 +41,8 @@ public class CollapsingHeaderNode : LayoutListNode, ICollapsingHeaderNode {
         ToggleableHeaderNode = new ToggleableHeaderNode();
         ToggleableHeaderNode.AttachNode(this);
 
-        ToggleableHeaderNode.OnCollapsed += () => {
-            foreach (var node in Nodes) {
-                node.IsVisible = false;
-            }
-            Height = 28.0f;
-        };
-
-        ToggleableHeaderNode.OnUncollapsed += () => {
-            foreach (var node in Nodes) {
-                node.IsVisible = true;
-            }
-            RecalculateLayout();
-        };
+        ToggleableHeaderNode.OnCollapsed += UpdateLayout;
+        ToggleableHeaderNode.OnUncollapsed += UpdateLayout;
     }
 
     /// <inheritdoc />
@@ -65,34 +54,51 @@ public class CollapsingHeaderNode : LayoutListNode, ICollapsingHeaderNode {
     }
 
     /// <inheritdoc />
-    protected override void OnRecalculateLayout() {
+    protected override void OnUpdateSizes() {
         if (IsCollapsed) {
-            foreach (var node in Nodes) {
-                node.IsVisible = false;
-            }
-
             Height = 28.0f;
         }
         else {
-            var yPosition = ToggleableHeaderNode.Height + FirstItemSpacing;
-
-            foreach (var node in Nodes) {
-                node.IsVisible = !IsCollapsed;
-                node.Y = yPosition;
-
-                yPosition += node.Height + ItemSpacing;
-
+            foreach (var node in NodeList) {
                 if (StretchWidth) {
                     node.Width = Width;
                 }
             }
-
-            Height = yPosition;
+            Height = CalculateCollapsedHeight();
         }
     }
 
     /// <inheritdoc />
-    protected override void OnRecalculateNavigation() {
+    protected override void OnUpdateLayout() {
+        foreach (var node in NodeList) {
+            node.IsVisible = !IsCollapsed;
+        }
+
+        if (!IsCollapsed) {
+            var yPosition = ToggleableHeaderNode.Height + FirstItemSpacing;
+
+            foreach (var node in NodeList) {
+                node.Y = yPosition;
+                yPosition += node.Height + ItemSpacing;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Calculates the height of the node when not collapsed, based on the header and child nodes.
+    /// </summary>
+    private float CalculateCollapsedHeight() {
+        var yPosition = ToggleableHeaderNode.Height + FirstItemSpacing;
+
+        foreach (var node in NodeList) {
+            yPosition += node.Height + ItemSpacing;
+        }
+
+        return yPosition;
+    }
+
+    /// <inheritdoc />
+    protected override void OnUpdateControllerNav() {
         // Not implemented yet.
     }
 

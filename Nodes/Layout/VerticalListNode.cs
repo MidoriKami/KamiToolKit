@@ -2,6 +2,7 @@ using System.Linq;
 using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
+using System;
 
 namespace KamiToolKit.Nodes;
 
@@ -21,7 +22,7 @@ public class VerticalListNode : LayoutListNode, IVerticalListNode {
         get;
         set {
             field = value;
-            RecalculateLayout();
+            UpdateLayout();
         }
     }
 
@@ -30,7 +31,7 @@ public class VerticalListNode : LayoutListNode, IVerticalListNode {
         get;
         set {
             field = value;
-            RecalculateLayout();
+            UpdateLayout();
         }
     }
 
@@ -41,7 +42,22 @@ public class VerticalListNode : LayoutListNode, IVerticalListNode {
     public bool StretchWidth { get; set; }
 
     /// <inheritdoc />
-    protected override void OnRecalculateLayout() {
+    protected override void OnUpdateSizes() {
+        foreach (var node in NodeList) {
+            if (!node.IsVisible) continue;
+
+            if (StretchWidth) {
+                node.Width = Width;
+            }
+        }
+
+        if (FitContents) {
+            Height = Math.Max(0.0f, NodeList.Sum(node => node.IsVisible ? node.Height + ItemSpacing : 0.0f) + FirstItemSpacing - ItemSpacing);
+        }
+    }
+
+    /// <inheritdoc />
+    protected override void OnUpdateLayout() {
         var startY = Anchor switch {
             VerticalListAnchor.Top => 0.0f + FirstItemSpacing,
             VerticalListAnchor.Bottom => Height,
@@ -57,10 +73,7 @@ public class VerticalListNode : LayoutListNode, IVerticalListNode {
 
             node.Y = startY;
 
-            if (StretchWidth) {
-                node.Width = Width;
-            }
-            else {
+            if (!StretchWidth) {
                 switch (Alignment) {
                     case VerticalListAlignment.Right:
                         node.X = Width - node.Width;
@@ -78,14 +91,10 @@ public class VerticalListNode : LayoutListNode, IVerticalListNode {
                 startY += node.Height + ItemSpacing;
             }
         }
-
-        if (FitContents) {
-            Height = NodeList.Sum(node => node.IsVisible ? node.Height + ItemSpacing : 0.0f) + FirstItemSpacing - ItemSpacing;
-        }
     }
 
     /// <inheritdoc />
-    protected override void OnRecalculateNavigation() {
+    protected override void OnUpdateControllerNav() {
         var componentNodes = NodeList.OfType<ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
 

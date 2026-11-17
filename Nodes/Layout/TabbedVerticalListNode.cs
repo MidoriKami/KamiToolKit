@@ -69,45 +69,38 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
         => Nodes.OfType<T>();
 
     /// <inheritdoc/>
-    public void RecalculateLayout() {
+    public void UpdateLayout() {
         if (suppressRecalculateLayout) return;
 
-        foreach (var node in Nodes) {
-            if (node is ILayoutUpdatable subNode) {
-                subNode.RecalculateLayout();
-            }
-        }
-
-        OnRecalculateLayout();
-
-        if (NavIndex is not 0) {
-            OnRecalculateNavigation();
+        if (nodeList.Count > 0) {
+            OnUpdateSizes();
+            OnUpdateLayout();
         }
 
         foreach (var node in Nodes) {
             if (node is ILayoutUpdatable subNode) {
-                subNode.RecalculateLayout();
+                subNode.UpdateLayout();
             }
         }
+
+        if (nodeList.Count > 0) {
+            OnUpdateSizes();
+        }
+
+        UpdateNavigation();
     }
 
     /// <inheritdoc/>
-    public void RecalculateNavigation() {
+    public void UpdateNavigation() {
         if (suppressRecalculateLayout) return;
 
         foreach (var node in Nodes) {
-            if (node is INavigationRecalculable subNode) {
-                subNode.RecalculateNavigation();
+            if (node is INavigationUpdatable subNode) {
+                subNode.UpdateNavigation();
             }
         }
 
-        OnRecalculateNavigation();
-
-        foreach (var node in Nodes) {
-            if (node is INavigationRecalculable subNode) {
-                subNode.RecalculateNavigation();
-            }
-        }
+        OnUpdateControllerNav();
     }
 
     /// <summary>
@@ -167,7 +160,7 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
 
         node.AttachNode(this);
         if (!suppressRecalculateLayout) {
-            RecalculateLayout();
+            UpdateLayout();
         }
     }
 
@@ -183,7 +176,7 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
         suppressRecalculateLayout = true;
         AddNode(0, nodes);
         suppressRecalculateLayout = false;
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc/>
@@ -193,7 +186,7 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
             RemoveNode(node);
         }
         suppressRecalculateLayout = false;
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc/>
@@ -203,7 +196,7 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
         nodeList.RemoveAll(entry => entry.Node == node);
         node.Dispose();
 
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc/>
@@ -217,14 +210,28 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
         }
 
         nodeList.Clear();
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc/>
     public void ReorderNodes(Comparison<NodeBase> comparison)
         => nodeList.Sort((left, right) => comparison(left.Node, right.Node));
 
-    private void OnRecalculateLayout() {
+    private void OnUpdateSizes() {
+        foreach (var (node, tab) in nodeList) {
+            if (!node.IsVisible) continue;
+
+            if (StretchWidth) {
+                node.Width = Width - tab * TabSize - ItemSpacing;
+            }
+        }
+
+        if (FitContents) {
+            Height = CalculateFitContentsHeight();
+        }
+    }
+
+    private void OnUpdateLayout() {
         var startY = 0.0f + FirstItemSpacing;
 
         foreach (var (node, tab) in nodeList) {
@@ -232,20 +239,11 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
 
             node.Y = startY;
             node.X = tab * TabSize;
-
-            if (StretchWidth) {
-                node.Width = Width - node.X - ItemSpacing;
-            }
-
             startY += node.Height + ItemSpacing;
-        }
-
-        if (FitContents) {
-            Height = startY + ItemSpacing;
         }
     }
 
-    private void OnRecalculateNavigation() {
+    private void OnUpdateControllerNav() {
         var componentNodes = nodeList.Select(nodeEntry => nodeEntry.Node).OfType<ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
 
@@ -270,6 +268,21 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
                 node.NavDown = (byte) (index + 1 + NavIndex);
             }
         }
+    }
+
+    /// <summary>
+    /// Calculates the height needed to fit all visible child nodes when FitContents is enabled.
+    /// </summary>
+    private float CalculateFitContentsHeight() {
+        var height = FirstItemSpacing;
+
+        foreach (var (node, tab) in nodeList) {
+            if (!node.IsVisible) continue;
+
+            height += node.Height + ItemSpacing;
+        }
+
+        return height;
     }
 
     private readonly List<TabbedNodeEntry<NodeBase>> nodeList = [];

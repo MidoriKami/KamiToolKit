@@ -102,7 +102,7 @@ public class NestableTreeListNode<T, TU> : ResNode, INestableTreeListNode<T, TU>
     }
 
     /// <inheritdoc />
-    public void RecalculateLayout()
+    public void UpdateLayout()
         => OnSizeChanged();
 
     /// <summary>

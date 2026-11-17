@@ -14,13 +14,21 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Implementation of the game's TextNode.
 /// </summary>
-public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
+public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode, ILayoutUpdatable {
 
     /// <inheritdoc />
     /// <remarks>
     /// Useful for filling a region to display a centered error message.
     /// </remarks>
     public LayoutFill LayoutFill { get; set; } = LayoutFill.Disabled;
+
+    /// <summary>
+    /// Gets or sets whether this node should fit its height to the contained text.
+    /// </summary>
+    /// <remarks>
+    /// Useful when using multiline, and you don't know the final dimensions yet.
+    /// </remarks>
+    public bool AutoFitTextHeight { get; set; }
 
     /// <inheritdoc />
     public Vector4 TextColor {
@@ -208,8 +216,13 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
+
         UpdateText();
     }
+
+    /// <inheritdoc />
+    public void UpdateLayout()
+        => UpdateText();
 
     /// <summary>
     /// Re-invokes SetText with the currently set <see cref="String"/> to trigger flag size and position updates.
@@ -229,5 +242,12 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
         }
 
         Node->SetText(builder.GetViewAsSpan());
+
+        if (AutoFitTextHeight) {
+            var textSize = GetTextDrawSize();
+            if (textSize.Y > 0) {
+                Height = textSize.Y;
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.BaseTypes;
+using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
 using Lumina.Text.ReadOnly;
 
@@ -11,50 +12,65 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// This node represents a tab bar and multiple VerticalListNode's representing the tab contents.
 /// </summary>
-public sealed class TabbedContentNode : VerticalListNode, ITabbedContentNode {
+public sealed class TabbedContentNode : LayoutListNode, ITabbedContentNode {
+
+    /// <inheritdoc />
+    public LayoutFill LayoutFill { get; set; } = LayoutFill.Vertical;
+
     private readonly TabBarNode tabBarNode;
-    private readonly List<NodeBase> contentNodes = [];
 
     /// <inheritdoc />
     public Action? OnTabChanged { get; set; }
+
+    private IEnumerable<NodeBase> ContentNodes => NodeList.Skip(1);
 
     /// <summary>
     /// Constructs a new <see cref="TabbedContentNode"/>.
     /// </summary>
     public TabbedContentNode() {
         tabBarNode = new TabBarNode();
-        tabBarNode.AttachNode(this);
+        AddNode(tabBarNode);
 
         Height = 24.0f;
     }
 
     /// <inheritdoc />
-    protected override void OnRecalculateLayout() {
-        tabBarNode.Position = new Vector2(0.0f, 0.0f);
+    protected override void OnUpdateSizes() {
         tabBarNode.Size = new Vector2(Width, 24.0f);
 
         var contentHeight = Math.Max(0.0f, Height - tabBarNode.Bounds.Bottom);
         var contentSize = new Vector2(Width, contentHeight);
 
-        foreach (var contentNode in contentNodes) {
-            contentNode.Position = new Vector2(0.0f, tabBarNode.Bounds.Bottom);
-            contentNode.Size = contentSize;
-
-            if (contentNode is ILayoutUpdatable updatable) {
-                updatable.RecalculateLayout();
-            }
+        foreach (var node in ContentNodes) {
+            node.Size = contentSize;
         }
     }
 
     /// <inheritdoc />
-    public void AddTab(ReadOnlySeString label, out VerticalListNode tabContents, ReadOnlySeString? tooltip = null, Action? tabChanged = null) {
-        var index = contentNodes.Count;
+    protected override void OnUpdateLayout() {
+        tabBarNode.Position = new Vector2(0.0f, 0.0f);
 
-        contentNodes.Add(tabContents = new VerticalListNode {
+        var contentY = tabBarNode.Bounds.Bottom;
+
+        foreach (var node in ContentNodes) {
+            node.Position = new Vector2(0.0f, contentY);
+        }
+    }
+
+    /// <inheritdoc />
+    protected override void OnUpdateControllerNav() {
+        // Not implemented yet.
+    }
+
+    /// <inheritdoc />
+    public void AddTab(ReadOnlySeString label, out VerticalListNode tabContents, ReadOnlySeString? tooltip = null, Action? tabChanged = null) {
+        var index = NodeList.Count - 1;
+
+        tabContents = new VerticalListNode {
             StretchWidth = true,
             IsVisible = index is 0,
-        });
-        tabContents.AttachNode(this);
+        };
+        AddNode(tabContents);
 
         tabBarNode.AddTab(label, () => {
             HandleTabClick(index);
@@ -64,10 +80,10 @@ public sealed class TabbedContentNode : VerticalListNode, ITabbedContentNode {
 
     /// <inheritdoc />
     public void AddTab<T>(ReadOnlySeString label, out T tabContents, ReadOnlySeString? tooltip = null, Action? tabChanged = null) where T : NodeBase, new() {
-        var index = contentNodes.Count;
+        var index = NodeList.Count - 1;
 
-        contentNodes.Add(tabContents = new T());
-        tabContents.AttachNode(this);
+        tabContents = new T();
+        AddNode(tabContents);
 
         tabBarNode.AddTab(label, () => {
             HandleTabClick(index);
@@ -77,12 +93,11 @@ public sealed class TabbedContentNode : VerticalListNode, ITabbedContentNode {
 
     /// <inheritdoc />
     public void AddTab<T>(ReadOnlySeString label, T contentNode, ReadOnlySeString? tooltip = null, Action? tabChanged = null) where T : NodeBase {
-        var index = contentNodes.Count;
+        var index = NodeList.Count - 1;
 
         contentNode.IsVisible = index is 0;
 
-        contentNodes.Add(contentNode);
-        contentNode.AttachNode(this);
+        AddNode(contentNode);
 
         tabBarNode.AddTab(label, () => {
             HandleTabClick(index);
@@ -91,7 +106,7 @@ public sealed class TabbedContentNode : VerticalListNode, ITabbedContentNode {
     }
 
     private void HandleTabClick(int selectedIndex) {
-        foreach (var (index, node) in contentNodes.Index()) {
+        foreach (var (index, node) in ContentNodes.Index()) {
             node.IsVisible = index == selectedIndex;
         }
 

@@ -33,7 +33,7 @@ public class GridNode : ResNode, IGridNode {
     } = new(0, 0);
 
     /// <inheritdoc />
-    public void RecalculateLayout() {
+    public void UpdateLayout() {
         var gridWidth = Width / GridSize.Columns;
         var gridHeight = Height / GridSize.Rows;
 
@@ -48,7 +48,7 @@ public class GridNode : ResNode, IGridNode {
     /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     private void ReallocateArray() {
@@ -68,7 +68,7 @@ public class GridNode : ResNode, IGridNode {
             }
         }
 
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     private readonly List<ResNode> gridNodes = [];

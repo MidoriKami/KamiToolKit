@@ -410,7 +410,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode, IDropDownNode<T> {
 
         PopupButtonListNode.Size = new Vector2(PopupBackgroundNode.Width - 24.0f, PopupBackgroundNode.Height - 18.0f);
         PopupButtonListNode.Position = new Vector2(8.0f, 6.0f);
-        PopupButtonListNode.RecalculateLayout();
+        PopupButtonListNode.UpdateLayout();
     }
 
     private void PopulatePopupList() {

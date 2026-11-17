@@ -87,7 +87,7 @@ public class TabBarNode : ResNode, ITabBarNode {
 
         button.Dispose();
         radioButtons.Remove(button);
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc />
@@ -109,7 +109,7 @@ public class TabBarNode : ResNode, ITabBarNode {
     /// <inheritdoc />
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc />
@@ -134,7 +134,7 @@ public class TabBarNode : ResNode, ITabBarNode {
             newButton.IsSelected = true;
         }
 
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc />
@@ -157,7 +157,7 @@ public class TabBarNode : ResNode, ITabBarNode {
             newButton.IsSelected = true;
         }
 
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     private void ClickHandler(TabBarRadioButtonNode button) {
@@ -170,7 +170,7 @@ public class TabBarNode : ResNode, ITabBarNode {
         button.IsSelected = true;
     }
 
-    private void RecalculateLayout() {
+    private void UpdateLayout() {
         if (radioButtons.Count is 0) return;
         if (Width is 0) return;
         if (Height is 0) return;

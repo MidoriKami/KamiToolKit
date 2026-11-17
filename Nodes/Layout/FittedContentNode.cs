@@ -13,21 +13,26 @@ public sealed class FittedContentNode : LayoutListNode, ILayoutFiller {
     public LayoutFill LayoutFill { get; set; } = LayoutFill.Both;
 
     /// <inheritdoc />
-    protected override void OnRecalculateLayout() {
+    protected override void OnUpdateSizes() {
         var contentSize = new Vector2(Width, Height);
+        foreach (var node in NodeList) {
+            node.Size = contentSize;
+        }
+    }
 
+    /// <inheritdoc />
+    protected override void OnUpdateLayout() {
         foreach (var node in NodeList) {
             node.Position = new Vector2(0.0f, 0.0f);
-            node.Size = contentSize;
 
             if (node is ILayoutUpdatable updatable) {
-                updatable.RecalculateLayout();
+                updatable.UpdateLayout();
             }
         }
     }
 
     /// <inheritdoc />
-    protected override void OnRecalculateNavigation() {
-        // todo: eventually do this.
+    protected override void OnUpdateControllerNav() {
+        // Not implemented yet.
     }
 }

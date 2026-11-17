@@ -73,7 +73,7 @@ public class ScrollingNode<T> : ResNode, IScrollingNode<T> where T : NodeBase, n
     }
 
     /// <inheritdoc />
-    public void RecalculateLayout() {
+    public void UpdateLayout() {
         OnSizeChanged();
     }
 
@@ -152,7 +152,7 @@ public class ScrollingNode<T> : ResNode, IScrollingNode<T> where T : NodeBase, n
         }
 
         if (ContentNode is ILayoutUpdatable layoutNode) {
-            layoutNode.RecalculateLayout();
+            layoutNode.UpdateLayout();
         }
     }
 }

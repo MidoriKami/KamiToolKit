@@ -19,7 +19,7 @@ public class HorizontalListNode : LayoutListNode, IHorizontalListNode {
         get;
         set {
             field = value;
-            RecalculateLayout();
+            UpdateLayout();
         }
     }
 
@@ -28,7 +28,7 @@ public class HorizontalListNode : LayoutListNode, IHorizontalListNode {
         get => base.Width;
         set {
             base.Width = value;
-            RecalculateLayout();
+            UpdateLayout();
         }
     }
 
@@ -46,11 +46,26 @@ public class HorizontalListNode : LayoutListNode, IHorizontalListNode {
         => Width - NodeList.Sum(node => node.Width + ItemSpacing) - ItemSpacing;
 
     /// <inheritdoc />
-    protected override void OnRecalculateLayout() {
+    protected override void OnUpdateSizes() {
         if (FitToContentWidth) {
             base.Width = NodeList.Sum(node => node.IsVisible ? node.Width + ItemSpacing : 0.0f) + FirstItemSpacing - ItemSpacing;
         }
 
+        foreach (var node in NodeList) {
+            if (!node.IsVisible) continue;
+
+            if (FitHeight) {
+                node.Height = Height;
+            }
+        }
+
+        if (FitToContentHeight) {
+            Height = NodeList.Max(node => node.Height);
+        }
+    }
+
+    /// <inheritdoc />
+    protected override void OnUpdateLayout() {
         var startX = Alignment switch {
             HorizontalListAnchor.Left => 0.0f + FirstItemSpacing,
             HorizontalListAnchor.Right => Width - FirstItemSpacing,
@@ -70,19 +85,11 @@ public class HorizontalListNode : LayoutListNode, IHorizontalListNode {
             if (Alignment is HorizontalListAnchor.Left) {
                 startX += node.Width + ItemSpacing;
             }
-
-            if (FitHeight) {
-                node.Height = Height;
-            }
-        }
-
-        if (FitToContentHeight) {
-            Height = NodeList.Max(node => node.Height);
         }
     }
 
     /// <inheritdoc />
-    protected override void OnRecalculateNavigation() {
+    protected override void OnUpdateControllerNav() {
         var componentNodes = NodeList.OfType<ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
 

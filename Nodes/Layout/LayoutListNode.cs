@@ -56,11 +56,11 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
     public float FirstItemSpacing { get; set; }
 
     /// <inheritdoc/>
-    public void RecalculateLayout() {
+    public void UpdateLayout() {
         if (suppressRecalculateLayout) return;
 
-        var remainingHeight = Height + FirstItemSpacing;
-        var remainingWidth = Width + FirstItemSpacing;
+        var remainingHeight = Height - FirstItemSpacing;
+        var remainingWidth = Width - FirstItemSpacing;
 
         foreach (var node in NodeList) {
             if (node is ILayoutFiller filler) {
@@ -75,41 +75,47 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
 
             remainingHeight -= node.Height + ItemSpacing;
             remainingWidth -= node.Width + ItemSpacing;
-
-            if (node is ILayoutUpdatable subNode) {
-                subNode.RecalculateLayout();
-            }
         }
-
-        OnRecalculateLayout();
-
-        // todo: temp until callsites can be updated
-        RecalculateNavigation();
 
         foreach (var node in NodeList) {
             if (node is ILayoutUpdatable subNode) {
-                subNode.RecalculateLayout();
+                subNode.UpdateLayout();
             }
         }
+
+        if (NodeList.Count > 0) {
+            OnUpdateSizes();
+            OnUpdateLayout();
+        }
+
+        foreach (var node in NodeList) {
+            if (node is ILayoutUpdatable subNode) {
+                subNode.UpdateLayout();
+            }
+        }
+
+        // Reapply sizes in case children changed to fit something.
+        if (NodeList.Count > 0) {
+            OnUpdateSizes();
+        }
+
+        UpdateNavigation();
     }
 
     /// <inheritdoc/>
-    public void RecalculateNavigation() {
+    public void UpdateNavigation() {
         if (suppressRecalculateLayout) return;
 
+        // Propagate navigation update to children first, so nested containers can resolve
+        // their internal navigation before the parent sets its own navigation indices.
         foreach (var node in NodeList) {
-            if (node is INavigationRecalculable controllerNavigable) {
-                controllerNavigable.RecalculateNavigation();
+            if (node is INavigationUpdatable controllerNavigable) {
+                controllerNavigable.UpdateNavigation();
             }
         }
 
-        OnRecalculateNavigation();
-
-        foreach (var node in NodeList) {
-            if (node is INavigationRecalculable controllerNavigable) {
-                controllerNavigable.RecalculateNavigation();
-            }
-        }
+        // Then update this container's own navigation (NavIndex, NavUp, NavDown, etc.).
+        OnUpdateControllerNav();
     }
 
     /// <inheritdoc/>
@@ -127,7 +133,7 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
         } finally {
             suppressRecalculateLayout = false;
         }
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc/>
@@ -138,7 +144,7 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
 
         node.AttachNode(this);
 
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc/>
@@ -151,7 +157,7 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
         } finally {
             suppressRecalculateLayout = false;
         }
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc/>
@@ -161,7 +167,7 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
         NodeList.Remove(node);
         node.Dispose();
 
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc/>
@@ -183,13 +189,13 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
         } finally {
             suppressRecalculateLayout = false;
         }
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <inheritdoc/>
     public void ReorderNodes(Comparison<NodeBase> comparison) {
         NodeList.Sort(comparison);
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <summary>
@@ -198,17 +204,22 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
     protected List<NodeBase> NodeList { get; }= [];
 
     /// <summary>
-    /// Function that is invoked when this node needs to rebuild its layout.
+    /// Function that is invoked when this node needs to update child node sizes.
     /// </summary>
-    protected abstract void OnRecalculateLayout();
+    protected abstract void OnUpdateSizes();
 
     /// <summary>
-    /// Function that is invoked when this node needs to rebuild its controller navigation layout.
+    /// Function that is invoked when this node needs to update child node positions.
     /// </summary>
-    protected abstract void OnRecalculateNavigation();
+    protected abstract void OnUpdateLayout();
 
     /// <summary>
-    /// Adjusts the nodes properties when <see cref="RecalculateLayout"/> is invoked.
+    /// Function that is invoked when this node needs to update controller navigation layout.
+    /// </summary>
+    protected abstract void OnUpdateControllerNav();
+
+    /// <summary>
+    /// Adjusts the nodes properties when <see cref="UpdateLayout"/> is invoked.
     /// </summary>
     protected virtual void AdjustNode(NodeBase node) { }
 

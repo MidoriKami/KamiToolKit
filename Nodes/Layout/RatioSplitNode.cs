@@ -40,7 +40,7 @@ public class RatioSplitNode : HorizontalListNode, IRatioSplitNode {
     }
 
     /// <inheritdoc />
-    protected override void OnRecalculateLayout() {
+    protected override void OnUpdateSizes() {
         if (NodeList.Count is 0) return;
         if (Ratios.Length != NodeList.Count) return;
 
@@ -50,15 +50,27 @@ public class RatioSplitNode : HorizontalListNode, IRatioSplitNode {
 
         var availableWidth = Math.Max(0.0f, Width - FirstItemSpacing - totalItemSpacing - totalSeparatorWidth);
 
+        foreach (var (index, node) in NodeList.Index()) {
+            var sectionWidth = availableWidth * Ratios[index];
+            node.Size = new Vector2(sectionWidth, Height);
+        }
+
+        if (FitContents) {
+            Height = NodeList.Max(node => node.Height);
+        }
+    }
+
+    /// <inheritdoc />
+    protected override void OnUpdateLayout() {
+        if (NodeList.Count is 0) return;
+        if (Ratios.Length != NodeList.Count) return;
+
         var currentX = FirstItemSpacing;
 
         foreach (var (index, node) in NodeList.Index()) {
-            var sectionWidth = availableWidth * Ratios[index];
-
-            node.Size = new Vector2(sectionWidth, Height);
             node.Position = new Vector2(currentX, 0.0f);
 
-            currentX += sectionWidth + ItemSpacing;
+            currentX += node.Width + ItemSpacing;
 
             // We have 1 fewer separators than we have nodes.
             if (index < NodeList.Count - 1) {
@@ -74,12 +86,23 @@ public class RatioSplitNode : HorizontalListNode, IRatioSplitNode {
             }
 
             if (node is ILayoutUpdatable splitChild) {
-                splitChild.RecalculateLayout();
+                splitChild.UpdateLayout();
             }
         }
+    }
 
-        if (FitContents) {
-            Height = NodeList.Max(node => node.Height);
-        }
+    /// <inheritdoc />
+    protected override void OnUpdateControllerNav() {
+        // Not implemented yet.
+    }
+
+    /// <summary>
+    /// Calculates the available width after accounting for spacing and separators.
+    /// </summary>
+    private float CalculateAvailableWidth() {
+        var spacingCount = Math.Max(0, NodeList.Count - 1);
+        var totalItemSpacing = ItemSpacing * spacingCount;
+        var totalSeparatorWidth = spacingCount * 6.0f;
+        return Math.Max(0.0f, Width - FirstItemSpacing - totalItemSpacing - totalSeparatorWidth);
     }
 }
