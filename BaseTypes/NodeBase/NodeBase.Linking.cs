@@ -344,56 +344,47 @@ public abstract unsafe partial class NodeBase {
     /// ComponentNode boundaries start a new UldManager scope where counting starts from 1.
     /// Nodes with IDs below NodeIdBase (game-managed) are preserved; all others get incremental IDs.
     /// </summary>
-    private void ReassignSubtreeIds(ref uint nextId) {
+    private static void AssignIds(NodeBase node, ref uint nextId) {
         // Skip nodes with hardcoded game-style IDs
-        if (NodeId < NodeIdBase) return;
+        if (node.NodeId < NodeIdBase) return;
 
-        // Assign the next sequential ID from the parent's scope
-        this.NodeId = nextId++;
+        // Assign the next sequential ID
+        node.NodeId = nextId++;
 
         // Assign IDs to all children recursively
-        int count = ChildNodes.Count;
+        AssignChildrenIds(node, ref nextId);
+    }
+
+    /// <summary>
+    /// Recursively assigns IDs to a node's children without re-assigning the node's own ID.
+    /// Used after the parent has already assigned the node's ID (e.g. ComponentNode boundaries).
+    /// </summary>
+    private static void AssignChildrenIds(NodeBase node, ref uint nextId) {
+        int count = node.ChildNodes.Count;
         for (int i = 0; i < count; i++) {
-            var child = ChildNodes[i];
+            var child = node.ChildNodes[i];
             // Skip children with hardcoded game-style IDs
             if (child.NodeId < NodeIdBase) continue;
 
-            // ComponentNode creates a new UldManager scope: the ComponentNode itself gets
-            // an ID from the parent's counter, but its children start counting from 1.
+            // ComponentNode creates a new UldManager scope: assign its own ID from
+            // the current counter, then start its children from 1.
             if (child is ComponentNode) {
-                // Assign the ComponentNode's own ID from the parent's counter
                 child.NodeId = nextId++;
-                // Now assign its children starting from 1 (new UldManager scope)
                 uint childNextId = 1;
-                AssignChildIds(child, ref childNextId);
+                AssignChildrenIds(child, ref childNextId);
             }
             else {
-                child.ReassignSubtreeIds(ref nextId);
+                child.NodeId = nextId++;
+                AssignChildrenIds(child, ref nextId);
             }
         }
     }
 
     /// <summary>
-    /// Recursively assigns IDs to a node's children within the same UldManager scope.
+    /// Entry point for deterministic ID reassignment — calls the static walker on this node.
     /// </summary>
-    private static void AssignChildIds(NodeBase parent, ref uint nextId) {
-        int count = parent.ChildNodes.Count;
-        for (int i = 0; i < count; i++) {
-            var child = parent.ChildNodes[i];
-            // Skip children with hardcoded game-style IDs
-            if (child.NodeId < NodeIdBase) continue;
-
-            // Nested ComponentNode: assign its own ID, then its children from a new scope
-            if (child is ComponentNode) {
-                child.NodeId = nextId++;
-                uint nestedNextId = 1;
-                AssignChildIds(child, ref nestedNextId);
-            }
-            else {
-                child.NodeId = nextId++;
-                AssignChildIds(child, ref nextId);
-            }
-        }
+    private void ReassignSubtreeIds(ref uint nextId) {
+        AssignIds(this, ref nextId);
     }
 
     /// <summary>
@@ -404,17 +395,14 @@ public abstract unsafe partial class NodeBase {
     private void ReassignSubtreeIdsFromParent() {
         if (parentNode is null) return;
 
-        // Collect all IDs used in the parent's UldManager scope (siblings and their subtrees)
-        uint maxId = 0;
+        // Find the maximum ID in the parent's UldManager scope in a single pass,
+        // then assign new IDs starting from maxId + 1.
+        uint maxId = parentNode.NodeId;
         foreach (var sibling in parentNode.ChildNodes) {
             if (sibling == this) continue;
             maxId = Math.Max(maxId, MaxIdInSubtree(sibling));
         }
 
-        // Also check the parent's own ID
-        maxId = Math.Max(maxId, parentNode.NodeId);
-
-        // Start assigning from maxId + 1
         uint nextId = maxId + 1;
         ReassignSubtreeIds(ref nextId);
     }
