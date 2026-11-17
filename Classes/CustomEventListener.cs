@@ -17,6 +17,11 @@ namespace KamiToolKit.Classes;
 /// </remarks>
 public class CustomEventListener : IDisposable, IAsyncDisposable {
 
+    private readonly unsafe AtkEventListener* eventListener;
+
+    private AtkEventListener.Delegates.ReceiveEvent? receiveEventDelegate;
+    private AtkEventListener.Delegates.ReceiveEvent? receiveEventWrapper;
+
     /// <summary>
     /// Public implicit operator to be able to use this instance as a AtkEventListener* directly.
     /// </summary>
@@ -51,11 +56,6 @@ public class CustomEventListener : IDisposable, IAsyncDisposable {
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
         => await IFramework.Get().Run(Dispose);
-
-    private readonly unsafe AtkEventListener* eventListener;
-
-    private AtkEventListener.Delegates.ReceiveEvent? receiveEventDelegate;
-    private AtkEventListener.Delegates.ReceiveEvent? receiveEventWrapper;
 
     [UnmanagedCallersOnly] private static void NullSub() { }
 

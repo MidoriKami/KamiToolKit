@@ -19,6 +19,11 @@ namespace KamiToolKit.UiOverlay;
 /// </summary>
 public unsafe class OverlayController : IDisposable {
 
+    private readonly Dictionary<OverlayLayer, List<OverlayNode>> overlayNodes = [];
+    private readonly Dictionary<OverlayLayer, OverlayAddonState> addonState = [];
+
+    private ControllerState controllerState = ControllerState.WaitForNameplate;
+
     /// <summary>
     /// Adds a node to the overlay.
     /// </summary>
@@ -270,9 +275,4 @@ public unsafe class OverlayController : IDisposable {
             overlayAddon->UpdateCollisionNodeList(false);
         }
     }
-
-    private readonly Dictionary<OverlayLayer, List<OverlayNode>> overlayNodes = [];
-    private readonly Dictionary<OverlayLayer, OverlayAddonState> addonState = [];
-
-    private ControllerState controllerState = ControllerState.WaitForNameplate;
 }

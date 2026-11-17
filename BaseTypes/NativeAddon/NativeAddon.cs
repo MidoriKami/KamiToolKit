@@ -16,21 +16,12 @@ namespace KamiToolKit.BaseTypes;
 /// </summary>
 public unsafe partial class NativeAddon {
 
-    /// <summary>
-    /// Triggers a window update via AtkUnitBase.SetSize(...), to have the game recalculate NodeFlags.Anchor{Direction}.
-    /// </summary>
-    protected void UpdateAnchoringLayout()
-        => SetWindowSize(Size);
+    private PinnedGCHandle<NativeAddon>? disposeHandle;
 
     /// <summary>
     /// Pointer to the contained addon. This is also accessible via <see cref="op_Implicit"/>
     /// </summary>
     protected internal AtkUnitBase* InternalAddon { get; private set; }
-
-    /// <summary>
-    /// Converts this instance to a AtkUnitBase for seamless game interop.
-    /// </summary>
-    public static implicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
 
     /// <summary>
     /// Window node for this NativeAddon. May be null if <see cref="CreateWindowNode"/> returns a null windowNode.
@@ -46,6 +37,17 @@ public unsafe partial class NativeAddon {
     /// Root node for this NativeAddon.
     /// </summary>
     public ResNode RootNode { get; private set; } = null!;
+
+    /// <summary>
+    /// Converts this instance to a AtkUnitBase for seamless game interop.
+    /// </summary>
+    public static implicit operator AtkUnitBase*(NativeAddon addon) => addon.InternalAddon;
+
+    /// <summary>
+    /// Triggers a window update via AtkUnitBase.SetSize(...), to have the game recalculate NodeFlags.Anchor{Direction}.
+    /// </summary>
+    protected void UpdateAnchoringLayout()
+        => SetWindowSize(Size);
 
     private void AllocateAddon(uint atkValueCount = 0, AtkValue* atkValues = null) {
         if (InternalAddon is not null) {
@@ -131,6 +133,4 @@ public unsafe partial class NativeAddon {
             InternalAddon->SetPosition((short)clampedPosition.X, (short)clampedPosition.Y);
         }
     }
-
-    private PinnedGCHandle<NativeAddon>? disposeHandle;
 }

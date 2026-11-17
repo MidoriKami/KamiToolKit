@@ -9,6 +9,9 @@ namespace KamiToolKit.BaseTypes;
 
 public partial class NativeAddon : IDisposable, IAsyncDisposable {
 
+    internal static List<NativeAddon> CreatedAddons { get; } = [];
+    private bool isDisposed;
+
     /// <summary>
     /// Triggers the disposal of this addon. <br/> <br/>
     /// This will not await the addon to actually close which happens several frames later
@@ -97,7 +100,4 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
 
         CreatedAddons.Clear();
     }
-
-    internal static List<NativeAddon> CreatedAddons { get; } = [];
-    private bool isDisposed;
 }

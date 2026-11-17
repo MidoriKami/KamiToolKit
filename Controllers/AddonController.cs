@@ -21,6 +21,10 @@ public class AddonController : AddonController<AtkUnitBase>;
 /// </summary>
 public class AddonController<T> : IAddonEventController<T>, IAsyncDisposable, IDisposable where T : unmanaged {
 
+    private unsafe T* AddonPointer => (T*)RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
+
+    private bool IsEnabled { get; set; }
+
     /// <summary>
     /// The addon name to bind to.
     /// </summary>
@@ -197,8 +201,4 @@ public class AddonController<T> : IAddonEventController<T>, IAsyncDisposable, ID
                 return;
         }
     }
-
-    private unsafe T* AddonPointer => (T*)RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
-
-    private bool IsEnabled { get; set; }
 }

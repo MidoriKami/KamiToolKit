@@ -10,6 +10,9 @@ namespace KamiToolKit.BaseTypes;
 
 public abstract unsafe partial class NodeBase {
 
+    private CustomEventListener? nodeEventListener;
+    private readonly Dictionary<AtkEventType, EventHandlerInfo> eventHandlers = [];
+
     /// <summary>
     /// Gets or sets whether this node should show a clickable cursor when hovered.
     /// </summary>
@@ -179,7 +182,4 @@ public abstract unsafe partial class NodeBase {
                 break;
         }
     }
-
-    private CustomEventListener? nodeEventListener;
-    private readonly Dictionary<AtkEventType, EventHandlerInfo> eventHandlers = [];
 }

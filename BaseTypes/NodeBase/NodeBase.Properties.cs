@@ -15,6 +15,9 @@ namespace KamiToolKit.BaseTypes;
 public abstract unsafe partial class NodeBase {
 
     private static bool EnableSizingWarnings { get; set; } = false;
+    private Action<bool>? OnVisibilityToggled { get; set; }
+    private bool? lastIsVisible;
+    private bool isInsideSizeChanged;
 
     /// <summary>
     /// Gets or sets the nodes X position relative to its parent node.
@@ -475,9 +478,4 @@ public abstract unsafe partial class NodeBase {
     /// Overridable function that is called whenever this node's size is changed.
     /// </summary>
     protected virtual void OnSizeChanged() { }
-
-    private Action<bool>? OnVisibilityToggled { get; set; }
-
-    private bool? lastIsVisible;
-    private bool isInsideSizeChanged;
 }

@@ -232,6 +232,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         CursorNode.AttachNode(this);
 
         PlaceholderTextNode = new TextNode {
+            NodeId = 20,
             TextColor = ColorHelper.GetColor(3),
         };
         PlaceholderTextNode.AttachNode(this);

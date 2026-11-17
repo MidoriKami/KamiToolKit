@@ -10,6 +10,9 @@ namespace KamiToolKit.BaseTypes;
 
 public unsafe partial class NodeBase : ITextTooltip, IActionTooltip, IItemTooltip, IInventoryItemTooltip {
 
+    private AtkTooltipType tooltipType = AtkTooltipType.None;
+    private bool tooltipEventsRegistered;
+
     /// <inheritdoc/>
     public virtual ReadOnlySeString TextTooltip {
         get;
@@ -236,7 +239,7 @@ public unsafe partial class NodeBase : ITextTooltip, IActionTooltip, IItemToolti
     }
 
     private void ToggleCollisionFlag(bool isVisible) {
-        if (this is ComponentNode.ComponentNode) return;
+        if (this is ComponentNode) return;
 
         if (isVisible) {
             AddNodeFlags(NodeFlags.HasCollision);
@@ -245,7 +248,4 @@ public unsafe partial class NodeBase : ITextTooltip, IActionTooltip, IItemToolti
             RemoveNodeFlags(NodeFlags.HasCollision);
         }
     }
-
-    private AtkTooltipType tooltipType = AtkTooltipType.None;
-    private bool tooltipEventsRegistered;
 }

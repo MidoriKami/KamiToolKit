@@ -30,42 +30,7 @@ public unsafe partial class NativeAddon {
     private AtkUnitBase.AtkUnitBaseVirtualTable* modifiedVirtualTable;
     private AtkUnitBase.AtkUnitBaseVirtualTable* originalVirtualTable;
 
-    private void RegisterVirtualTable() {
-
-        originalVirtualTable = InternalAddon->VirtualTable;
-
-        // Overwrite virtual table with a custom copy,
-        // Note: currently there are 73 vfuncs, but there's no harm in copying more for when they add new vfuncs to the game
-        modifiedVirtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) IMemorySpace.GetUISpace()->AllocateZeroedArray<nint>(VirtualTableEntryCount);
-        NativeMemory.Copy(InternalAddon->VirtualTable, modifiedVirtualTable, 0x8 * VirtualTableEntryCount);
-        InternalAddon->VirtualTable = modifiedVirtualTable;
-
-        initializeFunction = Initialize;
-        onSetupFunction = Setup;
-        showFunction = Show;
-        updateFunction = Update;
-        drawFunction = Draw;
-        hideFunction = Hide;
-        softHideFunction = Hide2;
-        finalizerFunction = Finalizer;
-        destructorFunction = Destructor;
-        onRequestedUpdateFunction = RequestedUpdate;
-        onRefreshFunction = Refresh;
-        onScreenSizeChangedFunction = ScreenSizeChange;
-
-        modifiedVirtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(initializeFunction);
-        modifiedVirtualTable->OnSetup = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, void>)Marshal.GetFunctionPointerForDelegate(onSetupFunction);
-        modifiedVirtualTable->Show = (delegate* unmanaged<AtkUnitBase*, bool, uint, void>)Marshal.GetFunctionPointerForDelegate(showFunction);
-        modifiedVirtualTable->Update = (delegate* unmanaged<AtkUnitBase*, float, void>)Marshal.GetFunctionPointerForDelegate(updateFunction);
-        modifiedVirtualTable->Draw = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(drawFunction);
-        modifiedVirtualTable->Hide = (delegate* unmanaged<AtkUnitBase*, bool, bool, uint, void>)Marshal.GetFunctionPointerForDelegate(hideFunction);
-        modifiedVirtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(softHideFunction);
-        modifiedVirtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(finalizerFunction);
-        modifiedVirtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>)Marshal.GetFunctionPointerForDelegate(destructorFunction);
-        modifiedVirtualTable->OnRequestedUpdate = (delegate* unmanaged<AtkUnitBase*, NumberArrayData**, StringArrayData**, void>)Marshal.GetFunctionPointerForDelegate(onRequestedUpdateFunction);
-        modifiedVirtualTable->OnRefresh = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, bool>)Marshal.GetFunctionPointerForDelegate(onRefreshFunction);
-        modifiedVirtualTable->OnScreenSizeChange = (delegate* unmanaged<AtkUnitBase*, int, int, void>)Marshal.GetFunctionPointerForDelegate(onScreenSizeChangedFunction);
-    }
+    private bool isSetup;
 
     /// <summary>
     /// OnSetup Callback for an addon, this is called to attach and save references to created nodes.
@@ -112,6 +77,43 @@ public unsafe partial class NativeAddon {
     /// OnRefresh Callback for the addon, the game calls this once on open, and may trigger it under other unknown conditions.
     /// </summary>
     protected virtual void OnRefresh(AtkUnitBase* addon, Span<AtkValue> atkValues) { }
+
+    private void RegisterVirtualTable() {
+
+        originalVirtualTable = InternalAddon->VirtualTable;
+
+        // Overwrite virtual table with a custom copy,
+        // Note: currently there are 73 vfuncs, but there's no harm in copying more for when they add new vfuncs to the game
+        modifiedVirtualTable = (AtkUnitBase.AtkUnitBaseVirtualTable*) IMemorySpace.GetUISpace()->AllocateZeroedArray<nint>(VirtualTableEntryCount);
+        NativeMemory.Copy(InternalAddon->VirtualTable, modifiedVirtualTable, 0x8 * VirtualTableEntryCount);
+        InternalAddon->VirtualTable = modifiedVirtualTable;
+
+        initializeFunction = Initialize;
+        onSetupFunction = Setup;
+        showFunction = Show;
+        updateFunction = Update;
+        drawFunction = Draw;
+        hideFunction = Hide;
+        softHideFunction = Hide2;
+        finalizerFunction = Finalizer;
+        destructorFunction = Destructor;
+        onRequestedUpdateFunction = RequestedUpdate;
+        onRefreshFunction = Refresh;
+        onScreenSizeChangedFunction = ScreenSizeChange;
+
+        modifiedVirtualTable->Initialize = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(initializeFunction);
+        modifiedVirtualTable->OnSetup = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, void>)Marshal.GetFunctionPointerForDelegate(onSetupFunction);
+        modifiedVirtualTable->Show = (delegate* unmanaged<AtkUnitBase*, bool, uint, void>)Marshal.GetFunctionPointerForDelegate(showFunction);
+        modifiedVirtualTable->Update = (delegate* unmanaged<AtkUnitBase*, float, void>)Marshal.GetFunctionPointerForDelegate(updateFunction);
+        modifiedVirtualTable->Draw = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(drawFunction);
+        modifiedVirtualTable->Hide = (delegate* unmanaged<AtkUnitBase*, bool, bool, uint, void>)Marshal.GetFunctionPointerForDelegate(hideFunction);
+        modifiedVirtualTable->Hide2 = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(softHideFunction);
+        modifiedVirtualTable->Finalizer = (delegate* unmanaged<AtkUnitBase*, void>)Marshal.GetFunctionPointerForDelegate(finalizerFunction);
+        modifiedVirtualTable->Dtor = (delegate* unmanaged<AtkUnitBase*, byte, AtkEventListener*>)Marshal.GetFunctionPointerForDelegate(destructorFunction);
+        modifiedVirtualTable->OnRequestedUpdate = (delegate* unmanaged<AtkUnitBase*, NumberArrayData**, StringArrayData**, void>)Marshal.GetFunctionPointerForDelegate(onRequestedUpdateFunction);
+        modifiedVirtualTable->OnRefresh = (delegate* unmanaged<AtkUnitBase*, uint, AtkValue*, bool>)Marshal.GetFunctionPointerForDelegate(onRefreshFunction);
+        modifiedVirtualTable->OnScreenSizeChange = (delegate* unmanaged<AtkUnitBase*, int, int, void>)Marshal.GetFunctionPointerForDelegate(onScreenSizeChangedFunction);
+    }
 
     private void Initialize(AtkUnitBase* thisPtr) {
         IPluginLog.Get().Verbose($"[{InternalName}] Initialize");
@@ -336,6 +338,4 @@ public unsafe partial class NativeAddon {
             thisPtr->SetScale(1.0f / AtkUnitBase.GetGlobalUIScale(), true);
         }
     }
-
-    private bool isSetup;
 }

@@ -12,6 +12,18 @@ namespace KamiToolKit.BaseTypes;
 
 public abstract unsafe partial class NodeBase {
 
+    private Vector2 clickStartPosition = Vector2.Zero;
+    private NodeEditMode currentEditMode = 0;
+
+    private ViewportEventListener? editEventListener;
+
+    private bool isCursorSet;
+
+    private bool isMoving;
+    private bool isResizing;
+
+    private NodeEditOverlayNode? overlayNode;
+
     /// <summary>
     /// Action that is called once the cursor is released after resizing this node.
     /// </summary>
@@ -214,16 +226,4 @@ public abstract unsafe partial class NodeBase {
 
     private static void ResetCursor()
         => IAddonEventManager.Get().ResetCursor();
-
-    private Vector2 clickStartPosition = Vector2.Zero;
-    private NodeEditMode currentEditMode = 0;
-
-    private ViewportEventListener? editEventListener;
-
-    private bool isCursorSet;
-
-    private bool isMoving;
-    private bool isResizing;
-
-    private NodeEditOverlayNode? overlayNode;
 }
