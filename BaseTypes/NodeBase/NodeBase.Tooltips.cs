@@ -236,7 +236,7 @@ public unsafe partial class NodeBase : ITextTooltip, IActionTooltip, IItemToolti
     }
 
     private void ToggleCollisionFlag(bool isVisible) {
-        if (this is ComponentNode.ComponentNode) return;
+        if (this is ComponentNode) return;
 
         if (isVisible) {
             AddNodeFlags(NodeFlags.HasCollision);
