@@ -276,7 +276,7 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
     private float CalculateFitContentsHeight() {
         var height = FirstItemSpacing;
 
-        foreach (var (node, tab) in nodeList) {
+        foreach (var (node, _) in nodeList) {
             if (!node.IsVisible) continue;
 
             height += node.Height + ItemSpacing;
