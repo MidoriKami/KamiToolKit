@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
-namespace KamiToolKit.BaseTypes.ComponentNode;
+namespace KamiToolKit.BaseTypes;
 
 public abstract unsafe partial class ComponentNode {
 
