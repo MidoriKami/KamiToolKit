@@ -95,14 +95,4 @@ public class RatioSplitNode : HorizontalListNode, IRatioSplitNode {
     protected override void OnUpdateControllerNav() {
         // Not implemented yet.
     }
-
-    /// <summary>
-    /// Calculates the available width after accounting for spacing and separators.
-    /// </summary>
-    private float CalculateAvailableWidth() {
-        var spacingCount = Math.Max(0, NodeList.Count - 1);
-        var totalItemSpacing = ItemSpacing * spacingCount;
-        var totalSeparatorWidth = spacingCount * 6.0f;
-        return Math.Max(0.0f, Width - FirstItemSpacing - totalItemSpacing - totalSeparatorWidth);
-    }
 }
