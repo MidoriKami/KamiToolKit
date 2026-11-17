@@ -167,6 +167,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// resources that exist in managed spaces, as the game has already cleaned up everything else.
     /// </param>
     protected virtual void Dispose(bool isNativeDestructor) {
+
         // Dispose of managed resources that must be disposed regardless of how dispose is invoked
         DisposeEvents();
         DisableEditMode(NodeEditMode.Move | NodeEditMode.Resize);
