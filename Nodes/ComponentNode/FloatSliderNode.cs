@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.BaseTypes.ComponentNode;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;

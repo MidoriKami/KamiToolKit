@@ -1,8 +1,8 @@
 using System.Linq;
-using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
 using System;
+using KamiToolKit.BaseTypes;
 
 namespace KamiToolKit.Nodes;
 

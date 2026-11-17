@@ -1,5 +1,5 @@
 using System.Linq;
-using KamiToolKit.BaseTypes.ComponentNode;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
 

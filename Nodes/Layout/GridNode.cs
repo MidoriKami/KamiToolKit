@@ -63,8 +63,10 @@ public class GridNode : ResNode, IGridNode {
 
         foreach (var row in Enumerable.Range(0, GridSize.Rows)) {
             foreach (var column in Enumerable.Range(0, GridSize.Columns)) {
-                this[column, row].AttachNode(this);
-                this[column, row].IsVisible = true;
+                var node = this[column, row];
+
+                node.AttachNode(this);
+                node.IsVisible = true;
             }
         }
 

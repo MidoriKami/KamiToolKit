@@ -1,11 +1,11 @@
 using System.Numerics;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
 using Dalamud.Excel.Sheets;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Interfaces;
 using Lumina.Text.ReadOnly;
 using Action = System.Action;

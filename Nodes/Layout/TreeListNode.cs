@@ -367,6 +367,5 @@ public class TreeListNode<T, TU> : ResNode, ITreeListNode<T, TU> where TU : Tree
     private List<ReadOnlySeString> CollapsedEntries { get; } = [];
 
     private readonly float itemHeight;
-
     private int scrollPosition;
 }
