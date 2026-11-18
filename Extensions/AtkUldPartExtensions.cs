@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -8,6 +9,7 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
+using Lumina.Data.Files;
 
 namespace KamiToolKit.Extensions;
 
@@ -67,6 +69,29 @@ public static unsafe class AtkUldPartExtensions {
             catch (Exception e) {
                 IPluginLog.Get().Error(e, "Error in AtkUldPartExtensions LoadTexture");
             }
+        }
+
+        internal bool TryLoadFromUld(string uldPath, uint partId, uint partSet) {
+            if (uldPath?.EndsWith(".uld", StringComparison.OrdinalIgnoreCase) != true) return false;
+            if (IDataManager.Get().GetFile<UldFile>(uldPath) is not { } uld) return false;
+            if (partSet >= uld.Parts.Length) return false;
+
+            var parts = uld.Parts[partSet].Parts;
+            if (parts is null || partId >= parts.Length) return false;
+
+            var sourcePart = parts[partId];
+            var asset = uld.AssetData.FirstOrDefault(entry => entry.Id == sourcePart.TextureId);
+            var path = asset.Path.AsSpan().TrimEnd('\0');
+            if (path.IsEmpty) return false;
+
+            part.U = sourcePart.U;
+            part.V = sourcePart.V;
+            part.Width = sourcePart.W;
+            part.Height = sourcePart.H;
+
+            var resolveTheme = uld.WidgetData.AssetsHaveThemeSupport && asset.ThemeSupportBitmask is not 0;
+            part.LoadTexture(path.ToString(), resolveTheme);
+            return true;
         }
 
         /// <summary>

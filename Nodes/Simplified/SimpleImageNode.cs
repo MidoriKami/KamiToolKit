@@ -92,6 +92,15 @@ public unsafe class SimpleImageNode : ImageNode {
         => PartsList[0]->LoadTexture(path, resolveTheme);
 
     /// <summary>
+    /// Loads a part from a ULD file, using the first part set by default.
+    /// </summary>
+    public bool TryLoadUldPart(string uldPath, uint partId, uint partSet = 0) {
+        if (!PartsList[0]->TryLoadFromUld(uldPath, partId, partSet)) return false;
+        MarkDirty();
+        return true;
+    }
+
+    /// <summary>
     /// Loads a specified iconId directly.
     /// </summary>
     public void LoadIcon(uint iconId)
@@ -102,5 +111,18 @@ public unsafe class SimpleImageNode : ImageNode {
     /// </summary>
     public SimpleImageNode() {
         PartsList.Add(new Part());
+    }
+
+    /// <summary>
+    /// Constructs a new <see cref="SimpleImageNode"/> from a ULD part.
+    /// </summary>
+    public SimpleImageNode(string uldPath, uint partId, uint partSet = 0) : this() {
+        try {
+            if (TryLoadUldPart(uldPath, partId, partSet)) Size = TextureSize;
+        }
+        catch {
+            Dispose();
+            throw;
+        }
     }
 }
