@@ -71,11 +71,12 @@ public static unsafe class AtkUldPartExtensions {
             }
         }
 
-        internal bool TryLoadFromUld(string uldPath, uint partId, uint? partsListId) {
+        internal bool TryLoadFromUld(string uldPath, uint partId, uint partSet) {
             if (uldPath?.EndsWith(".uld", StringComparison.OrdinalIgnoreCase) != true) return false;
             if (IDataManager.Get().GetFile<UldFile>(uldPath) is not { } uld) return false;
+            if (partSet >= uld.Parts.Length) return false;
 
-            var parts = uld.Parts.FirstOrDefault(list => partsListId is null || list.Id == partsListId).Parts;
+            var parts = uld.Parts[partSet].Parts;
             if (parts is null || partId >= parts.Length) return false;
 
             var sourcePart = parts[partId];
