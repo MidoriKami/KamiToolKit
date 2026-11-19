@@ -47,7 +47,10 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
     /// <inheritdoc/>
     public int Value {
         get => Component->Value;
-        set => Component->InnerSetValue(value, true, false);
+        set {
+            Component->InnerSetValue(value, true, false);
+            ValueTextNode.String = value.ToString();
+        }
     }
 
     /// <inheritdoc/>
