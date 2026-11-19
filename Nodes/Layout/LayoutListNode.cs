@@ -30,7 +30,6 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
     public int NavDown { get; set; }
 
     /// <inheritdoc/>
-
     public IEnumerable<T> GetNodes<T>() where T : NodeBase => NodeList.OfType<T>();
 
     /// <inheritdoc/>
@@ -59,6 +58,16 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
     public void UpdateLayout() {
         if (suppressRecalculateLayout) return;
 
+        // Save old sizes to check if sizes were changed later for recursing.
+        var oldSizes = NodeList.Select(n => n.Size).ToArray();
+
+        UpdateFillerNodes();
+        UpdateChildrenLayout(oldSizes);
+        UpdateNavigation();
+    }
+
+    // If any children are ILayoutFiller, resize them.
+    private void UpdateFillerNodes() {
         var remainingHeight = Height - FirstItemSpacing;
         var remainingWidth = Width - FirstItemSpacing;
 
@@ -76,45 +85,38 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
             remainingHeight -= node.Height + ItemSpacing;
             remainingWidth -= node.Width + ItemSpacing;
         }
+    }
 
-        foreach (var node in NodeList) {
-            if (node is ILayoutUpdatable subNode) {
-                subNode.UpdateLayout();
-            }
-        }
+    private void UpdateChildrenLayout(Vector2[] oldSizes) {
+        if (NodeList.Count is 0) return;
 
-        if (NodeList.Count > 0) {
-            OnUpdateSizes();
-            OnUpdateLayout();
-        }
+        OnUpdateSizes();
+        OnUpdateLayout();
 
-        foreach (var node in NodeList) {
-            if (node is ILayoutUpdatable subNode) {
+        // update children, but only if their sizes are different.
+        foreach(var (node, oldSize) in NodeList.Zip(oldSizes)) {
+            if (node is not ILayoutUpdatable subNode) continue;
+
+            var newSize = node.Size;
+            if (Vector2.Distance(oldSize, newSize) > 0.5f) {
                 subNode.UpdateLayout();
             }
         }
 
         // Reapply sizes in case children changed to fit something.
-        if (NodeList.Count > 0) {
-            OnUpdateSizes();
-        }
-
-        UpdateNavigation();
+        OnUpdateSizes();
     }
 
     /// <inheritdoc/>
     public void UpdateNavigation() {
         if (suppressRecalculateLayout) return;
 
-        // Propagate navigation update to children first, so nested containers can resolve
-        // their internal navigation before the parent sets its own navigation indices.
         foreach (var node in NodeList) {
             if (node is INavigationUpdatable controllerNavigable) {
                 controllerNavigable.UpdateNavigation();
             }
         }
 
-        // Then update this container's own navigation (NavIndex, NavUp, NavDown, etc.).
         OnUpdateControllerNav();
     }
 
@@ -125,13 +127,10 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
 
     /// <inheritdoc/>
     public virtual void AddNode(IEnumerable<NodeBase> nodes) {
-        suppressRecalculateLayout = true;
-        try {
+        using (SuppressLayoutRecalculation()) {
             foreach (var node in nodes) {
                 AddNode(node);
             }
-        } finally {
-            suppressRecalculateLayout = false;
         }
         UpdateLayout();
     }
@@ -141,7 +140,6 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
         if (node is null) return;
 
         NodeList.Add(node);
-
         node.AttachNode(this);
 
         UpdateLayout();
@@ -149,13 +147,10 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
 
     /// <inheritdoc/>
     public void RemoveNode(IEnumerable<NodeBase> items) {
-        suppressRecalculateLayout = true;
-        try {
+        using (SuppressLayoutRecalculation()) {
             foreach (var node in items) {
                 RemoveNode(node);
             }
-        } finally {
-            suppressRecalculateLayout = false;
         }
         UpdateLayout();
     }
@@ -181,13 +176,10 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
 
     /// <inheritdoc/>
     public virtual void Clear() {
-        suppressRecalculateLayout = true;
-        try {
+        using (SuppressLayoutRecalculation()) {
             foreach (var node in NodeList.ToList()) {
                 RemoveNode(node);
             }
-        } finally {
-            suppressRecalculateLayout = false;
         }
         UpdateLayout();
     }
@@ -201,27 +193,42 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
     /// <summary>
     /// Gets the list of nodes that this <see cref="LayoutListNode"/> is managing.
     /// </summary>
-    protected List<NodeBase> NodeList { get; }= [];
+    protected List<NodeBase> NodeList { get; } = [];
 
     /// <summary>
-    /// Function that is invoked when this node needs to update child node sizes.
+    /// Temporarily suppresses layout recalculation while performing batch operations.
+    /// </summary>
+    private ScopeGuard SuppressLayoutRecalculation() {
+        suppressRecalculateLayout = true;
+        return new ScopeGuard(() => suppressRecalculateLayout = false);
+    }
+
+    private readonly struct ScopeGuard(Action action) : IDisposable {
+        public void Dispose() => action();
+    }
+
+    /// <summary>
+    /// Whether layout recalculation is currently suppressed during batch operations.
+    /// </summary>
+    private bool suppressRecalculateLayout;
+
+    /// <summary>
+    /// Invoked when this node needs to update child node sizes.
     /// </summary>
     protected abstract void OnUpdateSizes();
 
     /// <summary>
-    /// Function that is invoked when this node needs to update child node positions.
+    /// Invoked when this node needs to update child node positions.
     /// </summary>
     protected abstract void OnUpdateLayout();
 
     /// <summary>
-    /// Function that is invoked when this node needs to update controller navigation layout.
+    /// Invoked when this node needs to update controller navigation layout.
     /// </summary>
     protected abstract void OnUpdateControllerNav();
 
     /// <summary>
-    /// Adjusts the nodes properties when <see cref="UpdateLayout"/> is invoked.
+    /// Invoked during layout to allow subclasses to adjust individual node properties.
     /// </summary>
     protected virtual void AdjustNode(NodeBase node) { }
-
-    private bool suppressRecalculateLayout;
 }

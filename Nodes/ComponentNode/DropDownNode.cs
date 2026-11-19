@@ -74,7 +74,9 @@ public unsafe class DropDownNode<T> : SimpleComponentNode, IDropDownNode<T> {
         get;
         set {
             field = value;
-            RebuildPopupList();
+            if (popupInitialized) {
+                RebuildPopupList();
+            }
         }
     } = 5;
 
@@ -100,12 +102,14 @@ public unsafe class DropDownNode<T> : SimpleComponentNode, IDropDownNode<T> {
                 LabelNode.String = PlaceholderString.IsEmpty ? "Empty Options, No Placeholder" : PlaceholderString;
             }
             else {
-                if (PlaceholderString is { } placeholder) {
+                if (PlaceholderString is { IsEmpty: false } placeholder) {
                     LabelNode.String = placeholder;
                 }
             }
 
-            RebuildPopupList();
+            if (popupInitialized) {
+                RebuildPopupList();
+            }
         }
     } = [];
 
@@ -195,6 +199,9 @@ public unsafe class DropDownNode<T> : SimpleComponentNode, IDropDownNode<T> {
 
         IsCollapsed = false;
         Timeline?.PlayAnimation(11);
+
+        // Lazy create list only when it's needed.
+        EnsurePopupInitialized();
 
         scrollPosition = 0;
         PopulatePopupList();
@@ -352,8 +359,11 @@ public unsafe class DropDownNode<T> : SimpleComponentNode, IDropDownNode<T> {
 
         BackgroundNode.Size = new Vector2(Width, Height - 1.0f);
         LabelNode.Size = new Vector2(Width - 32.0f, Height - 3.0f);
-        ResizePopupList();
-        RebuildPopupList();
+
+        if (popupInitialized) {
+            ResizePopupList();
+            RebuildPopupList();
+        }
     }
 
     private void MoveListOnScreen() {
@@ -373,6 +383,26 @@ public unsafe class DropDownNode<T> : SimpleComponentNode, IDropDownNode<T> {
         if (PopupContainerNode.ScreenPosition.Y + scaledListSize.Y > screenSize.Height) {
             PopupContainerNode.Y += (screenSize.Height - PopupContainerNode.ScreenPosition.Y - scaledListSize.Y) / scale;
         }
+    }
+
+    // Should only populate entries if we've tried to actually open the list,
+    // else this is being called from a rebuild during setup.
+    private void EnsurePopupInitialized() {
+        if (popupInitialized) return;
+        popupInitialized = true;
+
+        var buttonCount = Math.Min(MaxListOptions, Options.Count);
+        foreach (var _ in Enumerable.Range(0, buttonCount)) {
+            var buttonNode = new ListButtonNode {
+                Height = 22.0f,
+                String = "DEBUG: Unset",
+            };
+
+            PopupButtonListNode.AddNode(buttonNode);
+        }
+
+        ResizePopupList();
+        PopulatePopupList();
     }
 
     private void RebuildPopupList() {
@@ -499,6 +529,7 @@ public unsafe class DropDownNode<T> : SimpleComponentNode, IDropDownNode<T> {
 
     private int scrollPosition;
     private bool isFocusSet;
+    private bool popupInitialized;
 
     private void BuildTimelines() {
         AddTimeline(new TimelineBuilder()
