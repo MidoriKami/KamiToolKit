@@ -54,6 +54,14 @@ public unsafe class NumericInputNode : ComponentNode<AtkComponentNumericInput, A
     }
 
     /// <inheritdoc/>
+    public void SetValueSilent(int value) {
+        var callback = OnValueUpdate;
+        OnValueUpdate = null;
+        Value = value;
+        OnValueUpdate = callback;
+    }
+
+    /// <inheritdoc/>
     public int Min {
         get => Component->Data.Min;
         set => Component->Data.Min = value;

@@ -73,6 +73,14 @@ public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldCompone
         set => Component->SetValue(value);
     }
 
+    /// <inheritdoc/>
+    public void SetValueSilent(int value) {
+        var callback = OnValueUpdate;
+        OnValueUpdate = null;
+        Value = value;
+        OnValueUpdate = callback;
+    }
+
     /// <summary>
     /// Constructs a new <see cref="SliderNode"/>.
     /// </summary>

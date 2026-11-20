@@ -107,6 +107,14 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     }
 
     /// <inheritdoc/>
+    public void SetValueSilent(ReadOnlySeString value) {
+        var callback = OnInputReceived;
+        OnInputReceived = null;
+        String = value;
+        OnInputReceived = callback;
+    }
+
+    /// <inheritdoc/>
     public bool ShowPlaceholderString {
         get => PlaceholderTextNode.IsVisible;
         set => PlaceholderTextNode.IsVisible = value;

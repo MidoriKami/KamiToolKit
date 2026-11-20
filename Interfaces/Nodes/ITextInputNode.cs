@@ -56,6 +56,12 @@ public interface ITextInputNode : IFocusable, IPlaceholderText {
     Action<ReadOnlySeString>? OnInputReceived { get; set; }
 
     /// <summary>
+    /// Sets the text without triggering the <see cref="OnInputReceived"/> callback.
+    /// Use this when initializing or resetting values on existing nodes.
+    /// </summary>
+    void SetValueSilent(ReadOnlySeString value);
+
+    /// <summary>
     /// Gets or sets the action to be invoked when input is completed via pressing return.
     /// Includes a reference to the modified string.
     /// </summary>

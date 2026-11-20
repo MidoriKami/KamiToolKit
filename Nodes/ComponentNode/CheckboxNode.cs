@@ -86,6 +86,14 @@ public unsafe class CheckboxNode : ComponentNode<AtkComponentCheckBox, AtkUldCom
     }
 
     /// <inheritdoc/>
+    public void SetValueSilent(bool value) {
+        var callback = OnChecked;
+        OnChecked = null;
+        IsChecked = value;
+        OnChecked = callback;
+    }
+
+    /// <inheritdoc/>
     public bool TruncateText {
         get => Label.TextFlags.HasFlag(TextFlags.AutoAdjustNodeSize);
         set {

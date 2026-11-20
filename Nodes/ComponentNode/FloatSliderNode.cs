@@ -61,6 +61,14 @@ public unsafe class FloatSliderNode : ComponentNode<AtkComponentSlider, AtkUldCo
         set => Component->SetValue((int) (value * 100.0f));
     }
 
+    /// <inheritdoc/>
+    public void SetValueSilent(float value) {
+        var callback = OnValueUpdate;
+        OnValueUpdate = null;
+        Value = value;
+        OnValueUpdate = callback;
+    }
+
     /// <summary>
     /// Constructs a new <see cref="FloatSliderNode"/>.
     /// </summary>

@@ -16,4 +16,10 @@ public interface IValueChangeable<T> {
     /// Gets or sets the action that is invoked when the value is updated.
     /// </summary>
     Action<T>? OnValueUpdate { get; set; }
+
+    /// <summary>
+    /// Sets the value without triggering the <see cref="OnValueUpdate"/> callback.
+    /// Use this when initializing or resetting values on existing nodes.
+    /// </summary>
+    void SetValueSilent(T value);
 }
