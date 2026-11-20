@@ -46,7 +46,7 @@ public class RatioSplitNode : HorizontalListNode, IRatioSplitNode {
 
         var spacingCount = Math.Max(0, NodeList.Count - 1);
         var totalItemSpacing = ItemSpacing * spacingCount;
-        var totalSeparatorWidth = spacingCount * 6.0f;
+        var totalSeparatorWidth = ShowSeparators ? spacingCount * 6.0f : 0.0f;
 
         var availableWidth = Math.Max(0.0f, Width - FirstItemSpacing - totalItemSpacing - totalSeparatorWidth);
 
@@ -76,13 +76,14 @@ public class RatioSplitNode : HorizontalListNode, IRatioSplitNode {
             if (index < NodeList.Count - 1) {
                 var separator = separators[index];
 
-                currentX += ItemSpacing + 2.0f;
+                if (ShowSeparators) {
+                    currentX += ItemSpacing + 2.0f;
+                    separator.Position = new Vector2(currentX, 0.0f);
+                    separator.Height = Height;
+                    currentX += 4.0f;
+                }
 
                 separator.IsVisible = ShowSeparators;
-                separator.Position = new Vector2(currentX, 0.0f);
-                separator.Height = Height;
-
-                currentX += 4.0f;
             }
 
             if (node is ILayoutUpdatable splitChild) {
