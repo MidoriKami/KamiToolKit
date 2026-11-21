@@ -9,9 +9,9 @@ using KamiToolKit.Enums;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
-using Dalamud.Excel.Sheets;
 using KamiToolKit.Interfaces;
 using Lumina.Data.Parsing.Uld;
+using Lumina.Excel.Sheets;
 using Lumina.Text.ReadOnly;
 using Action = System.Action;
 
