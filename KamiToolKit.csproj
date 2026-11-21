@@ -5,6 +5,15 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
+    <!-- NuGet settings -->
+    <PropertyGroup>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
     <!-- Dalamud.NET.Sdk settings -->
     <PropertyGroup>
         <Use_DalamudPackager>false</Use_DalamudPackager>
