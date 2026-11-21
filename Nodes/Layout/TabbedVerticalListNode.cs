@@ -10,39 +10,10 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// A specialized vertical list node with features for adding nodes with specified tab values.
 /// </summary>
-public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
+public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
 
     /// <inheritdoc/>
-    public int NavIndex { get; set; }
-
-    /// <inheritdoc/>
-    public int NavLeft { get; set; }
-
-    /// <inheritdoc/>
-    public int NavRight { get; set; }
-
-    /// <inheritdoc/>
-    public int NavUp { get; set; }
-
-    /// <inheritdoc/>
-    public int NavDown { get; set; }
-
-    /// <inheritdoc/>
-    public IReadOnlyList<NodeBase> Nodes => nodeList.Select(node => node.Node).ToList();
-
-    /// <inheritdoc/>
-    public bool ClipContents { get; set; }
-
-    /// <inheritdoc/>
-    public float ItemSpacing { get; set; }
-
-    /// <inheritdoc/>
-    public float FirstItemSpacing { get; set; }
-
-    /// <inheritdoc/>
-    public ICollection<NodeBase> InitialNodes {
-        set => AddNode(value);
-    }
+    public override IReadOnlyList<NodeBase> Nodes => nodeList.Select(node => node.Node).ToList();
 
     /// <summary>
     /// Special implementation for allowing initial tabbed node entries.
@@ -64,42 +35,15 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
     }
 
     /// <inheritdoc/>
-    public IEnumerable<T> GetNodes<T>() where T : NodeBase
-        => Nodes.OfType<T>();
-
-    /// <inheritdoc/>
-    public void UpdateLayout() {
-        if (suppressRecalculateLayout) return;
-
+    protected override void DoUpdateLayout() {
         if (nodeList.Count > 0) {
             OnUpdateSizes();
             OnUpdateLayout();
         }
 
-        foreach (var node in Nodes) {
-            if (node is ILayoutUpdatable subNode) {
-                subNode.UpdateLayout();
-            }
-        }
-
         if (nodeList.Count > 0) {
             OnUpdateSizes();
         }
-
-        UpdateNavigation();
-    }
-
-    /// <inheritdoc/>
-    public void UpdateNavigation() {
-        if (suppressRecalculateLayout) return;
-
-        foreach (var node in Nodes) {
-            if (node is INavigationUpdatable subNode) {
-                subNode.UpdateNavigation();
-            }
-        }
-
-        OnUpdateControllerNav();
     }
 
     /// <summary>
@@ -141,11 +85,13 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
     /// Tab index provided will be <em>added</em> to the current accumulated TabStep.
     /// </remarks>
     public void AddNode(int tabIndex, IEnumerable<NodeBase> nodes) {
-        suppressRecalculateLayout = true;
-        foreach (var node in nodes) {
-            AddNode(tabIndex, node);
+        using (SuppressLayoutRecalculation()) {
+            foreach (var node in nodes) {
+                AddNode(tabIndex, node);
+            }
         }
-        suppressRecalculateLayout = false;
+        UpdateLayout();
+        UpdateNavigation();
     }
 
     /// <summary>
@@ -158,65 +104,53 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
         nodeList.Add(new TabbedNodeEntry<NodeBase>(node, tabIndex + TabStep));
 
         node.AttachNode(this);
-        if (!suppressRecalculateLayout) {
-            UpdateLayout();
-        }
+        UpdateLayout();
+        UpdateNavigation();
     }
 
     /// <inheritdoc/>
-    public void AddNode(NodeBase? node) {
+    public override void AddNode(NodeBase? node) {
         if (node is null) return;
-
         AddNode(0, node);
     }
 
     /// <inheritdoc/>
-    public void AddNode(IEnumerable<NodeBase> nodes) {
-        suppressRecalculateLayout = true;
-        AddNode(0, nodes);
-        suppressRecalculateLayout = false;
-        UpdateLayout();
-    }
-
-    /// <inheritdoc/>
-    public void RemoveNode(IEnumerable<NodeBase> items) {
-        suppressRecalculateLayout = true;
-        foreach (var node in items) {
-            RemoveNode(node);
+    public override void AddNode(IEnumerable<NodeBase> nodes) {
+        using (SuppressLayoutRecalculation()) {
+            AddNode(0, nodes);
         }
-        suppressRecalculateLayout = false;
         UpdateLayout();
+        UpdateNavigation();
     }
 
     /// <inheritdoc/>
-    public void RemoveNode(NodeBase node) {
-        if (nodeList.All(entry => entry.Node != node)) return;
+    protected override void AddNodeInternal(NodeBase node) {
+        nodeList.Add(new TabbedNodeEntry<NodeBase>(node, TabStep));
+        node.AttachNode(this);
+    }
 
+    /// <inheritdoc/>
+    protected override bool RemoveNodeInternal(NodeBase node) {
+        if (nodeList.All(entry => entry.Node != node)) return false;
         nodeList.RemoveAll(entry => entry.Node == node);
-        node.Dispose();
-
-        UpdateLayout();
+        return true;
     }
 
     /// <inheritdoc/>
-    public void AddDummy(float size = 0)
-        => AddNode(new ResNode{ Width = size, Height = size });
-
-    /// <inheritdoc/>
-    public void Clear() {
+    protected override void ClearInternal() {
         foreach (var nodeEntry in nodeList) {
             nodeEntry.Node.Dispose();
         }
-
         nodeList.Clear();
-        UpdateLayout();
     }
 
     /// <inheritdoc/>
-    public void ReorderNodes(Comparison<NodeBase> comparison)
-        => nodeList.Sort((left, right) => comparison(left.Node, right.Node));
+    protected override void ReorderInternal(Comparison<NodeBase> comparison) {
+        nodeList.Sort((left, right) => comparison(left.Node, right.Node));
+    }
 
-    private void OnUpdateSizes() {
+    /// <inheritdoc/>
+    protected override void OnUpdateSizes() {
         foreach (var (node, tab) in nodeList) {
             if (!node.IsVisible) continue;
 
@@ -230,7 +164,8 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
         }
     }
 
-    private void OnUpdateLayout() {
+    /// <inheritdoc/>
+    protected override void OnUpdateLayout() {
         var startY = 0.0f + FirstItemSpacing;
 
         foreach (var (node, tab) in nodeList) {
@@ -242,7 +177,8 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
         }
     }
 
-    private void OnUpdateControllerNav() {
+    /// <inheritdoc/>
+    protected override void OnUpdateControllerNav() {
         var componentNodes = nodeList.Select(nodeEntry => nodeEntry.Node).OfType<ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
 
@@ -285,5 +221,4 @@ public class TabbedVerticalListNode : ResNode, ILayoutListNode, IStretchWidth {
     }
 
     private readonly List<TabbedNodeEntry<NodeBase>> nodeList = [];
-    private bool suppressRecalculateLayout;
 }

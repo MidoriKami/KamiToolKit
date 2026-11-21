@@ -80,7 +80,6 @@ public class HorizontalListNode : LayoutListNode, IHorizontalListNode {
             }
 
             node.X = startX;
-            AdjustNode(node);
 
             if (Alignment is HorizontalListAnchor.Left) {
                 startX += node.Width + ItemSpacing;

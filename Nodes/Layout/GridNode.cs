@@ -9,7 +9,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// A layout node representing a grid.
 /// </summary>
-public class GridNode : ResNode, IGridNode {
+public class GridNode : LayoutNodeBase, IGridNode {
 
     /// <summary>
     /// Gets the grid section at the specified X,Y coordinate.
@@ -33,7 +33,7 @@ public class GridNode : ResNode, IGridNode {
     } = new(0, 0);
 
     /// <inheritdoc />
-    public void UpdateLayout() {
+    protected override void DoUpdateLayout() {
         var gridWidth = Width / GridSize.Columns;
         var gridHeight = Height / GridSize.Rows;
 
@@ -43,12 +43,6 @@ public class GridNode : ResNode, IGridNode {
                 this[column, row].Position = new Vector2(column * gridWidth, row * gridHeight);
             }
         }
-    }
-
-    /// <inheritdoc />
-    protected override void OnSizeChanged() {
-        base.OnSizeChanged();
-        UpdateLayout();
     }
 
     private void ReallocateArray() {

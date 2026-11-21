@@ -1,8 +1,8 @@
+using System;
 using System.Linq;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
-using System;
-using KamiToolKit.BaseTypes;
 
 namespace KamiToolKit.Nodes;
 
@@ -84,8 +84,6 @@ public class VerticalListNode : LayoutListNode, IVerticalListNode {
                         break;
                 }
             }
-
-            AdjustNode(node);
 
             if (Anchor is VerticalListAnchor.Top) {
                 startY += node.Height + ItemSpacing;

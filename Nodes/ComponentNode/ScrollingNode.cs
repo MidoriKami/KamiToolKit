@@ -140,19 +140,13 @@ public class ScrollingNode<T> : ResNode, IScrollingNode<T> where T : NodeBase, n
         ScrollBarNode.ScrollPosition = Math.Clamp(oldPosition, 0, ScrollBarNode.ScrollMaxPosition);
 
         if (IsHorizontal) {
-            ContentNode.Height = Height;
+            ContentNode.Size = new Vector2(Width, Height);
         }
         else {
-            if (ScrollBarNode.IsVisible) {
-                ContentNode.Width = Width - ScrollBarNode.Width - 2.0f;
-            }
-            else {
-                ContentNode.Width = Width;
-            }
-        }
-
-        if (ContentNode is ILayoutUpdatable layoutNode) {
-            layoutNode.UpdateLayout();
+            var contentWidth = ScrollBarNode.IsVisible
+                ? Width - ScrollBarNode.Width - 2.0f
+                : Width;
+            ContentNode.Size = new Vector2(contentWidth, Height);
         }
     }
 }

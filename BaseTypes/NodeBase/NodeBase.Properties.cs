@@ -3,6 +3,7 @@ using Dalamud.Interface;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Internal.Classes;
 using Bounds = KamiToolKit.Classes.Bounds;
@@ -18,6 +19,14 @@ public abstract unsafe partial class NodeBase {
     private Action<bool>? OnVisibilityToggled { get; set; }
     private bool? lastIsVisible;
     private bool isInsideSizeChanged;
+
+    /// <summary>
+    /// Temporarily suppresses <see cref="OnSizeChanged"/> while performing batch size operations.
+    /// </summary>
+    protected ScopeGuard SuppressSizeChanged() {
+        isInsideSizeChanged = true;
+        return new ScopeGuard(() => isInsideSizeChanged = false);
+    }
 
     /// <summary>
     /// Gets or sets the nodes X position relative to its parent node.
@@ -93,9 +102,9 @@ public abstract unsafe partial class NodeBase {
 
             ResNode->SetWidth((ushort)value);
             if (value > 0 && Height > 0 && !isInsideSizeChanged) {
-                isInsideSizeChanged = true;
-                OnSizeChanged();
-                isInsideSizeChanged = false;
+                using (SuppressSizeChanged()) {
+                    OnSizeChanged();
+                }
             }
         }
     }
@@ -123,9 +132,9 @@ public abstract unsafe partial class NodeBase {
             ResNode->SetHeight((ushort)value);
 
             if (value > 0 && Width > 0 && !isInsideSizeChanged) {
-                isInsideSizeChanged = true;
-                OnSizeChanged();
-                isInsideSizeChanged = false;
+                using (SuppressSizeChanged()) {
+                    OnSizeChanged();
+                }
             }
         }
     }
@@ -167,9 +176,9 @@ public abstract unsafe partial class NodeBase {
             ResNode->SetHeight((ushort)value.Y);
 
             if (value is { X: > 0, Y: > 0} && !isInsideSizeChanged) {
-                isInsideSizeChanged = true;
-                OnSizeChanged();
-                isInsideSizeChanged = false;
+                using (SuppressSizeChanged()) {
+                    OnSizeChanged();
+                }
             }
         }
     }

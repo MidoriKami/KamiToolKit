@@ -24,10 +24,6 @@ public sealed class FittedContentNode : LayoutListNode, ILayoutFiller {
     protected override void OnUpdateLayout() {
         foreach (var node in NodeList) {
             node.Position = new Vector2(0.0f, 0.0f);
-
-            if (node is ILayoutUpdatable updatable) {
-                updatable.UpdateLayout();
-            }
         }
     }
 

@@ -85,10 +85,6 @@ public class RatioSplitNode : HorizontalListNode, IRatioSplitNode {
 
                 separator.IsVisible = ShowSeparators;
             }
-
-            if (node is ILayoutUpdatable splitChild) {
-                splitChild.UpdateLayout();
-            }
         }
     }
 
