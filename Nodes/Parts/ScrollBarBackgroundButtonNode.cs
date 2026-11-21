@@ -1,5 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.BaseTypes.ComponentNode;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.BaseTypes;
 
 namespace KamiToolKit.Nodes;
 

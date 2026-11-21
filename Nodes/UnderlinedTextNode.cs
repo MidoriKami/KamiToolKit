@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Interfaces;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
@@ -6,7 +8,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// A <see cref="TextNode"/> with a <see cref="HorizontalLineNode"/> underneath it for stylish texting.
 /// </summary>
-public class UnderlinedTextNode : ResNode {
+public class UnderlinedTextNode : ResNode, IUnderlinedTextNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -18,15 +20,49 @@ public class UnderlinedTextNode : ResNode {
     /// </summary>
     public HorizontalLineNode LineNode { get; }
 
-    /// <summary>
-    /// Gets or sets the displayed string.
-    /// </summary>
+    /// <inheritdoc />
     public ReadOnlySeString String {
         get => LabelTextNode.String;
         set {
             LabelTextNode.String = value;
             RecalculateLineSize();
         }
+    }
+
+    /// <inheritdoc />
+    public Vector4 TextColor {
+        get => LabelTextNode.TextColor;
+        set => LabelTextNode.TextColor = value;
+    }
+
+    /// <inheritdoc />
+    public Vector4 TextOutlineColor {
+        get => LabelTextNode.TextOutlineColor;
+        set => LabelTextNode.TextOutlineColor = value;
+    }
+
+    /// <inheritdoc />
+    public AlignmentType AlignmentType {
+        get => LabelTextNode.AlignmentType;
+        set => LabelTextNode.AlignmentType = value;
+    }
+
+    /// <inheritdoc />
+    public FontType FontType {
+        get => LabelTextNode.FontType;
+        set => LabelTextNode.FontType = value;
+    }
+
+    /// <inheritdoc />
+    public TextFlags TextFlags {
+        get => LabelTextNode.TextFlags;
+        set => LabelTextNode.TextFlags = value;
+    }
+
+    /// <inheritdoc />
+    public uint FontSize {
+        get => LabelTextNode.FontSize;
+        set => LabelTextNode.FontSize = value;
     }
 
     /// <summary>

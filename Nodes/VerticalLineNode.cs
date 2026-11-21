@@ -1,4 +1,4 @@
-﻿namespace KamiToolKit.Nodes;
+namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// Specialization of a NineGridNode to represent a 4px thick vertical line.

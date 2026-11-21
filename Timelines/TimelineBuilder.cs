@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
@@ -14,7 +14,7 @@ public class TimelineBuilder {
     /// Give this function the full range of frames you want to build timelines for.
     /// </summary>
     /// <remarks>
-    /// Every 60 keyframes represents a 1second animation regardless of the games actual framerate.
+    /// Every 60 keyframes represents a 1second animation regardless of the game's actual framerate.
     /// </remarks>
     /// <param name="startFrameId">The starting frame index.</param>
     /// <param name="endFrameId">The ending frame index.</param>
@@ -42,7 +42,7 @@ public class TimelineBuilder {
         => new(new FrameSetBuilder(this, frameSetStart, frameSetEnd), frameIndex);
 
     /// <summary>
-    /// Constructs the actual native object that will be set in the games memory to do the animations.
+    /// Constructs the actual native object that will be set in the game's memory to do the animations.
     /// </summary>
     public Timeline Build() {
         var newTimeline = new Timeline();

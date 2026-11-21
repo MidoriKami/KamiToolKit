@@ -1,12 +1,13 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// Specialization of <see cref="TextNode"/> that represents a gray colored text that is often used as a category label.
 /// </summary>
-public sealed class CategoryTextNode : TextNode {
+public sealed class CategoryTextNode : TextNode, ICategoryTextNode {
 
     /// <summary>
     /// Gets or sets the nodes height including <see cref="HeightPadding"/>
@@ -19,9 +20,7 @@ public sealed class CategoryTextNode : TextNode {
         set => base.Height = value + HeightPadding;
     }
 
-    /// <summary>
-    /// Gets or sets the nodes height padding.
-    /// </summary>
+    /// <inheritdoc/>
     public float HeightPadding { get; set; } = 8.0f;
 
     /// <summary>

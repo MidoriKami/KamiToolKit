@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Dalamud.Plugin.Services;
 
@@ -30,6 +31,14 @@ public static class PluginLogExtensions {
             if (EnableExcessiveLogging) {
                 log.Verbose(message);
             }
+        }
+
+        /// <summary>
+        /// Logs a warning, but only if the plugin is built in debug mode.
+        /// </summary>
+        [Conditional("DEBUG")]
+        public void DebugWarning(string message) {
+            log.Warning(message);
         }
     }
 }

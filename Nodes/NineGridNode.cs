@@ -1,39 +1,34 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games NineGridNode.
+/// Implementation of the game's NineGridNode.
 /// </summary>
-public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
+public unsafe class NineGridNode : NodeBase<AtkNineGridNode>, INineGridNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
     /// </summary>
     public PartsList PartsList { get; }
 
-    /// <summary>
-    /// Sets the collection of parts to use for this node.
-    /// </summary>
+    /// <inheritdoc/>
     public ICollection<Part> Parts {
         set => PartsList.Add([.. value]);
     }
 
-    /// <summary>
-    /// Gets or sets the PartId.
-    /// </summary>
-    public uint PartId {
-        get => Node->PartId;
+    /// <inheritdoc/>
+    public ushort PartId {
+        get => (ushort) Node->PartId;
         set => Node->PartId = value;
     }
 
-    /// <summary>
-    /// Gets or sets the texture offsets used for fitting the ninegrid texture.
-    /// </summary>
+    /// <inheritdoc/>
     public Vector4 Offsets {
         get => new(Node->TopOffset, Node->BottomOffset, Node->LeftOffset, Node->RightOffset);
         set {
@@ -44,69 +39,47 @@ public unsafe class NineGridNode : NodeBase<AtkNineGridNode> {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the top offset for the texture.
-    /// </summary>
+    /// <inheritdoc/>
     public float TopOffset {
         get => Node->TopOffset;
         set => Node->TopOffset = (short)value;
     }
 
-    /// <summary>
-    /// Gets or sets the bottom offset for the texture.
-    /// </summary>
+    /// <inheritdoc/>
     public float BottomOffset {
         get => Node->BottomOffset;
         set => Node->BottomOffset = (short)value;
     }
 
-    /// <summary>
-    /// Gets or sets the left offset for the texture.
-    /// </summary>
+    /// <inheritdoc/>
     public float LeftOffset {
         get => Node->LeftOffset;
         set => Node->LeftOffset = (short)value;
     }
 
-    /// <summary>
-    /// Gets or sets the right offset for the texture.
-    /// </summary>
+    /// <inheritdoc/>
     public float RightOffset {
         get => Node->RightOffset;
         set => Node->RightOffset = (short)value;
     }
 
-    /// <summary>
-    /// Gets or sets the blend mode.
-    /// </summary>
+    /// <inheritdoc/>
     public uint BlendMode {
         get => Node->BlendMode;
         set => Node->BlendMode = value;
     }
 
-    /// <summary>
-    /// Gets or sets the parts render type.
-    /// </summary>
+    /// <inheritdoc/>
     public byte PartsRenderType {
         get => Node->PartsTypeRenderType;
         set => Node->PartsTypeRenderType = value;
     }
 
-    /// <summary>
-    /// Adds a single part.
-    /// </summary>
+    /// <inheritdoc/>
     public AtkUldPart* AddPart(Part part)
         => PartsList.Add(part);
 
-    /// <summary>
-    /// Adds multiple parts.
-    /// </summary>
-    public void AddPart(params Part[] parts)
-        => PartsList.Add(parts);
-
-    /// <summary>
-    /// Adds a part from provided params.
-    /// </summary>
+    /// <inheritdoc/>
     public void AddPart(string path, Vector2 position, Vector2 size)
         => PartsList.Add(new Part {
             TexturePath = path,

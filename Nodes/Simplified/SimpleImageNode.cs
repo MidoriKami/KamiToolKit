@@ -1,5 +1,6 @@
-﻿using System.Numerics;
+using System.Numerics;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes.Simplified;
 
@@ -9,27 +10,21 @@ namespace KamiToolKit.Nodes.Simplified;
 /// <remarks>
 /// This node is not intended to be used with multiple <see cref="Part" />'s.
 /// </remarks>
-public unsafe class SimpleImageNode : ImageNode {
+public unsafe class SimpleImageNode : ImageNode, ISingleTextureNode, ITextureLoader {
 
-    /// <summary>
-    /// Gets or sets the textures U position.
-    /// </summary>
+    /// <inheritdoc />
     public float U {
         get => PartsList[0]->U;
         set => PartsList[0]->U = (ushort)value;
     }
 
-    /// <summary>
-    /// Gets or sets the textures V position.
-    /// </summary>
+    /// <inheritdoc />
     public float V {
         get => PartsList[0]->V;
         set => PartsList[0]->V = (ushort)value;
     }
 
-    /// <summary>
-    /// Gets or sets the textures coordinates.
-    /// </summary>
+    /// <inheritdoc />
     public Vector2 TextureCoordinates {
         get => new(U, V);
         set {
@@ -38,25 +33,19 @@ public unsafe class SimpleImageNode : ImageNode {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the textures hegith.
-    /// </summary>
+    /// <inheritdoc />
     public float TextureHeight {
         get => PartsList[0]->Height;
         set => PartsList[0]->Height = (ushort)value;
     }
 
-    /// <summary>
-    /// Gets or sets the textures width.
-    /// </summary>
+    /// <inheritdoc />
     public float TextureWidth {
         get => PartsList[0]->Width;
         set => PartsList[0]->Width = (ushort)value;
     }
 
-    /// <summary>
-    /// Gets or sets the textures size.
-    /// </summary>
+    /// <inheritdoc />
     public Vector2 TextureSize {
         get => new(TextureWidth, TextureHeight);
         set {
@@ -65,42 +54,27 @@ public unsafe class SimpleImageNode : ImageNode {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the textures path.
-    /// </summary>
-    /// <remarks>
-    /// Setting this will cause the texture to be loaded from game or from filesystem.
-    /// </remarks>
+    /// <inheritdoc />
     public virtual string TexturePath {
         get => PartsList[0]->LoadedPath;
         set => PartsList[0]->LoadTexture(value);
     }
 
-    /// <summary>
-    /// Gets the textures actual size.
-    /// </summary>
-    /// <remarks>
-    /// Is Vector2.Zero when texture is invalid or not ready.
-    /// </remarks>
+    /// <inheritdoc />
     public Vector2 ActualTextureSize
         => PartsList[0]->LoadedTextureSize;
 
-    /// <summary>
-    /// Loads a texture of the given path, optionally with theme resolution disabled.
-    /// </summary>
+    /// <inheritdoc />
     public void LoadTexture(string path, bool resolveTheme = true)
         => PartsList[0]->LoadTexture(path, resolveTheme);
 
-    /// <summary>
-    /// Loads a specified iconId directly.
-    /// </summary>
+    /// <inheritdoc />
     public void LoadIcon(uint iconId)
         => PartsList[0]->LoadIcon(iconId);
 
     /// <summary>
     /// Constructs a new <see cref="SimpleImageNode"/>
     /// </summary>
-    public SimpleImageNode() {
-        PartsList.Add(new Part());
-    }
+    public SimpleImageNode()
+        => PartsList.Add(new Part());
 }

@@ -1,5 +1,6 @@
-﻿using System.Numerics;
+using System.Numerics;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Nodes;
@@ -8,11 +9,9 @@ namespace KamiToolKit.Nodes;
 /// A specialization of an ImageNode intended for displaying game icons via IconId.
 /// </summary>
 /// <remarks>This node is not intended to be used with multiple <see cref="Part"/>'s.</remarks>
-public unsafe class IconImageNode : SimpleImageNode {
+public unsafe class IconImageNode : SimpleImageNode, IIconImageNode {
 
-    /// <summary>
-    /// Gets or sets the displayed Icon.
-    /// </summary>
+    /// <inheritdoc />
     public uint IconId {
         get;
         set {
@@ -23,15 +22,11 @@ public unsafe class IconImageNode : SimpleImageNode {
         }
     }
 
-    /// <summary>
-    /// Gets if the texture is loaded.
-    /// </summary>
+    /// <inheritdoc />
     public bool IsTextureReady
         => PartsList[0]->IsTextureReady;
 
-    /// <summary>
-    /// Gets the currently loaded iconId
-    /// </summary>
+    /// <inheritdoc />
     public uint? LoadedIconId
         => Node->IconId;
 

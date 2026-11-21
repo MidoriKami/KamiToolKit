@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
@@ -16,6 +16,11 @@ namespace KamiToolKit.Classes;
 /// This version is specifically to be used for ATK/UI events.
 /// </remarks>
 public class CustomEventListener : IDisposable, IAsyncDisposable {
+
+    private readonly unsafe AtkEventListener* eventListener;
+
+    private AtkEventListener.Delegates.ReceiveEvent? receiveEventDelegate;
+    private AtkEventListener.Delegates.ReceiveEvent? receiveEventWrapper;
 
     /// <summary>
     /// Public implicit operator to be able to use this instance as a AtkEventListener* directly.
@@ -51,11 +56,6 @@ public class CustomEventListener : IDisposable, IAsyncDisposable {
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
         => await IFramework.Get().Run(Dispose);
-
-    private readonly unsafe AtkEventListener* eventListener;
-
-    private AtkEventListener.Delegates.ReceiveEvent? receiveEventDelegate;
-    private AtkEventListener.Delegates.ReceiveEvent? receiveEventWrapper;
 
     [UnmanagedCallersOnly] private static void NullSub() { }
 

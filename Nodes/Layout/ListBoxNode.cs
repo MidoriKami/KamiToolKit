@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.BaseTypes;
-using KamiToolKit.BaseTypes.ComponentNode;
 using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
 
@@ -11,7 +10,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// A list layout node that allows anchoring from any corner, and allows setting a border or background color.
 /// </summary>
-public class ListBoxNode : LayoutListNode, IControllerNavigable {
+public class ListBoxNode : LayoutListNode, IListBoxNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -23,78 +22,51 @@ public class ListBoxNode : LayoutListNode, IControllerNavigable {
     /// </summary>
     public BorderNineGridNode Border { get; }
 
-    /// <summary>
-    /// Get or sets the layout anchor position.
-    /// </summary>
-    /// <remarks>
-    /// When set recalculates node layout.
-    /// </remarks>
+    /// <inheritdoc />
     public LayoutAnchor LayoutAnchor {
         get;
         set {
             field = value;
-            RecalculateLayout();
+            UpdateLayout();
         }
     }
 
-    /// <summary>
-    /// Gets or sets whether the node should resize to fit its contents.
-    /// </summary>
+    /// <inheritdoc />
     public bool FitContents {
         get;
         set {
             field = value;
-            RecalculateLayout();
+            UpdateLayout();
             Size = GetMinimumSize();
         }
     }
 
-    /// <summary>
-    /// Gets or sets which direction nodes will travel relative to the <see cref="LayoutAnchor"/>.
-    /// </summary>
+    /// <inheritdoc />
     public LayoutOrientation LayoutOrientation {
         get;
         set {
             field = value;
-            RecalculateLayout();
+            UpdateLayout();
         }
     }
 
-    /// <summary>
-    /// Gets or sets the background color.
-    /// </summary>
+    /// <inheritdoc />
     public Vector4 BackgroundColor {
         get => ColorImageNode.Color;
         set => ColorImageNode.Color = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether the background color is shown.
-    /// </summary>
+    /// <inheritdoc />
     public bool ShowBackground {
         get => ColorImageNode.IsVisible;
         set => ColorImageNode.IsVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether the border is shown.
-    /// </summary>
+    /// <inheritdoc />
     public bool ShowBorder {
         get => Border.IsVisible;
         set => Border.IsVisible = value;
     }
-
-    /// <inheritdoc/>
-    public int NavLeft { get; set; }
-
-    /// <inheritdoc/>
-    public int NavRight { get; set; }
-
-    /// <inheritdoc/>
-    public int NavUp { get; set; }
-
-    /// <inheritdoc/>
-    public int NavDown { get; set; }
 
     /// <inheritdoc/>
     public override float Height {
@@ -178,12 +150,13 @@ public class ListBoxNode : LayoutListNode, IControllerNavigable {
 
         Border.Size = Size + new Vector2(30.0f, 30.0f);
         Border.Position = -new Vector2(15.0f, 15.0f);
-
-        RecalculateLayout();
     }
 
     /// <inheritdoc/>
-    protected override void OnRecalculateLayout() {
+    protected override void OnUpdateSizes() { }
+
+    /// <inheritdoc/>
+    protected override void OnUpdateLayout() {
         var runningPosition = LayoutOrientation switch {
             LayoutOrientation.Vertical when LayoutAnchor is LayoutAnchor.TopLeft or LayoutAnchor.TopRight
                 => GetLayoutStartPosition() + new Vector2(0.0f, FirstItemSpacing),
@@ -251,7 +224,7 @@ public class ListBoxNode : LayoutListNode, IControllerNavigable {
     }
 
     /// <inheritdoc/>
-    protected override void OnRecalculateNavigation() {
+    protected override void OnUpdateControllerNav() {
         var componentNodes = NodeList.OfType<ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
 
@@ -288,24 +261,24 @@ public class ListBoxNode : LayoutListNode, IControllerNavigable {
             }
 
             foreach (var (index, node) in componentNodes.Index()) {
-                node.NavIndex = (byte) (index + NavIndex);
+                node.NavIndex = index + NavIndex;
                 node.NavLeft = NavLeft;
                 node.NavRight = NavRight;
 
                 // First Element
                 if (index is 0) {
-                    node.NavUp = (byte) (componentNodes.Count - 1 + NavIndex);
+                    node.NavUp = componentNodes.Count - 1 + NavIndex;
                 }
                 else {
-                    node.NavUp = (byte) (index - 1 + NavIndex);
+                    node.NavUp = index - 1 + NavIndex;
                 }
 
                 // Last Element
                 if (index == componentNodes.Count - 1) {
-                    node.NavDown = (byte) NavIndex;
+                    node.NavDown = NavIndex;
                 }
                 else {
-                    node.NavDown = (byte) (index + 1 + NavIndex);
+                    node.NavDown = index + 1 + NavIndex;
                 }
             }
         }

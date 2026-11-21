@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 
 namespace KamiToolKit.Enums;
 
 /// <summary>
-/// Enumeration of AtkResNode DrawFlags. ClientStructs didn't
+/// Enumeration of AtkResNode DrawFlags.
 /// </summary>
 [Flags]
 public enum DrawFlags : uint {
+
     /// <summary>
     /// No flags active.
     /// </summary>
@@ -53,7 +54,7 @@ public enum DrawFlags : uint {
     DisableTimelineLabel = 0x100,
 
     /// <summary>
-    /// Causes this node to change the games cursor to a finger pointer cursor when hovering this node.
+    /// Causes this node to change the game's cursor to a finger pointer cursor when hovering this node.
     /// </summary>
     ClickableCursor = 0x100000,
 
@@ -63,12 +64,12 @@ public enum DrawFlags : uint {
     RenderOnTop = 0x200000,
 
     /// <summary>
-    /// Causes this node to change the game cursor to a text input syncom when hovering this node.
+    /// Causes this node to change the game cursor to a text input symbol when hovering this node.
     /// </summary>
     TextInputCursor = 0x400000,
 
     /// <summary>
-    /// Calculates collision for this node spherically based on its width/height
+    /// Calculates collision for this node spherically based on its width/height.
     /// </summary>
     UseEllipticalCollision = 0x800000,
 

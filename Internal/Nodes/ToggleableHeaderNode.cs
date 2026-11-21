@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
@@ -12,48 +13,7 @@ namespace KamiToolKit.Internal.Nodes;
 /// <summary>
 /// Node for use with <see cref="CollapsingHeaderNode"/> and <see cref="TreeListNode{T,TU}"/>, to represent a clickable header node.
 /// </summary>
-internal class ToggleableHeaderNode : SimpleComponentNode {
-
-    /// <summary>
-    /// Gets or sets if this node should show as collapsed.
-    /// </summary>
-    public bool IsCollapsed {
-        get;
-        set {
-            if (field == value) return;
-
-            field = value;
-            if (value) {
-                Collapse();
-            }
-            else {
-                Uncollapse();
-            }
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the displayed string.
-    /// </summary>
-    public ReadOnlySeString String {
-        get => LabelTextNode.String;
-        set => LabelTextNode.String = value;
-    }
-
-    /// <summary>
-    /// Action that is invoked when the header node is collapsed.
-    /// </summary>
-    public Action? OnCollapse { get; set; }
-
-    /// <summary>
-    /// Action that is invoked when the header node is uncollapsed.
-    /// </summary>
-    public Action? OnUncollapse { get; set; }
-
-    /// <summary>
-    /// Action that is invoked when the header is either collapsed or uncollapsed.
-    /// </summary>
-    public Action<bool>? OnToggle { get; set; }
+internal class ToggleableHeaderNode : SimpleComponentNode, IToggleableHeaderNode {
 
     /// <summary>
     /// Gets the node used to display the body texture of this node.
@@ -69,6 +29,103 @@ internal class ToggleableHeaderNode : SimpleComponentNode {
     /// Gets the image node used to display the collapsed/uncollapsed arrow node.
     /// </summary>
     public ImageNode ToggleArrowImageNode { get; }
+
+    /// <inheritdoc />
+    public bool IsCollapsed {
+        get;
+        set {
+            if (field == value) return;
+
+            field = value;
+            if (value) {
+                Collapse();
+            }
+            else {
+                Uncollapse();
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public ReadOnlySeString String {
+        get => LabelTextNode.String;
+        set => LabelTextNode.String = value;
+    }
+
+    /// <inheritdoc />
+    public Vector4 TextColor {
+        get => LabelTextNode.TextColor;
+        set => LabelTextNode.TextColor = value;
+    }
+
+    /// <inheritdoc />
+    public Vector4 TextOutlineColor {
+        get => LabelTextNode.TextOutlineColor;
+        set => LabelTextNode.TextOutlineColor = value;
+    }
+
+    /// <inheritdoc />
+    public AlignmentType AlignmentType {
+        get => LabelTextNode.AlignmentType;
+        set => LabelTextNode.AlignmentType = value;
+    }
+
+    /// <inheritdoc />
+    public FontType FontType {
+        get => LabelTextNode.FontType;
+        set => LabelTextNode.FontType = value;
+    }
+
+    /// <inheritdoc />
+    public TextFlags TextFlags {
+        get => LabelTextNode.TextFlags;
+        set => LabelTextNode.TextFlags = value;
+    }
+
+    /// <inheritdoc />
+    public uint FontSize {
+        get => LabelTextNode.FontSize;
+        set => LabelTextNode.FontSize = value;
+    }
+
+    /// <inheritdoc />
+    public Action? OnCollapsed { get; set; }
+
+    /// <inheritdoc />
+    public Action? OnUncollapsed { get; set; }
+
+    /// <inheritdoc />
+    public Action<bool>? OnCollapseToggled { get; set; }
+
+    /// <inheritdoc />
+    public void Collapse(bool playSoundEffect = true) {
+        if (!IsEnabled) return;
+
+        ToggleArrowImageNode.PartId = 1;
+
+        OnCollapsed?.Invoke();
+        OnCollapseToggled?.Invoke(false);
+    }
+
+    /// <inheritdoc />
+    public void Uncollapse(bool playSoundEffect = true) {
+        if (!IsEnabled) return;
+
+        ToggleArrowImageNode.PartId = 0;
+
+        OnUncollapsed?.Invoke();
+        OnCollapseToggled?.Invoke(true);
+    }
+
+    /// <inheritdoc />
+    public void Toggle(bool playSoundEffect = true) {
+        if (IsCollapsed) {
+            Uncollapse(playSoundEffect);
+        }
+        else {
+            Collapse(playSoundEffect);
+        }
+    }
 
     public unsafe ToggleableHeaderNode() {
         CollisionNode.ShowClickableCursor = true;
@@ -221,7 +278,6 @@ internal class ToggleableHeaderNode : SimpleComponentNode {
 
             case AtkEventType.MouseUp when IsCollapsed:
                 IsCollapsed = false;
-                Uncollapse();
                 break;
 
             case AtkEventType.MouseDown when !IsCollapsed:
@@ -230,26 +286,7 @@ internal class ToggleableHeaderNode : SimpleComponentNode {
 
             case AtkEventType.MouseUp when !IsCollapsed:
                 IsCollapsed = true;
-                Collapse();
                 break;
         }
-    }
-
-    private void Collapse() {
-        if (!IsEnabled) return;
-
-        ToggleArrowImageNode.PartId = 1;
-
-        OnCollapse?.Invoke();
-        OnToggle?.Invoke(false);
-    }
-
-    private void Uncollapse() {
-        if (!IsEnabled) return;
-
-        ToggleArrowImageNode.PartId = 0;
-
-        OnUncollapse?.Invoke();
-        OnToggle?.Invoke(true);
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
@@ -20,6 +20,10 @@ public class AddonController : AddonController<AtkUnitBase>;
 /// The primary feature is automatic unloading, and reloading when an addon loads/unloads/reloads.
 /// </summary>
 public class AddonController<T> : IAddonEventController<T>, IAsyncDisposable, IDisposable where T : unmanaged {
+
+    private unsafe T* AddonPointer => (T*)RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
+
+    private bool IsEnabled { get; set; }
 
     /// <summary>
     /// The addon name to bind to.
@@ -197,8 +201,4 @@ public class AddonController<T> : IAddonEventController<T>, IAsyncDisposable, ID
                 return;
         }
     }
-
-    private unsafe T* AddonPointer => (T*)RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
-
-    private bool IsEnabled { get; set; }
 }

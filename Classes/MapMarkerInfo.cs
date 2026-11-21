@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
 using Lumina.Text.ReadOnly;
 

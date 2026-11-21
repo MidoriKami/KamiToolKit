@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
@@ -8,6 +8,9 @@ using Serilog;
 namespace KamiToolKit.BaseTypes;
 
 public partial class NativeAddon : IDisposable, IAsyncDisposable {
+
+    internal static List<NativeAddon> CreatedAddons { get; } = [];
+    private bool isDisposed;
 
     /// <summary>
     /// Triggers the disposal of this addon. <br/> <br/>
@@ -97,7 +100,4 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
 
         CreatedAddons.Clear();
     }
-
-    internal static List<NativeAddon> CreatedAddons { get; } = [];
-    private bool isDisposed;
 }

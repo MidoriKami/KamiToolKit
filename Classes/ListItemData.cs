@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace KamiToolKit.Classes;

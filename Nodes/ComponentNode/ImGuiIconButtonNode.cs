@@ -1,5 +1,6 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 
 namespace KamiToolKit.Nodes;
@@ -7,7 +8,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Specialization of a button that uses a IDalamudTextureWrap or file from disk as a button.
 /// </summary>
-public class ImGuiIconButtonNode : ButtonBase {
+public class ImGuiIconButtonNode : ButtonBase, IImGuiIconButtonNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -19,37 +20,24 @@ public class ImGuiIconButtonNode : ButtonBase {
     /// </summary>
     public ImGuiImageNode ImageNode { get; }
 
-    /// <summary>
-    /// Gets or sets whether the border/background of the button should be shown.
-    /// </summary>
+    /// <inheritdoc/>
     public bool ShowBackground {
         get => BackgroundNode.IsVisible;
         set => BackgroundNode.IsVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets the texture path for the image to display.
-    /// Setting this will trigger it to be loaded from disk/game.
-    /// </summary>
+    /// <inheritdoc/>
     public string TexturePath {
         get => ImageNode.TexturePath;
         set => ImageNode.TexturePath = value;
     }
 
-    /// <summary>
-    /// Use a texture that has already been created.
-    /// </summary>
-    /// <remarks>
-    /// This texture must continue to exist during the life of this node.
-    /// </remarks>
+    /// <inheritdoc/>
     public void LoadTexture(IDalamudTextureWrap texture)
         => ImageNode.LoadTexture(texture);
 
-    /// <summary>
-    /// Loads a texture from the provided path, if the path is a game path will load from game files.
-    /// Else the texture will be loaded from disk.
-    /// </summary>
-    public void LoadTextureFromFile(string path)
+    /// <inheritdoc/>
+    public void LoadTexture(string path)
         => ImageNode.TexturePath = path;
 
 

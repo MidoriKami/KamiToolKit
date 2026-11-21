@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace KamiToolKit.Enums;
 
@@ -6,6 +6,7 @@ namespace KamiToolKit.Enums;
 /// 2-dimensional anchor positioning. For use with <see cref="Nodes.ListBoxNode"/>
 /// </summary>
 public enum LayoutAnchor {
+
     /// <summary>
     /// Anchor to the top left corner.
     /// </summary>

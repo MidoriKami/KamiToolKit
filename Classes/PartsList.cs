@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Text.ReadOnly;

@@ -1,61 +1,40 @@
-﻿using System.Linq;
-using KamiToolKit.BaseTypes.ComponentNode;
+using System.Linq;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// A horizontal <see cref="LayoutListNode"/> that will evenly divide its area among its children nodes.
 /// </summary>
-public class HorizontalFlexNode : LayoutListNode {
+public class HorizontalFlexNode : LayoutListNode, IHorizontalFlexNode {
 
-    /// <summary>
-    /// Gets or sets the alignment flags for adjusting children.
-    /// </summary>
+    /// <inheritdoc />
     public FlexFlags AlignmentFlags { get; set; } = FlexFlags.FitContentHeight;
+
+    /// <inheritdoc />
+    public LayoutFill LayoutFill { get; set; } = LayoutFill.Horizontal;
 
     /// <inheritdoc/>
     public override float Width {
         get => base.Width;
         set {
             base.Width = value;
-            RecalculateLayout();
+            UpdateLayout();
         }
     }
 
-    /// <summary>
-    /// Gets or sets the up nav index.
-    /// </summary>
-    public int NavUp { get; set; }
-
-    /// <summary>
-    /// Gets or sets the down nav index.
-    /// </summary>
-    public int NavDown { get; set; }
-
     /// <inheritdoc />
-    protected override void OnRecalculateLayout() {
-        var step = Width / NodeList.Count;
-
-        if (NodeList.Count != 0 && AlignmentFlags.HasFlag(FlexFlags.FitContentHeight)) {
+    protected override void OnUpdateSizes() {
+        if (AlignmentFlags.HasFlag(FlexFlags.FitContentHeight)) {
             Height = NodeList.Max(node => node.Height);
         }
 
+        var step = Width / NodeList.Count;
         foreach (var index in Enumerable.Range(0, NodeList.Count)) {
-
-            if (AlignmentFlags.HasFlag(FlexFlags.CenterHorizontally)) {
-                NodeList[index].X = step * index + step / 2.0f - NodeList[index].Width / 2.0f;
-            }
-            else {
-                NodeList[index].X = step * index;
-            }
-
             if (AlignmentFlags.HasFlag(FlexFlags.FitHeight)) {
                 NodeList[index].Height = Height;
-            }
-
-            if (AlignmentFlags.HasFlag(FlexFlags.CenterVertically)) {
-                NodeList[index].Y = Height / 2 - NodeList[index].Height / 2;
             }
 
             if (AlignmentFlags.HasFlag(FlexFlags.FitWidth)) {
@@ -65,7 +44,24 @@ public class HorizontalFlexNode : LayoutListNode {
     }
 
     /// <inheritdoc />
-    protected override void OnRecalculateNavigation() {
+    protected override void OnUpdateLayout() {
+        var step = Width / NodeList.Count;
+        foreach (var index in Enumerable.Range(0, NodeList.Count)) {
+            if (AlignmentFlags.HasFlag(FlexFlags.CenterHorizontally)) {
+                NodeList[index].X = step * index + step / 2.0f - NodeList[index].Width / 2.0f;
+            }
+            else {
+                NodeList[index].X = step * index;
+            }
+
+            if (AlignmentFlags.HasFlag(FlexFlags.CenterVertically)) {
+                NodeList[index].Y = Height / 2 - NodeList[index].Height / 2;
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    protected override void OnUpdateControllerNav() {
         var componentNodes = NodeList.OfType<ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
 

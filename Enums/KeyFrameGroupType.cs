@@ -1,10 +1,11 @@
-﻿namespace KamiToolKit.Enums;
+namespace KamiToolKit.Enums;
 
 /// <summary>
 /// Enumeration for key frame group types,
 /// this represents the array index that stores these types of keyframes.
 /// </summary>
 public enum KeyFrameGroupType {
+
     /// <summary>
     /// Position
     /// </summary>

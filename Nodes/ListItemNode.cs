@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+using System;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
 using KamiToolKit.Internal.Classes;
 
@@ -28,6 +29,11 @@ public abstract class ListItemNode<T> : SelectableNode {
     }
 
     /// <summary>
+    /// Gets the list's reference data. Often this will be a reference to a configuration data object.
+    /// </summary>
+    public object? ReferenceData { get; set; }
+
+    /// <summary>
     /// Update function that is called each frame the list is called to be updated.
     /// </summary>
     /// <remarks>
@@ -45,6 +51,12 @@ public abstract class ListItemNode<T> : SelectableNode {
     /// Processes building controller navigation.
     /// </summary>
     public virtual void ProcessNav(int index, int up, int down, int left, int right) { }
+
+    /// <summary>
+    /// Gets or sets a callback that can optionally be invoked to inform the containing list that
+    /// this node's state was changed, and to trigger <see cref="ListNode{T,TU}.OnItemStateChanged"/>.
+    /// </summary>
+    public Action<ListItemNode<T>>? OnStateChanged { get; set; }
 
     /// <summary>
     /// Prevents this selectable node from being highlightable or clickable.
@@ -65,7 +77,7 @@ public abstract class ListItemNode<T> : SelectableNode {
     }
 
     /// <summary>
-    /// Gets a value indicating whether internations with this node should be allowed.
+    /// Gets a value indicating whether interactions with this node should be allowed.
     /// </summary>
     public bool InteractionsDisabled { get; private set; }
 }

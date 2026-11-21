@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Nodes;
@@ -10,7 +11,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// A custom component node representing an alpha slider.
 /// </summary>
-public unsafe class AlphaBarNode : ResNode {
+public unsafe class AlphaBarNode : ResNode, IAlphaBarNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -27,15 +28,10 @@ public unsafe class AlphaBarNode : ResNode {
     /// </summary>
     public ImGuiImageNode AlphaBarSelectorNode { get; }
 
-    /// <summary>
-    /// Action to be invoked when the alpha value is changed. Provides the new value.
-    /// </summary>
-    /// <remarks>
-    /// Alpha value is in the range of 0.0f to 1.0f.
-    /// </remarks>
+    /// <inheritdoc />
     public Action<float>? OnAlphaChanged { get; init; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override Vector4 Color {
         get => AlphaBarGradientNode.Color;
         set {
@@ -44,7 +40,7 @@ public unsafe class AlphaBarNode : ResNode {
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override ColorHelpers.HsvaColor ColorHsva {
         get => AlphaBarGradientNode.MultiplyColorHsva;
         set {

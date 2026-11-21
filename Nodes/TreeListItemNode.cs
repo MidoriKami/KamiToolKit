@@ -1,9 +1,10 @@
-﻿namespace KamiToolKit.Nodes;
+namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// Abstract class for use with <see cref="TreeListNode{T,TU}"/>
 /// </summary>
 public abstract class TreeListItemNode<T> : SelectableNode {
+
     /// <summary>
     /// Gets or sets the item data for this node.
     /// </summary>

@@ -1,6 +1,7 @@
-﻿using System.Linq;
-using KamiToolKit.BaseTypes.ComponentNode;
+using System.Linq;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
@@ -8,19 +9,17 @@ namespace KamiToolKit.Nodes;
 /// A <see cref="LayoutListNode"/> that represents a horizontally growing list of nodes.
 /// Can be anchored on left side or right side.
 /// </summary>
-public class HorizontalListNode : LayoutListNode {
+public class HorizontalListNode : LayoutListNode, IHorizontalListNode {
 
-    /// <summary>
-    /// Gets or sets the alignment used when calculating layout.
-    /// </summary>
-    /// <remarks>
-    /// Setting triggers layout recalculation.
-    /// </remarks>
+    /// <inheritdoc/>
+    public LayoutFill LayoutFill { get; set; } = LayoutFill.Horizontal;
+
+    /// <inheritdoc/>
     public HorizontalListAnchor Alignment {
         get;
         set {
             field = value;
-            RecalculateLayout();
+            UpdateLayout();
         }
     }
 
@@ -29,47 +28,44 @@ public class HorizontalListNode : LayoutListNode {
         get => base.Width;
         set {
             base.Width = value;
-            RecalculateLayout();
+            UpdateLayout();
         }
     }
 
-    /// <summary>
-    /// Adjusts contained nodes heights to match this nodes height
-    /// </summary>
+    /// <inheritdoc/>
     public bool FitHeight { get; set; }
 
-    /// <summary>
-    /// Resizes the horizontal list node to fit the height of all contents
-    /// </summary>
+    /// <inheritdoc/>
     public bool FitToContentHeight { get; set; }
 
-    /// <summary>
-    /// Resizes the horizontal list node to fit the width of all contents
-    /// </summary>
+    /// <inheritdoc/>
     public bool FitToContentWidth { get; set; }
 
-    /// <summary>
-    /// Gets the amount of space remaining in this node.
-    /// </summary>
+    /// <inheritdoc/>
     public float AreaRemaining
         => Width - NodeList.Sum(node => node.Width + ItemSpacing) - ItemSpacing;
 
-    /// <summary>
-    /// Gets or sets the up nav index.
-    /// </summary>
-    public int NavUp { get; set; }
-
-    /// <summary>
-    /// Gets or sets the down nav index.
-    /// </summary>
-    public int NavDown { get; set; }
-
     /// <inheritdoc />
-    protected override void OnRecalculateLayout() {
+    protected override void OnUpdateSizes() {
         if (FitToContentWidth) {
             base.Width = NodeList.Sum(node => node.IsVisible ? node.Width + ItemSpacing : 0.0f) + FirstItemSpacing - ItemSpacing;
         }
 
+        foreach (var node in NodeList) {
+            if (!node.IsVisible) continue;
+
+            if (FitHeight) {
+                node.Height = Height;
+            }
+        }
+
+        if (FitToContentHeight) {
+            Height = NodeList.Max(node => node.Height);
+        }
+    }
+
+    /// <inheritdoc />
+    protected override void OnUpdateLayout() {
         var startX = Alignment switch {
             HorizontalListAnchor.Left => 0.0f + FirstItemSpacing,
             HorizontalListAnchor.Right => Width - FirstItemSpacing,
@@ -89,19 +85,11 @@ public class HorizontalListNode : LayoutListNode {
             if (Alignment is HorizontalListAnchor.Left) {
                 startX += node.Width + ItemSpacing;
             }
-
-            if (FitHeight) {
-                node.Height = Height;
-            }
-        }
-
-        if (FitToContentHeight) {
-            Height = NodeList.Max(node => node.Height);
         }
     }
 
     /// <inheritdoc />
-    protected override void OnRecalculateNavigation() {
+    protected override void OnUpdateControllerNav() {
         var componentNodes = NodeList.OfType<ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
 

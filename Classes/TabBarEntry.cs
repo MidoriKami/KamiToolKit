@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 
@@ -32,5 +32,5 @@ public class TabBarEntry {
     /// <summary>
     /// The callback when this tab is clicked.
     /// </summary>
-    public required Action OnClick { get; set; }
+    public Action? OnClick { get; set; }
 }

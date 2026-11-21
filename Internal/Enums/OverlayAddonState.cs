@@ -1,4 +1,4 @@
-﻿namespace KamiToolKit.Internal.Enums;
+namespace KamiToolKit.Internal.Enums;
 
 internal enum OverlayAddonState {
     None,

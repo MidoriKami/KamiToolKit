@@ -16,6 +16,32 @@ namespace KamiToolKit.BaseTypes;
 /// </summary>
 public abstract unsafe partial class NodeBase : IDisposable {
 
+    internal const uint NodeIdBase = 100_000_000;
+    internal static uint CurrentOffset;
+
+    internal static List<NodeBase> CreatedNodes { get; } = [];
+
+    internal abstract AtkResNode* ResNode { get; }
+    internal bool IsAddonRootNode;
+
+    /// <summary>
+    /// Indicates whether this instance has already been disposed.
+    /// </summary>
+    /// <remarks>
+    /// When overriding OnDisposed, always include this before executing any code:
+    /// <code>
+    /// if (IsDisposed) return;
+    /// </code>
+    /// </remarks>
+    protected bool IsDisposed { get; private set; }
+
+    private static int logIndent = -1;
+
+    private AtkResNode.Delegates.Destroy destroyFunction = null!;
+
+    private AtkResNode.AtkResNodeVirtualTable* originalVirtualTable;
+    private AtkResNode.AtkResNodeVirtualTable* modifiedVirtualTable;
+
     /// <summary>
     /// Implicit operator to convert this instance to a AtkResNode* for cleaner interop.
     /// </summary>
@@ -30,16 +56,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
     /// Implicit operator to convert this instance to a nint node pointer.
     /// </summary>
     public static implicit operator nint(NodeBase node) => (nint)node.ResNode;
-
-    /// <summary>
-    /// Gets the list of all allocated nodes for this KamiToolKit instance.
-    /// </summary>
-    internal static List<NodeBase> CreatedNodes { get; } = [];
-
-    /// <summary>
-    /// Indicates whether this instance has already been disposed.
-    /// </summary>
-    protected bool IsDisposed { get; private set; }
 
     /// <summary>
     /// Disposes this instance. Has double dispose guards.
@@ -100,19 +116,6 @@ public abstract unsafe partial class NodeBase : IDisposable {
             logIndent--;
         }
     }
-
-    internal const uint NodeIdBase = 100_000_000;
-    internal static uint CurrentOffset;
-
-    internal abstract AtkResNode* ResNode { get; }
-    internal bool IsAddonRootNode;
-
-    private static int logIndent = -1;
-
-    private AtkResNode.Delegates.Destroy destroyFunction = null!;
-
-    private AtkResNode.AtkResNodeVirtualTable* originalVirtualTable;
-    private AtkResNode.AtkResNodeVirtualTable* modifiedVirtualTable;
 
     private static void LogIndented(string message, bool enableLogging) {
         if (!enableLogging) return;
@@ -182,7 +185,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
     }
 
     /// <summary>
-    /// Replaces the nodes entire virtual table to ensure that C#'s managed space gets notified of the games unmanaged node dtor.
+    /// Replaces this node's entire virtual table to ensure that C#'s managed space gets notified of the game's unmanaged node dtor.
     /// </summary>
     protected void BuildVirtualTable() {
         // Back up original destructor pointer
@@ -221,7 +224,7 @@ public abstract unsafe partial class NodeBase : IDisposable {
 
     // To be invoked from NodeBase.Dispose(bool, bool).
     /// <summary>
-    /// Invokes the original games destroy function without calling back to the native disposal method.
+    /// Invokes the original game's destroy function without calling back to the native disposal method.
     /// </summary>
     /// <remarks>
     /// This is intended to be used from <see cref="NodeBase"/> after the managed disposal functions have been invoked.

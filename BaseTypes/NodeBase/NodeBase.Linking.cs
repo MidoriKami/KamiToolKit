@@ -14,6 +14,13 @@ namespace KamiToolKit.BaseTypes;
 
 public abstract unsafe partial class NodeBase {
 
+    internal readonly List<NodeBase> ChildNodes = [];
+    private NodeBase? parentNode;
+    private bool suppressAddonUpdate;
+
+    internal AtkUldManager* ParentUldManager { get; set; }
+    internal AtkUnitBase* ParentAddon { get; private set; }
+
     /// <summary>
     /// Attaches this node to targetAddon's root node using targetPosition as the relative positioning.
     /// </summary>
@@ -90,6 +97,10 @@ public abstract unsafe partial class NodeBase {
 
         parentNode = targetAddon.RootNode;
         parentNode.ChildNodes.Add(this);
+
+        // We are attaching to an addon directly, start id at base id.
+        var nextId = NodeIdBase;
+        SetNodeIds(this, ref nextId);
     }
 
     private void PerformManagedAttach(NodeBase? targetNode, NodePosition targetPosition) {
@@ -121,6 +132,10 @@ public abstract unsafe partial class NodeBase {
 
         parentNode = targetNode;
         parentNode.ChildNodes.Add(this);
+
+        // We are attaching to an existing NodeBase,
+        // find the max id for that nodes tree, and then adjust our child ids.
+        AdjustChildNodeIdsFromParent();
     }
 
     private void PerformNativeAttach(AtkResNode* targetNode, NodePosition targetPosition) {
@@ -162,6 +177,13 @@ public abstract unsafe partial class NodeBase {
         NodeLinker.AttachNode(this, targetNode, targetPosition);
         UpdateParentAddon(targetNode);
         UpdateNative();
+
+        // We need to set id's but only if the target is a native node,
+        // if its custom we already set them by now.
+        if (targetNode->NodeId < NodeIdBase) {
+            var nextId = NodeIdBase;
+            SetNodeIds(this, ref nextId);
+        }
     }
 
     internal void ReattachNode(AtkResNode* newTarget) {
@@ -300,22 +322,61 @@ public abstract unsafe partial class NodeBase {
     }
 
     internal static IEnumerable<NodeBase> GetLocalChildren(NodeBase parent) {
-        if (parent is ComponentNode.ComponentNode) yield break;
+        if (parent is ComponentNode) yield break;
 
         foreach (var child in parent.ChildNodes) {
             yield return child;
 
-            if (child is ComponentNode.ComponentNode) continue;
+            if (child is ComponentNode) continue;
             foreach (var childNode in GetLocalChildren(child)) {
                 yield return childNode;
             }
         }
     }
 
-    internal readonly List<NodeBase> ChildNodes = [];
-    private NodeBase? parentNode;
-    private bool suppressAddonUpdate;
+    private static void SetNodeIds(NodeBase node, ref uint nextId) {
+        if (node.NodeId < NodeIdBase) return;
 
-    internal AtkUldManager* ParentUldManager { get; set; }
-    internal AtkUnitBase* ParentAddon { get; private set; }
+        node.NodeId = nextId++;
+
+        AdjustChildIds(node, ref nextId);
+    }
+
+    private static void AdjustChildIds(NodeBase node, ref uint nextId) {
+
+        foreach (var childNode in node.ChildNodes) {
+            if (childNode.NodeId < NodeIdBase) continue;
+
+            childNode.NodeId = nextId++;
+
+            // If component, set the component node itself, but then reset index
+            // so its children start after the highest native child ID and grow sequentially.
+            if (childNode is ComponentNode) {
+                uint childNextId = 1;
+
+                // The component might have some nodes that have fixed ID's, but may also have other nodes without fixed ids.
+                // Start the highest fixed id value.
+                foreach (var grandChild in childNode.ChildNodes) {
+                    if (grandChild.NodeId >= NodeIdBase) continue;
+                    childNextId = Math.Max(childNextId, grandChild.NodeId + 1);
+                }
+                AdjustChildIds(childNode, ref childNextId);
+            }
+            else {
+                AdjustChildIds(childNode, ref nextId);
+            }
+        }
+    }
+
+    private void AdjustChildNodeIdsFromParent() {
+        if (parentNode is null) return;
+
+        var maxId = parentNode.ChildNodes
+            .SelectMany(child => GetAllChildren(child).Prepend(child).Select(n => n.NodeId))
+            .DefaultIfEmpty(parentNode.NodeId)
+            .Max();
+
+        var nextId = maxId + 1;
+        SetNodeIds(this, ref nextId);
+    }
 }

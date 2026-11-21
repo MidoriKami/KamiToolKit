@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 using Lumina.Data.Parsing.Uld;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
@@ -17,7 +19,7 @@ namespace KamiToolKit.Nodes;
 /// </summary>
 /// <typeparam name="T">The data model to use.</typeparam>
 /// <typeparam name="TU">The view to render the data models data.</typeparam>
-public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : ListItemNode<T>, IListItemNode, new() {
+public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T, TU>, ILayoutFiller where TU : ListItemNode<T>, IListItemNode, new() {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -45,6 +47,9 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     public TextNode NoResultsTextNode { get; }
 
     /// <inheritdoc/>
+    public LayoutFill LayoutFill { get; set; } = LayoutFill.Horizontal;
+
+    /// <inheritdoc/>
     public int NavIndex { get; set; }
 
     /// <inheritdoc/>
@@ -59,24 +64,40 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     /// <inheritdoc/>
     public int NavDown { get; set; }
 
-    /// <summary>
-    /// Gets or sets whether the "No results found." placeholder text should show when there are no elements.
-    /// </summary>
-    public bool ShowNoResultsPlaceholder { get; set; } = true;
+    /// <inheritdoc/>
+    public bool ShowPlaceholderString { get; set; } = true;
 
-    /// <summary>
-    /// Gets or sets the action to be invoked when an item is selected.
-    /// </summary>
-    public Action<T?>? OnItemSelected { get; set; }
+    /// <inheritdoc/>
+    public ReadOnlySeString PlaceholderString {
+        get => NoResultsTextNode.String;
+        set => NoResultsTextNode.String = value;
+    }
 
-    /// <summary>
-    /// Gets the list of currently selected items.
-    /// </summary>
-    public List<T> SelectedItems { get; private set; } = [];
+    /// <inheritdoc/>
+    public uint PlaceholderStringTextId {
+        get => NoResultsTextNode.TextId;
+        set => NoResultsTextNode.TextId = value;
+    }
 
-    /// <summary>
-    /// Gets or sets the item spacing.
-    /// </summary>
+    /// <inheritdoc/>
+    public NodeData.SheetType PlaceHolderStringSheetType {
+        get => NoResultsTextNode.SheetType;
+        set => NoResultsTextNode.SheetType = value;
+    }
+
+    /// <inheritdoc/>
+    public Action<T>? OnOptionSelected { get; set; }
+
+    /// <inheritdoc/>
+    public Action<TU, T>? OnItemStateChanged { get; set; }
+
+    /// <inheritdoc/>
+    public object? NodeReferenceData { get; set; }
+
+    /// <inheritdoc/>
+    public List<T> SelectedOptions { get; private set; } = [];
+
+    /// <inheritdoc/>
     public float ItemSpacing {
         get;
         set {
@@ -85,18 +106,14 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         }
     }
 
-    /// <summary>
-    /// When updating <see cref="OptionsList"/>, automatically resets scroll to the top.
-    /// </summary>
-    /// <remarks>
-    /// This may be undesirable if the list is being constantly updated.
-    /// </remarks>
+    /// <inheritdoc/>
     public bool AutoResetScroll { get; set; } = true;
 
-    /// <summary>
-    /// Gets or sets the options list that is used for rendering.
-    /// </summary>
-    public required List<T> OptionsList {
+    /// <inheritdoc/>
+    public bool EnableSelection { get; set; } = true;
+
+    /// <inheritdoc/>
+    public List<T> Options {
         get;
         set {
             field = value;
@@ -110,7 +127,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
                 RecalculateScroll();
             }
 
-            NoResultsTextNodeContainer.IsVisible = value.Count is 0 && ShowNoResultsPlaceholder;
+            NoResultsTextNodeContainer.IsVisible = value.Count is 0 && ShowPlaceholderString;
 
             if (AutoResetScroll) {
                 ResetScroll();
@@ -118,44 +135,29 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         }
     } = [];
 
-    /// <summary>
-    /// Gets a read-only enumerable for the available option nodes.
-    /// </summary>
+
+    /// <inheritdoc/>
     public IReadOnlyList<TU> OptionNodes => nodeList;
 
-    /// <summary>
-    /// Gets or sets whether multiselect will be allowed.
-    /// </summary>
-    /// <remarks>
-    /// When enabled, the list will not clear the
-    /// </remarks>
+    /// <inheritdoc/>
     public bool AllowMultipleSelection { get; set; }
 
-    /// <summary>
-    /// Resets scroll position back to the top.
-    /// </summary>
-    /// <remarks>
-    /// When changing the list data, you will likely need to invoke this manually.
-    /// </remarks>
+    /// <inheritdoc/>
     public void ResetScroll() {
         scrollPosition = 0;
         ScrollBarNode.ScrollPosition = 0;
         PopulateNodes();
     }
 
-    /// <summary>
-    /// Clears the currently selected item.
-    /// </summary>
+    /// <inheritdoc/>
     public void ClearSelection() {
-        SelectedItems.Clear();
+        SelectedOptions.Clear();
         PopulateNodes();
     }
 
-    /// <summary>
-    /// Updates the data being displayed.
-    /// </summary>
+    /// <inheritdoc/>
     public void Update() {
-        NoResultsTextNodeContainer.IsVisible = !NoResultsTextNode.String.IsEmpty && OptionsList.Count is 0 && ShowNoResultsPlaceholder;
+        NoResultsTextNodeContainer.IsVisible = !NoResultsTextNode.String.IsEmpty && Options.Count is 0 && ShowPlaceholderString;
 
         PopulateNodes();
 
@@ -166,12 +168,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         }
     }
 
-    /// <summary>
-    /// Resets and rebuilds list
-    /// </summary>
-    /// <remarks>
-    /// Use sparingly, this is an expensive operation.
-    /// </remarks>
+    /// <inheritdoc/>
     public void FullRebuild() {
         UpwardsNavNode?.Dispose();
         UpwardsNavNode = null;
@@ -184,8 +181,8 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         }
         nodeList.Clear();
 
-        scrollPosition = Math.Clamp(scrollPosition, 0, Math.Max(OptionsList.Count - nodeCount, 0));
-        SelectedItems.Clear();
+        scrollPosition = Math.Clamp(scrollPosition, 0, Math.Max(Options.Count - nodeCount, 0));
+        SelectedOptions.Clear();
 
         UpwardsNavNode = new ListNavNode {
             Position = new Vector2(0.0f, 0.0f),
@@ -216,7 +213,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         itemHeight = TU.ItemHeight;
 
         ScrollBarNode = new ScrollBarNode {
-            OnValueChanged = OnScrollUpdate,
+            OnScrollChanged = OnScrollUpdate,
             ScrollSpeed = (int)itemHeight,
             HideWhenDisabled = true,
         };
@@ -272,13 +269,25 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
 
         foreach (var index in Enumerable.Range(0, nodeCount)) {
             var node = new TU {
+                EnableSelection = EnableSelection,
                 Size = new Vector2(ScrollBarNode.Bounds.Left - 8.0f, itemHeight),
                 Position = new Vector2(0.0f, index * (itemHeight + ItemSpacing)),
                 OnClick = clickedNode => {
-                    SelectItem(((TU)clickedNode).ItemData);
-                    OnItemSelected?.Invoke(((TU)clickedNode).ItemData);
+                    var itemData = ((TU)clickedNode).ItemData;
+
+                    if (itemData is not null) {
+                        SelectItem(itemData);
+                        OnOptionSelected?.Invoke(itemData);
+                    }
                 },
                 IsVisible = false,
+                ReferenceData = NodeReferenceData,
+            };
+
+            node.OnStateChanged = _ => {
+                if (node.ItemData is not null) {
+                    OnItemStateChanged?.Invoke(node, node.ItemData);
+                }
             };
 
             node.AttachNode(this);
@@ -290,12 +299,12 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         foreach (var (nodeIndex, node) in nodeList.Index()) {
             var dataIndex = scrollPosition + nodeIndex;
 
-            if (dataIndex < OptionsList.Count) {
-                var item = OptionsList[dataIndex];
+            if (dataIndex < Options.Count) {
+                var item = Options[dataIndex];
                 node.ItemData = item;
                 node.IsVisible = true;
                 node.ShowClickableCursor = !node.InteractionsDisabled;
-                node.IsSelected = SelectedItems.Any(selectedItem => GenericUtil.AreEqual(node.ItemData, selectedItem));
+                node.IsSelected = SelectedOptions.Any(selectedItem => GenericUtil.AreEqual(node.ItemData, selectedItem));
             }
             else {
                 node.IsVisible = false;
@@ -308,11 +317,11 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
         if (item is null) return;
 
         if (!AllowMultipleSelection) {
-            SelectedItems.Clear();
+            SelectedOptions.Clear();
         }
 
-        if (!SelectedItems.Remove(item)) {
-            SelectedItems.Add(item);
+        if (!SelectedOptions.Remove(item)) {
+            SelectedOptions.Add(item);
         }
 
         foreach (var node in nodeList) {
@@ -320,13 +329,13 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
                 node.IsSelected = false;
             }
             else {
-                node.IsSelected = SelectedItems.Any(selectedItem => GenericUtil.AreEqual(node.ItemData, selectedItem));
+                node.IsSelected = SelectedOptions.Any(selectedItem => GenericUtil.AreEqual(node.ItemData, selectedItem));
             }
         }
     }
 
     private void RecalculateScroll() {
-        if (OptionsList.Count < nodeCount) {
+        if (Options.Count < nodeCount) {
             ScrollBarNode.ScrollPosition = 0;
             ScrollBarNode.IsEnabled = false;
         }
@@ -363,7 +372,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
             }
         }
 
-        var totalHeight = (int)(OptionsList.Count * (itemHeight + ItemSpacing) + ItemSpacing);
+        var totalHeight = (int)(Options.Count * (itemHeight + ItemSpacing) + ItemSpacing);
         ScrollBarNode.UpdateScrollParams((int)(nodeList.Count * (itemHeight + ItemSpacing)), totalHeight);
         ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
     }
@@ -379,7 +388,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
 
     private void OnMouseWheel(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
         scrollPosition += atkEventData->IsScrollUp ? -1 : 1;
-        scrollPosition = Math.Clamp(scrollPosition, 0, Math.Max(0, OptionsList.Count - nodeCount));
+        scrollPosition = Math.Clamp(scrollPosition, 0, Math.Max(0, Options.Count - nodeCount));
 
         ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
         PopulateNodes();
@@ -410,7 +419,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable where TU : L
     }
 
     private void OnDownNavReceived() {
-        if (scrollPosition < OptionsList.Count - nodeList.Count) {
+        if (scrollPosition < Options.Count - nodeList.Count) {
             DownwardsNavNode?.NavDown = 0;
             scrollPosition++;
             ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));

@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
@@ -25,7 +25,7 @@ public class IconIndicator : ResNode {
             Size = new Vector2(18, 18),
             NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             WrapMode = WrapMode.Stretch,
-            PartId = (uint)(innerNodeId == 5 ? 25 : 30),
+            PartId = (ushort)(innerNodeId == 5 ? 25 : 30),
         };
 
         IconNodeTextureHelper.LoadIconAFrameTexture(IconNode);

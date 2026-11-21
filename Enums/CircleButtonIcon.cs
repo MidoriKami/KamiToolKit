@@ -1,4 +1,4 @@
-﻿using KamiToolKit.Nodes;
+using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Enums;
 
@@ -6,6 +6,7 @@ namespace KamiToolKit.Enums;
 /// Enumeration of available icons for use with <see cref="CircleButtonNode"/>
 /// </summary>
 public enum CircleButtonIcon {
+
     /// <summary>
     /// GearCog
     /// </summary>

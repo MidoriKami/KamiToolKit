@@ -1,4 +1,4 @@
-﻿namespace KamiToolKit.Enums;
+namespace KamiToolKit.Enums;
 
 /// <summary>
 /// Enumeration of available pre-defined fonts to use for <see cref="Nodes.CounterNode"/>

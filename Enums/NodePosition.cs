@@ -4,6 +4,7 @@ namespace KamiToolKit.Enums;
 /// Enum representing a relative position for inserting new nodes into an existing node tree.
 /// </summary>
 public enum NodePosition {
+
     /// <summary>
     /// Inserts as the nodes NextSibling, which will cause it to render underneath the target node.
     /// </summary>

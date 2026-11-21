@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Numerics;
 using Dalamud.Game.ClientState.Conditions;
@@ -14,6 +14,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 using Lumina.Text.ReadOnly;
 
@@ -22,7 +23,7 @@ namespace KamiToolKit.Nodes;
 /// <summary>
 /// Specialization of <see cref="DragDropNode"/> that has handy accessors for things used to represent a hotbar slot.
 /// </summary>
-public partial class HotbarNode : DragDropNode {
+public partial class HotbarNode : DragDropNode, IHotbarNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -34,9 +35,7 @@ public partial class HotbarNode : DragDropNode {
     /// </summary>
     public TextNode ItemCountTextNode { get; }
 
-    /// <summary>
-    /// Updates the hotbar slots current state, cost, icon, and various other fields.
-    /// </summary>
+    /// <inheritdoc/>
     public void Update() {
         UpdateSlotAppearance();
 
@@ -48,25 +47,25 @@ public partial class HotbarNode : DragDropNode {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the keybind that will activate this slot.
-    /// </summary>
+    /// <inheritdoc/>
     public KeySetting? KeyBind { get; set; }
 
-    /// <summary>
-    /// Gets whether this slot is empty.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsEmpty => Payload.Type is 0 or DragDropType.Nothing;
 
-    /// <summary>
-    /// Sets this hotbar slot from the provided payload information.
-    /// </summary>
+    /// <inheritdoc/>
+    public void SetAction(uint actionId) {
+        SetHotbarSlotFromPayload(new DragDropPayload {
+            Type = DragDropType.Action,
+            Int2 = (int) actionId,
+        });
+    }
+
+    /// <inheritdoc/>
     public void SetSlot(DragDropPayload payload)
         => SetHotbarSlotFromPayload(payload);
 
-    /// <summary>
-    /// Sets this hotbar slot to the specific type and id.
-    /// </summary>
+    /// <inheritdoc/>
     public void SetSlot(DragDropType type, uint id) {
         SetHotbarSlotFromPayload(new DragDropPayload {
             Type = type,
@@ -74,20 +73,16 @@ public partial class HotbarNode : DragDropNode {
         });
     }
 
-    /// <summary>
-    /// Clears the data for this hotbar slot.
-    /// </summary>
+    /// <inheritdoc/>
+    public void SetSlot(DragDropType payloadType, int payloadInt)
+        => SetSlot(payloadType, (uint)payloadInt);
+
+    /// <inheritdoc/>
     public unsafe void ClearSlot() {
         Payload.Clear();
         hotbarState->Ctor();
         hotbarData->Clear();
     }
-
-    /// <summary>
-    /// Sets this hotbar slot to the specific type and id.
-    /// </summary>
-    public void SetSlot(DragDropType payloadType, int payloadInt)
-        => SetSlot(payloadType, (uint)payloadInt);
 
     /// <summary>
     /// Function that is called when the associated <see cref="KeyBind"/> is pressed.
@@ -96,16 +91,6 @@ public partial class HotbarNode : DragDropNode {
         OnHotbarNodeClicked(this);
         IconNode.IconExtras.Timeline?.PlayAnimation(3, true);
         lastClickTime = DateTime.UtcNow;
-    }
-
-    /// <summary>
-    /// Sets this hotbar slot to the specified action.
-    /// </summary>
-    public void SetAction(uint actionId) {
-        SetHotbarSlotFromPayload(new DragDropPayload {
-            Type = DragDropType.Action,
-            Int2 = (int) actionId,
-        });
     }
 
     /// <inheritdoc />

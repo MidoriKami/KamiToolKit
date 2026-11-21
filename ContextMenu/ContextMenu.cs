@@ -13,6 +13,18 @@ namespace KamiToolKit.ContextMenu;
 /// </summary>
 public unsafe class ContextMenu : IDisposable {
 
+    // Prevent the return entry from colliding with submenu items
+    private const int SubMenuIndexOffset = 1000;
+
+    private readonly CustomEventInterface contextMenuEventInterface;
+
+    private Dictionary<long, ContextMenuItem> mainMenuEntries = [];
+    private Dictionary<long, ContextMenuSubItem> mainMenuSubMenus = [];
+    private Dictionary<long, ContextMenuItem> subMenuEntries = [];
+
+    private List<ContextMenuItem> Items { get; set; } = [];
+    private IOrderedEnumerable<ContextMenuItem> OrderedItems => Items.OrderBy(item => item.DisplayPriority);
+
     /// <summary>
     /// Adds a menu entry with the specific name and callback function.
     /// </summary>
@@ -169,16 +181,4 @@ public unsafe class ContextMenu : IDisposable {
         returnValue->SetBool(true);
         return returnValue;
     }
-
-    private readonly CustomEventInterface contextMenuEventInterface;
-
-    private Dictionary<long, ContextMenuItem> mainMenuEntries = [];
-    private Dictionary<long, ContextMenuSubItem> mainMenuSubMenus = [];
-    private Dictionary<long, ContextMenuItem> subMenuEntries = [];
-
-    // Prevent the return entry from colliding with submenu items
-    private const int SubMenuIndexOffset = 1000;
-
-    private List<ContextMenuItem> Items { get; set; } = [];
-    private IOrderedEnumerable<ContextMenuItem> OrderedItems => Items.OrderBy(item => item.DisplayPriority);
 }

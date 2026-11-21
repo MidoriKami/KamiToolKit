@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Plugin.Services;
@@ -11,6 +11,18 @@ using KamiToolKit.Internal.Nodes;
 namespace KamiToolKit.BaseTypes;
 
 public abstract unsafe partial class NodeBase {
+
+    private Vector2 clickStartPosition = Vector2.Zero;
+    private NodeEditMode currentEditMode = 0;
+
+    private ViewportEventListener? editEventListener;
+
+    private bool isCursorSet;
+
+    private bool isMoving;
+    private bool isResizing;
+
+    private NodeEditOverlayNode? overlayNode;
 
     /// <summary>
     /// Action that is called once the cursor is released after resizing this node.
@@ -214,16 +226,4 @@ public abstract unsafe partial class NodeBase {
 
     private static void ResetCursor()
         => IAddonEventManager.Get().ResetCursor();
-
-    private Vector2 clickStartPosition = Vector2.Zero;
-    private NodeEditMode currentEditMode = 0;
-
-    private ViewportEventListener? editEventListener;
-
-    private bool isCursorSet;
-
-    private bool isMoving;
-    private bool isResizing;
-
-    private NodeEditOverlayNode? overlayNode;
 }

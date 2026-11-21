@@ -1,51 +1,39 @@
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games ImageNode.
+/// Implementation of the game's ImageNode.
 /// </summary>
-public unsafe class ImageNode : NodeBase<AtkImageNode> {
+public unsafe class ImageNode : NodeBase<AtkImageNode>, IImageNode {
 
-    /// <summary>
-    /// Not intended for public use, but it's here if you absolutely need it.
-    /// </summary>
+    /// <inheritdoc />
     public PartsList PartsList { get; }
 
-    /// <summary>
-    /// Gets or sets the PartId.
-    /// </summary>
-    public uint PartId {
+    /// <inheritdoc />
+    public ushort PartId {
         get => Node->PartId;
-        set => Node->PartId = (ushort)value;
+        set => Node->PartId = value;
     }
 
-    /// <summary>
-    /// Gets or sets the wrap mode for the displayed image.
-    /// </summary>
+    /// <inheritdoc />
     public WrapMode WrapMode {
         get => (WrapMode)Node->WrapMode;
         set => Node->WrapMode = (byte)value;
     }
 
-    /// <summary>
-    /// Gets or sets the image node flags.
-    /// </summary>
+    /// <inheritdoc />
     public ImageNodeFlags ImageNodeFlags {
         get => Node->Flags;
         set => Node->Flags = value;
     }
 
-    /// <summary>
-    /// When set to true, will cause the loaded texture to
-    /// fit itself to the size of the node
-    /// </summary>
-    /// <remarks>
-    /// Sets AutoFit ImageNodeFlag and Stretch WrapMode
-    /// </remarks>
+    /// <inheritdoc />
     public bool FitTexture {
         set {
             if (value) {
@@ -56,25 +44,31 @@ public unsafe class ImageNode : NodeBase<AtkImageNode> {
     }
 
     /// <summary>
-    /// Adds a single part.
-    /// </summary>
-    public AtkUldPart* AddPart(Part part)
-        => PartsList.Add(part);
-
-    /// <summary>
-    /// Adds multiple parts.
-    /// </summary>
-    public void AddPart(params Part[] parts)
-        => PartsList.Add(parts);
-
-
-    /// <summary>
-    /// Constructs a new <see cref="IconImageNode"/>
+    /// Constructs a new <see cref="ImageNode"/>
     /// </summary>
     public ImageNode() : base(NodeType.Image) {
         PartsList = new PartsList();
 
         Node->PartsList = PartsList.InternalPartsList;
+    }
+
+    /// <inheritdoc />
+    public AtkUldPart* AddPart(Part part) {
+        return PartsList.Add(part);
+    }
+
+    /// <inheritdoc />
+    public void AddPart(params Part[] parts) {
+        PartsList.Add(parts);
+    }
+
+    /// <inheritdoc />
+    public void AddPart(string path, Vector2 position, Vector2 size) {
+        PartsList.Add(new Part {
+            TexturePath = path,
+            TextureCoordinates = position,
+            Size = size,
+        });
     }
 
     /// <inheritdoc />

@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
 using Vector4 = System.Numerics.Vector4;

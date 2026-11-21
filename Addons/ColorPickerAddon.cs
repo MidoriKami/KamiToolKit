@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -81,8 +81,8 @@ public class ColorPickerAddon : NativeAddon {
         };
         ColorPicker.AttachNode(this);
 
-        ColorPicker.ColorPreviewed += hsva => OnHsvaColorPreviewed?.Invoke(hsva);
-        ColorPicker.RgbaColorPreviewed += rgba => OnColorPreviewed?.Invoke(rgba);
+        ColorPicker.OnColorPreviewed += hsva => OnHsvaColorPreviewed?.Invoke(hsva);
+        ColorPicker.OnRgbaColorPreviewed += rgba => OnColorPreviewed?.Invoke(rgba);
 
         ColorPicker.SetColor(initialRgba);
 

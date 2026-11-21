@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
@@ -9,7 +9,7 @@ using Lumina.Text.ReadOnly;
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games WindowNode. Not intended for external use.
+/// Implementation of the game's WindowNode. Not intended for external use.
 /// </summary>
 public unsafe class WindowNode : WindowNodeBase {
 
@@ -76,10 +76,8 @@ public unsafe class WindowNode : WindowNodeBase {
         set => Component->OwnerUnitBase = value;
     }
 
-    /// <summary>
-    /// Gets or sets the title text.
-    /// </summary>
-    public ReadOnlySeString Title {
+    /// <inheritdoc />
+    public override ReadOnlySeString Title {
         get => TitleNode.String;
         set {
             TitleNode.String = value;
@@ -87,10 +85,8 @@ public unsafe class WindowNode : WindowNodeBase {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the subtitle text.
-    /// </summary>
-    public ReadOnlySeString Subtitle {
+    /// <inheritdoc />
+    public override ReadOnlySeString Subtitle {
         get => SubtitleNode.String;
         set {
             SubtitleNode.String = value;
@@ -99,40 +95,26 @@ public unsafe class WindowNode : WindowNodeBase {
         }
     }
 
-    /// <summary>
-    /// Gets or sets whether the close button is visible.
-    /// </summary>
-    public bool ShowCloseButton {
+    /// <inheritdoc />
+    public override bool ShowCloseButton {
         get => CloseButtonNode.IsVisible;
         set => CloseButtonNode.IsVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether the gear button is visible.
-    /// </summary>
-    /// <remarks>
-    /// Seems to be unused by the game.
-    /// </remarks>
-    public bool ShowConfigButton {
+    /// <inheritdoc />
+    public override bool ShowConfigButton {
         get => ConfigurationButtonNode.IsVisible;
         set => ConfigurationButtonNode.IsVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether the help button is visible.
-    /// </summary>
-    /// <remarks>
-    /// Seems to only be used in very specific cases by the game.
-    /// </remarks>
-    public bool ShowHelpButton {
+    /// <inheritdoc />
+    public override bool ShowHelpButton {
         get => InformationButtonNode.IsVisible;
         set => InformationButtonNode.IsVisible = value;
     }
 
-    /// <summary>
-    /// Gets or sets whether the border node is visible.
-    /// </summary>
-    public bool Focused {
+    /// <inheritdoc />
+    public override bool Focused {
         get => BorderTextureNode.IsVisible;
         set => BorderTextureNode.IsVisible = value;
     }
@@ -277,7 +259,7 @@ public unsafe class WindowNode : WindowNodeBase {
                         NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TextColor = ColorHelper.GetColor(3),
             TextOutlineColor = ColorHelper.GetColor(6),
-            BackgroundColor = Vector4.Zero,
+            SelectionColor = Vector4.Zero,
             Size = new Vector2(46.0f, 20.0f),
             Position = new Vector2(83.0f, 17.0f),
         };
@@ -294,7 +276,7 @@ public unsafe class WindowNode : WindowNodeBase {
                         NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents,
             TextColor = ColorHelper.GetColor(2),
             TextOutlineColor = ColorHelper.GetColor(7),
-            BackgroundColor = Vector4.Zero,
+            SelectionColor = Vector4.Zero,
             Size = new Vector2(86.0f, 31.0f),
             Position = new Vector2(12.0f, 7.0f),
         };

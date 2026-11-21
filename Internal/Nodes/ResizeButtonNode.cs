@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
 using KamiToolKit.Internal.Enums;
@@ -11,6 +11,15 @@ internal class ResizeButtonNode : SimpleComponentNode {
 
     public readonly ImageNode SelectedImageNode;
     public readonly ImageNode UnselectedImageNode;
+
+    public bool IsHovered {
+        get;
+        set {
+            field = value;
+            UnselectedImageNode.IsVisible = !value;
+            SelectedImageNode.IsVisible = value;
+        }
+    }
 
     public ResizeButtonNode(ResizeDirection direction) {
 
@@ -47,14 +56,5 @@ internal class ResizeButtonNode : SimpleComponentNode {
 
         SelectedImageNode.Size = Size - new Vector2(4.0f, 4.0f);
         SelectedImageNode.Position = new Vector2(2.0f, 2.0f);
-    }
-
-    public bool IsHovered {
-        get;
-        set {
-            field = value;
-            UnselectedImageNode.IsVisible = !value;
-            SelectedImageNode.IsVisible = value;
-        }
     }
 }

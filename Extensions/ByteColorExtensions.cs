@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 
 namespace KamiToolKit.Extensions;
@@ -7,6 +7,7 @@ namespace KamiToolKit.Extensions;
 /// ByteColor extension methods.
 /// </summary>
 public static class ByteColorExtensions {
+
     /// <summary>
     /// Converts a ByteColor to a Vector4 with ranges 0.0f to 1.0f.
     /// </summary>

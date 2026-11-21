@@ -1,4 +1,4 @@
-﻿using KamiToolKit.Nodes;
+using KamiToolKit.Nodes;
 
 namespace KamiToolKit.Enums;
 
@@ -6,6 +6,7 @@ namespace KamiToolKit.Enums;
 /// Which side to anchor node within a <see cref="VerticalListNode"/>.
 /// </summary>
 public enum VerticalListAnchor {
+
     /// <summary>
     /// Top
     /// </summary>

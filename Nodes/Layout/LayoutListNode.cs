@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
+using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes;
@@ -13,34 +14,29 @@ namespace KamiToolKit.Nodes;
 /// </summary>
 public abstract class LayoutListNode : ResNode, ILayoutListNode {
 
-    /// <summary>
-    /// Nav index for use with setting contained nodes controller nav values.
-    /// </summary>
-    /// <remarks>
-    /// Must be non-zero to apply nav to contained nodes.
-    /// </remarks>
+    /// <inheritdoc/>
     public int NavIndex { get; set; }
 
-    /// <summary>
-    /// Get a readonly enumerable of the contained nodes of the specified type.
-    /// </summary>
-    /// <typeparam name="T">The NodeType to search for.</typeparam>
-    /// <returns>An IEnumerable of Nodes.</returns>
+    /// <inheritdoc/>
+    public int NavLeft { get; set; }
+
+    /// <inheritdoc/>
+    public int NavRight { get; set; }
+
+    /// <inheritdoc/>
+    public int NavUp { get; set; }
+
+    /// <inheritdoc/>
+    public int NavDown { get; set; }
+
+    /// <inheritdoc/>
     public IEnumerable<T> GetNodes<T>() where T : NodeBase => NodeList.OfType<T>();
 
-    /// <summary>
-    /// Get a readonly list of the contained nodes.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyList<NodeBase> Nodes => NodeList;
 
-    /// <summary>
-    /// When true, will clip the nodes contents, preventing any contained nodes
-    /// outside the area of this node from being visible.
-    /// </summary>
-    /// <remarks>
-    /// If a node is being partially clipped, it will be un-interactable.
-    /// </remarks>
-    public bool ClipListContents {
+    /// <inheritdoc/>
+    public bool ClipContents {
         get => NodeFlags.HasFlag(NodeFlags.Clip);
         set {
             if (value) {
@@ -52,115 +48,124 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
         }
     }
 
-    /// <summary>
-    /// Spacing between items, does not apply to the first item.
-    /// </summary>
+    /// <inheritdoc/>
     public float ItemSpacing { get; set; }
 
-    /// <summary>
-    /// Spacing to apply before the first item.
-    /// </summary>
+    /// <inheritdoc/>
     public float FirstItemSpacing { get; set; }
 
-    /// <summary>
-    /// Recalculates the contained layout, and controller navigation values if applicable.
-    /// </summary>
-    public void RecalculateLayout() {
+    /// <inheritdoc/>
+    public void UpdateLayout() {
         if (suppressRecalculateLayout) return;
 
+        // Save old sizes to check if sizes were changed later for recursing.
+        var oldSizes = NodeList.Select(n => n.Size).ToArray();
+
+        UpdateFillerNodes();
+        UpdateChildrenLayout(oldSizes);
+        UpdateNavigation();
+    }
+
+    // If any children are ILayoutFiller, resize them.
+    private void UpdateFillerNodes() {
+        var remainingHeight = Height - FirstItemSpacing;
+        var remainingWidth = Width - FirstItemSpacing;
+
         foreach (var node in NodeList) {
-            if (node is ILayoutListNode subNode) {
-                subNode.RecalculateLayout();
+            if (node is ILayoutFiller filler) {
+                if (filler.LayoutFill.HasFlag(LayoutFill.Vertical)) {
+                    node.Height = remainingHeight;
+                }
+
+                if (filler.LayoutFill.HasFlag(LayoutFill.Horizontal)) {
+                    node.Width = remainingWidth;
+                }
             }
-        }
 
-        OnRecalculateLayout();
-
-        if (NavIndex is not 0) {
-            OnRecalculateNavigation();
-        }
-
-        foreach (var node in NodeList) {
-            if (node is ILayoutListNode subNode) {
-                subNode.RecalculateLayout();
-            }
+            remainingHeight -= node.Height + ItemSpacing;
+            remainingWidth -= node.Width + ItemSpacing;
         }
     }
 
-    /// <summary>
-    /// An init only collection of nodes, to add a predefined amount of nodes to the list.
-    /// This is the preferred way of adding nodes.
-    /// </summary>
+    private void UpdateChildrenLayout(Vector2[] oldSizes) {
+        if (NodeList.Count is 0) return;
+
+        OnUpdateSizes();
+        OnUpdateLayout();
+
+        // update children, but only if their sizes are different.
+        foreach(var (node, oldSize) in NodeList.Zip(oldSizes)) {
+            if (node is not ILayoutUpdatable subNode) continue;
+
+            var newSize = node.Size;
+            if (Vector2.Distance(oldSize, newSize) > 0.5f) {
+                subNode.UpdateLayout();
+            }
+        }
+
+        // Reapply sizes in case children changed to fit something.
+        OnUpdateSizes();
+    }
+
+    /// <inheritdoc/>
+    public void UpdateNavigation() {
+        if (suppressRecalculateLayout) return;
+
+        foreach (var node in NodeList) {
+            if (node is INavigationUpdatable controllerNavigable) {
+                controllerNavigable.UpdateNavigation();
+            }
+        }
+
+        OnUpdateControllerNav();
+    }
+
+    /// <inheritdoc/>
     public ICollection<NodeBase> InitialNodes {
         set => AddNode(value);
     }
 
-    /// <summary>
-    /// Adds multiple nodes to the list. Added nodes are considered to be owned by the list.
-    /// </summary>
-    /// <param name="nodes">The nodes to add.</param>
+    /// <inheritdoc/>
     public virtual void AddNode(IEnumerable<NodeBase> nodes) {
-        suppressRecalculateLayout = true;
-        try {
+        using (SuppressLayoutRecalculation()) {
             foreach (var node in nodes) {
                 AddNode(node);
             }
-        } finally {
-            suppressRecalculateLayout = false;
         }
-        RecalculateLayout();
+        UpdateLayout();
     }
 
-    /// <summary>
-    /// Adds a single node to the list.
-    /// </summary>
-    /// <param name="node">Node to add.</param>
-    /// <remarks>
-    /// While this function accepts a nullable node, that's just for convenience, if the node is null it will not be added.
-    /// </remarks>
+    /// <inheritdoc/>
     public virtual void AddNode(NodeBase? node) {
         if (node is null) return;
 
         NodeList.Add(node);
-
         node.AttachNode(this);
 
-        RecalculateLayout();
+        UpdateLayout();
     }
 
-    /// <summary>
-    /// Removes multiple nodes from the list. Removed nodes are disposed by the list.
-    /// </summary>
-    /// <param name="items">Nodes to remove.</param>
+    /// <inheritdoc/>
     public void RemoveNode(IEnumerable<NodeBase> items) {
-        suppressRecalculateLayout = true;
-        try {
+        using (SuppressLayoutRecalculation()) {
             foreach (var node in items) {
                 RemoveNode(node);
             }
-        } finally {
-            suppressRecalculateLayout = false;
         }
-        RecalculateLayout();
+        UpdateLayout();
     }
 
-    /// <summary>
-    /// Remove a single node from the list. Removed nodes are disposed by the list.
-    /// </summary>
-    /// <param name="node">Node to remove.</param>
+    /// <inheritdoc/>
     public virtual void RemoveNode(NodeBase node) {
         if (!NodeList.Contains(node)) return;
 
         NodeList.Remove(node);
         node.Dispose();
 
-        RecalculateLayout();
+        UpdateLayout();
     }
 
-    /// <summary>
-    /// Adds a dummy node to the list, a standard ResNode with no contents for spacing/positioning.
-    /// </summary>
-    /// <param name="size">The size of the dummy to add.</param>
+    /// <inheritdoc/>
     public void AddDummy(float size = 0.0f) {
         var dummyNode = new ResNode {
             Size = new Vector2(size, size),
@@ -169,49 +174,61 @@ public abstract class LayoutListNode : ResNode, ILayoutListNode {
         AddNode(dummyNode);
     }
 
-    /// <summary>
-    /// Removes all nodes from the list. All nodes are disposed.
-    /// </summary>
+    /// <inheritdoc/>
     public virtual void Clear() {
-        suppressRecalculateLayout = true;
-        try {
+        using (SuppressLayoutRecalculation()) {
             foreach (var node in NodeList.ToList()) {
                 RemoveNode(node);
             }
-        } finally {
-            suppressRecalculateLayout = false;
         }
-        RecalculateLayout();
+        UpdateLayout();
     }
 
-    /// <summary>
-    /// Sorts the contained nodes using the provided comparison.
-    /// </summary>
-    /// <param name="comparison"></param>
+    /// <inheritdoc/>
     public void ReorderNodes(Comparison<NodeBase> comparison) {
         NodeList.Sort(comparison);
-        RecalculateLayout();
+        UpdateLayout();
     }
 
     /// <summary>
     /// Gets the list of nodes that this <see cref="LayoutListNode"/> is managing.
     /// </summary>
-    protected List<NodeBase> NodeList { get; }= [];
+    protected List<NodeBase> NodeList { get; } = [];
 
     /// <summary>
-    /// Function that is invoked when this node needs to rebuild its layout.
+    /// Temporarily suppresses layout recalculation while performing batch operations.
     /// </summary>
-    protected abstract void OnRecalculateLayout();
+    private ScopeGuard SuppressLayoutRecalculation() {
+        suppressRecalculateLayout = true;
+        return new ScopeGuard(() => suppressRecalculateLayout = false);
+    }
+
+    private readonly struct ScopeGuard(Action action) : IDisposable {
+        public void Dispose() => action();
+    }
 
     /// <summary>
-    /// Function that is invoked when this node needs to rebuild its controller navigation layout.
+    /// Whether layout recalculation is currently suppressed during batch operations.
     /// </summary>
-    protected abstract void OnRecalculateNavigation();
+    private bool suppressRecalculateLayout;
 
     /// <summary>
-    /// Adjusts the nodes properties when <see cref="RecalculateLayout"/> is invoked.
+    /// Invoked when this node needs to update child node sizes.
+    /// </summary>
+    protected abstract void OnUpdateSizes();
+
+    /// <summary>
+    /// Invoked when this node needs to update child node positions.
+    /// </summary>
+    protected abstract void OnUpdateLayout();
+
+    /// <summary>
+    /// Invoked when this node needs to update controller navigation layout.
+    /// </summary>
+    protected abstract void OnUpdateControllerNav();
+
+    /// <summary>
+    /// Invoked during layout to allow subclasses to adjust individual node properties.
     /// </summary>
     protected virtual void AdjustNode(NodeBase node) { }
-
-    private bool suppressRecalculateLayout;
 }

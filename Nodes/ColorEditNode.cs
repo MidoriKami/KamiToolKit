@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addons;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes.Simplified;
 using Lumina.Text.ReadOnly;
 
@@ -10,58 +11,85 @@ namespace KamiToolKit.Nodes;
 
 /// <summary>
 /// A node representing a colored square, and a label, all of which are clickable to open a color picker window.
+/// Properly separates preview state (UI-only) from confirmed state (persisted to config).
 /// </summary>
-public class ColorEditNode : SimpleComponentNode {
+public class ColorEditNode : SimpleComponentNode, IColorEditNode {
 
-    /// <summary>
-    /// Gets or sets the current color.
-    /// </summary>
+    /// <inheritdoc />
     public Vector4 CurrentColor {
-        get => squareNode.Color;
-        set => squareNode.Color = value;
+        get => committedColor;
+        set {
+            committedColor = value;
+            squareNode.Color = value;
+        }
     }
 
-    /// <summary>
-    /// Gets or sets the string displayed next to the color box.
-    /// </summary>
+    /// <inheritdoc />
     public ReadOnlySeString String {
         get => labelNode.String;
         set => labelNode.String = value;
     }
 
-    /// <summary>
-    /// Gets or sets a color that will be set when the user clicks "Default" in the color picker window.
-    /// </summary>
+    /// <inheritdoc />
+    public Vector4 TextColor {
+        get => labelNode.TextColor;
+        set => labelNode.TextColor = value;
+    }
+
+    /// <inheritdoc />
+    public Vector4 TextOutlineColor {
+        get => labelNode.TextOutlineColor;
+        set => labelNode.TextOutlineColor = value;
+    }
+
+    /// <inheritdoc />
+    public AlignmentType AlignmentType {
+        get => labelNode.AlignmentType;
+        set => labelNode.AlignmentType = value;
+    }
+
+    /// <inheritdoc />
+    public FontType FontType {
+        get => labelNode.FontType;
+        set => labelNode.FontType = value;
+    }
+
+    /// <inheritdoc />
+    public TextFlags TextFlags {
+        get => labelNode.TextFlags;
+        set => labelNode.TextFlags = value;
+    }
+
+    /// <inheritdoc />
+    public uint FontSize {
+        get => labelNode.FontSize;
+        set => labelNode.FontSize = value;
+    }
+
+    /// <inheritdoc />
     public Vector4? DefaultColor { get; set; }
 
-    /// <summary>
-    /// Action to be called if the color picker window is closed, or canceled without confirming a new color.
-    /// </summary>
+    /// <inheritdoc />
     public Action? OnColorCancelled { get; set; }
 
-    /// <summary>
-    /// Action to be called on any color change within the color picker.
-    /// </summary>
-    /// <remarks>
-    /// Use this to show a preview of what the new colors effect will be, without saving the color.
-    /// You can then use <see cref="OnColorCancelled"/> to restore the original color.
-    /// </remarks>
+    /// <inheritdoc />
     public Action<Vector4>? OnColorPreviewed { get; set; }
 
-    /// <summary>
-    /// Action to be called when a color is confirmed from the color picker.
-    /// </summary>
+    /// <inheritdoc />
     public Action<Vector4>? OnColorConfirmed { get; set; }
 
     /// <summary>
     /// Constructs a <see cref="ColorEditNode"/> instance.
     /// </summary>
     public unsafe ColorEditNode() {
+        committedColor = Vector4.One;
+
         squareNode = new ColorSquareNode();
         squareNode.AttachNode(this);
 
         labelNode = new TextNode {
             AlignmentType = AlignmentType.Left,
+            FontSize = 14,
         };
         labelNode.AttachNode(this);
 
@@ -80,11 +108,11 @@ public class ColorEditNode : SimpleComponentNode {
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 
-        squareNode.Size = new Vector2(Height - 6.0f, Height - 6.0f);
-        squareNode.Position = new Vector2(3.0f, 3.0f);
+        squareNode.Size = new Vector2(Height - 4.0f, Height - 4.0f);
+        squareNode.Position = new Vector2(0.0f, 2.0f);
 
-        labelNode.Size = new Vector2(Width - Height - 12.0f, Height);
-        labelNode.Position = new Vector2(squareNode.Bounds.Right + 12.0f, 0.0f);
+        labelNode.Size = new Vector2(Width - Height - 4.0f, Height);
+        labelNode.Position = new Vector2(Height, 0.0f);
     }
 
     /// <inheritdoc />
@@ -108,34 +136,47 @@ public class ColorEditNode : SimpleComponentNode {
     }
 
     private void OnClicked() {
-        var originalColor = CurrentColor;
-        colorPicker?.DefaultColor = DefaultColor;
-        colorPicker?.InitialColor = CurrentColor;
+        // Close any existing color picker instances.
+        colorPicker?.Dispose();
 
-        colorPicker?.OnColorPreviewed = color => {
+        // Create a fresh color picker instance for each click to avoid shared state conflicts.
+        var newColorPicker = CreateColorPicker();
+
+        // Preview: only update the visual square, NOT the committed color.
+        newColorPicker.OnColorPreviewed = color => {
             squareNode.Color = color;
-            CurrentColor = color;
             OnColorPreviewed?.Invoke(color);
         };
 
-        colorPicker?.OnColorCancelled = () => {
-            CurrentColor = originalColor;
+        // Cancel: restore the visual square to the committed color and fire cancel callback.
+        newColorPicker.OnColorCancelled = () => {
+            squareNode.Color = committedColor;
             OnColorCancelled?.Invoke();
         };
 
-        colorPicker?.OnColorConfirmed = color => {
-            CurrentColor = color;
+        // Confirm: update the committed color and fire confirm callback.
+        newColorPicker.OnColorConfirmed = color => {
+            committedColor = color;
+            squareNode.Color = color;
             OnColorConfirmed?.Invoke(color);
         };
 
-        colorPicker?.Toggle();
+        newColorPicker.Toggle();
     }
 
-    private ColorPickerAddon? colorPicker = new() {
+    private ColorPickerAddon CreateColorPicker() => colorPicker = new ColorPickerAddon {
         InternalName = "ColorPicker",
-        Title = "Color Picker",
+        Title = String.ToString(),
+        DefaultColor = DefaultColor,
+        InitialColor = committedColor,
     };
 
+    /// <summary>
+    /// The color value that is currently committed (confirmed). Preview changes do not affect this.
+    /// </summary>
+    private Vector4 committedColor;
+
+    private ColorPickerAddon? colorPicker;
     private readonly ColorSquareNode squareNode;
     private readonly TextNode labelNode;
 }

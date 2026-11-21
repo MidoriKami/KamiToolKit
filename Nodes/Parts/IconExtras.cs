@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
@@ -97,8 +97,8 @@ public unsafe class IconExtras : ResNode {
     /// Gets or sets the value used to indicate current charges.
     /// </summary>
     public int ChargeCount {
-        get => (int) ChargeCountImageNode.PartId;
-        set => ChargeCountImageNode.PartId = (uint) value;
+        get => ChargeCountImageNode.PartId;
+        set => ChargeCountImageNode.PartId = (ushort) value;
     }
 
     /// <summary>
@@ -118,7 +118,7 @@ public unsafe class IconExtras : ResNode {
     /// </summary>
     public float ChargePercent {
         get => AlternateCooldownNode.CooldownImage.PartId;
-        set => AlternateCooldownNode.CooldownImage.PartId = (uint)(value * 80 + 81);
+        set => AlternateCooldownNode.CooldownImage.PartId = (ushort)(value * 80 + 81);
     }
 
     /// <summary>
@@ -153,7 +153,7 @@ public unsafe class IconExtras : ResNode {
     /// </summary>
     public float CooldownPercent {
         get => CooldownNode.CooldownImage.PartId;
-        set => CooldownNode.CooldownImage.PartId = (uint)(value * 80);
+        set => CooldownNode.CooldownImage.PartId = (ushort)(value * 80);
     }
 
     /// <summary>

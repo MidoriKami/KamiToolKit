@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Game.Addon.Lifecycle;
@@ -18,6 +18,11 @@ namespace KamiToolKit.UiOverlay;
 /// Overlay controller for interacting with various overlay addons for displaying ui elements as part of the HUD.
 /// </summary>
 public unsafe class OverlayController : IDisposable {
+
+    private readonly Dictionary<OverlayLayer, List<OverlayNode>> overlayNodes = [];
+    private readonly Dictionary<OverlayLayer, OverlayAddonState> addonState = [];
+
+    private ControllerState controllerState = ControllerState.WaitForNameplate;
 
     /// <summary>
     /// Adds a node to the overlay.
@@ -270,9 +275,4 @@ public unsafe class OverlayController : IDisposable {
             overlayAddon->UpdateCollisionNodeList(false);
         }
     }
-
-    private readonly Dictionary<OverlayLayer, List<OverlayNode>> overlayNodes = [];
-    private readonly Dictionary<OverlayLayer, OverlayAddonState> addonState = [];
-
-    private ControllerState controllerState = ControllerState.WaitForNameplate;
 }

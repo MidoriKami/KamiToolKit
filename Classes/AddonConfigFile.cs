@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,6 +13,11 @@ namespace KamiToolKit.Classes;
 /// Data model for reading and writing addon configs to and from a single file instead of one file per addon.
 /// </summary>
 internal class AddonConfigFile {
+
+    private static readonly JsonSerializerOptions SerializerOptions = new() {
+        WriteIndented = true,
+        IncludeFields = true,
+    };
 
     public Dictionary<string, AddonConfig> AddonConfigs = [];
 
@@ -120,9 +125,4 @@ internal class AddonConfigFile {
             await SaveAsync();
         }
     }
-
-    private static readonly JsonSerializerOptions SerializerOptions = new() {
-        WriteIndented = true,
-        IncludeFields = true,
-    };
 }

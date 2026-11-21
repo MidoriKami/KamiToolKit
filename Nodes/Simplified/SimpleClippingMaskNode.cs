@@ -1,32 +1,27 @@
 using System.Numerics;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 
 namespace KamiToolKit.Nodes.Simplified;
 
 /// <summary>
 /// A simplified implementation of a <see cref="ClippingMaskNode"/> with a pre-allocated texture part.
 /// </summary>
-public unsafe class SimpleClippingMaskNode : ClippingMaskNode {
+public unsafe class SimpleClippingMaskNode : ClippingMaskNode, ISingleTextureNode, ITextureLoader {
 
-    /// <summary>
-    /// Gets or sets the textures U value for texture positioning.
-    /// </summary>
+    /// <inheritdoc />
     public float U {
         get => PartsList[0]->U;
         set => PartsList[0]->U = (ushort)value;
     }
 
-    /// <summary>
-    /// Gets or sets the textures V value for texture positioning.
-    /// </summary>
+    /// <inheritdoc />
     public float V {
         get => PartsList[0]->V;
         set => PartsList[0]->V = (ushort)value;
     }
 
-    /// <summary>
-    /// Gets or sets the textures UV values for positioning.
-    /// </summary>
+    /// <inheritdoc />
     public Vector2 TextureCoordinates {
         get => new(U, V);
         set {
@@ -35,25 +30,19 @@ public unsafe class SimpleClippingMaskNode : ClippingMaskNode {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the textures height.
-    /// </summary>
+    /// <inheritdoc />
     public float TextureHeight {
         get => PartsList[0]->Height;
         set => PartsList[0]->Height = (ushort)value;
     }
 
-    /// <summary>
-    /// Gets or sets the textures width.
-    /// </summary>
+    /// <inheritdoc />
     public float TextureWidth {
         get => PartsList[0]->Width;
         set => PartsList[0]->Width = (ushort)value;
     }
 
-    /// <summary>
-    /// Gets or sets the textures size.
-    /// </summary>
+    /// <inheritdoc />
     public Vector2 TextureSize {
         get => new(TextureWidth, TextureHeight);
         set {
@@ -62,40 +51,27 @@ public unsafe class SimpleClippingMaskNode : ClippingMaskNode {
         }
     }
 
-    /// <summary>
-    /// Gets or sets the texture path.
-    /// </summary>
-    /// <remarks>
-    /// Setting a path will cause it to be loaded from the game or filesystems.
-    /// </remarks>
+    /// <inheritdoc />
     public string TexturePath {
         get => PartsList[0]->LoadedPath;
         set => PartsList[0]->LoadTexture(value);
     }
 
-    /// <summary>
-    /// Gets the textures actual texture size or Vector2.Zero if not ready.
-    /// </summary>
+    /// <inheritdoc />
     public Vector2 ActualTextureSize
         => PartsList[0]->LoadedTextureSize;
 
-    /// <summary>
-    /// Loads the specified texture.
-    /// </summary>
-    public void LoadTexture(string path)
-        => PartsList[0]->LoadTexture(path);
+    /// <inheritdoc />
+    public void LoadTexture(string path, bool resolveTheme = true)
+        => PartsList[0]->LoadTexture(path, resolveTheme);
 
-    /// <summary>
-    /// Loads the specified icon.
-    /// </summary>
-    /// <param name="iconId"></param>
+    /// <inheritdoc />
     public void LoadIcon(uint iconId)
         => PartsList[0]->LoadIcon(iconId);
 
     /// <summary>
     /// Constructs a new <see cref="SimpleClippingMaskNode"/>
     /// </summary>
-    public SimpleClippingMaskNode() {
-        PartsList.Add(new Part());
-    }
+    public SimpleClippingMaskNode()
+        => PartsList.Add(new Part());
 }

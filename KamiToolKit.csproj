@@ -1,7 +1,6 @@
-﻿<Project Sdk="Dalamud.NET.Sdk/15.0.0">
+<Project Sdk="Dalamud.NET.Sdk/15.0.0">
     <!-- Project settings -->
     <PropertyGroup>
-        <LangVersion>preview</LangVersion>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>

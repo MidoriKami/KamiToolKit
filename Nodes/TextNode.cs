@@ -3,16 +3,24 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Interfaces;
 using Lumina.Data.Parsing.Uld;
+using Lumina.Text.Payloads;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Nodes;
 
 /// <summary>
-/// Implementation of the games TextNode.
+/// Implementation of the game's TextNode.
 /// </summary>
 public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Useful for filling a region to display a centered error message.
+    /// </remarks>
+    public LayoutFill LayoutFill { get; set; } = LayoutFill.Disabled;
 
     /// <inheritdoc />
     public Vector4 TextColor {
@@ -27,7 +35,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     }
 
     /// <inheritdoc />
-    public Vector4 BackgroundColor {
+    public Vector4 SelectionColor {
         get => Node->BackgroundColor.ToVector4();
         set => Node->BackgroundColor = value.ToByteColor();
     }
@@ -48,6 +56,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public AlignmentType AlignmentType {
         get => Node->AlignmentType;
         set {
+            if (Node->AlignmentType == value) return;
+
             Node->SetAlignment(value);
             UpdateText();
         }
@@ -57,6 +67,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public FontType FontType {
         get => Node->FontType;
         set {
+            if (Node->FontType == value) return;
+
             Node->SetFont(value);
             UpdateText();
         }
@@ -66,6 +78,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public TextFlags TextFlags {
         get => Node->TextFlags;
         set {
+            if (Node->TextFlags == value) return;
+
             Node->TextFlags = value;
             UpdateText();
         }
@@ -75,6 +89,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public uint FontSize {
         get => Node->FontSize;
         set {
+            if (Node->FontSize == value) return;
+
             Node->FontSize = (byte)value;
             UpdateText();
         }
@@ -84,6 +100,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public uint LineSpacing {
         get => Node->LineSpacing;
         set {
+            if (Node->LineSpacing == value) return;
+
             Node->LineSpacing = (byte)value;
             UpdateText();
         }
@@ -93,6 +111,8 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
     public uint CharSpacing {
         get => Node->CharSpacing;
         set {
+            if (Node->CharSpacing == value) return;
+
             Node->CharSpacing = (byte)value;
             UpdateText();
         }
@@ -110,21 +130,16 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
         set => Node->TextId = value;
     }
 
+    private ReadOnlySeString OriginalString { get; set; }
+
     /// <inheritdoc />
     public ReadOnlySeString String {
         get => new(Node->GetText().AsSpan());
         set {
+            OriginalString = value;
+
             using var builder = new RentedSeStringBuilder();
             Node->SetText(builder.Append(value).GetViewAsSpan());
-        }
-    }
-
-    /// <inheritdoc />
-    public override Vector2 Size {
-        get => base.Size;
-        set {
-            base.Size = value;
-            UpdateText();
         }
     }
 
@@ -153,8 +168,9 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
         ushort sizeX = 0;
         ushort sizeY = 0;
 
-        fixed (byte* ptr = builder.Append(text).GetViewAsSpan())
+        fixed (byte* ptr = builder.Append(text).GetViewAsSpan()) {
             Node->GetTextDrawSize(&sizeX, &sizeY, ptr, considerScale: considerScale);
+        }
 
         return new Vector2(sizeX, sizeY);
     }
@@ -189,8 +205,30 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
         }
     }
 
+    /// <inheritdoc />
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
+
+        UpdateText();
+    }
+
+    /// <summary>
+    /// Re-invokes SetText with the currently set <see cref="String"/> to trigger flag size and position updates.
+    /// </summary>
     private void UpdateText() {
         using var builder = new RentedSeStringBuilder();
-        Node->SetText(builder.Append(String).GetViewAsSpan());
+
+        // If we have these flags, the node will automatically re-add newlines if we strip them first.
+        if (TextFlags.HasFlag(TextFlags.MultiLine) && TextFlags.HasFlag(TextFlags.WordWrap)) {
+            foreach (var payload in OriginalString) {
+                if (payload.IsMacro(MacroCode.NewLine)) continue;
+                builder.Append(payload);
+            }
+        }
+        else {
+            builder.Append(OriginalString);
+        }
+
+        Node->SetText(builder.GetViewAsSpan());
     }
 }

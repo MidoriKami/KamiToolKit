@@ -1,4 +1,4 @@
-﻿namespace KamiToolKit.Interfaces;
+namespace KamiToolKit.Interfaces;
 
 /// <summary>
 /// Interface representing elements that are navigable via controller input.
