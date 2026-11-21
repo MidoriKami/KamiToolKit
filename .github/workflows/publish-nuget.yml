@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
     env:
       DALAMUD_HOME: /tmp/dalamud
 
@@ -89,9 +90,8 @@ jobs:
           echo "Resolved package version: $VER"
           echo "version=$VER" >> "$GITHUB_OUTPUT"
 
-      - name: Pack and push
+      - name: Pack
         env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
           INITIAL_VERSION: ${{ steps.version.outputs.version }}
           IS_TAG_PUSH: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: |
@@ -127,35 +127,14 @@ jobs:
           for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
             echo "Pack attempt $attempt / $MAX_ATTEMPTS (version $VER)"
             pack "$VER"
-
-            set +e
-            dotnet nuget push ./artifacts/*.nupkg \
-              --api-key "$NUGET_API_KEY" \
-              --source https://api.nuget.org/v3/index.json \
-              >push.log 2>&1
-            rc=$?
-            set -e
-
-            if [ "$rc" -eq 0 ]; then
-              echo "Published $VER"
-              exit 0
-            fi
-
-            cat push.log
-
-            if [ "$IS_TAG_PUSH" = "true" ]; then
-              echo "Push failed for tag build; not bumping version."
-              exit "$rc"
-            fi
-
-            if grep -qiE 'already exists|conflict|409' push.log; then
-              VER=$(bump_patch "$VER")
-              echo "Package version already on feed (or pending); bumping to $VER and retrying."
-              continue
-            fi
-
-            exit "$rc"
+            break
           done
 
-          echo "Exceeded $MAX_ATTEMPTS publish attempts."
-          exit 1
+      - name: NuGet login
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: NuGet push
+        run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
