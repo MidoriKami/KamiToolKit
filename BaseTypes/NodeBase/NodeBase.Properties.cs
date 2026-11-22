@@ -277,7 +277,9 @@ public abstract unsafe partial class NodeBase {
     public virtual bool IsVisible {
         get => ResNode->Visible;
         set {
+            if (ResNode->Visible == value) return;
             ResNode->Visible = value;
+
             if (lastIsVisible is null || lastIsVisible != value) {
                 OnVisibilityToggled?.Invoke(value);
                 lastIsVisible = value;
