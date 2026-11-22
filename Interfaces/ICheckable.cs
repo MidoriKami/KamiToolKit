@@ -5,7 +5,7 @@ namespace KamiToolKit.Interfaces;
 /// <summary>
 /// Represents something that can be checked.
 /// </summary>
-public interface ICheckable {
+public interface ICheckable : ISilentSettable<bool> {
 
     /// <summary>
     /// Gets or sets if this node is checked.
@@ -19,10 +19,4 @@ public interface ICheckable {
     /// Action called when this node's text or box are clicked.
     /// </summary>
     Action<bool>? OnChecked { get; set; }
-
-    /// <summary>
-    /// Sets the checked state without triggering the <see cref="OnChecked"/> callback.
-    /// Use this when initializing or resetting values on existing nodes.
-    /// </summary>
-    void SetValueSilent(bool value);
 }

@@ -5,7 +5,7 @@ namespace KamiToolKit.Interfaces;
 /// <summary>
 /// Interface representing a scrolling area node.
 /// </summary>
-public interface IScrollingNode<out T> : ILayoutUpdatable, ILayoutFiller where T : NodeBase, new() {
+public interface IScrollingNode<out T> : ILayoutUpdatable, ILayoutFiller, INode where T : NodeBase, new() {
 
     /// <summary>
     /// Gets a reference to the contained content node.

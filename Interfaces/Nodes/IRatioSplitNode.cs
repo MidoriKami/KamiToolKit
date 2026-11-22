@@ -5,7 +5,7 @@ namespace KamiToolKit.Interfaces;
 /// <summary>
 /// Interface representing a RatioSplitNode
 /// </summary>
-public interface IRatioSplitNode : ILayoutUpdatable, ILayoutFiller {
+public interface IRatioSplitNode : ILayoutUpdatable, ILayoutFiller, INode {
 
     /// <summary>
     /// Define a set of ratios, these need to add up to approx 1.0f.

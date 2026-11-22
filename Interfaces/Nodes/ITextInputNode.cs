@@ -7,7 +7,7 @@ namespace KamiToolKit.Interfaces;
 /// <summary>
 /// Interface representing a text input node.
 /// </summary>
-public interface ITextInputNode : IFocusable, IPlaceholderText {
+public interface ITextInputNode : IFocusable, IPlaceholderText, INode {
 
     /// <summary>
     /// Gets or sets the maximum number of characters allowed.

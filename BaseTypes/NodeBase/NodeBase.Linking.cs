@@ -7,6 +7,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Nodes;
 
@@ -38,6 +39,10 @@ public abstract unsafe partial class NodeBase {
     [OverloadResolutionPriority(1)]
     public void AttachNode(NodeBase? targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformManagedAttach(targetNode, targetPosition);
+
+    /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
+    public void AttachNode(ILayoutNode? targetNode, NodePosition targetPosition = NodePosition.AsLastChild)
+        => PerformManagedAttach((NodeBase?)targetNode, targetPosition);
 
     /// <inheritdoc cref="AttachNode(NodeBase?, NodePosition)"/>
     public void AttachNode(AtkResNode* targetNode, NodePosition targetPosition = NodePosition.AsLastChild)

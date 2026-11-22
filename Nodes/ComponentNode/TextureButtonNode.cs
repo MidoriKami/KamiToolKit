@@ -37,7 +37,7 @@ public class TextureButtonNode : ButtonBase, ITextureButtonNode {
     /// Constructs a new <see cref="TextureButtonNode"/>
     /// </summary>
     public TextureButtonNode() {
-        ImageNode = new ImGuiImageNode {
+        ImageNode = new SimpleImageNode {
             WrapMode = WrapMode.Stretch,
         };
         ImageNode.AttachNode(this);

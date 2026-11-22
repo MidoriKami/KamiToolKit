@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Internal.Classes;
 using Bounds = KamiToolKit.Classes.Bounds;
 using Vector2 = System.Numerics.Vector2;
@@ -13,7 +14,7 @@ using Vector4 = System.Numerics.Vector4;
 
 namespace KamiToolKit.BaseTypes;
 
-public abstract unsafe partial class NodeBase {
+public abstract unsafe partial class NodeBase : INode {
 
     private static bool EnableSizingWarnings { get; set; } = false;
     private Action<bool>? OnVisibilityToggled { get; set; }

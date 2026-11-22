@@ -6,7 +6,7 @@ namespace KamiToolKit.Interfaces;
 /// <summary>
 /// Interface representing a DropDown node.
 /// </summary>
-public interface IDropDownNode<T> : ICollapsible, IOptionSelectable<T>, IPlaceholderText, ILayoutFiller {
+public interface IDropDownNode<T> : ICollapsible, IOptionSelectable<T>, IPlaceholderText, ILayoutFiller, INode {
 
     /// <summary>
     /// Gets or sets the maximum number of options to show.

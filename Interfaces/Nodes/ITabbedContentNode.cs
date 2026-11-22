@@ -8,7 +8,7 @@ namespace KamiToolKit.Interfaces;
 /// <summary>
 /// Interface representing a tabbed content node container.
 /// </summary>
-public interface ITabbedContentNode : ILayoutUpdatable, ILayoutFiller {
+public interface ITabbedContentNode : ILayoutUpdatable, ILayoutFiller, INode {
 
     /// <summary>
     /// Adds a tab and a vertical list content area, and outputs the built <see cref="VerticalListNode"/>.

@@ -7,7 +7,7 @@ namespace KamiToolKit.Interfaces;
 /// <summary>
 /// Interface representing layout node.
 /// </summary>
-public interface ILayoutNode : ILayoutUpdatable {
+public interface ILayoutNode : ILayoutUpdatable, INode, IAttachableNode {
 
     /// <summary>
     /// When true, will clip the nodes contents, preventing any contained nodes

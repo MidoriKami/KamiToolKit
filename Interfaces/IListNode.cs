@@ -6,7 +6,7 @@ namespace KamiToolKit.Interfaces;
 /// <summary>
 /// Interface representing a virtualized list node.
 /// </summary>
-public interface IListNode<T, TU> : IOptionMultiSelectable<T>, IPlaceholderText, IUpdatable, IScrollable {
+public interface IListNode<T, TU> : IOptionMultiSelectable<T>, IPlaceholderText, IUpdatable, IScrollable, INode {
 
     /// <summary>
     /// Gets or sets the action to be invoked when an item is changed.

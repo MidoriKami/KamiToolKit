@@ -24,17 +24,6 @@ public class WindowFrameNode : ResNode, ILayoutFiller, IFocusable {
     }
 
     /// <inheritdoc />
-    public void ClearFocus()
-        => IsFocused = false;
-
-    /// <inheritdoc />
-    public void SetFocus()
-        => IsFocused = true;
-
-    /// <inheritdoc />
-    public Action? OnFocusLost { get; set; }
-
-    /// <inheritdoc />
     public Action? OnFocused { get; set; }
 
     /// <inheritdoc />

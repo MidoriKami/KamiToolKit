@@ -61,8 +61,10 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     public TextNode PlaceholderTextNode { get; }
 
     /// <inheritdoc/>
-    public bool IsFocused
-        => AtkStage.Instance()->AtkInputManager->FocusedNode == CollisionNode.Node;
+    public bool IsFocused {
+        get => AtkStage.Instance()->AtkInputManager->FocusedNode == CollisionNode.Node;
+        set => AtkStage.Instance()->AtkInputManager->SetFocus(value ? (AtkResNode*)CollisionNode.Node : null, ParentAddon, 0);
+    }
 
     /// <inheritdoc/>
     public int MaxCharacters {
@@ -162,21 +164,12 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     /// <inheritdoc/>
     public Action? OnTabEntered { get; set; }
 
-    /// <inheritdoc/>
-    public Action? OnFocusLost { get; set; }
 
     /// <inheritdoc/>
     public Action? OnFocused { get; set; }
 
     /// <inheritdoc/>
     public Action? OnUnfocused { get; set; }
-
-    /// <inheritdoc/>
-    public void ClearFocus() {
-        if (IsFocused) {
-            AtkStage.Instance()->AtkInputManager->SetFocus(null, ParentAddon, 0);
-        }
-    }
 
     /// <summary>
     /// Constructs a new <see cref="TextInputNode"/>
@@ -310,7 +303,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
             switch (type) {
                 case InputCallbackType.Enter:
                     OnInputComplete?.Invoke(Component->EvaluatedString.AsSpan());
-                    ClearFocus();
+                    IsFocused = false;
                     break;
 
                 case InputCallbackType.TextChanged:
@@ -322,7 +315,7 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
                     break;
 
                 case InputCallbackType.FocusLost:
-                    OnFocusLost?.Invoke();
+                    OnUnfocused?.Invoke();
                     break;
 
                 case InputCallbackType.Tab:

@@ -8,27 +8,25 @@ namespace KamiToolKit.Interfaces;
 public interface IFocusable {
 
     /// <summary>
-    /// Gets if this node is focused.
+    /// Gets or sets whether this node is focused.
     /// </summary>
-    bool IsFocused { get; }
+    bool IsFocused { get; set; }
 
     /// <summary>
     /// Clears the nodes focus.
     /// </summary>
-    void ClearFocus();
+    void ClearFocus() {
+        IsFocused = false;
+        OnUnfocused?.Invoke();
+    }
 
     /// <summary>
     /// Sets this node to be focused.
     /// </summary>
-    void SetFocus();
-
-    /// <summary>
-    /// Gets or sets the action to be called when the node loses focus.
-    /// </summary>
-    /// <remarks>
-    /// May be redundant with <see cref="OnUnfocused"/>
-    /// </remarks>
-    Action? OnFocusLost { get; set; }
+    void SetFocus() {
+        IsFocused = true;
+        OnFocused?.Invoke();
+    }
 
     /// <summary>
     /// Gets or sets the action to be called when the node is focused.
@@ -38,8 +36,5 @@ public interface IFocusable {
     /// <summary>
     /// Gets or sets the action to be called when the node loses focus.
     /// </summary>
-    /// <remarks>
-    /// May be redundant with <see cref="OnFocusLost"/>
-    /// </remarks>
     Action? OnUnfocused { get; set; }
 }

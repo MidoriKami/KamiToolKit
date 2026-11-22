@@ -5,7 +5,7 @@ namespace KamiToolKit.Interfaces;
 /// <summary>
 /// Interface representing capabilities of a vertical list node.
 /// </summary>
-public interface IVerticalListNode : ILayoutUpdatable, ILayoutFiller, IStretchWidth {
+public interface IVerticalListNode : ILayoutListNode, ILayoutFiller, IStretchWidth {
 
     /// <summary>
     /// Displays items starting from either the bottom or the top of the list
