@@ -21,14 +21,6 @@ public abstract unsafe partial class NodeBase {
     private bool isInsideSizeChanged;
 
     /// <summary>
-    /// Temporarily suppresses <see cref="OnSizeChanged"/> while performing batch size operations.
-    /// </summary>
-    protected ScopeGuard SuppressSizeChanged() {
-        isInsideSizeChanged = true;
-        return new ScopeGuard(() => isInsideSizeChanged = false);
-    }
-
-    /// <summary>
     /// Gets or sets the nodes X position relative to its parent node.
     /// </summary>
     public virtual float X {
@@ -489,4 +481,9 @@ public abstract unsafe partial class NodeBase {
     /// Overridable function that is called whenever this node's size is changed.
     /// </summary>
     protected virtual void OnSizeChanged() { }
+
+    private ScopeGuard SuppressSizeChanged() {
+        isInsideSizeChanged = true;
+        return new ScopeGuard(() => isInsideSizeChanged = false);
+    }
 }
