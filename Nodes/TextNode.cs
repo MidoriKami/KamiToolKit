@@ -197,7 +197,7 @@ public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
         TextOutlineColor = ColorHelper.GetColor(7);
         FontSize = 12;
         FontType = FontType.Axis;
-        LineSpacing = 12;
+        LineSpacing = 14;
         AlignmentType = AlignmentType.Left;
 
         if (AtkStage.Instance()->AtkUIColorHolder->ActiveColorThemeType is 0) {
