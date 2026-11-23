@@ -51,10 +51,22 @@ public abstract class LayoutListNode : LayoutNodeBase, ILayoutListNode {
     }
 
     /// <inheritdoc/>
-    public float ItemSpacing { get; set; }
+    public float ItemSpacing {
+        get;
+        set {
+            field = value;
+            UpdateLayout();
+        }
+    }
 
     /// <inheritdoc/>
-    public float FirstItemSpacing { get; set; }
+    public float FirstItemSpacing {
+        get;
+        set {
+            field = value;
+            UpdateLayout();
+        }
+    }
 
     /// <inheritdoc/>
     public ICollection<NodeBase> InitialNodes {
