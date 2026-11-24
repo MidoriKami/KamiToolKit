@@ -17,4 +17,9 @@ public interface IDropDownNode<T> : ICollapsible, IOptionSelectable<T>, IPlaceho
     /// Gets or sets a function to be used to define how to extract a label from a <typeparamref name="T"/>.
     /// </summary>
     Func<T, ReadOnlySeString>? GetLabelFunction { get; set; }
+
+    /// <summary>
+    /// Refreshes the displayed label by re-evaluating the label function for the currently selected option.
+    /// </summary>
+    void RefreshLabel();
 }

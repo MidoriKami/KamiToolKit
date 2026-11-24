@@ -480,6 +480,11 @@ public unsafe class DropDownNode<T> : SimpleComponentNode, IDropDownNode<T> {
         atkEvent->SetEventIsHandled();
     }
 
+    /// <inheritdoc />
+    public void RefreshLabel() {
+        UpdateLabel(SelectedOption);
+    }
+
     private void UpdateLabel(T? entry) {
         if (entry is null) {
             LabelNode.String = PlaceholderString.IsEmpty ? IDataManager.Get().GetExcelSheet<Addon>().GetRow(1818).Text : PlaceholderString;
