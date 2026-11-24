@@ -159,7 +159,8 @@ public static class KamiToolKitLibrary {
         NodeBase.WarnLeakedNodes();
         NativeAddon.WarnLeakedAddons();
 
-        await IFramework.Get().Run(NativeAddon.DisposeAddons);
+        await NativeAddon.DisposeAddonsAsync();
+
         await IFramework.Get().Run(NodeBase.DisposeNodes);
 
         PluginInterface.RelinquishData(NodeDataShareKey);
