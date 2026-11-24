@@ -1,6 +1,6 @@
 using System;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Enums;
+using KamiToolKit.Core.Enums;
 
 namespace KamiToolKit.Internal.Classes;
 

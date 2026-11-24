@@ -1,6 +1,6 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.BaseTypes;
-using KamiToolKit.Controllers;
+using KamiToolKit.Core.Primitives;
+using KamiToolKit.Services.Controllers;
 
 namespace KamiToolKit.Internal.Classes;
 

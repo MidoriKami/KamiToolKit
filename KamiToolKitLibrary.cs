@@ -9,8 +9,8 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
-using KamiToolKit.BaseTypes;
-using KamiToolKit.Classes;
+using KamiToolKit.Core.Primitives;
+using KamiToolKit.Core.Classes;
 using KamiToolKit.Debug;
 using KamiToolKit.Internal.Classes;
 using Serilog.Events;
@@ -52,8 +52,6 @@ public static class KamiToolKitLibrary {
         DefaultWindowSubtitle = defaultWindowSubtitle;
         PluginInterface = pluginInterface;
 
-        // Inject non-Experimental Properties
-        PluginInterface.Create<Services>();
         IGameInteropProvider.Get().InitializeFromAttributes(Experimental);
 
         // Create node data share

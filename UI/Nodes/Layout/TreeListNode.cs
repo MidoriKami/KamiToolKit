@@ -1,0 +1,371 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Internal.Classes;
+using KamiToolKit.Internal.Nodes;
+using Lumina.Data.Parsing.Uld;
+using Lumina.Text.ReadOnly;
+
+namespace KamiToolKit.UI.Nodes;
+
+/// <summary>
+/// Virtualized node representing a scrollable tree list, categories can be collapsed or uncollapsed as needed.
+/// </summary>
+/// /// <typeparam name="T">The data model to use.</typeparam>
+/// <typeparam name="TU">The view to render the data models data.</typeparam>
+public class TreeListNode<T, TU> : ResNode, ITreeListNode<T, TU> where TU : TreeListItemNode<T>, IListItemNode, new()  {
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ScrollBarNode ScrollBarNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public ResNode NoResultsTextNodeContainer { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public TextNode NoResultsTextNode { get; }
+
+    /// <inheritdoc />
+    public Action<T?>? OnOptionSelected { get; set; }
+
+    /// <inheritdoc />
+    public T? SelectedItem { get; set; }
+
+    /// <inheritdoc />
+    public Dictionary<ReadOnlySeString, List<T>> Options {
+        get;
+        set {
+            field = value;
+
+            NoResultsTextNodeContainer.IsVisible = value.Count is 0;
+
+            RebuildNodes();
+            PopulateNodes();
+        }
+    } = [];
+
+    /// <inheritdoc />
+    public float ItemSpacing {
+        get;
+        set;
+    }
+
+    /// <inheritdoc />
+    public ReadOnlySeString? NoResultsString {
+        get;
+        set {
+            field = value;
+            if (value is { } stringValue) {
+                NoResultsTextNode.String = stringValue;
+            }
+            else {
+                NoResultsTextNode.String = string.Empty;
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public void Update() {
+        NoResultsTextNodeContainer.IsVisible = !NoResultsTextNode.String.IsEmpty;
+
+        PopulateNodes();
+
+        foreach (var node in EntryNodes) {
+            if (node.IsVisible) {
+                node.Update();
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public void UpdateLayout()
+        => OnSizeChanged();
+
+    /// <summary>
+    /// Constructs a new instance of <see cref="TreeListNode{T,TU}"/>
+    /// </summary>
+    public unsafe TreeListNode() {
+        itemHeight = TU.ItemHeight;
+
+        ScrollBarNode = new ScrollBarNode {
+            OnScrollChanged = OnScrollUpdate,
+            ScrollSpeed = (int)itemHeight,
+        };
+        ScrollBarNode.AttachNode(this);
+
+        NoResultsTextNodeContainer = new ResNode {
+            IsVisible = false,
+        };
+        NoResultsTextNodeContainer.AttachNode(this);
+
+        NoResultsTextNode = new TextNode {
+            AlignmentType = AlignmentType.Center,
+            TextId = 5494, // "No results found."
+            SheetType = NodeData.SheetType.Addon,
+        };
+        NoResultsTextNode.AttachNode(NoResultsTextNodeContainer);
+
+        AddEvent(AtkEventType.MouseWheel, OnMouseWheel);
+    }
+
+    /// <inheritdoc />
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
+
+        ScrollBarNode.Size = new Vector2(8.0f, Height);
+        ScrollBarNode.Position = new Vector2(Width - 8.0f, 0.0f);
+
+        NoResultsTextNodeContainer.Size = new Vector2(Width - 8.0f, Height);
+        NoResultsTextNodeContainer.Position = Vector2.Zero;
+
+        NoResultsTextNode.Size = NoResultsTextNodeContainer.Size;
+        NoResultsTextNode.Position = Vector2.Zero;
+
+        RebuildNodes();
+        PopulateNodes();
+    }
+
+    /// <summary>
+    /// Function is called on any click-drag of the scrollbar, or direct mousewheel on the scrollbar.
+    /// </summary>
+    private unsafe void OnScrollUpdate(int newPosition) {
+        var remainingPosition = (float) newPosition;
+        var scrollOffset = 0;
+
+        foreach (var (_, entryList) in Options) {
+            remainingPosition -= 28.0f + ItemSpacing;
+
+            if (remainingPosition <= 0) {
+                scrollPosition = scrollOffset;
+                PopulateNodes();
+                return;
+            }
+
+            scrollOffset++;
+
+            foreach (var _ in entryList) {
+                remainingPosition -= itemHeight + ItemSpacing;
+
+                if (remainingPosition <= 0) {
+                    scrollPosition = scrollOffset;
+                    PopulateNodes();
+                    return;
+                }
+
+                scrollOffset++;
+            }
+        }
+
+        if (ParentAddon is not null) {
+            ParentAddon->UpdateCollisionNodeList(false);
+        }
+    }
+
+    /// <summary>
+    /// Function is called when the content body is scrolled via mousewheel.
+    /// </summary>
+    private unsafe void OnMouseWheel(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData) {
+        if (!ScrollBarNode.IsEnabled) {
+            atkEvent->SetEventIsHandled();
+            return;
+        }
+
+        var numValidOptions = 0;
+
+        foreach (var (header, entryList) in Options) {
+            numValidOptions++;
+
+            if (!CollapsedEntries.Contains(header)) {
+                foreach (var _ in entryList) {
+                    numValidOptions++;
+                }
+            }
+        }
+
+        scrollPosition += atkEventData->IsScrollUp ? -1 : 1;
+        scrollPosition = Math.Clamp(scrollPosition, 0, numValidOptions - Math.Min(HeaderNodes.Count, EntryNodes.Count));
+        ScrollBarNode.ScrollPosition = (float) scrollPosition / numValidOptions * GetTotalOffscreenHeight();
+
+        PopulateNodes();
+
+        if (ParentAddon is not null) {
+            ParentAddon->UpdateCollisionNodeList(false);
+        }
+
+        atkEvent->SetEventIsHandled();
+    }
+
+    /// <summary>
+    /// Rebuilds the node arrays if needed, checks if the correct number are allocated.
+    /// </summary>
+    private void RebuildNodes() {
+        var headerNodeCount = (int) (Height / (28.0f + ItemSpacing));
+        if (headerNodeCount != HeaderNodes.Count) {
+            foreach (var node in HeaderNodes) {
+                node.Dispose();
+            }
+            HeaderNodes.Clear();
+
+            foreach (var _ in Enumerable.Range(0, headerNodeCount)) {
+                var headerNode = new ToggleableHeaderNode {
+                    Size = new Vector2(ScrollBarNode.Bounds.Left - 8.0f, 28.0f),
+                    Position = new Vector2(0.0f, -32.0f),
+                    IsVisible = false,
+                };
+
+                headerNode.OnCollapseToggled = isVisible => {
+                    if (isVisible) {
+                        CollapsedEntries.Remove(headerNode.String);
+                    }
+                    else {
+                        if (!CollapsedEntries.Contains(headerNode.String)) {
+                            CollapsedEntries.Add(headerNode.String);
+                        }
+                    }
+
+                    PopulateNodes();
+                };
+
+                headerNode.AttachNode(this);
+                HeaderNodes.Add(headerNode);
+            }
+        }
+
+        var entryNodeCount = (int) (Height / (itemHeight + ItemSpacing));
+        if (entryNodeCount != EntryNodes.Count) {
+            foreach (var node in EntryNodes) {
+                node.Dispose();
+            }
+            EntryNodes.Clear();
+
+            foreach (var _ in Enumerable.Range(0, entryNodeCount)) {
+                var node = new TU {
+                    Size = new Vector2(ScrollBarNode.Bounds.Left - 8.0f, itemHeight),
+                    OnClick = clickedNode => {
+                        EntryNodes.ForEach(node => node.IsSelected = false);
+
+                        clickedNode.IsSelected = true;
+
+                        SelectedItem = ((TU)clickedNode).ItemData;
+                        OnOptionSelected?.Invoke(SelectedItem);
+                    },
+                    IsVisible = false,
+                };
+
+                node.AttachNode(this);
+                EntryNodes.Add(node);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Fills the data for each node, but also repositions them to make it seem seamless.
+    /// </summary>
+    private void PopulateNodes() {
+        var headerIndex = 0;
+        var entryIndex = 0;
+
+        HeaderNodes.ForEach(node => {
+            node.Y = 0.0f;
+            node.IsVisible = false;
+            node.Height = 0.0f;
+        });
+
+        EntryNodes.ForEach(node => {
+            node.Y = 0.0f;
+            node.IsVisible = false;
+            node.Height = 0.0f;
+        });
+
+        var position = 0.0f;
+
+        // To handle scroll position, we have to skip a certain number of entries and
+        // sub entries according to the collapsed state of each header.
+        var scrollSkips = scrollPosition;
+
+        foreach (var (header, entries) in Options) {
+            if (headerIndex > HeaderNodes.Count) break;
+            if (position + 28.0f + ItemSpacing > Height) break;
+
+            var isCollapsed = CollapsedEntries.Contains(header);
+
+            if (scrollSkips is 0 || scrollSkips-- <= 0) {
+                var headerNode = HeaderNodes[headerIndex];
+                headerIndex++;
+
+                headerNode.Height = 28.0f;
+                headerNode.String = header;
+                headerNode.IsVisible = true;
+                headerNode.IsCollapsed = isCollapsed;
+
+                headerNode.Y = position;
+                position += headerNode.Height + ItemSpacing;
+            }
+
+            if (isCollapsed) continue;
+            var isBreaking = false;
+
+            foreach (var entry in entries) {
+                if (entryIndex > EntryNodes.Count) {
+                    isBreaking = true;
+                    break;
+                }
+
+                if (position + itemHeight + ItemSpacing > Height) {
+                    isBreaking = true;
+                    break;
+                }
+
+                if (scrollSkips is 0 || scrollSkips-- <= 0) {
+                    var entryNode = EntryNodes[entryIndex];
+                    entryIndex++;
+
+                    entryNode.Height = itemHeight;
+                    entryNode.ItemData = entry;
+                    entryNode.IsVisible = true;
+                    entryNode.IsSelected = GenericUtil.AreEqual(entryNode.ItemData, SelectedItem);
+
+                    entryNode.Y = position;
+                    position += entryNode.Height + ItemSpacing;
+                }
+            }
+
+            if (isBreaking) {
+                break;
+            }
+        }
+
+        ScrollBarNode.UpdateScrollParams((int) ScrollBarNode.Height, (int) GetTotalOffscreenHeight());
+    }
+
+    private float GetTotalOffscreenHeight() {
+        var calculatedOffscreenHeight = itemHeight + ItemSpacing;
+
+        foreach (var (header, entryList) in Options) {
+            calculatedOffscreenHeight += 28.0f + ItemSpacing;
+
+            if (!CollapsedEntries.Contains(header)) {
+                foreach (var _ in entryList) {
+                    calculatedOffscreenHeight += itemHeight + ItemSpacing;
+                }
+            }
+        }
+
+        return calculatedOffscreenHeight;
+    }
+
+    private List<ToggleableHeaderNode> HeaderNodes { get; } = [];
+    private List<TU> EntryNodes { get; } = [];
+    private List<ReadOnlySeString> CollapsedEntries { get; } = [];
+
+    private readonly float itemHeight;
+    private int scrollPosition;
+}

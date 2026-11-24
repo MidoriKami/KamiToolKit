@@ -1,0 +1,90 @@
+using System.IO;
+using System.Threading.Tasks;
+using Dalamud.Interface.Textures.TextureWraps;
+using Dalamud.Plugin.Services;
+using KamiToolKit.Core.Classes;
+using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Internal.Classes;
+using KamiToolKit.UI.Nodes.Simplified;
+
+namespace KamiToolKit.UI.Nodes;
+
+/// <summary>
+/// A simple image node that allows you to load an IDalamudTextureWrap texture into a native image node.
+/// This node creates a single <see cref="Part" />.
+/// </summary>
+/// <remarks>This node is not intended to be used with multiple <see cref="Part"/>'s.</remarks>
+public class ImGuiImageNode : SimpleImageNode, IImGuiImageNode {
+
+    /// <inheritdoc />
+    public override string TexturePath {
+        get => base.TexturePath;
+        set {
+
+            // If path represents a file system path, we need to load via ImGui.
+            if (Path.IsPathRooted(value)) {
+
+                // Start by hiding the node.
+                Alpha = 0.0f;
+
+                // Load the texture as a task
+                Task.Run(async () => {
+                    var newTexture = await ITextureProvider.Get().GetFromFile(value).RentAsync();
+                    IPluginLog.Get().Verbose($"Loaded texture from file system: {value}");
+
+                    // Once it's ready, load it into the node on the next frame.
+                    await IFramework.Get().Run(() => {
+                        unsafe {
+                            if (Node is not null) {
+                                LoadTexture(newTexture);
+                                TextureSize = newTexture.Size;
+                                Alpha = 1.0f;
+                                MarkDirty();
+                            }
+                        }
+                    });
+                });
+            }
+
+            // else, the path is a game file, and the game itself can do its loading magic.
+            else if (IDataManager.Get().FileExists(value)) {
+                unsafe {
+                    PartsList[0]->LoadTexture(value);
+                }
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public unsafe void LoadTexture(IDalamudTextureWrap texture) {
+
+        // Load new texture
+        PartsList[0]->LoadTexture(texture);
+
+        if (LoadedTexture is not null) {
+            IPluginLog.Get().Verbose($"Disposing texture: {LoadedTexture} to load {texture}");
+        }
+
+        // Dispose any previously used texture
+        LoadedTexture?.Dispose();
+
+        // Track currently used texture
+        LoadedTexture = texture;
+    }
+
+    /// <inheritdoc />
+    protected override void Dispose(bool isNativeDestructor) {
+        if (IsDisposed) return;
+
+        if (LoadedTexture is not null) {
+            IPluginLog.Get().Verbose($"Disposing texture: {LoadedTexture}");
+        }
+
+        LoadedTexture?.Dispose();
+        LoadedTexture = null;
+
+        base.Dispose(isNativeDestructor);
+    }
+
+    private IDalamudTextureWrap? LoadedTexture { get; set; }
+}

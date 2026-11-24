@@ -1,0 +1,234 @@
+using System.Numerics;
+using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Core.Primitives;
+using KamiToolKit.Core.Classes;
+using KamiToolKit.Core.Enums;
+using KamiToolKit.Core.Interfaces;
+using Lumina.Data.Parsing.Uld;
+using Lumina.Text.Payloads;
+using Lumina.Text.ReadOnly;
+
+namespace KamiToolKit.UI.Nodes;
+
+/// <summary>
+/// Implementation of the game's TextNode.
+/// </summary>
+public unsafe class TextNode : NodeBase<AtkTextNode>, ITextNode {
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Useful for filling a region to display a centered error message.
+    /// </remarks>
+    public LayoutFill LayoutFill { get; set; } = LayoutFill.Disabled;
+
+    /// <inheritdoc />
+    public Vector4 TextColor {
+        get => Node->TextColor.ToVector4();
+        set => Node->TextColor = value.ToByteColor();
+    }
+
+    /// <inheritdoc />
+    public Vector4 TextOutlineColor {
+        get => Node->EdgeColor.ToVector4();
+        set => Node->EdgeColor = value.ToByteColor();
+    }
+
+    /// <inheritdoc />
+    public Vector4 SelectionColor {
+        get => Node->BackgroundColor.ToVector4();
+        set => Node->BackgroundColor = value.ToByteColor();
+    }
+
+    /// <inheritdoc />
+    public uint SelectStart {
+        get => Node->SelectStart;
+        set => Node->SelectStart = value;
+    }
+
+    /// <inheritdoc />
+    public uint SelectEnd {
+        get => Node->SelectEnd;
+        set => Node->SelectEnd = value;
+    }
+
+    /// <inheritdoc />
+    public AlignmentType AlignmentType {
+        get => Node->AlignmentType;
+        set {
+            if (Node->AlignmentType == value) return;
+
+            Node->SetAlignment(value);
+            UpdateText();
+        }
+    }
+
+    /// <inheritdoc />
+    public FontType FontType {
+        get => Node->FontType;
+        set {
+            if (Node->FontType == value) return;
+
+            Node->SetFont(value);
+            UpdateText();
+        }
+    }
+
+    /// <inheritdoc />
+    public TextFlags TextFlags {
+        get => Node->TextFlags;
+        set {
+            if (Node->TextFlags == value) return;
+
+            Node->TextFlags = value;
+            UpdateText();
+        }
+    }
+
+    /// <inheritdoc />
+    public uint FontSize {
+        get => Node->FontSize;
+        set {
+            if (Node->FontSize == value) return;
+
+            Node->FontSize = (byte)value;
+            UpdateText();
+        }
+    }
+
+    /// <inheritdoc />
+    public uint LineSpacing {
+        get => Node->LineSpacing;
+        set {
+            if (Node->LineSpacing == value) return;
+
+            Node->LineSpacing = (byte)value;
+            UpdateText();
+        }
+    }
+
+    /// <inheritdoc />
+    public uint CharSpacing {
+        get => Node->CharSpacing;
+        set {
+            if (Node->CharSpacing == value) return;
+
+            Node->CharSpacing = (byte)value;
+            UpdateText();
+        }
+    }
+
+    /// <inheritdoc />
+    public NodeData.SheetType SheetType {
+        get => (NodeData.SheetType)Node->SheetType;
+        set => Node->SheetType = (byte)value;
+    }
+
+    /// <inheritdoc />
+    public uint TextId {
+        get => Node->TextId;
+        set => Node->TextId = value;
+    }
+
+    private ReadOnlySeString OriginalString { get; set; }
+
+    /// <inheritdoc />
+    public ReadOnlySeString String {
+        get => new(Node->GetText().AsSpan());
+        set {
+            OriginalString = value;
+
+            using var builder = new RentedSeStringBuilder();
+            Node->SetText(builder.Append(value).GetViewAsSpan());
+        }
+    }
+
+    /// <inheritdoc />
+    public void AddTextFlags(params TextFlags[] flags) {
+        foreach (var flag in flags) {
+            TextFlags |= flag;
+        }
+    }
+
+    /// <inheritdoc />
+    public void RemoveTextFlags(params TextFlags[] flags) {
+        foreach (var flag in flags) {
+            TextFlags &= ~flag;
+        }
+    }
+
+    /// <inheritdoc />
+    public void SetNumber(int number, bool showCommas = false, bool showPlusSign = false, int digits = 0, bool zeroPad = false)
+        => Node->SetNumber(number, showCommas, showPlusSign, (byte)digits, zeroPad);
+
+    /// <inheritdoc />
+    public Vector2 GetTextDrawSize(ReadOnlySeString text, bool considerScale = true) {
+        using var builder = new RentedSeStringBuilder();
+
+        ushort sizeX = 0;
+        ushort sizeY = 0;
+
+        fixed (byte* ptr = builder.Append(text).GetViewAsSpan()) {
+            Node->GetTextDrawSize(&sizeX, &sizeY, ptr, considerScale: considerScale);
+        }
+
+        return new Vector2(sizeX, sizeY);
+    }
+
+    /// <inheritdoc />
+    public Vector2 GetTextDrawSize(bool considerScale = true) {
+        ushort sizeX = 0;
+        ushort sizeY = 0;
+
+        Node->GetTextDrawSize(&sizeX, &sizeY, considerScale: considerScale);
+
+        return new Vector2(sizeX, sizeY);
+    }
+
+    /// <summary>
+    /// Constructs a new <see cref="TextNode"/>
+    /// </summary>
+    /// <remarks>
+    /// This will default various properties to standard values
+    /// and colors for the theme that was active when this was constructed.
+    /// </remarks>
+    public TextNode() : base(NodeType.Text) {
+        TextColor = ColorHelper.GetColor(8);
+        TextOutlineColor = ColorHelper.GetColor(7);
+        FontSize = 12;
+        FontType = FontType.Axis;
+        LineSpacing = 14;
+        AlignmentType = AlignmentType.Left;
+
+        if (AtkStage.Instance()->AtkUIColorHolder->ActiveColorThemeType is 0) {
+            AddTextFlags(TextFlags.Emboss);
+        }
+    }
+
+    /// <inheritdoc />
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
+
+        UpdateText();
+    }
+
+    /// <summary>
+    /// Re-invokes SetText with the currently set <see cref="String"/> to trigger flag size and position updates.
+    /// </summary>
+    private void UpdateText() {
+        using var builder = new RentedSeStringBuilder();
+
+        // If we have these flags, the node will automatically re-add newlines if we strip them first.
+        if (TextFlags.HasFlag(TextFlags.MultiLine) && TextFlags.HasFlag(TextFlags.WordWrap)) {
+            foreach (var payload in OriginalString) {
+                if (payload.IsMacro(MacroCode.NewLine)) continue;
+                builder.Append(payload);
+            }
+        }
+        else {
+            builder.Append(OriginalString);
+        }
+
+        Node->SetText(builder.GetViewAsSpan());
+    }
+}
