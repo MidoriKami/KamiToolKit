@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
 using KamiToolKit.Internal.Classes;
@@ -98,6 +99,14 @@ public partial class NativeAddon : IDisposable, IAsyncDisposable {
             addon.Dispose();
         }
 
+        CreatedAddons.Clear();
+    }
+
+    internal static async Task DisposeAddonsAsync() {
+        await Task.WhenAll(CreatedAddons
+                .ToArray()
+                .Where(addon => !addon.IsOverlayAddon)
+                .Select(addon => addon.DisposeAsync().AsTask()));
         CreatedAddons.Clear();
     }
 }
