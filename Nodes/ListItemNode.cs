@@ -34,6 +34,16 @@ public abstract class ListItemNode<T> : SelectableNode {
     public object? ReferenceData { get; set; }
 
     /// <summary>
+    /// Forces this node to re-render its current item data using the current reference data.
+    /// Use when the reference data changed but the item data remained the same.
+    /// </summary>
+    public void Refresh() {
+        if (ItemData is not null) {
+            SetNodeData(ItemData);
+        }
+    }
+
+    /// <summary>
     /// Update function that is called each frame the list is called to be updated.
     /// </summary>
     /// <remarks>

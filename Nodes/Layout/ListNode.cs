@@ -301,10 +301,12 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
 
             if (dataIndex < Options.Count) {
                 var item = Options[dataIndex];
+                node.ReferenceData = NodeReferenceData;
                 node.ItemData = item;
                 node.IsVisible = true;
                 node.ShowClickableCursor = !node.InteractionsDisabled;
                 node.IsSelected = SelectedOptions.Any(selectedItem => GenericUtil.AreEqual(node.ItemData, selectedItem));
+                node.Refresh();
             }
             else {
                 node.IsVisible = false;
