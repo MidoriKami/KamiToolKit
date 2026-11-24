@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using KamiToolKit.Core.Primitives;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.Core.Primitives.NodeBase;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a tree list node with collapsible categories.

@@ -1,4 +1,4 @@
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing an ImGui Icon Button Node.

@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a texture node that stretches its parts to fit its content area.

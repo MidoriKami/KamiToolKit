@@ -2,7 +2,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a counter node for displaying formatted numbers.

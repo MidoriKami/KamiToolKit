@@ -1,10 +1,9 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Services.Timelines;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Parts;
 
 /// <summary>
 /// Node part used for <see cref="IconNode"/>, not intended for external use.

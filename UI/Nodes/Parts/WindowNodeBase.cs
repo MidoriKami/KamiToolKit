@@ -1,10 +1,10 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives.ComponentNode;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Parts;
 
 /// <summary>
 /// Abstract base class implementation of a WindowNode and its associated component.

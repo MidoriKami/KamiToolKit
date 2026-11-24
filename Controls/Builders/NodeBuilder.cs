@@ -6,11 +6,15 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Textures.TextureWraps;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Classes;
+using KamiToolKit.UI;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.Core.Primitives.NodeBase;
 using KamiToolKit.UI.Nodes;
+using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Layout;
 using Lumina.Text.ReadOnly;
 
 

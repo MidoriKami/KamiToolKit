@@ -1,6 +1,6 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a collision node for handling input collision detection.

@@ -1,7 +1,7 @@
 using System.Numerics;
 using Dalamud.Interface;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Represents an object that can have its color reset to a pre-set default value.

@@ -1,6 +1,7 @@
 using KamiToolKit.Core.Enums;
+using KamiToolKit.Core.Layout;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a horizontal flex node that evenly divides its area among children.

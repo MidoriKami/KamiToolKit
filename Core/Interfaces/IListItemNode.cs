@@ -1,4 +1,4 @@
-using KamiToolKit.UI.Nodes;
+using KamiToolKit.UI.Nodes.Layout;
 
 namespace KamiToolKit.Core.Interfaces;
 

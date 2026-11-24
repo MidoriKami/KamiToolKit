@@ -8,17 +8,17 @@ using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using InteropGenerator.Runtime;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Classes;
 using KamiToolKit.Core.Enums;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives.ComponentNode;
 using KamiToolKit.Internal.Classes;
-using KamiToolKit.UI.Nodes.Simplified;
 using KamiToolKit.Services.Timelines;
+using KamiToolKit.UI.Nodes.Parts;
+using KamiToolKit.UI.Nodes.Simplified;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Implementation of the game's TextInputNode and its associated component.

@@ -1,7 +1,8 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
+using KamiToolKit.Core.Primitives.ComponentNode;
+using KamiToolKit.UI.Nodes.ComponentNode;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Parts;
 
 /// <summary>
 /// Specialized implementation for use with <see cref="ScrollBarNode"/>. Not intended for external use.

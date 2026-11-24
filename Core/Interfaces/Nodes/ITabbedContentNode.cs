@@ -1,9 +1,10 @@
 using System;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.UI.Nodes;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.UI.Nodes.Layout;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a tabbed content node container.

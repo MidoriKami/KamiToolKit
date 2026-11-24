@@ -3,7 +3,6 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using KamiToolKit.Data.ListItemNodes;
-using KamiToolKit.Core.Extensions;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Controls.Search;

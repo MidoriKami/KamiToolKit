@@ -1,9 +1,9 @@
 using System;
 using System.Numerics;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.Internal.Nodes;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// Layout node representing a collapsing header that will collapse/hide its contained nodes.

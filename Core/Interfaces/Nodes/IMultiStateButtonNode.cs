@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a multi-state button node that cycles through states.

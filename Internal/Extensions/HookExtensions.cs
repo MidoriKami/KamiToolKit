@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Dalamud.Hooking;
 using Dalamud.Plugin.Services;
-using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Internal.Extensions;
 

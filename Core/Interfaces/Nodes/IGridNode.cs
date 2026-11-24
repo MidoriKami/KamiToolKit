@@ -1,6 +1,7 @@
-using KamiToolKit.Core.Classes;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.UI.Nodes.Layout;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a grid layout node.

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives.NodeBase;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// A two part <see cref="LayoutListNode"/> that allows you to specify the relative width of each section.

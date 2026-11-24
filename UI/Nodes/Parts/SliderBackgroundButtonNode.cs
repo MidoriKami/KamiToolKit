@@ -1,10 +1,11 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.UI.Nodes.Simplified;
+using KamiToolKit.Core.Primitives.ComponentNode;
 using KamiToolKit.Services.Timelines;
+using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Simplified;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Parts;
 
 /// <summary>
 /// Specialized implementation for use with <see cref="SliderNode"/>. Not intended for external use.

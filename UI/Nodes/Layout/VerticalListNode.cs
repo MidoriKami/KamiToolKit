@@ -1,10 +1,9 @@
 using System;
 using System.Linq;
-using KamiToolKit.Core.Primitives;
 using KamiToolKit.Core.Enums;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// A <see cref="LayoutListNode"/> that represents a vertical list of elements.
@@ -93,7 +92,7 @@ public class VerticalListNode : LayoutListNode, IVerticalListNode {
 
     /// <inheritdoc />
     protected override void OnUpdateControllerNav() {
-        var componentNodes = NodeList.OfType<ComponentNode>().ToList();
+        var componentNodes = NodeList.OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
 
         if (Anchor is VerticalListAnchor.Bottom) {

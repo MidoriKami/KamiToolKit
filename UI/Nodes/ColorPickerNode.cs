@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 using Dalamud.Interface;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.UI.Nodes;

@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a color edit node with a clickable color square and label.

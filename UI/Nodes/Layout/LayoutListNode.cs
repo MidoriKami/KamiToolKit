@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.Core.Primitives.NodeBase;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// Abstract base class for layout nodes that manage a collection of child nodes.

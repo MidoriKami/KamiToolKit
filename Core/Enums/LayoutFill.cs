@@ -1,5 +1,5 @@
 using System;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Layout;
 
 namespace KamiToolKit.Core.Enums;
 

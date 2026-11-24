@@ -1,9 +1,10 @@
 using System.ComponentModel;
+using KamiToolKit.UI.Nodes.Layout;
 
 namespace KamiToolKit.Core.Enums;
 
 /// <summary>
-/// Anchor definitions for <see cref="KamiToolKit.UI.Nodes.HorizontalListNode"/>
+/// Anchor definitions for <see cref="HorizontalListNode"/>
 /// </summary>
 public enum HorizontalListAnchor {
 

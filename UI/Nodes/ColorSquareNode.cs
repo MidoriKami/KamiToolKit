@@ -2,8 +2,8 @@ using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
 using KamiToolKit.Core.Enums;
-using KamiToolKit.Core.Interfaces;
-using KamiToolKit.Internal.Classes;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Services;
 
 namespace KamiToolKit.UI.Nodes;
 
@@ -49,7 +49,7 @@ public class ColorSquareNode : ResNode, IColorSquareNode {
         SelectedColorPreviewBorderNode.AttachNode(this);
 
         AlphaLayerPreviewNode = new ImGuiImageNode {
-            TexturePath = KamiToolKit.Internal.Classes.Services.GetAssetPath("alpha_background.png"),
+            TexturePath = AssetServices.GetAssetPath("alpha_background.png"),
             WrapMode = WrapMode.Tile,
         };
         AlphaLayerPreviewNode.AttachNode(this);

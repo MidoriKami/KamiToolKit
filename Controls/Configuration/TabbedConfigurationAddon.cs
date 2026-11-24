@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Classes;
 using KamiToolKit.Controls.ConfigurationNodes;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Primitives.NativeAddon;
+using KamiToolKit.Core.Primitives.NodeBase;
 using KamiToolKit.UI.Nodes;
+using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Layout;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 

@@ -1,9 +1,9 @@
 using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.UI.Nodes.Simplified;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Specialization of a button that uses a IDalamudTextureWrap or file from disk as a button.

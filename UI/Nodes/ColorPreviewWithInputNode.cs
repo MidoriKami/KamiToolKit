@@ -2,7 +2,8 @@ using System;
 using System.Globalization;
 using System.Numerics;
 using Dalamud.Interface;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.UI.Nodes.ComponentNode;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.UI.Nodes;

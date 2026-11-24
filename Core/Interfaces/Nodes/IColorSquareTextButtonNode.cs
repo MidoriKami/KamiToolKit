@@ -1,4 +1,4 @@
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a TextButtonNode that displays a colored square indicating the current color.

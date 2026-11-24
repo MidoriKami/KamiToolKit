@@ -1,12 +1,11 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Classes;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives.ComponentNode;
 using KamiToolKit.UI.Nodes.Simplified;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Implementation of the game's TextNineGridNode and associated component.

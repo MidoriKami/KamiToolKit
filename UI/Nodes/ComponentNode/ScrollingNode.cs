@@ -1,11 +1,11 @@
 using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
 using KamiToolKit.Core.Enums;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives.NodeBase;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Generic class for making any node type scrollable.

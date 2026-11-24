@@ -2,6 +2,8 @@ using System;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Internal.Classes;
+using KamiToolKit.UI.Nodes.Layout;
+using KamiToolKit.UI.Nodes.Parts;
 
 namespace KamiToolKit.UI.Nodes;
 

@@ -1,11 +1,12 @@
 using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives.ComponentNode;
+using KamiToolKit.Core.Primitives.NodeBase;
 using KamiToolKit.Services.Timelines;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Implementation of the game's ButtonNode and associated component.

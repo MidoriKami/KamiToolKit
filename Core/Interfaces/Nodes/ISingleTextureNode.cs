@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a node that displays a single texture with configurable coordinates and size.

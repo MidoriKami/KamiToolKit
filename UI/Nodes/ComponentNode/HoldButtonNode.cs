@@ -1,16 +1,17 @@
 using System.Numerics;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives.ComponentNode;
 using KamiToolKit.Internal.Classes;
-using KamiToolKit.UI.Nodes.Simplified;
 using KamiToolKit.Services.Timelines;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.UI.Nodes.Parts;
+using KamiToolKit.UI.Nodes.Simplified;
 using Lumina.Excel.Sheets;
 using Lumina.Text.ReadOnly;
 using Action = System.Action;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Implementation of the game's HoldButton and associated component.

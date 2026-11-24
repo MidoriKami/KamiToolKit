@@ -1,8 +1,8 @@
 using System.Numerics;
 using KamiToolKit.Core.Enums;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Layout;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// A layout node that fits all added child nodes to its own size.

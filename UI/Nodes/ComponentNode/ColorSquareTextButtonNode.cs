@@ -1,13 +1,13 @@
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Interfaces;
-using KamiToolKit.UI.Nodes.Simplified;
+using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.Services.Timelines;
+using KamiToolKit.UI.Nodes.Simplified;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Specialization of a <see cref="TextButtonNode"/> that displays a colored square with the currently set color.

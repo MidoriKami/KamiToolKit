@@ -2,10 +2,10 @@ using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.UI.Nodes.Simplified;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Parts;
 
 /// <summary>
 /// Inheritable node that manages hovered and clicked states.

@@ -4,7 +4,7 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 
-namespace KamiToolKit.Core.Primitives;
+namespace KamiToolKit.Core.Primitives.NativeAddon;
 
 public unsafe partial class NativeAddon {
     private static Hook<AtkUnitBase.Delegates.FireCallback>? fireCallbackHook;

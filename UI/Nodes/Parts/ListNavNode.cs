@@ -2,9 +2,10 @@ using System;
 using System.Diagnostics;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.UI.Nodes.Layout;
 using KamiToolKit.UI.Nodes.Simplified;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Parts;
 
 /// <summary>
 /// Part of <see cref="ListNode{T,TU}"/> used for helping controller nav.

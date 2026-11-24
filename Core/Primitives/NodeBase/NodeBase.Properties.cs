@@ -3,16 +3,15 @@ using Dalamud.Interface;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces;
 using KamiToolKit.Internal.Classes;
-using Bounds = KamiToolKit.Core.Classes.Bounds;
+using Bounds = KamiToolKit.UI.Bounds;
 using Vector2 = System.Numerics.Vector2;
 using Vector3 = System.Numerics.Vector3;
 using Vector4 = System.Numerics.Vector4;
 
-namespace KamiToolKit.Core.Primitives;
+namespace KamiToolKit.Core.Primitives.NodeBase;
 
 public abstract unsafe partial class NodeBase : INode {
 

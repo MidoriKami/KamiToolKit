@@ -2,10 +2,11 @@ using System;
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
+using KamiToolKit.UI.Events;
 using KamiToolKit.Core.Enums;
-using KamiToolKit.Core.Interfaces;
-using KamiToolKit.Internal.Classes;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Services;
+using KamiToolKit.UI.Nodes.Parts;
 using KamiToolKit.UI.Nodes.Simplified;
 
 namespace KamiToolKit.UI.Nodes;
@@ -78,14 +79,14 @@ public unsafe class ColorRingWithSquareNode : SimpleComponentNode, IColorRingWit
         ColorGradientSquare.AttachNode(this);
 
         ColorRingNode = new ImGuiImageNode {
-            TexturePath = KamiToolKit.Internal.Classes.Services.GetAssetPath("color_ring.png"),
+            TexturePath = AssetServices.GetAssetPath("color_ring.png"),
             FitTexture = true,
             ImageNodeFlags = ImageNodeFlags.FlipV,
         };
         ColorRingNode.AttachNode(this);
 
         ColorRingSelectorNode = new ImGuiImageNode {
-            TexturePath = KamiToolKit.Internal.Classes.Services.GetAssetPath("color_ring_selector.png"),
+            TexturePath = AssetServices.GetAssetPath("color_ring_selector.png"),
             FitTexture = true,
             MultiplyColor = new Vector3(1.0f, 0.0f, 0.0f),
         };

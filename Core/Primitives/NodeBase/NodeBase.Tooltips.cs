@@ -2,11 +2,11 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Enums;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
-using KamiToolKit.Core.Classes;
+using KamiToolKit.Data;
 using KamiToolKit.Core.Interfaces;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Core.Primitives;
+namespace KamiToolKit.Core.Primitives.NodeBase;
 
 public unsafe partial class NodeBase : ITextTooltip, IActionTooltip, IItemTooltip, IInventoryItemTooltip {
 
@@ -239,7 +239,7 @@ public unsafe partial class NodeBase : ITextTooltip, IActionTooltip, IItemToolti
     }
 
     private void ToggleCollisionFlag(bool isVisible) {
-        if (this is ComponentNode) return;
+        if (this is ComponentNode.ComponentNode) return;
 
         if (isVisible) {
             AddNodeFlags(NodeFlags.HasCollision);

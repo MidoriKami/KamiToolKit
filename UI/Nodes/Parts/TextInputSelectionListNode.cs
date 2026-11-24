@@ -1,9 +1,10 @@
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.UI.Nodes.ComponentNode;
 using KamiToolKit.UI.Nodes.Simplified;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Parts;
 
 /// <summary>
 /// Node part used for <see cref="TextInputNode"/>, represents the auto translate button list.

@@ -1,6 +1,6 @@
 using System;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing elements that can be selected via navigation input.

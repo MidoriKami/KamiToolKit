@@ -1,4 +1,4 @@
-using KamiToolKit.Core.Classes;
+using KamiToolKit.Data;
 
 namespace KamiToolKit.Core.Interfaces;
 

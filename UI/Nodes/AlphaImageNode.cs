@@ -1,5 +1,5 @@
 using KamiToolKit.Core.Enums;
-using KamiToolKit.Internal.Classes;
+using KamiToolKit.Services;
 
 namespace KamiToolKit.UI.Nodes;
 
@@ -12,7 +12,7 @@ public sealed class AlphaImageNode : ImGuiImageNode {
     /// Constructs a <see cref="AlphaImageNode"/> instance.
     /// </summary>
     public AlphaImageNode() {
-        TexturePath = KamiToolKit.Internal.Classes.Services.GetAssetPath("alpha_background.png");
+        TexturePath = AssetServices.GetAssetPath("alpha_background.png");
         WrapMode = WrapMode.Tile;
     }
 }

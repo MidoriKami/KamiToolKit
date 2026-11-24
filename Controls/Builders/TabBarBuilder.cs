@@ -1,7 +1,6 @@
 using System;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
-using KamiToolKit.Core.Classes;
 using KamiToolKit.UI.Nodes;
 
 namespace KamiToolKit.Controls.Builders;

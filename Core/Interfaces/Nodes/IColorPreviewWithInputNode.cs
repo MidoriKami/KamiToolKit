@@ -3,7 +3,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a color preview node with a hex string input.

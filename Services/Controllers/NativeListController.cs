@@ -10,8 +10,8 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Classes;
+using KamiToolKit.UI.Nodes;
+using KamiToolKit.Core.Primitives.NodeBase;
 using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Services.Controllers;

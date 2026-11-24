@@ -2,8 +2,9 @@ using System;
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
+using KamiToolKit.Core.Primitives.NativeAddon;
 using KamiToolKit.UI.Nodes;
+using KamiToolKit.UI.Nodes.ComponentNode;
 using Lumina.Data.Parsing.Uld;
 
 namespace KamiToolKit.UI.Addons;

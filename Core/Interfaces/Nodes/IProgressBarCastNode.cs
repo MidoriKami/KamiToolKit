@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a progress bar cast node with border customization.

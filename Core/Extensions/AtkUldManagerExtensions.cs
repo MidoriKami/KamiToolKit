@@ -5,7 +5,7 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
-using KamiToolKit.Core.Primitives;
+using KamiToolKit.Core.Primitives.NodeBase;
 using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Core.Extensions;

@@ -1,7 +1,7 @@
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
+using KamiToolKit.UI;
 using KamiToolKit.Core.Enums;
 
 namespace KamiToolKit.Core.Extensions;

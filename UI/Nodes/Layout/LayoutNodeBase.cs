@@ -1,8 +1,8 @@
 using System.Numerics;
-using KamiToolKit.Core.Classes;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.Core;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// Abstract base class providing shared layout update infrastructure:

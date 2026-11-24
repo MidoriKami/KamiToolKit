@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Classes;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives.NodeBase;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// A specialized vertical list node with features for adding nodes with specified tab values.
@@ -179,7 +178,7 @@ public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
 
     /// <inheritdoc/>
     protected override void OnUpdateControllerNav() {
-        var componentNodes = nodeList.Select(nodeEntry => nodeEntry.Node).OfType<ComponentNode>().ToList();
+        var componentNodes = nodeList.Select(nodeEntry => nodeEntry.Node).OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
 
         foreach (var (index, node) in componentNodes.Index()) {

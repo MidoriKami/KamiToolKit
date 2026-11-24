@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 using System.Numerics;
-using KamiToolKit.Core.Primitives;
 using KamiToolKit.Core.Enums;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives.NodeBase;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// A list layout node that allows anchoring from any corner, and allows setting a border or background color.
@@ -225,7 +225,7 @@ public class ListBoxNode : LayoutListNode, IListBoxNode {
 
     /// <inheritdoc/>
     protected override void OnUpdateControllerNav() {
-        var componentNodes = NodeList.OfType<ComponentNode>().ToList();
+        var componentNodes = NodeList.OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
 
         if (LayoutOrientation is LayoutOrientation.Horizontal) {

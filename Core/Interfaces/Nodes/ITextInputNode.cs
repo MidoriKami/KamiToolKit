@@ -2,7 +2,7 @@ using System;
 using KamiToolKit.Core.Enums;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a text input node.

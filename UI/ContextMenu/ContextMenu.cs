@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
+using KamiToolKit.UI.Events;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.UI.ContextMenu;

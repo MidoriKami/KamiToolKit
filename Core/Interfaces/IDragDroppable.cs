@@ -1,7 +1,7 @@
 using System;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
-using KamiToolKit.UI.Nodes;
+using KamiToolKit.UI.Events;
+using KamiToolKit.UI.Nodes.ComponentNode;
 
 namespace KamiToolKit.Core.Interfaces;
 

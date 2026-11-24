@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
-using KamiToolKit.UI.Nodes;
+using KamiToolKit.UI.Nodes.ComponentNode;
 
 namespace KamiToolKit.Core.Enums;
 

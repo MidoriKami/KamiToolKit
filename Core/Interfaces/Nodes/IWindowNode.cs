@@ -2,7 +2,7 @@ using System.Numerics;
 using KamiToolKit.UI.Nodes;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a window node with title, subtitle, and button controls.

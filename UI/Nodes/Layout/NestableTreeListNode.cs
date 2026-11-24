@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Internal.Nodes;
+using KamiToolKit.UI.Nodes.ComponentNode;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// Virtualized scrollable tree list with nested collapsible sections via <see cref="Sections"/>.

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Specialization of <see cref="TextButtonNode"/> that has multiple label states.

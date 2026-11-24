@@ -4,12 +4,14 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Internal.Nodes;
+using KamiToolKit.UI.Nodes.ComponentNode;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// Virtualized node representing a scrollable tree list, categories can be collapsed or uncollapsed as needed.

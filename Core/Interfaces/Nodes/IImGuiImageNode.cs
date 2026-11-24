@@ -1,6 +1,6 @@
 using Dalamud.Interface.Textures.TextureWraps;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing an image node that can load IDalamudTextureWrap textures.

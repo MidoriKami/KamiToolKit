@@ -3,7 +3,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.UI.Nodes;
 
-namespace KamiToolKit.UI.Overlays;
+namespace KamiToolKit.UI.Overlays.UiOverlay;
 
 /// <summary>
 /// Node used in <see cref="OverlayController"/> to display ui elements in the HUD.

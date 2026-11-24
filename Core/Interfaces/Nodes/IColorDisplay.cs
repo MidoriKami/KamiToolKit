@@ -1,7 +1,7 @@
 using System.Numerics;
 using Dalamud.Interface;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a node that displays a color in both RGBA and HSVA formats.

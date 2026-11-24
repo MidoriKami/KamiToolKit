@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
+using KamiToolKit.UI.Events;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Internal.Classes;
 
-namespace KamiToolKit.Core.Primitives;
+namespace KamiToolKit.Core.Primitives.NodeBase;
 
 public abstract unsafe partial class NodeBase {
 

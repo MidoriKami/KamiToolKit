@@ -1,9 +1,9 @@
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Internal.Classes;
+using KamiToolKit.Services;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Parts;
 
 /// <summary>
 /// Square texture node representing a triple color gradient for use in <see cref="Addons.ColorPickerAddon"/>.
@@ -52,26 +52,26 @@ public class ColorGradientSquare : ResNode {
     /// </summary>
     public ColorGradientSquare() {
         WhiteGradientNode = new ImGuiImageNode {
-            TexturePath = KamiToolKit.Internal.Classes.Services.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
+            TexturePath = AssetServices.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
             FitTexture = true,
         };
         WhiteGradientNode.AttachNode(this);
 
         ColorGradientNode = new ImGuiImageNode {
-            TexturePath = KamiToolKit.Internal.Classes.Services.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
+            TexturePath = AssetServices.GetAssetPath("HorizontalGradient_WhiteToAlpha.png"),
             FitTexture = true,
             ImageNodeFlags = ImageNodeFlags.FlipH,
         };
         ColorGradientNode.AttachNode(this);
 
         BlackGradientNode = new ImGuiImageNode {
-            TexturePath = KamiToolKit.Internal.Classes.Services.GetAssetPath("VerticalGradient_AlphaToBlack.png"),
+            TexturePath = AssetServices.GetAssetPath("VerticalGradient_AlphaToBlack.png"),
             FitTexture = true,
         };
         BlackGradientNode.AttachNode(this);
 
         ColorDotNode = new ImGuiImageNode {
-            TexturePath = KamiToolKit.Internal.Classes.Services.GetAssetPath("color_select_dot.png"),
+            TexturePath = AssetServices.GetAssetPath("color_select_dot.png"),
             FitTexture = true,
         };
         ColorDotNode.AttachNode(this);

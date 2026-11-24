@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.Services.Timelines;
+using KamiToolKit.UI.Nodes.ComponentNode;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.UI.Nodes;

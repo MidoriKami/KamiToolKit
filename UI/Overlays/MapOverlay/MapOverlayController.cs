@@ -7,14 +7,14 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
-using KamiToolKit.Services.Controllers;
+using KamiToolKit.UI.Events;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Internal.Classes;
+using KamiToolKit.Services.Controllers;
 using KamiToolKit.UI.Nodes;
-using MapMarkerInfo = KamiToolKit.Core.Classes.MapMarkerInfo;
+using MapMarkerInfo = KamiToolKit.Data.MapMarkerInfo;
 
-namespace KamiToolKit.UI.Overlays;
+namespace KamiToolKit.UI.Overlays.MapOverlay;
 
 /// <summary>
 /// Controller for <see cref="MapMarkerNode"/>'s that are rendered over top of the game's native map.

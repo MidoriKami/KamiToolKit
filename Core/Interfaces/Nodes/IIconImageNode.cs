@@ -1,4 +1,4 @@
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing an image node that displays a game icon by ID.

@@ -1,6 +1,5 @@
 using System.Linq;
 using KamiToolKit.Data.ListItemNodes;
-using KamiToolKit.Core.Extensions;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Controls.Search;

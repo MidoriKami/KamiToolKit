@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using KamiToolKit.UI.Nodes;
+using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Layout;
 
 namespace KamiToolKit.Data.Icons;
 

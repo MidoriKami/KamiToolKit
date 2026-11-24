@@ -1,6 +1,6 @@
 using System;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing elements that receive hover feedback via navigation input.

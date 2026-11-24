@@ -1,7 +1,9 @@
+using KamiToolKit.UI.Nodes.Layout;
+
 namespace KamiToolKit.Core.Enums;
 
 /// <summary>
-/// Row kinds produced while laying out a <see cref="KamiToolKit.UI.Nodes.NestableTreeListNode{T,TU}"/>.
+/// Row kinds produced while laying out a <see cref="NestableTreeListNode{T,TU}"/>.
 /// </summary>
 public enum NestableTreeListRowKind {
 

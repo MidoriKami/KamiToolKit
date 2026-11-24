@@ -10,7 +10,7 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Interfaces;
 using KamiToolKit.Internal.Classes;
-using KamiToolKit.UI.Overlays;
+using KamiToolKit.UI.Overlays.UiOverlay;
 
 namespace KamiToolKit.Services.Controllers;
 

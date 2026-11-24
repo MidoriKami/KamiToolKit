@@ -3,12 +3,12 @@ using System.Numerics;
 using Dalamud.Game.Addon.Events;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
+using KamiToolKit.UI.Events;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Internal.Nodes;
 
-namespace KamiToolKit.Core.Primitives;
+namespace KamiToolKit.Core.Primitives.NodeBase;
 
 public abstract unsafe partial class NodeBase {
 

@@ -8,7 +8,7 @@ using Lumina.Excel.Sheets;
 using Lumina.Text.ReadOnly;
 using Action = System.Action;
 
-namespace KamiToolKit.UI.Overlays;
+namespace KamiToolKit.UI.Overlays.MapOverlay;
 
 /// <summary>
 /// Inheritable node intended for use with <see cref="MapOverlayController"/>.

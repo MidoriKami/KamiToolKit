@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using KamiToolKit.Core.Classes;
+using KamiToolKit.UI.Nodes;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a tab bar node.

@@ -1,8 +1,9 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Primitives.NodeBase;
 using KamiToolKit.UI.Nodes;
 
-namespace KamiToolKit.Core.Primitives;
+namespace KamiToolKit.Core.Primitives.ComponentNode;
 
 /// <summary>
 /// Abstract implementation of the base class for all component nodes use in KamiToolKit.
@@ -63,7 +64,7 @@ public abstract unsafe partial class ComponentNode(NodeType nodeType) : NodeBase
     /// <summary>
     /// Gets the node used when focusing this element via controller.
     /// </summary>
-    public NodeBase FocusNode {
+    public NodeBase.NodeBase FocusNode {
         get => field ?? CollisionNode;
         protected set;
     }

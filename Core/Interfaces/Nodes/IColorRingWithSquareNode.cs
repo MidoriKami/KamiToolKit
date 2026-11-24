@@ -1,7 +1,7 @@
 using System;
 using Dalamud.Interface;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a color ring with a gradient square for hue, saturation, and value selection.

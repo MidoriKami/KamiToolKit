@@ -3,6 +3,8 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.UI.Nodes;
+using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Layout;
 using Lumina.Data.Parsing.Uld;
 
 namespace KamiToolKit.Controls.DataInput;

@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using Dalamud.Interface;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing an alpha bar node for adjusting color transparency.

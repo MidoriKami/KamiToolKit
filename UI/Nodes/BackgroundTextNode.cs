@@ -1,7 +1,7 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.UI.Nodes.ComponentNode;
 using KamiToolKit.UI.Nodes.Simplified;
 using Lumina.Text.ReadOnly;
 

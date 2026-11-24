@@ -1,10 +1,11 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
-using KamiToolKit.UI.Nodes.Simplified;
 using KamiToolKit.Services.Timelines;
+using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Simplified;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Parts;
 
 /// <summary>
 /// Node part used for <see cref="HoldButtonNode"/>, not intended for external use.

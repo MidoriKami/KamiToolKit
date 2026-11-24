@@ -1,6 +1,6 @@
 using KamiToolKit.Services.Timelines;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a node used for simplifying usages of animations.

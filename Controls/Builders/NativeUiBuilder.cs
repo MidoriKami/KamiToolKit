@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
-using KamiToolKit.Core.Interfaces;
-using KamiToolKit.UI.Nodes;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.UI.Nodes.Layout;
 
 namespace KamiToolKit.Controls.Builders;
 

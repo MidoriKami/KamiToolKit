@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Layout;
 using KamiToolKit.UI.Nodes.Simplified;
 
 namespace KamiToolKit.UI.Nodes;

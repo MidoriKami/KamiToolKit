@@ -8,7 +8,7 @@ using KamiToolKit.Core.Enums;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Services.Timelines;
 
-namespace KamiToolKit.Core.Primitives;
+namespace KamiToolKit.Core.Primitives.NativeAddon;
 
 public unsafe partial class NativeAddon {
 

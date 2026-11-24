@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using KamiToolKit.Core.Classes;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// A layout node representing a grid.

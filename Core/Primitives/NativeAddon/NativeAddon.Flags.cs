@@ -1,6 +1,4 @@
-using KamiToolKit.Core.Classes;
-
-namespace KamiToolKit.Core.Primitives;
+namespace KamiToolKit.Core.Primitives.NativeAddon;
 
 public unsafe partial class NativeAddon {
 

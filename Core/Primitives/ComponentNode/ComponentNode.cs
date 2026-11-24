@@ -3,7 +3,7 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.UI.Nodes;
 
-namespace KamiToolKit.Core.Primitives;
+namespace KamiToolKit.Core.Primitives.ComponentNode;
 
 /// <summary>
 /// Generic Implementation of the game's ComponentNode as a base class for use in KTK.

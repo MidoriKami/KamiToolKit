@@ -1,7 +1,8 @@
 using System.Numerics;
 using KamiToolKit.Core.Enums;
+using KamiToolKit.Core.Layout;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a list box node with border and background customization.

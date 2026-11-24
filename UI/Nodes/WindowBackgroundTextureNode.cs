@@ -1,5 +1,6 @@
 using System.Numerics;
-using KamiToolKit.Core.Classes;
+using KamiToolKit.UI.Nodes.Parts;
+using KamiToolKit.UI.Nodes.ComponentNode;
 
 namespace KamiToolKit.UI.Nodes;
 

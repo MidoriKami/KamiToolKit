@@ -1,9 +1,10 @@
 using System;
+using KamiToolKit.UI.Nodes.Layout;
 
 namespace KamiToolKit.Core.Enums;
 
 /// <summary>
-/// Enumeration of flags used for <see cref="KamiToolKit.UI.Nodes.HorizontalFlexNode"/>
+/// Enumeration of flags used for <see cref="HorizontalFlexNode"/>
 /// </summary>
 [Flags]
 public enum FlexFlags {

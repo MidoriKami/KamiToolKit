@@ -1,6 +1,7 @@
 using KamiToolKit.Core.Enums;
+using KamiToolKit.Core.Layout;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing capabilities of a vertical list node.

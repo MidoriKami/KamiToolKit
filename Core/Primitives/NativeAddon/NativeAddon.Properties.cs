@@ -2,7 +2,7 @@ using System.Linq;
 using System.Numerics;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Core.Primitives;
+namespace KamiToolKit.Core.Primitives.NativeAddon;
 
 public unsafe partial class NativeAddon {
 

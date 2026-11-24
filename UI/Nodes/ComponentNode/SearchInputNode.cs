@@ -1,6 +1,6 @@
 using Lumina.Data.Parsing.Uld;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Implementation of <see cref="TextInputNode"/> that defaults the <see cref="TextInputNode.PlaceholderString"/>

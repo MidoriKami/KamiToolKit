@@ -1,15 +1,14 @@
 using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Classes;
-using KamiToolKit.Core.Interfaces;
-using KamiToolKit.UI.Nodes.Simplified;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives.ComponentNode;
 using KamiToolKit.Services.Timelines;
+using KamiToolKit.UI.Nodes.Simplified;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Specialization of a RadioButton for use with <see cref="TabBarNode"/>. Not intended for external use.

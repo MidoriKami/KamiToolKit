@@ -1,7 +1,7 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
-namespace KamiToolKit.UI.Overlays;
+namespace KamiToolKit.UI.Overlays.MapOverlay;
 
 /// <summary>
 /// Specialized implementation of a <see cref="MapMarkerNode"/> for use in <see cref="MapOverlayController"/>

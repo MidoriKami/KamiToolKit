@@ -2,12 +2,13 @@ using System;
 using System.Globalization;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Interfaces;
-using KamiToolKit.UI.Nodes.Simplified;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives.ComponentNode;
 using KamiToolKit.Services.Timelines;
+using KamiToolKit.UI.Nodes.Parts;
+using KamiToolKit.UI.Nodes.Simplified;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Implementation of the game's SliderNode and associated component.

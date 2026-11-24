@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel;
-using KamiToolKit.UI.Overlays;
+using KamiToolKit.UI.Overlays.UiOverlay;
 
 namespace KamiToolKit.Core.Enums;
 

@@ -1,10 +1,10 @@
 using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.UI.Nodes.Simplified;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Specialization of the <see cref="IProgressNode"/> that represents a player-spell cast.

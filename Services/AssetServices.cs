@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace KamiToolKit;
+namespace KamiToolKit.Services;
 
 internal static class AssetServices {
     public static string GetAssetPath(string assetName)

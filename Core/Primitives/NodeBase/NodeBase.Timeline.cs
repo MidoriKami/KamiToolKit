@@ -1,6 +1,6 @@
 using KamiToolKit.Services.Timelines;
 
-namespace KamiToolKit.Core.Primitives;
+namespace KamiToolKit.Core.Primitives.NodeBase;
 
 public abstract unsafe partial class NodeBase {
 

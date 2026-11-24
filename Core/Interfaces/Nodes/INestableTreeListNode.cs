@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using KamiToolKit.Core.Primitives;
-using KamiToolKit.Core.Classes;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.UI.Nodes;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a nestable tree list node with nested collapsible sections.

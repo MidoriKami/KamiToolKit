@@ -1,7 +1,8 @@
 using System;
+using KamiToolKit.Core.Layout;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Core.Interfaces;
+namespace KamiToolKit.Core.Interfaces.Nodes;
 
 /// <summary>
 /// Interface representing a DropDown node.

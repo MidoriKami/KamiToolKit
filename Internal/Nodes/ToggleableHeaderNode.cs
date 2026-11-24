@@ -1,11 +1,13 @@
 using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.UI;
+using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.UI.Nodes;
+using KamiToolKit.UI.Nodes.Parts;
 using KamiToolKit.UI.Nodes.Simplified;
 using KamiToolKit.Services.Timelines;
+using KamiToolKit.UI.Nodes.Layout;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.Internal.Nodes;

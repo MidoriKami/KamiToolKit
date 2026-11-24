@@ -4,18 +4,18 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
 using KamiToolKit.Core.Enums;
+using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.Internal.Classes;
-using KamiToolKit.UI.Nodes.Simplified;
 using KamiToolKit.Services.Timelines;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.UI.Nodes.Layout;
+using KamiToolKit.UI.Nodes.Simplified;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Excel.Sheets;
 using Lumina.Text.ReadOnly;
 using Action = System.Action;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.ComponentNode;
 
 /// <summary>
 /// Specialization of <see cref="DropDownNode{T}"/> for strings.

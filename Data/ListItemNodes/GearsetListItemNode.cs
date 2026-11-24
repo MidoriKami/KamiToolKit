@@ -2,7 +2,7 @@ using System.Numerics;
 using Dalamud.Game.Text;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Classes;
+using KamiToolKit.UI;
 using KamiToolKit.Core.Interfaces;
 using KamiToolKit.UI.Nodes;
 

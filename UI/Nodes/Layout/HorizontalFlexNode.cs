@@ -1,9 +1,8 @@
 using System.Linq;
-using KamiToolKit.Core.Primitives;
 using KamiToolKit.Core.Enums;
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.Core.Interfaces.Nodes;
 
-namespace KamiToolKit.UI.Nodes;
+namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// A horizontal <see cref="LayoutListNode"/> that will evenly divide its area among its children nodes.
@@ -62,7 +61,7 @@ public class HorizontalFlexNode : LayoutListNode, IHorizontalFlexNode {
 
     /// <inheritdoc />
     protected override void OnUpdateControllerNav() {
-        var componentNodes = NodeList.OfType<ComponentNode>().ToList();
+        var componentNodes = NodeList.OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
         if (componentNodes.Count is 0) return;
 
         foreach (var (index, node) in componentNodes.Index()) {

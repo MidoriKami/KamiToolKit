@@ -9,7 +9,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Internal.Classes;
 
-namespace KamiToolKit.Core.Primitives;
+namespace KamiToolKit.Core.Primitives.NodeBase;
 
 /// <summary>
 /// Abstract base class for all nodes used in KamiToolKit.
