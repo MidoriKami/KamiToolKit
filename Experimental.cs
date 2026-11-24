@@ -1,4 +1,4 @@
-﻿// ReSharper disable RedundantUnsafeContext
+// ReSharper disable RedundantUnsafeContext
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 namespace KamiToolKit;
