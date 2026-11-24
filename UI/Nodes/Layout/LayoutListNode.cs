@@ -161,7 +161,7 @@ public abstract class LayoutListNode : LayoutNodeBase, ILayoutListNode {
     }
 
     /// <inheritdoc/>
-    public void AddDummy(float size = 0.0f) {
+    public void AddSpacer(float size = 0.0f) {
         AddNode(new ResNode { Size = new Vector2(size, size) });
     }
 

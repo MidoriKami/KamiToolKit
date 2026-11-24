@@ -97,14 +97,8 @@ public abstract class NodeBuilder {
     /// <summary>
     /// Adds a spacer with the specified size.
     /// </summary>
-    public NodeBuilder Dummy(float size)
-        => AddNode(new ResNode { Size = new Vector2(size, size) });
-
-    /// <summary>
-    /// Adds a spacer with the specified size.
-    /// </summary>
     public NodeBuilder Spacer(float size)
-        => Dummy(size);
+        => AddNode(new ResNode { Size = new Vector2(size, size) });
 
     /// <summary>
     /// Adds a HorizontalLineNode.

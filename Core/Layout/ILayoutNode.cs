@@ -75,10 +75,10 @@ public interface ILayoutNode : ILayoutUpdatable, INode {
     void RemoveNode(NodeBase node);
 
     /// <summary>
-    /// Adds a dummy node to the list, a standard ResNode with no contents for spacing/positioning.
+    /// Adds a spacer node to the list, a standard ResNode with no contents for spacing/positioning.
     /// </summary>
-    /// <param name="size">The size of the dummy to add.</param>
-    void AddDummy(float size = 0.0f);
+    /// <param name="size">The size of the spacer to add.</param>
+    void AddSpacer(float size = 0.0f);
 
     /// <summary>
     /// Removes all nodes from the list. All nodes are disposed.
