@@ -27,6 +27,14 @@ public class MultiStateButtonNode<T> : TextButtonNode, IMultiStateButtonNode<T> 
         set => SelectedIndex = States.IndexOf(value);
     }
 
+    /// <inheritdoc />
+    public void SetValueSilent(T value) {
+        var stateChangedDelegates = OnStateChanged;
+        OnStateChanged = null;
+        SelectedState = value;
+        OnStateChanged = stateChangedDelegates;
+    }
+
     /// <summary>
     /// Constructs a new <see cref="MultiStateButtonNode{T}"/>.
     /// </summary>

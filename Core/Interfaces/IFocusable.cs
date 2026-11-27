@@ -15,18 +15,12 @@ public interface IFocusable {
     /// <summary>
     /// Clears the nodes focus.
     /// </summary>
-    void ClearFocus() {
-        IsFocused = false;
-        OnUnfocused?.Invoke();
-    }
+    void ClearFocus();
 
     /// <summary>
     /// Sets this node to be focused.
     /// </summary>
-    void SetFocus() {
-        IsFocused = true;
-        OnFocused?.Invoke();
-    }
+    void SetFocus();
 
     /// <summary>
     /// Gets or sets the action to be called when the node is focused.

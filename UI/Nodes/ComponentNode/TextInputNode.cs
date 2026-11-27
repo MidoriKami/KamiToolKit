@@ -61,12 +61,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
     public TextNode PlaceholderTextNode { get; }
 
     /// <inheritdoc/>
-    public bool IsFocused {
-        get => AtkStage.Instance()->AtkInputManager->FocusedNode == CollisionNode.Node;
-        set => AtkStage.Instance()->AtkInputManager->SetFocus(value ? (AtkResNode*)CollisionNode.Node : null, ParentAddon, 0);
-    }
-
-    /// <inheritdoc/>
     public int MaxCharacters {
         get => (int)Component->ComponentTextData.MaxChar;
         set => Component->ComponentTextData.MaxChar = (uint)value;
@@ -163,13 +157,6 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
 
     /// <inheritdoc/>
     public Action? OnTabEntered { get; set; }
-
-
-    /// <inheritdoc/>
-    public Action? OnFocused { get; set; }
-
-    /// <inheritdoc/>
-    public Action? OnUnfocused { get; set; }
 
     /// <summary>
     /// Constructs a new <see cref="TextInputNode"/>
@@ -271,6 +258,8 @@ public unsafe class TextInputNode : ComponentNode<AtkComponentTextInput, AtkUldC
         Component->Callback = (delegate* unmanaged<AtkUnitBase*, InputCallbackType, CStringPointer, CStringPointer, int, InputCallbackResult>)Marshal.GetFunctionPointerForDelegate(pinnedCallbackFunction);
 
         InitializeComponentEvents();
+
+        FocusNode = CollisionNode;
 
         CollisionNode.AddEvent(AtkEventType.FocusStart, OnInputFocusStarted);
         CollisionNode.AddEvent(AtkEventType.FocusStop, OnInputFocusEnded);
