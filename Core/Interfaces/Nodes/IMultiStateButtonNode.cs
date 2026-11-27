@@ -6,7 +6,7 @@ namespace KamiToolKit.Core.Interfaces.Nodes;
 /// <summary>
 /// Interface representing a multi-state button node that cycles through states.
 /// </summary>
-public interface IMultiStateButtonNode<T> : ITextButtonNode where T : notnull {
+public interface IMultiStateButtonNode<T> : ITextButtonNode, ISilentSettable<T> where T : notnull {
 
     /// <summary>
     /// Gets or sets the list of available states.
