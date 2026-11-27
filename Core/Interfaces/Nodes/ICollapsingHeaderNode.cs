@@ -5,4 +5,4 @@ namespace KamiToolKit.Core.Interfaces.Nodes;
 /// <summary>
 /// Interface representing a collapsing header node.
 /// </summary>
-public interface ICollapsingHeaderNode : ILayoutNode, ICollapsible, IStretchWidth;
+public interface ICollapsingHeaderNode : IToggleableHeaderNode, ILayoutNode, IStretchWidth;

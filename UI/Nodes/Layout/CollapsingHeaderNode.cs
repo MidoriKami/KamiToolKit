@@ -1,7 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Core.Layout;
 using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives.NodeBase;
 using KamiToolKit.Internal.Nodes;
+using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.UI.Nodes.Layout;
 
@@ -29,6 +34,48 @@ public class CollapsingHeaderNode : LayoutListNode, ICollapsingHeaderNode {
     public Action<bool>? OnCollapseToggled {
         get => ToggleableHeaderNode.OnCollapseToggled;
         set => ToggleableHeaderNode.OnCollapseToggled = value;
+    }
+
+    /// <inheritdoc />
+    public Vector4 TextColor {
+        get => ToggleableHeaderNode.TextColor;
+        set => ToggleableHeaderNode.TextColor = value;
+    }
+
+    /// <inheritdoc />
+    public Vector4 TextOutlineColor {
+        get => ToggleableHeaderNode.TextOutlineColor;
+        set => ToggleableHeaderNode.TextOutlineColor = value;
+    }
+
+    /// <inheritdoc />
+    public ReadOnlySeString String {
+        get => ToggleableHeaderNode.String;
+        set => ToggleableHeaderNode.String = value;
+    }
+
+    /// <inheritdoc />
+    public AlignmentType AlignmentType {
+        get => ToggleableHeaderNode.AlignmentType;
+        set => ToggleableHeaderNode.AlignmentType = value;
+    }
+
+    /// <inheritdoc />
+    public FontType FontType {
+        get => ToggleableHeaderNode.FontType;
+        set => ToggleableHeaderNode.FontType = value;
+    }
+
+    /// <inheritdoc />
+    public TextFlags TextFlags {
+        get => ToggleableHeaderNode.TextFlags;
+        set => ToggleableHeaderNode.TextFlags = value;
+    }
+
+    /// <inheritdoc />
+    public uint FontSize {
+        get => ToggleableHeaderNode.FontSize;
+        set => ToggleableHeaderNode.FontSize = value;
     }
 
     /// <inheritdoc />
