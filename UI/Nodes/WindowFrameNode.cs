@@ -25,6 +25,18 @@ public class WindowFrameNode : ResNode, ILayoutFiller, IFocusable {
     }
 
     /// <inheritdoc />
+    public void ClearFocus() {
+        IsFocused = false;
+        OnUnfocused?.Invoke();
+    }
+
+    /// <inheritdoc />
+    public void SetFocus() {
+        IsFocused = true;
+        OnFocused?.Invoke();
+    }
+
+    /// <inheritdoc />
     public Action? OnFocused { get; set; }
 
     /// <inheritdoc />

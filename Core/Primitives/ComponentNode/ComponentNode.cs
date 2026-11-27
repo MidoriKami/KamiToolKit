@@ -1,6 +1,8 @@
+using System;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Core.Interfaces;
 using KamiToolKit.UI.Nodes;
 
 namespace KamiToolKit.Core.Primitives.ComponentNode;
@@ -10,7 +12,7 @@ namespace KamiToolKit.Core.Primitives.ComponentNode;
 /// </summary>
 /// <typeparam name="T">The component type</typeparam>
 /// <typeparam name="TU">The component uld data type</typeparam>
-public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unmanaged, ICreatable<T> where TU : unmanaged {
+public abstract unsafe class ComponentNode<T, TU> : ComponentNode, IFocusable where T : unmanaged, ICreatable<T> where TU : unmanaged {
 
     /// <inheritdoc/>>
     public sealed override CollisionNode CollisionNode { get; }
@@ -66,14 +68,33 @@ public abstract unsafe class ComponentNode<T, TU> : ComponentNode where T : unma
         }
     }
 
-    /// <summary>
-    /// Sets this node as focused using the <see cref="ComponentNode.FocusNode"/> property.
-    /// </summary>
+    /// <inheritdoc/>
+    public bool IsFocused { get; set; }
+
+    /// <inheritdoc/>
+    public Action? OnFocused { get; set; }
+
+    /// <inheritdoc/>
+    public Action? OnUnfocused { get; set; }
+
+    /// <inheritdoc/>
     public void SetFocus() {
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(this);
         if (addon is null) return;
 
         AtkStage.Instance()->AtkInputManager->SetFocus(FocusNode, addon, 0);
+        IsFocused = true;
+        OnFocused?.Invoke();
+    }
+
+    /// <inheritdoc/>
+    public void ClearFocus() {
+        var addon = RaptureAtkUnitManager.Instance()->GetAddonByNode(this);
+        if (addon is null) return;
+
+        AtkStage.Instance()->AtkInputManager->SetFocus(null, addon, 0);
+        IsFocused = false;
+        OnUnfocused?.Invoke();
     }
 
     /// <summary>
