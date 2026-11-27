@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -8,6 +9,7 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
+using Lumina.Data.Files;
 
 namespace KamiToolKit.Core.Extensions;
 
@@ -109,6 +111,32 @@ public static unsafe class AtkUldPartExtensions {
             part.LoadTexture(texturePointer);
         }
 
+        /// <summary>
+        /// Loads a single part from a specified uld via part-set and part-id params.
+        /// </summary>
+        public bool TryLoadFromUld(string uldPath, uint partId, uint partSet, bool resolveTheme = true) {
+            if (uldPath.EndsWith(".uld", StringComparison.OrdinalIgnoreCase)) return false;
+            if (IDataManager.Get().GetFile<UldFile>(uldPath) is not { } loadedUld) return false;
+            if (partSet >= loadedUld.Parts.Length) return false;
+
+            var parts = loadedUld.Parts[partSet].Parts;
+            if (parts is null || partId >= parts.Length) return false;
+
+            var sourcePart = parts[partId];
+            var asset = loadedUld.AssetData.FirstOrDefault(entry => entry.Id == sourcePart.TextureId);
+            var path = asset.Path.AsSpan().TrimEnd('\0');
+            if (path.IsEmpty) return false;
+
+            part.U = sourcePart.U;
+            part.V = sourcePart.V;
+            part.Width = sourcePart.W;
+            part.Height = sourcePart.H;
+
+            var shouldResolveTheme = resolveTheme && loadedUld.WidgetData.AssetsHaveThemeSupport && asset.ThemeSupportBitmask is not 0;
+            part.LoadTexture(path.ToString(), shouldResolveTheme);
+            return true;
+        }
+
         private string GetLoadedPath() {
             if (part.UldAsset is null) return string.Empty;
             if (part.UldAsset->AtkTexture.Resource is null) return string.Empty;
@@ -138,6 +166,7 @@ public static unsafe class AtkUldPartExtensions {
             var height = part.UldAsset->AtkTexture.GetTextureHeight();
             return new Vector2(width, height);
         }
+
     }
 
     private static IconSubFolder GetIconSubFolder(uint iconId) {

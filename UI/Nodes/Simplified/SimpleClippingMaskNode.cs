@@ -69,6 +69,10 @@ public unsafe class SimpleClippingMaskNode : ClippingMaskNode, ISingleTextureNod
     public void LoadIcon(uint iconId)
         => PartsList[0]->LoadIcon(iconId);
 
+    /// <inheritdoc />
+    public void LoadUldPart(string uldPath, uint partId, uint partSet, bool resolveTheme = true)
+        => PartsList[0]->TryLoadFromUld(uldPath, partId, partSet, resolveTheme);
+
     /// <summary>
     /// Constructs a new <see cref="SimpleClippingMaskNode"/>
     /// </summary>
