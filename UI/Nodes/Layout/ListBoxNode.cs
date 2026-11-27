@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.Core.Enums;
+using KamiToolKit.Core.Layout;
 using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.Core.Primitives.NodeBase;
 
@@ -225,61 +226,42 @@ public class ListBoxNode : LayoutListNode, IListBoxNode {
 
     /// <inheritdoc/>
     protected override void OnUpdateControllerNav() {
-        var componentNodes = NodeList.OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
-        if (componentNodes.Count is 0) return;
+        var navigationGroups = GetNavigationChildGroups();
 
         if (LayoutOrientation is LayoutOrientation.Horizontal) {
             if (LayoutAnchor is LayoutAnchor.BottomRight or LayoutAnchor.TopRight) {
-                componentNodes = componentNodes.AsEnumerable().Reverse().ToList();
+                navigationGroups.Reverse();
             }
 
-            foreach (var (index, node) in componentNodes.Index()) {
-                node.NavIndex = index + NavIndex;
-                node.NavUp = NavUp;
-                node.NavDown = NavDown;
-
-                // First Element
-                if (index is 0) {
-                    node.NavLeft = componentNodes.Count - 1 + NavIndex;
-                }
-                else {
-                    node.NavLeft = index - 1 + NavIndex;
-                }
-
-                // Last Element
-                if (index == componentNodes.Count - 1) {
-                    node.NavRight = NavIndex;
-                }
-                else {
-                    node.NavRight = index + 1 + NavIndex;
-                }
-            }
+            ConnectHorizontalNavigationGroups(navigationGroups);
         }
         else if (LayoutOrientation is LayoutOrientation.Vertical) {
             if (LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.BottomRight) {
-                componentNodes = componentNodes.AsEnumerable().Reverse().ToList();
+                navigationGroups.Reverse();
             }
 
-            foreach (var (index, node) in componentNodes.Index()) {
-                node.NavIndex = index + NavIndex;
-                node.NavLeft = NavLeft;
-                node.NavRight = NavRight;
+            ConnectVerticalNavigationGroups(navigationGroups);
+        }
 
-                // First Element
-                if (index is 0) {
-                    node.NavUp = componentNodes.Count - 1 + NavIndex;
-                }
-                else {
-                    node.NavUp = index - 1 + NavIndex;
-                }
+        var boundary = CreateNavigationBoundary(navigationGroups);
+        SetNavigationBoundary(boundary);
 
-                // Last Element
-                if (index == componentNodes.Count - 1) {
-                    node.NavDown = NavIndex;
-                }
-                else {
-                    node.NavDown = index + 1 + NavIndex;
-                }
+        if (LayoutOrientation is LayoutOrientation.Horizontal) {
+            LinkNavigationBoundaryToIndex(boundary.Left, ControllerNavigationDirection.Left, NavLeft);
+            LinkNavigationBoundaryToIndex(boundary.Right, ControllerNavigationDirection.Right, NavRight);
+
+            foreach (var group in navigationGroups) {
+                LinkNavigationBoundaryToIndex(group.Boundary.Top, ControllerNavigationDirection.Up, NavUp);
+                LinkNavigationBoundaryToIndex(group.Boundary.Bottom, ControllerNavigationDirection.Down, NavDown);
+            }
+        }
+        else if (LayoutOrientation is LayoutOrientation.Vertical) {
+            LinkNavigationBoundaryToIndex(boundary.Top, ControllerNavigationDirection.Up, NavUp);
+            LinkNavigationBoundaryToIndex(boundary.Bottom, ControllerNavigationDirection.Down, NavDown);
+
+            foreach (var group in navigationGroups) {
+                LinkNavigationBoundaryToIndex(group.Boundary.Left, ControllerNavigationDirection.Left, NavLeft);
+                LinkNavigationBoundaryToIndex(group.Boundary.Right, ControllerNavigationDirection.Right, NavRight);
             }
         }
     }

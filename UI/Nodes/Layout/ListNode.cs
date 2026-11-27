@@ -11,6 +11,7 @@ using KamiToolKit.UI.Nodes.ComponentNode;
 using KamiToolKit.UI.Nodes.Parts;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
+using ComponentNodeBase = KamiToolKit.Core.Primitives.ComponentNode.ComponentNode;
 
 namespace KamiToolKit.UI.Nodes.Layout;
 
@@ -150,6 +151,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
         scrollPosition = 0;
         ScrollBarNode.ScrollPosition = 0;
         PopulateNodes();
+        RefreshNavigationForDynamicContent();
     }
 
     /// <inheritdoc/>
@@ -191,7 +193,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
             Position = new Vector2(0.0f, 0.0f),
             Size = new Vector2(Width, 4.0f),
             OnUpNavReceived = OnUpNavReceived,
-            IsVisible = NavIndex is not 0,
+            IsVisible = false,
         };
         UpwardsNavNode.AttachNode(this);
 
@@ -201,7 +203,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
             Position = new Vector2(0.0f, Height - 4.0f),
             Size = new Vector2(Width, 4.0f),
             OnDownNavReceived = OnDownNavReceived,
-            IsVisible = NavIndex is not 0,
+            IsVisible = false,
         };
         DownwardsNavNode.AttachNode(this);
 
@@ -318,6 +320,27 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
         }
     }
 
+    /// <inheritdoc/>
+    public override void UpdateNavigation() => UpdateNavigationFromRoot();
+
+    /// <inheritdoc/>
+    public override void UpdateNavigation(ControllerNavigationContext context) {
+        ArgumentNullException.ThrowIfNull(context);
+
+        if (UpwardsNavNode is not null) {
+            UpwardsNavNode.IsVisible = CanScrollUp;
+        }
+
+        if (DownwardsNavNode is not null) {
+            DownwardsNavNode.IsVisible = CanScrollDown;
+        }
+
+        base.UpdateNavigation(context);
+        ConnectConsecutiveRowBoundaries(context);
+        ConnectScrollWindowBoundaries(context);
+        UpdateNavigationBoundary();
+    }
+
     private void SelectItem(T? item) {
         if (item is null) return;
 
@@ -340,51 +363,171 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
     }
 
     private void RecalculateScroll() {
+        var maxScrollPosition = nodeList.Count is 0 ? 0 : Math.Max(0, Options.Count - nodeList.Count);
+        var previousScrollPosition = scrollPosition;
+        scrollPosition = Math.Clamp(scrollPosition, 0, maxScrollPosition);
+        if (scrollPosition != previousScrollPosition) {
+            PopulateNodes();
+        }
+
         if (Options.Count < nodeCount) {
             ScrollBarNode.ScrollPosition = 0;
             ScrollBarNode.IsEnabled = false;
         }
 
-        // Recalculate Controller Nav
-        if (NavIndex is not 0) {
-            UpwardsNavNode?.NavIndex = NavIndex;
-            UpwardsNavNode?.NavUp = NavUp;
-            UpwardsNavNode?.NavLeft = NavLeft;
-            UpwardsNavNode?.NavRight = NavRight;
-            UpwardsNavNode?.NavDown = NavIndex + 1;
-
-            DownwardsNavNode?.NavIndex = nodeList.Count * 4 + NavIndex + 1;
-            DownwardsNavNode?.NavUp = (nodeList.Count - 1 ) * 4 + NavIndex + 1;
-            DownwardsNavNode?.NavLeft = NavLeft;
-            DownwardsNavNode?.NavRight = NavRight;
-            DownwardsNavNode?.NavDown = NavDown;
-        }
-
-        foreach (var index in Enumerable.Range(0, nodeList.Count)) {
-            if (NavIndex is not 0) {
-                var node = nodeList[index];
-
-                // We'll allocate 4 nav slots per list item to do sub-nav via left/right.
-                if (index is 0) {
-                    node.ProcessNav(index * 4 + NavIndex + 1, NavIndex, (index + 1) * 4 + NavIndex + 1, NavLeft, NavRight);
-                }
-                else if (index == nodeCount - 1) {
-                    node.ProcessNav(index * 4 + NavIndex + 1, (index - 1) * 4 + NavIndex + 1, nodeList.Count * 4 + NavIndex + 1, NavLeft, NavRight);
-                }
-                else {
-                    node.ProcessNav(index * 4 + NavIndex + 1, (index - 1) * 4 + NavIndex + 1, (index + 1) * 4 + NavIndex + 1, NavLeft, NavRight);
-                }
-            }
-        }
-
         var totalHeight = (int)(Options.Count * (itemHeight + ItemSpacing) + ItemSpacing);
         ScrollBarNode.UpdateScrollParams((int)(nodeList.Count * (itemHeight + ItemSpacing)), totalHeight);
         ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
+
+        RefreshNavigationForDynamicContent();
+    }
+
+    private void UpdateNavigationBoundary() {
+        var rowBoundaries = nodeList
+            .Where(node => node.IsVisible)
+            .Select(node => node.NavigationBoundary)
+            .Where(boundary => boundary.Top.Count is not 0 && boundary.Bottom.Count is not 0)
+            .ToList();
+
+        var entryTargets = rowBoundaries
+            .Select(boundary => boundary.Top)
+            .FirstOrDefault(targets => targets.Count is not 0) ?? [];
+
+        if (entryTargets.Count is 0) {
+            NavigationBoundary = ControllerNavigationBoundary.Empty;
+            return;
+        }
+
+        var bottomBoundary = CanScrollDown ? [] : rowBoundaries[^1].Bottom.ToList();
+        if (!CanScrollDown && nodeList.LastOrDefault(node => node.IsVisible && node.NavigationBoundary.Bottom.Count is not 0)?.NavigationCheckboxNode is { } bottomCheckbox) {
+            bottomBoundary.Add(bottomCheckbox);
+        }
+
+        var leftBoundary = rowBoundaries.SelectMany(boundary => boundary.Left).Distinct().ToList();
+        var rightBoundary = rowBoundaries.SelectMany(boundary => boundary.Right).Distinct().ToList();
+        var topExit = new List<ComponentNodeBase>();
+        if (!CanScrollUp) {
+            topExit.AddRange(entryTargets);
+            if (nodeList.FirstOrDefault(node => node.IsVisible && node.NavigationBoundary.Top.Count is not 0)?.NavigationCheckboxNode is { } topCheckbox) {
+                topExit.Add(topCheckbox);
+            }
+        }
+
+        NavigationBoundary = new ControllerNavigationBoundary(entryTargets, bottomBoundary, leftBoundary, rightBoundary, topExit, entryTargets);
+    }
+
+    private void ConnectScrollWindowBoundaries(ControllerNavigationContext context) {
+        var rowBoundaries = nodeList
+            .Where(node => node.IsVisible)
+            .Select(node => node.NavigationBoundary)
+            .Where(boundary => boundary.Top.Count is not 0 && boundary.Bottom.Count is not 0)
+            .ToList();
+        if (rowBoundaries.Count is 0) return;
+
+        if (CanScrollUp && UpwardsNavNode is not null) {
+            foreach (var component in rowBoundaries[0].Top) {
+                context.TrySetLink(component, ControllerNavigationDirection.Up, UpwardsNavNode);
+            }
+
+            if (nodeList.FirstOrDefault(node => node.IsVisible && node.NavigationBoundary.Top.Count is not 0)?.NavigationCheckboxNode is { } topCheckbox) {
+                context.TrySetLink(topCheckbox, ControllerNavigationDirection.Up, UpwardsNavNode);
+            }
+        }
+
+        if (CanScrollDown && DownwardsNavNode is not null) {
+            foreach (var component in rowBoundaries[^1].Bottom) {
+                context.TrySetLink(component, ControllerNavigationDirection.Down, DownwardsNavNode);
+            }
+
+            if (nodeList.LastOrDefault(node => node.IsVisible && node.NavigationBoundary.Bottom.Count is not 0)?.NavigationCheckboxNode is { } bottomCheckbox) {
+                context.TrySetLink(bottomCheckbox, ControllerNavigationDirection.Down, DownwardsNavNode);
+            }
+        }
+    }
+
+    private void ConnectConsecutiveRowBoundaries(ControllerNavigationContext context) {
+        var rows = nodeList
+            .Where(node => node.IsVisible)
+            .Where(node => node.NavigationBoundary.Top.Any(component => component.NavIndex is >= 1 and <= byte.MaxValue)
+                           && node.NavigationBoundary.Bottom.Any(component => component.NavIndex is >= 1 and <= byte.MaxValue))
+            .ToList();
+
+        for (var index = 0; index < rows.Count - 1; index++) {
+            var currentBoundary = rows[index].NavigationBoundary;
+            var nextBoundary = rows[index + 1].NavigationBoundary;
+            ConnectRowBoundaryTargets(context, currentBoundary.Bottom, nextBoundary.Top, ControllerNavigationDirection.Down);
+            ConnectRowBoundaryTargets(context, nextBoundary.Top, currentBoundary.Bottom, ControllerNavigationDirection.Up);
+
+            if (rows[index].NavigationCheckboxNode is { } currentCheckbox) {
+                ConnectRowBoundaryTargets(context, [currentCheckbox], nextBoundary.Top, ControllerNavigationDirection.Down);
+            }
+
+            if (rows[index + 1].NavigationCheckboxNode is { } nextCheckbox) {
+                ConnectRowBoundaryTargets(context, [nextCheckbox], currentBoundary.Bottom, ControllerNavigationDirection.Up);
+            }
+        }
+    }
+
+    private static void ConnectRowBoundaryTargets(
+        ControllerNavigationContext context,
+        IReadOnlyList<ComponentNodeBase> sources,
+        IReadOnlyList<ComponentNodeBase> targets,
+        ControllerNavigationDirection direction) {
+
+        var sourceGroups = sources
+            .Where(component => component.NavIndex is >= 1 and <= byte.MaxValue)
+            .GroupBy(component => component.NavIndex)
+            .Select(group => group.ToList())
+            .ToList();
+        var targetGroups = targets
+            .Where(component => component.NavIndex is >= 1 and <= byte.MaxValue)
+            .GroupBy(component => component.NavIndex)
+            .Select(group => group.ToList())
+            .ToList();
+
+        foreach (var sourceGroup in sourceGroups) {
+            var targetDistances = targetGroups
+                .Select(targetGroup => (
+                    Components: targetGroup,
+                    Distance: sourceGroup
+                        .SelectMany(source => targetGroup.Select(target => MathF.Abs(GetCenterX(source) - GetCenterX(target))))
+                        .Min()))
+                .ToList();
+
+            if (targetDistances.Count is 0) continue;
+
+            var closestDistance = targetDistances.Min(target => target.Distance);
+            var closestTargets = targetDistances
+                .Where(target => MathF.Abs(target.Distance - closestDistance) <= 0.5f)
+                .ToList();
+
+            if (closestTargets.Count is not 1) {
+                foreach (var source in sourceGroup) {
+                    context.TrySetLink(source, direction, null);
+                }
+                context.ReportAmbiguousTarget($"{direction} list-row boundary from NavIndex {sourceGroup[0].NavIndex}");
+                continue;
+            }
+
+            foreach (var source in sourceGroup) {
+                context.TrySetLink(source, direction, closestTargets[0].Components[0]);
+            }
+        }
+    }
+
+    private static float GetCenterX(ComponentNodeBase component)
+        => component.ScreenPosition.X + component.Width * component.Scale.X / 2.0f;
+
+    private void RefreshNavigationForDynamicContent() {
+        UpdateNavigationFromRoot();
     }
 
     private void OnScrollUpdate(int newPosition) {
-        scrollPosition = (int)(newPosition / (itemHeight + ItemSpacing));
+        var newScrollPosition = (int)(newPosition / (itemHeight + ItemSpacing));
+        var maxScrollPosition = nodeList.Count is 0 ? 0 : Math.Max(0, Options.Count - nodeList.Count);
+        scrollPosition = Math.Clamp(newScrollPosition, 0, maxScrollPosition);
         PopulateNodes();
+        RefreshNavigationForDynamicContent();
 
         if (ParentAddon is not null) {
             ParentAddon->UpdateCollisionNodeList(false);
@@ -397,6 +540,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
 
         ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
         PopulateNodes();
+        RefreshNavigationForDynamicContent();
 
         if (ParentAddon is not null) {
             ParentAddon->UpdateCollisionNodeList(false);
@@ -406,40 +550,43 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
     }
 
     private void OnUpNavReceived() {
-        if (scrollPosition > 0) {
-            UpwardsNavNode?.NavUp = 0;
-            scrollPosition--;
-            ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
-            PopulateNodes();
+        if (!CanScrollUp) return;
 
-            if (!AllowMultipleSelection) {
-                var node = nodeList[0];
-                node.OnClick?.Invoke(node);
-            }
-
-            if (scrollPosition is 0) {
-                UpwardsNavNode?.NavUp = NavUp;
-            }
-        }
+        var currentBoundary = nodeList[0].NavigationBoundary.Top;
+        scrollPosition--;
+        ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
+        PopulateNodes();
+        RefreshNavigationForDynamicContent();
+        FocusAdjacentRow(currentBoundary, nodeList[0].NavigationBoundary.Top);
     }
 
     private void OnDownNavReceived() {
-        if (scrollPosition < Options.Count - nodeList.Count) {
-            DownwardsNavNode?.NavDown = 0;
-            scrollPosition++;
-            ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
-            PopulateNodes();
+        if (!CanScrollDown) return;
 
-            if (!AllowMultipleSelection) {
-                var node = nodeList[^1];
-                node.OnClick?.Invoke(node);
-            }
+        var currentBoundary = nodeList[^1].NavigationBoundary.Bottom;
+        scrollPosition++;
+        ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
+        PopulateNodes();
+        RefreshNavigationForDynamicContent();
+        FocusAdjacentRow(currentBoundary, nodeList[^1].NavigationBoundary.Bottom);
+    }
 
-            if (scrollPosition is 0) {
-                DownwardsNavNode?.NavDown = NavDown;
-            }
+    private static void FocusAdjacentRow(IReadOnlyList<ComponentNodeBase> currentBoundary, IReadOnlyList<ComponentNodeBase> nextBoundary) {
+        if (currentBoundary.Count is 0 || nextBoundary.Count is 0) return;
+
+        var currentCenter = GetCenterX(currentBoundary[0]);
+        var target = nextBoundary
+            .Where(component => component.NavIndex is >= 1 and <= byte.MaxValue)
+            .OrderBy(component => MathF.Abs(GetCenterX(component) - currentCenter))
+            .FirstOrDefault();
+        if (target is IFocusable focusable) {
+            focusable.SetFocus();
         }
     }
+
+    private bool CanScrollUp => nodeList.Count is not 0 && scrollPosition > 0;
+
+    private bool CanScrollDown => nodeList.Count is not 0 && scrollPosition < Math.Max(0, Options.Count - nodeList.Count);
 
     private readonly List<TU> nodeList = [];
     private readonly float itemHeight;

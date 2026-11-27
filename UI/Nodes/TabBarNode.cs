@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Layout;
 using KamiToolKit.Services.Timelines;
 using KamiToolKit.UI.Nodes.ComponentNode;
 using Lumina.Text.ReadOnly;
@@ -29,6 +30,8 @@ public class TabBarNode : ResNode, ITabBarNode {
 
     /// <inheritdoc/>
     public int NavDown { get; set; }
+
+    internal IReadOnlyList<TabBarRadioButtonNode> Buttons => radioButtons;
 
     /// <inheritdoc />
     public ICollection<TabBarEntry> InitialEntries {
@@ -88,6 +91,7 @@ public class TabBarNode : ResNode, ITabBarNode {
         button.Dispose();
         radioButtons.Remove(button);
         UpdateLayout();
+        UpdateNavigation();
     }
 
     /// <inheritdoc />
@@ -97,6 +101,8 @@ public class TabBarNode : ResNode, ITabBarNode {
         }
 
         radioButtons.Clear();
+        UpdateLayout();
+        UpdateNavigation();
     }
 
     /// <summary>
@@ -135,6 +141,7 @@ public class TabBarNode : ResNode, ITabBarNode {
         }
 
         UpdateLayout();
+        UpdateNavigation();
     }
 
     /// <inheritdoc />
@@ -158,6 +165,7 @@ public class TabBarNode : ResNode, ITabBarNode {
         }
 
         UpdateLayout();
+        UpdateNavigation();
     }
 
     private void ClickHandler(TabBarRadioButtonNode button) {
@@ -169,6 +177,32 @@ public class TabBarNode : ResNode, ITabBarNode {
         button.IsChecked = true;
         button.IsSelected = true;
     }
+
+    /// <inheritdoc/>
+    public override void UpdateNavigation() => UpdateNavigationFromRoot();
+
+    /// <inheritdoc/>
+    public override void UpdateNavigation(ControllerNavigationContext context) {
+        ArgumentNullException.ThrowIfNull(context);
+
+        foreach (var button in radioButtons) {
+            context.TryAssignIndex(button);
+        }
+
+        for (var index = 0; index < radioButtons.Count; index++) {
+            var button = radioButtons[index];
+            var previous = radioButtons[index is 0 ? radioButtons.Count - 1 : index - 1];
+            var next = radioButtons[index == radioButtons.Count - 1 ? 0 : index + 1];
+
+            context.TrySetLink(button, ControllerNavigationDirection.Left, previous);
+            context.TrySetLink(button, ControllerNavigationDirection.Right, next);
+        }
+
+        NavigationBoundary = radioButtons.Count is 0
+            ? ControllerNavigationBoundary.Empty
+            : new ControllerNavigationBoundary(radioButtons, radioButtons, [radioButtons[0]], [radioButtons[^1]]);
+    }
+
 
     private void UpdateLayout() {
         if (radioButtons.Count is 0) return;
@@ -193,26 +227,6 @@ public class TabBarNode : ResNode, ITabBarNode {
                 button.Width = step + 2.5f;
             }
 
-            button.NavIndex = NavIndex + index;
-
-            if (NavIndex is not 0) {
-                if (index is 0) {
-                    button.NavLeft = radioButtons.Count - 1 + NavIndex;
-                }
-                else {
-                    button.NavLeft = index - 1 + NavIndex;
-                }
-
-                if (index == radioButtons.Count - 1) {
-                    button.NavRight = NavIndex;
-                }
-                else {
-                    button.NavRight = index + 1 + NavIndex;
-                }
-            }
-
-            button.NavUp = NavUp;
-            button.NavDown = NavDown;
         }
     }
 

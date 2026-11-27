@@ -1,5 +1,6 @@
 using System.Linq;
 using KamiToolKit.Core.Enums;
+using KamiToolKit.Core.Layout;
 using KamiToolKit.Core.Interfaces.Nodes;
 
 namespace KamiToolKit.UI.Nodes.Layout;
@@ -61,29 +62,18 @@ public class HorizontalFlexNode : LayoutListNode, IHorizontalFlexNode {
 
     /// <inheritdoc />
     protected override void OnUpdateControllerNav() {
-        var componentNodes = NodeList.OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
-        if (componentNodes.Count is 0) return;
+        var navigationGroups = GetNavigationChildGroups();
 
-        foreach (var (index, node) in componentNodes.Index()) {
-            node.NavIndex = index + NavIndex;
-            node.NavUp = NavUp;
-            node.NavDown = NavDown;
+        ConnectHorizontalNavigationGroups(navigationGroups);
 
-            // First Element
-            if (index is 0) {
-                node.NavLeft = componentNodes.Count - 1 + NavIndex;
-            }
-            else {
-                node.NavLeft = index - 1 + NavIndex;
-            }
+        var boundary = CreateNavigationBoundary(navigationGroups);
+        SetNavigationBoundary(boundary);
+        LinkNavigationBoundaryToIndex(boundary.Left, ControllerNavigationDirection.Left, NavLeft);
+        LinkNavigationBoundaryToIndex(boundary.Right, ControllerNavigationDirection.Right, NavRight);
 
-            // Last Element
-            if (index == componentNodes.Count - 1) {
-                node.NavRight = NavIndex;
-            }
-            else {
-                node.NavRight = index + 1 + NavIndex;
-            }
+        foreach (var group in navigationGroups) {
+            LinkNavigationBoundaryToIndex(group.Boundary.Top, ControllerNavigationDirection.Up, NavUp);
+            LinkNavigationBoundaryToIndex(group.Boundary.Bottom, ControllerNavigationDirection.Down, NavDown);
         }
     }
 }

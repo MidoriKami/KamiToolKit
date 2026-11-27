@@ -90,6 +90,6 @@ public class RatioSplitNode : HorizontalListNode, IRatioSplitNode {
 
     /// <inheritdoc />
     protected override void OnUpdateControllerNav() {
-        // Not implemented yet.
+        base.OnUpdateControllerNav();
     }
 }

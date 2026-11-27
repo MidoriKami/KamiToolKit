@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using KamiToolKit.Core.Enums;
+using KamiToolKit.Core.Layout;
 using KamiToolKit.Core.Interfaces.Nodes;
 
 namespace KamiToolKit.UI.Nodes.Layout;
@@ -92,35 +93,22 @@ public class VerticalListNode : LayoutListNode, IVerticalListNode {
 
     /// <inheritdoc />
     protected override void OnUpdateControllerNav() {
-        var componentNodes = NodeList.OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
-        if (componentNodes.Count is 0) return;
+        var navigationGroups = GetNavigationChildGroups();
 
         if (Anchor is VerticalListAnchor.Bottom) {
-            componentNodes = [
-                .. componentNodes.AsEnumerable().Reverse(),
-            ];
+            navigationGroups.Reverse();
         }
 
-        foreach (var (index, node) in componentNodes.Index()) {
-            node.NavIndex = (byte) (index + NavIndex);
-            node.NavLeft = NavLeft;
-            node.NavRight = NavRight;
+        ConnectVerticalNavigationGroups(navigationGroups);
 
-            // First Element
-            if (index is 0) {
-                node.NavUp = (byte) (componentNodes.Count - 1 + NavIndex);
-            }
-            else {
-                node.NavUp = (byte) (index - 1 + NavIndex);
-            }
+        var boundary = CreateNavigationBoundary(navigationGroups);
+        SetNavigationBoundary(boundary);
+        LinkNavigationBoundaryToIndex(boundary.Top, ControllerNavigationDirection.Up, NavUp);
+        LinkNavigationBoundaryToIndex(boundary.Bottom, ControllerNavigationDirection.Down, NavDown);
 
-            // Last Element
-            if (index == componentNodes.Count - 1) {
-                node.NavDown = (byte) NavIndex;
-            }
-            else {
-                node.NavDown = (byte) (index + 1 + NavIndex);
-            }
+        foreach (var group in navigationGroups) {
+            LinkNavigationBoundaryToIndex(group.Boundary.Left, ControllerNavigationDirection.Left, NavLeft);
+            LinkNavigationBoundaryToIndex(group.Boundary.Right, ControllerNavigationDirection.Right, NavRight);
         }
     }
 }

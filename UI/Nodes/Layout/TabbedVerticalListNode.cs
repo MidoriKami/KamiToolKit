@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Layout;
 using KamiToolKit.Core.Primitives.NodeBase;
 
 namespace KamiToolKit.UI.Nodes.Layout;
@@ -103,6 +104,7 @@ public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
         nodeList.Add(new TabbedNodeEntry<NodeBase>(node, tabIndex + TabStep));
 
         node.AttachNode(this);
+        SetNavigationParentForChild(node, this);
         UpdateLayout();
         UpdateNavigation();
     }
@@ -126,18 +128,21 @@ public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
     protected override void AddNodeInternal(NodeBase node) {
         nodeList.Add(new TabbedNodeEntry<NodeBase>(node, TabStep));
         node.AttachNode(this);
+        SetNavigationParentForChild(node, this);
     }
 
     /// <inheritdoc/>
     protected override bool RemoveNodeInternal(NodeBase node) {
         if (nodeList.All(entry => entry.Node != node)) return false;
         nodeList.RemoveAll(entry => entry.Node == node);
+        SetNavigationParentForChild(node, null);
         return true;
     }
 
     /// <inheritdoc/>
     protected override void ClearInternal() {
         foreach (var nodeEntry in nodeList) {
+            SetNavigationParentForChild(nodeEntry.Node, null);
             nodeEntry.Node.Dispose();
         }
         nodeList.Clear();
@@ -178,29 +183,17 @@ public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
 
     /// <inheritdoc/>
     protected override void OnUpdateControllerNav() {
-        var componentNodes = nodeList.Select(nodeEntry => nodeEntry.Node).OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
-        if (componentNodes.Count is 0) return;
+        var navigationGroups = GetNavigationChildGroups();
+        ConnectVerticalNavigationGroups(navigationGroups);
 
-        foreach (var (index, node) in componentNodes.Index()) {
-            node.NavIndex = (byte) (index + NavIndex);
-            node.NavLeft = NavLeft;
-            node.NavRight = NavRight;
+        var boundary = CreateNavigationBoundary(navigationGroups);
+        SetNavigationBoundary(boundary);
+        LinkNavigationBoundaryToIndex(boundary.Top, ControllerNavigationDirection.Up, NavUp);
+        LinkNavigationBoundaryToIndex(boundary.Bottom, ControllerNavigationDirection.Down, NavDown);
 
-            // First Element
-            if (index is 0) {
-                node.NavUp = (byte) (componentNodes.Count - 1 + NavIndex);
-            }
-            else {
-                node.NavUp = (byte) (index - 1 + NavIndex);
-            }
-
-            // Last Element
-            if (index == componentNodes.Count - 1) {
-                node.NavDown = (byte) NavIndex;
-            }
-            else {
-                node.NavDown = (byte) (index + 1 + NavIndex);
-            }
+        foreach (var group in navigationGroups) {
+            LinkNavigationBoundaryToIndex(group.Boundary.Left, ControllerNavigationDirection.Left, NavLeft);
+            LinkNavigationBoundaryToIndex(group.Boundary.Right, ControllerNavigationDirection.Right, NavRight);
         }
     }
 

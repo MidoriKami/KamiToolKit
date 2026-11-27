@@ -131,104 +131,73 @@ public class TabbedConfigurationAddon<T, TU, TV, TW> : NativeAddon
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan) {
         base.OnSetup(addon, atkValueSpan);
 
-        LayoutContainer = new VerticalListNode {
+        var tabbedContainer = new TabbedContentNode {
             Position = ContentStartPosition,
             Size = ContentSize,
-            StretchWidth = true,
+        };
+
+        OptionsConfigurationPage = new HorizontalListNode {
+            ItemSpacing = 4.0f,
             InitialNodes = [
-                new TabBarNode {
-                    Height = 26.0f,
-                    InitialEntries = [
-                        new TabBarEntry {
-                            TextId = 465, // "Options"
-                            SheetType = NodeData.SheetType.Addon,
-                            OnClick = OnOptionsTabSelected,
-                        },
-                        new TabBarEntry {
-                            TextId = 662, // "General"
-                            SheetType = NodeData.SheetType.Addon,
-                            OnClick = OnGeneralTabSelected,
-                        },
-                    ],
-                },
-                new ResNode { Height = 8.0f },
-                OptionsConfigurationPage = new HorizontalListNode {
-                    Height = ContentSize.Y - 26.0f - 8.0f,
-                    FitHeight = true,
-                    ItemSpacing = 4.0f,
+                new VerticalListNode {
+                    Width = ContentSize.X * 4.0f / 10.0f - 5.0f,
+                    StretchWidth = true,
                     InitialNodes = [
-                        new VerticalListNode {
-                            Width = ContentSize.X * 4.0f / 10.0f - 5.0f,
-                            StretchWidth = true,
+                        SearchInputNode = new SearchInputNode {
+                            Height = 26.0f,
+                            OnInputReceived = OnSearchInputReceived,
+                        },
+                        new ResNode { Height = 8.0f },
+                        OptionsListNode = new ListNode<T, TU> {
+                            AllowMultipleSelection = false,
+                            ItemSpacing = 2.0f,
+                            Options = OptionsList,
+                            OnOptionSelected = OnEntrySelected,
+                        },
+                        new ResNode { Height = 8.0f },
+                        new HorizontalFlexNode {
+                            Width = ContentSize.X,
+                            Height = 26.0f,
+                            AlignmentFlags = FlexFlags.FitHeight | FlexFlags.FitWidth,
+                            ItemSpacing = 6.0f,
                             InitialNodes = [
-                                SearchInputNode = new SearchInputNode {
-                                    Height = 26.0f,
-                                    OnInputReceived = OnSearchInputReceived,
-                                    NavIndex = 1,
-                                    NavDown = 2,
-                                    NavUp = 100,
-                                    NavRight = BodyNavIndex,
+                                new TextButtonNode {
+                                    TextId = 302, // "Add"
+                                    SheetType = NodeData.SheetType.Addon,
+                                    OnClick = OnAddClicked,
                                 },
-                                new ResNode { Height = 8.0f },
-                                OptionsListNode = new ListNode<T, TU> {
-                                    Height = ContentSize.Y - 26.0f - 26.0f - 26.0f - 16.0f - 8.0f,
-                                    AllowMultipleSelection = false,
-                                    ItemSpacing = 2.0f,
-                                    Options = OptionsList,
-                                    OnOptionSelected = OnEntrySelected,
-                                    NavIndex = 2,
-                                    NavUp = 1,
-                                    NavDown = 100,
-                                    NavRight = BodyNavIndex,
-                                },
-                                new ResNode { Height = 8.0f },
-                                new HorizontalFlexNode {
-                                    Width = ContentSize.X,
-                                    Height = 26.0f,
-                                    AlignmentFlags = FlexFlags.FitHeight | FlexFlags.FitWidth,
-                                    ItemSpacing = 6.0f,
-                                    InitialNodes = [
-                                        new TextButtonNode {
-                                            TextId = 302, // "Add"
-                                            SheetType = NodeData.SheetType.Addon,
-                                            OnClick = OnAddClicked,
-                                            NavIndex = 100,
-                                            NavUp = 2,
-                                            NavDown = 1,
-                                            NavRight = 101,
-                                        },
-                                        RemoveButtonNode = new TextButtonNode {
-                                            TextId = 85, // "Remove"
-                                            SheetType = NodeData.SheetType.Addon,
-                                            OnClick = OnRemoveClicked,
-                                            IsEnabled = false,
-                                            NavIndex = 101,
-                                            NavUp = 2,
-                                            NavDown = 1,
-                                            NavLeft = 100,
-                                            NavRight = BodyNavIndex,
-                                        },
-                                    ],
+                                RemoveButtonNode = new TextButtonNode {
+                                    TextId = 85, // "Remove"
+                                    SheetType = NodeData.SheetType.Addon,
+                                    OnClick = OnRemoveClicked,
+                                    IsEnabled = false,
                                 },
                             ],
                         },
-                        new VerticalLineNode { Width = 4.0f },
-                        EntryConfigurationNode = new TV {
-                            Width =  ContentSize.X * 6.0f / 10.0f - 5.0f,
-                            SaveConfig = SaveConfig,
-                        },
                     ],
+                },
+                new VerticalLineNode { Width = 4.0f },
+                EntryConfigurationNode = new TV {
+                    Width = ContentSize.X * 6.0f / 10.0f - 5.0f,
+                    SaveConfig = SaveConfig,
                 },
             ],
         };
-        LayoutContainer.AttachNode(this);
 
-        GeneralConfigurationPage = new TW {
-            Position = OptionsConfigurationPage.Position + LayoutContainer.Position,
-            Size = OptionsConfigurationPage.Size,
-            IsVisible = false,
-        };
-        GeneralConfigurationPage.AttachNode(this);
+        GeneralConfigurationPage = new TW();
+        tabbedContainer.AddTab(new TabBarEntry {
+            TextId = 465, // "Options"
+            SheetType = NodeData.SheetType.Addon,
+            OnClick = OnOptionsTabSelected,
+        }, OptionsConfigurationPage);
+        tabbedContainer.AddTab(new TabBarEntry {
+            TextId = 662, // "General"
+            SheetType = NodeData.SheetType.Addon,
+            OnClick = OnGeneralTabSelected,
+        }, GeneralConfigurationPage);
+
+        LayoutContainer = tabbedContainer;
+        LayoutContainer.AttachNode(this);
     }
 
     /// <inheritdoc />
@@ -237,6 +206,7 @@ public class TabbedConfigurationAddon<T, TU, TV, TW> : NativeAddon
         SearchInputNode = null;
         OptionsListNode = null;
         RemoveButtonNode = null;
+        GeneralConfigurationPage = null;
 
         base.OnFinalize(addon);
     }

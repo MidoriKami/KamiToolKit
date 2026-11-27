@@ -1,9 +1,16 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.Core.Primitives.NodeBase;
 using KamiToolKit.Internal.Classes;
+using KamiToolKit.UI.Nodes.ComponentNode;
 using KamiToolKit.UI.Nodes.Layout;
 using KamiToolKit.UI.Nodes.Parts;
+using ComponentNodeBase = KamiToolKit.Core.Primitives.ComponentNode.ComponentNode;
 
 namespace KamiToolKit.UI.Nodes;
 
@@ -11,6 +18,24 @@ namespace KamiToolKit.UI.Nodes;
 /// Abstract class for use with <see cref="ListNode{T,TU}"/>.
 /// </summary>
 public abstract class ListItemNode<T> : SelectableNode {
+
+    /// <summary>
+    /// The focus component representing this list item itself.
+    /// </summary>
+    protected NavFocusNode RowFocusNode { get; }
+
+    internal CheckboxNode? NavigationCheckboxNode { get; private set; }
+
+    /// <summary>
+    /// Constructs a list item with a dedicated controller focus component.
+    /// </summary>
+    protected ListItemNode() {
+        RowFocusNode = new NavFocusNode();
+        RowFocusNode.AttachNode(this);
+        RowFocusNode.OnSelected = OnNavSelected;
+        RowFocusNode.OnHoverStart = OnNavHoverStart;
+        RowFocusNode.OnHoverEnd = OnNavHoverEnd;
+    }
 
     /// <summary>
     /// Gets or sets the item data for this node.
@@ -62,7 +87,83 @@ public abstract class ListItemNode<T> : SelectableNode {
     /// <summary>
     /// Processes building controller navigation.
     /// </summary>
-    public virtual void ProcessNav(int index, int up, int down, int left, int right) { }
+    public virtual void ProcessNav(int index, int up, int down, int left, int right) {
+        RowFocusNode.NavIndex = index;
+        RowFocusNode.NavUp = up;
+        RowFocusNode.NavDown = down;
+        RowFocusNode.NavLeft = left;
+        RowFocusNode.NavRight = right;
+    }
+
+    /// <summary>
+    /// Overridable function that is called when this node is selected through controller navigation.
+    /// </summary>
+    protected virtual void OnNavSelected() {
+        IsSelected = !IsSelected;
+        OnClick?.Invoke(this);
+    }
+
+    /// <summary>
+    /// Overridable function that is called when this node is hovered through controller navigation.
+    /// </summary>
+    protected virtual void OnNavHoverStart() { }
+
+    /// <summary>
+    /// Overridable function that is called when this node is no longer hovered through controller navigation.
+    /// </summary>
+    protected virtual void OnNavHoverEnd() { }
+
+    /// <inheritdoc />
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
+
+        RowFocusNode.Size = Vector2.Zero;
+        RowFocusNode.Position = new Vector2(2.0f, Height / 2.0f);
+    }
+
+    /// <inheritdoc/>
+    public override void UpdateNavigation(ControllerNavigationContext context) {
+        base.UpdateNavigation(context);
+
+        var navigationComponents = GetNavigationComponents(this)
+            .Where(component => component.NavIndex is >= 1 and <= byte.MaxValue)
+            .ToList();
+        NavigationCheckboxNode = navigationComponents.OfType<CheckboxNode>().FirstOrDefault();
+
+        if (RowFocusNode.NavIndex is < 1 or > byte.MaxValue) {
+            NavigationBoundary = ControllerNavigationBoundary.Empty;
+            return;
+        }
+
+        if (NavigationCheckboxNode is { } checkboxNode) {
+            context.TrySetLink(RowFocusNode, ControllerNavigationDirection.Right, checkboxNode);
+            context.TrySetLink(checkboxNode, ControllerNavigationDirection.Left, RowFocusNode);
+        }
+
+        var rightBoundary = NavigationCheckboxNode is { } rightCheckbox
+            ? new ComponentNodeBase[] { rightCheckbox }
+            : Array.Empty<ComponentNodeBase>();
+
+        NavigationBoundary = new ControllerNavigationBoundary(
+            [RowFocusNode],
+            [RowFocusNode],
+            [RowFocusNode],
+            rightBoundary,
+            [RowFocusNode]);
+    }
+
+    private static IEnumerable<ComponentNodeBase> GetNavigationComponents(NodeBase node) {
+        foreach (var child in node.ChildNodes) {
+            if (child is ComponentNodeBase component) {
+                yield return component;
+            }
+            else {
+                foreach (var descendantComponent in GetNavigationComponents(child)) {
+                    yield return descendantComponent;
+                }
+            }
+        }
+    }
 
     /// <summary>
     /// Gets or sets a callback that can optionally be invoked to inform the containing list that

@@ -14,7 +14,7 @@ namespace KamiToolKit.Data.ListItemNodes;
 /// Specialization of <see cref="ListItemNode{T}"/> for use with <see cref="ListNode{T,TU}"/> or <see cref="ItemSearchAddon"/>
 /// to represent <see cref="Item"/>'s.
 /// </summary>
-public class ItemListItemNode : ListItemWithFocusNav<Item>, IListItemNode {
+public class ItemListItemNode : ListItemNode<Item>, IListItemNode {
 
     /// <inheritdoc/>
     public static float ItemHeight => 48.0f;

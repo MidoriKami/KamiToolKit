@@ -1,6 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Layout;
+using KamiToolKit.Core.Primitives.NodeBase;
 
 namespace KamiToolKit.UI.Nodes.Layout;
 
@@ -8,6 +12,9 @@ namespace KamiToolKit.UI.Nodes.Layout;
 /// A layout node that fits all added child nodes to its own size.
 /// </summary>
 public sealed class FittedContentNode : LayoutListNode, ILayoutFiller {
+
+    private readonly List<ControllerNavigationContext> childContexts = [];
+    private int childContextStartIndex;
 
     /// <inheritdoc />
     public LayoutFill LayoutFill { get; set; } = LayoutFill.Both;
@@ -29,6 +36,28 @@ public sealed class FittedContentNode : LayoutListNode, ILayoutFiller {
 
     /// <inheritdoc />
     protected override void OnUpdateControllerNav() {
-        // Not implemented yet.
+        SetNavigationBoundary(CreateNavigationBoundary(GetNavigationChildGroups()));
+    }
+
+    /// <inheritdoc/>
+    public override void UpdateNavigation(ControllerNavigationContext context) {
+        ArgumentNullException.ThrowIfNull(context);
+
+        childContexts.Clear();
+        childContextStartIndex = context.NextIndex;
+
+        base.UpdateNavigation(context);
+
+        var exclusiveNextIndex = childContexts.Count is 0
+            ? childContextStartIndex
+            : childContexts.Max(childContext => childContext.NextIndex);
+        context.TryReserveThrough(exclusiveNextIndex);
+    }
+
+    /// <inheritdoc/>
+    protected override ControllerNavigationContext CreateChildNavigationContext(NodeBase child, ControllerNavigationContext context) {
+        var childContext = context.CreateLocalScope(childContextStartIndex);
+        childContexts.Add(childContext);
+        return childContext;
     }
 }

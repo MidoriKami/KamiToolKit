@@ -132,10 +132,6 @@ public class ConfigurationAddon<T, TU, TV> : NativeAddon where TV : EntryConfigu
                         SearchInputNode = new SearchInputNode {
                             Height = 26.0f,
                             OnInputReceived = OnSearchInputReceived,
-                            NavIndex = 1,
-                            NavDown = 2,
-                            NavUp = 100,
-                            NavRight = BodyNavIndex,
                         },
                         new ResNode { Height = 8.0f },
                         OptionsListNode = new ListNode<T, TU> {
@@ -144,10 +140,6 @@ public class ConfigurationAddon<T, TU, TV> : NativeAddon where TV : EntryConfigu
                             ItemSpacing = 2.0f,
                             Options = OptionsList,
                             OnOptionSelected = OnEntrySelected,
-                            NavIndex = 2,
-                            NavUp = 1,
-                            NavDown = 100,
-                            NavRight = BodyNavIndex,
                         },
                         new ResNode { Height = 8.0f },
                         new HorizontalFlexNode {
@@ -160,21 +152,12 @@ public class ConfigurationAddon<T, TU, TV> : NativeAddon where TV : EntryConfigu
                                     TextId = 302, // "Add"
                                     SheetType = NodeData.SheetType.Addon,
                                     OnClick = OnAddClicked,
-                                    NavIndex = 100,
-                                    NavUp = 2,
-                                    NavDown = 1,
-                                    NavRight = 101,
                                 },
                                 RemoveButtonNode = new TextButtonNode {
                                     TextId = 85, // "Remove"
                                     SheetType = NodeData.SheetType.Addon,
                                     OnClick = OnRemoveClicked,
                                     IsEnabled = false,
-                                    NavIndex = 101,
-                                    NavUp = 2,
-                                    NavDown = 1,
-                                    NavLeft = 100,
-                                    NavRight = BodyNavIndex,
                                 },
                             ],
                         },

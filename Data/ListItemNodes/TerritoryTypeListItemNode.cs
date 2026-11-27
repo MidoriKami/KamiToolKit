@@ -13,7 +13,7 @@ namespace KamiToolKit.Data.ListItemNodes;
 /// <summary>
 /// Implementation of <see cref="ListItemNode{T}"/> for use with <see cref="KamiToolKit.Controls.Search.TerritoryTypeSearchAddon"/>.
 /// </summary>
-public class TerritoryTypeListItemNode : ListItemWithFocusNav<TerritoryType>, IListItemNode {
+public class TerritoryTypeListItemNode : ListItemNode<TerritoryType>, IListItemNode {
 
     /// <inheritdoc/>
     public static float ItemHeight => 64.0f;

@@ -1,6 +1,8 @@
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Interfaces;
 using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Internal.Classes;
 using KamiToolKit.UI.Nodes;
 
 namespace KamiToolKit.Core.Primitives.ComponentNode;
@@ -34,31 +36,31 @@ public abstract unsafe partial class ComponentNode(NodeType nodeType) : NodeBase
     /// <inheritdoc/>
     public int NavIndex {
         get => CursorNavInfo.Index;
-        set => CursorNavInfo.Index = (byte) value;
+        set => CursorNavInfo.Index = ToNavigationByte(value, nameof(NavIndex));
     }
 
     /// <inheritdoc/>
     public int NavLeft {
         get => CursorNavInfo.LeftIndex;
-        set => CursorNavInfo.LeftIndex = (byte) value;
+        set => CursorNavInfo.LeftIndex = ToNavigationByte(value, nameof(NavLeft));
     }
 
     /// <inheritdoc/>
     public int NavRight {
         get => CursorNavInfo.RightIndex;
-        set => CursorNavInfo.RightIndex = (byte) value;
+        set => CursorNavInfo.RightIndex = ToNavigationByte(value, nameof(NavRight));
     }
 
     /// <inheritdoc/>
     public int NavUp {
         get => CursorNavInfo.UpIndex;
-        set => CursorNavInfo.UpIndex = (byte) value;
+        set => CursorNavInfo.UpIndex = ToNavigationByte(value, nameof(NavUp));
     }
 
     /// <inheritdoc/>
     public int NavDown {
         get => CursorNavInfo.DownIndex;
-        set => CursorNavInfo.DownIndex = (byte) value;
+        set => CursorNavInfo.DownIndex = ToNavigationByte(value, nameof(NavDown));
     }
 
     /// <summary>
@@ -67,5 +69,12 @@ public abstract unsafe partial class ComponentNode(NodeType nodeType) : NodeBase
     public NodeBase.NodeBase FocusNode {
         get => field ?? CollisionNode;
         protected set;
+    }
+
+    private static byte ToNavigationByte(int value, string propertyName) {
+        if (value is >= byte.MinValue and <= byte.MaxValue) return (byte)value;
+
+        IPluginLog.Get().Warning($"Invalid controller navigation value {value} assigned to {propertyName}; the value is cleared.");
+        return 0;
     }
 }

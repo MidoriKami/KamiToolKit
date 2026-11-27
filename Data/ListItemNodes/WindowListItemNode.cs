@@ -9,7 +9,7 @@ namespace KamiToolKit.Data.ListItemNodes;
 /// <summary>
 /// Implementation of <see cref="ListItemNode{T}"/> for displaying a loaded <see cref="AtkUnitBase"/>
 /// </summary>
-public class WindowListItemNode : ListItemWithFocusNav<Pointer<AtkUnitBase>>, IListItemNode {
+public class WindowListItemNode : ListItemNode<Pointer<AtkUnitBase>>, IListItemNode {
 
     /// <inheritdoc/>
     public static float ItemHeight => 48.0f;

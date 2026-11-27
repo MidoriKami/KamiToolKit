@@ -33,20 +33,7 @@ internal class ToggleableHeaderNode : SimpleComponentNode, IToggleableHeaderNode
     public ImageNode ToggleArrowImageNode { get; }
 
     /// <inheritdoc />
-    public bool IsCollapsed {
-        get;
-        set {
-            if (field == value) return;
-
-            field = value;
-            if (value) {
-                Collapse();
-            }
-            else {
-                Uncollapse();
-            }
-        }
-    }
+    public bool IsCollapsed { get; set; }
 
     /// <inheritdoc />
     public ReadOnlySeString String {
@@ -105,6 +92,7 @@ internal class ToggleableHeaderNode : SimpleComponentNode, IToggleableHeaderNode
 
         ToggleArrowImageNode.PartId = 1;
 
+        IsCollapsed = true;
         OnCollapsed?.Invoke();
         OnCollapseToggled?.Invoke(false);
     }
@@ -115,6 +103,7 @@ internal class ToggleableHeaderNode : SimpleComponentNode, IToggleableHeaderNode
 
         ToggleArrowImageNode.PartId = 0;
 
+        IsCollapsed = false;
         OnUncollapsed?.Invoke();
         OnCollapseToggled?.Invoke(true);
     }

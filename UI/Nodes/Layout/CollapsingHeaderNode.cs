@@ -145,8 +145,28 @@ public class CollapsingHeaderNode : LayoutListNode, ICollapsingHeaderNode {
     }
 
     /// <inheritdoc />
+    protected override void OnPrepareControllerNavigation(ControllerNavigationContext context) {
+        context.TryAssignIndex(ToggleableHeaderNode);
+    }
+
+    /// <inheritdoc />
     protected override void OnUpdateControllerNav() {
-        // Not implemented yet.
+        var navigationGroups = new List<(NodeBase Node, ControllerNavigationBoundary Boundary)> {
+            (ToggleableHeaderNode, new ControllerNavigationBoundary([ToggleableHeaderNode], [ToggleableHeaderNode], [ToggleableHeaderNode], [ToggleableHeaderNode])),
+        };
+        navigationGroups.AddRange(GetNavigationChildGroups());
+
+        ConnectVerticalNavigationGroups(navigationGroups);
+
+        var boundary = CreateNavigationBoundary(navigationGroups);
+        SetNavigationBoundary(boundary);
+        LinkNavigationBoundaryToIndex(boundary.Top, ControllerNavigationDirection.Up, NavUp);
+        LinkNavigationBoundaryToIndex(boundary.Bottom, ControllerNavigationDirection.Down, NavDown);
+
+        foreach (var group in navigationGroups) {
+            LinkNavigationBoundaryToIndex(group.Boundary.Left, ControllerNavigationDirection.Left, NavLeft);
+            LinkNavigationBoundaryToIndex(group.Boundary.Right, ControllerNavigationDirection.Right, NavRight);
+        }
     }
 
     /// <inheritdoc />
