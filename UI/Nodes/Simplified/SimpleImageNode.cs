@@ -1,4 +1,5 @@
 using System.Numerics;
+using KamiToolKit.Core.Enums;
 using KamiToolKit.UI.Nodes.Parts;
 using KamiToolKit.Core.Interfaces.Nodes;
 
@@ -85,6 +86,9 @@ public unsafe class SimpleImageNode : ImageNode, ISingleTextureNode, ITextureLoa
     /// <summary>
     /// Constructs a new <see cref="SimpleImageNode"/> with a single part loaded from uld.
     /// </summary>
-    public SimpleImageNode(string uldPath, uint partId, uint partSet = 0, bool resolveTheme = true)
-        => LoadUldPart(uldPath, partId, partSet, resolveTheme);
+    public SimpleImageNode(string uldPath, uint partId, uint partSet = 0, bool resolveTheme = true) {
+        PartsList.Add(new Part());
+        LoadUldPart(uldPath, partId, partSet, resolveTheme);
+        WrapMode = WrapMode.Stretch;
+    }
 }
