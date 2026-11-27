@@ -35,5 +35,6 @@ public unsafe class IconImageNode : SimpleImageNode, IIconImageNode {
     /// </summary>
     public IconImageNode() {
         TextureSize = new Vector2(32.0f, 32.0f);
+        FitTexture = true;
     }
 }
