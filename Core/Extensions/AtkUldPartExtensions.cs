@@ -115,7 +115,7 @@ public static unsafe class AtkUldPartExtensions {
         /// Loads a single part from a specified uld via part-set and part-id params.
         /// </summary>
         public bool TryLoadFromUld(string uldPath, uint partId, uint partSet, bool resolveTheme = true) {
-            if (uldPath.EndsWith(".uld", StringComparison.OrdinalIgnoreCase)) return false;
+            if (!uldPath.EndsWith(".uld", StringComparison.OrdinalIgnoreCase)) return false;
             if (IDataManager.Get().GetFile<UldFile>(uldPath) is not { } loadedUld) return false;
             if (partSet >= loadedUld.Parts.Length) return false;
 
