@@ -3,7 +3,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.UI.Nodes;
-using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Components;
 using KamiToolKit.UI.Nodes.Layout;
 using Lumina.Data.Parsing.Uld;
 
@@ -66,58 +66,6 @@ public class Vector4ConfigNode : ResNode {
             TopInputNode.Max = (int)value.Y;
             RightInputNode.Max = (int)value.Z;
             BottomInputNode.Max = (int)value.W;
-        }
-    }
-
-    /// <summary>
-    /// Nav index for use with setting contained nodes controller nav values.
-    /// </summary>
-    /// <remarks>
-    /// Must be non-zero to apply nav to contained nodes.
-    /// </remarks>
-    public int NavIndex {
-        get => LeftRightInputContainerNode.NavIndex;
-        set {
-            LeftRightInputContainerNode.NavIndex = value;
-            TopBottomInputContainerNode.NavIndex = value + 2;
-
-            LeftRightInputContainerNode.NavDown = TopBottomInputContainerNode.NavIndex;
-            TopBottomInputContainerNode.NavUp = LeftRightInputContainerNode.NavIndex;
-
-            LeftRightInputContainerNode.UpdateLayout();
-            TopBottomInputContainerNode.UpdateLayout();
-        }
-    }
-
-    /// <summary>
-    /// Nav index for use with setting contained nodes controller nav values.
-    /// </summary>
-    /// <remarks>
-    /// Must be non-zero to apply nav to contained nodes.
-    /// </remarks>
-    public int NavUp {
-        get => LeftRightInputContainerNode.NavUp;
-        set {
-            LeftRightInputContainerNode.NavUp = value;
-
-            LeftRightInputContainerNode.UpdateLayout();
-            TopBottomInputContainerNode.UpdateLayout();
-        }
-    }
-
-    /// <summary>
-    /// Nav index for use with setting contained nodes controller nav values.
-    /// </summary>
-    /// <remarks>
-    /// Must be non-zero to apply nav to contained nodes.
-    /// </remarks>
-    public int NavDown {
-        get => TopBottomInputContainerNode.NavDown;
-        set {
-            TopBottomInputContainerNode.NavDown = value;
-
-            LeftRightInputContainerNode.UpdateLayout();
-            TopBottomInputContainerNode.UpdateLayout();
         }
     }
 

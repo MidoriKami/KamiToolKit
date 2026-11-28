@@ -3,14 +3,15 @@ using System.Linq;
 using System.Numerics;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces.Nodes;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.Core.Primitives;
 
 namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// A list layout node that allows anchoring from any corner, and allows setting a border or background color.
 /// </summary>
-public class ListBoxNode : LayoutListNode, IListBoxNode {
+public class ListBoxNode : LayoutNode, IListBoxNode {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -153,9 +154,6 @@ public class ListBoxNode : LayoutListNode, IListBoxNode {
     }
 
     /// <inheritdoc/>
-    protected override void OnUpdateSizes() { }
-
-    /// <inheritdoc/>
     protected override void OnUpdateLayout() {
         var runningPosition = LayoutOrientation switch {
             LayoutOrientation.Vertical when LayoutAnchor is LayoutAnchor.TopLeft or LayoutAnchor.TopRight
@@ -223,65 +221,9 @@ public class ListBoxNode : LayoutListNode, IListBoxNode {
         }
     }
 
-    /// <inheritdoc/>
-    protected override void OnUpdateControllerNav() {
-        var componentNodes = NodeList.OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
-        if (componentNodes.Count is 0) return;
-
-        if (LayoutOrientation is LayoutOrientation.Horizontal) {
-            if (LayoutAnchor is LayoutAnchor.BottomRight or LayoutAnchor.TopRight) {
-                componentNodes = componentNodes.AsEnumerable().Reverse().ToList();
-            }
-
-            foreach (var (index, node) in componentNodes.Index()) {
-                node.NavIndex = index + NavIndex;
-                node.NavUp = NavUp;
-                node.NavDown = NavDown;
-
-                // First Element
-                if (index is 0) {
-                    node.NavLeft = componentNodes.Count - 1 + NavIndex;
-                }
-                else {
-                    node.NavLeft = index - 1 + NavIndex;
-                }
-
-                // Last Element
-                if (index == componentNodes.Count - 1) {
-                    node.NavRight = NavIndex;
-                }
-                else {
-                    node.NavRight = index + 1 + NavIndex;
-                }
-            }
-        }
-        else if (LayoutOrientation is LayoutOrientation.Vertical) {
-            if (LayoutAnchor is LayoutAnchor.BottomLeft or LayoutAnchor.BottomRight) {
-                componentNodes = componentNodes.AsEnumerable().Reverse().ToList();
-            }
-
-            foreach (var (index, node) in componentNodes.Index()) {
-                node.NavIndex = index + NavIndex;
-                node.NavLeft = NavLeft;
-                node.NavRight = NavRight;
-
-                // First Element
-                if (index is 0) {
-                    node.NavUp = componentNodes.Count - 1 + NavIndex;
-                }
-                else {
-                    node.NavUp = index - 1 + NavIndex;
-                }
-
-                // Last Element
-                if (index == componentNodes.Count - 1) {
-                    node.NavDown = NavIndex;
-                }
-                else {
-                    node.NavDown = index + 1 + NavIndex;
-                }
-            }
-        }
+    /// <inheritdoc />
+    protected override void OnNavigationUpdate(NavigationContext context) {
+        // todo: this as well
     }
 
     private Vector2 GetLayoutStartPosition() => LayoutAnchor switch {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces;
-using KamiToolKit.Core.Primitives.NativeAddon;
+using KamiToolKit.Core.Primitives;
 using KamiToolKit.UI.Nodes;
-using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Components;
 using KamiToolKit.UI.Nodes.Layout;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
@@ -47,7 +47,7 @@ public class AbstractSearchAddon<T, TU> : NativeAddon where TU : ListItemNode<T>
     /// <summary>
     /// Main layout container for this addon.
     /// </summary>
-    protected LayoutListNode? LayoutContainer { get; private set; }
+    protected LayoutNode? LayoutContainer { get; private set; }
 
     /// <summary>
     /// Search input box.
@@ -105,9 +105,6 @@ public class AbstractSearchAddon<T, TU> : NativeAddon where TU : ListItemNode<T>
                     Height = 26.0f,
                     OnInputReceived = OnSearchInputReceived,
                     OnInputComplete = OnSearchInputComplete,
-                    NavIndex = 1,
-                    NavDown = 2,
-                    NavUp = 100,
                 },
                 new ResNode { Height = 8.0f },
                 ResultsListNode = new ListNode<T, TU> {
@@ -115,11 +112,6 @@ public class AbstractSearchAddon<T, TU> : NativeAddon where TU : ListItemNode<T>
                     AllowMultipleSelection = AllowMultiselect,
                     ItemSpacing = 2.0f,
                     Options = OptionsList,
-                    NavIndex = 2,
-                    NavUp = 1,
-                    NavDown = 100,
-                    NavLeft = 1,
-                    NavRight = 100,
                 },
                 new ResNode { Height = 8.0f },
                 new HorizontalFlexNode {
@@ -131,19 +123,11 @@ public class AbstractSearchAddon<T, TU> : NativeAddon where TU : ListItemNode<T>
                             TextId = 1, // "OK"
                             SheetType = NodeData.SheetType.Addon,
                             OnClick = OnConfirmClicked,
-                            NavIndex = 100,
-                            NavUp = 2,
-                            NavDown = 1,
-                            NavRight = 101,
                         },
                         new TextButtonNode {
                             TextId = 2, // "Cancel"
                             SheetType = NodeData.SheetType.Addon,
                             OnClick = OnCancelClicked,
-                            NavIndex = 101,
-                            NavUp = 2,
-                            NavDown = 1,
-                            NavLeft = 100,
                         },
                     ],
                 },

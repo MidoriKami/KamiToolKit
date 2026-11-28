@@ -1,14 +1,15 @@
 using System.Linq;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Layout;
 
 namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
-/// A <see cref="LayoutListNode"/> that represents a horizontally growing list of nodes.
+/// A <see cref="LayoutNode"/> that represents a horizontally growing list of nodes.
 /// Can be anchored on left side or right side.
 /// </summary>
-public class HorizontalListNode : LayoutListNode, IHorizontalListNode {
+public class HorizontalListNode : LayoutNode, IHorizontalListNode {
 
     /// <inheritdoc/>
     public LayoutFill LayoutFill { get; set; } = LayoutFill.Horizontal;
@@ -87,34 +88,7 @@ public class HorizontalListNode : LayoutListNode, IHorizontalListNode {
     }
 
     /// <inheritdoc />
-    protected override void OnUpdateControllerNav() {
-        var componentNodes = NodeList.OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
-        if (componentNodes.Count is 0) return;
-
-        if (Alignment is HorizontalListAnchor.Right) {
-            componentNodes = componentNodes.AsEnumerable().Reverse().ToList();
-        }
-
-        foreach (var (index, node) in componentNodes.Index()) {
-            node.NavIndex = index + NavIndex;
-            node.NavUp = NavUp;
-            node.NavDown = NavDown;
-
-            // First Element
-            if (index is 0) {
-                node.NavLeft = componentNodes.Count - 1 + NavIndex;
-            }
-            else {
-                node.NavLeft = index - 1 + NavIndex;
-            }
-
-            // Last Element
-            if (index == componentNodes.Count - 1) {
-                node.NavRight = NavIndex;
-            }
-            else {
-                node.NavRight = index + 1 + NavIndex;
-            }
-        }
+    protected override void OnNavigationUpdate(NavigationContext context) {
+        // todo: this as well
     }
 }

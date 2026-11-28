@@ -3,7 +3,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.UI.Nodes;
-using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Components;
 using KamiToolKit.UI.Nodes.Layout;
 using Lumina.Data.Parsing.Uld;
 
@@ -59,48 +59,6 @@ public class Vector2ConfigNode : ResNode {
             field = value;
             WidthInputNode.Max = (int)value.X;
             HeightInputNode.Max = (int)value.Y;
-        }
-    }
-
-    /// <summary>
-    /// Nav index for use with setting contained nodes controller nav values.
-    /// </summary>
-    /// <remarks>
-    /// Must be non-zero to apply nav to contained nodes.
-    /// </remarks>
-    public int NavIndex {
-        get => InputContainerNode.NavIndex;
-        set {
-            InputContainerNode.NavIndex = value;
-            InputContainerNode.UpdateLayout();
-        }
-    }
-
-    /// <summary>
-    /// Nav index for use with setting contained nodes controller nav values.
-    /// </summary>
-    /// <remarks>
-    /// Must be non-zero to apply nav to contained nodes.
-    /// </remarks>
-    public int NavUp {
-        get => InputContainerNode.NavUp;
-        set {
-            InputContainerNode.NavUp = value;
-            InputContainerNode.UpdateLayout();
-        }
-    }
-
-    /// <summary>
-    /// Nav index for use with setting contained nodes controller nav values.
-    /// </summary>
-    /// <remarks>
-    /// Must be non-zero to apply nav to contained nodes.
-    /// </remarks>
-    public int NavDown {
-        get => InputContainerNode.NavDown;
-        set {
-            InputContainerNode.NavDown = value;
-            InputContainerNode.UpdateLayout();
         }
     }
 

@@ -8,10 +8,10 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.UI.Nodes;
-using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Components;
 using KamiToolKit.UI.Nodes.Parts;
 
-namespace KamiToolKit.Core.Primitives.NativeAddon;
+namespace KamiToolKit.Core.Primitives;
 
 /// <summary>
 /// Implementation of a custom native addon (AtkUnitBase).

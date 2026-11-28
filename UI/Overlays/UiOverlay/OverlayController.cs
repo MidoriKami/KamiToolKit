@@ -8,7 +8,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
-using KamiToolKit.Core.Primitives.NativeAddon;
+using KamiToolKit.Core.Primitives;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Internal.Enums;
 

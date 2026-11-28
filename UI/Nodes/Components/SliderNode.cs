@@ -1,0 +1,195 @@
+using System;
+using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Primitives;
+using KamiToolKit.Services.Timelines;
+using KamiToolKit.UI.Nodes.Parts;
+using KamiToolKit.UI.Nodes.Simplified;
+
+namespace KamiToolKit.UI.Nodes.Components;
+
+/// <summary>
+/// Implementation of the game's SliderNode and associated component.
+/// </summary>
+public unsafe class SliderNode : ComponentNode<AtkComponentSlider, AtkUldComponentDataSlider>, ISliderNode<int> {
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public NineGridNode ProgressTextureNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public SliderBackgroundButtonNode SliderBackgroundButtonNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public SliderForegroundButtonNode SliderForegroundButtonNode { get; }
+
+    /// <summary>
+    /// Not intended for public use, but it's here if you absolutely need it.
+    /// </summary>
+    public TextNode ValueNode { get; }
+
+    /// <inheritdoc/>
+    public Action<int>? OnValueUpdate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the range of values allowed for this node.
+    /// </summary>
+    public Range Range {
+        get => new(Data->Min, Data->Max);
+        set {
+            Component->SetMaxValue(value.End.Value);
+            Component->SetMinValue(value.Start.Value);
+
+            Value = Math.Clamp(Value, value.Start.Value, value.End.Value);
+        }
+    }
+
+    /// <inheritdoc/>
+    public int Min {
+        get => Component->MinValue;
+        set => Component->SetMinValue(value);
+    }
+
+    /// <inheritdoc/>
+    public int Max {
+        get => Component->MaxValue;
+        set => Component->SetMaxValue(value);
+    }
+
+    /// <inheritdoc/>
+    public int Step {
+        get => Component->Steps;
+        set => Component->Steps = value;
+    }
+
+    /// <inheritdoc/>
+    public int Value {
+        get => Component->Value;
+        set => Component->SetValue(value);
+    }
+
+    /// <inheritdoc/>
+    public void SetValueSilent(int value) {
+        var callback = OnValueUpdate;
+        OnValueUpdate = null;
+        Value = value;
+        OnValueUpdate = callback;
+    }
+
+    /// <summary>
+    /// Constructs a new <see cref="SliderNode"/>.
+    /// </summary>
+    public SliderNode() {
+        SetInternalComponentType(ComponentType.Slider);
+
+        SliderBackgroundButtonNode = new SliderBackgroundButtonNode();
+        SliderBackgroundButtonNode.AttachNode(this);
+
+        ProgressTextureNode = new SimpleNineGridNode {
+            TexturePath = "ui/uld/SliderGaugeHorizontalA.tex",
+            TextureCoordinates = new Vector2(16.0f, 8.0f),
+            TextureSize = new Vector2(40.0f, 7.0f),
+            Height = 7.0f,
+            Y = 4.0f,
+            LeftOffset = 8,
+            RightOffset = 8,
+        };
+        ProgressTextureNode.AttachNode(this);
+
+        SliderForegroundButtonNode = new SliderForegroundButtonNode {
+            Size = new Vector2(16.0f, 16.0f),
+        };
+        SliderForegroundButtonNode.AttachNode(this);
+
+        ValueNode = new TextNode {
+            Size = new Vector2(24.0f, 16.0f),
+            FontType = FontType.Axis,
+            FontSize = 12,
+            AlignmentType = AlignmentType.TopLeft,
+            TextFlags = TextFlags.AutoAdjustNodeSize,
+        };
+        ValueNode.AttachNode(this);
+
+        Data->Step = 1;
+        Data->Min = 0;
+        Data->Max = 100;
+        Data->OfffsetL = 4;
+        Data->OffsetR = 50;
+
+        Data->Nodes[0] = ProgressTextureNode.NodeId;
+        Data->Nodes[1] = SliderForegroundButtonNode.NodeId;
+        Data->Nodes[2] = ValueNode.NodeId;
+        Data->Nodes[3] = SliderBackgroundButtonNode.NodeId;
+
+        BuildTimelines();
+
+        InitializeComponentEvents();
+
+        Component->SliderSize = 220;
+        Component->OffsetR = 50;
+        Component->OffsetL = 4;
+
+        AddEvent(AtkEventType.SliderValueUpdate, ValueChangedHandler);
+
+        FocusNode = SliderForegroundButtonNode;
+    }
+
+    /// <inheritdoc />
+    protected override void OnSizeChanged() {
+        base.OnSizeChanged();
+
+        SliderBackgroundButtonNode.Size = new Vector2(Width - 18.0f - 25.0f, Height / 2.0f);
+        SliderBackgroundButtonNode.Position = new Vector2(0.0f, 4.0f);
+
+        ProgressTextureNode.Size = new Vector2(0.0f, Height / 2.0f - 1.0f);
+        ProgressTextureNode.Position = new Vector2(0.0f, 4.0f);
+
+        SliderForegroundButtonNode.Size = new Vector2(Height - 4.0f, Height - 4.0f);
+        SliderForegroundButtonNode.Position = new Vector2(0.0f, 0.0f);
+
+        ValueNode.Size = new Vector2(0.0f, Height);
+        ValueNode.Position = new Vector2(Width - 18.0f - 20.0f, 0.0f);
+
+        Component->SliderSize = (short)Width;
+    }
+
+    private void ValueChangedHandler()
+        => OnValueUpdate?.Invoke(Value);
+
+    private void BuildTimelines() {
+        AddTimeline(new TimelineBuilder()
+            .BeginFrameSet(1, 30)
+            .AddLabel(1, 17, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(11, 18, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .AddLabel(21, 7, AtkTimelineJumpBehavior.PlayOnce, 0)
+            .EndFrameSet()
+            .Build()
+        );
+
+        ProgressTextureNode.AddTimeline(new TimelineBuilder()
+            .BeginFrameSet(1, 20)
+            .AddFrame(1, alpha: 255)
+            .EndFrameSet()
+            .BeginFrameSet(21, 30)
+            .AddFrame(21, alpha: 127)
+            .EndFrameSet()
+            .Build()
+        );
+
+        ValueNode.AddTimeline(new TimelineBuilder()
+            .BeginFrameSet(1, 20)
+            .AddFrame(1, alpha: 255)
+            .EndFrameSet()
+            .BeginFrameSet(21, 30)
+            .AddFrame(21, alpha: 153)
+            .EndFrameSet()
+            .Build()
+        );
+    }
+}

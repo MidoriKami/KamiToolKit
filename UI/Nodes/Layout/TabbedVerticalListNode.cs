@@ -1,18 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using KamiToolKit.Core.Interfaces.Nodes;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.Core.Primitives;
 
 namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// A specialized vertical list node with features for adding nodes with specified tab values.
 /// </summary>
-public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
-
-    /// <inheritdoc/>
-    public override IReadOnlyList<NodeBase> Nodes => nodeList.Select(node => node.Node).ToList();
+[Obsolete("Todo: add a NodeBuilder for this.")] // todo: marked todo in-case this todo isn't an obvious enough todo
+public class TabbedVerticalListNode : LayoutNode, IStretchWidth {
 
     /// <summary>
     /// Special implementation for allowing initial tabbed node entries.
@@ -30,18 +28,6 @@ public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
                     }
                 }
             }
-        }
-    }
-
-    /// <inheritdoc/>
-    protected override void DoUpdateLayout() {
-        if (nodeList.Count > 0) {
-            OnUpdateSizes();
-            OnUpdateLayout();
-        }
-
-        if (nodeList.Count > 0) {
-            OnUpdateSizes();
         }
     }
 
@@ -86,11 +72,10 @@ public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
     public void AddNode(int tabIndex, IEnumerable<NodeBase> nodes) {
         using (SuppressLayoutRecalculation()) {
             foreach (var node in nodes) {
-                AddNode(tabIndex, node);
+                AddNodeInternal(node, tabIndex + TabStep);
             }
         }
         UpdateLayout();
-        UpdateNavigation();
     }
 
     /// <summary>
@@ -100,11 +85,8 @@ public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
     /// Tab index provided will be <em>added</em> to the current accumulated <see cref="TabStep"/>
     /// </remarks>
     public void AddNode(int tabIndex, NodeBase node) {
-        nodeList.Add(new TabbedNodeEntry<NodeBase>(node, tabIndex + TabStep));
-
-        node.AttachNode(this);
+        AddNodeInternal(node, tabIndex + TabStep);
         UpdateLayout();
-        UpdateNavigation();
     }
 
     /// <inheritdoc/>
@@ -119,42 +101,38 @@ public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
             AddNode(0, nodes);
         }
         UpdateLayout();
-        UpdateNavigation();
     }
 
     /// <inheritdoc/>
     protected override void AddNodeInternal(NodeBase node) {
-        nodeList.Add(new TabbedNodeEntry<NodeBase>(node, TabStep));
-        node.AttachNode(this);
+        AddNodeInternal(node, TabStep);
+    }
+
+    private void AddNodeInternal(NodeBase node, int tabIndex) {
+        tabIndices.Add(node, tabIndex);
+        base.AddNodeInternal(node);
     }
 
     /// <inheritdoc/>
     protected override bool RemoveNodeInternal(NodeBase node) {
-        if (nodeList.All(entry => entry.Node != node)) return false;
-        nodeList.RemoveAll(entry => entry.Node == node);
-        return true;
+        if (!tabIndices.Remove(node)) return false;
+        return base.RemoveNodeInternal(node);
     }
 
     /// <inheritdoc/>
     protected override void ClearInternal() {
-        foreach (var nodeEntry in nodeList) {
-            nodeEntry.Node.Dispose();
-        }
-        nodeList.Clear();
+        tabIndices.Clear();
+        base.ClearInternal();
     }
 
-    /// <inheritdoc/>
-    protected override void ReorderInternal(Comparison<NodeBase> comparison) {
-        nodeList.Sort((left, right) => comparison(left.Node, right.Node));
-    }
 
     /// <inheritdoc/>
     protected override void OnUpdateSizes() {
-        foreach (var (node, tab) in nodeList) {
+        foreach (var node in NodeList) {
             if (!node.IsVisible) continue;
 
             if (StretchWidth) {
-                node.Width = Width - tab * TabSize - ItemSpacing;
+                node.Width = Width - tabIndices[node] * TabSize - ItemSpacing;
             }
         }
 
@@ -167,41 +145,18 @@ public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
     protected override void OnUpdateLayout() {
         var startY = 0.0f + FirstItemSpacing;
 
-        foreach (var (node, tab) in nodeList) {
+        foreach (var node in NodeList) {
             if (!node.IsVisible) continue;
 
             node.Y = startY;
-            node.X = tab * TabSize;
+            node.X = tabIndices[node] * TabSize;
             startY += node.Height + ItemSpacing;
         }
     }
 
-    /// <inheritdoc/>
-    protected override void OnUpdateControllerNav() {
-        var componentNodes = nodeList.Select(nodeEntry => nodeEntry.Node).OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
-        if (componentNodes.Count is 0) return;
-
-        foreach (var (index, node) in componentNodes.Index()) {
-            node.NavIndex = (byte) (index + NavIndex);
-            node.NavLeft = NavLeft;
-            node.NavRight = NavRight;
-
-            // First Element
-            if (index is 0) {
-                node.NavUp = (byte) (componentNodes.Count - 1 + NavIndex);
-            }
-            else {
-                node.NavUp = (byte) (index - 1 + NavIndex);
-            }
-
-            // Last Element
-            if (index == componentNodes.Count - 1) {
-                node.NavDown = (byte) NavIndex;
-            }
-            else {
-                node.NavDown = (byte) (index + 1 + NavIndex);
-            }
-        }
+    /// <inheritdoc />
+    protected override void OnNavigationUpdate(NavigationContext context) {
+        // todo: this as well
     }
 
     /// <summary>
@@ -210,7 +165,7 @@ public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
     private float CalculateFitContentsHeight() {
         var height = FirstItemSpacing;
 
-        foreach (var (node, _) in nodeList) {
+        foreach (var node in NodeList) {
             if (!node.IsVisible) continue;
 
             height += node.Height + ItemSpacing;
@@ -219,5 +174,5 @@ public class TabbedVerticalListNode : LayoutListNode, IStretchWidth {
         return height;
     }
 
-    private readonly List<TabbedNodeEntry<NodeBase>> nodeList = [];
+    private readonly Dictionary<NodeBase, int> tabIndices = [];
 }

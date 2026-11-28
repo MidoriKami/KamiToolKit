@@ -1,17 +1,20 @@
 using System;
 using System.Linq;
 using KamiToolKit.Core.Enums;
+using KamiToolKit.Core.Interfaces;
 using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.Core.Primitives;
 
 namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
-/// A <see cref="LayoutListNode"/> that represents a vertical list of elements.
+/// A <see cref="LayoutNode"/> that represents a vertical list of elements.
 /// </summary>
 /// <remarks>
 /// If you are needing to represent the same element multiple times use a <see cref="ListNode{T,TU}"/> instead for performance reasons.
 /// </remarks>
-public class VerticalListNode : LayoutListNode, IVerticalListNode {
+public class VerticalListNode : LayoutNode, IVerticalListNode {
 
     /// <inheritdoc/>
     public LayoutFill LayoutFill { get; set; } = LayoutFill.Vertical;
@@ -43,8 +46,6 @@ public class VerticalListNode : LayoutListNode, IVerticalListNode {
     /// <inheritdoc />
     protected override void OnUpdateSizes() {
         foreach (var node in NodeList) {
-            if (!node.IsVisible) continue;
-
             if (StretchWidth) {
                 node.Width = Width;
             }
@@ -91,36 +92,17 @@ public class VerticalListNode : LayoutListNode, IVerticalListNode {
     }
 
     /// <inheritdoc />
-    protected override void OnUpdateControllerNav() {
-        var componentNodes = NodeList.OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
-        if (componentNodes.Count is 0) return;
+    protected override void OnNavigationUpdate(NavigationContext context) {
+        var navTargets = NodeList.OfType<INavigationTarget>()
+            .Where(node => node.NavIndex is not 0)
+            .ToArray();
 
-        if (Anchor is VerticalListAnchor.Bottom) {
-            componentNodes = [
-                .. componentNodes.AsEnumerable().Reverse(),
-            ];
-        }
+        if (navTargets.Length is 0) return;
 
-        foreach (var (index, node) in componentNodes.Index()) {
-            node.NavIndex = (byte) (index + NavIndex);
-            node.NavLeft = NavLeft;
-            node.NavRight = NavRight;
-
-            // First Element
-            if (index is 0) {
-                node.NavUp = (byte) (componentNodes.Count - 1 + NavIndex);
-            }
-            else {
-                node.NavUp = (byte) (index - 1 + NavIndex);
-            }
-
-            // Last Element
-            if (index == componentNodes.Count - 1) {
-                node.NavDown = (byte) NavIndex;
-            }
-            else {
-                node.NavDown = (byte) (index + 1 + NavIndex);
-            }
+        for (var i = 0; i < navTargets.Length; i++) {
+            var target = navTargets[i];
+            target.NavUp = navTargets[(i - 1 + navTargets.Length) % navTargets.Length].NavIndex;
+            target.NavDown = navTargets[(i + 1) % navTargets.Length].NavIndex;
         }
     }
 }

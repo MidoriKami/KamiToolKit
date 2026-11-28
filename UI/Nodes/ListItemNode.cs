@@ -60,11 +60,6 @@ public abstract class ListItemNode<T> : SelectableNode {
     protected abstract void SetNodeData(T itemData);
 
     /// <summary>
-    /// Processes building controller navigation.
-    /// </summary>
-    public virtual void ProcessNav(int index, int up, int down, int left, int right) { }
-
-    /// <summary>
     /// Gets or sets a callback that can optionally be invoked to inform the containing list that
     /// this node's state was changed, and to trigger <see cref="ListNode{T,TU}.OnItemStateChanged"/>.
     /// </summary>

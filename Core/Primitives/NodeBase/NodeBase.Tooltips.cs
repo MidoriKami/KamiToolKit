@@ -6,7 +6,7 @@ using KamiToolKit.Data;
 using KamiToolKit.Core.Interfaces;
 using Lumina.Text.ReadOnly;
 
-namespace KamiToolKit.Core.Primitives.NodeBase;
+namespace KamiToolKit.Core.Primitives;
 
 public unsafe partial class NodeBase : ITextTooltip, IActionTooltip, IItemTooltip, IInventoryItemTooltip {
 
@@ -239,7 +239,7 @@ public unsafe partial class NodeBase : ITextTooltip, IActionTooltip, IItemToolti
     }
 
     private void ToggleCollisionFlag(bool isVisible) {
-        if (this is ComponentNode.ComponentNode) return;
+        if (this is ComponentNode) return;
 
         if (isVisible) {
             AddNodeFlags(NodeFlags.HasCollision);

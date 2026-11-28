@@ -8,7 +8,7 @@ namespace KamiToolKit.Core.Interfaces.Nodes;
 /// <summary>
 /// Interface representing a tab bar node.
 /// </summary>
-public interface ITabBarNode : IControllerNavigable, INode {
+public interface ITabBarNode : INode {
 
     /// <summary>
     /// Sets the initial nodes that this list will use.

@@ -6,7 +6,7 @@ namespace KamiToolKit.Core.Interfaces.Nodes;
 /// <summary>
 /// Interface representing a list node oriented horizontally.
 /// </summary>
-public interface IHorizontalListNode : ILayoutFiller, IControllerNavigable, INode {
+public interface IHorizontalListNode : ILayoutFiller, INode {
 
     /// <summary>
     /// Gets or sets the alignment used when calculating layout.

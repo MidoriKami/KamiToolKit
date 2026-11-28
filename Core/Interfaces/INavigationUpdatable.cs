@@ -1,12 +1,14 @@
+using KamiToolKit.Core.Layout;
+
 namespace KamiToolKit.Core.Interfaces;
 
 /// <summary>
-/// Interface representing an element with updatable controller navigation.
+/// Represents a node that updates controller navigation recursively.
 /// </summary>
 public interface INavigationUpdatable {
 
     /// <summary>
-    /// Function that is invoked when this node needs to update its controller navigation layout.
+    /// Updates navigation using the shared index allocator and directional destinations in the context.
     /// </summary>
-    void UpdateNavigation();
+    void UpdateNavigation(NavigationContext context);
 }

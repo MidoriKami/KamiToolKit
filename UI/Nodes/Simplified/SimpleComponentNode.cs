@@ -1,5 +1,5 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Primitives.ComponentNode;
+using KamiToolKit.Core.Primitives;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.UI.Nodes.Simplified;

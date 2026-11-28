@@ -4,7 +4,8 @@ using System.Linq;
 using System.Numerics;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces.Nodes;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.Core.Primitives;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.UI.Nodes.Layout;
@@ -12,7 +13,7 @@ namespace KamiToolKit.UI.Nodes.Layout;
 /// <summary>
 /// This node represents a tab bar and multiple VerticalListNode's representing the tab contents.
 /// </summary>
-public sealed class TabbedContentNode : LayoutListNode, ITabbedContentNode {
+public sealed class TabbedContentNode : LayoutNode, ITabbedContentNode {
 
     /// <inheritdoc />
     public LayoutFill LayoutFill { get; set; } = LayoutFill.Vertical;
@@ -57,8 +58,8 @@ public sealed class TabbedContentNode : LayoutListNode, ITabbedContentNode {
     }
 
     /// <inheritdoc />
-    protected override void OnUpdateControllerNav() {
-        // Not implemented yet.
+    protected override void OnNavigationUpdate(NavigationContext context) {
+        // todo: cats and butts
     }
 
     /// <inheritdoc />

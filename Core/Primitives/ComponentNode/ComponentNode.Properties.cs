@@ -1,14 +1,13 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Interfaces;
-using KamiToolKit.Core.Primitives.NodeBase;
 using KamiToolKit.UI.Nodes;
 
-namespace KamiToolKit.Core.Primitives.ComponentNode;
+namespace KamiToolKit.Core.Primitives;
 
 /// <summary>
 /// Abstract implementation of the base class for all component nodes use in KamiToolKit.
 /// </summary>
-public abstract unsafe partial class ComponentNode(NodeType nodeType) : NodeBase<AtkComponentNode>(nodeType), IControllerNavigable {
+public abstract unsafe partial class ComponentNode(NodeType nodeType) : NodeBase<AtkComponentNode>(nodeType), INavigationTarget {
 
     /// <summary>
     /// Gets the collision node used for this component node.
@@ -32,39 +31,39 @@ public abstract unsafe partial class ComponentNode(NodeType nodeType) : NodeBase
         => ref ComponentBase->CursorNavigationInfo;
 
     /// <inheritdoc/>
-    public int NavIndex {
+    public byte NavIndex {
         get => CursorNavInfo.Index;
-        set => CursorNavInfo.Index = (byte) value;
+        set => CursorNavInfo.Index = value;
     }
 
     /// <inheritdoc/>
-    public int NavLeft {
+    public byte NavLeft {
         get => CursorNavInfo.LeftIndex;
-        set => CursorNavInfo.LeftIndex = (byte) value;
+        set => CursorNavInfo.LeftIndex = value;
     }
 
     /// <inheritdoc/>
-    public int NavRight {
+    public byte NavRight {
         get => CursorNavInfo.RightIndex;
-        set => CursorNavInfo.RightIndex = (byte) value;
+        set => CursorNavInfo.RightIndex = value;
     }
 
     /// <inheritdoc/>
-    public int NavUp {
+    public byte NavUp {
         get => CursorNavInfo.UpIndex;
-        set => CursorNavInfo.UpIndex = (byte) value;
+        set => CursorNavInfo.UpIndex = value;
     }
 
     /// <inheritdoc/>
-    public int NavDown {
+    public byte NavDown {
         get => CursorNavInfo.DownIndex;
-        set => CursorNavInfo.DownIndex = (byte) value;
+        set => CursorNavInfo.DownIndex = value;
     }
 
     /// <summary>
     /// Gets the node used when focusing this element via controller.
     /// </summary>
-    public NodeBase.NodeBase FocusNode {
+    public NodeBase FocusNode {
         get => field ?? CollisionNode;
         protected set;
     }

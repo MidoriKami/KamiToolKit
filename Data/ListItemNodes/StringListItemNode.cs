@@ -8,7 +8,7 @@ namespace KamiToolKit.Data.ListItemNodes;
 /// <summary>
 /// Implementation of a <see cref="ListItemNode{T}"/> that represents a string.
 /// </summary>
-public class StringListItemNode : ListItemWithFocusNav<string>, IListItemNode {
+public class StringListItemNode : ListItemNode<string>, IListItemNode {
 
     /// <inheritdoc/>
     public static float ItemHeight => 24.0f;

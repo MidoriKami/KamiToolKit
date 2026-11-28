@@ -38,8 +38,4 @@ public abstract class TreeListItemNode<T> : SelectableNode {
     /// <param name="itemData">The new item data to show.</param>
     protected abstract void SetNodeData(T itemData);
 
-    /// <summary>
-    /// Processes building controller navigation.
-    /// </summary>
-    public virtual void ProcessNav(int index, int up, int down, int left, int right) { }
 }

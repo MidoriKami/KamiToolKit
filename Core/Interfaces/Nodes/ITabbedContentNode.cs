@@ -1,6 +1,6 @@
 using System;
 using KamiToolKit.Core.Layout;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Primitives;
 using KamiToolKit.UI.Nodes.Layout;
 using Lumina.Text.ReadOnly;
 

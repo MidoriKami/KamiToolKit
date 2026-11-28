@@ -6,10 +6,9 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Controls.ConfigurationNodes;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces;
-using KamiToolKit.Core.Primitives.NativeAddon;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Primitives;
 using KamiToolKit.UI.Nodes;
-using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Components;
 using KamiToolKit.UI.Nodes.Layout;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
@@ -65,14 +64,9 @@ public class TabbedConfigurationAddon<T, TU, TV, TW> : NativeAddon
     public Action? SaveConfig { get; set; }
 
     /// <summary>
-    /// The starting nav index for the body section of nodes next to the selection list.
-    /// </summary>
-    protected int BodyNavIndex { get; private set; } = 150;
-
-    /// <summary>
     /// Main layout container for this addon.
     /// </summary>
-    protected LayoutListNode? LayoutContainer { get; private set; }
+    protected LayoutNode? LayoutContainer { get; private set; }
 
     /// <summary>
     /// Search input box.
@@ -87,7 +81,7 @@ public class TabbedConfigurationAddon<T, TU, TV, TW> : NativeAddon
     /// <summary>
     /// Gets the layout node used to display the options list config page.
     /// </summary>
-    protected LayoutListNode? OptionsConfigurationPage { get; private set; }
+    protected LayoutNode? OptionsConfigurationPage { get; private set; }
 
     /// <summary>
     /// Gets the node used to display the general options.
@@ -164,10 +158,6 @@ public class TabbedConfigurationAddon<T, TU, TV, TW> : NativeAddon
                                 SearchInputNode = new SearchInputNode {
                                     Height = 26.0f,
                                     OnInputReceived = OnSearchInputReceived,
-                                    NavIndex = 1,
-                                    NavDown = 2,
-                                    NavUp = 100,
-                                    NavRight = BodyNavIndex,
                                 },
                                 new ResNode { Height = 8.0f },
                                 OptionsListNode = new ListNode<T, TU> {
@@ -176,10 +166,6 @@ public class TabbedConfigurationAddon<T, TU, TV, TW> : NativeAddon
                                     ItemSpacing = 2.0f,
                                     Options = OptionsList,
                                     OnOptionSelected = OnEntrySelected,
-                                    NavIndex = 2,
-                                    NavUp = 1,
-                                    NavDown = 100,
-                                    NavRight = BodyNavIndex,
                                 },
                                 new ResNode { Height = 8.0f },
                                 new HorizontalFlexNode {
@@ -192,21 +178,12 @@ public class TabbedConfigurationAddon<T, TU, TV, TW> : NativeAddon
                                             TextId = 302, // "Add"
                                             SheetType = NodeData.SheetType.Addon,
                                             OnClick = OnAddClicked,
-                                            NavIndex = 100,
-                                            NavUp = 2,
-                                            NavDown = 1,
-                                            NavRight = 101,
                                         },
                                         RemoveButtonNode = new TextButtonNode {
                                             TextId = 85, // "Remove"
                                             SheetType = NodeData.SheetType.Addon,
                                             OnClick = OnRemoveClicked,
                                             IsEnabled = false,
-                                            NavIndex = 101,
-                                            NavUp = 2,
-                                            NavDown = 1,
-                                            NavLeft = 100,
-                                            NavRight = BodyNavIndex,
                                         },
                                     ],
                                 },

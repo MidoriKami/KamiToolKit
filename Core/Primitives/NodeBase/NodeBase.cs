@@ -6,7 +6,7 @@ using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 
-namespace KamiToolKit.Core.Primitives.NodeBase;
+namespace KamiToolKit.Core.Primitives;
 
 /// <summary>
 /// Generic Base class for all nodes used in KamiToolKit.

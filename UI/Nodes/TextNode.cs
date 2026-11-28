@@ -3,7 +3,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces.Nodes;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Primitives;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.Payloads;
 using Lumina.Text.ReadOnly;

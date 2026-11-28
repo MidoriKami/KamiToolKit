@@ -1,5 +1,5 @@
 using System;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Primitives;
 
 namespace KamiToolKit.Core.Enums;
 

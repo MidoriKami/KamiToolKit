@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using KamiToolKit.Core.Interfaces;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Primitives;
 
 namespace KamiToolKit.Core.Layout;
 

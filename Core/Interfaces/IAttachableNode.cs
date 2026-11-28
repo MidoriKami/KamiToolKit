@@ -1,8 +1,7 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Layout;
-using KamiToolKit.Core.Primitives.NativeAddon;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Primitives;
 
 namespace KamiToolKit.Core.Interfaces;
 

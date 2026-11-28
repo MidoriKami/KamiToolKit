@@ -1,7 +1,7 @@
 using System.Numerics;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Services.Timelines;
-using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Components;
 using KamiToolKit.UI.Nodes.Simplified;
 
 namespace KamiToolKit.UI.Nodes.Parts;

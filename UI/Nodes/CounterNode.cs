@@ -5,7 +5,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.UI.Nodes.Parts;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces.Nodes;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Primitives;
 using KamiToolKit.Internal.Classes;
 using Lumina.Text.Payloads;
 using Lumina.Text.ReadOnly;

@@ -6,7 +6,7 @@ using KamiToolKit.UI.Events;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Internal.Classes;
 
-namespace KamiToolKit.Core.Primitives.NodeBase;
+namespace KamiToolKit.Core.Primitives;
 
 public abstract unsafe partial class NodeBase {
 

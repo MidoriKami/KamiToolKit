@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Core.Interfaces;
 using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Layout;
 using KamiToolKit.Services.Timelines;
-using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Components;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.UI.Nodes;
@@ -13,22 +15,7 @@ namespace KamiToolKit.UI.Nodes;
 /// <summary>
 /// Custom implementation of a tab bar.
 /// </summary>
-public class TabBarNode : ResNode, ITabBarNode {
-
-    /// <inheritdoc/>
-    public int NavIndex { get; set; }
-
-    /// <inheritdoc/>
-    public int NavLeft { get; set; }
-
-    /// <inheritdoc/>
-    public int NavRight { get; set; }
-
-    /// <inheritdoc/>
-    public int NavUp { get; set; }
-
-    /// <inheritdoc/>
-    public int NavDown { get; set; }
+public class TabBarNode : ResNode, ITabBarNode, INavigationUpdatable {
 
     /// <inheritdoc />
     public ICollection<TabBarEntry> InitialEntries {
@@ -88,6 +75,7 @@ public class TabBarNode : ResNode, ITabBarNode {
         button.Dispose();
         radioButtons.Remove(button);
         UpdateLayout();
+        // LayoutNode.RefreshNavigation(this); // todo: this?
     }
 
     /// <inheritdoc />
@@ -97,6 +85,7 @@ public class TabBarNode : ResNode, ITabBarNode {
         }
 
         radioButtons.Clear();
+        // LayoutNode.RefreshNavigation(this); // todo: this?
     }
 
     /// <summary>
@@ -135,6 +124,7 @@ public class TabBarNode : ResNode, ITabBarNode {
         }
 
         UpdateLayout();
+        // LayoutNode.RefreshNavigation(this); // todo: this?
     }
 
     /// <inheritdoc />
@@ -158,6 +148,7 @@ public class TabBarNode : ResNode, ITabBarNode {
         }
 
         UpdateLayout();
+        // LayoutNode.RefreshNavigation(this); // todo: this?
     }
 
     private void ClickHandler(TabBarRadioButtonNode button) {
@@ -193,27 +184,14 @@ public class TabBarNode : ResNode, ITabBarNode {
                 button.Width = step + 2.5f;
             }
 
-            button.NavIndex = NavIndex + index;
-
-            if (NavIndex is not 0) {
-                if (index is 0) {
-                    button.NavLeft = radioButtons.Count - 1 + NavIndex;
-                }
-                else {
-                    button.NavLeft = index - 1 + NavIndex;
-                }
-
-                if (index == radioButtons.Count - 1) {
-                    button.NavRight = NavIndex;
-                }
-                else {
-                    button.NavRight = index + 1 + NavIndex;
-                }
-            }
-
-            button.NavUp = NavUp;
-            button.NavDown = NavDown;
         }
+    }
+
+    /// <inheritdoc />
+    public void UpdateNavigation(NavigationContext context) {
+        // todo: also this... there's a lot of these actually...
+
+
     }
 
     private void BuildTimelines() {

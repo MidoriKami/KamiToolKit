@@ -7,8 +7,7 @@ using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces;
 using KamiToolKit.Core.Layout;
 using KamiToolKit.Internal.Classes;
-using KamiToolKit.UI.Nodes.ComponentNode;
-using KamiToolKit.UI.Nodes.Parts;
+using KamiToolKit.UI.Nodes.Components;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 
@@ -22,17 +21,7 @@ namespace KamiToolKit.UI.Nodes.Layout;
 /// </summary>
 /// <typeparam name="T">The data model to use.</typeparam>
 /// <typeparam name="TU">The view to render the data models data.</typeparam>
-public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T, TU>, ILayoutFiller where TU : ListItemNode<T>, IListItemNode, new() {
-
-    /// <summary>
-    /// Not intended for public use, but it's here if you absolutely need it.
-    /// </summary>
-    public ListNavNode? UpwardsNavNode { get; private set; }
-
-    /// <summary>
-    /// Not intended for public use, but it's here if you absolutely need it.
-    /// </summary>
-    public ListNavNode? DownwardsNavNode { get; private set; }
+public unsafe class ListNode<T, TU> : ResNode, IListNode<T, TU>, ILayoutFiller, INavigationUpdatable where TU : ListItemNode<T>, IListItemNode, new() {
 
     /// <summary>
     /// Not intended for public use, but it's here if you absolutely need it.
@@ -51,21 +40,6 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
 
     /// <inheritdoc/>
     public LayoutFill LayoutFill { get; set; } = LayoutFill.Horizontal;
-
-    /// <inheritdoc/>
-    public int NavIndex { get; set; }
-
-    /// <inheritdoc/>
-    public int NavLeft { get; set; }
-
-    /// <inheritdoc/>
-    public int NavRight { get; set; }
-
-    /// <inheritdoc/>
-    public int NavUp { get; set; }
-
-    /// <inheritdoc/>
-    public int NavDown { get; set; }
 
     /// <inheritdoc/>
     public bool ShowPlaceholderString { get; set; } = true;
@@ -146,6 +120,11 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
     public bool AllowMultipleSelection { get; set; }
 
     /// <inheritdoc/>
+    public void UpdateNavigation(NavigationContext context) {
+        // todo: this and stuff
+    }
+
+    /// <inheritdoc/>
     public void ResetScroll() {
         scrollPosition = 0;
         ScrollBarNode.ScrollPosition = 0;
@@ -173,12 +152,6 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
 
     /// <inheritdoc/>
     public void FullRebuild() {
-        UpwardsNavNode?.Dispose();
-        UpwardsNavNode = null;
-
-        DownwardsNavNode?.Dispose();
-        DownwardsNavNode = null;
-
         foreach (var node in nodeList) {
             node.Dispose();
         }
@@ -187,26 +160,11 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
         scrollPosition = Math.Clamp(scrollPosition, 0, Math.Max(Options.Count - nodeCount, 0));
         SelectedOptions.Clear();
 
-        UpwardsNavNode = new ListNavNode {
-            Position = new Vector2(0.0f, 0.0f),
-            Size = new Vector2(Width, 4.0f),
-            OnUpNavReceived = OnUpNavReceived,
-            IsVisible = NavIndex is not 0,
-        };
-        UpwardsNavNode.AttachNode(this);
-
         RebuildNodeList();
-
-        DownwardsNavNode = new ListNavNode {
-            Position = new Vector2(0.0f, Height - 4.0f),
-            Size = new Vector2(Width, 4.0f),
-            OnDownNavReceived = OnDownNavReceived,
-            IsVisible = NavIndex is not 0,
-        };
-        DownwardsNavNode.AttachNode(this);
 
         PopulateNodes();
         RecalculateScroll();
+        // LayoutNode.RefreshNavigation(this); // todo: this?
     }
 
     /// <summary>
@@ -259,9 +217,6 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
         foreach (var node in nodeList) {
             node.Width = ScrollBarNode.Bounds.Left - 8.0f;
         }
-
-        UpwardsNavNode?.Width = Width;
-        DownwardsNavNode?.Width = Width;
 
         RecalculateScroll();
     }
@@ -345,38 +300,6 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
             ScrollBarNode.IsEnabled = false;
         }
 
-        // Recalculate Controller Nav
-        if (NavIndex is not 0) {
-            UpwardsNavNode?.NavIndex = NavIndex;
-            UpwardsNavNode?.NavUp = NavUp;
-            UpwardsNavNode?.NavLeft = NavLeft;
-            UpwardsNavNode?.NavRight = NavRight;
-            UpwardsNavNode?.NavDown = NavIndex + 1;
-
-            DownwardsNavNode?.NavIndex = nodeList.Count * 4 + NavIndex + 1;
-            DownwardsNavNode?.NavUp = (nodeList.Count - 1 ) * 4 + NavIndex + 1;
-            DownwardsNavNode?.NavLeft = NavLeft;
-            DownwardsNavNode?.NavRight = NavRight;
-            DownwardsNavNode?.NavDown = NavDown;
-        }
-
-        foreach (var index in Enumerable.Range(0, nodeList.Count)) {
-            if (NavIndex is not 0) {
-                var node = nodeList[index];
-
-                // We'll allocate 4 nav slots per list item to do sub-nav via left/right.
-                if (index is 0) {
-                    node.ProcessNav(index * 4 + NavIndex + 1, NavIndex, (index + 1) * 4 + NavIndex + 1, NavLeft, NavRight);
-                }
-                else if (index == nodeCount - 1) {
-                    node.ProcessNav(index * 4 + NavIndex + 1, (index - 1) * 4 + NavIndex + 1, nodeList.Count * 4 + NavIndex + 1, NavLeft, NavRight);
-                }
-                else {
-                    node.ProcessNav(index * 4 + NavIndex + 1, (index - 1) * 4 + NavIndex + 1, (index + 1) * 4 + NavIndex + 1, NavLeft, NavRight);
-                }
-            }
-        }
-
         var totalHeight = (int)(Options.Count * (itemHeight + ItemSpacing) + ItemSpacing);
         ScrollBarNode.UpdateScrollParams((int)(nodeList.Count * (itemHeight + ItemSpacing)), totalHeight);
         ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
@@ -385,6 +308,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
     private void OnScrollUpdate(int newPosition) {
         scrollPosition = (int)(newPosition / (itemHeight + ItemSpacing));
         PopulateNodes();
+        // LayoutNode.RefreshNavigation(this); // todo: this?
 
         if (ParentAddon is not null) {
             ParentAddon->UpdateCollisionNodeList(false);
@@ -397,6 +321,7 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
 
         ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
         PopulateNodes();
+        // LayoutNode.RefreshNavigation(this); // todo: this?
 
         if (ParentAddon is not null) {
             ParentAddon->UpdateCollisionNodeList(false);
@@ -405,44 +330,10 @@ public unsafe class ListNode<T, TU> : ResNode, IControllerNavigable, IListNode<T
         atkEvent->SetEventIsHandled();
     }
 
-    private void OnUpNavReceived() {
-        if (scrollPosition > 0) {
-            UpwardsNavNode?.NavUp = 0;
-            scrollPosition--;
-            ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
-            PopulateNodes();
-
-            if (!AllowMultipleSelection) {
-                var node = nodeList[0];
-                node.OnClick?.Invoke(node);
-            }
-
-            if (scrollPosition is 0) {
-                UpwardsNavNode?.NavUp = NavUp;
-            }
-        }
-    }
-
-    private void OnDownNavReceived() {
-        if (scrollPosition < Options.Count - nodeList.Count) {
-            DownwardsNavNode?.NavDown = 0;
-            scrollPosition++;
-            ScrollBarNode.ScrollPosition = (int)(scrollPosition * (itemHeight + ItemSpacing));
-            PopulateNodes();
-
-            if (!AllowMultipleSelection) {
-                var node = nodeList[^1];
-                node.OnClick?.Invoke(node);
-            }
-
-            if (scrollPosition is 0) {
-                DownwardsNavNode?.NavDown = NavDown;
-            }
-        }
-    }
 
     private readonly List<TU> nodeList = [];
     private readonly float itemHeight;
     private int scrollPosition;
     private int nodeCount;
+
 }

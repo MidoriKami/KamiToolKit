@@ -1,13 +1,14 @@
 using System.Linq;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Layout;
 
 namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
-/// A horizontal <see cref="LayoutListNode"/> that will evenly divide its area among its children nodes.
+/// A horizontal <see cref="LayoutNode"/> that will evenly divide its area among its children nodes.
 /// </summary>
-public class HorizontalFlexNode : LayoutListNode, IHorizontalFlexNode {
+public class HorizontalFlexNode : LayoutNode, IHorizontalFlexNode {
 
     /// <inheritdoc />
     public FlexFlags AlignmentFlags { get; set; } = FlexFlags.FitContentHeight;
@@ -60,30 +61,7 @@ public class HorizontalFlexNode : LayoutListNode, IHorizontalFlexNode {
     }
 
     /// <inheritdoc />
-    protected override void OnUpdateControllerNav() {
-        var componentNodes = NodeList.OfType<Core.Primitives.ComponentNode.ComponentNode>().ToList();
-        if (componentNodes.Count is 0) return;
-
-        foreach (var (index, node) in componentNodes.Index()) {
-            node.NavIndex = index + NavIndex;
-            node.NavUp = NavUp;
-            node.NavDown = NavDown;
-
-            // First Element
-            if (index is 0) {
-                node.NavLeft = componentNodes.Count - 1 + NavIndex;
-            }
-            else {
-                node.NavLeft = index - 1 + NavIndex;
-            }
-
-            // Last Element
-            if (index == componentNodes.Count - 1) {
-                node.NavRight = NavIndex;
-            }
-            else {
-                node.NavRight = index + 1 + NavIndex;
-            }
-        }
+    protected override void OnNavigationUpdate(NavigationContext context) {
+        // todo: this as well
     }
 }

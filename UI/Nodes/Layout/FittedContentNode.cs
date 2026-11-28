@@ -7,7 +7,7 @@ namespace KamiToolKit.UI.Nodes.Layout;
 /// <summary>
 /// A layout node that fits all added child nodes to its own size.
 /// </summary>
-public sealed class FittedContentNode : LayoutListNode, ILayoutFiller {
+public sealed class FittedContentNode : LayoutNode, ILayoutFiller {
 
     /// <inheritdoc />
     public LayoutFill LayoutFill { get; set; } = LayoutFill.Both;
@@ -28,7 +28,7 @@ public sealed class FittedContentNode : LayoutListNode, ILayoutFiller {
     }
 
     /// <inheritdoc />
-    protected override void OnUpdateControllerNav() {
-        // Not implemented yet.
+    protected override void OnNavigationUpdate(NavigationContext context) {
+        // TODO: THIS DON'T FORGET DINGUS
     }
 }

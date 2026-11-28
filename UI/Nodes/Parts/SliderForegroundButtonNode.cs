@@ -1,9 +1,9 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Core.Enums;
-using KamiToolKit.Core.Primitives.ComponentNode;
+using KamiToolKit.Core.Primitives;
 using KamiToolKit.Services.Timelines;
-using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Components;
 using KamiToolKit.UI.Nodes.Simplified;
 
 namespace KamiToolKit.UI.Nodes.Parts;

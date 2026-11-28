@@ -1,5 +1,5 @@
 using KamiToolKit.Core.Interfaces.Nodes;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Primitives;
 using KamiToolKit.Services.Timelines;
 
 namespace KamiToolKit.UI.Nodes;

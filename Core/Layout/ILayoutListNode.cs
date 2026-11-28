@@ -1,8 +1,8 @@
-using KamiToolKit.Core.Interfaces;
+using KamiToolKit.UI.Nodes.Layout;
 
 namespace KamiToolKit.Core.Layout;
 
 /// <summary>
-/// Interface representing the capabilities of a LayoutListNode.
+/// Compatibility interface for ordered layout containers, implemented by <see cref="LayoutNode"/>.
 /// </summary>
-public interface ILayoutListNode : ILayoutNode, IControllerNavigable, INavigationUpdatable;
+public interface ILayoutListNode : ILayoutNode;

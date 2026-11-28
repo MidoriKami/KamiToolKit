@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Primitives;
 using KamiToolKit.UI.Nodes.Layout;
 
 namespace KamiToolKit.UI.Nodes;

@@ -11,7 +11,7 @@ using Vector2 = System.Numerics.Vector2;
 using Vector3 = System.Numerics.Vector3;
 using Vector4 = System.Numerics.Vector4;
 
-namespace KamiToolKit.Core.Primitives.NodeBase;
+namespace KamiToolKit.Core.Primitives;
 
 public abstract unsafe partial class NodeBase : INode {
 

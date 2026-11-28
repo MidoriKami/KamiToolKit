@@ -12,7 +12,7 @@ namespace KamiToolKit.Data.ListItemNodes;
 /// <summary>
 /// Implementation of <see cref="ListItemNode{T}"/> for use in <see cref="KamiToolKit.Controls.Search.ClassJobSearchAddon"/>
 /// </summary>
-public class ClassJobListItemNode : ListItemWithFocusNav<ClassJob>, IListItemNode {
+public class ClassJobListItemNode : ListItemNode<ClassJob>, IListItemNode {
 
     /// <inheritdoc/>
     public static float ItemHeight => 48.0f;

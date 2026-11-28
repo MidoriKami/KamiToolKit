@@ -1,71 +1,59 @@
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using System.Numerics;
 using KamiToolKit.Core.Interfaces.Nodes;
+using KamiToolKit.Core.Layout;
+using KamiToolKit.Core.Primitives;
 
 namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
 /// A layout node representing a grid.
 /// </summary>
-public class GridNode : LayoutNodeBase, IGridNode {
+public class GridNode : LayoutNode, IGridNode {
 
     /// <summary>
-    /// Gets the grid section at the specified X,Y coordinate.
+    /// Gets the child at the specified column and row.
     /// </summary>
-    public ResNode this[int x, int y]
-        => gridNodes[x + y * GridSize.Columns];
+    public NodeBase this[int x, int y]
+        => this[x + y * GridSize.Columns];
 
     /// <summary>
-    /// Gets the grid section at the specified index.
+    /// Gets the child at the specified row-major index.
     /// </summary>
-    public ResNode this[int index]
-        => gridNodes[index];
+    public NodeBase this[int index]
+        => NodeList[index];
 
     /// <inheritdoc />
     public required GridSize GridSize {
         get;
-        set {
+        init {
+            if (value.Columns is 0 || value.Rows is 0) throw new IndexOutOfRangeException();
+
             field = value;
-            ReallocateArray();
+            UpdateLayout();
         }
-    } = new(0, 0);
+    }
 
     /// <inheritdoc />
-    protected override void DoUpdateLayout() {
-        var gridWidth = Width / GridSize.Columns;
-        var gridHeight = Height / GridSize.Rows;
+    protected override void OnUpdateLayout() {
+        var columns = GridSize.Columns;
+        var rows = GridSize.Rows;
+        if (columns is 0 || rows is 0) return;
 
-        foreach (var row in Enumerable.Range(0, GridSize.Rows)) {
-            foreach (var column in Enumerable.Range(0, GridSize.Columns)) {
-                this[column, row].Size = new Vector2(gridWidth, gridHeight);
-                this[column, row].Position = new Vector2(column * gridWidth, row * gridHeight);
-            }
+        var gridWidth = Width / columns;
+        var gridHeight = Height / rows;
+
+        for (var index = 0; index < NodeList.Count; index++) {
+            var cell = this[index];
+            var column = index % columns;
+            var row = index / columns;
+            cell.Size = new Vector2(gridWidth, gridHeight);
+            cell.Position = new Vector2(column * gridWidth, row * gridHeight);
         }
     }
 
-    private void ReallocateArray() {
-        foreach (var node in gridNodes) {
-            node.Dispose();
-        }
-        gridNodes.Clear();
-
-        foreach (var _ in Enumerable.Range(0, GridSize.Rows * GridSize.Columns)) {
-            gridNodes.Add(new ResNode());
-        }
-
-        foreach (var row in Enumerable.Range(0, GridSize.Rows)) {
-            foreach (var column in Enumerable.Range(0, GridSize.Columns)) {
-                var node = this[column, row];
-
-                node.AttachNode(this);
-                node.IsVisible = true;
-            }
-        }
-
-        UpdateLayout();
+    /// <inheritdoc />
+    protected override void OnNavigationUpdate(NavigationContext context) {
+        // TODO: DO DIS YOU DOER
     }
-
-    private readonly List<ResNode> gridNodes = [];
-
 }

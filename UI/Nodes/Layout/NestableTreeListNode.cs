@@ -8,7 +8,7 @@ using KamiToolKit.Core.Interfaces;
 using KamiToolKit.Core.Interfaces.Nodes;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Internal.Nodes;
-using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Components;
 using Lumina.Data.Parsing.Uld;
 using Lumina.Text.ReadOnly;
 

@@ -6,7 +6,7 @@ using Dalamud.Plugin.Services;
 using KamiToolKit.Internal.Classes;
 using Serilog;
 
-namespace KamiToolKit.Core.Primitives.NativeAddon;
+namespace KamiToolKit.Core.Primitives;
 
 public partial class NativeAddon : IDisposable, IAsyncDisposable {
 

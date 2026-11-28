@@ -11,13 +11,15 @@ using KamiToolKit.Core.Layout;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.UI.Nodes;
 
-namespace KamiToolKit.Core.Primitives.NodeBase;
+namespace KamiToolKit.Core.Primitives;
 
 public abstract unsafe partial class NodeBase {
 
     internal readonly List<NodeBase> ChildNodes = [];
     private NodeBase? parentNode;
     private bool suppressAddonUpdate;
+
+    internal NodeBase? ParentNode => parentNode;
 
     internal AtkUldManager* ParentUldManager { get; set; }
     internal AtkUnitBase* ParentAddon { get; private set; }
@@ -26,10 +28,10 @@ public abstract unsafe partial class NodeBase {
     /// Attaches this node to targetAddon's root node using targetPosition as the relative positioning.
     /// </summary>
     [OverloadResolutionPriority(1)]
-    public void AttachNode(NativeAddon.NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild)
+    public void AttachNode(NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformManagedAttach(targetAddon, targetPosition);
 
-    /// <inheritdoc cref="AttachNode(KamiToolKit.Core.Primitives.NativeAddon.NativeAddon?,KamiToolKit.Core.Enums.NodePosition)"/>
+    /// <inheritdoc cref="AttachNode(NativeAddon?,KamiToolKit.Core.Enums.NodePosition)"/>
     public void AttachNode(AtkUnitBase* targetAddon, NodePosition targetPosition = NodePosition.AsLastChild)
         => PerformNativeAttach(targetAddon is not null ? targetAddon->RootNode : null, targetPosition);
 
@@ -94,7 +96,7 @@ public abstract unsafe partial class NodeBase {
         RemoveParentAddonReferences();
     }
 
-    private void PerformManagedAttach(NativeAddon.NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild) {
+    private void PerformManagedAttach(NativeAddon? targetAddon, NodePosition targetPosition = NodePosition.AsLastChild) {
         ThreadSafety.AssertMainThread();
         if (targetAddon is null) return;
 
@@ -327,12 +329,12 @@ public abstract unsafe partial class NodeBase {
     }
 
     internal static IEnumerable<NodeBase> GetLocalChildren(NodeBase parent) {
-        if (parent is ComponentNode.ComponentNode) yield break;
+        if (parent is ComponentNode) yield break;
 
         foreach (var child in parent.ChildNodes) {
             yield return child;
 
-            if (child is ComponentNode.ComponentNode) continue;
+            if (child is ComponentNode) continue;
             foreach (var childNode in GetLocalChildren(child)) {
                 yield return childNode;
             }
@@ -356,7 +358,7 @@ public abstract unsafe partial class NodeBase {
 
             // If component, set the component node itself, but then reset index
             // so its children start after the highest native child ID and grow sequentially.
-            if (childNode is ComponentNode.ComponentNode) {
+            if (childNode is ComponentNode) {
                 uint childNextId = 1;
 
                 // The component might have some nodes that have fixed ID's, but may also have other nodes without fixed ids.

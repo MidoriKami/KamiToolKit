@@ -1,4 +1,4 @@
-using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Components;
 
 namespace KamiToolKit.Core.Enums;
 

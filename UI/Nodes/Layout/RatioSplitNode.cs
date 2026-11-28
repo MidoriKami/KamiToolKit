@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.Core.Interfaces.Nodes;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Primitives;
 
 namespace KamiToolKit.UI.Nodes.Layout;
 
 /// <summary>
-/// A two part <see cref="LayoutListNode"/> that allows you to specify the relative width of each section.
+/// A two part <see cref="LayoutNode"/> that allows you to specify the relative width of each section.
 /// </summary>
 /// <remarks>
 /// Useful for layouts that want 1/3rd and 2/3rd of the width respectively.
@@ -88,8 +88,4 @@ public class RatioSplitNode : HorizontalListNode, IRatioSplitNode {
         }
     }
 
-    /// <inheritdoc />
-    protected override void OnUpdateControllerNav() {
-        // Not implemented yet.
-    }
 }

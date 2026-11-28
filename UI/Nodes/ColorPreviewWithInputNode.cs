@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Numerics;
 using Dalamud.Interface;
 using KamiToolKit.Core.Interfaces.Nodes;
-using KamiToolKit.UI.Nodes.ComponentNode;
+using KamiToolKit.UI.Nodes.Components;
 using Lumina.Text.ReadOnly;
 
 namespace KamiToolKit.UI.Nodes;

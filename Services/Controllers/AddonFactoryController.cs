@@ -6,7 +6,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using InteropGenerator.Runtime;
-using KamiToolKit.Core.Primitives.NativeAddon;
+using KamiToolKit.Core.Primitives;
 using KamiToolKit.Internal.Classes;
 
 namespace KamiToolKit.Services.Controllers;

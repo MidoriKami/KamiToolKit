@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Core.Layout;
 using KamiToolKit.Core.Interfaces.Nodes;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Layout;
 using KamiToolKit.Internal.Nodes;
 using Lumina.Text.ReadOnly;
 
@@ -13,7 +11,7 @@ namespace KamiToolKit.UI.Nodes.Layout;
 /// <summary>
 /// Layout node representing a collapsing header that will collapse/hide its contained nodes.
 /// </summary>
-public class CollapsingHeaderNode : LayoutListNode, ICollapsingHeaderNode {
+public class CollapsingHeaderNode : LayoutNode, ICollapsingHeaderNode {
 
     /// <inheritdoc />
     public bool IsCollapsed => ToggleableHeaderNode.IsCollapsed;
@@ -131,6 +129,11 @@ public class CollapsingHeaderNode : LayoutListNode, ICollapsingHeaderNode {
         }
     }
 
+    /// <inheritdoc />
+    protected override void OnNavigationUpdate(NavigationContext context) {
+        // todo: this as well
+    }
+
     /// <summary>
     /// Calculates the height of the node when not collapsed, based on the header and child nodes.
     /// </summary>
@@ -142,11 +145,6 @@ public class CollapsingHeaderNode : LayoutListNode, ICollapsingHeaderNode {
         }
 
         return yPosition;
-    }
-
-    /// <inheritdoc />
-    protected override void OnUpdateControllerNav() {
-        // Not implemented yet.
     }
 
     /// <inheritdoc />

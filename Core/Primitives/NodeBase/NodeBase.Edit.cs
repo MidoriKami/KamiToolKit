@@ -8,7 +8,7 @@ using KamiToolKit.Core.Enums;
 using KamiToolKit.Internal.Classes;
 using KamiToolKit.Internal.Nodes;
 
-namespace KamiToolKit.Core.Primitives.NodeBase;
+namespace KamiToolKit.Core.Primitives;
 
 public abstract unsafe partial class NodeBase {
 

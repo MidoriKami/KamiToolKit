@@ -4,7 +4,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.UI;
 using KamiToolKit.Core.Enums;
 using KamiToolKit.Core.Interfaces.Nodes;
-using KamiToolKit.Core.Primitives.ComponentNode;
+using KamiToolKit.Core.Primitives;
 using KamiToolKit.UI.Nodes;
 using KamiToolKit.UI.Nodes.Simplified;
 using KamiToolKit.Services.Timelines;

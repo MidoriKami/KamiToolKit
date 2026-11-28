@@ -11,7 +11,7 @@ namespace KamiToolKit.Data.ListItemNodes;
 /// <summary>
 /// Implementation of <see cref="ListItemNode{T}"/> for use with <see cref="KamiToolKit.Controls.Search.GearsetSearchAddon"/>
 /// </summary>
-public class GearsetListItemNode : ListItemWithFocusNav<RaptureGearsetModule.GearsetEntry>, IListItemNode {
+public class GearsetListItemNode : ListItemNode<RaptureGearsetModule.GearsetEntry>, IListItemNode {
 
     /// <inheritdoc/>
     public static float ItemHeight => 48.0f;

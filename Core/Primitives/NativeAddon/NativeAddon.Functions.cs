@@ -8,7 +8,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Internal.Classes;
 
-namespace KamiToolKit.Core.Primitives.NativeAddon;
+namespace KamiToolKit.Core.Primitives;
 
 public partial class NativeAddon {
 
@@ -109,7 +109,7 @@ public partial class NativeAddon {
     /// <summary>
     /// Attaches a collection nodes to this addon's root node.
     /// </summary>
-    public void AddNode(ICollection<NodeBase.NodeBase> nodes) {
+    public void AddNode(ICollection<NodeBase> nodes) {
         foreach (var node in nodes) {
             AddNode(node);
         }
@@ -119,7 +119,7 @@ public partial class NativeAddon {
     /// Attaches a specific node to this addon's root node.
     /// </summary>
     /// <param name="node"></param>
-    public void AddNode(NodeBase.NodeBase? node)
+    public void AddNode(NodeBase? node)
         => node?.AttachNode(this);
 
     /// <summary>

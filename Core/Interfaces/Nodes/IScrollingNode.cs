@@ -1,5 +1,5 @@
 using KamiToolKit.Core.Layout;
-using KamiToolKit.Core.Primitives.NodeBase;
+using KamiToolKit.Core.Primitives;
 
 namespace KamiToolKit.Core.Interfaces.Nodes;
 
